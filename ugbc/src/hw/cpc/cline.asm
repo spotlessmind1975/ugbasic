@@ -55,7 +55,7 @@ CLINE:
 
     LD A, (XCURSYS)
     LD B, A
-    LD A, $50
+    LD A, (CONSOLEWB)
     SUB B
 CLINEC:
     LD C, A
@@ -79,26 +79,17 @@ CLINECL2:
     LD D, A
     INC HL
 
+    LD (COPYOFTEXTADDRESS), DE
+
+    CALL TEXTATPIXPOSH
+
+    LD DE, (COPYOFTEXTADDRESS)
+
     LD HL, DE
-
-    PUSH BC
-
-    LD A, (XCURSYS)
-    LD C, A
     LD A, 0
-    LD B, A
-
-    ADD HL, BC
-    LD DE, HL
-
-    LD A, 0
-    LD (DE),A
-    LD (HL),A
+    LD (HL), A
     INC DE
-    LD (DE),A
 
-
-    POP BC
     POP BC
     PUSH BC
     LDIR

@@ -89,6 +89,13 @@ VSCROLLTUP:
     ; HL = HL + DE
 
     ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
+    ADD HL, DE
 
     ; If just one line, we do not scroll!
     LD A, C
@@ -110,6 +117,18 @@ VSCROLLTUPL1:
     LD D, A
     INC HL
 
+    ; Calculate CONSOLEX1 column
+
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
+
     ; Move forward to the address of CONSOLEY1+1 line
 
     ADD HL, 14
@@ -121,6 +140,16 @@ VSCROLLTUPL1:
     INC HL
     LD A, (HL)
     LD B, A
+
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), BC
+    CALL TEXTATPIXPOSH
+    LD BC, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
     LD HL, BC
 
     ; We copy the calculated number of bytes.

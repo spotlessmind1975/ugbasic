@@ -40,6 +40,11 @@ DSEQUAL:
     PUSH BC
     PUSH DE
     PUSH HL
+    LD A, (HL)
+    LD B, A
+    LD A, (IX)
+    CP B
+    JR NZ, DSEQUALNO
     INC HL
     LD A, (IX)
     LD B, A

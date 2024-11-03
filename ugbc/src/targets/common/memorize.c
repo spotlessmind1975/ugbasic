@@ -72,8 +72,9 @@ void memorize( Environment * _environment ) {
     sprintf( doNothingLabel2, "%sdonothing", label );
     
     cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 0 );
-    console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
-    console_save( _environment, 0 );
+    // console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
+    // console_save( _environment, 0 );
+    cpu_store_8bit( _environment, "CONSOLEID", 0 );
     cpu_label( _environment, doNothingLabel2 );
 
     Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );

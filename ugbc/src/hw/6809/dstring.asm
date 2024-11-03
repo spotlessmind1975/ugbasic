@@ -39,6 +39,9 @@
 DSEQUAL
     PSHS D
     PSHS Y
+    LDB ,Y
+    CMPB ,X
+    BNE DSEQUALNO
     LEAY 1, Y
     LDB , X
     LDD 1, X
