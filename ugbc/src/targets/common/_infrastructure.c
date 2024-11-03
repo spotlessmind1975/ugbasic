@@ -4071,8 +4071,10 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
  * @return Variable* The complement of _destination variable
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
-Variable * variable_complement_const( Environment * _environment, char * _destination, int _value ) {
-    Variable * destination = variable_retrieve( _environment, _destination );
+Variable * variable_complement_const( Environment * _environment, char * _source, int _value ) {
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * destination = variable_temporary( _environment, source->type, "(destination)" );
+    variable_move_naked( _environment, source->name, destination->name );
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             cpu_math_complement_const_32bit( _environment, destination->realName, _value );
@@ -4085,7 +4087,7 @@ Variable * variable_complement_const( Environment * _environment, char * _destin
             break;
         case 1:
         case 0:
-            CRITICAL_COMPLEMENT_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type]);
+            CRITICAL_COMPLEMENT_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
      }
     return destination;
 }
