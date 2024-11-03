@@ -41,7 +41,7 @@ PLOT:
 
     LD A, (CURRENTTILEMODE)
     CP 1
-    RET Z
+    JP Z, PLOTP
 
 @IF optionClip
 
@@ -84,8 +84,8 @@ PLOTCLIP4B:
     LD B, A
     LD A, IXL
     CP B
-    JR NC, PLOTCLIP5
     JR Z, PLOTCLIP42
+    JR NC, PLOTCLIP5
     JP PLOTP
 PLOTCLIP42:
 PLOTCLIP42B:
