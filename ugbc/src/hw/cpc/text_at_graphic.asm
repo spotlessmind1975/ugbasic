@@ -519,10 +519,10 @@ TEXTATFONT1L1:
     XOR $FF
     AND $0F
     CALL CPCVIDEOMUL82
-    LD (DE), A
     LD IXH, A
     LD A, (DE)
     OR IXH
+    LD (DE), A
 
     DEC DE
 
