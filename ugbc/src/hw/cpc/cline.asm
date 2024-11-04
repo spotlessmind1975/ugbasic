@@ -62,8 +62,30 @@ CLINEC:
     LD A, 0
     LD B, A
 
+    LD A, (CURRENTMODE)
+    CP 0
+    JP Z, CLINECM0
+    CP 1
+    JP Z, CLINECM1
+    CP 2
+    JP Z, CLINECM2
+    CP 3
+    JP Z, CLINECM3
+    JR CLINECM3
+
+CLINECM0:
+CLINECM3:
+    SLA C
+    RL B
+CLINECM1:
+    SLA C
+    RL B
+CLINECM2:
+
 CLINECL:
 
+    DEC C
+    
     LD A, 8
 
 CLINECL2:
