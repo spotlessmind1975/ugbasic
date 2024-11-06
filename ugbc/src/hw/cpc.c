@@ -2072,6 +2072,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
         Resource resource;
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
+        resource.isAddress = 0;
         cpc_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
@@ -2085,6 +2086,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
         Resource resource;
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
+        resource.isAddress = 0;
         cpc_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LD HL, 0" );
