@@ -267,8 +267,8 @@ void pc1403_initialization( Environment * _environment ) {
     // variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     // variable_global( _environment, "FONTHEIGHT" );
 
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 192, 256, 2, 8, 8, "Standard Bitmap Mode" );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 32, 25, 8, 8, 8, "(emulated) Standard Character Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 120, 8, 2, 8, 8, "Standard Bitmap Mode (LCD)" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 24, 1, 5, 8, 8, "(emulated) Standard Character Mode" );
 
     variable_import( _environment, "XGR", VT_BYTE, 0 );
     variable_global( _environment, "XGR" );
@@ -345,15 +345,15 @@ void pc1403_initialization( Environment * _environment ) {
 
     // _environment->currentRgbConverterFunction = rgbConverterFunction;
 
-    // _environment->screenWidth = 256;
-    // _environment->screenHeight = 192;
-    // _environment->fontWidth = 8;
-    // _environment->fontHeight = 8;
-    // _environment->screenColors = COLOR_COUNT;
-    // _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
-    // _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
-    // _environment->consoleTilesWidth = _environment->screenTilesWidth;
-    // _environment->consoleTilesHeight = _environment->screenTilesHeight;
+    _environment->screenWidth = 120;
+    _environment->screenHeight = 8;
+    _environment->fontWidth = 5;
+    _environment->fontHeight = 8;
+    _environment->screenColors = COLOR_COUNT;
+    _environment->screenTilesWidth = _environment->screenWidth / _environment->fontWidth;
+    _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
     // cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     // cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );

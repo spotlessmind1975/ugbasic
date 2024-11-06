@@ -56,23 +56,23 @@ void pmode( Environment * _environment, int _mode, int _start_page ) {
     switch( _mode ) {
         // 0	128x96
         case 0:
-            m = BITMAP_MODE_GRAPHIC2;
+            m = BITMAP_MODE_STANDARD;
             break;
         // 1	128x96
         case 1:
-            m = BITMAP_MODE_GRAPHIC2;
+            m = BITMAP_MODE_STANDARD;
             break;
         // 2	192x128
         case 2:
-            m = BITMAP_MODE_GRAPHIC2;
+            m = BITMAP_MODE_STANDARD;
             break;
         // 3	192x128
         case 3:
-            m = BITMAP_MODE_GRAPHIC2;
+            m = BITMAP_MODE_STANDARD;
             break;
         // 4	256x192
         case 4:
-            m = BITMAP_MODE_GRAPHIC2;
+            m = BITMAP_MODE_STANDARD;
             break;
         default:
             WARNING_SCREEN_MODE( _mode );

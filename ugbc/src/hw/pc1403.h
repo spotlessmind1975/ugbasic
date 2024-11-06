@@ -167,7 +167,7 @@
 #define INPUT_DEFAULT_RATE          16
 #define INPUT_DEFAULT_DELAY         64
 
-#define SCREEN_WIDTH                128
+#define SCREEN_WIDTH                120
 #define SCREEN_HEIGHT                 8
 
 #define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
@@ -189,9 +189,9 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
-#define BITMAP_MODE_STANDARD    0
-#define BITMAP_MODE_DEFAULT     BITMAP_MODE_STANDARD
-#define BITMAP_MODE_GRAPHIC2    0
+#define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode
+#define TILEMAP_MODE_STANDARD       0           // (emulated) Standard Character Mode
+#define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
 
 #define DOUBLE_BUFFER_PAGE_0    0
 #define DOUBLE_BUFFER_PAGE_1    0

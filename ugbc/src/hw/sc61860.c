@@ -1514,9 +1514,7 @@ void sc61860_compare_8bit( Environment * _environment, char *_source, char *_des
     char doneLabel[MAX_TEMPORARY_STORAGE];
     sprintf( doneLabel, "%sb2", label );
 
-    op_ldx( _environment, _destination );
-
-    op_lda_x( _environment );
+    op_lda( _environment, _destination );
 
     op_xab( _environment );
 
