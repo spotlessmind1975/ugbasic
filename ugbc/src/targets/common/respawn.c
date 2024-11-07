@@ -104,6 +104,7 @@ Variable * respawn_procedure( Environment * _environment, char * _name ) {
     cpu_protothread_get_state( _environment, threadId->realName, threadState->realName );
     cpu_compare_and_branch_8bit_const( _environment, threadState->realName, PROTOTHREAD_STATUS_ENDED, doNothingLabel, 0 );
     cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_WAITING );
+    cpu_protothread_save( _environment, threadId->realName, 0 );
     
     cpu_label( _environment, doNothingLabel );
 
