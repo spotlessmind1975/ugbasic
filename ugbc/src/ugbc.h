@@ -4894,6 +4894,7 @@ Variable *              rnd1( Environment * _environment );
 void                    rot( Environment * _environment, char * _angle, char * _step );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
+Variable *              running( Environment * _environment, char * _thread_id );
 
 //----------------------------------------------------------------------------
 // *S*

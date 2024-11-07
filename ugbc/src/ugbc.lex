@@ -1252,6 +1252,9 @@ ROWS { RETURN(ROWS,1); }
 Rws { RETURN(ROWS,1); }
 RUNSTOP { RETURN(RUNSTOP,1); }
 RUN { RETURN(RUN,1); }
+Ru { RETURN(RUN,1); }
+RUNNING { RETURN(RUNNING,1); }
+Run { RETURN(RUNNING,1); }
 
 %{ /* --------------------------------- S --------------------------------- */ %}
 
