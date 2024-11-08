@@ -177,19 +177,19 @@ PLOT2:
 
     TXA
     ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
-    STA PLOTCDEST               ;= cell address
+    STA PLOTLDEST               ;= cell address
 
     LDA #0
     ADC PLOTCVBASEHI,Y          ;do the high byte
-    STA PLOTCDEST+1
+    STA PLOTLDEST+1
 
     SEC
-    LDA PLOTCDEST
+    LDA PLOTLDEST
     SBC #$00
-    STA PLOTLDEST               ;= cell address
-    LDA PLOTCDEST+1
+    STA PLOTCDEST               ;= cell address
+    LDA PLOTLDEST+1
     SBC #$04
-    STA PLOTLDEST+1             ;= cell address
+    STA PLOTCDEST+1             ;= cell address
 
     ;---------------------------------
     ;get in-cell offset to point (0-7)
