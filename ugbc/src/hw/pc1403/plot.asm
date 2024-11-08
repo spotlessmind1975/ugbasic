@@ -155,6 +155,63 @@ CALCPOSDONE3:
 ; Plot a point inside the LCD.
 ; Input:    K = x; L = y; A = mode
 PLOT:
+
+@IF optionClip
+    PUSH
+    LIDP CLIPX1
+    LII 0x00
+    LP 0x03
+    MVWD
+    LIP 8
+    LDM
+    LIP 3
+    CPMA
+    JRZP PLOTNOCLIPPEDX2
+    JRCP PLOTNOCLIPPEDX2
+    POP
+    RTN
+PLOTNOCLIPPEDX2:
+    LIDP CLIPX2
+    LII 0x00
+    LP 0x03
+    MVWD
+    LIP 8
+    LDM
+    LIP 3
+    CPMA
+    JRNCP PLOTNOCLIPPEDY1
+    POP
+    RTN
+PLOTNOCLIPPEDY1:
+    LIDP CLIPY1
+    LII 0x00
+    LP 0x03
+    MVWD
+    LIP 9
+    LDM
+    LIP 3
+    CPMA
+    JRZP PLOTNOCLIPPEDY2
+    JRCP PLOTNOCLIPPEDY2
+    POP
+    RTN
+PLOTNOCLIPPEDY2:
+    LIDP CLIPY2
+    LII 0x00
+    LP 0x03
+    MVWD
+    LIP 9
+    LDM
+    LIP 3
+    CPMA
+    JRNCP PLOTNOCLIPPEDOK
+    POP
+    RTN
+PLOTNOCLIPPEDOK:
+    POP
+
+@ENDIF
+
     CPIA 0
     JRZP PLOTE
     CPIA 1

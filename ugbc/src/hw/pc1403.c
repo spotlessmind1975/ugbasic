@@ -279,14 +279,14 @@ void pc1403_initialization( Environment * _environment ) {
     // variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     // variable_global( _environment, "TABCOUNT" );
 
-    // variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
-    // variable_global( _environment, "CLIPX1" );
-    // variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
-    // variable_global( _environment, "CLIPX2" );
-    // variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
-    // variable_global( _environment, "CLIPY1" );
-    // variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
-    // variable_global( _environment, "CLIPY2" );
+    variable_import( _environment, "CLIPX1", VT_BYTE, 0 );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_BYTE, 120 );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_BYTE, 0 );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_BYTE, 7 );
+    variable_global( _environment, "CLIPY2" );
 
     // variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
     // variable_global( _environment, "ORIGINX" );
