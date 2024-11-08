@@ -771,7 +771,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("LDA #%00001000");
             outline0("STA $FF14");
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0c00 );
 
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -805,7 +805,7 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             outline0("LDA #%00001000");
             outline0("STA $FF14");
             
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x0c00 );
             
             cpu_store_8bit( _environment, "_PEN", 0x01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -1017,6 +1017,10 @@ void ted_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
         Variable * c = variable_retrieve( _environment, "PEN" );
         outline1("LDA %s", c->realName );
     }
+    outline0("ASL");
+    outline0("ASL");
+    outline0("ASL");
+    outline0("ASL");
     outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");
@@ -1051,6 +1055,10 @@ void ted_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
     outline1("LDA %s", y->realName );
     outline0("STA PLOTY");
     outline1("LDA %s", c->realName );
+    outline0("ASL");
+    outline0("ASL");
+    outline0("ASL");
+    outline0("ASL");
     outline0("STA PLOTCPE");
     outline0("LDA #1");
     outline0("STA PLOTM");

@@ -35,12 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLOTX    = $22 ; $23
-PLOTY    = $24
-PLOTM    = $25
-PLOTOMA  = $26
-PLOTAMA  = $27
-PLOTCPE  = $28
+PLOTX: .WORD $0
+PLOTY: .BYTE $0
+PLOTM: .BYTE $0
+PLOTOMA: .BYTE $0
+PLOTAMA: .BYTE $0
+PLOTCPE: .BYTE $0
 
 ;--------------
 
@@ -177,19 +177,19 @@ PLOT2:
 
     TXA
     ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
-    STA PLOTLDEST               ;= cell address
+    STA PLOTCDEST               ;= cell address
 
     LDA #0
     ADC PLOTCVBASEHI,Y          ;do the high byte
-    STA PLOTLDEST+1
+    STA PLOTCDEST+1
 
     SEC
-    LDA PLOTLDEST
+    LDA PLOTCDEST
     SBC #$00
-    STA PLOTCDEST               ;= cell address
-    LDA PLOTLDEST+1
+    STA PLOTLDEST               ;= cell address
+    LDA PLOTCDEST+1
     SBC #$04
-    STA PLOTCDEST+1             ;= cell address
+    STA PLOTLDEST+1             ;= cell address
 
     ;---------------------------------
     ;get in-cell offset to point (0-7)
@@ -309,7 +309,7 @@ PLOT3:
 
     LDY #0
     LDA (PLOTCDEST),Y
-    AND #$0F
+    AND #$F0
     CMP PLOTCPE
     BEQ PLOT3C1
     LDY #0
@@ -321,7 +321,7 @@ PLOT3:
     CMP PLOTCPE
     BEQ PLOT3C2
     LDA (PLOTC2DEST),Y
-    AND #$0F
+    AND #$f0
     CMP PLOTCPE
     BEQ PLOT3C3
 
@@ -338,10 +338,6 @@ PLOT3SC1:
     AND #$0F
     STA (PLOTCDEST),Y
     LDA PLOTCPE
-    ASL
-    ASL
-    ASL
-    ASL
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     LDA #1
@@ -358,6 +354,10 @@ PLOT3SC2:
     AND #$F0
     STA (PLOTCDEST),Y
     LDA PLOTCPE
+    LSR
+    LSR
+    LSR
+    LSR
     ORA (PLOTCDEST),Y
     STA (PLOTCDEST),Y
     LDA #2
@@ -453,14 +453,14 @@ PLOTD:
     STA (PLOTDEST),y           ;write back to $A000
     LDY #0
     LDA (PLOTCDEST),y          ;get row with point in it
-    AND #$f0                   ;isolate AND set the point
+    AND #$0f                   ;isolate AND set the point
     ORA PLOTCPE                   ;isolate OR set the point
     STA (PLOTCDEST),y          ;write back to $A000    
 
     LDY #0
     LDA (PLOTLDEST),y          ;get row with point in it
-    AND #$0f                   ;isolate AND set the point
-    ORA #$c0                   ;increase luminance
+    AND #$f0                   ;isolate AND set the point
+    ORA #$0c                   ;increase luminance
     STA (PLOTLDEST),y          ;write back to $A000    
 
     JMP PLOTP                  ;skip the erase-point section
