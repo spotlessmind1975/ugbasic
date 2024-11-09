@@ -76,15 +76,15 @@ OLDSVC0208:
 
 @IF keyboardConfig.sync
 
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;- SYNCHRONIZED KEYBOARD READING
-;-
-;- This is the actual implementation that will be used, where the programmer 
-;- chooses to read the key stroke at the specific moment, using the INKEY or 
-;- similar instruction.
-;-
-;- To enable: DEFINE KEYBOARD SYNC
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- SYNCHRONIZED KEYBOARD READING
+    ;-
+    ;- This is the actual implementation that will be used, where the programmer 
+    ;- chooses to read the key stroke at the specific moment, using the INKEY or 
+    ;- similar instruction.
+    ;-
+    ;- To enable: DEFINE KEYBOARD SYNC
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     ; This routine will be called by IRQ when a key is pressd.
 
@@ -235,6 +235,7 @@ OLDSVC0208:
 
     ASCIICODE:
         JSR SCANCODE
+    ASCIICODEDIR:
         TAY
         LDA #<KEYBOARDMAP
         STA TMPPTR
@@ -362,14 +363,14 @@ OLDSVC0208:
 
 @ELSE
 
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-;- ASYNCRONOUS JOYSTICK READING (default)
-;-
-;- This is the implementation used where the programmer chooses to use 
-;- interrupts to read the joystick position.
-;-
-;- To enable: DEFINE JOYSTICK ASYNC
-;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ;- ASYNCRONOUS KEYBOARD READING (default)
+    ;-
+    ;- This is the implementation used where the programmer chooses to use 
+    ;- interrupts to read the joystick position.
+    ;-
+    ;- To enable: DEFINE KEYBOARD ASYNC
+    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
     KEYBOARDBUFFERRESET:
         LDX #15
@@ -437,7 +438,7 @@ OLDSVC0208:
         PLA
         EOR #$40
     VKEYDREPLACEMENTL1CASE:
-        JSR KEYBOARDPUSH
+        STA KEYBOARDACTUAL
     VKEYDREPLACEMENTL1C:
         PLA
         CMP $D209
@@ -516,24 +517,24 @@ OLDSVC0208:
         ; queue, we ignore the pressing key and
         ; try to consume the queue in a rapid way.
 
-        SEC
-        LDA KEYBOARDQUEUEWPOS
-        SBC KEYBOARDQUEUERPOS
-        BEQ KEYBOARDMANAGERDONE2
+        ; SEC
+        ; LDA KEYBOARDQUEUEWPOS
+        ; SBC KEYBOARDQUEUERPOS
+        ; BEQ KEYBOARDMANAGERDONE2
 
-        LDA KEYBOARDASFSTATE
-        CMP #3
-        BEQ KEYBOARDMANAGERDONEYES
-        CMP #1
-        BEQ KEYBOARDMANAGERDONEYES
+        ; LDA KEYBOARDASFSTATE
+        ; CMP #3
+        ; BEQ KEYBOARDMANAGERDONEYES
+        ; CMP #1
+        ; BEQ KEYBOARDMANAGERDONEYES
 
-        JSR KEYBOARDPOP
-        STA KEYBOARDACTUAL
-        LDA #2
-        STA KEYBOARDASFSTATE
-        LDA #$00
-        STA KEYBOARDELAPSED
-        JMP KEYBOARDMANAGERDONEYES
+        ; JSR KEYBOARDPOP
+        ; STA KEYBOARDACTUAL
+        ; LDA #2
+        ; STA KEYBOARDASFSTATE
+        ; LDA #$00
+        ; STA KEYBOARDELAPSED
+        ; JMP KEYBOARDMANAGERDONEYES
 
     KEYBOARDMANAGERDONE2:
 
@@ -623,6 +624,21 @@ OLDSVC0208:
         RTS
     KEYBOARDPOPNONE:
         LDA #$FF
+        RTS
+
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDEMPTY
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to understand if the keyboard queue is empty.
+
+    KEYBOARDEMPTY:
+        LDX KEYBOARDQUEUERPOS
+        CPX KEYBOARDQUEUEWPOS
+        BEQ KEYBOARDEMPTYYES
+        CLC
+        RTS
+    KEYBOARDEMPTYYES:
+        SEC
         RTS
 
     ; ----------------------------------------------------------------------------
@@ -1054,6 +1070,7 @@ OLDSVC0208:
 
     ASCIICODE:
         JSR SCANCODE
+    ASCIICODEDIR:
         TAY
         LDA #<KEYBOARDMAP
         STA TMPPTR
@@ -1144,6 +1161,12 @@ OLDSVC0208:
         RTS
 
     INKEY:
+        JSR KEYBOARDEMPTY
+        BCS INKEYB
+        JSR KEYBOARDPOP
+        JSR ASCIICODEDIR
+        RTS
+    INKEYB:
         JSR KEYPRESSED
         CMP #$FF
         BEQ INKEY0
