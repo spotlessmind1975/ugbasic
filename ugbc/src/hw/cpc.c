@@ -117,7 +117,7 @@ void cpc_wait_key( Environment * _environment, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     if ( _release ) {
         outline0("CALL WAITKEYRELEASE");
@@ -133,7 +133,7 @@ void cpc_wait_key_or_fire( Environment * _environment, int _port, int _release )
     _environment->bitmaskNeeded = 1;
 
     deploy( joystick, src_hw_cpc_joystick_asm );
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
     deploy( wait_key_or_fire, src_hw_cpc_wait_key_or_fire_asm );
 
     if ( _port == -1 ) {
@@ -150,7 +150,7 @@ void cpc_wait_key_or_fire_semivar( Environment * _environment, char * _port, int
     _environment->bitmaskNeeded = 1;
 
     deploy( joystick, src_hw_cpc_joystick_asm );
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
     deploy( wait_key_or_fire, src_hw_cpc_wait_key_or_fire_asm );
 
     if ( ! _port ) {
@@ -203,7 +203,7 @@ void cpc_key_state( Environment * _environment, char *_scancode, char * _result 
 
     MAKE_LABEL
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYSTATE");
@@ -248,7 +248,7 @@ void cpc_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     MAKE_LABEL
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYPRESSED");
@@ -265,7 +265,7 @@ void cpc_keyshift( Environment * _environment, char * _shifts ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     outline0("CALL KEYSHIFT" );
     outline1("LD (%s), A", _shifts );
@@ -276,7 +276,7 @@ void cpc_clear_key( Environment * _environment ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     outline0("CALL CLEARKEY" );
 
@@ -305,7 +305,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
 
     MAKE_LABEL
@@ -345,7 +345,7 @@ void cpc_joy( Environment * _environment, int _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
     
-    deploy( keyboard, src_hw_cpc_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
     deploy( joystick, src_hw_cpc_joystick_asm );
     if ( _environment->keyboardConfig.sync ) {
         outline0("CALL SCANCODERAW" );
