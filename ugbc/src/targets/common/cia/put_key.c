@@ -61,6 +61,9 @@ are executed automatically, such as a macro.
 The maximum length of the string you can enter depends on the keyboard buffer,
 but normally is up to 10 characters.
 
+Please note that this feature is available with the "asynchronous" keyboard 
+reading mechanism or in some specific, selected targets.
+
 @italian
 
 Il comando ''PUT KEY'' consente di simulare la pressione di un tasto sulla 
@@ -77,6 +80,9 @@ come una macro.
 
 La lunghezza massima della stringa che è possibile immettere dipende dal 
 buffer della tastiera, ma normalmente è fino a 10 caratteri.
+
+Da notare che questa funzionalità è disponibile con il  meccanismo di lettura 
+della tastiera di tipo "asincrono" oppure in alcuni, specifici, target selezionati.
 
 @syntax PUT KEY string
 
