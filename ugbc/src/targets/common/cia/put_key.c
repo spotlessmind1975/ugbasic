@@ -62,7 +62,8 @@ The maximum length of the string you can enter depends on the keyboard buffer,
 but normally is up to 10 characters.
 
 Please note that this feature is available with the "asynchronous" keyboard 
-reading mechanism or in some specific, selected targets.
+reading mechanism or in some specific, selected targets. To enable this
+keyboard reading mode you must use the ''DEFINE KEYBOARD ASYNC''.
 
 @italian
 
@@ -83,6 +84,8 @@ buffer della tastiera, ma normalmente è fino a 10 caratteri.
 
 Da notare che questa funzionalità è disponibile con il  meccanismo di lettura 
 della tastiera di tipo "asincrono" oppure in alcuni, specifici, target selezionati.
+Per abilitare questa modalità di lettura della tastiera è necessario utilizzare
+la direttiva ''DEFINE KEYBOARD ASYNC''.
 
 @syntax PUT KEY string
 
