@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 static void blit_define_bltu( Environment * _environment, int _op, char * _a, char * _c ) {
 
+    // outline3("; blit_define_bltu( %d, %s, %s )", _op, _a, _c );
+
     if ( _op == ( 1 << _environment->currentModeBW ) + 3 ) {
 
         MAKE_LABEL
@@ -150,6 +152,8 @@ static void blit_define_bltu( Environment * _environment, int _op, char * _a, ch
 }
 
 static void blit_define_bltb( Environment * _environment, int _op, char * _a, char * _b, char * _d ) {
+
+    // outline4("; blit_define_bltb( %d, %s, %s, %s )", _op, _a, _b, _d );
 
     if ( _op == 0 ) {
         outline0("; bltb C = A and B");
@@ -265,6 +269,8 @@ static void blit_define_bltb( Environment * _environment, int _op, char * _a, ch
 </usermanual> */
 void blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top ) {
 
+    // outline0("; blit_define( ....)" );
+
     char blitLabel[MAX_TEMPORARY_STORAGE]; sprintf( blitLabel, "_%sblit", _name );
     char skipLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipLabel, "_%sskip", _name );
 
@@ -316,6 +322,8 @@ static const char BLIT_SOURCES_REGISTER[][4] = {
 
 void blit_define_begin_compound( Environment * _environment, char * _name ) {
 
+    // outline1("; blit_define_begin_compound( %s )", _name );
+
     char blitLabel[MAX_TEMPORARY_STORAGE]; sprintf( blitLabel, "_%sblit", _name );
     char skipLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipLabel, "_%sskip", _name );
 
@@ -338,6 +346,8 @@ void blit_define_begin_compound( Environment * _environment, char * _name ) {
 
 void blit_define_compound_operand_to_register( Environment * _environment, int _register, int _source ) {
 
+    // outline2("; blit_define_compound_operand_to_register( %d, %d )", _register, _source );
+
     char * reg = cpu_blit_register_name( _environment, _register ) ;
 
     outline1( "LD A, %s", &BLIT_SOURCES_REGISTER[_source][0] );
@@ -359,6 +369,8 @@ void blit_define_compound_binary( Environment * _environment, int _operation, in
 
 void blit_define_end_compound( Environment * _environment, int _result ) {
     
+    // outline1("; blit_define_end_compound( %d )", _result );
+
     char skipLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipLabel, "_%sskip", _environment->blit.name );
     char blitStageAreaName[MAX_TEMPORARY_STORAGE]; sprintf( blitStageAreaName, "%sbs", _environment->blit.name );
 
