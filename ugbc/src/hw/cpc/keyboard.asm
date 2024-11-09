@@ -447,9 +447,7 @@ KEYBOARDINKEY:          DB $FF
     ;           5	Right ALT
 
     KEYSHIFT:
-@IF keyboardConfig.sync    
         CALL SCANCODERAW
-@ENDIF
         LD A, (KEYBOARDSHIFT)
         RET
 
