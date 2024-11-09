@@ -88,6 +88,23 @@ della tastiera di tipo "asincrono" oppure in alcuni, specifici, target seleziona
 
 @example PUT KEY "yes"
 
+@target atari 
+@target atarixl
+@target c128
+@target c64
+@target c64reu
+@target coco
+@target coco3
+@target cpc
+@target d32
+@target d64
+@target mo5
+@target msx1
+@target pc128op
+@target plus4
+@target sg1000
+@target to8
+@target vic20
 </usermanual> */
 
 void put_key( Environment * _environment, char * _string ) {
