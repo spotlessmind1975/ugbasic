@@ -168,7 +168,7 @@ KEYBOARDINKEY:          DB $FF
         CP 23
         JR Z, SCANCODESINGLEKEYPRESSEDCTRL
 
-        CP 40
+        CP $40
         JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
 
     SCANCODEENTIREL1BL1:
@@ -447,6 +447,9 @@ KEYBOARDINKEY:          DB $FF
     ;           5	Right ALT
 
     KEYSHIFT:
+@IF keyboardConfig.sync    
+        CALL SCANCODERAW
+@ENDIF
         LD A, (KEYBOARDSHIFT)
         RET
 
