@@ -61,6 +61,10 @@ are executed automatically, such as a macro.
 The maximum length of the string you can enter depends on the keyboard buffer,
 but normally is up to 10 characters.
 
+Please note that this feature is available with the "asynchronous" keyboard 
+reading mechanism or in some specific, selected targets. To enable this
+keyboard reading mode you must use the ''DEFINE KEYBOARD ASYNC''.
+
 @italian
 
 Il comando ''PUT KEY'' consente di simulare la pressione di un tasto sulla 
@@ -78,10 +82,32 @@ come una macro.
 La lunghezza massima della stringa che è possibile immettere dipende dal 
 buffer della tastiera, ma normalmente è fino a 10 caratteri.
 
+Da notare che questa funzionalità è disponibile con il  meccanismo di lettura 
+della tastiera di tipo "asincrono" oppure in alcuni, specifici, target selezionati.
+Per abilitare questa modalità di lettura della tastiera è necessario utilizzare
+la direttiva ''DEFINE KEYBOARD ASYNC''.
+
 @syntax PUT KEY string
 
 @example PUT KEY "yes"
 
+@target atari 
+@target atarixl
+@target c128
+@target c64
+@target c64reu
+@target coco
+@target coco3
+@target cpc
+@target d32
+@target d64
+@target mo5
+@target msx1
+@target pc128op
+@target plus4
+@target sg1000
+@target to8
+@target vic20
 </usermanual> */
 
 void put_key( Environment * _environment, char * _string ) {

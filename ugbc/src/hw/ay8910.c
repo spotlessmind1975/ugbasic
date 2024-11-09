@@ -104,6 +104,9 @@ void ay8910_start( Environment * _environment, int _channels ) {
     if ( _channels & 0x04 ) {
         outline0("CALL AY8910START2");
     }
+    if ( _channels & 0x08 ) {
+        outline0("CALL AY8910STARTN0");
+    }
 
 }
 
@@ -128,7 +131,9 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     if ( ( c & 0x02 ) ) \
         outline0("CALL AY8910PROGFREQ1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL AY8910PROGFREQ2" );
+        outline0("CALL AY8910PROGFREQ2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL AY8910PROGFREQN0" );
 
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LD A, (%s)", f ); \
@@ -164,7 +169,9 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     if ( ( c & 0x02 ) ) \
         outline0("CALL AY8910PROGDUR1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL AY8910PROGDUR2" );
+        outline0("CALL AY8910PROGDUR2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL AY8910PROGDURN0" );
 
 #define     WAIT_DURATION( c ) \
     if ( ( c & 0x01 ) ) \
@@ -172,7 +179,9 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     if ( ( c & 0x02 ) ) \
         outline0("CALL AY8910WAITDUR1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL AY8910WAITDUR2" );
+        outline0("CALL AY8910WAITDUR2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL AY8910WAITDURN0" );
 
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LD A, $%2.2x", ( f & 0xff ) ); \
@@ -184,7 +193,9 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     if ( ( c & 0x02 ) ) \
         outline0("CALL AY8910PROGFREQ1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL AY8910PROGFREQ2" );
+        outline0("CALL AY8910PROGFREQ2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL AY8910PROGFREQN0" );
 
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LD A, (%s)", f ); \
@@ -444,7 +455,9 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     if ( ( c & 0x02 ) ) \
         outline0("CALL AY8910STOP1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL AY8910STOP2" );
+        outline0("CALL AY8910STOP2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL AY8910STOPN0" );
 
 #define     STOP_FREQUENCY_V( c ) \
     if ( c == NULL ) { \

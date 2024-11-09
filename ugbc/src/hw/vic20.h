@@ -153,6 +153,7 @@ void vic20_scancode( Environment * _environment, char * _pressed, char * _scacod
 void vic20_scanshift( Environment * _environment, char * _shifts );
 void vic20_keyshift( Environment * _environment, char * _shifts );
 void vic20_clear_key( Environment * _environment );
+void vic20_put_key(  Environment * _environment, char *_string, char * _size );
 
 void vic20_sys_call( Environment * _environment, int _destination );
 

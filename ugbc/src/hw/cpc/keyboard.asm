@@ -168,7 +168,7 @@ KEYBOARDINKEY:          DB $FF
         CP 23
         JR Z, SCANCODESINGLEKEYPRESSEDCTRL
 
-        CP 40
+        CP $40
         JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
 
     SCANCODEENTIREL1BL1:
@@ -447,6 +447,7 @@ KEYBOARDINKEY:          DB $FF
     ;           5	Right ALT
 
     KEYSHIFT:
+        CALL SCANCODERAW
         LD A, (KEYBOARDSHIFT)
         RET
 
@@ -470,7 +471,7 @@ KEYBOARDINKEY:          DB $FF
     PUTKEY:
         RET
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @ELSE
 
@@ -628,8 +629,8 @@ KEYBOARDTEMP:           DB $00
         PUSH DE
         PUSH AF
 
-        CALL KEYBOARDEMPTY
-        JP NC, KEYBOARDMANAGERDONEYES
+        ; CALL KEYBOARDEMPTY
+        ; JP NC, KEYBOARDMANAGERDONEYES
 
         LD IXL, 0
         LD A, 0
@@ -869,10 +870,10 @@ KEYBOARDTEMP:           DB $00
 
     KEYBOARDASF0:
 
-        CALL KEYBOARDEMPTY
-        JR C, KEYBOARDASF0B
-        CALL KEYBOARDPOP
-        LD (KEYBOARDACTUAL), A
+        ; CALL KEYBOARDEMPTY
+        ; JR C, KEYBOARDASF0B
+        ; CALL KEYBOARDPOP
+        ; LD (KEYBOARDACTUAL), A
 
     KEYBOARDASF0B:
 
@@ -911,9 +912,9 @@ KEYBOARDTEMP:           DB $00
 
     KEYBOARDASF1:
 
-        CALL KEYBOARDEMPTY
-        JR C, KEYBOARDASF1B
-        JMP KEYBOARDASFTO0
+        ; CALL KEYBOARDEMPTY
+        ; JR C, KEYBOARDASF1B
+        ; JMP KEYBOARDASFTO0
 
     KEYBOARDASF1B:
 
@@ -1185,6 +1186,7 @@ KEYBOARDTEMP:           DB $00
 
     ASCIICODE:
         CALL SCANCODE
+    ASCIICODEDIR:
         LD HL, KEYBOARDMAP 
         LD E, A
         LD A, 0
@@ -1284,6 +1286,12 @@ KEYBOARDTEMP:           DB $00
         RET
 
     INKEY:
+        CALL KEYBOARDEMPTY
+        JR C, INKEYB
+        CALL KEYBOARDPOP
+        CALL ASCIICODEDIR
+        RET
+    INKEYB:
         CALL KEYPRESSED
         CP $FF
         JR Z, INKEY0

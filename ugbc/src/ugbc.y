@@ -7634,21 +7634,26 @@ writing_definition :
     }
     ;
 
+milliseconds_optional :
+    |
+    milliseconds
+    ;
+
 sound_definition_argument :
-    OP_HASH const_expr {
+    OP_HASH const_expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
         ((struct _Environment *)_environment)->soundDurationValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $5;
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | expr {
+    | expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     }
-    | expr OP_COMMA expr {
+    | expr OP_COMMA expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
         ((struct _Environment *)_environment)->soundDuration[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $3 );
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;

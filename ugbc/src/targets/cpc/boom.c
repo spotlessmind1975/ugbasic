@@ -52,7 +52,8 @@
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
-    ay8910_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+    _channels = 0x08; // noise channel!
+
     ay8910_start( _environment, _channels );
     ay8910_set_frequency( _environment, _channels, 1000 );
 
@@ -80,25 +81,21 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        ay8910_start_var( _environment, channels->realName );
-        ay8910_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-    } else {
-        ay8910_start_var( _environment, NULL );
-        ay8910_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-    }
+    Variable * noiseChannel = variable_temporary( _environment, VT_BYTE, "(channel)" );
+    variable_store( _environment, noiseChannel->name, 0x08 ); // noise channel!
+
+    ay8910_start_var( _environment, noiseChannel->realName );
 
     if ( _duration ) {
-        Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+        Variable * duration = variable_retrieve_or_define( _environment, noiseChannel->realName, VT_WORD, 0x07 );
         cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-        ay8910_set_duration_vars( _environment, _channels, duration->realName );
+        ay8910_set_duration_vars( _environment, noiseChannel->realName, duration->realName );
     } else {
-        ay8910_set_duration_vars( _environment, _channels, NULL );
+        ay8910_set_duration_vars( _environment, noiseChannel->realName, NULL );
     } 
 
     if ( ! _environment->audioConfig.async ) {
-        ay8910_wait_duration_vars( _environment, _channels );
+        ay8910_wait_duration_vars( _environment, noiseChannel->realName );
     }
 
 }
