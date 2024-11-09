@@ -6599,12 +6599,16 @@ void z80_blit_initialize( Environment * _environment ) {
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
 
+    // outline0("; z80_blit_initialize");
+
     outline0("PUSH HL");
     outline0("PUSH DE");
 
 }
 
 void z80_blit_finalize( Environment * _environment ) {
+
+    // outline0("; z80_blit_finalize");
 
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
@@ -6633,6 +6637,7 @@ int z80_blit_alloc_register(  Environment * _environment ) {
         if ( ! isRegisterUsed ) {
             _environment->blit.freeRegisters |= registerMask;
             // printf( "z80_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
+            // outline1("; z80_blit_alloc_register = %d", reg );
             return reg;
         }
     }
@@ -6651,7 +6656,8 @@ int z80_blit_alloc_register(  Environment * _environment ) {
             outline2( "LD (%sbs+$%2.2x), A",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
             // printf( "z80_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
-            return ( ( reg << 8 ) | location );
+            // outline1("; z80_blit_alloc_register = %d", ( ( (reg+1) << 8 ) | location ) );
+            return ( ( (reg+1) << 8 ) | location );
         }
     }
 
@@ -6660,6 +6666,8 @@ int z80_blit_alloc_register(  Environment * _environment ) {
 }
 
 void z80_blit_free_register(  Environment * _environment, int _register ) {
+
+    // outline1("; z80_blit_free_register = %d", _register );
 
     // printf( "z80_blit_free_register($%4.4x)\n", _register );
 
@@ -6676,7 +6684,7 @@ void z80_blit_free_register(  Environment * _environment, int _register ) {
             CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
         }
     } else {
-        int registerMask = 0x10 << ( ( _register >> 8 ) & 0xff );
+        int registerMask = 0x10 << ( ( ( _register >> 8 ) & 0xff ) - 1 );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
             outline2( "LD A, (%sbs+$%2.2x)",  _environment->blit.realName, location );
