@@ -238,7 +238,7 @@ void cpc_asciicode( Environment * _environment, char * _result ) {
     deploy_deferred( keyboard, src_hw_cpc_keyboard_asm);
 
     outline0("CALL ASCIICODE");
-    outline1("LD A, (%s)", _result );
+    outline1("LD (%s), A", _result );
    
 }
 
