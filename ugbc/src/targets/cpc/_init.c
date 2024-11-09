@@ -107,7 +107,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
-    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
+    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 8 );
     variable_global( _environment, "AY8910TIMER" );    
 
     variable_import( _environment, "CLINEX", VT_BYTE, 0 );

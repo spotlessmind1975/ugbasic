@@ -66,7 +66,8 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
-    ay8910_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
+    _channels = 0x08; // force noise channel
+
     ay8910_start( _environment, _channels );
     ay8910_set_frequency( _environment, _channels, 1000 );
 

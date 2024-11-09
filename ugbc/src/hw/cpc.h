@@ -261,7 +261,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
-#define MAX_AUDIO_CHANNELS  3
+#define MAX_AUDIO_CHANNELS  3 /* 4 channel is noise! */
 
 // IN r,(C)/OUT (C),r instructions: Bits b15-b8 come from the B register, 
 // bits b7-b0 come from r 
