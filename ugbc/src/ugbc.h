@@ -3410,6 +3410,24 @@ void buffered_pop_output( Environment * _environment );
         } \
     }
 
+#define outline6n(n,s,a,b,c,d,e,f,r)   \
+    { \
+        int outsi; \
+        for(outsi=0; outsi<n; ++outsi) \
+            buffered_fputs(((Environment *)_environment), "\t", ((Environment *)_environment)->asmFile); \
+        if ( ((Environment *)_environment)->emptyProcedure ) { \
+            buffered_fputs(((Environment *)_environment), "\t; (excluded by ON target) : ", ((Environment *)_environment)->asmFile); \
+        } \
+        buffered_fprintf(((Environment *)_environment), ((Environment *)_environment)->asmFile, s, a, b, c, d, e, f); \
+        if ( r ) { \
+            buffered_fputs(((Environment *)_environment), "\n", ((Environment *)_environment)->asmFile); \
+            if ( ! ((Environment *)_environment)->emptyProcedure ) { \
+                ((Environment *)_environment)->producedAssemblyLines += assemblyLineIsAComment( s ) ? 0 : 1; \
+            } \
+        } \
+    }
+
+
 #define cfgline0n(n,s,r)     \
     { \
         int outsi; \
@@ -3630,12 +3648,14 @@ int embed_scan_string (const char *);
 #define outline3(s,a,b,c)       outline3n(1, s, a, b, c, 1)
 #define outline4(s,a,b,c,d)     outline4n(1, s, a, b, c, d, 1)
 #define outline5(s,a,b,c,d,e)   outline5n(1, s, a, b, c, d, e, 1)
+#define outline6(s,a,b,c,d,e,f) outline6n(1, s, a, b, c, d, e, f, 1)
 #define out0(s)                 outline0n(0, s, 0)
 #define out1(s,a)               outline1n(0, s, a, 0)
 #define out2(s,a,b)             outline2n(0, s, a, b, 0)
 #define out3(s,a,b,c)           outline3n(0, s, a, b, c, 0)
 #define out4(s,a,b,c,d)         outline4n(0, s, a, b, c, d, 0)
 #define out5(s,a,b,c,d,e)       outline5n(0, s, a, b, c, d, e, 0)
+#define out6(s,a,b,c,d,e,f)     outline6n(0, s, a, b, c, d, e, f, 0)
 
 #define cfghead0(s)             cfgline0n(0, s, 1)
 #define cfghead1(s,a)           cfgline1n(0, s, a, 1)

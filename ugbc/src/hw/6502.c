@@ -6885,7 +6885,7 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
             outline2( "STA %sbs+$%2.2x",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
             // printf( "cpu6502_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
-            return ( ( reg << 8 ) | location );
+            return ( ( (reg+1) << 8 ) | location );
         }
     }
 
@@ -6910,7 +6910,7 @@ void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
             CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
         }
     } else {
-        int registerMask = 0x10 << ( ( _register >> 8 ) & 0xff );
+        int registerMask = 0x10 << ( ( ( _register >> 8 ) & 0xff ) - 1 );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
             outline2( "LDA (%sbs+$%2.2x)",  _environment->blit.realName, location );

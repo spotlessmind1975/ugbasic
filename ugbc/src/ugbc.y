@@ -5587,7 +5587,7 @@ blit_expression :
         blit_define_compound_unary( _environment, 1 << ((struct _Environment *)_environment)->currentModeBW /* COPY */, operand, result );
         // Free operand
         cpu_blit_free_register( _environment, operand );
-        //printf( "( O%2.2x (R%2.2X) ) -> R%2.2x\n", $2, operand, result );
+        // outline3( "; ( O%2.2x (R%2.2X) ) -> R%2.2x", $2, operand, result );
         $$ = result;
 
     }
@@ -5601,7 +5601,7 @@ blit_expression :
         blit_define_compound_unary( _environment, $2, operand, result );
         // Free operand
         cpu_blit_free_register( _environment, operand );
-        //printf( "*( [%2.2x] O%2.2x (R%2.2x) ) -> R%2.2x\n", $2, $3, operand, result );
+        // outline4( "; ( [%2.2x] O%2.2x (R%2.2x) ) -> R%2.2x", $2, $3, operand, result );
         $$ = result;
     }
     | OP blit_operand blit_binary_op blit_operand CP {
@@ -5619,19 +5619,19 @@ blit_expression :
         cpu_blit_free_register( _environment, operand1 );
         // Free operand2
         cpu_blit_free_register( _environment, operand2 );
-        //printf( "( O%2.2x R%2.2x [%2.2x] O%2.2x R%2.2x ) -> R%2.2x\n", $2, operand1, $3, $4, operand2, result );
+        // outline6( "; ( O%2.2x R%2.2x [%2.2x] O%2.2x R%2.2x ) -> R%2.2x", $2, operand1, $3, $4, operand2, result );
         $$ = result;
     }
     ;
 
 blit_compounded :
     blit_expression {
-        //printf( "R%2.2x -> R%2.2x\n", $1, $1 );
+        // outline2( "; R%2.2x -> R%2.2x", $1, $1 );
         // Pass result register
         $$ = $1;
     }
     | OP blit_compounded CP {
-        //printf( "(R%2.2x) -> R%2.2x \n", $2, $2 );
+        // outline2( "; (R%2.2x) -> R%2.2x", $2, $2 );
         // Pass result register
         $$ = $2;
     }
@@ -5641,7 +5641,9 @@ blit_compounded :
         // B ( result1, result2 ) -> result
         blit_define_compound_unary( _environment, $2, $3, result );
         // Pass result register
-        //printf( "( [%2.2x] R%2.2x) -> R%2.2x\n", $2, $3, result );
+        // outline3( "; ( [%2.2x] R%2.2x) -> R%2.2x", $2, $3, result );
+        // Free operand
+        cpu_blit_free_register( _environment, $3 );
         $$ = result;
     }
     | OP blit_compounded blit_binary_op blit_compounded CP {
@@ -5650,7 +5652,11 @@ blit_compounded :
         // B ( result1, result2 ) -> result
         blit_define_compound_binary( _environment, $3, $2, $4, result );
         // Pass result register
-        //printf( "( R%2.2x [%2.2x] R%2.2x) -> R%2.2x\n", $2, $3, $4, result );
+        // outline4( "; ( R%2.2x [%2.2x] R%2.2x) -> R%2.2x", $2, $3, $4, result );
+        // Free operands
+        cpu_blit_free_register( _environment, $2 );
+        // Free operands
+        cpu_blit_free_register( _environment, $4 );
         $$ = result;
     }
     ;
