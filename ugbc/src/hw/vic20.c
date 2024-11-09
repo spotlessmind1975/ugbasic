@@ -88,7 +88,7 @@ void vic20_inkey( Environment * _environment, char * _pressed, char * _key ) {
     outline0("LDX #0");
     outhead1("%sclkeys:", label);
     outline0("LDA $0278,X" );
-    outline0("LDA $0277,X" );
+    outline0("STA $0277,X" );
     outline0("INX");
     outline0("CPX $c6");
     outline1("BNE %sclkeys", label);
@@ -529,4 +529,27 @@ void vic20_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 
+void vic20_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    MAKE_LABEL
+
+    _environment->bitmaskNeeded = 1;
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+
+    outline0("LDY #0");
+    outline0("LDX $c6");
+    outhead1("%sputkey:", label);
+    outline0("LDA (TMPPTR),Y" );
+    outline0("STA $0277,X" );
+    outline0("INY");
+    outline0("INX");
+    outline1("CPY %s", _size );
+    outline1("BNE %sputkey", label);
+    outline0("STX $c6");
+
+}
 #endif
