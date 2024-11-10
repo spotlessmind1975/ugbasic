@@ -70,7 +70,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
     ay8910_start( _environment, ( _channels & 0x07 ) );
     ay8910_set_frequency( _environment, _channels, chipsetFrequency );
     if ( _delay ) {
-        ay8910_set_duration( _environment, _channels, _delay / 50 /* approx! */ );
+        ay8910_set_duration( _environment, _channels, _delay / 32 /* approx! */ );
         ay8910_wait_duration( _environment, _channels );
     }
 
@@ -112,7 +112,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 4 /* approx! */ );
+            Variable * delayScaled = variable_sr_const( _environment, delay->name, 5 /* approx! */ );
             ay8910_set_duration_vars( _environment, channels->realName, delayScaled->realName );
             ay8910_wait_duration_vars( _environment, channels->realName );
         }        
@@ -121,7 +121,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 4 /* approx! */ );
+            Variable * delayScaled = variable_sr_const( _environment, delay->name, 5 /* approx! */ );
             ay8910_set_duration_vars( _environment, NULL, delayScaled->realName );
             ay8910_wait_duration_vars( _environment, NULL );
         }        
