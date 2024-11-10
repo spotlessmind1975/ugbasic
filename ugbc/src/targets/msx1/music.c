@@ -63,7 +63,7 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
             CRITICAL_CANNOT_MUSIC( _music );
         }
 
-        ay8910_start( _environment, 0xff );
+        ay8910_start( _environment, 0x07 );
         ay8910_music( _environment, music->realName, music->size, _loop );
 
     }

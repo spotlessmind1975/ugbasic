@@ -376,6 +376,38 @@ const_note :
         $$ = $1 + ( $2 * 12 );
     }
     |
+    F1 {
+        $$ = 5 + ( 1 * 12 );
+    }
+    |
+    F2 {
+        $$ = 5 + ( 2 * 12 );
+    }
+    |
+    F3 {
+        $$ = 5 + ( 3 * 12 );
+    }
+    |
+    F4 {
+        $$ = 5 + ( 4 * 12 );
+    }
+    |
+    F5 {
+        $$ = 5 + ( 5 * 12 );
+    }
+    |
+    F6 {
+        $$ = 5 + ( 6 * 12 );
+    }
+    |
+    F7 {
+        $$ = 5 + ( 7 * 12 );
+    }
+    |
+    F8 {
+        $$ = 5 + ( 8 * 12 );
+    }
+    |
     note OP_HASH octave {
         $$ = ( $1 + 1 ) + ( $3 * 12 );
     }
@@ -7830,6 +7862,9 @@ play_definition_simple :
     | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
         play( _environment, $2, $5, $8 );
     }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+        play( _environment, $5, $8, $2 );
+    }
     | OFF  {
         play_off( _environment, 0xffff );
     }
@@ -7852,6 +7887,9 @@ play_definition_expression :
     }
     | expr OP_COMMA expr ON expr {
         play_vars( _environment, $1, $3, $5 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        play_vars( _environment, $3, $5, $1 );
     }
     | expr ON expr {
         play_vars( _environment, $1, NULL, $3 );

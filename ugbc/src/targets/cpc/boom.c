@@ -54,7 +54,7 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 
     _channels = 0x08; // noise channel!
 
-    ay8910_start( _environment, _channels );
+    ay8910_start( _environment, ( _channels & 0x07 ) );
     ay8910_set_frequency( _environment, _channels, 1000 );
 
     long durationInTicks = ( _duration / 20 ) & 0xff;

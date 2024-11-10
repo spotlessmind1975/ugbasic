@@ -50,7 +50,7 @@
  */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
-    ay8910_start( _environment, _channels );
+    ay8910_start( _environment, ( _channels & 0x07 ) );
     ay8910_set_program( _environment, _channels, _instrument );
 
 }

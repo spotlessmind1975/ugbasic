@@ -67,7 +67,7 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
     int chipsetFrequency = ( 3576000 / _freq ) / 16;
 
-    ay8910_start( _environment, _channels );
+    ay8910_start( _environment, ( _channels & 0x07 ) );
     ay8910_set_frequency( _environment, _channels, chipsetFrequency );
     if ( _delay ) {
         ay8910_set_duration( _environment, _channels, _delay / 50 /* approx! */ );

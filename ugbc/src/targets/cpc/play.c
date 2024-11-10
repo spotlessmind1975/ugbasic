@@ -55,7 +55,7 @@
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
-    ay8910_start( _environment, _channels );
+    ay8910_start( _environment, ( _channels & 0x07 ) );
     ay8910_set_note( _environment, _channels, _note );
     if ( _delay ) {
         wait_milliseconds( _environment, _delay );
