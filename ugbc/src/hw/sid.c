@@ -49,13 +49,16 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void sid_initialization( Environment * _environment ) {
 
-    if ( _environment->deployed.sidstartup ) {
-        cpu_call( _environment, "SIDSTARTUP" );
-    }
-
+    cpu_call( _environment, "SIDSTARTUP" );
+    
 }
 
 void sid_finalization( Environment * _environment ) {
+
+    if ( !_environment->deployed.sidstartup ) {
+        outhead0( "SIDSTARTUP:" );
+        outline0( "RTS" );
+    }
 
 }
 
