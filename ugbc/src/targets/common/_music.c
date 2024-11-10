@@ -40,15 +40,23 @@
  * CODE SECTION 
  ****************************************************************************/
 
+// SET VOLUME, 2 bytes, 
+//          FORMAT: 
+//              1110cccc -> cccc is hardware audio channel
+//              nnnnnnnn -> nnnnnnnn is the value (0...255)
+// #define IMF_SET_VOLUME_CHANNEL( channel ) 0xe0 | ( ( 1 << ( ( channel ) % ( MAX_AUDIO_CHANNELS ) ) ) )
+
 // NOTE OFF, 1 byte, FORMAT: 1110cccc -> cccc is hardware audio channel
 #define IMF_NOTE_OFF( channel ) 0xe0 | ( ( 1 << ( ( channel ) % ( MAX_AUDIO_CHANNELS ) ) ) )
 
-// NOTE ON, 2 bytes, 
+// NOTE ON, 3 bytes, 
 //          FORMAT: 
 //              110ccccc -> cccc is hardware audio channel
 //              nnnnnnnn -> nnnnnnnn is the note value
+//              nnnnnnnn -> nnnnnnnn is the volume (0...255)
 #define IMF_NOTE_ON_CHANNEL( channel ) 0xc0 | ( ( 1 << ( ( channel ) % ( MAX_AUDIO_CHANNELS ) ) ) )
 #define IMF_NOTE_ON_NOTE( note ) ( ( note ) & 0xff )
+#define IMF_SET_VOLUME_VALUE( value ) ( ( value ) & 0xff )
 
 // SET PROGRAM, 2 bytes, 
 //          FORMAT: 
@@ -204,6 +212,10 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
             // Produce the 2 bytes data on the stream
             imfBuffer[imfStreamPos++] = IMF_NOTE_ON_CHANNEL( imfChannelIndex );
             imfBuffer[imfStreamPos++] = IMF_NOTE_ON_NOTE( _payload->MsgData.NoteOn.iNote );  
+
+            // Produce the 2 bytes with the volume on the stream
+            // imfBuffer[imfStreamPos++] = IMF_SET_VOLUME_CHANNEL( imfChannelIndex );
+            imfBuffer[imfStreamPos++] = IMF_SET_VOLUME_VALUE( _payload->MsgData.NoteOn.iVolume );  
 
             // We have to store, also, the note played on that channel.
             lastNoteOnChannel[ imfChannelIndex ] = _payload->MsgData.NoteOn.iNote;
