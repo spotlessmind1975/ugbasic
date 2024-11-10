@@ -739,7 +739,11 @@ void ay8910_set_volume_vars( Environment * _environment, char * _channels, char 
     outline0("SRL A" );
     outline0("SRL A" );
     outline0("LD E, A" );
-    outline1("LD A, (%s)", _channels );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
     outline0("CALL AY8910STARTVOL");
 
 }
