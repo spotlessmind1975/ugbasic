@@ -227,6 +227,9 @@ void generate_atr( Environment * _environment ) {
     if ( !storage ) {
         BUILD_TOOLCHAIN_DIR2ATR( _environment, dir2AtrExecutableName, bootCodeFilename, temporaryPath, atrFileName, pipes );
         autorun_atr( _environment, atrFileName, "MAIN    EXE" );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n",atrFileName );
+        }
     } else {
         int i=0;
         while( storage ) {
@@ -288,6 +291,9 @@ void generate_atr( Environment * _environment ) {
             BUILD_TOOLCHAIN_DIR2ATR( _environment, dir2AtrExecutableName, bootCodeFilename, temporaryPath, buffer, pipes );
             if ( i == 0 ) {
                 autorun_atr( _environment, buffer, "MAIN    EXE" );
+            }
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n",buffer );
             }
             storage = storage->next;
             ++i;

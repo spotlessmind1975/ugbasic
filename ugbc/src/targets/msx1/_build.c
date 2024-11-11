@@ -381,6 +381,10 @@ void generate_dsk( Environment * _environment ) {
             return;
         }; 
         
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", _environment->exeFileName );
+        }
+
     } else {
 
         char diskName[MAX_TEMPORARY_STORAGE];
@@ -463,6 +467,10 @@ void generate_dsk( Environment * _environment ) {
                 printf("Please use option '-I' to install chain tool.\n\n");
                 return;
             }; 
+
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", diskName );
+            }
 
             storage = storage->next;
             ++i;

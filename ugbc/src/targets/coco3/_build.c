@@ -386,6 +386,10 @@ void generate_dsk( Environment * _environment ) {
         }
     }
 
+    if ( _environment->outputGeneratedFiles ) {
+        printf( "%s\n", _environment->exeFileName );
+    }
+
     if ( !storage ) {
 
     } else {
@@ -469,7 +473,9 @@ void generate_dsk( Environment * _environment ) {
                     printf("The compilation of assembly program failed.\n\n");
                     printf("Please use option '-I' to install chain tool.\n\n");
                 };
-
+                if ( _environment->outputGeneratedFiles ) {
+                    printf( "%s\n", buffer );
+                }
             }
 
         }
