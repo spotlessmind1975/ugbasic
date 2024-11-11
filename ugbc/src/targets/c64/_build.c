@@ -118,6 +118,9 @@ void generate_d64( Environment * _environment ) {
         d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
         d64_output( handle, d64FileName );
         d64_free( handle );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", d64FileName );
+        }
     } else {
         int i=0;
         while( storage ) {
@@ -175,6 +178,9 @@ void generate_d64( Environment * _environment ) {
                 strcat( buffer, ".d64" );
             }
             d64_output( handle, buffer );
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", buffer );
+            }
             d64_free( handle );
             storage = storage->next;
             ++i;

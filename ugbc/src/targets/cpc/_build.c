@@ -346,6 +346,9 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
         // if ( !strstr( diskName, ".dsk" ) ) {
         //     strcat( diskName, ".dsk" );
         // }
+        if ( !strstr( diskName, ".dsk" ) ) {
+            strcat( diskName, ".dsk" );
+        }        
     } else {
         strcpy( diskName, _environment->exeFileName );
         if ( !strstr( diskName, ".dsk") ) {
@@ -374,7 +377,9 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
         }; 
 
         BUILD_SAFE_MOVE( _environment, diskName, _environment->exeFileName );
-
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n", _environment->exeFileName );
+        }
     } else {
         int i=0;
         char * additionalFiles = NULL;
@@ -438,6 +443,10 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
             storage = storage->next;
             ++i;
+
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", diskName );
+            }
 
             if ( storage ) {
                 char buffer[MAX_TEMPORARY_STORAGE];

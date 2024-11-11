@@ -109,6 +109,9 @@ void generate_d64( Environment * _environment ) {
         D64Handle * handle = d64_create( CBMDOS );
         d64_write_file( handle, "MAIN", FT_PRG, prgContent, prgSize );
         d64_output( handle, d64FileName );
+        if ( _environment->outputGeneratedFiles ) {
+            printf( "%s\n",d64FileName );
+        }
         d64_free( handle );
     } else {
         int i=0;
@@ -157,6 +160,9 @@ void generate_d64( Environment * _environment ) {
                 strcat( buffer, ".d64" );
             }
             d64_output( handle, buffer );
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n",buffer );
+            }            
             d64_free( handle );
             storage = storage->next;
             ++i;

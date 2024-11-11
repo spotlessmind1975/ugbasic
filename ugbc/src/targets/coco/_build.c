@@ -354,6 +354,10 @@ void generate_dsk( Environment * _environment ) {
         }
     }
 
+    if ( _environment->outputGeneratedFiles ) {
+        printf( "%s\n", _environment->exeFileName );
+    }
+
     if ( !storage ) {
 
     } else {

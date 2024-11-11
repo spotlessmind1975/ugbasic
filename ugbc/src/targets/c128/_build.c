@@ -169,6 +169,9 @@ void generate_d64( Environment * _environment ) {
                 strcat( buffer, ".d64" );
             }
             d64_output( handle, buffer );
+            if ( _environment->outputGeneratedFiles ) {
+                printf( "%s\n", buffer );
+            }
             d64_free( handle );
             storage = storage->next;
             ++i;
