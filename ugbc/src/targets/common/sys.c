@@ -194,9 +194,9 @@ void sys_var( Environment * _environment, char * _address ) {
 
     if ( _environment->returns ) {
         for( int i=0; i<_environment->returns; ++i ) {
-            if ( _environment->returnsEach[i] ) {
-                Variable * var = variable_retrieve( _environment, _environment->returnsEach[i] );
-                cpu_get_asmio_indirect( _environment, _environment->returnsAsmioEach[i], var->realName );
+            if ( _environment->returnsEach[_environment->returns-i-1] ) {
+                Variable * var = variable_retrieve( _environment, _environment->returnsEach[_environment->returns-i-1] );
+                cpu_get_asmio_indirect( _environment, _environment->returnsAsmioEach[_environment->returns-i-1], var->realName );
             }
         }
     }
