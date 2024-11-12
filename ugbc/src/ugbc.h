@@ -1561,6 +1561,7 @@ typedef struct _Deployed {
     int vars;
     int vars2;
     int startup;
+    int startup2;
     int c6847startup;
     int c6847vars;
     int bitmap;
