@@ -137,7 +137,7 @@ void target_initialization( Environment * _environment ) {
     // outline0("DEFW CODESTART");
 
     deploy_preferred( startup, src_hw_coleco_startup_asm);
-    deploy_preferred( startup, src_hw_coleco_startup2_asm);
+    deploy_preferred( startup2, src_hw_coleco_startup2_asm);
 
     outhead0("CODESTART:")
     outline0("LD SP, $73b8");
