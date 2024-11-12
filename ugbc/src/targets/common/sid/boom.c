@@ -120,8 +120,8 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-            sid_set_duration_vars( _environment, channels->realName, duration->realName );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            sid_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
         } else {
             sid_set_duration_vars( _environment, channels->realName, NULL );
         }
@@ -133,8 +133,8 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         sid_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-            sid_set_duration_vars( _environment, NULL, duration->realName );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            sid_set_duration_vars( _environment, NULL, durationInTicks->realName );
         } else {
             sid_set_duration_vars( _environment, NULL, NULL );
         }

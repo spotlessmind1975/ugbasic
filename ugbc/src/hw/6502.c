@@ -1356,6 +1356,116 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
 }
 
+void cpu6502_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_math_div_8bit_to_8bit )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source );
+            outline1("EOR #$%2.2x", _destination );
+            outline0("AND #$80" );
+            outline0("PHA");
+            outline1("LDA %s", _source );
+            outline0("AND #$80" );
+            outline1("BEQ %ssecond", label );
+            outline0("CLC" );
+            outline1("LDA %s", _source );
+            outline0("EOR #$ff" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR0" );
+            outhead1("%ssecond:", label );
+            outline1("LDA #$%2.2x", _destination );
+            outline0("AND #$80" );
+            outline1("BEQ %sthird", label );
+            outline0("CLC" );
+            outline1("LDA #$%2.2x", _destination );
+            outline0("EOR #$ff" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR1" );
+            outhead1("%sthird:", label );
+
+            outline0("LDA MATHPTR0" );
+            outline1("STA %s", _other );
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline0("LDX #8");
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s", _other_remainder );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline0("SBC MATHPTR1" );
+            outline0("TAY" );
+            outline1("BCC %sL2", label );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );
+
+            outline0("PLA");
+            outline0("AND #$80");
+            outline1("BEQ %sdone", label);
+            outline1("LDA %s", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s", _other );
+            outline0("CLC" );
+            outline1("LDA %s", _other );
+            outline0("ADC #1" );
+            outline1("STA %s", _other );
+            outhead1("%sdone:", label );
+
+        } else {
+            outline1("LDA %s", _source );
+            outline1("STA %s", _other );
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline0("LDX #8");
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s", _other_remainder );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline1("SBC #$%2.2x", _destination );
+            outline0("TAY" );
+            outline1("BCC %sL2", label );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );
+        }
+    
+    embedded( cpu_math_div_8bit_to_8bit, src_hw_6502_cpu_math_div_8bit_to_8bit_asm )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source);
+            outline0("STA CPUMATHDIV8BITTO8BIT_SOURCE");
+            outline1("LDA #$%2.2x", _destination);
+            outline0("STA CPUMATHDIV8BITTO8BIT_DESTINATION");
+            outline0("JSR CPUMATHDIV8BITTO8BIT_SIGNED")
+            outline0("LDA CPUMATHDIV8BITTO8BIT_OTHER");
+            outline1("STA %s", _other);
+            outline0("LDA CPUMATHDIV8BITTO8BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder);
+        } else {
+            outline1("LDA %s", _source);
+            outline0("STA CPUMATHDIV8BITTO8BIT_SOURCE");
+            outline1("LDA #$%2.2x", _destination);
+            outline0("STA CPUMATHDIV8BITTO8BIT_DESTINATION");
+            outline0("JSR CPUMATHDIV8BITTO8BIT")
+            outline0("LDA CPUMATHDIV8BITTO8BIT_OTHER");
+            outline1("STA %s", _other);
+            outline0("LDA CPUMATHDIV8BITTO8BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder);
+        }
+
+    done()
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to halves for several times a 8 bit value 
  * 
@@ -2419,6 +2529,192 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
 }
 
+void cpu6502_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_math_div_16bit_to_16bit )
+
+        if ( _signed ) {
+
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("EOR #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("AND #$80" );
+            outline0("PHA");
+
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("AND #$80" );
+            outline1("BEQ %ssecond", label );
+            outline0("CLC" );
+            outline1("LDA %s", _source );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR0" );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR1" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR0" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR0" );
+            outline0("LDA MATHPTR1" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR1" );        
+            outline1("JMP %ssecond2", label );
+            outhead1("%ssecond:", label );
+            outline1("LDA %s", _source );
+            outline0("STA MATHPTR0");
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("STA MATHPTR1");
+            outline1("JMP %ssecond2", label );
+
+            outhead1("%ssecond2:", label );
+            outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("AND #$80" );
+            outline1("BEQ %sthird", label );
+            outline0("CLC" );
+            outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR2" );
+            outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("EOR #$ff" );
+            outline0("STA MATHPTR3" );
+            outline0("CLC" );
+            outline0("LDA MATHPTR2" );
+            outline0("ADC #1" );
+            outline0("STA MATHPTR2" );
+            outline0("LDA MATHPTR3" );
+            outline0("ADC #0" );
+            outline0("STA MATHPTR3" );        
+            outline1("JMP %sthird2", label );
+            outhead1("%sthird:", label );
+            outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+            outline0("STA MATHPTR2");
+            outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("STA MATHPTR3");
+            outline1("JMP %sthird2", label );
+
+            outhead1("%sthird2:", label );
+
+            outline0("LDA MATHPTR0" );
+            outline1("STA %s", _other );
+            outline0("LDA MATHPTR1" );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline0("LDX #16" );
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s", address_displacement(_environment, _other, "1") );
+            outline1("ROL %s", _other_remainder );
+            outline1("ROL %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline0("SBC MATHPTR2" );
+            outline0("TAY" );
+            outline1("LDA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline0("SBC MATHPTR3" );
+            outline1("BCC %sL2", label );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );        
+
+            outline0("PLA");
+            outline0("AND #$80");
+            outline1("BEQ %sdone", label);
+            outline1("LDA %s", _other );
+            outline0("EOR #$ff" );
+            outline1("STA %s", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
+            outline0("EOR #$ff" );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline0("CLC" );
+            outline1("LDA %s", _other );
+            outline0("ADC #1" );
+            outline1("STA %s", _other );
+            outline1("LDA %s", address_displacement(_environment, _other, "1") );
+            outline0("ADC #0" );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outhead1("%sdone:", label );
+                    
+        } else {
+            outline1("LDA %s", _source );
+            outline1("STA %s", _other );
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+
+            outline0("LDA #0" );
+            outline1("STA %s", _other_remainder );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline0("LDX #16" );
+            outhead1("%sL1:", label );
+            outline1("ASL %s", _other );
+            outline1("ROL %s", address_displacement(_environment, _other, "1") );
+            outline1("ROL %s", _other_remainder );
+            outline1("ROL %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("LDA %s", _other_remainder );
+            outline0("SEC" );
+            outline1("SBC #$%2.2x", (unsigned char)((_destination)&0xff) );
+            outline0("TAY" );
+            outline1("LDA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("SBC #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline1("BCC %sL2", label );
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+            outline1("STY %s", _other_remainder );
+            outline1("INC %s", _other );
+            outhead1("%sL2:", label );
+            outline0("DEX" );
+            outhead1("BNE %sL1", label );
+        }
+
+    embedded( cpu_math_div_16bit_to_16bit, src_hw_6502_cpu_math_div_16bit_to_16bit_asm )
+
+        if ( _signed ) {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
+            outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
+            outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED");
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+        } else {
+            outline1("LDA %s", _source );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE");
+            outline1("LDA %s", address_displacement(_environment, _source, "1") );
+            outline0("STA CPUMATHDIV16BITTO16BIT_SOURCE+1");
+            outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION");
+            outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+            outline0("STA CPUMATHDIV16BITTO16BIT_DESTINATION+1");            
+            outline0("JSR CPUMATHDIV16BITTO16BIT");
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER");
+            outline1("STA %s", _other );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER+1");
+            outline1("STA %s", address_displacement(_environment, _other, "1") );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER");
+            outline1("STA %s", _other_remainder );
+            outline0("LDA CPUMATHDIV16BITTO16BIT_OTHER_REMAINDER+1");
+            outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+        }
+
+    done()
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to subtract two 16 bit values
  * 
@@ -2731,6 +3027,105 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         outline1("LDA %s", _destination );
         outline0("STA MATHPTR0");
         outline1("LDA %s", address_displacement(_environment, _destination, "1") );
+        outline0("STA MATHPTR1" );
+        outline0("JSR CPUMATHDIV32BITTO16BIT" );
+        outline0("LDA MATHPTR4");
+        outline1("STA %s", _other );
+        outline0("LDA MATHPTR5");
+        outline1("STA %s", address_displacement(_environment, _other, "1") );
+        outline0("LDA MATHPTR2");
+        outline1("STA %s", _other_remainder );
+        outline0("LDA MATHPTR3");
+        outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+
+    done()
+
+}
+
+void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    MAKE_LABEL
+
+    inline( cpu_math_div_32bit_to_16bit )
+
+        outline1("LDA %s", _source );
+        outline0("STA MATHPTR4");
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
+        outline0("STA MATHPTR5");
+        outline1("LDA %s", address_displacement(_environment, _source, "2") );
+        outline0("STA MATHPTR2");
+        outline1("LDA %s", address_displacement(_environment, _source, "3") );
+        outline0("STA MATHPTR3" );
+
+        outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+        outline0("STA MATHPTR0");
+        outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
+        outline0("STA MATHPTR1" );
+
+        outhead1("%sSTART:", label );
+        outline0("SEC" );
+        outline0("LDA MATHPTR2" );
+        outline0("SBC MATHPTR0" );
+        outline0("LDA MATHPTR3" );
+        outline0("SBC MATHPTR1 " );
+        outline1("BCS %soflo", label );
+        outline0("LDX #$11" );
+        outhead1("%sloop:", label)
+
+        outline0("ROL MATHPTR4");
+        outline0("ROL MATHPTR5");
+        outline0("DEX" );
+        outline1("BEQ %send", label );
+
+        outline0("ROL MATHPTR2" );
+        outline0("ROL MATHPTR3" );
+        outline0("STA MATHPTR7" );
+        outline0("ROL MATHPTR8" ); // <<--- forse MATHPTR7
+        outline0("SEC" );
+        outline0("LDA MATHPTR2" );
+        outline0("SBC MATHPTR0" );
+        outline0("STA MATHPTR6" );
+        outline0("LDA MATHPTR3" );
+        outline0("SBC MATHPTR1" );
+        outline0("TAY" );
+        outline0("LDA MATHPTR8" ); // <<--- forse MATHPTR8
+        outline0("SBC #0" );
+        outline1("BCC %sloop", label )
+        outline0("LDA MATHPTR6");
+        outline0("STA MATHPTR2");
+        outline0("STY MATHPTR3" );
+        outline1("JMP %sloop", label );
+
+        outhead1("%soflo:", label );
+        outline0("LDA #$ff" );
+        outline0("STA MATHPTR2" );
+        outline0("STA MATHPTR3" );
+        outline0("STA MATHPTR4" );
+        outline0("STA MATHPTR5" );
+        outhead1("%send:", label );
+
+        outline0("LDA MATHPTR4");
+        outline1("STA %s", _other );
+        outline0("LDA MATHPTR5");
+        outline1("STA %s", address_displacement(_environment, _other, "1") );
+        outline0("LDA MATHPTR2");
+        outline1("STA %s", _other_remainder );
+        outline0("LDA MATHPTR3");
+        outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+
+    embedded( cpu_math_div_32bit_to_16bit, src_hw_6502_cpu_math_div_32bit_to_16bit_asm )
+
+        outline1("LDA %s", _source );
+        outline0("STA MATHPTR4");
+        outline1("LDA %s", address_displacement(_environment, _source, "1") );
+        outline0("STA MATHPTR5");
+        outline1("LDA %s", address_displacement(_environment, _source, "2") );
+        outline0("STA MATHPTR2");
+        outline1("LDA %s", address_displacement(_environment, _source, "3") );
+        outline0("STA MATHPTR3" );
+        outline1("LDA #$%2.2x", (unsigned char)((_destination)&0xff) );
+        outline0("STA MATHPTR0");
+        outline1("LDA #$%2.2x", (unsigned char)((_destination>>8)&0xff) );
         outline0("STA MATHPTR1" );
         outline0("JSR CPUMATHDIV32BITTO16BIT" );
         outline0("LDA MATHPTR4");

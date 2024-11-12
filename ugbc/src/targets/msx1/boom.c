@@ -84,18 +84,24 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         ay8910_start_var( _environment, channels->realName );
         ay8910_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            ay8910_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
+        } else {
+            ay8910_set_duration_vars( _environment, channels->realName, NULL );
+        } 
     } else {
         ay8910_start_var( _environment, NULL );
         ay8910_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        if ( _duration ) {
+            Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            ay8910_set_duration_vars( _environment, NULL, durationInTicks->realName );
+        } else {
+            ay8910_set_duration_vars( _environment, NULL, NULL );
+        } 
     }
-
-    if ( _duration ) {
-        Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
-        ay8910_set_duration_vars( _environment, _channels, duration->realName );
-    } else {
-        ay8910_set_duration_vars( _environment, _channels, NULL );
-    } 
 
     if ( ! _environment->audioConfig.async ) {
         ay8910_wait_duration_vars( _environment, _channels );

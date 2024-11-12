@@ -48,9 +48,11 @@
  */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 2 );
+    int timing = _timing / 20;
 
-    ted_busy_wait( _environment, timingString );
+    outline1( "LDX #$%2.2x", (unsigned char)( timing & 0xff ) );
+    outline1( "LDY #$%2.2x", (unsigned char)( ( timing >> 8 ) & 0xff ) );
+    outline0( "JSR WAITTIMER" );
 
 }
 
@@ -64,20 +66,11 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
+    Variable * realTiming = variable_div_const( _environment, variable_retrieve( _environment, _timing )->name, 20, NULL );
 
-    Variable * timing = variable_retrieve( _environment, _timing );
-    Variable * zero = variable_temporary( _environment, VT_BYTE, "(0)" );
-    variable_store( _environment, zero->name, 0 );
-
-    Variable * temp = variable_cast( _environment, timing->name, VT_BYTE );
-
-    temp = variable_sr_const( _environment, temp->name, 2 );
-
-    if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
-        ted_busy_wait( _environment, temp->realName );
-    end_if_then( _environment );
-
+    outline1( "LDX %s", realTiming->realName );
+    outline1( "LDY %s", address_displacement( _environment, realTiming->realName, "1" ) );
+    outline0( "JSR WAITTIMER" );
     
 }
 

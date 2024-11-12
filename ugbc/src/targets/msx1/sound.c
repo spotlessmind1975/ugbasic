@@ -112,19 +112,20 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 5 /* approx! */ );
-            ay8910_set_duration_vars( _environment, channels->realName, delayScaled->realName );
+            Variable * durationInTicks = variable_div_const( _environment,delay->name, 20, NULL );
+            ay8910_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
             ay8910_wait_duration_vars( _environment, channels->realName );
-        }        
+        }
     } else {
         ay8910_start_var( _environment, NULL );
         ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 5 /* approx! */ );
-            ay8910_set_duration_vars( _environment, NULL, delayScaled->realName );
+            Variable * durationInTicks = variable_div_const( _environment, delay->name, 20, NULL );
+            ay8910_set_duration_vars( _environment, NULL, durationInTicks->realName );
             ay8910_wait_duration_vars( _environment, NULL );
         }        
     }
+
 
 }

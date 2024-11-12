@@ -606,7 +606,7 @@ void sid_set_program_semi_var( Environment * _environment, char * _channels, int
         case IMF_INSTRUMENT_DULCIMER:
             PROGRAM_WAVEFORM_SV(_channels, WAVEFORM_TRIANGLE | WAVEFORM_RECTANGLE);
             PROGRAM_ATTACK_DECAY_SV(_channels, 0, 6);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 0);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 5, 0);
             break;
 
         default:

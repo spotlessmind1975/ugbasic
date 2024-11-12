@@ -97,7 +97,7 @@ void sn76489z_finalization( Environment * _environment ) {
 void sn76489z_start( Environment * _environment, int _channels ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _channels & 0x01 ) {
         outline0("CALL SN76489START0");
@@ -114,7 +114,7 @@ void sn76489z_start( Environment * _environment, int _channels ) {
 void sn76489z_set_volume( Environment * _environment, int _channels, int _volume ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline1("LD A, $%2.2x", ( _volume & 0x0f ) );
     outline0("LD B, A" );
@@ -470,7 +470,7 @@ void sn76489z_set_volume( Environment * _environment, int _channels, int _volume
 void sn76489z_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
@@ -676,7 +676,7 @@ void sn76489z_set_parameter( Environment * _environment, int _channels, int _par
 void sn76489z_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     PROGRAM_FREQUENCY( _channels, _frequency );
 
@@ -685,7 +685,7 @@ void sn76489z_set_frequency( Environment * _environment, int _channels, int _fre
 void sn76489z_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     PROGRAM_PITCH( _channels, _pitch );
 
@@ -700,7 +700,7 @@ void sn76489z_set_note( Environment * _environment, int _channels, int _note ) {
 void sn76489z_stop( Environment * _environment, int _channels ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     STOP_FREQUENCY( _channels );
 
@@ -709,7 +709,7 @@ void sn76489z_stop( Environment * _environment, int _channels ) {
 void sn76489z_start_var( Environment * _environment, char * _channels ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
@@ -723,7 +723,7 @@ void sn76489z_start_var( Environment * _environment, char * _channels ) {
 void sn76489z_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline1("LD A, (%s)", _volume );
     outline0("SRL A" );
@@ -743,7 +743,7 @@ void sn76489z_set_volume_vars( Environment * _environment, char * _channels, cha
 void sn76489z_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline1("LD A, $%2.2x", _volume );
     outline0("LD B, A" );
@@ -759,7 +759,7 @@ void sn76489z_set_volume_semi_var( Environment * _environment, char * _channel, 
 void sn76489z_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
@@ -961,7 +961,7 @@ void sn76489z_set_program_semi_var( Environment * _environment, char * _channels
 void sn76489z_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline1("LD A, (%s)", _frequency );
     outline0("LD E, A" );
@@ -980,7 +980,7 @@ void sn76489z_set_frequency_vars( Environment * _environment, char * _channels, 
 void sn76489z_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline1("LD A, (%s)", _pitch );
     outline0("LD E, A" );
@@ -999,7 +999,7 @@ void sn76489z_set_pitch_vars( Environment * _environment, char * _channels, char
 void sn76489z_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     outline0("LD HL, SN76489FREQTABLE");
     outline1("LD A, (%s)", _note);
@@ -1028,7 +1028,7 @@ void sn76489z_set_note_vars( Environment * _environment, char * _channels, char 
 void sn76489z_stop_vars( Environment * _environment, char * _channels ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
@@ -1042,7 +1042,7 @@ void sn76489z_stop_vars( Environment * _environment, char * _channels ) {
 void sn76489z_music( Environment * _environment, char * _music, int _size, int _loop, int _type ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
     deploy( music, src_hw_sn76489z_music_asm );
 
     outline0("DI");
@@ -1063,7 +1063,7 @@ void sn76489z_music( Environment * _environment, char * _music, int _size, int _
 void sn76489z_set_duration( Environment * _environment, int _channel, int _duration ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     PROGRAM_DURATION( _channel, _duration );
 
@@ -1072,7 +1072,7 @@ void sn76489z_set_duration( Environment * _environment, int _channel, int _durat
 void sn76489z_wait_duration( Environment * _environment, int _channel ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     WAIT_DURATION( _channel );
 
@@ -1081,7 +1081,7 @@ void sn76489z_wait_duration( Environment * _environment, int _channel ) {
 void sn76489z_set_duration_vars( Environment * _environment, char * _channel, char * _duration ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _duration ) {
         outline1("LD DE, (%s)", _duration );
@@ -1101,7 +1101,7 @@ void sn76489z_set_duration_vars( Environment * _environment, char * _channel, ch
 void sn76489z_wait_duration_vars( Environment * _environment, char *  _channel ) {
 
     deploy( sn76489vars, src_hw_sn76489z_vars_asm );
-    deploy( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );

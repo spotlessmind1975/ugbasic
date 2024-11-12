@@ -1570,6 +1570,7 @@ typedef struct _Deployed {
     int vars;
     int vars2;
     int startup;
+    int startup2;
     int c6847startup;
     int c6847vars;
     int bitmap;
@@ -5079,6 +5080,7 @@ Variable *              variable_define_no_init( Environment * _environment, cha
 int                     variable_delete( Environment * _environment, char * _name );
 Variable *              variable_direct_assign( Environment * _environment, char * _var, char * _expr );
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
+Variable *              variable_div_const( Environment * _environment, char * _source, int _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits );
 Variable *              variable_sr_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );

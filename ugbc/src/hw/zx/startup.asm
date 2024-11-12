@@ -156,3 +156,19 @@ ZXNTSC:
 ZXSTARTUPDONE:
     RET
     
+WAITTIMER:
+    LD A, (ZXTIMER)
+    LD B, A
+WAITTIMERL1:
+    LD A, (ZXTIMER)
+    CP B
+    JR Z, WAITTIMERL1
+    DEC L
+    LD A, L
+    CP $FF
+    JR NZ, WAITTIMER
+    DEC H
+    LD A, H
+    CP $FF
+    JR NZ, WAITTIMER
+    RET

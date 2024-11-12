@@ -192,13 +192,13 @@ void call_procedure( Environment * _environment, char * _name ) {
         if ( procedure->returns ) {
             for( int i=0; i<procedure->returns; ++i ) {
                 Variable * var;
-                if ( procedure->returnsEach[i] ) {
-                    var = variable_retrieve_or_define( _environment, _environment->parametersEach[i], procedure->returnsTypeEach[i], 0 );
+                if ( procedure->returnsEach[procedure->returns-i-1] ) {
+                    var = variable_retrieve_or_define( _environment, _environment->parametersEach[procedure->returns-i-1], procedure->returnsTypeEach[procedure->returns-i-1], 0 );
                 } else {
                     char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", procedure->name );
-                    var = variable_define( _environment, paramName, procedure->returnsTypeEach[i], 0 );
+                    var = variable_define( _environment, paramName, procedure->returnsTypeEach[procedure->returns-i-1], 0 );
                 }
-                cpu_get_asmio_indirect( _environment, procedure->returnsAsmioEach[i], var->realName );
+                cpu_get_asmio_indirect( _environment, procedure->returnsAsmioEach[procedure->returns-i-1], var->realName );
                 break;
             }
         } 

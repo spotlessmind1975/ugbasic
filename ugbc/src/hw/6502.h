@@ -164,8 +164,11 @@ void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *
 void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _signed );
 void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _signed );
 void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
+void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
+void cpu6502_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
+void cpu6502_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, int _value, int _signed );
 void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, int _value, int _signed );
 void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, int _value, int _signed );
@@ -475,8 +478,11 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_math_mul_16bit_to_32bit( _environment, _source, _destination,  _name, _signed  ) cpu6502_math_mul_16bit_to_32bit( _environment, _source, _destination,  _name, _signed  )
 #define cpu_math_mul_8bit_to_16bit( _environment, _source, _destination,  _name, _signed  ) cpu6502_math_mul_8bit_to_16bit( _environment, _source, _destination,  _name, _signed  )
 #define cpu_math_div_32bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder, _signed  ) cpu6502_math_div_32bit_to_16bit( _environment, _source, _destination, _other, _other_remainder, _signed )
+#define cpu_math_div_32bit_to_16bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed  ) cpu6502_math_div_32bit_to_16bit_const( _environment, _source, _destination, _other, _other_remainder, _signed )
 #define cpu_math_div_16bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder, _signed  ) cpu6502_math_div_16bit_to_16bit( _environment, _source, _destination, _other, _other_remainder, _signed )
+#define cpu_math_div_16bit_to_16bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed  ) cpu6502_math_div_16bit_to_16bit_const( _environment, _source, _destination, _other, _other_remainder, _signed )
 #define cpu_math_div_8bit_to_8bit( _environment, _source, _destination,   _other, _other_remainder, _signed  ) cpu6502_math_div_8bit_to_8bit( _environment, _source, _destination,  _other, _other_remainder, _signed )
+#define cpu_math_div_8bit_to_8bit_const( _environment, _source, _destination,   _other, _other_remainder, _signed  ) cpu6502_math_div_8bit_to_8bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed )
 #define cpu_math_mul2_const_16bit( _environment, _source, _value, _signed  ) cpu6502_math_mul2_const_16bit( _environment, _source, _value, _signed  )
 #define cpu_math_mul2_const_32bit( _environment, _source, _value, _signed  ) cpu6502_math_mul2_const_32bit( _environment, _source, _value, _signed  )
 #define cpu_math_mul2_const_8bit( _environment, _source, _value, _signed  ) cpu6502_math_mul2_const_8bit( _environment, _source, _value, _signed  )

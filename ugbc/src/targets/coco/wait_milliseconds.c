@@ -48,9 +48,10 @@
  */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing >> 4 );
+    int timing = _timing / 20;
 
-    coco_busy_wait( _environment, timingString );
+    outline1( "LDD #$%4.4x", timing );
+    outline0( "JSR WAITTIMER" );
 }
 
 /**
@@ -63,19 +64,10 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
+    Variable * realTiming = variable_div_const( _environment, variable_retrieve( _environment, _timing )->name, 20, NULL );
 
-    Variable * timing = variable_retrieve( _environment, _timing );
-    Variable * zero = variable_temporary( _environment, VT_WORD, "(0)" );
-    variable_store( _environment, zero->name, 0 );
-
-    Variable * temp = variable_cast( _environment, timing->name, VT_WORD );
-
-    temp = variable_sr_const( _environment, temp->name, 4 );
-
-    if_then( _environment, variable_compare_not( _environment, temp->name, zero->name )->name );
-        coco_busy_wait( _environment, temp->realName );
-    end_if_then( _environment );
+    outline1( "LDD %s", realTiming->realName );
+    outline0( "JSR WAITTIMER" );
 
 }
 

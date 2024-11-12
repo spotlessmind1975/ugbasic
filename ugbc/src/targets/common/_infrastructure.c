@@ -4272,8 +4272,12 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
 
-    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant && ( log2(target->value) == (int)log2(target->value) ) ) { 
-        return variable_div2_const( _environment, _source, target->value );
+    if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant ) { 
+        if ( log2(target->value) == (int)log2(target->value) ) {
+            return variable_div2_const( _environment, _source, target->value );
+        } else {
+            return variable_div_const( _environment, _source, target->value, _remainder );
+        }
     } 
 
     int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
@@ -4372,6 +4376,66 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
             switch( target->type ) {
                 case VT_FLOAT:
                     result = variable_temporary( _environment, VT_FLOAT, "(result of division)" );
+                    switch( target->precision ) {
+                        case FT_FAST: {
+                            cpu_float_fast_div( _environment, source->realName, target->realName, result->realName );
+                            break;
+                        }
+                        case FT_SINGLE: {
+                            cpu_float_single_div( _environment, source->realName, target->realName, result->realName );
+                            break;
+                        }
+                        default:
+                            CRITICAL_DIV_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+                            break;
+                    }
+                    break; 
+                default:
+                    CRITICAL_DIV_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            }        
+            break;
+    }
+
+    if ( _remainder ) {
+        variable_move( _environment, remainder->name, _remainder );
+    }
+    
+    return result;
+}
+
+Variable * variable_div_const( Environment * _environment, char * _source, int _destination, char * _remainder ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    Variable * result = NULL;
+    Variable * remainder = NULL;
+    Variable * realTarget = NULL;
+    Variable * realSource = NULL;
+
+    switch( VT_BITWIDTH( source->type ) ) {
+        case 32:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+            cpu_math_div_32bit_to_16bit_const( _environment, source->realName, _destination, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 16:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(remainder of division)" );
+            cpu_math_div_16bit_to_16bit_const( _environment, source->realName, _destination, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 8:
+            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(result of division)" );
+            remainder = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SBYTE : VT_BYTE, "(remainder of division)" );
+            cpu_math_div_8bit_to_8bit_const( _environment, source->realName, _destination, result->realName, remainder->realName, VT_SIGNED( source->type ) );
+            break;
+        case 1:
+            CRITICAL_DIV_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        case 0:
+            switch( source->type ) {
+                case VT_FLOAT:
+                    result = variable_temporary( _environment, VT_FLOAT, "(result of division)" );
+                    Variable * target = variable_temporary( _environment, VT_FLOAT, "(target)" );
+                    variable_store_float( _environment, target->name, _destination );
                     switch( target->precision ) {
                         case FT_FAST: {
                             cpu_float_fast_div( _environment, source->realName, target->realName, result->realName );
