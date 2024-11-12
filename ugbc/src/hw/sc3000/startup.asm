@@ -262,50 +262,6 @@ error_beep_loop6:
 		jr     nz, error_beep_loop5
 		jp     error_beep			; loop forever
 
-INT_HANDLER2:
-	PUSH	AF
-	PUSH	BC
-	PUSH	DE
-	PUSH	HL
-	PUSH	IX
-	PUSH	IY
-	EX	AF,AF'
-	PUSH	AF
-	EXX
-	PUSH	BC
-	PUSH	DE
-	PUSH	HL
-    LD HL,(SC3000TIMER)
-    INC HL
-    LD (SC3000TIMER),HL
-	LD A, (IRQVECTORREADY)
-	CMP 0
-	JR Z, IRQVECTORSKIP
-    CALL IRQVECTOR
-IRQVECTORSKIP:
-@IF deployed.music
-    CALL MUSICPLAYER
-@ENDIF
-@IF deployed.timer
-    CALL TIMERMANAGER
-@ENDIF
-	CALL KBIRQ
-	IN A, (vdp_control)
-	POP	HL
-	POP	DE
-	POP	BC
-	EXX
-	POP	AF
-	EX	AF,AF'
-	POP	IY
-	POP	IX
-	POP	HL
-	POP	DE
-	POP	BC
-	POP	AF
-	EI
-	RETI
-
 NMI_HANDLER2:
 	RETN
 	
@@ -554,3 +510,19 @@ KEYB_BUFFERPUTCHAR:
 	LD (KEYBD_PUTPNT), HL
 	RET
 
+WAITTIMER:
+    LD A, (SG1000TIMER)
+    LD B, A
+WAITTIMERL1:
+    LD A, (SG1000TIMER)
+    CP B
+    JR Z, WAITTIMERL1
+    DEC L
+    LD A, L
+    CP $FF
+    JR NZ, WAITTIMER
+    DEC H
+    LD A, H
+    CP $FF
+    JR NZ, WAITTIMER
+    RET

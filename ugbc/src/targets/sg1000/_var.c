@@ -425,6 +425,8 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
+
     generate_cgoto_address_table( _environment );
 
     banks_generate( _environment );
