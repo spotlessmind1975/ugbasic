@@ -5717,7 +5717,7 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
         outline1("LD (%s), A", address_displacement(_environment, _other_remainder, "1"));
 
         // outline0("POP AF");
-        outline1("LD B, #$%2.2x", (_destination < 0) ? 0x80 : 0x00 );
+        outline1("LD B, $%2.2x", (_destination < 0) ? 0x80 : 0x00 );
         // outline0("CMP $80");
         // outline1("JR NZ, %srepositive", label);
         // z80_complement2_16bit( _environment, _destination, NULL );
@@ -5979,7 +5979,7 @@ void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_sourc
         outline0("LD (DE), A");
 
         // outline0("POP AF");
-        outline1("LD B, #$%2.2x", _destination < 0 ? 0x80 : 0x00 );
+        outline1("LD B, $%2.2x", _destination < 0 ? 0x80 : 0x00 );
         // outline0("CMP $80");
         // outline1("JR NZ, %srepositive", label);
         // z80_complement2_16bit( _environment, _destination, NULL );

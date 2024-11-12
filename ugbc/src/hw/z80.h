@@ -165,7 +165,7 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
 void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
 void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
-void z80_math_div_8bit_to_8bit_cont( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
+void z80_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void z80_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
