@@ -120,13 +120,9 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_start_var( _environment, NULL );
         ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
         if ( _delay ) {
-            outline0("; retrieve delay ");
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            outline0("; calc durationInTicks ");
             Variable * durationInTicks = variable_div_const( _environment, delay->name, 20, NULL );
-            outline0("; set duration ");
             ay8910_set_duration_vars( _environment, NULL, durationInTicks->realName );
-            outline0("; wait duration ");
             ay8910_wait_duration_vars( _environment, NULL );
         }        
     }
