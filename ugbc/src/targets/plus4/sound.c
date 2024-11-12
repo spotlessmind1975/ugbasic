@@ -84,8 +84,8 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ted_set_frequency_vars( _environment, channels->realName, freq->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 4 /* approx! */ );
-            ted_set_duration_vars( _environment, channels->realName, delayScaled->realName );
+            Variable * durationInTicks = variable_div_const( _environment, delay->name, 20, NULL );
+            ted_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
             ted_wait_duration_vars( _environment, channels->realName );
         }
     } else {
@@ -93,8 +93,8 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ted_set_frequency_vars( _environment, NULL, freq->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * delayScaled = variable_sr_const( _environment, delay->name, 4 /* approx! */ );
-            ted_set_duration_vars( _environment, NULL, delayScaled->realName );
+            Variable * durationInTicks = variable_div_const( _environment, delay->name, 20, NULL );
+            ted_set_duration_vars( _environment, NULL, durationInTicks->realName );
             ted_wait_duration_vars( _environment, NULL );
         }
     }
