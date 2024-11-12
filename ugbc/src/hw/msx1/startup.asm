@@ -136,3 +136,20 @@ MSX1STARTUPDONE:
 @ENDIF
 
     RET
+
+WAITTIMER:
+    LD A, ($FC9E)
+    LD B, A
+WAITTIMERL1:
+    LD A, ($FC9E)
+    CP B
+    JR Z, WAITTIMERL1
+    DEC L
+    LD A, L
+    CP $FF
+    JR NZ, WAITTIMER
+    DEC H
+    LD A, H
+    CP $FF
+    JR NZ, WAITTIMER
+    RET
