@@ -74,6 +74,20 @@ void z80_init( Environment * _environment ) {
     outline0( "INC DE");
     outline0( "LD (HL), DE");
 
+    variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
+    variable_global( _environment, "CALLINDIRECTSAVEHL" );
+
+    char callIndirect[3] = {
+        // +00
+        0xc3, 0x00, 0x00
+    };
+
+    variable_import( _environment, "CALLINDIRECT", VT_BUFFER, 3 );
+    variable_global( _environment, "CALLINDIRECT" );
+
+    variable_store_buffer( _environment, "CALLINDIRECT", callIndirect, sizeof( callIndirect ), 0 );
+    variable_retrieve( _environment, "CALLINDIRECT" )->readonly = 0;
+
 }
 
 void z80_nop( Environment * _environment ) {
@@ -3355,14 +3369,11 @@ void z80_call_indirect( Environment * _environment, char * _value ) {
 
     char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
-    outline0( "PUSH HL" )
+    outline0( "LD (CALLINDIRECTSAVEHL), HL" )
     outline1( "LD HL, (%s)", _value )
-    z80_jump( _environment, label );
-    z80_label( _environment, indirectLabel );
-    outline0( "JP (HL)" );
-    z80_label( _environment, label );
-    z80_call( _environment, indirectLabel );
-    outline0( "POP HL" )
+    outline0( "LD (CALLINDIRECT+1), HL" )
+    outline0( "LD HL, (CALLINDIRECTSAVEHL)" )
+    outline0( "CALL CALLINDIRECT" );
 
 }
 
