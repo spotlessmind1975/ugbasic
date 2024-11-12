@@ -48,7 +48,7 @@
  */
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
-    int timing = timing >> 3;
+    int timing = _timing / 20;
 
     outline1( "LDX #$%2.2x", (unsigned char)( timing & 0xff ) );
     outline1( "LDY #$%2.2x", (unsigned char)( ( timing >> 8 ) & 0xff ) );
@@ -66,12 +66,10 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
+    Variable * realTiming = variable_div_const( _environment, variable_retrieve( _environment, _timing )->name, 20, NULL );
 
-    Variable * timing = variable_sr_const( _environment, variable_retrieve( _environment, _timing )->name, 3 );
-
-    outline1( "LDX %s", timing->realName );
-    outline1( "LDY %s", address_displacement( _environment, timing->realName, "1" ) );
+    outline1( "LDX %s", realTiming->realName );
+    outline1( "LDY %s", address_displacement( _environment, realTiming->realName, "1" ) );
     outline0( "JSR WAITTIMER" );
     
 }
