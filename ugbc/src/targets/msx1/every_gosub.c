@@ -56,7 +56,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     msx1_timer_set_address( _environment, timerRealName, _label );
-    msx1_timer_set_counter( _environment, timerRealName, NULL );
+    msx1_timer_set_counter( _environment, timerRealName, timing->realName );
     msx1_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

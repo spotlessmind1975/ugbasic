@@ -62,7 +62,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     atari_timer_set_address( _environment, timerRealName, _label );
-    atari_timer_set_counter( _environment, timerRealName, NULL );
+    atari_timer_set_counter( _environment, timerRealName, timing->realName );
     atari_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

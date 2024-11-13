@@ -72,7 +72,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
     }
 
     plus4_timer_set_address( _environment, timerRealName, procedure->realName );
-    plus4_timer_set_counter( _environment, timerRealName, NULL );
+    plus4_timer_set_counter( _environment, timerRealName, timing->realName );
     plus4_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

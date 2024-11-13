@@ -70,7 +70,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
     }
 
     zx_timer_set_address( _environment, timerRealName, procedure->realName );
-    zx_timer_set_counter( _environment, timerRealName, NULL );
+    zx_timer_set_counter( _environment, timerRealName, timing->realName );
     zx_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

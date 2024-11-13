@@ -72,7 +72,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
     }
 
     to8_timer_set_address( _environment, timerRealName, procedure->realName );
-    to8_timer_set_counter( _environment, timerRealName, NULL );
+    to8_timer_set_counter( _environment, timerRealName, timing->realName );
     to8_timer_set_init( _environment, timerRealName, timing->realName );
     
 }

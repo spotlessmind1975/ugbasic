@@ -72,7 +72,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
     }
 
     pc128op_timer_set_address( _environment, timerRealName, procedure->realName );
-    pc128op_timer_set_counter( _environment, timerRealName, NULL );
+    pc128op_timer_set_counter( _environment, timerRealName, timing->realName );
     pc128op_timer_set_init( _environment, timerRealName, timing->realName );
     
 }
