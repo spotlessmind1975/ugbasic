@@ -6090,7 +6090,11 @@ console_definition:
     | console_definition_expression;
 
 bar_definition_expression:
-    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y OP_COMMA optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
