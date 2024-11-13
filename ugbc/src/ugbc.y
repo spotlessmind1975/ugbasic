@@ -9615,6 +9615,24 @@ at_definition :
             }
         }
         variable_swap( _environment, $2, $5 );
+    }
+    | Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
+        if ( ($2 != 0) && ($5 != 0) && ($2 != $5) ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$2], DATATYPE_AS_STRING[$5] );
+        }
+        if ( $2 != VT_DSTRING ) {
+            Variable * v1 = variable_retrieve( _environment, $1 );
+            if ( v1->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            }
+        }
+        if ( $5 != VT_DSTRING ) {
+            Variable * v2 = variable_retrieve( _environment, $4 );
+            if ( v2->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            }
+        }
+        variable_swap( _environment, $1, $4 );
     };
 
 nrm_definition :
