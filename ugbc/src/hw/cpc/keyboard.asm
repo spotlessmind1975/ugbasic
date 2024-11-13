@@ -44,7 +44,7 @@ KEYBOARDMAP:
     DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    DB      0,  0,  0,  0,  0, 'N', 00,  0, 13,'\\'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
     DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
@@ -71,7 +71,7 @@ KEYBOARDMAP2:
     DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    DB      0,  0,  0,  0,  0,'n', 00,  0, 13,'\\'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
     DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
@@ -420,7 +420,17 @@ KEYBOARDINKEY:          DB $FF
         CP $FF
         JR Z, INKEY0
         LD (KEYBOARDINKEY), A
+        PUSH AF
+        LD A, (KEYBOARDSHIFT)
+        AND $04
+        CP $04
+        POP AF
+        JR Z, INKEYUP
+        LD HL, KEYBOARDMAP2
+        JR INKEYCOMMON
+INKEYUP:
         LD HL, KEYBOARDMAP
+INKEYCOMMON:
         LD E, A
         LD A, 0
         LD D, A
