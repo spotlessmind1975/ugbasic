@@ -3785,6 +3785,31 @@ exponential_less:
         cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
         $$ = ntsc->name;
     }
+    | LITTLE ENDIAN {
+        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
+    #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+        defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+        defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+        defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+        defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
+        defined( __c64reu__)
+        variable_store( _environment, endianess->name, 1 );
+    #else
+        variable_store( _environment, endianess->name, 0 );
+    #endif
+        $$ = endianess->name;
+    }
+    | BIG ENDIAN {
+        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
+    #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+        defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+        defined(__to8__)
+        variable_store( _environment, endianess->name, 1 );
+    #else
+        variable_store( _environment, endianess->name, 0 );
+    #endif
+        $$ = endianess->name;
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
