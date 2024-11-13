@@ -4224,6 +4224,9 @@ exponential_less:
             $$ = key_state_var( _environment, $4 )->name;
         }
     }
+    | KEY STATE OP OP_HASH const_expr CP {
+        $$ = key_state( _environment, $5 )->name;
+    }
     | KEY STATE OP expr CP {
         $$ = key_state_var( _environment, $4 )->name;
     }
