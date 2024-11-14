@@ -1660,6 +1660,7 @@ typedef struct _Deployed {
 
     int draw;
     int bar;
+    int ellipse;
 
     Embedded embedded;
 
