@@ -337,7 +337,7 @@ in una singola stringa, utilizzando ''CLEFT$''.
 
 @syntax CLEFT$
 
-@example PRINT CCLEFTUP$
+@example PRINT CLEFT$
 
 @usedInExample texts_position_10.bas
 
