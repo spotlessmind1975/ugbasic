@@ -9281,6 +9281,17 @@ basano su operazioni a livello di bit.
 
 @target all
  </usermanual> */
+/* <usermanual>
+@keyword BIN$
+
+@english
+
+@italian
+
+@syntax = BIN$( value [, digits] )
+
+@alias BIN
+ </usermanual> */
 
 Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
 

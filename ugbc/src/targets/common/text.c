@@ -179,7 +179,7 @@ in una singola stringa, utilizzando ''CDOWN$''.
 
 @syntax CDOWN$
 
-@example PRINT CDOWN$
+@example PRINT CDOWN$;
 
 @usedInExample texts_position_10.bas
 
@@ -232,7 +232,7 @@ in una singola stringa, utilizzando ''CUP$''.
 
 @syntax CUP$
 
-@example PRINT CUP$
+@example PRINT CUP$;
 
 @usedInExample texts_position_10.bas
 
@@ -285,7 +285,7 @@ in una singola stringa, utilizzando ''CRIGHT$''.
 
 @syntax CRIGHT$
 
-@example PRINT CRIGHT$
+@example PRINT CRIGHT$;
 
 @usedInExample texts_position_10.bas
 
@@ -337,7 +337,7 @@ in una singola stringa, utilizzando ''CLEFT$''.
 
 @syntax CLEFT$
 
-@example PRINT CLEFT$
+@example PRINT CLEFT$;
 
 @usedInExample texts_position_10.bas
 

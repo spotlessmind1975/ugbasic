@@ -3646,7 +3646,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = ARROW LEFT
 
-@example IF KET STATE(ARROW LEFT) THEN
+@example IF KEY STATE(KEY ARROW LEFT) THEN
 @example    PRINT "LEFT ARROW has been pressed!"
 @example ENDIF
 
@@ -3700,7 +3700,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = ARROW UP
 
-@example IF KET STATE(ARROW UP) THEN
+@example IF KEY STATE(KEY ARROW UP) THEN
 @example    PRINT "UP ARROW has been pressed!"
 @example ENDIF
 
@@ -3814,7 +3814,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = ASTERISK
 
-@example IF KET STATE(ASTERISK) THEN
+@example IF KEY STATE(KEY ASTERISK) THEN
 @example    PRINT "ASTERISK has been pressed!"
 @example ENDIF
 
@@ -3839,7 +3839,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = AT
 
-@example IF KET STATE(AT) THEN
+@example IF KEY STATE(KEY AT) THEN
 @example    PRINT "ASTERISK has been pressed!"
 @example ENDIF
 
@@ -4085,7 +4085,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = CLEAR
 
-@example IF KET STATE(CLEAR) THEN
+@example IF KEY STATE(KEY CLEAR) THEN
 @example    PRINT "CLEAR has been pressed!"
 @example ENDIF
 
@@ -4322,7 +4322,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = CONTROL
 
-@example IF KET STATE(CONTROL) THEN
+@example IF KEY STATE(KEY CONTROL) THEN
 @example    PRINT "CONTROL has been pressed!"
 @example ENDIF
 
@@ -4347,7 +4347,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = CRSR LEFT RIGHT
 
-@example IF KET STATE(CRSR LEFT RIGHT) THEN
+@example IF KEY STATE(KEY CRSR LEFT RIGHT) THEN
 @example    PRINT "CRSR LEFT RIGHT has been pressed!"
 @example ENDIF
 
@@ -4372,7 +4372,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = CRSR UP DOWN
 
-@example IF KET STATE(CRSR UP DOWN) THEN
+@example IF KEY STATE(KEY CRSR UP DOWN) THEN
 @example    PRINT "CRSR UP DOWN has been pressed!"
 @example ENDIF
 
@@ -4443,7 +4443,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = DELETE
 
-@example IF KET STATE(DELETE) THEN
+@example IF KEY STATE(KEY DELETE) THEN
 @example    PRINT "DELETE has been pressed!"
 @example ENDIF
 
@@ -4488,7 +4488,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = DOWN
 
-@example IF KET STATE(DOWN) THEN
+@example IF KEY STATE(KEY DOWN) THEN
 @example    PRINT "DOWN has been pressed!"
 @example ENDIF
 
@@ -4631,7 +4631,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = EQUAL
 
-@example IF KET STATE(EQUAL) THEN
+@example IF KEY STATE(KEY EQUAL) THEN
 @example    PRINT "EQUAL has been pressed!"
 @example ENDIF
 
@@ -4754,7 +4754,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = HOME
 
-@example IF KET STATE(HOME) THEN
+@example IF KEY STATE(KEY HOME) THEN
 @example    PRINT "HOME has been pressed!"
 @example ENDIF
 
@@ -4817,7 +4817,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = INSERT
 
-@example IF KET STATE(INSERT) THEN
+@example IF KEY STATE(KEY INSERT) THEN
 @example    PRINT "INSERT has been pressed!"
 @example ENDIF
 
@@ -4963,7 +4963,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = LEFT
 
-@example IF KET STATE(LEFT) THEN
+@example IF KEY STATE(KEY LEFT) THEN
 @example    PRINT "LEFT has been pressed!"
 @example ENDIF
 
@@ -4988,7 +4988,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = RIGHT
 
-@example IF KET STATE(RIGHT) THEN
+@example IF KEY STATE(KEY RIGHT) THEN
 @example    PRINT "RIGHT has been pressed!"
 @example ENDIF
 
@@ -5013,7 +5013,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = UP
 
-@example IF KET STATE(UP) THEN
+@example IF KEY STATE(KEY UP) THEN
 @example    PRINT "UP has been pressed!"
 @example ENDIF
 
@@ -5038,7 +5038,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = DOWN
 
-@example IF KET STATE(DOWN) THEN
+@example IF KEY STATE(KEY DOWN) THEN
 @example    PRINT "DOWN has been pressed!"
 @example ENDIF
 
@@ -5083,7 +5083,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = MINUS
 
-@example IF KET STATE(MINUS) THEN
+@example IF KEY STATE(KEY MINUS) THEN
 @example    PRINT "MINUS has been pressed!"
 @example ENDIF
 
@@ -5540,7 +5540,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = HOME
 
-@example IF KET STATE(HOME) THEN
+@example IF KEY STATE(KEY HOME) THEN
 @example    PRINT "HOME has been pressed!"
 @example ENDIF
 
@@ -5588,7 +5588,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = PLUS
 
-@example IF KET STATE(PLUS) THEN
+@example IF KEY STATE(KEY PLUS) THEN
 @example    PRINT "PLUS has been pressed!"
 @example ENDIF
 
@@ -5649,7 +5649,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = POUND
 
-@example IF KET STATE(POUND) THEN
+@example IF KEY STATE(KEY POUND) THEN
 @example    PRINT "POUND has been pressed!"
 @example ENDIF
 
@@ -5674,7 +5674,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = RETURN
 
-@example IF KET STATE(RETURN) THEN
+@example IF KEY STATE(KEY RETURN) THEN
 @example    PRINT "RETURN has been pressed!"
 @example ENDIF
 
