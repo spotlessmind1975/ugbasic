@@ -69,6 +69,6 @@ di "memoria insufficiente" quando si lavora con le stringhe.
 </usermanual> */
 void clear( Environment * _environment ) {
 
-    cpu_call( _environment, "VARINIT" );
+    cpu_call( _environment, "VARINITCLEAR" );
 
 }
