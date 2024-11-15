@@ -118,7 +118,7 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
         variable_move( _environment, ry->name, y->name );
         // int sigma
         // for ( sigma = 2∗b2+a2∗(1−2∗b)
-        Variable * sigma = variable_temporary( _environment, VT_POSITION, "(sigma)" );
+        Variable * sigma = variable_temporary( _environment, VT_SDWORD, "(sigma)" );
         variable_move( _environment, 
                 variable_add( _environment,
                     variable_mul2_const( _environment,
@@ -334,6 +334,8 @@ void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char
                         )->name
                 )->name
             );
+
+            // wait_key( _environment, 0 );
 
             // for ( ... y++)
             variable_increment( _environment, y->name );
