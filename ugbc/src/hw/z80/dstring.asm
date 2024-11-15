@@ -372,3 +372,16 @@ DSDESCRIPTOR:
 OUT_OF_MEMORY:
     JMP OUT_OF_MEMORY
 
+DSINIT:
+    LD BC, stringscount*4+stringsspace*2
+    LD A, 0
+    LD HL, DESCRIPTORS
+    LD DE, HL
+    INC DE
+    LD (HL), A
+    LDIR
+    LD A, stringscount
+    LD (MAXSTRINGS), A
+    LD DE, stringsspace
+    LD (FREE_STRING), DE
+    RET

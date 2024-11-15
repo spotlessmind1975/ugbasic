@@ -271,6 +271,7 @@ void cpu6502_dswrite( Environment * _environment, char * _index );
 void cpu6502_dsresize( Environment * _environment, char * _index, char * _size );
 void cpu6502_dsresize_size( Environment * _environment, char * _index, int _size );
 void cpu6502_dsgc( Environment * _environment );
+void cpu6502_dsinit( Environment * _environment );
 void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
 void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
@@ -582,6 +583,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_dsresize( _environment, _index, _size ) cpu6502_dsresize( _environment, _index, _size )
 #define cpu_dsresize_size( _environment, _index, _size ) cpu6502_dsresize_size( _environment, _index, _size )
 #define cpu_dsgc( _environment ) cpu6502_dsgc( _environment )
+#define cpu_dsinit( _environment ) cpu6502_dsinit( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) cpu6502_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_move_8bit_indirect_with_offset( _environment, _source, _value, _offset ) cpu6502_move_8bit_indirect_with_offset( _environment, _source, _value, _offset )
 #define cpu_move_8bit_with_offset2( _environment, _source, _value, _offset ) cpu6502_move_8bit_with_offset2( _environment, _source, _value, _offset )

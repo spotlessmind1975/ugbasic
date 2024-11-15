@@ -6727,6 +6727,14 @@ void cpu6502_dsgc( Environment * _environment ) {
 
 }
 
+void cpu6502_dsinit( Environment * _environment ) {
+
+    deploy( dstring,src_hw_6502_dstring_asm );
+
+    outline0( "JSR DSINIT" );
+
+}
+
 void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
     deploy( dstring,src_hw_6502_dstring_asm );
@@ -6876,35 +6884,37 @@ void cpu6502_dstring_vars( Environment * _environment ) {
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
     emit_segment_if_enough_space( _environment, 1 );
-    outhead1("MAXSTRINGS:                   .BYTE %d", count );
+    outhead1("stringscount =                 %d", count );
+    outhead1("stringsspace =                 %d", space );
+    outhead0("MAXSTRINGS:                   .BYTE stringscount" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_STATUS:           .RES %d,0", count );
+    outhead0("DESCRIPTORS_STATUS:           .RES stringscount,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_ADDRESS_LO:       .RES %d,0", count );
+    outhead0("DESCRIPTORS_ADDRESS_LO:       .RES stringscount,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_ADDRESS_HI:       .RES %d,0", count );
+    outhead0("DESCRIPTORS_ADDRESS_HI:       .RES stringscount,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, count );
-    outhead1("DESCRIPTORS_SIZE:             .RES %d,0", count );
+    outhead0("DESCRIPTORS_SIZE:             .RES stringscount,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, space );
-    outhead1("WORKING:                      .RES %d,0", space );
+    outhead0("WORKING:                      .RES stringsspace,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, space );
-    outhead1("TEMPORARY:                    .RES %d,0", space );
+    outhead0("TEMPORARY:                    .RES stringsspace,0" );
     outhead0(".segment \"CODE\"" );
 
     emit_segment_if_enough_space( _environment, 2 );
-    outhead1("FREE_STRING:                  .WORD %d", space );
+    outhead0("FREE_STRING:                  .WORD (stringsspace-1)" );
     outhead0(".segment \"CODE\"" );
 
 

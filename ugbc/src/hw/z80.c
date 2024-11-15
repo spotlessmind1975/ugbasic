@@ -6611,6 +6611,14 @@ void z80_dsgc( Environment * _environment ) {
 
 }
 
+void z80_dsinit( Environment * _environment ) {
+
+    deploy( dstring,src_hw_z80_dstring_asm );
+
+    outline0( "CALL DSINIT" );
+
+}
+
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
     deploy( dstring,src_hw_z80_dstring_asm );
@@ -6733,11 +6741,13 @@ void z80_dstring_vars( Environment * _environment ) {
 #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
     outhead0("section data_user" );
 #endif
-    outhead1("MAXSTRINGS:                   DB %d", count );
-    outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
-    outhead1("WORKING:                      DEFS %d", space );
-    outhead1("TEMPORARY:                    DEFS %d", space );
-    outhead2("FREE_STRING:                  DB $%2.2X, $%2.2x", ((space-1)& 0xff), ((space-1)>>8)& 0xff );
+    outhead1("stringscount =                  %d", count );
+    outhead1("stringsspace =                  %d", space );
+    outhead0("MAXSTRINGS:                   DB stringscount" );
+    outhead0("DESCRIPTORS:                  DEFS stringscount*4" );
+    outhead0("WORKING:                      DEFS stringsspace" );
+    outhead0("TEMPORARY:                    DEFS stringsspace" );
+    outhead0("FREE_STRING:                  DW (stringsspace-1)" );
 #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
     outhead0("section code_user" );
 #endif

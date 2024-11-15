@@ -425,3 +425,41 @@ OUT_OF_MEMORY:
 
 USING:
     .BYTE   0
+
+DSINIT:
+    LDA #stringscount
+    STA MAXSTRINGS
+    LDA #((stringsspace-1)&$FF)
+    STA FREE_STRING
+    LDA #(((stringsspace-1)>>8)&&$FF)
+    STA FREE_STRING+1
+    LDA #((stringscount*4+stringsspace*2)&$ff)
+    STA MATHPTR0
+    LDA #(((stringscount*4+stringsspace*2)>>8)&$ff)
+    STA MATHPTR0+1
+    LDA #<DESCRIPTORS_STATUS
+    STA TMPPTR
+    LDA #>DESCRIPTORS_STATUS
+    STA TMPPTR+1
+    LDA #0
+    LDY #0
+DSINITL1:
+    STA (TMPPTR),Y
+    INC TMPPTR
+    BNE DSINITL2
+    INC TMPPTR+1
+DSINITL2:
+    PHA
+    DEC MATHPTR0
+    LDA MATHPTR0
+    CMP #$FF
+    BNE DSINITL3
+    DEC MATHPTR0+1
+    LDA MATHPTR0+1
+    CMP #$FF
+    BNE DSINITL3
+    PLA
+    RTS
+DSINITL3:
+    PLA
+    JMP DSINITL1

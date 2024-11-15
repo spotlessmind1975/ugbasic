@@ -9246,6 +9246,7 @@ clear_definition :
         }
         ((struct _Environment *)_environment)->dstring.space = $1;
         clear( _environment );
+        cpu_dsinit( _environment );
     }
     ;
 

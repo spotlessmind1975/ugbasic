@@ -5434,6 +5434,14 @@ void cpu6809_dsgc( Environment * _environment ) {
 
 }
 
+void cpu6809_dsinit( Environment * _environment ) {
+
+    deploy( dstring, src_hw_6809_dstring_asm );
+
+    outline0( "JSR DSINIT" );
+
+}
+
 void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
     deploy( dstring,src_hw_6809_dstring_asm );
@@ -5541,11 +5549,13 @@ void cpu6809_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-    outhead1("MAXSTRINGS                    equ %d", count );
-    outhead1("DESCRIPTORS                   rzb %d", count * 4 );
-    outhead1("WORKING                       rzb %d", space );
-    outhead1("TEMPORARY                     rzb %d", space );
-    outhead1("FREE_STRING                   fdb %d", space );
+    outhead1("stringscount                  equ %d", count );
+    outhead1("stringsspace                  equ %d", space );
+    outhead0("MAXSTRINGS                    equ stringscount" );
+    outhead0("DESCRIPTORS                   rzb stringscount*4");
+    outhead0("WORKING                       rzb stringsspace" );
+    outhead0("TEMPORARY                     rzb stringsspace" );
+    outhead0("FREE_STRING                   fdb stringsspace" );
 
 }
 
