@@ -80,150 +80,298 @@ l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 </usermanual> */
 void ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color ) {
 
-    Variable * six = variable_temporary( _environment, VT_POSITION, "(6)");
-    variable_store( _environment, six->name, 6 );
-    Variable * four = variable_temporary( _environment, VT_POSITION, "(4)");
-    variable_store( _environment, four->name, 4 );
-    Variable * two = variable_temporary( _environment, VT_POSITION, "(2)");
-    variable_store( _environment, two->name, 2 );
-    Variable * one = variable_temporary( _environment, VT_POSITION, "(1)");
-    variable_store( _environment, one->name, 1 );
-    Variable * zero = variable_temporary( _environment, VT_POSITION, "(0)");
-    variable_store( _environment, zero->name, 0 );
+    deploy_begin( ellipse );
 
-    Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    Variable * yCentre = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
-    Variable * a = variable_retrieve_or_define( _environment, _rx, VT_POSITION, 0);
-    Variable * b = variable_retrieve_or_define( _environment, _ry, VT_POSITION, 0);
+        Variable * xc = variable_define( _environment, "ellipse__xc", VT_POSITION, 0 );
+        Variable * yc = variable_define( _environment, "ellipse__yc", VT_POSITION, 0 );
+        Variable * rx = variable_define( _environment, "ellipse__rx", VT_POSITION, 0 );
+        Variable * ry = variable_define( _environment, "ellipse__ry", VT_POSITION, 0 );
+        Variable * c = variable_define( _environment, "ellipse__c", VT_POSITION, 0 );
 
-    Variable * a2 = variable_temporary( _environment, VT_POSITION, "(a2)");
-    Variable * b2 = variable_temporary( _environment, VT_POSITION, "(b2)");
-    Variable * fa2 = variable_temporary( _environment, VT_POSITION, "(fa2)");
-    Variable * fb2 = variable_temporary( _environment, VT_POSITION, "(fb2)");
+        // forCondition
+        Variable * forCondition = variable_temporary( _environment, VT_SBYTE, "(forCondition)" );
 
-    variable_move( _environment, variable_mul( _environment, a->name, a->name )->name, a2->name );
-    variable_move( _environment, variable_mul( _environment, b->name, b->name )->name, b2->name );
-    variable_move( _environment, variable_mul( _environment, four->name, a2->name )->name, fa2->name );
-    variable_move( _environment, variable_mul( _environment, four->name, b2->name )->name, fb2->name );
+        // one
+        Variable * one = variable_temporary( _environment, VT_POSITION, "(one)" );
+        variable_store( _environment, one->name, 1 );
+        // six
+        Variable * six = variable_temporary( _environment, VT_POSITION, "(six)" );
+        variable_store( _environment, six->name, 6 );
 
-    Variable * x = variable_temporary( _environment, VT_POSITION, "(x)");
-    Variable * y = variable_temporary( _environment, VT_POSITION, "(y)");
-    Variable * sigma = variable_temporary( _environment, VT_POSITION, "(sigma)");
+        // int a2 = a∗a
+        Variable * a2 = variable_temporary( _environment, VT_POSITION, "(a2)" );
+        variable_move( _environment, variable_mul( _environment, rx->name, rx->name )->name, a2->name );
+        //  int b2 = b∗b
+        Variable * b2 = variable_temporary( _environment, VT_POSITION, "(b2)" );
+        variable_move( _environment, variable_mul( _environment, ry->name, ry->name )->name, b2->name );
+        // int  fa2 = 4∗a2
+        Variable * fa2 = variable_temporary( _environment, VT_POSITION, "(fa2)" );
+        variable_move( _environment, variable_mul2_const( _environment, a2->name, 4 )->name, fa2->name );
 
-    variable_store( _environment, x->name, 0 );
-    variable_move( _environment, b->name, y->name );
-    variable_move( _environment, 
-        variable_add( _environment,
-            variable_mul( _environment, two->name, b2->name )->name,
-            variable_mul( _environment, 
-                a2->name, 
-                variable_sub( _environment, one->name, variable_mul( _environment, two->name, b->name )->name )->name 
-            )->name
-        )->name, 
-        sigma->name );
+        // int x
+        // for ( x = 0
+        Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_store( _environment, x->name, 0 );
+        // int y
+        // for ( y = b
+        Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, ry->name, y->name );
+        // int sigma
+        // for ( sigma = 2∗b2+a2∗(1−2∗b)
+        Variable * sigma = variable_temporary( _environment, VT_POSITION, "(sigma)" );
+        variable_move( _environment, 
+                variable_add( _environment,
+                    variable_mul2_const( _environment,
+                        b2->name,
+                        2
+                        )->name,
+                    variable_mul( _environment,
+                        a2->name,
+                        variable_sub( _environment,
+                            one->name,
+                            variable_mul2_const( _environment,
+                                ry->name,
+                                2
+                            )->name
+                        )->name
+                    )->name              
+                )->name,
+                    sigma->name );
 
-    begin_while( _environment );
-    begin_while_condition( _environment, 
-        variable_less_than( _environment, 
+        MAKE_LABEL
+
+        char forLabel1[MAX_TEMPORARY_STORAGE];
+        sprintf( forLabel1, "%sfor1", label );
+        char endForLabel1[MAX_TEMPORARY_STORAGE];
+        sprintf( endForLabel1, "%sendfor1", label );
+
+        cpu_label( _environment, forLabel1 );
+
+        // for ( ; b2∗x <= a2∗y ; )
+        variable_move( _environment, variable_less_than( _environment, 
             variable_mul( _environment, b2->name, x->name )->name,
             variable_mul( _environment, a2->name, y->name )->name,
-            1
-            )->name
-    );
+            1 )->name, forCondition->name );
 
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
+        cpu_compare_and_branch_8bit_const( _environment, forCondition->realName, 0x00, endForLabel1, 1 );
 
-        if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
-        variable_move( _environment,
-            variable_add( _environment, 
-                sigma->name,
-                variable_mul( _environment,
-                    fa2->name,
-                    variable_sub( _environment, one->name, y->name )->name 
-                )->name
-            )->name,
-            sigma->name
-        );
+            // DrawPixel ( xc+x , yc+y ) ;
+            plot( _environment, 
+                variable_add( _environment, xc->name, x->name )->name, 
+                variable_add( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
 
-        variable_decrement( _environment, y->name );
-        end_if_then( _environment );
+            // DrawPixel ( xc−x , yc+y ) ;
+            plot( _environment, 
+                variable_sub( _environment, xc->name, x->name )->name, 
+                variable_add( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
 
-        variable_move( _environment,
-            variable_add( _environment, 
+            // DrawPixel ( xc+x , yc−y ) ;
+            plot( _environment, 
+                variable_add( _environment, xc->name, x->name )->name, 
+                variable_sub( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
+
+            // DrawPixel ( xc−x , yc−y ) ;
+            plot( _environment, 
+                variable_sub( _environment, xc->name, x->name )->name, 
+                variable_sub( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
+
+            ;
+
+            // wait_key( _environment, 0 );
+
+            // if ( sigma >= 0 )
+            if_then( _environment, variable_greater_than_const( _environment, sigma->name, 0, 1 )->name );
+                // sigma += fa2∗(1−y) ;
+                variable_add_inplace_vars( _environment, 
+                    sigma->name,
+                    variable_mul( _environment,
+                        fa2->name,
+                        variable_sub( _environment,
+                            one->name,
+                            y->name)->name
+                    )->name
+                );
+
+                // y−−;
+                variable_decrement( _environment, y->name );
+
+            end_if_then( _environment );
+
+            // sig a += b2∗(4∗x+6);
+            variable_add_inplace_vars( _environment, 
                 sigma->name,
                 variable_mul( _environment,
                     b2->name,
-                    variable_add( _environment, 
-                        variable_mul( _environment, four->name, x->name )->name,
+                    variable_add( _environment,
+                        variable_mul2_const( _environment,
+                            x->name,
+                            4 )->name,
                         six->name
-                    )->name 
-                )->name 
-            )->name,
-            sigma->name
-        );
+                        )->name
+                )->name
+            );
 
-        variable_increment( _environment, x->name );
-    end_while( _environment );
+            // for ( ... x++)
+            variable_increment( _environment, x->name );
 
-    variable_move( _environment, a->name, x->name );
-    variable_store( _environment, y->name, 0 );
-    variable_move( _environment, 
-        variable_add( _environment,
-            variable_mul( _environment, two->name, a2->name )->name,
-            variable_mul( _environment, 
-                b2->name, 
-                variable_sub( _environment, one->name, variable_mul( _environment, two->name, a->name )->name )->name 
-            )->name
-        )->name, 
-        sigma->name );
+            cpu_jump( _environment, forLabel1 );
 
-    begin_while( _environment );
-    begin_while_condition( _environment, 
-        variable_less_than( _environment, 
+        cpu_label( _environment, endForLabel1 );
+
+        //////////////////////////////////////////////////////////////////////
+
+        // int  fb2 = 4∗b2
+        Variable * fb2 = variable_temporary( _environment, VT_POSITION, "(fb2)" );
+        variable_move( _environment, variable_mul2_const( _environment, b2->name, 4 )->name, fb2->name );
+
+        char forLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( forLabel2, "%sfor2", label );
+        char endForLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( endForLabel2, "%sendfor2", label );
+
+        // for( x=a
+        variable_move( _environment, rx->name, x->name );
+
+        // for( y=0
+        variable_store( _environment, y->name, 0 );
+
+        // for( sigma = 2∗a2+b2∗(1−2∗a )
+        variable_move( _environment, 
+                variable_add( _environment,
+                    variable_mul2_const( _environment,
+                        a2->name,
+                        2
+                        )->name,
+                    variable_mul( _environment,
+                        b2->name,
+                        variable_sub( _environment,
+                            one->name,
+                            variable_mul2_const( _environment,
+                                rx->name,
+                                2
+                            )->name
+                        )->name
+                    )->name              
+                )->name,
+                    sigma->name );
+
+        cpu_label( _environment, forLabel2 );
+
+        // for(  a2∗y <= b2∗x )
+        variable_move( _environment, variable_less_than( _environment, 
             variable_mul( _environment, a2->name, y->name )->name,
             variable_mul( _environment, b2->name, x->name )->name,
-            1
-            )->name
-    );
+            1 )->name, forCondition->name );
 
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_add( _environment, y->name, yCentre->name )->name, _c, _preserve_color );
-        plot( _environment, variable_add( _environment, x->name, xCentre->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
-        plot( _environment, variable_sub( _environment, xCentre->name, x->name )->name, variable_sub( _environment, yCentre->name,  y->name )->name, _c, _preserve_color );
+        cpu_compare_and_branch_8bit_const( _environment, forCondition->realName, 0x00, endForLabel2, 1 );
 
-        if_then( _environment, variable_greater_than( _environment, sigma->name, zero->name, 1 ) ->name );
-        variable_move( _environment,
-            variable_add( _environment, 
-                sigma->name,
-                variable_mul( _environment,
-                    fb2->name,
-                    variable_sub( _environment, one->name, x->name )->name 
-                )->name
-            )->name,
-            sigma->name
-        );
+            // DrawPixel ( xc+x , yc+y ) ;
+            plot( _environment, 
+                variable_add( _environment, xc->name, x->name )->name, 
+                variable_add( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
 
-        variable_decrement( _environment, x->name );
-        end_if_then( _environment );
+            // DrawPixel ( xc−x , yc+y ) ;
+            plot( _environment, 
+                variable_sub( _environment, xc->name, x->name )->name, 
+                variable_add( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
 
-        variable_move( _environment,
-            variable_add( _environment, 
+            // DrawPixel ( xc+x , yc−y ) ;
+            plot( _environment, 
+                variable_add( _environment, xc->name, x->name )->name, 
+                variable_sub( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
+
+            // DrawPixel ( xc−x , yc−y ) ;
+            plot( _environment, 
+                variable_sub( _environment, xc->name, x->name )->name, 
+                variable_sub( _environment, yc->name, y->name )->name, 
+                c->name, 
+                _preserve_color );
+
+            ;
+
+            // if ( sigma >= 0 )
+            if_then( _environment, variable_greater_than_const( _environment, sigma->name, 0, 1 )->name );
+                // sigma += fb2∗(1−x);
+                variable_add_inplace_vars( _environment, 
+                    sigma->name,
+                    variable_mul( _environment,
+                        fb2->name,
+                        variable_sub( _environment,
+                            one->name,
+                            x->name)->name
+                    )->name
+                );
+
+                // x−−;
+                variable_decrement( _environment, x->name );
+
+            end_if_then( _environment );
+
+            // sigma += a2∗(4∗y+6);
+            variable_add_inplace_vars( _environment, 
                 sigma->name,
                 variable_mul( _environment,
                     a2->name,
-                    variable_add( _environment, 
-                        variable_mul( _environment, four->name, y->name )->name,
+                    variable_add( _environment,
+                        variable_mul2_const( _environment,
+                            y->name,
+                            4 )->name,
                         six->name
-                    )->name 
-                )->name 
-            )->name,
-            sigma->name
-        );
+                        )->name
+                )->name
+            );
 
-        variable_increment( _environment, y->name );
-    end_while( _environment );
+            // for ( ... y++)
+            variable_increment( _environment, y->name );
+
+        cpu_jump( _environment, forLabel2 );
+
+        cpu_label( _environment, endForLabel2 );
+
+        cpu_return( _environment );
+
+    deploy_end( ellipse );
+
+    Variable * xc = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * yc = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * rx = variable_retrieve_or_define( _environment, _rx, VT_POSITION, 0 );
+    Variable * ry = variable_retrieve_or_define( _environment, _ry, VT_POSITION, 0 );
+    Variable * c = NULL;
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    }
+
+    Variable * pxc = variable_retrieve( _environment, "ellipse__xc" );
+    Variable * pyc = variable_retrieve( _environment, "ellipse__yc" );
+    Variable * prx = variable_retrieve( _environment, "ellipse__rx" );
+    Variable * pry = variable_retrieve( _environment, "ellipse__ry" );
+    Variable * pc = variable_retrieve( _environment, "ellipse__c" );
+
+    variable_move( _environment, xc->name, pxc->name );
+    variable_move( _environment, yc->name, pyc->name );
+    variable_move( _environment, rx->name, prx->name );
+    variable_move( _environment, ry->name, pry->name );
+
+    if ( c ) {
+        variable_move( _environment, c->name, pc->name );
+    } else {
+        variable_move( _environment, "PEN", pc->name );
+    }
+
+    cpu_call( _environment, "lib_ellipse");
 
 }

@@ -63,7 +63,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     pc128op_timer_set_address( _environment, timerRealName, _label );
-    pc128op_timer_set_counter( _environment, timerRealName, NULL );
+    pc128op_timer_set_counter( _environment, timerRealName, timing->realName );
     pc128op_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

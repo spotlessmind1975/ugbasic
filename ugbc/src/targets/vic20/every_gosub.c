@@ -63,7 +63,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     vic20_timer_set_address( _environment, timerRealName, _label );
-    vic20_timer_set_counter( _environment, timerRealName, NULL );
+    vic20_timer_set_counter( _environment, timerRealName, timing->realName );
     vic20_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

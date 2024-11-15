@@ -63,7 +63,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     d64_timer_set_address( _environment, timerRealName, _label );
-    d64_timer_set_counter( _environment, timerRealName, NULL );
+    d64_timer_set_counter( _environment, timerRealName, timing->realName );
     d64_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

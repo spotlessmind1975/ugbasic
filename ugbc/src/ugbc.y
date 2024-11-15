@@ -3802,6 +3802,31 @@ exponential_less:
         cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
         $$ = ntsc->name;
     }
+    | LITTLE ENDIAN {
+        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
+    #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+        defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+        defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+        defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+        defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
+        defined( __c64reu__)
+        variable_store( _environment, endianess->name, 1 );
+    #else
+        variable_store( _environment, endianess->name, 0 );
+    #endif
+        $$ = endianess->name;
+    }
+    | BIG ENDIAN {
+        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
+    #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+        defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+        defined(__to8__)
+        variable_store( _environment, endianess->name, 1 );
+    #else
+        variable_store( _environment, endianess->name, 0 );
+    #endif
+        $$ = endianess->name;
+    }
     | IMAGE WIDTH OP expr CP {
         $$ = image_get_width( _environment, $4 )->name;
     }
@@ -4215,6 +4240,9 @@ exponential_less:
         } else {
             $$ = key_state_var( _environment, $4 )->name;
         }
+    }
+    | KEY STATE OP OP_HASH const_expr CP {
+        $$ = key_state( _environment, $5 )->name;
     }
     | KEY STATE OP expr CP {
         $$ = key_state_var( _environment, $4 )->name;
@@ -6082,7 +6110,11 @@ console_definition:
     | console_definition_expression;
 
 bar_definition_expression:
-    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y OP_COMMA optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $5, $7 );
+    }
+    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
     }
@@ -9624,6 +9656,24 @@ at_definition :
             }
         }
         variable_swap( _environment, $2, $5 );
+    }
+    | Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
+        if ( ($2 != 0) && ($5 != 0) && ($2 != $5) ) {
+            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$2], DATATYPE_AS_STRING[$5] );
+        }
+        if ( $2 != VT_DSTRING ) {
+            Variable * v1 = variable_retrieve( _environment, $1 );
+            if ( v1->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            }
+        }
+        if ( $5 != VT_DSTRING ) {
+            Variable * v2 = variable_retrieve( _environment, $4 );
+            if ( v2->type != VT_DSTRING ) {
+                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            }
+        }
+        variable_swap( _environment, $1, $4 );
     };
 
 nrm_definition :

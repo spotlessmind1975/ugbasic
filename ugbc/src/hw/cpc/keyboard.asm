@@ -44,7 +44,7 @@ KEYBOARDMAP:
     DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    DB      0,  0,  0,  0,  0, 'N', 00,  0, 13,'\\'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
     DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
@@ -71,7 +71,7 @@ KEYBOARDMAP2:
     DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0,  0, 00,  0, 13,'\\'
+    DB      0,  0,  0,  0,  0,'n', 00,  0, 13,'\\'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
     DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
@@ -159,17 +159,11 @@ KEYBOARDINKEY:          DB $FF
         XOR $FF
         LD (HL), A
         INC HL
+
         CP 0
-        JR Z, SCANCODEENTIREL1B
+        JR Z, SCANCODESINGLEKEYL1CONTINUE
 
-        CP 21
-        JR Z, SCANCODESINGLEKEYPRESSEDSHIFT
-
-        CP 23
-        JR Z, SCANCODESINGLEKEYPRESSEDCTRL
-
-        CP $40
-        JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
+        PUSH IX
 
     SCANCODEENTIREL1BL1:
         CP 0
@@ -178,6 +172,13 @@ KEYBOARDINKEY:          DB $FF
         JR NC, SCANCODEENTIREL1BL2
 
         LD A, IXL
+
+        CP 23
+        JR Z, SCANCODESINGLEKEYPRESSEDCTRL
+
+        CP 40
+        JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
+
         LD (KEYBOARDACTUAL), A
         LD A, 1
         LD (KEYBOARDPRESSED), A
@@ -188,6 +189,7 @@ KEYBOARDINKEY:          DB $FF
         JR SCANCODEENTIREL1BL1
 
     SCANCODEENTIREL1B:
+        POP IX
     SCANCODESINGLEKEYL1CONTINUE:
         POP AF
 
@@ -213,7 +215,10 @@ KEYBOARDINKEY:          DB $FF
         LD A, $FF
         LD (KEYBOARDACTUAL), A
 
+        JP SCANCODEDONEYES
+
     SCANCODEENTIREL1XX:
+        NOP
     SCANCODEDONEYES:
 
         POP AF
@@ -420,7 +425,17 @@ KEYBOARDINKEY:          DB $FF
         CP $FF
         JR Z, INKEY0
         LD (KEYBOARDINKEY), A
+        PUSH AF
+        LD A, (KEYBOARDSHIFT)
+        AND $04
+        CP $04
+        POP AF
+        JR Z, INKEYUP
+        LD HL, KEYBOARDMAP2
+        JR INKEYCOMMON
+    INKEYUP:
         LD HL, KEYBOARDMAP
+    INKEYCOMMON:
         LD E, A
         LD A, 0
         LD D, A
@@ -632,6 +647,8 @@ KEYBOARDTEMP:           DB $00
         ; CALL KEYBOARDEMPTY
         ; JP NC, KEYBOARDMANAGERDONEYES
 
+        DI
+
         LD IXL, 0
         LD A, 0
         LD (KEYBOARDPRESSED), A
@@ -662,17 +679,9 @@ KEYBOARDTEMP:           DB $00
         LD (HL), A
         INC HL
         CP 0
-        JR Z, SCANCODEENTIREL1B
+        JR Z, KEYBOARDMANAGERSINGLEKEYL1CONTINUE
 
-        CP 21
-        JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDSHIFT
-
-        CP 23
-        JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
-
-        CP 40
-        JR Z, KEYBOARDMANAGERSINGLEKEYPRESSECAPSLOCK
-
+        PUSH IX
     SCANCODEENTIREL1BL1:
         CP 0
         JR Z, SCANCODEENTIREL1B
@@ -680,6 +689,13 @@ KEYBOARDTEMP:           DB $00
         JR NC, SCANCODEENTIREL1BL2
 
         LD A, IXL
+
+        CP 23
+        JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
+
+        CP 40
+        JR Z, KEYBOARDMANAGERSINGLEKEYPRESSECAPSLOCK
+
         LD (KEYBOARDACTUAL), A
         LD A, 1
         LD (KEYBOARDPRESSED), A
@@ -690,6 +706,8 @@ KEYBOARDTEMP:           DB $00
         JR SCANCODEENTIREL1BL1
 
     SCANCODEENTIREL1B:
+        POP IX
+
     KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
         POP AF
 
@@ -715,7 +733,10 @@ KEYBOARDTEMP:           DB $00
         LD A, $FF
         LD (KEYBOARDACTUAL), A
 
+        JP KEYBOARDMANAGERDONEYES
+
     SCANCODEENTIREL1XX:
+        NOP
     KEYBOARDMANAGERDONEYES:
 
         ; Increase the elapsed timer.
@@ -728,6 +749,8 @@ KEYBOARDTEMP:           DB $00
 
         CALL KEYBOARDASF
 
+        EI
+        
         POP AF
         POP DE
         POP BC
@@ -1296,7 +1319,17 @@ KEYBOARDTEMP:           DB $00
         CP $FF
         JR Z, INKEY0
         LD (KEYBOARDINKEY), A
+        PUSH AF
+        LD A, (KEYBOARDSHIFT)
+        AND $04
+        CP $04
+        POP AF
+        JR Z, INKEYUP
+        LD HL, KEYBOARDMAP2
+        JR INKEYCOMMON
+INKEYUP:
         LD HL, KEYBOARDMAP
+INKEYCOMMON:
         LD E, A
         LD A, 0
         LD D, A

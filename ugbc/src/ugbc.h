@@ -1671,6 +1671,7 @@ typedef struct _Deployed {
 
     int draw;
     int bar;
+    int ellipse;
     int create_path;
     int travel_path;
 

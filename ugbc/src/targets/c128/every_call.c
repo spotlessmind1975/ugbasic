@@ -71,7 +71,7 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
     }
 
     c128_timer_set_address( _environment, timerRealName, procedure->realName );
-    c128_timer_set_counter( _environment, timerRealName, NULL );
+    c128_timer_set_counter( _environment, timerRealName, timing->realName );
     c128_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

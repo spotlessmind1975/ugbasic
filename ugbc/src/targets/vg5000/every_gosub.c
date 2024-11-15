@@ -56,7 +56,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     vg5000_timer_set_address( _environment, timerRealName, _label );
-    vg5000_timer_set_counter( _environment, timerRealName, NULL );
+    vg5000_timer_set_counter( _environment, timerRealName, timing->realName );
     vg5000_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

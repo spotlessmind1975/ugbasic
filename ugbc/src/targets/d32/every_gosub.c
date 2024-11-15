@@ -63,7 +63,7 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
     }
 
     d32_timer_set_address( _environment, timerRealName, _label );
-    d32_timer_set_counter( _environment, timerRealName, NULL );
+    d32_timer_set_counter( _environment, timerRealName, timing->realName );
     d32_timer_set_init( _environment, timerRealName, timing->realName );
 
 }
