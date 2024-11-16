@@ -291,3 +291,13 @@ DSUSINGW
 USING 
     FCB   0
     
+DSINIT
+    LDY #((stringscount*4+stringsspace*2))
+    LDX #DESCRIPTORS
+DSINITL1
+    STA ,X+
+    LEAY -1, Y
+    CMPY #$0
+    BNE DSINITL1
+    RTS
+

@@ -44,16 +44,6 @@
  * @param _environment Current calling environment
  * @param _value Value to the return
  */
-/* <usermanual>
-@keyword STORAGE...ENDSTORAGE
-
-@english
-To conclude the definition of a mass memory, the ENDSTORAGE command can be used.
-
-@italian
-Per concludere la definizione di una memoria di massa si può utilizzare il comando ENDSTORAGE.
-
-</usermanual> */
 void end_storage( Environment * _environment ) {
 
     if ( ! _environment->currentStorage ) {

@@ -278,6 +278,7 @@ void z80_dswrite( Environment * _environment, char * _index );
 void z80_dsresize( Environment * _environment, char * _index, char * _size );
 void z80_dsresize_size( Environment * _environment, char * _index, int _size );
 void z80_dsgc( Environment * _environment );
+void z80_dsinit( Environment * _environment );
 void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
 void z80_dsalloc_size( Environment * _environment, int _size, char * _index );
@@ -592,6 +593,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_dsgc( _environment ) z80_dsgc( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) z80_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_dsalloc_size( _environment, _size, _index ) z80_dsalloc_size( _environment, _size, _index ) 
+#define cpu_dsinit( _environment ) z80_dsinit( _environment )
 #define cpu_bit_check_extended( _environment, _value, _position, _result, _bitwidth ) z80_bit_check_extended( _environment, _value, _position, _result, _bitwidth )
 #define cpu_bits_to_string( _environment, _number, _string, _string_size, _bits ) z80_bits_to_string( _environment, _number, _string, _string_size, _bits )
 #define cpu_hex_to_string( _environment, _number, _string, _string_size, _bits ) z80_hex_to_string( _environment, _number, _string, _string_size, _bits )
