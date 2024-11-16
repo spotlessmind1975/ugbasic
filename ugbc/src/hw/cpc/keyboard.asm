@@ -301,17 +301,24 @@ KEYBOARDINKEY:          DB $FF
         LD B, A
         POP AF
 
+        PUSH HL
+        LD HL, BITMASK
+        LD E, B
+        LD D, 0
+        ADD HL, DE
         LD A, (HL)
-
-    KEYSTATEL1:
-        SRL A
-        JR C, KEYSTATE10
-        CP 0
-        JR Z, KEYSTATE10
-        DEC B
-        JP KEYSTATEL1
-
-    KEYSTATE10:
+        POP HL
+        LD B, A
+        LD A, (HL)
+        AND B
+        CP B
+        JR Z, KEYSTATEL1Y
+    KEYSTATEL1N:
+        SCF
+        CCF
+        RET
+    KEYSTATEL1Y:
+        SCF
         RET
 
     ; ----------------------------------------------------------------------------
@@ -1166,17 +1173,24 @@ KEYBOARDTEMP:           DB $00
         LD B, A
         POP AF
 
+        PUSH HL
+        LD HL, BITMASK
+        LD E, B
+        LD D, 0
+        ADD HL, DE
         LD A, (HL)
-
-    KEYSTATEL1:
-        SRL A
-        JR C, KEYSTATE10
-        CP 0
-        JR Z, KEYSTATE10
-        DEC B
-        JP KEYSTATEL1
-
-    KEYSTATE10:
+        POP HL
+        LD B, A
+        LD A, (HL)
+        AND B
+        CP B
+        JR Z, KEYSTATEL1Y
+    KEYSTATEL1N:
+        SCF
+        CCF
+        RET
+    KEYSTATEL1Y:
+        SCF
         RET
 
     ; ----------------------------------------------------------------------------

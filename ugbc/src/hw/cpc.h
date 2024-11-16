@@ -124,8 +124,8 @@
 #define KEY_RET                     0xff
 #define KEY_INS                     0xff
 #define KEY_DEL                     24
-#define KEY_LEFT                    16
-#define KEY_UP                      8
+#define KEY_LEFT                    8
+#define KEY_UP                      0
 #define KEY_DOWN                    2
 #define KEY_RIGHT                   1
 #define KEY_DIVISION                0xff
