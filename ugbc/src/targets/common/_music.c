@@ -173,7 +173,7 @@ static int decode_midi_payload_note_off( MidiMessagePayload * _payload ) {
 // IMF NOTE ON FORMAT: 2 bytes = 1110cccc; nnnnnnnn
 // The routine returns 0 if nothing is produced, 1 if NOTE OFF has been
 // produced, 2 if NOTE ON has been produced.
-static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
+static int decode_midi_payload_note_on( MidiMessagePayload * _payload, int _track ) {
 
     // First of all, we have to distinguish between a real NOTE ON
     // and a NOTE ON used to "mute" the previous NOTE ON (and it is
@@ -200,9 +200,11 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
             // (note that bounded channels are already allocated)
             usedChannel[ imfChannelIndex ] = 1;
 
-            if ( ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] & 0xff ) != 0xff ) {
+            // printf( "lastProgramOnMIDITrack[ %d ] = %d\n", _track, lastProgramOnMIDITrack[ _track] );
+
+            if ( lastProgramOnMIDITrack[ _track ] != -1 ) {
                 imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
-                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] );
+                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( lastProgramOnMIDITrack[ _track ] );
                 // printf( " -> set program $%2.2x on on %d\n", lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], imfChannelIndex );
             } else {
                 imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
@@ -244,7 +246,7 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
 // IMF FORMAT: 2 bytes = 10cccccc; nnnnnnnn
 // The routine returns 0 if nothing is produced, 2 if SET PROGRAM
 // has been produced.
-static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
+static int decode_midi_payload_set_program( MidiMessagePayload * _payload, int _track, int _tracks ) {
 
     int imfChannelIndex;
 
@@ -257,7 +259,16 @@ static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
     // note on the wrong channel.-
     char str[MAX_TEMPORARY_STORAGE];
 
-    lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = _payload->MsgData.ChangeProgram.iProgram;
+    if ( _payload->MsgData.ChangeProgram.iProgram > 0 && _payload->MsgData.ChangeProgram.iProgram < 128 ) {
+        for( int i=0; i<_tracks; ++i ) {
+            if ( lastProgramOnMIDITrack[ i ] == -1 ) {
+                lastProgramOnMIDITrack[ i ] = _payload->MsgData.ChangeProgram.iProgram;
+                // printf( "+ lastProgramOnMIDITrack[ %d ] = %d\n", i, lastProgramOnMIDITrack[ i] );
+            }
+        }
+        lastProgramOnMIDITrack[ _track ] = _payload->MsgData.ChangeProgram.iProgram;
+        // printf( "+ lastProgramOnMIDITrack[ %d ] = %d\n", _track, lastProgramOnMIDITrack[ _track] );
+    }
 
     return 0;
 
@@ -266,7 +277,7 @@ static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
 // This routine will help to decode a single frame of MIDI message, converting
 // it into a (simplier) IMF sequence. The method will return the number of
 // bytes generated on the IMF stream.
-static int decode_midi_payload( MidiMessagePayload * _payload, int _control_only ) {
+static int decode_midi_payload( MidiMessagePayload * _payload, int _control_only, int _track, int _tracks ) {
 
     // First of all, decode the main event type
     int ev;
@@ -275,6 +286,8 @@ static int decode_midi_payload( MidiMessagePayload * _payload, int _control_only
     } else { 
         ev = _payload->iType; 
     }
+
+    // printf( " > [%d] event = %2.2x\n", _track, ev );
 
     // Based on the event type, we produce a different sequence.
     switch(ev) {
@@ -289,14 +302,14 @@ static int decode_midi_payload( MidiMessagePayload * _payload, int _control_only
         case	messageNoteOn:
             // printf( "%4.4x: NOTE ON iNote = $%2.2x iChannel = $%2.2x iVolume = $%2.2x iProgram = $%2.2x\n", _payload->dwAbsPos, _payload->MsgData.NoteOn.iNote, _payload->MsgData.NoteOn.iChannel, _payload->MsgData.NoteOn.iVolume, lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] & 0xff );
             if ( !_control_only ) {
-                return decode_midi_payload_note_on( _payload );
+                return decode_midi_payload_note_on( _payload, _track );
             } else {
                 // printf( " ! ignored since control only\n" );   
             }
             break;
         case	messageSetProgram:
             // printf( "%4.4x: SET PROGRAM iProgram = $%2.2x iChannel = $%2.2x\n", _payload->dwAbsPos, _payload->MsgData.ChangeProgram.iProgram, _payload->MsgData.ChangeProgram.iChannel );
-            return decode_midi_payload_set_program( _payload );
+            return decode_midi_payload_set_program( _payload, _track, _tracks );
             break;
         case	messageNoteKeyPressure:
             // printf( "%4.4x: NOTE KEY PRESSURE\n", _payload->dwAbsPos );
@@ -454,14 +467,14 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
                 // If the track has not bneen finished...
                 if ( ! finishedTrack[ track ] ) {
 
-                    // printf(" TRACK %d msg position = %4.4x\n", track, msg[track].dwAbsPos );
+                    printf(" TRACK %d msg position = %4.4x, midiPosition = %4.4x\n", track, msg[track].dwAbsPos, midiPosition );
 
                     // If the current position is AFTER the one
                     // in the message, and the message has been
                     // used, the message is outdated.
                     if ( msg[track].dwAbsPos < midiPosition ) {
 
-                        // printf(" >> TRANSLATING " );
+                        printf(" >> TRANSLATING " );
 
                         while( msg[track].dwAbsPos < midiPosition ) {
 
@@ -469,7 +482,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
 
                             // Before reading the next message, decode the current
                             // one if of control type.
-                            decode_midi_payload( &msg[track], 1 );
+                            decode_midi_payload( &msg[track], 1, track, numMidiTracks );
 
                             // Try to read the next message. If the track
                             // is finished, we take note of that.
@@ -490,11 +503,11 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
 
                     } else if ( msg[track].dwAbsPos == midiPosition && usedTrack[ track ] ) {
 
-                        // printf(" >> NEXT MESSAGE\n" );
+                        printf(" >> NEXT MESSAGE\n" );
 
                         // Before reading the next message, decode the current
                         // one if of control type.
-                        decode_midi_payload( &msg[track], 1 );
+                        decode_midi_payload( &msg[track], 1, track, numMidiTracks );
 
                         // Try to read the next message. If the track
                         // is finished, we take note of that.
@@ -544,7 +557,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
                         continue;
                     }
 
-                    decode_midi_payload( &msg[track], 0 );
+                    decode_midi_payload( &msg[track], 0, track, numMidiTracks );
 
                     usedTrack[track] = 1;
 
