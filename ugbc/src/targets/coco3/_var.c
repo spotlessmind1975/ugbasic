@@ -606,10 +606,10 @@ void variable_cleanup( Environment * _environment ) {
                     out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
             }
-            dataDataSegment = dataDataSegment->next;
-            if ( dataDataSegment ) {
+            if ( dataDataSegment->next && dataDataSegment->size ) {
                 out0(",");
-            }
+            }            
+            dataDataSegment = dataDataSegment->next;
         }
         outline0("");
         dataSegment = dataSegment->next;

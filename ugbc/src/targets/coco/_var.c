@@ -576,7 +576,9 @@ void variable_cleanup( Environment * _environment ) {
                         out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                     } else {
                         out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                        out1("\"%s\"", dataDataSegment->data );
+                        if ( dataDataSegment->size ) {
+                            out1("\"%s\"", dataDataSegment->data );
+                        }
                     }
                 } else {
                     for( i=0; i<(dataDataSegment->size-1); ++i ) {
@@ -595,7 +597,9 @@ void variable_cleanup( Environment * _environment ) {
                     } else {
                         out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
                         out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                        out1("\"%s\"", dataDataSegment->data );
+                        if ( dataDataSegment->size ) {
+                            out1("\"%s\"", dataDataSegment->data );
+                        }
                     }
                 } else {
                     out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
@@ -605,10 +609,10 @@ void variable_cleanup( Environment * _environment ) {
                     out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
             }
-            dataDataSegment = dataDataSegment->next;
-            if ( dataDataSegment ) {
+            if ( dataDataSegment->next && dataDataSegment->size ) {
                 out0(",");
             }
+            dataDataSegment = dataDataSegment->next;
         }
         outline0("");
         dataSegment = dataSegment->next;
