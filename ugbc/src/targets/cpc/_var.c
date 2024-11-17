@@ -454,7 +454,7 @@ void variable_cleanup( Environment * _environment ) {
                     binary = 1;
                     break;
                 }
-            }            
+            }                       
             if ( dataSegment->type ) {
                 if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
                     if ( binary ) {
@@ -475,6 +475,9 @@ void variable_cleanup( Environment * _environment ) {
                 }
             } else {
                 out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                if ( ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) ) {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                }
                 for( i=0; i<(dataDataSegment->size-1); ++i ) {
                     out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
