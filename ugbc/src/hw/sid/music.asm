@@ -206,9 +206,10 @@ SIDGUNSHOT:
 
 ; X: CHANNEL
 SIDPIANO:
+SIDCLAVI:
     TXA
-    LDX #$8C
-    LDY #$0A
+    LDX #$00
+    LDY #$06
     JSR SIDPROGPULSE
     LDX #2
     LDY #11
@@ -219,95 +220,58 @@ SIDPIANO:
     RTS
 
 ; X: CHANNEL
-SIDCLAVI:
-    TXA
-    LDX #0
-    LDY #4
-    JSR SIDPROGPULSE
-    LDX #3
-    LDY #3
-    JSR SIDPROGAD
-    LDX #14
-    LDY #3
-    JSR SIDPROGSR
-    RTS
-
-; X: CHANNEL
 SIDXYLOPHONE:
     TXA
     LDX #WAVEFORM_RECTANGLE
     JSR SIDPROGCTR
     LDX #0
-    LDY #10
+    LDY #9
     JSR SIDPROGAD
-    LDX #4
-    LDY #14
+    LDX #0
+    LDY #0
     JSR SIDPROGSR
     RTS
 
 ; X: CHANNEL
 SIDROCKORGAN:
     TXA
-    LDX #WAVEFORM_TRIANGLE
+    LDX #$00
+    LDY #$08
+    JSR SIDPROGPULSE
     JSR SIDPROGCTR
-    LDX #3
-    LDY #3
+    LDX #0
+    LDY #9
     JSR SIDPROGAD
-    LDX #14
-    LDY #14
+    LDX #9
+    LDY #0
     JSR SIDPROGSR
     RTS
 
-; Waveform:      Pulse
-; Pulse Width:   1800
-; Attack:        0
-; Decay:         10
-; Sustain:       0
-; Release:       10
-; Release Point: 2
-; Filter:        Yes
-; Filter Mode:   L
-; Resonance:     10
-; Autofilter:    10
-
 ; X: CHANNEL
 SIDGUITAR:
+SIDBANJO:
     TXA
-    LDX #8
-    LDY #7
-    JSR SIDPROGPULSE
+    LDX #WAVEFORM_SAW
+    JSR SIDPROGCTR
     LDX #0
-    LDY #10
+    LDY #9
     JSR SIDPROGAD
-    LDX #0
-    LDY #10
+    LDX #2
+    LDY #1
     JSR SIDPROGSR
     RTS
 
 ; X: CHANNEL
 SIDGUITARMUTED:
-    TXA
-    LDX #128
-    LDY #0
-    JSR SIDPROGPULSE
-    LDX #1
-    LDY #2
-    JSR SIDPROGAD
-    LDX #4
-    LDY #3
-    JSR SIDPROGSR
-    RTS
-
-; X: CHANNEL
 SIDBASS:
     TXA
-    LDX #WAVEFORM_TRIANGLE
+    LDX #WAVEFORM_SAW
     JSR SIDPROGCTR
-    LDX #2
-    LDY #10
+    LDX #0
+    LDY #9
     JSR SIDPROGAD
-    LDX #12
-    LDY #14
+    LDX #1
+    LDY #1
     JSR SIDPROGSR
     RTS
 
@@ -329,65 +293,67 @@ SIDVIOLIN:
 
 ; X: CHANNEL
 SIDTIMPANI:
+SIDDRUMS:
     TXA
     LDX #WAVEFORM_NOISE
     JSR SIDPROGCTR
-    LDX #3
-    LDY #8
+    LDX #0
+    LDY #5
     JSR SIDPROGAD
-    LDX #3
-    LDY #8
+    LDX #0
+    LDY #0
     JSR SIDPROGSR
     RTS
 
 ; X: CHANNEL
 SIDTRUMPET:
     TXA
-    LDX #WAVEFORM_TRIANGLE
+    LDX #WAVEFORM_SAW
     JSR SIDPROGCTR
-    LDX #0
-    LDY #15
+    LDX #8
+    LDY #9
     JSR SIDPROGAD
-    LDX #2
-    LDY #6
+    LDX #4
+    LDY #1
     JSR SIDPROGSR
     RTS
 
 ; X: CHANNEL
-SIDBANJO:
+SIDFLUTE:
     TXA
-    LDX #(WAVEFORM_SAW + WAVEFORM_TRIANGLE)
+    LDX #WAVEFORM_TRIANGLE
     JSR SIDPROGCTR
-    LDX #0
-    LDY #9
+    LDX #9
+    LDY #4
     JSR SIDPROGAD
-    LDX #0
-    LDY #9
+    LDX #4
+    LDY #0
     JSR SIDPROGSR
     RTS
 
-; Waveform:      Pulse
-; Pulse Width:   2048
-; Pulse Sweep:   20
-; Attack:        0
-; Decay:         8
-; Sustain:       0
-; Release:       8
-; Release Point: 1
-; Vib. Depth:    3
-; Vib. Rate:     2
-; Portamento:    85-90
-
-SIDDRUMS:
+; X: CHANNEL
+SIDACCORDION:
     TXA
-    LDX #0
-    LDY #8
-    JSR SIDPROGPULSE
-    LDX #0
-    LDY #8
+    LDX #WAVEFORM_SAW
+    JSR SIDPROGCTR
+    LDX #9
+    LDY #4
     JSR SIDPROGAD
+    LDX #4
+    LDY #0
+    JSR SIDPROGSR
+    RTS
+
+; X: CHANNEL
+SIDCALLIOPE:
+    TXA
+    LDX #WAVEFORM_TRIANGLE
+    JSR SIDPROGCTR
     LDX #0
-    LDY #8
+    LDY #0
+    JSR SIDPROGAD
+    LDX #15
+    LDY #0
     JSR SIDPROGSR
     RTS
 
@@ -405,7 +371,6 @@ SIDSETPROGRAM0:
     BNE SIDSETPROGRAM1
     JSR SIDDRUMS
     JMP SIDSETPROGRAMNN
-; IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO			= $01
 
 ; 1-8	Piano
 
@@ -546,7 +511,7 @@ SIDSETPROGRAM16:
 SIDSETPROGRAM17:
     SBC #1
     BNE SIDSETPROGRAM18
-    JSR SIDROCKORGAN
+    JSR SIDACCORDION
     JMP SIDSETPROGRAMNN
 ; IMF_INSTRUMENT_HARMONICA					= $17
 SIDSETPROGRAM18:
@@ -858,7 +823,7 @@ SIDSETPROGRAM4A:
 SIDSETPROGRAM4B:
     SBC #1
     BNE SIDSETPROGRAM4C
-    JSR SIDTRUMPET
+    JSR SIDFLUTE
     JMP SIDSETPROGRAMNN
 ; IMF_INSTRUMENT_RECORDER						= $4B
 SIDSETPROGRAM4C:
@@ -894,7 +859,7 @@ SIDSETPROGRAM50:
 SIDSETPROGRAM51:
     SBC #1
     BNE SIDSETPROGRAM52
-    JSR SIDVIOLIN
+    JSR SIDTRUMPET
     JMP SIDSETPROGRAMNN
 ; IMF_INSTRUMENT_LEAD_1_SQUARE				= $51
 SIDSETPROGRAM52:
@@ -906,7 +871,7 @@ SIDSETPROGRAM52:
 SIDSETPROGRAM53:
     SBC #1
     BNE SIDSETPROGRAM54
-    JSR SIDXYLOPHONE
+    JSR SIDCALLIOPE
     JMP SIDSETPROGRAMNN
 ; IMF_INSTRUMENT_LEAD_3_CALLIOPE				= $53
 SIDSETPROGRAM54:
@@ -1361,8 +1326,9 @@ MUSICREADNEXTBYTELE:
     LDA SIDBLOCKS
     BEQ MUSICREADNEXTBYTEEND
 
-    ; Increment the base address by 256
+    ; Increment the base address by 255
     INC SIDTMPPTR+1
+    DEC SIDTMPPTR
 
     ; Decrement the number of remaining blocks
     DEC SIDBLOCKS
@@ -1372,7 +1338,7 @@ MUSICREADNEXTBYTELE:
     BEQ MUSICPLAYERLE2
 
     ; Remaining block is 256 bytes lenght.
-    LDY #$FF
+    LDY #$ff
     STY SIDTMPLEN
 
     ; Put the index to 0

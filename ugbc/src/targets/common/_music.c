@@ -98,6 +98,9 @@ static int * lastProgramOnMIDITrack;
 // Store bounded IMF channel
 static int lastProgramOnChannel[MAX_AUDIO_CHANNELS];
 
+// Store bounded MIDI channel
+static int lastChannelOnChannel[MAX_AUDIO_CHANNELS];
+
 // Tempo of the MIDI file
 static int tempo = 81;
 
@@ -148,6 +151,8 @@ static int decode_midi_payload_note_off( MidiMessagePayload * _payload ) {
             // Produce the data on the IMF stream.
             imfBuffer[imfStreamPos++] = IMF_NOTE_OFF( imfChannelIndex );
 
+            // printf( "%d: NOTE OFF\n", imfChannelIndex );
+
             // printf( " -> note off on %d\n", imfChannelIndex );
 
             break;
@@ -182,15 +187,49 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
     // NOTE ON.
     if ( _payload->MsgData.NoteOn.iVolume > 0 ) {
 
-        int imfChannelIndex;
+        int alreadyAllocated = MAX_AUDIO_CHANNELS;
+        int imfChannelIndex = 0;
 
-        // We have to look for a free one. 
-        // So we have to look for an unused one.
         for( imfChannelIndex=0; imfChannelIndex<MAX_AUDIO_CHANNELS; ++imfChannelIndex ) {
             // We exit as soon as we found one.
-            if ( ! usedChannel[ imfChannelIndex ] ) {
+            if ( lastChannelOnChannel[ imfChannelIndex ] == _payload->MsgData.NoteOn.iChannel &&
+                (lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] != -1) && (lastProgramOnChannel[ imfChannelIndex ] != -1) && (lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] == lastProgramOnChannel[ imfChannelIndex ])  ) {
+                alreadyAllocated = imfChannelIndex;
+                // printf( "ALREADY ALLOCATED, IMF = %2.2x, MIDI = %2.2x", alreadyAllocated, _payload->MsgData.NoteOn.iChannel );
                 break;
             }
+        }
+
+        if ( alreadyAllocated == MAX_AUDIO_CHANNELS ) {
+
+            // We have to look for an already setted channel, and not used.
+            for( imfChannelIndex=0; imfChannelIndex<MAX_AUDIO_CHANNELS; ++imfChannelIndex ) {
+                // printf( "%d) IMF: %2.2x MIDI: %2.2x\n", imfChannelIndex, lastProgramOnChannel[ imfChannelIndex ], lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] );
+                // We exit as soon as we found one.
+                if ( (lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] != -1) && (lastProgramOnChannel[ imfChannelIndex ] != -1) && (lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] == lastProgramOnChannel[ imfChannelIndex ]) ) {
+                    // printf( "%d: POTENTIAL %2.2x (channel=%2.2x)\n", imfChannelIndex, lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], _payload->MsgData.NoteOn.iChannel );
+                    if ( ! usedChannel[ imfChannelIndex ] ) {
+                        // printf( "%d: SELECTED!\n", imfChannelIndex );
+                        break;
+                    }
+                }
+            }
+
+            if ( imfChannelIndex == MAX_AUDIO_CHANNELS ) {
+                // printf( "NONE POTENTIAL\n" );
+                // We have to look for a free one. 
+                // So we have to look for an unused one.
+                for( imfChannelIndex=0; imfChannelIndex<MAX_AUDIO_CHANNELS; ++imfChannelIndex ) {
+                    // We exit as soon as we found one.
+                    if ( ! usedChannel[ imfChannelIndex ] ) {
+                        // printf( "%d: FREE!\n", imfChannelIndex );
+                        break;
+                    }
+                }
+            }
+
+        } else {
+            imfChannelIndex = alreadyAllocated;
         }
 
         // If we found a channel...
@@ -200,19 +239,28 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
             // (note that bounded channels are already allocated)
             usedChannel[ imfChannelIndex ] = 1;
 
-            if ( ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] & 0xff ) != 0xff ) {
-                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
-                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] );
-                // printf( " -> set program $%2.2x on on %d\n", lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], imfChannelIndex );
+            if ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] != lastProgramOnChannel[ imfChannelIndex ] ) {
+                if ( ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] & 0xff ) != 0xff ) {
+                    imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
+                    imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] );
+                    // printf( " -> set program $%2.2x on on %d\n", lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], imfChannelIndex );
+                    lastProgramOnChannel[ imfChannelIndex ] = lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ];
+                    lastChannelOnChannel[ imfChannelIndex ] = _payload->MsgData.NoteOn.iChannel;
+                    // printf( "%d: SET PROGRAM %2.2x (channel=%2.2x)\n", imfChannelIndex, lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], _payload->MsgData.NoteOn.iChannel );
+                } else {
+                    // imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
+                    // imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( 0 );
+                }
             } else {
-                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
-                imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( 0 );
+
             }
 
             // Produce the 2 bytes data on the stream
             imfBuffer[imfStreamPos++] = IMF_NOTE_ON_CHANNEL( imfChannelIndex );
             imfBuffer[imfStreamPos++] = IMF_NOTE_ON_NOTE( _payload->MsgData.NoteOn.iNote );  
 
+            // printf( "%d: NOTE ON %d [%2.2x]\n", imfChannelIndex, _payload->MsgData.NoteOn.iNote, lastProgramOnChannel[ imfChannelIndex ] );
+            
             // Produce the 2 bytes with the volume on the stream
             // imfBuffer[imfStreamPos++] = IMF_SET_VOLUME_CHANNEL( imfChannelIndex );
             imfBuffer[imfStreamPos++] = IMF_SET_VOLUME_VALUE( _payload->MsgData.NoteOn.iVolume );  
@@ -259,7 +307,7 @@ static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
 
     if ( _payload->MsgData.ChangeProgram.iChannel == 10 ) {
         if ( _payload->MsgData.ChangeProgram.iProgram == 0 ) {
-            lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = IMF_INSTRUMENT_SYNTH_DRUM;
+            lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = 0;
         } else {
             lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = _payload->MsgData.ChangeProgram.iProgram;
         }
@@ -392,6 +440,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
     memset( usedChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
     lastProgramOnMIDITrack = NULL;
     memset( lastProgramOnChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
+    memset( lastChannelOnChannel, 0, MAX_AUDIO_CHANNELS * sizeof( int ) );
     tempo = 81;
     imfBuffer = NULL;
 
@@ -440,6 +489,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
         lastProgramOnMIDITrack = malloc( MAX_MIDI_CHANNELS * sizeof( int ) );
         memset( lastProgramOnMIDITrack, 0xff, MAX_MIDI_CHANNELS * sizeof( int ) );
         memset( lastProgramOnChannel, 0xff, MAX_AUDIO_CHANNELS * sizeof( int ) );
+        memset( lastChannelOnChannel, 0xff, MAX_AUDIO_CHANNELS * sizeof( int ) );
 
         // Current position examinated
         int midiPosition = 0;
@@ -591,12 +641,14 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
                     while( jiffies > 127 ) {
                         imfBuffer[imfStreamPos++] = IMF_DELAY( 127 );
                         jiffies -= 127;
+                        // printf( "DELAY 2.54 seconds\n" );
                         if ( !decode_midi_inside_memory_limits( ) ) {
                             CRITICAL_MIDI_OUT_OF_MEMORY( _filename )
                         }
                     }
                     if ( jiffies > 0 ) {
                         imfBuffer[imfStreamPos++] = IMF_DELAY( jiffies );
+                        // printf( "DELAY %f seconds (%d jiffies)\n", (((float)jiffies) / ((float)50)), jiffies );
                         if ( !decode_midi_inside_memory_limits( ) ) {
                             CRITICAL_MIDI_OUT_OF_MEMORY( _filename )
                         }
