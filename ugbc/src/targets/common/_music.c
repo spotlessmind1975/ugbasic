@@ -257,7 +257,15 @@ static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
     // note on the wrong channel.-
     char str[MAX_TEMPORARY_STORAGE];
 
-    lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = _payload->MsgData.ChangeProgram.iProgram;
+    if ( _payload->MsgData.ChangeProgram.iChannel == 10 ) {
+        if ( _payload->MsgData.ChangeProgram.iProgram == 0 ) {
+            lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = IMF_INSTRUMENT_SYNTH_DRUM;
+        } else {
+            lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = _payload->MsgData.ChangeProgram.iProgram;
+        }
+    } else {
+        lastProgramOnMIDITrack[ _payload->MsgData.ChangeProgram.iChannel ] = _payload->MsgData.ChangeProgram.iProgram;
+    }
 
     return 0;
 
