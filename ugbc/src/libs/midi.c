@@ -959,12 +959,21 @@ int sz;
 							pMsg->MsgData.NoteOn.iNote = *(pMsgDataPtr);
 							pMsg->MsgData.NoteOn.iVolume = *(pMsgDataPtr+1);
 							pMsg->iMsgSize = 3;
+							// printf( "NOTE ON [channel=%2.2x, note=%2.2x, volume=%2.2x]\n",
+							// 	pMsg->MsgData.NoteOn.iChannel,
+							// 	pMsg->MsgData.NoteOn.iNote,
+							// 	pMsg->MsgData.NoteOn.iVolume
+							// 	 );
 							break;
 
 		case	messageNoteOff:
 							pMsg->MsgData.NoteOff.iChannel = pMsg->iLastMsgChnl;
 							pMsg->MsgData.NoteOff.iNote = *(pMsgDataPtr);
 							pMsg->iMsgSize = 3;
+							// printf( "NOTE OFF [channel=%2.2x, note=%2.2x]\n",
+							// 	pMsg->MsgData.NoteOff.iChannel,
+							// 	pMsg->MsgData.NoteOff.iNote
+							// 	 );
 							break;
 
 		case	messageNoteKeyPressure:
@@ -972,6 +981,11 @@ int sz;
 							pMsg->MsgData.NoteKeyPressure.iNote = *(pMsgDataPtr);
 							pMsg->MsgData.NoteKeyPressure.iPressure = *(pMsgDataPtr+1);
 							pMsg->iMsgSize = 3;
+							// printf( "NOTE KEY PRESSURE [channel=%2.2x, note=%2.2x, pressure=%2.2x]\n",
+							// 	pMsg->MsgData.NoteKeyPressure.iChannel,
+							// 	pMsg->MsgData.NoteKeyPressure.iNote,
+							// 	pMsg->MsgData.NoteKeyPressure.iPressure
+							// 	 );
 							break;
 
 		case	messageSetParameter:
@@ -979,18 +993,31 @@ int sz;
 							pMsg->MsgData.NoteParameter.iControl = (MidiControlCommand)*(pMsgDataPtr);
 							pMsg->MsgData.NoteParameter.iParam = *(pMsgDataPtr+1);
 							pMsg->iMsgSize = 3;
+							// printf( "SET PARAMETER [channel=%2.2x, control=%2.2x, param=%2.2x]\n",
+							// 	pMsg->MsgData.NoteParameter.iChannel,
+							// 	pMsg->MsgData.NoteParameter.iControl,
+							// 	pMsg->MsgData.NoteParameter.iParam
+							// 	 );
 							break;
 
 		case	messageSetProgram:
 							pMsg->MsgData.ChangeProgram.iChannel = pMsg->iLastMsgChnl;
 							pMsg->MsgData.ChangeProgram.iProgram = *(pMsgDataPtr);
 							pMsg->iMsgSize = 2;
+							// printf( "SET PROGRAM [channel=%2.2x, program=%2.2x]\n",
+							// 	pMsg->MsgData.ChangeProgram.iChannel,
+							// 	pMsg->MsgData.ChangeProgram.iProgram
+							// 	 );
 							break;
 
 		case	messageChangePressure:
 							pMsg->MsgData.ChangePressure.iChannel = pMsg->iLastMsgChnl;
 							pMsg->MsgData.ChangePressure.iPressure = *(pMsgDataPtr);
 							pMsg->iMsgSize = 2;
+							// printf( "CHANGE PRESSURE [channel=%2.2x, pressure=%2.2x]\n",
+							// 	pMsg->MsgData.ChangePressure.iChannel,
+							// 	pMsg->MsgData.ChangePressure.iPressure
+							// 	 );
 							break;
 
 		case	messageSetPitchWheel:
@@ -998,9 +1025,14 @@ int sz;
 							pMsg->MsgData.PitchWheel.iPitch = *(pMsgDataPtr) | (*(pMsgDataPtr+1) << 7);
 							pMsg->MsgData.PitchWheel.iPitch -= MIDI_WHEEL_CENTRE;
 							pMsg->iMsgSize = 3;
+							// printf( "PITCH WHEEL [channel=%2.2x, pitch=%2.2x]\n",
+							// 	pMsg->MsgData.PitchWheel.iChannel,
+							// 	pMsg->MsgData.PitchWheel.iPitch
+							// 	 );
 							break;
 
 		case	messageMetaEvent:
+							// printf( "META EVENT\n" );
 							bptr = pTrack->ptr;
 							pMsg->MsgData.MetaEvent.iType = (MidiMetaInfo)*(pTrack->ptr+1);
 							pTrack->ptr = _midiReadVarLen(pTrack->ptr+2, &pMsg->iMsgSize);
@@ -1072,6 +1104,7 @@ int sz;
 
 		case	messageSysEx1:
 		case	messageSysEx2:
+							// printf( "SYS1/SYS2\n" );
 							bptr = pTrack->ptr;
 							pTrack->ptr = _midiReadVarLen(pTrack->ptr+1, &pMsg->iMsgSize);
 							sz = (pTrack->ptr-bptr)+pMsg->iMsgSize;
