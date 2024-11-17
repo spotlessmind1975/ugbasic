@@ -214,6 +214,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     MAKE_LABEL
 
     char labelNoBank[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBank, "%snobank", label );
+    char labelNoBankLong[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBankLong, "%snobanklong", label );
     char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
 
     Variable * image = variable_retrieve( _environment, _image );
@@ -303,8 +304,10 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     // Bank assigned?
     outline1( "LDA %s", address_displacement( _environment, image->realName, "5" ) );
     outline0( "AND #$04" );
-    outline1( "BEQ %s", labelNoBank );
+    outline1( "BNE %s", labelNoBank );
+    outline1( "JMP %s", labelNoBankLong );
 
+    cpu_label( _environment, labelNoBank );
     outline1( "LDA %s", address_displacement( _environment, image->realName, "4" ) );
     outline0( "STA BANKPTR" );
     outline0( "LDA #$FF" );
@@ -319,7 +322,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     cpu_jump( _environment, labelDone );
 
-    cpu_label( _environment, labelNoBank );
+    cpu_label( _environment, labelNoBankLong );
 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
