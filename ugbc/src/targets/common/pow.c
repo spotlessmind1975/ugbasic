@@ -90,46 +90,32 @@ calcolare le potenze.
 
 Variable * powering( Environment * _environment, char * _base, char * _exponential ) {
 
-    Variable * base = variable_retrieve( _environment, _base );
-
-    Variable * exponential = variable_cast( _environment, _exponential, base->type );
-    if ( ! exponential ) {
-        CRITICAL_VARIABLE(_exponential);
-    }
+    Variable * base = variable_retrieve_or_define( _environment, _base, VT_SWORD, 0 );
+    Variable * exponential = variable_retrieve_or_define( _environment, _exponential, VT_SWORD, 0 );
 
     Variable * result, * temporary;
 
-    if ( base->type == VT_DWORD ) {
-        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
+    switch( base->type ) {
+        case VT_SBYTE:
+        case VT_BYTE:
+        case VT_SWORD:
+        case VT_WORD:
+        case VT_POSITION:
+            break;
+        default:
+            CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
     }
 
-    if ( exponential->type == VT_DWORD ) {
-        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
+    switch( exponential->type ) {
+        case VT_SBYTE:
+        case VT_BYTE:
+        case VT_SWORD:
+        case VT_WORD:
+        case VT_POSITION:
+            break;
+        default:
+            CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
     }
-
-    if ( base->type == VT_STRING ) {
-        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
-    }
-
-    if ( exponential->type == VT_STRING ) {
-        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
-    }
-
-    if ( base->type == VT_BUFFER ) {
-        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
-    }
-
-    if ( exponential->type == VT_BUFFER ) {
-        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
-    }
-
-    if ( base->type == VT_IMAGE ) {
-        CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
-    }
-
-    if ( exponential->type == VT_IMAGE ) {
-        CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[exponential->type]);
-    }    
 
     MAKE_LABEL
 
@@ -137,26 +123,6 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
 
     Variable * counter = variable_cast( _environment, exponential->name, VT_BYTE );
     switch( VT_BITWIDTH( base->type ) ) {
-        case 32:
-            result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
-            temporary = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
-            variable_store( _environment, result->name, 1 );
-            cpu_bveq( _environment, counter->realName, endLabel );
-            cpu_label( _environment, label );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char baseRealName[MAX_TEMPORARY_STORAGE]; sprintf( baseRealName, "%s", address_displacement(_environment, base->realName, "2") );
-                    char resultRealName[MAX_TEMPORARY_STORAGE]; sprintf( resultRealName, "%s", address_displacement(_environment, result->realName, "2") );
-                    cpu_math_mul_16bit_to_32bit( _environment, baseRealName, resultRealName, temporary->realName, VT_SIGNED( base->type ) );
-                }
-            #else
-                cpu_math_mul_16bit_to_32bit( _environment, base->realName, result->realName, temporary->realName, VT_SIGNED( base->type ) );
-            #endif
-            cpu_move_32bit( _environment, temporary->realName, result->realName );
-            cpu_dec( _environment, counter->realName );
-            cpu_bvneq( _environment, counter->realName, label );
-            cpu_label( _environment, endLabel );
-            break;
         case 16:
             result = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
             temporary = variable_temporary( _environment, VT_SIGNED( base->type ) ? VT_SDWORD : VT_DWORD, "(result of pow)");
