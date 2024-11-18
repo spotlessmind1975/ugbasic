@@ -4205,6 +4205,7 @@ di divisione.
 Variable * variable_div( Environment * _environment, char * _source, char * _destination, char * _remainder ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _destination );
+    Variable * remainder = NULL;
 
     if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant ) { 
         if ( log2(target->value) == (int)log2(target->value) ) {
@@ -4219,7 +4220,6 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
     target = variable_cast( _environment, target->name, best );
 
     Variable * result = NULL;
-    Variable * remainder = NULL;
     Variable * realTarget = NULL;
     Variable * realSource = NULL;
 
@@ -4309,7 +4309,14 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
         case 0:
             switch( target->type ) {
                 case VT_FLOAT:
+
+                    if ( _remainder ) {
+                        remainder = variable_retrieve( _environment, _remainder );
+                        CRITICAL_DIV_UNSUPPORTED(_remainder, DATATYPE_AS_STRING[remainder->type]);
+                    }
+
                     result = variable_temporary( _environment, VT_FLOAT, "(result of division)" );
+
                     switch( target->precision ) {
                         case FT_FAST: {
                             cpu_float_fast_div( _environment, source->realName, target->realName, result->realName );
