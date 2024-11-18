@@ -1818,7 +1818,7 @@ la dimensione totale ed eseguire molte altre operazioni.
 @syntax = UBOUND( array [, dimension])
 
 @example DIM a(10,20)
-@example PRINT UBOUND(a,1) : REM it will print 20
+@example PRINT UBOUND(a,1) : REM it will print 19 (0...19)
 
 </usermanual> */
 
@@ -1861,7 +1861,7 @@ il valore iniziale corretto del contatore del ciclo.
 @syntax = LBOUND( array [, dimension])
 
 @example DIM a(10,20)
-@example PRINT LBOUND(a) : REM it will print 0
+@example PRINT LBOUND(a) : REM it will print 0 (0...9)
 
 </usermanual> */
 
