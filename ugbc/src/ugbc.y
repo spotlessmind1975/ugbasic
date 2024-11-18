@@ -1244,7 +1244,7 @@ const_factor:
           if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
           }
-          $$ = array->arrayDimensionsEach[array->arrayDimensions-1];
+          $$ = array->arrayDimensionsEach[array->arrayDimensions-1]-1;
       }
       | UBOUND OP Identifier OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
@@ -1257,7 +1257,7 @@ const_factor:
         if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
             CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
         }
-        $$ = array->arrayDimensionsEach[array->arrayDimensions-$5-1];
+        $$ = array->arrayDimensionsEach[array->arrayDimensions-$5-1]-1;
       }
       | LBOUND OP Identifier CP {
           Variable * array = variable_retrieve( _environment, $3 );
@@ -3422,7 +3422,7 @@ exponential_less:
             CRITICAL_NOT_ARRAY( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
-        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-1] );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-1]-1 );
         $$ = value->name;
     }
     | UBOUND OP expr OP_COMMA const_expr CP {
@@ -3437,7 +3437,7 @@ exponential_less:
           CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
         }
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
-        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-$5-1] );
+        variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-$5-1]-1 );
         $$ = value->name;
     }
     | LBOUND OP expr CP {
