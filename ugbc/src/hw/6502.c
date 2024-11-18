@@ -5919,62 +5919,61 @@ void cpu6502_move_nbit_indirect( Environment * _environment, int _n, char *_sour
         sprintf( step3, "%d", stepIndex+3 );
         if ( _n >= 32 ) {
             outline1("LDA %s", address_displacement(_environment, _source, step));
-            outline0("LDY #$0" );
+            outline1("LDY #$%2.2x", stepIndex );
             outline0("STA (TMPPTR),Y");
             outline1("LDA %s", address_displacement(_environment, _source, step1));
-            outline0("LDY #$1" );
+            outline1("LDY #$%2.2x", stepIndex + 1 );
             outline0("STA (TMPPTR),Y");
             outline1("LDA %s", address_displacement(_environment, _source, step2));
-            outline0("LDY #$2" );
+            outline1("LDY #$%2.2x", stepIndex + 2 );
             outline0("STA (TMPPTR),Y");
             outline1("LDA %s", address_displacement(_environment, _source, step3));
-            outline0("LDY #$3" );
+            outline1("LDY #$%2.2x", stepIndex + 3 );
             outline0("STA (TMPPTR),Y");            
             stepIndex += 4;
             _n -= 32;
-            break;
         } else {
             switch( _n ) {
                 case 32: case 31: case 30: case 29:
                 case 28: case 27: case 26: case 25:
                     outline1("LDA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step1));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step2));
-                    outline0("LDY #$2" );
+                    outline1("LDY #$%2.2x", stepIndex + 2 );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step3));
-                    outline0("LDY #$3" );
+                    outline1("LDY #$%2.2x", stepIndex + 3 );
                     outline0("STA (TMPPTR),Y");            
                     break;
                 case 24: case 23: case 22: case 21:
                 case 20: case 19: case 18: case 17:
                     outline1("LDA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step1));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step2));
-                    outline0("LDY #$2" );
+                    outline1("LDY #$%2.2x", stepIndex + 2 );
                     outline0("STA (TMPPTR),Y");
                     break;
                 case 16: case 15: case 14: case 13:
                 case 12: case 11: case 10: case 9:
                     outline1("LDA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("STA (TMPPTR),Y");
                     outline1("LDA %s", address_displacement(_environment, _source, step1));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("STA (TMPPTR),Y");
                     break;
                 case 8: case 7: case 6: case 5:
                 case 4: case 3: case 2: case 1:
                     outline1("LDA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("STA (TMPPTR),Y");
                     break;
             }
@@ -6002,62 +6001,61 @@ void cpu6502_move_nbit_indirect2( Environment * _environment, int _n, char * _va
         sprintf( step2, "%d", stepIndex+2 );
         sprintf( step3, "%d", stepIndex+3 );
         if ( _n >= 32 ) {
-            outline0("LDY #$0" );
+            outline1("LDY #$%2.2x", stepIndex );
             outline0("LDA (TMPPTR),Y");
             outline1("STA %s", address_displacement(_environment, _source, step));
-            outline0("LDY #$1" );
+            outline1("LDY #$%2.2x", stepIndex + 1 );
             outline0("LDA (TMPPTR),Y");
             outline1("STA %s", address_displacement(_environment, _source, step1));
-            outline0("LDY #$2" );
+            outline1("LDY #$%2.2x", stepIndex + 2 );
             outline0("LDA (TMPPTR),Y");
             outline1("STA %s", address_displacement(_environment, _source, step2));
-            outline0("LDY #$3" );
+            outline1("LDY #$%2.2x", stepIndex + 3 );
             outline0("LDA (TMPPTR),Y");
             outline1("STA %s", address_displacement(_environment, _source, step3));
             stepIndex += 4;
             _n -= 32;
-            break;
         } else {
             switch( _n ) {
                 case 32: case 31: case 30: case 29:
                 case 28: case 27: case 26: case 25:
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step1));
-                    outline0("LDY #$2" );
+                    outline1("LDY #$%2.2x", stepIndex + 2 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step2));
-                    outline0("LDY #$3" );
+                    outline1("LDY #$%2.2x", stepIndex + 3 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step3));
                     break;
                 case 24: case 23: case 22: case 21:
                 case 20: case 19: case 18: case 17:
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step1));
-                    outline0("LDY #$2" );
+                    outline1("LDY #$%2.2x", stepIndex + 2 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step2));
                     break;
                 case 16: case 15: case 14: case 13:
                 case 12: case 11: case 10: case 9:
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step));
-                    outline0("LDY #$1" );
+                    outline1("LDY #$%2.2x", stepIndex + 1 );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step1));
                     break;
                 case 8: case 7: case 6: case 5:
                 case 4: case 3: case 2: case 1:
-                    outline0("LDY #$0" );
+                    outline1("LDY #$%2.2x", stepIndex );
                     outline0("LDA (TMPPTR),Y");
                     outline1("STA %s", address_displacement(_environment, _source, step));
                     break;
