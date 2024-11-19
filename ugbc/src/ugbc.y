@@ -10561,6 +10561,9 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
+  | END STORAGE {
+        end_storage( _environment );
+  }
   | ENDSTORAGE {
         end_storage( _environment );
   }
