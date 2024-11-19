@@ -312,6 +312,13 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline0( "STA BANKPTR" );
     outline0( "LDA #$FF" );
     outline0( "STA BANKUSE" );
+    outline0( "CLC" );
+    outline0( "LDA TMPPTR" );
+    outline1( "ADC %s", address_displacement( _environment, image->realName, "0" ) );
+    outline0( "STA TMPPTR" );
+    outline0( "LDA TMPPTR+1" );
+    outline1( "ADC %s", address_displacement( _environment, image->realName, "1" ) );
+    outline0( "STA TMPPTR+1" );
 
     Resource resource;
     resource.realName = strdup( address->realName );
