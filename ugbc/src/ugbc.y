@@ -1540,13 +1540,13 @@ modula:
         if ( log2($3) != (int)log2($3) ) {
             CRITICAL_INVALID_DIVISOR2( $3 );
         }
-        $$ = variable_div2_const( _environment, $1, $3 )->name;
+        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
     } 
     | modula OP_DIVISION2 Integer {
         if ( log2($3) != (int)log2($3) ) {
             CRITICAL_INVALID_DIVISOR2( $3 );
         }
-        $$ = variable_div2_const( _environment, $1, $3 )->name;
+        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
     } 
     ;
 
@@ -6443,7 +6443,7 @@ div_definition :
             variable_store( _environment, v->name, $5 );
             variable_move( _environment, variable_div( _environment, $1, temporary->name, NULL )->name, $1 );
         } else {
-            variable_move( _environment, variable_div2_const( _environment, $1, $5 )->name, $1 );
+            variable_move( _environment, variable_div2_const( _environment, $1, $5, NULL )->name, $1 );
         }
     }
     |
@@ -10613,6 +10613,9 @@ statement2nc:
             prepare_variable_storage( _environment, $10, v );
         }
         variable_temporary_remove( _environment, v->name );
+  }
+  | END STORAGE {
+        end_storage( _environment );
   }
   | ENDSTORAGE {
         end_storage( _environment );

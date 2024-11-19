@@ -474,7 +474,7 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_y( _environment, dy->name, 0 )->name, dy->name );
 
             variable_move( _environment, variable_mul( _environment, dy->name, scale->name )->name, dy->name );
-            variable_move( _environment, variable_div2_const( _environment, dy->name, 4 )->name, ds->name );
+            variable_move( _environment, variable_div2_const( _environment, dy->name, 4, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawDCommandLetter->realName, down2CommandLabel, 1 );
 
@@ -515,7 +515,7 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
 
             variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
-            variable_move( _environment, variable_div2_const( _environment, dx->name, 4 )->name, ds->name );
+            variable_move( _environment, variable_div2_const( _environment, dx->name, 4, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawRCommandLetter->realName, right2CommandLabel, 1 );
 
@@ -553,7 +553,7 @@ void draw_string( Environment * _environment, char * _string ) {
             variable_move( _environment, origin_resolution_relative_transform_x( _environment, dx->name, 0 )->name, dx->name );
 
             variable_move( _environment, variable_mul( _environment, dx->name, scale->name )->name, dx->name );
-            variable_move( _environment, variable_div2_const( _environment, dx->name, 4 )->name, ds->name );
+            variable_move( _environment, variable_div2_const( _environment, dx->name, 4, NULL )->name, ds->name );
 
             cpu_compare_and_branch_8bit( _environment, command->realName, drawECommandLetter->realName, angle45CommandLabel, 1 );
 

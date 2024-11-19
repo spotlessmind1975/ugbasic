@@ -203,7 +203,7 @@ void play_string( Environment * _environment, char * _string ) {
         cpu_jump( _environment, readParameter2DoneLabel );
 
         cpu_label( _environment, readParameterDiv2 );
-        cpu_math_div2_const_8bit( _environment, parameter->realName, 1, 0 );
+        cpu_math_div2_const_8bit( _environment, parameter->realName, 1, 0, NULL );
         cpu_jump( _environment, readParameter2DoneLabel );
 
         cpu_label( _environment, readParameter2DoneLabel );
@@ -361,7 +361,7 @@ void play_string( Environment * _environment, char * _string ) {
             cpu_inc_16bit( _environment, address->realName );
 
             cpu_move_8bit( _environment, duration->realName, temp->realName );
-            cpu_math_div2_const_8bit( _environment, temp->realName, 1, 0 );
+            cpu_math_div2_const_8bit( _environment, temp->realName, 1, 0, NULL );
             cpu_math_add_8bit( _environment, duration->realName, temp->realName, duration->realName );
 
             cpu_jump( _environment, durationDotCommandLabel );

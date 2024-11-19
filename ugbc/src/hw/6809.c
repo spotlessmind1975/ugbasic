@@ -1269,12 +1269,17 @@ void cpu6809_math_div_8bit_to_8bit_const( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_8bit )
 
         MAKE_LABEL
 
+        if ( _remainder ) {
+            outline1("LDA %s", _source);
+            outline0("ANDA #$01");
+            outline1("STA %s", _remainder);
+        }
         if ( _signed ) {
             outline0("LDA #0");
             outline0("STA <MATHPTR0");
@@ -1308,6 +1313,11 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
 
     embedded( cpu_math_div2_const_8bit, src_hw_6809_cpu_math_div2_const_8bit_asm );
 
+        if ( _remainder ) {
+            outline1("LDA %s", _source);
+            outline0("ANDA #$01");
+            outline1("STA %s", _remainder);
+        }
         outline1("LDB %s", _source);
         outline1("LDA #$%2.2x", _steps);
         if ( _signed ) {
@@ -2152,7 +2162,7 @@ void cpu6809_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_16bit )
 
@@ -2160,6 +2170,11 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
 
         if ( _signed ) {
 
+            if ( _remainder ) {
+                outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+                outline0("ANDA #$01");
+                outline1("STA %s", address_displacement( _environment, _remainder, "1" ) );
+            }
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
@@ -2207,6 +2222,11 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
 
         } else {
 
+            if ( _remainder ) {
+                outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+                outline0("ANDA #$01");
+                outline1("STA %s", address_displacement( _environment, _remainder, "1" ) );
+            }
             outline1("LDD %s", _source );
             outline1("LDX #$%2.2x", _steps );
             outhead1("%sloop", label );
@@ -2222,6 +2242,11 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
 
     embedded( cpu_math_div2_const_16bit, src_hw_6809_cpu_math_div2_const_16bit_asm );
 
+        if ( _remainder ) {
+            outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+            outline0("ANDA #$01");
+            outline1("STA %s", address_displacement( _environment, _remainder, "1" ) );
+        }
         outline1("LDD %s", _source );
         outline1("LDX #$%2.2x", _steps );
 
@@ -2763,7 +2788,7 @@ void cpu6809_math_complement_const_32bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_32bit )
 
@@ -2771,6 +2796,11 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
         if ( _signed ) {
 
+            if ( _remainder ) {
+                outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+                outline0("ANDA #$01");
+                outline1("STA %s", address_displacement( _environment, _remainder, "3" ) );
+            }
             outline1("LDA %s", _source);
             outline0("ANDA #$80");
             outline1("BEQ %spos", label );
@@ -2851,6 +2881,11 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
         } else {
 
+            if ( _remainder ) {
+                outline1("LDA %s", address_displacement( _environment, _source, "3" ) );
+                outline0("ANDA #$01");
+                outline1("STA %s", address_displacement( _environment, _remainder, "3" ) );
+            }
             outline1("LDD %s", _source );
             outline0("STD <MATHPTR0" );
             outline1("LDD %s", address_displacement(_environment, _source, "2") );
