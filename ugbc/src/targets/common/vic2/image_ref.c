@@ -152,9 +152,9 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // BASE
 
-                outline1("LDA #<%s", image->realName);
+                outline1("LDA #$%2.2x", (unsigned char)( image->absoluteAddress & 0xff ) );
                 outline1( "STA %s", imageRef->realName );
-                outline1("LDA #>%s", image->realName);
+                outline1("LDA #$%2.2x", (unsigned char)( (image->absoluteAddress>>8) & 0xff ) );
                 outline1( "STA %s", address_displacement( _environment, imageRef->realName, "1" ) );
 
                 // SIZE
@@ -271,9 +271,9 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // BASE
 
-                outline1("LDA #<%s", image->realName);
+                outline1("LDA #$%2.2x", (unsigned char)( image->absoluteAddress & 0xff ) );
                 outline1( "STA %s", imageRef->realName );
-                outline1("LDA #>%s", image->realName);
+                outline1("LDA #$%2.2x", (unsigned char)( (image->absoluteAddress>>8) & 0xff ) );
                 outline1( "STA %s", address_displacement( _environment, imageRef->realName, "1" ) );
 
                 // SIZE
