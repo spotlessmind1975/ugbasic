@@ -1270,7 +1270,7 @@ MUSICSETPROGRAM:
     TAX
     PLA
     JSR SIDSETPROGRAM
-    RTS    
+    JMP MUSICPLAYERL1B
 
 MUSICNOTEOFF:
     LSR
@@ -1278,7 +1278,7 @@ MUSICNOTEOFF:
     LSR
     LSR
     JSR SIDSTOP
-    RTS    
+    JMP MUSICPLAYERL1B
 
 MUSICNOTEON:
     LSR
@@ -1300,7 +1300,7 @@ MUSICNOTEON:
     PHA
     JSR MUSICREADNEXTBYTE
     PLA
-    RTS
+    JMP MUSICPLAYERL1B
 
 ; This routine has been added in order to read the
 ; next byte in a "blocked" byte stream.
