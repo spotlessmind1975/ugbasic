@@ -1473,11 +1473,16 @@ void cpu6502_math_div_8bit_to_8bit_const( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char *_remainder ) {
 
     inline( cpu_math_div2_const_8bit )
 
         if ( _signed ) {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             outline1("LDA %s", _source);
             outline0("AND #$80" );
             outline0("TAX");
@@ -1490,6 +1495,11 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
             outline1("ORA %s", _source);
             outline1("STA %s", _source);
         } else {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             while( _steps ) {
                 outline0("CLC");
                 outline1("ROR %s", _source);
@@ -1499,6 +1509,11 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
 
     embedded( cpu_math_div2_const_8bit, src_hw_6502_cpu_math_div2_const_8bit_asm )
 
+        if ( _remainder ) {
+            outline1("LDA %s", _source);
+            outline0("AND #$01" );
+            outline1("STA %s", _remainder);
+        }
         if ( _signed ) {
             outline1("LDA %s", _source);
             outline1("LDX #$%2.2x", _steps );
@@ -2801,11 +2816,16 @@ void cpu6502_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_16bit )
 
         if ( _signed ) {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline0("AND #$80" );
             outline0("TAX")
@@ -2819,6 +2839,11 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline1("ORA %s", address_displacement(_environment, _source, "1"));
             outline1("STA %s", address_displacement(_environment, _source, "1"));
         } else {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             while( _steps ) {
                 outline0("CLC");
                 outline1("LSR %s", address_displacement(_environment, _source, "1"));
@@ -3679,11 +3704,16 @@ void cpu6502_math_complement_const_32bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_32bit )
 
         if ( _signed ) {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline0("AND #$80");
             outline0("TAX");
@@ -3699,6 +3729,11 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline1("ORA %s", address_displacement(_environment, _source, "3"));
             outline1("STA %s", address_displacement(_environment, _source, "3"));
         } else {
+            if ( _remainder ) {
+                outline1("LDA %s", _source);
+                outline0("AND #$01" );
+                outline1("STA %s", _remainder);
+            }
             while( _steps ) {
                 outline0("CLC");
                 outline1("LSR %s", address_displacement(_environment, _source, "3"));

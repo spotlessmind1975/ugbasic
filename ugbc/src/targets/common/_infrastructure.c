@@ -4209,7 +4209,7 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
 
     if ( VT_BITWIDTH(source->type) > 1 && VT_BITWIDTH(target->type) > 1 && target->initializedByConstant ) { 
         if ( log2(target->value) == (int)log2(target->value) ) {
-            return variable_div2_const( _environment, _source, target->value );
+            return variable_div2_const( _environment, _source, target->value, _remainder );
         } else {
             return variable_div_const( _environment, _source, target->value, _remainder );
         }
@@ -5317,25 +5317,29 @@ Variable * variable_sl_const( Environment * _environment, char * _destination, i
  * @return Variable* The result of operation
  * @throw EXIT_FAILURE "Destination variable does not exist"
  */
-Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits ) {
+Variable * variable_div2_const( Environment * _environment, char * _destination, int _bits, char * _remainder ) {
     Variable * destination = variable_retrieve( _environment, _destination );    
     Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
     variable_move_naked( _environment, destination->name, result->name );
+    Variable * remainder;
+    if ( _remainder ) {
+        remainder = variable_retrieve_or_define( _environment, _remainder, destination->type, 0 );
+    }
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
             if ( (int)log2(_bits) > 0 ) {
-                cpu_math_div2_const_32bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+                cpu_math_div2_const_32bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ), remainder ? remainder->realName : NULL );
             }
             break;
         case 16:
             if ( (int)log2(_bits) > 0 ) {
-                cpu_math_div2_const_16bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+                cpu_math_div2_const_16bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ), remainder ? remainder->realName : NULL );
             }
             break;
         case 8:
             if ( (int)log2(_bits) > 0 ) {
-                cpu_math_div2_const_8bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ) );
+                cpu_math_div2_const_8bit( _environment, result->realName, (int)(log2(_bits)), VT_SIGNED( destination->type ), remainder ? remainder->realName : NULL );
             }
             break;
         case 1:
@@ -5354,13 +5358,13 @@ Variable * variable_sr_const( Environment * _environment, char * _destination, i
 
     switch( VT_BITWIDTH( destination->type ) ) {
         case 32:
-            cpu_math_div2_const_32bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_32bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ), NULL );
             break;
         case 16:
-            cpu_math_div2_const_16bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_16bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ), NULL );
             break;
         case 8:
-            cpu_math_div2_const_8bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ) );
+            cpu_math_div2_const_8bit( _environment, result->realName, _bits, VT_SIGNED( destination->type ), NULL );
             break;
         case 1:
         case 0:

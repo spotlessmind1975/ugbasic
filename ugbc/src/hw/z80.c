@@ -1430,14 +1430,19 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_8bit )
 
         MAKE_LABEL
 
+        if ( _remainder ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $1" );
+            outline1("LD (%s), A", _remainder );
+        }
         if ( _signed ) {
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
+            outline1("LD A, (%s)", _source );
             outline0("AND $80" );
             outline0("PUSH AF" );
             outline0("CP 0" );
@@ -1469,6 +1474,11 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
 
     embedded( cpu_math_div2_const_8bit, src_hw_z80_cpu_math_div2_const_8bit_asm );
 
+        if ( _remainder ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $1" );
+            outline1("LD (%s), A", _remainder );
+        }
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
         outline1("LD A, $%2.2x", _steps);
@@ -2299,12 +2309,17 @@ void z80_math_complement_const_16bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_16bit )
 
         MAKE_LABEL
 
+        if ( _remainder ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $1" );
+            outline1("LD (%s), A", _remainder );
+        }
         if ( _signed ) {
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1") );
             outline0("AND $80" );
@@ -2341,6 +2356,11 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
 
     embedded( cpu_math_div2_const_16bit, src_hw_z80_cpu_math_div2_const_16bit_asm )
 
+        if ( _remainder ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $1" );
+            outline1("LD (%s), A", _remainder );
+        }
         if ( _signed ) {
             if ( _steps ) {
                 outline1("LD HL, (%s)", _source );
@@ -3192,12 +3212,17 @@ void z80_math_complement_const_32bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_32bit )
 
         MAKE_LABEL
 
+        if ( _remainder ) {
+            outline1("LD A, (%s)", _source );
+            outline0("AND $1" );
+            outline1("LD (%s), A", _remainder );
+        }
         if ( _signed ) {
             outline1("LD A, (%s)", address_displacement(_environment, _source, "3") );
             outline0("AND $80" );
