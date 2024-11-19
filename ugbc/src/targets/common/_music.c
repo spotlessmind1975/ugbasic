@@ -120,6 +120,8 @@ static int decode_midi_inside_memory_limits( ) {
 // It returns always 0.
 static int decode_midi_payload_set_tempo( MidiMessagePayload * _payload ) {
 
+    // printf( "iBPM = %d\n", _payload->MsgData.MetaEvent.Data.Tempo.iBPM );
+
     tempo = _payload->MsgData.MetaEvent.Data.Tempo.iBPM;
 
     return 0;
@@ -454,7 +456,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
     if ( mf ) {
 
         imfBuffer = malloc( 16 * MAX_TEMPORARY_STORAGE );
-        int ppq = 120;
+        int ppq = midiFileGetPPQN(mf);
         int midiConversionDone = 0;
         int track = 0;
 
@@ -626,10 +628,21 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
                 // If the minimum position is valid...
                 if ( midiMinPosition >= midiPosition && midiMinPosition < (midiPosition + 0xffffff) ) {
 
+                    // just divide 60,000 by your tempo and you will get the number of milliseconds per beat. 
+                    // Thereafter you can divide by two for eighth notes or four for sixteenth notes.
+                    // microseconds per tick = microseconds per quarter note / ticks per quarter note
+
+                    float kMillisecondsPerBPM = (float)( 60 * 1000 ) / (float)tempo;
+                    float kMillisecondsPerTick = kMillisecondsPerBPM / ppq;
+                    float deltaTimeInMilliseconds = ( midiMinPosition - midiPosition ) * kMillisecondsPerTick;
+
                     // We must calculate the effective delay (in jiffies) 
                     // to introduce into the IMF stream, and it is based
                     // on the real MIDI tempo.
-                    int jiffies = ( ( midiMinPosition - midiPosition ) * 600 ) / ( tempo * ppq );
+                    int jiffies = deltaTimeInMilliseconds / 20;
+
+                    // printf( " ( midiMinPosition - midiPosition ): %d\n",  ( midiMinPosition - midiPosition ) );
+                    // printf( "deltaTimeInMilliseconds: %f, jiffies: %d\n", deltaTimeInMilliseconds, jiffies );
 
                     // printf(" DELAY: %d jiffies\n", jiffies );
 
