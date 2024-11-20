@@ -3134,7 +3134,9 @@ exponential_less:
             $17, $18, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        sequence->readonly = $19;
+        if ( $19 ) {
+            sequence->readonly = $19;
+        }
         $$ = sequence->name;
       }
     | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {        
@@ -3147,7 +3149,9 @@ exponential_less:
             $15, $16, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        sequence->readonly = $17;
+        if ( $17 ) {
+            sequence->readonly = $17;
+        }
         $$ = sequence->name;
       }
     | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
@@ -3159,7 +3163,9 @@ exponential_less:
             $9, $10, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        images->readonly = $11;
+        if ( $11 ) {
+            images->readonly = $11;
+        }
         $$ = images->name;
       }
     | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
@@ -3171,7 +3177,9 @@ exponential_less:
             $11, $12, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        images->readonly = $13;
+        if ( $11 ) {
+            images->readonly = $11;
+        }
         $$ = images->name;
       }
     | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
@@ -3185,22 +3193,30 @@ exponential_less:
       }
     | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
-        image->readonly = $10;
+        if ( $10 ) {
+            image->readonly = $10;
+        }
         $$ = image->name;
       }
     | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
-        image->readonly = $12;
+        if ( $12 ) {
+            image->readonly = $12;
+        }
         $$ = image->name;
       }
     | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
-        image->readonly = $12;
+        if ( $12 ) {
+            image->readonly = $12;
+        }
         $$ = image->name;
       }
     | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
-        image->readonly = $14;
+        if ( $14 ) {
+            image->readonly = $14;
+        }
         $$ = image->name;
       }
     | LOAD TILE OP String CP tile_load_flags {
