@@ -8967,6 +8967,26 @@ target :
         #else
             $$ = 1;
         #endif
+    }
+    |
+    SPRITE AVAILABLE {
+        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
+            || defined(__msx1__) || defined(__coleco__) \
+            || defined(__sc3000__) || defined(__sg1000__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
+    |
+    SPRITE NOT AVAILABLE {
+        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
+            || defined(__msx1__) || defined(__coleco__) \
+            || defined(__sc3000__) || defined(__sg1000__)
+            $$ = 0;
+        #else
+            $$ = 1;
+        #endif
     }    
     ;
 
