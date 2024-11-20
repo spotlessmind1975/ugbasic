@@ -90,6 +90,7 @@ void kill_procedure( Environment * _environment, char * _handle ) {
     
     _environment->anyProtothread = 1;
 
+    cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_ENDED );
     cpu_protothread_unregister( _environment, threadId->realName );
 
 }
