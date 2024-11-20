@@ -37,6 +37,7 @@
 
 VBL:
     CMP #$FA
+    LDA $D012
 VBL2:
     CMP $d012
     BNE VBL2
