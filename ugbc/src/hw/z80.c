@@ -6904,6 +6904,19 @@ void z80_protothread_get_state( Environment * _environment, char * _index, char 
 
 }
 
+void z80_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+
+    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+
+    outline1("LD A, (%s)", _index );
+    outline0("LD B, A" );
+
+    outline0("CALL PROTOTHREADGETADDRESS" );
+
+    outline1("LD (%s), DE", _state );
+
+}
+
 void z80_protothread_current( Environment * _environment, char * _current ) {
 
     deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
