@@ -61,7 +61,8 @@ This statement will generate a series of variables: ''prefixFrame'', which will
 contain the next frame to be displayed for the animation; ''prefixFrameDirection'', 
 which will be 1 if the animation proceeds from the smallest frame to the largest frame 
 and -1 vice versa; ''prefixX'' and ''prefixY'', which will contain the position where 
-the animation will be displayed; ''prefixNext'', to signal a ''NEXT'' event;
+the animation will be displayed, while ''prefixOX'' and ''prefixOY'' will contain
+the previous coordinates; ''prefixNext'', to signal a ''NEXT'' event;
 ''prefixAnimation'' that mantains the thread handle for this animation.
 
 It is possible to indicate that a certain number of frames at the beginning of the 
@@ -71,6 +72,14 @@ followed by the number of frames and any delay to be applied between each frame.
 It is also possible to indicate a certain number of frames from the end as belonging 
 to an "end of sequence" (also called "ease out"). With the keyword ''EASEOUT'' it will 
 be possible to indicate the number of frames, and the delay between each of them.
+
+If the animation needs to preserve the background, you need to add the ''PRESERVE BACKGROUND''
+keywords. This option will create an additional variable called ''prefixBackground'' with 
+the image that is in the background of the animation before the animation is drawn. 
+On each redraw, the background will be restored before drawing the next frame.
+
+If you need to synchronize with vertical blank, i.e. avoid flickering while drawing the 
+frame, you need to add the ''WAIT VBL'' option.
 
 Finally, you can indicate the name of an animation that will be executed at the end 
 of the current one, where the animation ends naturally or the signal to move to the 
@@ -90,7 +99,8 @@ all'oggetto che avrà questa animazione. Questo è possibile indicarlo con la pa
 chiave ''USING''. Questa istruzione genererà una serie di variabili: ''prefixFrame'', 
 che conterrà il prossimo fotogramma da visualizzare per l'animazione; ''prefixFrameDirection'', 
 che sarà 1 se l'animazione procede dal fotogramma più piccolo a quello più grande e -1 viceversa; 
-''prefixX'' e ''prefixY'', che conterrà la posizione dove l'animazione sarà visualizzata;
+''prefixX'' e ''prefixY'', che conterrà la posizione dove l'animazione sarà visualizzata, mentre 
+''prefixOX'' e ''prefixOY'' conterranno le coordinate precedenti;
 ''prefixNext'' per segnalare un evento ''NEXT''; ''prefixAnimation'' che mantiene l'handle per
 il thread per l'animazione attuale.
 
@@ -102,11 +112,20 @@ E' possibile, inoltre, indicare un certo numero di fotogrammi dalla fine come
 appartenenti a un "fine sequenza" (chiamato anche "ease out"). Con la parola chiave 
 ''EASEOUT'' sarà possibile indicare il numero di fotogrammi, e il ritardo tra ognuno di essi.
 
+Se l'animazione deve preservare lo sfondo, è necessario aggiungere le parole chiavi 
+''PRESERVE BACKGROUND''. Questa opzione creerà una variabile aggiuntiva chiamata 
+''prefixBackground'' con l'immagina presente sullo sfondo dell'animazione prima che la 
+stessa sia disegnata. Ad ogni ridisegno, lo sfondo sarà ripristinato prima di disegnare 
+il fotogramma successivo.
+
+Se fosse necessario sincronizzarsi con il vertical blank, cioè evitare il flickering durante
+il disegno del fotogramma, è necessario aggiungere l'opzione ''WAIT VBL''.
+
 Infine, si può indicare il nome di una animazione che sarà eseguita al termine di quella 
 attuale, laddove la stessa termini in modo naturale o sia inviato il segnale di passare alla 
 successiva. L'animazione viene indicata con la parola chiave NEXT e deve essere già definita.
 
-@syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT [WITH EASIN] anim]
+@syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT [WITH EASIN] anim] [WAIT VBL] [PRESERVE BACKGROUND]
 
 @example flyingAirplane := LOAD ATLAS("airplane.png") FRAME SIZE (16, 16)
 @example ANIMATION BOUNCE anim WITH flyingAirplane USING airplane
@@ -153,6 +172,39 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     char prefixNext[MAX_TEMPORARY_STORAGE]; sprintf( prefixNext, "%sNext", _prefix );
     Variable * prefixNextVar = variable_define( _environment, prefixNext, VT_SBYTE, 0 );
 
+    char prefixDummy[MAX_TEMPORARY_STORAGE]; sprintf( prefixDummy, "%sDummy", _prefix );
+
+    // DIM [prefix]Background AS IMAGE
+    Variable * prefixBackgroundVar = NULL;
+    Variable * prefixOXVar = NULL;
+    Variable * prefixOYVar = NULL;
+    Variable * prefixDummyVar = NULL;
+
+    char prefixBackground[MAX_TEMPORARY_STORAGE]; sprintf( prefixBackground, "%sBackground", _prefix );
+    char prefixBackground2[MAX_TEMPORARY_STORAGE]; sprintf( prefixBackground2, "_%sBackground", _prefix );
+    char prefixOX[MAX_TEMPORARY_STORAGE]; sprintf( prefixOX, "%sOX", _prefix );
+    char prefixOY[MAX_TEMPORARY_STORAGE]; sprintf( prefixOY, "%sOY", _prefix );
+
+    if ( _environment->animationPreserveBackground ) {
+        if ( ! variable_exists( _environment, prefixDummy ) ) {
+
+            // DIM [prefix]Background AS IMAGE
+            prefixBackgroundVar = new_image( _environment, atlas->frameWidth, atlas->frameHeight, ((struct _Environment *)_environment)->currentMode );
+            prefixBackgroundVar->name = strdup( prefixBackground );
+            prefixBackgroundVar->realName = strdup( prefixBackground2 );
+
+            // DIM [prefix]OX AS POSITION
+            prefixOXVar = variable_define( _environment, prefixOX, VT_POSITION, 0 );
+
+            // DIM [prefix]OY AS POSITION
+            prefixOYVar = variable_define( _environment, prefixOY, VT_POSITION, 0 );
+
+        } else {
+            prefixBackgroundVar = variable_retrieve( _environment, prefixBackground );
+            prefixOXVar = variable_retrieve( _environment, prefixOX );
+            prefixOYVar = variable_retrieve( _environment, prefixOY );
+        }
+    }
 	// PARALLEL PROCEDURE [identifier]
 
     ((struct _Environment *)_environment)->parameters = 0;
@@ -190,12 +242,63 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_POSITION;
     ++((struct _Environment *)_environment)->parameters;
 
+    if ( _environment->animationPreserveBackground ) {
+
+        // 	SHARED  [prefix]Background
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixBackground );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_IMAGE;
+        ++((struct _Environment *)_environment)->parameters;
+
+        // 	SHARED  [prefix]OX
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixOX );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_POSITION;
+        ++((struct _Environment *)_environment)->parameters;
+
+        // 	SHARED  [prefix]OY
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixOY );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_POSITION;
+        ++((struct _Environment *)_environment)->parameters;
+
+        // 	SHARED  [prefix]Dummy
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixDummy );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_BYTE;
+        ++((struct _Environment *)_environment)->parameters;
+
+    }
+
 	// 	SHARED  [prefix]Next
     ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixNext );
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_SBYTE;
     ++((struct _Environment *)_environment)->parameters;
 
     shared( _environment );
+
+    char skipToRealCodeStart[MAX_TEMPORARY_STORAGE]; sprintf( skipToRealCodeStart, "%scodestart", _identifier );
+    char updateIfPositionChanged[MAX_TEMPORARY_STORAGE]; sprintf( updateIfPositionChanged, "%supdate", _prefix );
+
+    if ( _environment->animationPreserveBackground && ! variable_exists( _environment, prefixDummy ) ) {
+
+        prefixDummyVar = variable_define( _environment, prefixDummy, VT_BYTE, 0 );
+
+        cpu_jump( _environment, skipToRealCodeStart );
+
+        cpu_label( _environment, updateIfPositionChanged );
+            char skipIfSamePositionLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipIfSamePositionLabel, "%sskip0same", _prefix );
+            char skipIfSamePositionLabel2[MAX_TEMPORARY_STORAGE]; sprintf( skipIfSamePositionLabel2, "%sskip0same2", _prefix );
+            cpu_compare_and_branch_8bit_const( _environment, prefixDummyVar->realName, 0x00, skipIfSamePositionLabel2, 1 );
+            cpu_compare_and_branch_8bit_const( _environment, variable_xor( _environment, variable_xor( _environment, prefixXVar->name, prefixOXVar->name )->name, variable_xor( _environment, prefixYVar->name, prefixOYVar->name )->name )->realName, 0x00, skipIfSamePositionLabel, 1 );
+            put_image( _environment, prefixBackgroundVar->name, prefixOXVar->name, prefixOYVar->name, NULL, NULL, NULL, NULL, 0 );
+            cpu_label( _environment, skipIfSamePositionLabel2 );
+            get_image( _environment, prefixBackgroundVar->name, prefixXVar->name, prefixYVar->name, NULL, NULL, NULL, NULL, 0 );
+            variable_move( _environment, prefixXVar->name, prefixOXVar->name );
+            variable_move( _environment, prefixYVar->name, prefixOYVar->name );
+            cpu_label( _environment, skipIfSamePositionLabel );
+            variable_store( _environment, prefixDummyVar->name, 0xff );
+            cpu_return( _environment );
+        
+        cpu_label( _environment, skipToRealCodeStart );
+
+    }
 
 	// 	[prefix]Frame = 0
     variable_store( _environment, prefixFrame, 0 );
@@ -219,6 +322,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
             if ( _environment->animationWaitVbl ) {
                 wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+            }
+
+            if ( _environment->animationPreserveBackground ) {
+                cpu_call( _environment, updateIfPositionChanged );                
             }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
@@ -257,6 +364,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
                 }
 
+                if ( _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
+
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
 
@@ -287,6 +398,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
                 if ( _environment->animationWaitVbl ) {
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
+
+                if ( _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
                 }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
@@ -338,6 +453,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
                 }
 
+                if ( _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
+
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
 
@@ -381,6 +500,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
             if ( _environment->animationWaitVbl ) {
                 wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+            }
+
+            if ( _environment->animationPreserveBackground ) {
+                cpu_call( _environment, updateIfPositionChanged );                
             }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY

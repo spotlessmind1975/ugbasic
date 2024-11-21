@@ -9963,9 +9963,18 @@ optional_wait_vbl :
     WAIT VBL {
         ((struct _Environment *)_environment)->animationWaitVbl = 1;
     };
-    
+
+optional_preserve_background :
+    {
+        ((struct _Environment *)_environment)->animationPreserveBackground = 0;
+    }
+    |
+    PRESERVE BACKGROUND {
+        ((struct _Environment *)_environment)->animationPreserveBackground = 1;
+    };
+
 animation_definition :
-    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl {
+    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
         animation( _environment, $2, $4, $9, $10 );
     };
 

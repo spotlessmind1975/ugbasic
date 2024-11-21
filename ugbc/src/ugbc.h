@@ -2906,6 +2906,8 @@ typedef struct _Environment {
 
     int animationWaitVbl;
 
+    int animationPreserveBackground;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
