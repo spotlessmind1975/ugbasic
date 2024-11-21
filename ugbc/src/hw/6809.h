@@ -305,6 +305,7 @@ void cpu6809_protothread_restore( Environment * _environment, char * _index, cha
 void cpu6809_protothread_set_state( Environment * _environment, char * _index, int _state );
 void cpu6809_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void cpu6809_protothread_current( Environment * _environment, char * _current );
+void cpu6809_protothread_get_index( Environment * _environment, char * _index, char * _address );
 
 void cpu6809_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
 void cpu6809_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
@@ -620,6 +621,7 @@ void cpu6809_f32sub( char * _x, char * _y, char * _result );
 #define cpu_protothread_set_state( _environment, _index, _state ) cpu6809_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) cpu6809_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) cpu6809_protothread_current( _environment, _current )
+#define cpu6809_protothread_get_index( _environment, _index, _address ) cpu6809_protothread_get_index( _environment, _index, _address )
 
 #define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) cpu6809_msc1_uncompress_direct_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) cpu6809_msc1_uncompress_direct_indirect( _environment, _input, _output )

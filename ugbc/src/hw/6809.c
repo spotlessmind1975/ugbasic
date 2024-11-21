@@ -5741,6 +5741,18 @@ void cpu6809_protothread_current( Environment * _environment, char * _current ) 
 
 }
 
+void cpu6809_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+
+    deploy_with_vars( protothread, src_hw_6809_protothread_asm, cpu_protothread_vars );
+
+    outline1("LDB %s", _index );
+
+    outline0("JSR PROTOTHREADGETADDRESS" );
+
+    outline1("STY %s", _address );
+
+}
+
 void cpu6809_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
     outline1("LDY #%s", _label );
