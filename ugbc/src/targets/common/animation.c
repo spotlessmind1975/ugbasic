@@ -75,7 +75,8 @@ be possible to indicate the number of frames, and the delay between each of them
 Finally, you can indicate the name of an animation that will be executed at the end 
 of the current one, where the animation ends naturally or the signal to move to the 
 next one is sent. The animation is indicated with the keyword ''NEXT'' and must already 
-be defined.
+be defined. If you need to use the ease in sequence, you need to use the 
+NEXT WITH EASEIN syntax.
 
 @italian
 
@@ -105,7 +106,7 @@ Infine, si può indicare il nome di una animazione che sarà eseguita al termine
 attuale, laddove la stessa termini in modo naturale o sia inviato il segnale di passare alla 
 successiva. L'animazione viene indicata con la parola chiave NEXT e deve essere già definita.
 
-@syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT anim]
+@syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT [WITH EASIN] anim]
 
 @example flyingAirplane := LOAD ATLAS("airplane.png") FRAME SIZE (16, 16)
 @example ANIMATION BOUNCE anim WITH flyingAirplane USING airplane
@@ -127,6 +128,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 	// DIM [prefix]Animation AS THREAD
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
     Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0 );
+
+	// DIM [prefix]AllowedEaseIn AS SIGNED BYTE
+    char prefixAllowedEasyIn[MAX_TEMPORARY_STORAGE]; sprintf( prefixAllowedEasyIn, "%sFrame", _prefix );
+    Variable * prefixAllowedEasyInVar = variable_define( _environment, prefixAllowedEasyIn, VT_SBYTE, 0 );
 
 	// DIM [prefix]frame AS SIGNED BYTE
     char prefixFrame[MAX_TEMPORARY_STORAGE]; sprintf( prefixFrame, "%sFrame", _prefix );
@@ -203,6 +208,8 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
         char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
 
+        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEasyInVar->realName, 0, easeInDoneLabel, 1 );
+
         // DO
         cpu_label( _environment, easeInLabel );
 
@@ -210,6 +217,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             wait_milliseconds( _environment, _environment->animationEaseInDelay );
 
 	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+            if ( _environment->animationWaitVbl ) {
+                wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+            }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
             put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
@@ -224,6 +234,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         cpu_jump( _environment, easeInLabel );
 
         cpu_label( _environment, easeInDoneLabel );
+
+        variable_store( _environment, prefixAllowedEasyInVar->name, 0xff );
+        variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
+
     }
 
     switch( _environment->animationType ) {
@@ -239,6 +253,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 wait_milliseconds( _environment, _environment->animationDelay );
 
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
@@ -268,6 +285,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 wait_milliseconds( _environment, _environment->animationDelay );
 
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
@@ -314,6 +334,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 wait_milliseconds( _environment, _environment->animationDelay );
 
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
@@ -356,6 +379,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             wait_milliseconds( _environment, _environment->animationEaseOutDelay );
 
 	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+            if ( _environment->animationWaitVbl ) {
+                wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+            }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
             put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
@@ -374,8 +400,11 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
     if ( _next ) {
         ((struct _Environment *)_environment)->parameters = 0;
+        Variable * temporary = variable_temporary( _environment, VT_THREAD, "(temp)");
+        variable_move( _environment, spawn_procedure( _environment, _next, 0 )->name, temporary->name );
         kill_procedure( _environment, prefixAnimationVar->name );
-        variable_move( _environment, spawn_procedure( _environment, _next, 0 )->name, prefixAnimationVar->name );
+        variable_move( _environment, temporary->name, prefixAnimationVar->name );
+        variable_store( _environment, prefixAllowedEasyInVar->name, _environment->animationNextWithEaseIn ? 0xff : 0 );
     }
 
     end_procedure( _environment, NULL );

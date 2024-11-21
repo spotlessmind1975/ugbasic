@@ -9942,15 +9942,30 @@ optional_ease_out :
 optional_next_animation :
     {
         $$ = NULL;
-    
+        ((struct _Environment *)_environment)->animationNextWithEaseIn = 0;
     }
     |
     NEXT Identifier {
         $$ = $2;
+        ((struct _Environment *)_environment)->animationNextWithEaseIn = 0;
+    }
+    |
+    NEXT WITH EASEIN Identifier {
+        $$ = $4;
+        ((struct _Environment *)_environment)->animationNextWithEaseIn = 1;
     };
 
+optional_wait_vbl :
+    {
+        ((struct _Environment *)_environment)->animationWaitVbl = 0;
+    }
+    |
+    WAIT VBL {
+        ((struct _Environment *)_environment)->animationWaitVbl = 1;
+    };
+    
 animation_definition :
-    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation {
+    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl {
         animation( _environment, $2, $4, $9, $10 );
     };
 

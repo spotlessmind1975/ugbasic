@@ -2902,6 +2902,10 @@ typedef struct _Environment {
     int animationEaseOutFrames;
     int animationEaseOutDelay;
 
+    int animationNextWithEaseIn;
+
+    int animationWaitVbl;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
