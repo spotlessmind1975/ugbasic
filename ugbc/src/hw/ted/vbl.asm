@@ -36,10 +36,10 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VBL:
-    BIT $FF1C
+    BIT $FF1D
     BPL VBL
 VBL2:
-    BIT $FF1C
+    BIT $FF1D
     BMI VBL2
     RTS
 
