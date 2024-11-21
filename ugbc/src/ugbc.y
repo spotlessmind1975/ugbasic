@@ -99,7 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
-%token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND
+%token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -181,6 +181,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> PALETTE1
 %type <string> dojo_functions
 %type <integer> clamp_optional
+%type <string> optional_next_animation
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -9879,6 +9880,80 @@ travel_definition :
         travel_path( _environment, $1, $3, $5 );
     };
 
+animation_type :
+      SIMPLE {
+      ((struct _Environment *)_environment)->animationType = AT_SIMPLE;
+    }
+    | BOUNCE {
+      ((struct _Environment *)_environment)->animationType = AT_BOUNCE;
+    }
+    | LOOP {
+      ((struct _Environment *)_environment)->animationType = AT_LOOP;
+    };
+
+optional_delay : 
+    {
+        ((struct _Environment *)_environment)->animationDelay = 20;
+    }
+    |
+    DELAY const_expr {
+        ((struct _Environment *)_environment)->animationDelay = $2;
+    };
+
+
+optional_ease_in_delay : 
+    {
+        ((struct _Environment *)_environment)->animationEaseInDelay = 20;
+    }
+    |
+    DELAY const_expr {
+        ((struct _Environment *)_environment)->animationEaseInDelay = $2;
+    };
+
+optional_ease_in : 
+    {
+        ((struct _Environment *)_environment)->animationEaseInFrames = 0;
+        ((struct _Environment *)_environment)->animationEaseInDelay = 0;
+    }
+    |
+    EASEIN const_expr optional_ease_in_delay {
+        ((struct _Environment *)_environment)->animationEaseInFrames = $2;
+    };
+
+optional_ease_out_delay : 
+    {
+        ((struct _Environment *)_environment)->animationEaseOutDelay = 20;
+    }
+    |
+    DELAY const_expr {
+        ((struct _Environment *)_environment)->animationEaseOutDelay = $2;
+    };
+
+optional_ease_out : 
+    {
+        ((struct _Environment *)_environment)->animationEaseOutFrames = 0;
+        ((struct _Environment *)_environment)->animationEaseOutDelay = 0;
+    }
+    |
+    EASEOUT const_expr optional_ease_out_delay {
+        ((struct _Environment *)_environment)->animationEaseOutFrames = $2;
+    };
+
+optional_next_animation :
+    {
+        $$ = NULL;
+    
+    }
+    |
+    NEXT Identifier {
+        $$ = $2;
+    };
+
+animation_definition :
+    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation {
+        animation( _environment, $2, $4, $9, $10 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -9892,6 +9967,7 @@ statement2nc:
       ((struct _Environment *)_environment)->paletteIndex = 0;
       color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
   } palette_definition
+  | ANIMATION animation_definition
   | PAUSE pause_definition
   | SUSPEND suspend_definition
   | RESUME resume_definition

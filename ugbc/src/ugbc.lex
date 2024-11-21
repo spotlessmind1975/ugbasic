@@ -287,6 +287,8 @@ ALT { RETURN(ALT,1); }
 Al { RETURN(ALT,1); }
 ALTO { RETURN(ALTO,1); }
 Alt { RETURN(ALTO,1); }
+ANIMATION { RETURN(ANIMATION,1); }
+Ani { RETURN(ANIMATION,1); }
 APPLAUSE { RETURN(APPLAUSE,1); }
 Ap { RETURN(APPLAUSE,1); }
 ARRAY { RETURN(ARRAY,1); }
@@ -401,6 +403,8 @@ BOOM { RETURN(BOOM,1); }
 Boo { RETURN(BOOM,1); }
 BORDER { RETURN(BORDER,1); }
 Bo { RETURN(BORDER,1); }
+BOUNCE { RETURN(BOUNCE,1); }
+Bou { RETURN(BOUNCE,1); }
 BUFFER { RETURN(BUFFER,1); }
 BUT { RETURN(BUT,1); }
 But { RETURN(BUT,1); }
@@ -632,6 +636,10 @@ Dyn { RETURN(DYNAMIC,1); }
 %{ /* --------------------------------- E --------------------------------- */ %}
 
 E { RETURN(E,1); }
+EASEIN { RETURN(EASEIN,1); }
+Eai { RETURN(EASEIN,1); }
+EASEOUT { RETURN(EASEOUT,1); }
+Eao { RETURN(EASEOUT,1); }
 ECHOES { RETURN(ECHOES,1); }
 ELECTRIC { RETURN(ELECTRIC,1); }
 ELLIPSE { RETURN(ELLIPSE,1); }
@@ -1312,6 +1320,8 @@ SHOOT { RETURN(SHOOT,1); }
 Sho { RETURN(SHOOT,1); }
 SIGNED { RETURN(SIGNED,1); }
 Sgnd { RETURN(SIGNED,1); }
+SIMPLE { RETURN(SIMPLE,1); }
+Sim { RETURN(SIMPLE,1); }
 SJ2 { RETURN(SJ2,1); }
 Sj2 { RETURN(SJ2,1); }
 SIN { RETURN(SIN,1); }
@@ -1488,6 +1498,8 @@ UPPER\$ { RETURN(UPPER,1); }
 Up { RETURN(UPPER,1); }
 USE { RETURN(USE,1); }
 Ux { RETURN(USE,1); }
+USING { RETURN(USING,1); }
+Uxi { RETURN(USING,1); }
 
 %{ /* --------------------------------- V --------------------------------- */ %}
 
