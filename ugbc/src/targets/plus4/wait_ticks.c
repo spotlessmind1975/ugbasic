@@ -48,11 +48,9 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    
-
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
-
-    ted_busy_wait( _environment, timingString );
+    outline1( "LDX #$%2.2x", (unsigned char)( _timing & 0xff ) );
+    outline1( "LDY #$%2.2x", (unsigned char)( ( _timing >> 8 ) & 0xff ) );
+    outline0( "JSR WAITTIMER" );
 
 }
 
@@ -66,10 +64,10 @@ void wait_ticks( Environment * _environment, int _timing ) {
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
-
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * realTiming = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    ted_busy_wait( _environment, timing->realName );
+    outline1( "LDX %s", realTiming->realName );
+    outline1( "LDY %s", address_displacement( _environment, realTiming->realName, "1" ) );
+    outline0( "JSR WAITTIMER" );
 
 }

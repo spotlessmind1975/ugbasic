@@ -48,24 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    MAKE_LABEL
-
-    outline0("LD HL, (CPCTIMER)");
-    outline0("LD DE, HL");
-    outhead1("%swt:", label);
-    outline0("LD HL, (CPCTIMER)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline0("LD A, H");
-    outline1("CP $%2.2x", (_timing >> 8) );
-    outline1("JR Z, %swt1", label );
-    outline1("JR C, %swt", label );
-    outhead1("%swt1:", label);
-    outline0("LD A, L");
-    outline1("CP $%2.2x", (_timing & 0xff) );
-    outline1("JR Z, %swt2", label );
-    outline1("JR C, %swt", label );
-    outhead1("%swt2:", label);
+    outline1( "LD HL, $%4.4x", _timing );
+    outline0( "CALL WAITTIMER" );
 
 }
 
@@ -81,27 +65,9 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * realTiming = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    outline0("LD HL, (CPCTIMER)");
-    outline0("LD DE, HL");
-    outhead1("%swt:", label);
-    outline0("LD HL, (CPCTIMER)");
-    outline0("SBC HL, DE");
-    outline0("INC HL");
-    outline1("LD A, (%s)", address_displacement(_environment, timing->realName, "1"));
-    outline0("LD B, A");
-    outline0("LD A, H");
-    outline0("CP B" );
-    outline1("JR Z, %swt1", label );
-    outline1("JR C, %swt", label );
-    outhead1("%swt1:", label);
-    outline1("LD A, (%s)", timing->realName);
-    outline0("LD B, A");
-    outline0("LD A, L");
-    outline0("CP B" );
-    outline1("JR Z, %swt2", label );
-    outline1("JR C, %swt", label );
-    outhead1("%swt2:", label);
+    outline1( "LD HL, (%s)", realTiming->realName );
+    outline0( "CALL WAITTIMER" );
 
 }

@@ -48,9 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
-
-    coco3_busy_wait( _environment, timingString );
+    outline1( "LDD #$%4.4x", _timing );
+    outline0( "JSR WAITTIMER" );
 
 }
 
@@ -66,14 +65,8 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * realTiming = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    outline0("LDD COCO3TIMER");
-    outline0("STD COCO3TIMER2");
-    outhead1("%s", label);
-    outline0("LDD COCO3TIMER");
-    outline0("SUBD COCO3TIMER2");
-    outline1("CMPD %s", timing->realName );
-    outline1("BNE %s", label );
-
+    outline1( "LDD %s", realTiming->realName );
+    outline0( "JSR WAITTIMER" );
 }

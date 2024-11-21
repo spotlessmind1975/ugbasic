@@ -48,15 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
     
-    MAKE_LABEL
-
-    outline1("LD BC, $%4.4x", _timing);
-    outhead1("%s:", label);
-    outline0("HALT");
-    outline0("DEC BC");
-    outline0("LD A,B");
-    outline0("OR C");
-    outline1("JR NZ, %s", label);
+    outline1( "LD HL, $%4.4x", _timing );
+    outline0( "CALL WAITTIMER" );
 
 }
 
@@ -70,16 +63,8 @@ void wait_ticks( Environment * _environment, int _timing ) {
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
 
-    MAKE_LABEL
-
-    Variable * timing = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
+    Variable * realTiming = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    outline1("LD BC, (%s)", timing->realName);
-    outhead1("%s:", label);
-    outline0("HALT");
-    outline0("DEC BC");
-    outline0("LD A,B");
-    outline0("OR C");
-    outline1("JR NZ, %s", label);
-
+    outline1( "LD HL, (%s)", realTiming->realName );
+    outline0( "CALL WAITTIMER" );
 }
