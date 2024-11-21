@@ -303,6 +303,7 @@ void cpu6502_protothread_restore( Environment * _environment, char * _index, cha
 void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state );
 void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void cpu6502_protothread_current( Environment * _environment, char * _current );
+void cpu6502_protothread_get_address( Environment * _environment, char * _index, char * _address );
 
 void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
 void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
@@ -620,6 +621,8 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_protothread_set_state( _environment, _index, _state ) cpu6502_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) cpu6502_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) cpu6502_protothread_current( _environment, _current )
+#define cpu_protothread_current( _environment, _current ) cpu6502_protothread_current( _environment, _current )
+#define cpu_protothread_get_address( _environment, _index, _address ) cpu6502_protothread_get_address(  _environment, _index, _address );
 
 #define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) cpu6502_msc1_uncompress_direct_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) cpu6502_msc1_uncompress_direct_indirect( _environment, _input, _output )

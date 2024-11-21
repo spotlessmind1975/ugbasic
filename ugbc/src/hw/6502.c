@@ -7107,6 +7107,21 @@ void cpu6502_protothread_current( Environment * _environment, char * _current ) 
 
 }
 
+void cpu6502_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+
+    deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
+
+    outline1("LDY %s", _index );
+
+    outline0("JSR PROTOTHREADGETADDRESS" );
+
+    outline0("LDA TMPPTR" );
+    outline1("STA %s", _address );
+    outline0("LDA TMPPTR+1" );
+    outline1("STA %s", address_displacement( _environment, _address, "1" ) );
+
+}
+
 void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
         outline1("LDA #<(%s)", address_displacement(_environment, _callback, "1"));
