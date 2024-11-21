@@ -99,7 +99,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token VALUES INST CGOTO DUP ENVELOPE WAVE UGBASIC DIALECT MULTI CSET ROT ASCII ASCIICODE LATENCY SPEED CHECK
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
-%token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING
+%token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9758,6 +9758,16 @@ pause_definition :
         pause_seconds( _environment, $1, $3 );
     };
 
+suspend_definition :
+    expr {
+        suspend_vars( _environment, $1 );
+    };
+
+resume_definition :
+    expr {
+        resume_vars( _environment, $1 );
+    };
+
 wave_definition :
     expr OP_COMMA expr {
         wave( _environment, $1, $3, NULL );
@@ -9883,6 +9893,8 @@ statement2nc:
       color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
   } palette_definition
   | PAUSE pause_definition
+  | SUSPEND suspend_definition
+  | RESUME resume_definition
   | WAIT wait_definition
   | CMOB cmob_definition
   | MOB mob_definition

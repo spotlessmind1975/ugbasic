@@ -3808,6 +3808,7 @@ int embed_scan_string (const char *);
 #define PROTOTHREAD_STATUS_YIELDED		2
 #define PROTOTHREAD_STATUS_EXITED		3
 #define PROTOTHREAD_STATUS_ENDED		4
+#define PROTOTHREAD_STATUS_PAUSED		5
 
 #define FLAG_FLIP_X         1
 #define FLAG_FLIP_Y         2
@@ -4903,6 +4904,7 @@ char *                  resource_load_asserts( Environment * _environment, char 
 Variable *              respawn_procedure( Environment * _environment, char * _name );
 void                    restore_label( Environment * _environment, char * _label );
 void                    restore_label_unsafe( Environment * _environment, char * _label );
+void                    resume_vars( Environment * _environment, char * _thread );
 void                    return_label( Environment * _environment );
 void                    return_procedure( Environment * _environment, char * _value );
 int                     rgbi_equals_rgb( RGBi * _first, RGBi * _second );
@@ -4988,6 +4990,7 @@ void                    sprite_at_vars( Environment * _environment, char * _spri
 Variable *              sqroot( Environment * _environment, char * _value );
 StaticString *          string_reserve( Environment * _environment, char * _value );
 Variable *              strptr( Environment * _environment, char * _name );
+void                    suspend_vars( Environment * _environment, char * _thread );
 void                    sys( Environment * _environment, int _address );
 void                    sys_var( Environment * _environment, char * _address );
 void                    sys_call( Environment * _environment, int _address );

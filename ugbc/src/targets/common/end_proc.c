@@ -105,6 +105,7 @@ void end_procedure( Environment * _environment, char * _value ) {
 
         char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
         char procedureEndedLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureEndedLabel, "%sended", _environment->procedureName );
+        char procedureSuspendedLabel[MAX_TEMPORARY_STORAGE]; sprintf(procedureSuspendedLabel, "%ssusp", _environment->procedureName );
         char protothreadLabelWaiting[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabelWaiting, "%spt%d", _environment->procedureName, 0 );
 
         cpu_label( _environment, procedureParallelDispatch  );
@@ -114,6 +115,8 @@ void end_procedure( Environment * _environment, char * _value ) {
         cpu_protothread_get_state( _environment, "PROTOTHREADCT", status->realName );
 
         cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_ENDED, procedureEndedLabel, 1 );
+
+        cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_PAUSED, procedureSuspendedLabel, 1 );
         // cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_WAITING, protothreadLabelWaiting, 1 );
 
         if ( _environment->protothreadStep > 1 ) {
@@ -135,6 +138,7 @@ void end_procedure( Environment * _environment, char * _value ) {
         }
 
         cpu_label( _environment, procedureEndedLabel );
+        cpu_label( _environment, procedureSuspendedLabel );
         cpu_return( _environment );
 
     }
