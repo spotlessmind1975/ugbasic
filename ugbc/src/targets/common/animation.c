@@ -301,12 +301,16 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     }
 
 	// 	[prefix]Frame = 0
-    variable_store( _environment, prefixFrame, 0 );
+    variable_store( _environment, prefixFrame, _environment->animationReverse ? ( atlas->frameCount - 1 ) : 0 );
     
 	// 	[prefix]FrameDirection = 1
-    variable_store( _environment, prefixFrameDirection, 1 );
+    variable_store( _environment, prefixFrameDirection, _environment->animationReverse ? -1 : 1 );
 
     if ( _environment->animationEaseInFrames ) {
+
+        if ( _environment->animationReverse ) {
+            CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING( _identifier );
+        }
 
         char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
         char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
@@ -371,11 +375,24 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
 
-                // 	INC [prefix]Frame
-                cpu_inc( _environment, prefixFrameVar->realName );
+                if ( _environment->animationReverse ) {
+                    // 	INC [prefix]Frame
+                    cpu_dec( _environment, prefixFrameVar->realName );
+                } else {
+                    // 	INC [prefix]Frame
+                    cpu_inc( _environment, prefixFrameVar->realName );
+                }
+
+                int lastFrame = 0;
+
+                if ( _environment->animationReverse ) {
+                    lastFrame = 0;
+                } else {
+                    lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : atlas->frameCount;
+                }
 
                 // 	EXIT IF [prefix]Frame = ofrom / last frame
-                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : atlas->frameCount, simpleDoneLabel, 1 );
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, lastFrame, simpleDoneLabel, 1 );
             
             // LOOP
             cpu_jump( _environment, simpleLabel );
@@ -410,15 +427,18 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // ADD [prefix]Frame, [prefix]FrameDirection
                 variable_add_inplace_vars( _environment, prefixFrameVar->name, prefixFrameDirectionVar->name );
 
+                int lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : ( atlas->frameCount - 1 );
+                int firstFrame = _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0;
+
                 // IF framePlayer = FRAMES( playerIdle ) - 1 THEN
-                if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, atlas->frameCount - 1 )->name );  
+                if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, lastFrame )->name );  
 
                     // 	framePlayerDirection = -1
                     variable_store( _environment, prefixFrameDirectionVar->name, -1 );
 
                 // ELSEIF framePlayer = 3 THEN
                 else_if_then_label( _environment );  
-                else_if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0 )->name );  
+                else_if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, firstFrame  )->name );  
 
                     // 	framePlayerDirection = 1
                     variable_store( _environment, prefixFrameDirectionVar->name, 1 );
@@ -448,6 +468,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // 	WAIT [delay] MS
                 wait_milliseconds( _environment, _environment->animationDelay );
 
+
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
                 if ( _environment->animationWaitVbl ) {
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
@@ -463,11 +484,21 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // ADD [prefix]Frame, [prefix]FrameDirection
                 variable_add_inplace( _environment, prefixFrameVar->name, 1 );
 
+                int lastFrame = 0;
+                int firstFrame = 0;
+                if ( _environment->animationReverse ) {
+                    firstFrame = atlas->frameCount - 1;
+                    lastFrame = 0;
+                } else {
+                    firstFrame = _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0 ;
+                    lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : ( atlas->frameCount - 1 );
+                }
+
                 // IF [prefix]Frame = FRAMES( [atlas] ) THEN
-                if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, atlas->frameCount )->name );  
+                if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, lastFrame )->name );  
 
                     // 	[prefix]Frame = 0
-                    variable_store( _environment, prefixFrameDirectionVar->name, 0 );
+                    variable_store( _environment, prefixFrameDirectionVar->name, firstFrame );
 
                 // ELSEIF framePlayer = 3 THEN
                 end_if_then( _environment );  
@@ -487,6 +518,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     }
 
     if ( _environment->animationEaseOutFrames ) {
+
+        if ( _environment->animationReverse ) {
+            CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING( _identifier );
+        }
 
         char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
         char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
