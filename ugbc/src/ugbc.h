@@ -2908,6 +2908,8 @@ typedef struct _Environment {
 
     int animationPreserveBackground;
 
+    int animationReverse;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3294,6 +3296,7 @@ typedef struct _Environment {
 #define CRITICAL_COMPRESSION_FAILED(v)  CRITICAL2("E317 - the compression algorithm failed in compressing", v );
 #define CRITICAL_cANNOT_DEFINE_ANIMATION_INSIDE_A_PROCEDURE(n)  CRITICAL2("E318 - cannot define an ANIMATION inside a PROCEDURE", n );
 #define CRITICAL_cANNOT_DEFINE_ANIMATION_WITHOUT_ATLAS(n)  CRITICAL2("E319 - cannot define an ANIMATION with something that is not an ATLAS", n );
+#define CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING(n)  CRITICAL2("E320 - cannot define a REVERSE ANIMATION with easing in/out", n );
 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4943,7 +4946,7 @@ Variable *              rnd1( Environment * _environment );
 void                    rot( Environment * _environment, char * _angle, char * _step );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
-Variable *              running( Environment * _environment, char * _thread_id );
+Variable *              running( Environment * _environment, char * _thread_id, char * _procedure_name );
 
 //----------------------------------------------------------------------------
 // *S*

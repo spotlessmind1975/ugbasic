@@ -3574,7 +3574,10 @@ exponential_less:
       $$ = param_procedure( _environment, $1 )->name;
     }
     | RUNNING OP Identifier CP {
-      $$ = running( _environment, $3 )->name;
+      $$ = running( _environment, $3, NULL )->name;
+    }
+    | RUNNING OP Identifier OP_COMMA Identifier CP {
+      $$ = running( _environment, $3, $5 )->name;
     }
     | SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
@@ -9973,9 +9976,18 @@ optional_preserve_background :
         ((struct _Environment *)_environment)->animationPreserveBackground = 1;
     };
 
+optional_reverse : 
+    {
+        ((struct _Environment *)_environment)->animationReverse = 0;
+    }
+    |
+    REVERSE {
+        ((struct _Environment *)_environment)->animationReverse = 1;
+    };
+
 animation_definition :
-    animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
-        animation( _environment, $2, $4, $9, $10 );
+    optional_reverse animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
+        animation( _environment, $3, $5, $10, $11 );
     };
 
 statement2nc:
