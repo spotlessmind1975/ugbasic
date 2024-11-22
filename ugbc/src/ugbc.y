@@ -9562,13 +9562,9 @@ kill_definition : {
       }
     };
 
-stop_definition : {
-        ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
-        memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
-    } thread_identifiers {
-        for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
-          kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
-        }
+stop_definition : 
+    expr {
+        stop_procedure( _environment, $1 );
     };
 
 spawn_definition :

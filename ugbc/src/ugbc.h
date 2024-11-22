@@ -5020,6 +5020,7 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+void                    stop_procedure( Environment * _environment, char * _prefix );
 StaticString *          string_reserve( Environment * _environment, char * _value );
 Variable *              strptr( Environment * _environment, char * _name );
 void                    suspend_vars( Environment * _environment, char * _thread );
