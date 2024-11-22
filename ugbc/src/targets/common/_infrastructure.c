@@ -667,6 +667,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
             var->size = _size_or_value;
         } else {
             var->value = _size_or_value;
+            var->initialValue = _size_or_value;
         }
         var->precision = _environment->floatType.precision;
 
