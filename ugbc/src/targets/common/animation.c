@@ -315,7 +315,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
         char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
 
-        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEasyInVar->realName, 0, easeInDoneLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEasyInVar->realName, 0xff, easeInDoneLabel, 1 );
 
         // DO
         cpu_label( _environment, easeInLabel );
@@ -346,7 +346,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
         cpu_label( _environment, easeInDoneLabel );
 
-        variable_store( _environment, prefixAllowedEasyInVar->name, 0xff );
+        variable_store( _environment, prefixAllowedEasyInVar->name, 0x0 );
         variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
 
     }
@@ -562,7 +562,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         variable_move( _environment, spawn_procedure( _environment, _next, 0 )->name, temporary->name );
         kill_procedure( _environment, prefixAnimationVar->name );
         variable_move( _environment, temporary->name, prefixAnimationVar->name );
-        variable_store( _environment, prefixAllowedEasyInVar->name, _environment->animationNextWithEaseIn ? 0xff : 0 );
+        variable_store( _environment, prefixAllowedEasyInVar->name, _environment->animationNextWithEaseIn ? 0x00 : 0xff );
     }
 
     end_procedure( _environment, NULL );
