@@ -3307,6 +3307,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_UNFREEZE_WITHOUT_ANIMATION(n)  CRITICAL2("E323 - cannot use UNFREEZE without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_STOP_WITHOUT_ANIMATION(n)  CRITICAL2("E324 - cannot use STOP without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_NEXT_ANIMATION_WITHOUT_ANIMATION(n)  CRITICAL2("E325 - cannot use NEXT ANIMATION without ANIMATION", n ); 
+#define CRITICAL_CANNOT_USE_ANIMATING_WITHOUT_ANIMATION(n)  CRITICAL2("E326 - cannot use ANIMATING without ANIMATION", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4436,6 +4437,7 @@ void                    add_complex_mt( Environment * _environment, char * _vari
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
 void                    animate_semivars( Environment * _environment, char * _prefix, char * _anim, char * _x, char * _y );
+Variable *              animating( Environment * _environment, char * _prefix, char * _animation );
 void                    animation( Environment * _environment, char * _identifier, char * _atlas, char * _prefix, char * _next );
 Variable *              asciicode( Environment * _environment );
 
