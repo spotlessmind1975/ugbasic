@@ -68,13 +68,13 @@ void stop_procedure( Environment * _environment, char * _prefix ) {
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
 
     if ( ! variable_exists( _environment, prefixAnimation ) ) {
-        CRITICAL_CANNOT_USE_UNFREEZE_WITHOUT_ANIMATION(_prefix);
+        CRITICAL_CANNOT_USE_STOP_WITHOUT_ANIMATION(_prefix);
     }
 
     Variable * prefixAnimationVar = variable_retrieve( _environment, prefixAnimation );
 
     if ( prefixAnimationVar->type != VT_THREAD ) {
-        CRITICAL_CANNOT_USE_UNFREEZE_WITHOUT_ANIMATION(_prefix);
+        CRITICAL_CANNOT_USE_STOP_WITHOUT_ANIMATION(_prefix);
     }
 
     kill_procedure( _environment, prefixAnimation );
