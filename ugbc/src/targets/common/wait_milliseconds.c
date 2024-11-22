@@ -71,9 +71,10 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
             Variable * result = variable_temporary( _environment, VT_WORD, "(temporary)" );
             variable_move_from_mt( _environment, waitVariableName, result->name );
             variable_compare_and_branch_const( _environment, 
-                variable_compare( _environment,
-                    result->name, 
-                    get_timer( _environment )->name
+                variable_greater_than( _environment,
+                    get_timer( _environment )->name,
+                    result->name,
+                    1
                 )->name, 0xff, doneLabel, 1 );
         end_loop( _environment, 1 );
       
@@ -121,8 +122,8 @@ void wait_milliseconds_var( Environment * _environment, char * _timing ) {
             variable_move_from_mt( _environment, waitVariableName, result->name );
             variable_compare_and_branch_const( _environment, 
                 variable_greater_than( _environment,
-                    result->name, 
                     get_timer( _environment )->name,
+                    result->name, 
                     1
                 )->name, 0xff, doneLabel, 1 );
         end_loop( _environment, 1 );
