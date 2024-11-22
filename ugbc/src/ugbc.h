@@ -3298,6 +3298,8 @@ typedef struct _Environment {
 #define CRITICAL_cANNOT_DEFINE_ANIMATION_WITHOUT_ATLAS(n)  CRITICAL2("E319 - cannot define an ANIMATION with something that is not an ATLAS", n );
 #define CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING(n)  CRITICAL2("E320 - cannot define a REVERSE ANIMATION with easing in/out", n );
 #define CRITICAL_CANNOT_USE_ANIMATE_WITHOUT_ANIMATION(n)  CRITICAL2("E321 - cannot use ANIMATE without ANIMATION", n ); 
+#define CRITICAL_CANNOT_USE_FREEZE_WITHOUT_ANIMATION(n)  CRITICAL2("E322 - cannot use FREEZE without ANIMATION", n ); 
+#define CRITICAL_CANNOT_USE_UNFREEZE_WITHOUT_ANIMATION(n)  CRITICAL2("E323 - cannot use UNFREEZE without ANIMATION", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4666,12 +4668,13 @@ void                    flip_image_vars_direction( Environment * _environment, c
 void                    flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    font_descriptors_init( Environment * _environment, int _embedded_present );
 void                    forbid( Environment * _environment );
-int                     frames( Environment * _environment, char * _image );
 Variable *              fp_cos( Environment * _environment, char * _angle );
 Variable *              fp_sin( Environment * _environment, char * _angle );
 Variable *              fp_tan( Environment * _environment, char * _angle );
 Variable *              fp_log( Environment * _environment, char * _value );
 Variable *              fp_exp( Environment * _environment, char * _value );
+int                     frames( Environment * _environment, char * _image );
+void                    freeze_vars( Environment * _environment, char * _prefix );
 
 //----------------------------------------------------------------------------
 // *G*
@@ -5080,6 +5083,7 @@ void                    travel_path( Environment * _environment, char * _p, char
 void                    use_tileset( Environment * _environment, char * _tileset );
 char *                  unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size );
 Variable *              uncompress( Environment * _environment, char * _value );
+void                    unfreeze_vars( Environment * _environment, char * _prefix );
 
 //----------------------------------------------------------------------------
 // *V*

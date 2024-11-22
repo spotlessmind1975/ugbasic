@@ -9562,6 +9562,15 @@ kill_definition : {
       }
     };
 
+stop_definition : {
+        ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
+        memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
+    } thread_identifiers {
+        for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
+          kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
+        }
+    };
+
 spawn_definition :
   Identifier on_targets {
       if ( $2 ) {
@@ -9769,7 +9778,7 @@ suspend_definition :
 
 freeze_definition :
     expr {
-        suspend_vars( _environment, $1 );
+        freeze_vars( _environment, $1 );
     };
 
 resume_definition :
@@ -9779,7 +9788,7 @@ resume_definition :
 
 unfreeze_definition :
     expr {
-        resume_vars( _environment, $1 );
+        unfreeze_vars( _environment, $1 );
     };
 
 wave_definition :
@@ -10570,6 +10579,7 @@ statement2nc:
       }
   }
   | KILL kill_definition
+  | STOP stop_definition
   | YIELD {
       yield( _environment );
   }
