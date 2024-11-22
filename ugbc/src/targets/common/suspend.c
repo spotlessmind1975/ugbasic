@@ -72,15 +72,15 @@ void suspend_vars( Environment * _environment, char * _thread ) {
 
     MAKE_LABEL
 
-    Variable * threadId = variable_temporary( _environment, VT_THREAD, "(thread)");
+    Variable * threadId = variable_retrieve( _environment, _thread );
 
     char doNothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( doNothingLabel, "%snothing", label );
 
     Variable * status = variable_temporary( _environment, VT_BYTE, "(status)" );
 
-    cpu_protothread_get_state( _environment, "PROTOTHREADCT", status->realName );
+    cpu_protothread_get_state( _environment, threadId->realName, status->realName );
 
-    cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_RUNNING, doNothingLabel, 0 );
+    cpu_compare_and_branch_8bit_const( _environment, status->realName, PROTOTHREAD_STATUS_YIELDED, doNothingLabel, 0 );
 
     cpu_protothread_set_state( _environment, threadId->realName, PROTOTHREAD_STATUS_PAUSED );
 
