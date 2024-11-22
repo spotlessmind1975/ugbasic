@@ -70,7 +70,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                     break;
                 default:
                     if ( variable->value != 0 ) {
-                        variable_store( _environment, variable->name, variable->value );
+                        variable_store( _environment, variable->name, variable->initialValue );
                     }
             }
         }
@@ -105,7 +105,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                     break;
                 default:
                     if ( variable->value != 0 ) {
-                        variable_store( _environment, variable->name, variable->value );
+                        variable_store( _environment, variable->name, variable->initialValue );
                     }
             }
         }

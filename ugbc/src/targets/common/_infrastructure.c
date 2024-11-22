@@ -478,6 +478,7 @@ static Variable * variable_define_internal( Environment * _environment, Variable
 
     var->type = _type;
     var->value = _value;
+    var->initialValue = _value;
     var->bank = _environment->banks[BT_VARIABLES];
     var->used = 1;
     var->locked = 0;
