@@ -1368,7 +1368,11 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             break;
         case 8:
             if ( destination->type == VT_CHAR ) {
-                cpu_store_char( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+                if ( _value >= 20 && _value <= 127 ) {
+                    cpu_store_char( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+                } else {
+                    cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
+                }
             } else {
                 cpu_store_8bit( _environment, destination->realName, VT_ESIGN_8BIT( destination->type, _value ) );
             }
