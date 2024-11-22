@@ -156,14 +156,16 @@ void pia_key_state( Environment * _environment, char *_scancode, char * _result 
 
     if ( _environment->keyboardConfig.sync ) {
         deploy( scancode, src_hw_pia_scancode_asm);
+        outline1("LDA %s", _scancode);
+        outline0("JSR KEYSTATE");
+        outline1("STA %s", _result);
     } else {
         deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline1("LDA %s", _scancode);
+        outline0("JSR KEYSTATE");
+        cpu_ctoa( _environment );
+        outline1("STA %s", _result);        
     }
-
-    outline1("LDA %s", _scancode);
-    outline0("JSR KEYSTATE");
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result);
 
 }
 
@@ -209,14 +211,16 @@ void pia_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     if ( _environment->keyboardConfig.sync ) {
         deploy( scancode, src_hw_pia_scancode_asm);
+        outline1("LDA %s", _scancode);
+        outline0("JSR KEYPRESSED");
+        outline1("STA %s", _result);        
     } else {
         deploy( keyboard, src_hw_pia_keyboard_asm );
+        outline1("LDA %s", _scancode);
+        outline0("JSR KEYPRESSED");
+        cpu_ctoa( _environment );
+        outline1("STA %s", _result);        
     }
-
-    outline1("LDA %s", _scancode);
-    outline0("JSR KEYPRESSED");
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result);
 
 }
 

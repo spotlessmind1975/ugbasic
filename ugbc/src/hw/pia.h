@@ -415,6 +415,111 @@
 
 #endif
 
+#define KEY2_NONE				   255
+#define KEY2_AT					    '@'
+#define KEY2_H						'H'
+#define KEY2_P						'P'
+#define KEY2_X						'X'
+#define KEY2_0						'0'
+#define KEY2_8						'8'
+#define KEY2_RETURN					 13
+
+#define KEY2_A 						'A'
+#define KEY2_I						'I'
+#define KEY2_Q						'Q'
+#define KEY2_Y						'Y'
+#define KEY2_1						'1'
+#define KEY2_9    					'9'
+
+#define KEY2_B 						'8'
+#define KEY2_J						'J'
+#define KEY2_R						'R'
+#define KEY2_Z						'Z'
+#define KEY2_2    					'2'
+#define KEY2_COLON 					','
+
+#define KEY2_C 						'C'
+#define KEY2_K						'K'
+#define KEY2_S						'S'
+#define KEY2_UP						0xfa
+#define KEY2_3						'3'
+#define KEY2_SEMICOMMA				';'
+
+#define KEY2_D 						'D'
+#define KEY2_L						'L'
+#define KEY2_T						'T'
+#define KEY2_DOWN					0xfb
+#define KEY2_4						'4'
+#define KEY2_COMMA				    ','
+
+#define KEY2_E 						'E'
+#define KEY2_M						'M'
+#define KEY2_U						'U'
+#define KEY2_BS  					0x08
+#define KEY2_LEFT  					0xfc
+#define KEY2_5				        '5'
+#define KEY2_MINUS   		        '-'
+
+#define KEY2_F 						'F'
+#define KEY2_N						'N'
+#define KEY2_V						'V'
+#define KEY2_RIGHT					0xfd
+#define KEY2_6				        '6'
+#define KEY2_PERIOD			        '.'
+
+#define KEY2_G 						'G'
+#define KEY2_O						'O'
+#define KEY2_W						'W'
+#define KEY2_SPACE				    32
+#define KEY2_7			            '7'
+#define KEY2_SLASH			        '/'
+
+#define KEY2_ASTERISK				'*'
+#define KEY2_CLEAR					 0
+#define KEY2_COMMODORE				 0
+#define KEY2_CONTROL				 0
+#define KEY2_CRSR_LEFT_RIGHT		 0
+#define KEY2_CRSR_UP_DOWN			 0
+#define KEY2_EQUAL					 0
+#define KEY2_F1					  	 0
+#define KEY2_F2						 0
+#define KEY2_F3					 	 0
+#define KEY2_F4						 0
+#define KEY2_F5						 0
+#define KEY2_F6						 0
+#define KEY2_F7						 0
+#define KEY2_F8						 0
+#define KEY2_HOME					 0
+#define KEY2_INSERT					 0
+#define KEY2_LEFT_ARROW				 0
+#define KEY2_LEFT_SHIFT				 0
+#define KEY2_PLUS					 0
+#define KEY2_POUND				 	 0
+#define KEY2_RIGHT_SHIFT				 0
+#define KEY2_RUNSTOP					 0
+#define KEY2_UP_ARROW				 0
+#define KEY2_BACKSLASH                0
+#define KEY2_SQUARE_OPEN              0
+#define KEY2_SQUARE_CLOSED            0
+#define KEY2_QUOTE                    0
+#define KEY2_APIX                     0
+#define KEY2_DEAD                     0
+#define KEY2_SHIFT                    0
+#define KEY2_CTRL                     0
+#define KEY2_GRAPH                    0
+#define KEY2_CAPS                     0
+#define KEY2_CODE                     0
+#define KEY2_ESC                      0
+#define KEY2_TAB                      0
+#define KEY2_STOP                     0
+#define KEY2_SELECT                   0
+#define KEY2_RET                      0
+#define KEY2_INS                      0
+#define KEY2_DEL                      0
+#define KEY2_DIVISION                 0
+#define KEY2_DELETE                   0
+#define KEY2_SEMICOLON				 0
+
 #define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
 void pia_wait_key( Environment * _environment, int _release );

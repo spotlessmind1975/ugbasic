@@ -40,8 +40,8 @@
 
 #if defined( __atari__ ) || defined(__atarixl__ ) || defined( __c128__ ) || \
     defined( __c128z__ ) || defined( __c64__ ) || defined( __c64reu__ ) || \
-    defined( __coco__ ) || defined( __coco3__ ) || defined(__coleco__ ) || \
-    defined( __cpc__ )  || defined( __d32__ ) || defined( __d64__ ) || \
+    defined(__coleco__ ) || \
+    defined( __cpc__ )  || \
     defined( __mo5__ ) || defined( __msx1__ ) || \
     defined( __plus4__ ) || defined( __plus4__ ) || defined( __sc3000__ ) || \
     defined( __sg1000__ ) || defined( __to8__ ) || defined( __vg5000__ ) || \
