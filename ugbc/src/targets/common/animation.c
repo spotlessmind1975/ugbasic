@@ -149,8 +149,8 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0 );
 
 	// DIM [prefix]AllowedEaseIn AS SIGNED BYTE
-    char prefixAllowedEasyIn[MAX_TEMPORARY_STORAGE]; sprintf( prefixAllowedEasyIn, "%sFrame", _prefix );
-    Variable * prefixAllowedEasyInVar = variable_define( _environment, prefixAllowedEasyIn, VT_SBYTE, 0 );
+    char prefixAllowedEaseIn[MAX_TEMPORARY_STORAGE]; sprintf( prefixAllowedEaseIn, "%sAllowedEaseIn", _prefix );
+    Variable * prefixAllowedEaseInVar = variable_define( _environment, prefixAllowedEaseIn, VT_SBYTE, 0 );
 
 	// DIM [prefix]frame AS SIGNED BYTE
     char prefixFrame[MAX_TEMPORARY_STORAGE]; sprintf( prefixFrame, "%sFrame", _prefix );
@@ -230,6 +230,11 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 	// 	SHARED  [prefix]frameDirection
     ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixFrameDirection );
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_SBYTE;
+    ++((struct _Environment *)_environment)->parameters;
+
+	// 	SHARED  [prefix]AllowedEaseIn
+    ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixAllowedEaseIn );
+    ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_BYTE;
     ++((struct _Environment *)_environment)->parameters;
 
 	// 	SHARED  [prefix]X
@@ -318,7 +323,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
         char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
 
-        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEasyInVar->realName, 0xff, easeInDoneLabel, 1 );
+        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEaseInVar->realName, 0xff, easeInDoneLabel, 1 );
 
         // DO
         cpu_label( _environment, easeInLabel );
@@ -349,7 +354,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
         cpu_label( _environment, easeInDoneLabel );
 
-        variable_store( _environment, prefixAllowedEasyInVar->name, 0x0 );
+        variable_store( _environment, prefixAllowedEaseInVar->name, 0x0 );
         variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
 
     }
@@ -567,7 +572,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         variable_move( _environment, spawn_procedure( _environment, _next, 0 )->name, temporary->name );
         kill_procedure( _environment, prefixAnimationVar->name );
         variable_move( _environment, temporary->name, prefixAnimationVar->name );
-        variable_store( _environment, prefixAllowedEasyInVar->name, _environment->animationNextWithEaseIn ? 0x00 : 0xff );
+        variable_store( _environment, prefixAllowedEaseInVar->name, _environment->animationNextWithEaseIn ? 0x00 : 0xff );
     }
 
     end_procedure( _environment, NULL );
