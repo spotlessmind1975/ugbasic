@@ -623,6 +623,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_protothread_set_state( _environment, _index, _state ) z80_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) z80_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) z80_protothread_current( _environment, _current )
+#define cpu_protothread_get_address( _environment, _index, _address ) z80_protothread_get_address( _environment, _index, _address )
 
 #define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) z80_msc1_uncompress_direct_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) z80_msc1_uncompress_direct_indirect( _environment, _input, _output )

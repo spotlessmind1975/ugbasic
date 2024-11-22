@@ -6913,7 +6913,7 @@ void z80_protothread_get_address( Environment * _environment, char * _index, cha
 
     outline0("CALL PROTOTHREADGETADDRESS" );
 
-    outline1("LD (%s), DE", _state );
+    outline1("LD (%s), DE", _address );
 
 }
 
