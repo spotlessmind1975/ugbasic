@@ -3297,7 +3297,7 @@ typedef struct _Environment {
 #define CRITICAL_cANNOT_DEFINE_ANIMATION_INSIDE_A_PROCEDURE(n)  CRITICAL2("E318 - cannot define an ANIMATION inside a PROCEDURE", n );
 #define CRITICAL_cANNOT_DEFINE_ANIMATION_WITHOUT_ATLAS(n)  CRITICAL2("E319 - cannot define an ANIMATION with something that is not an ATLAS", n );
 #define CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING(n)  CRITICAL2("E320 - cannot define a REVERSE ANIMATION with easing in/out", n );
-
+#define CRITICAL_CANNOT_USE_ANIMATE_WITHOUT_ANIMATION(n)  CRITICAL2("E321 - cannot use ANIMATE without ANIMATION", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4426,6 +4426,7 @@ void                    add_complex_array( Environment * _environment, char * _v
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
+void                    animate_semivars( Environment * _environment, char * _prefix, char * _anim, char * _x, char * _y );
 void                    animation( Environment * _environment, char * _identifier, char * _atlas, char * _prefix, char * _next );
 Variable *              asciicode( Environment * _environment );
 
