@@ -38,6 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined( __d32__ ) || defined(__d64__ ) || \
+    defined( __coco__ ) || defined(__coco3__ )
+
 int key_constant( Environment * _environment, int _key ) {
 
     if (  !_environment->keyboardConfig.sync ) {
@@ -128,3 +131,5 @@ int key_constant( Environment * _environment, int _key ) {
         return KEY_NONE;
     }
 }
+
+#endif
