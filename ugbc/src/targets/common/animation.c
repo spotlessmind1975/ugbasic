@@ -300,12 +300,15 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
     }
 
-	// 	[prefix]Frame = 0
-    variable_store( _environment, prefixFrame, _environment->animationReverse ? ( atlas->frameCount - 1 ) : 0 );
+	// 	[prefix]Frame = 0 / last (it depends on reverse)
+    variable_store( _environment, prefixFrameVar->name, _environment->animationReverse ? ( atlas->frameCount - 1 ) : 0 );
     
-	// 	[prefix]FrameDirection = 1
-    variable_store( _environment, prefixFrameDirection, _environment->animationReverse ? -1 : 1 );
+	// 	[prefix]FrameDirection = 1 / -1 (it depends on reverse)
+    variable_store( _environment, prefixFrameDirectionVar->name, _environment->animationReverse ? -1 : 1 );
 
+    // [prefix]Next = 0
+    variable_store( _environment, prefixNextVar->name, 0 );
+    
     if ( _environment->animationEaseInFrames ) {
 
         if ( _environment->animationReverse ) {
@@ -498,7 +501,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 if_then( _environment, variable_compare_const( _environment, prefixFrameVar->name, lastFrame )->name );  
 
                     // 	[prefix]Frame = 0
-                    variable_store( _environment, prefixFrameDirectionVar->name, firstFrame );
+                    variable_store( _environment, prefixFrameVar->name, firstFrame );
 
                 // ELSEIF framePlayer = 3 THEN
                 end_if_then( _environment );  
@@ -555,6 +558,8 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
         cpu_label( _environment, easeOutDoneLabel );
     }
+
+    variable_store( _environment, prefixNextVar->name, 0x0 );
 
     if ( _next ) {
         ((struct _Environment *)_environment)->parameters = 0;

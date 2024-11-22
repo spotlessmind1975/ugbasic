@@ -922,9 +922,14 @@ typedef struct _Variable {
     int assigned;
 
     /** 
-     * The initial value of the variable, as given by last (re)definition.
+     * The last value of the variable, as given by last assignment
      */
     int value;
+
+    /** 
+     * The first assigned value of the variable, as given by last (re)definition.
+     */
+    int initialValue;
 
     /** 
      * If this variable has been initialized by a numeric value,
@@ -3300,6 +3305,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_ANIMATE_WITHOUT_ANIMATION(n)  CRITICAL2("E321 - cannot use ANIMATE without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_FREEZE_WITHOUT_ANIMATION(n)  CRITICAL2("E322 - cannot use FREEZE without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_UNFREEZE_WITHOUT_ANIMATION(n)  CRITICAL2("E323 - cannot use UNFREEZE without ANIMATION", n ); 
+#define CRITICAL_CANNOT_USE_STOP_WITHOUT_ANIMATION(n)  CRITICAL2("E324 - cannot use STOP without ANIMATION", n ); 
+#define CRITICAL_CANNOT_USE_NEXT_ANIMATION_WITHOUT_ANIMATION(n)  CRITICAL2("E325 - cannot use NEXT ANIMATION without ANIMATION", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4826,6 +4833,7 @@ void                    music_seek_var( Environment * _environment, char * _posi
 // *N*
 //----------------------------------------------------------------------------
 
+void                    next_animation( Environment * _environment, char * _prefix );
 void                    next_raster( Environment * _environment );
 void                    next_raster_at_with( Environment * _environment, int _at, char * _with );
 void                    next_raster_at_with_var( Environment * _environment, char * _var, char * _with );

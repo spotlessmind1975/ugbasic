@@ -4502,6 +4502,11 @@ color_definition_simple:
       color_sprite( _environment, $2, $4 );
   };
 
+next_animation_definition : 
+    Identifier {
+        next_animation( _environment, $1 );
+    };
+    
 color_definition_expression :
   expr OP_COMMA expr OP_COMMA expr {
       color_tsb( _environment, $1, $3, $5 );
@@ -9563,7 +9568,7 @@ kill_definition : {
     };
 
 stop_definition : 
-    expr {
+    Identifier {
         stop_procedure( _environment, $1 );
     };
 
@@ -9773,7 +9778,7 @@ suspend_definition :
     };
 
 freeze_definition :
-    expr {
+    Identifier {
         freeze_vars( _environment, $1 );
     };
 
@@ -9783,7 +9788,7 @@ resume_definition :
     };
 
 unfreeze_definition :
-    expr {
+    Identifier {
         unfreeze_vars( _environment, $1 );
     };
 
@@ -10019,6 +10024,7 @@ statement2nc:
     BANK bank_definition
   | RASTER raster_definition
   | NEXT RASTER next_raster_definition
+  | NEXT ANIMATION next_animation_definition
   | COLOR color_definition
   | COLOUR color_definition
   | PALETTE {
