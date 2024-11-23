@@ -5871,7 +5871,7 @@ move_definition_expression:
         move( _environment, $1, $7, $3, $5, NULL );
     }
     | Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier {
-        move( _environment, $1, $7, $3, $5, $7 );
+        move( _environment, $1, $7, $3, $5, $9 );
     }    
     ;
 
