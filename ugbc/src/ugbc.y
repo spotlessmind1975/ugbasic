@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING
+%token ANIMATING MOVEMENT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5852,6 +5852,12 @@ move_definition_expression:
       TILE expr AT optional_x OP_COMMA optional_y {
         move_tile( _environment, $2, $4, $6 );
     }
+    | Identifier WITH Identifier {
+        move( _environment, $1, $3, NULL, NULL );
+    }
+    | Identifier TO expr OP_COMMA expr WITH Identifier {
+        move( _environment, $1, $7, $3, $5 );
+    }
     ;
 
 move_definition:
@@ -9903,7 +9909,7 @@ raw_optional :
     };
 
 travel_definition :
-    Identifier TO Identifier OP_COMMA Identifier {
+    Identifier TO expr OP_COMMA expr {
         travel_path( _environment, $1, $3, $5 );
     };
 
@@ -10024,6 +10030,45 @@ animate_definition :
     }    
     ;
 
+movement_direction :
+    LEFT {
+        ((struct _Environment *)_environment)->movementDeltaX = -1;
+        ((struct _Environment *)_environment)->movementDeltaY = 0;
+    }
+    | RIGHT {
+        ((struct _Environment *)_environment)->movementDeltaX = 1;
+        ((struct _Environment *)_environment)->movementDeltaY = 0;
+    }
+    | UP {
+        ((struct _Environment *)_environment)->movementDeltaX = 0;
+        ((struct _Environment *)_environment)->movementDeltaY = -1;
+    }
+    | DOWN {
+        ((struct _Environment *)_environment)->movementDeltaX = 0;
+        ((struct _Environment *)_environment)->movementDeltaY = 1;
+    }
+    | POSITION {
+        ((struct _Environment *)_environment)->movementDeltaX = 0;
+        ((struct _Environment *)_environment)->movementDeltaY = 0;
+    };
+
+optional_movement_delay :
+    {
+        ((struct _Environment *)_environment)->movementDelay = 20;
+    }
+    |
+    DELAY const_expr {
+        ((struct _Environment *)_environment)->movementDelay = $2;
+    };
+
+movement_definition :
+    Identifier TO movement_direction WITH expr optional_movement_delay USING Identifier {
+        movement( _environment, $1, $5, $8 );
+    }
+    | Identifier TO movement_direction optional_movement_delay USING Identifier {
+        movement( _environment, $1, NULL, $6 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -10038,6 +10083,7 @@ statement2nc:
       ((struct _Environment *)_environment)->paletteIndex = 0;
       color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
   } palette_definition
+  | MOVEMENT movement_definition
   | ANIMATION animation_definition
   | ANIMATE animate_definition
   | PAUSE pause_definition

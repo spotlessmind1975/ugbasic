@@ -2915,6 +2915,10 @@ typedef struct _Environment {
 
     int animationReverse;
 
+    int movementDelay;
+    int movementDeltaX;
+    int movementDeltaY;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3308,6 +3312,10 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_STOP_WITHOUT_ANIMATION(n)  CRITICAL2("E324 - cannot use STOP without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_NEXT_ANIMATION_WITHOUT_ANIMATION(n)  CRITICAL2("E325 - cannot use NEXT ANIMATION without ANIMATION", n ); 
 #define CRITICAL_CANNOT_USE_ANIMATING_WITHOUT_ANIMATION(n)  CRITICAL2("E326 - cannot use ANIMATING without ANIMATION", n ); 
+#define CRITICAL_CANNOT_DEFINE_MOVEMENT_INSIDE_A_PROCEDURE(n)  CRITICAL2("E327 - cannot use MOVEMENT inside a PROCEDURE", n ); 
+#define CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_ATLAS(n)  CRITICAL2("E328 - cannot use MOVEMENT without an ATLAS", n ); 
+#define CRITICAL_CANNOT_USE_MOVE_WITHOUT_MOVEMENT(n)  CRITICAL2("E329 - cannot use MOVE without a MOVEMENT", n ); 
+#define CRITICAL_CANNOT_USE_ABSOLUTE_MOVE_WITHOUT_ABSOLUTE_MOVEMENT(n)  CRITICAL2("E330 - cannot use absolute MOVE without an absolute MOVEMENT", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4819,7 +4827,9 @@ Variable *              minimum( Environment * _environment, char * _source, cha
 void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
+void                    move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
+void                    movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix );
 Variable *              msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    msprite_update( Environment * _environment );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
