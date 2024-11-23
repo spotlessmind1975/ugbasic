@@ -66,7 +66,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         if ( strcmp( variable->name, "PEN" ) == 0 ) {
                             outhead1("%s = 646", variable->realName);
                         } else {
-                            outhead1("%s: .res 1,0", variable->realName);
+                            vars_emit_byte( _environment, variable->realName, variable->initialValue );
                         }
                     }        
                     break;
@@ -84,7 +84,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 2,0", variable->realName);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue );
                     }
                     break;
                 case VT_DWORD:
@@ -92,7 +92,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 4,0", variable->realName);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }
                     break;
                 case VT_FLOAT:
@@ -349,8 +349,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             if ( strcmp( _variable->name, "PEN" ) == 0 ) {
                 outhead1("%s = 646", _variable->realName);
             } else {
-                outhead1("%s:", _variable->realName );
-                outline1(" .byte $%1.1x", ( _variable->value & 0xff ) );
+                vars_emit_byte( _environment, variable->realName, variable->initialValue );
             }
             break;
         case VT_DOJOKA:
@@ -369,13 +368,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SWORD:
         case VT_POSITION:
         case VT_ADDRESS:
-            outhead1("%s:", _variable->realName );
-            outline1(" .word $%2.2x", ( _variable->value & 0xffff ) );
+            vars_emit_word( _environment, variable->realName, variable->initialValue );
             break;
         case VT_DWORD:
         case VT_SDWORD:
-            outhead1("%s:", _variable->realName );
-            outline1(" .dword $%4.4x", ( _variable->value & 0xffff ) );
+            vars_emit_dword( _environment, variable->realName, variable->initialValue );
             break;
         case VT_FLOAT: {
             outhead1("%s:", _variable->realName );

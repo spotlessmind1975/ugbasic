@@ -57,7 +57,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        outline1("%s: defs 1", variable->realName);
+                        vars_emit_byte( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -96,7 +96,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        outline1("%s: defs 2", variable->realName);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -106,7 +106,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        outline1("%s: defs 4", variable->realName);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;

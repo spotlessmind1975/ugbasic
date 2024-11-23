@@ -63,7 +63,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 2", variable->realName);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_DWORD:
@@ -71,7 +71,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 4", variable->realName);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_FLOAT:
@@ -292,7 +292,7 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 1", variable->realName);
+                        vars_emit_byte( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_DOJOKA:

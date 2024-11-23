@@ -54,7 +54,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SBYTE:
                 case VT_COLOR:
                 case VT_THREAD:
-                    outline1("%s: defs 1", variable->realName);
+                    vars_emit_byte( _environment, variable->realName, variable->initialValue);
                     break;
                 case VT_DOJOKA:
                     outline1("%s: defs 8", variable->realName);
@@ -69,11 +69,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SWORD:
                 case VT_POSITION:
                 case VT_ADDRESS:
-                    outline1("%s: defs 2", variable->realName);
+                    vars_emit_word( _environment, variable->realName, variable->initialValue);
                     break;
                 case VT_DWORD:
                 case VT_SDWORD:
-                    outline1("%s: defs 4", variable->realName);
+                    vars_emit_dword( _environment, variable->realName, variable->initialValue);
                     break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {

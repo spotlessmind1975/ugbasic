@@ -62,7 +62,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 1,0", variable->realName);
+                        vars_emit_byte( _environment, variable->realName, variable->initialValue);
                     }        
                     break;
                 case VT_DOJOKA:
@@ -93,7 +93,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 2,0", variable->realName);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue);
                     }
                     break;
                 case VT_DWORD:
@@ -101,7 +101,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 4,0", variable->realName);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue);
                     }
                     break;
                case VT_FLOAT:
