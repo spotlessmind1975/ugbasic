@@ -5862,11 +5862,17 @@ move_definition_expression:
         move_tile( _environment, $2, $4, $6 );
     }
     | Identifier WITH Identifier {
-        move( _environment, $1, $3, NULL, NULL );
+        move( _environment, $1, $3, NULL, NULL, NULL );
+    }
+    | Identifier WITH Identifier SYNC Identifier {
+        move( _environment, $1, $3, NULL, NULL, $5 );
     }
     | Identifier TO expr OP_COMMA expr WITH Identifier {
-        move( _environment, $1, $7, $3, $5 );
+        move( _environment, $1, $7, $3, $5, NULL );
     }
+    | Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier {
+        move( _environment, $1, $7, $3, $5, $7 );
+    }    
     ;
 
 move_definition:

@@ -62,7 +62,7 @@ contain the next frame to be displayed for the animation; ''prefixFrameDirection
 which will be 1 if the animation proceeds from the smallest frame to the largest frame 
 and -1 vice versa; ''prefixX'' and ''prefixY'', which will contain the position where 
 the animation will be displayed, while ''prefixOX'' and ''prefixOY'' will contain
-the previous coordinates; ''prefixNext'', to signal a ''NEXT'' event;
+the previous coordinates; ''prefixNext'', to signal / receive a synchonization event (see below);
 ''prefixAnimation'' that mantains the thread handle for this animation.
 
 It is possible to indicate that a certain number of frames at the beginning of the 
@@ -86,6 +86,15 @@ of the current one, where the animation ends naturally or the signal to move to 
 next one is sent. The animation is indicated with the keyword ''NEXT'' and must already 
 be defined. If you need to use the ease in sequence, you need to use the 
 NEXT WITH EASEIN syntax.
+
+The var ''prefixNext'' deserves a special note. This variable acts as a bidirectional 
+data bus. By writing to this variable, you can send signals to the animation thread. 
+On the other hand, this variable is also written, and therefore you can get 
+information about the progress of the animation. In particular, bit 0, if active, 
+indicates that the "ease in" part of the animation has been executed; bit 1, 
+if active, indicates that the loop has been completed; bit 2, if active, indicates 
+that the "ease out" part of the animation has been executed; bit 3, if set externally 
+as active, indicates the request to exit an animation loop.
 
 @italian
 
@@ -124,6 +133,15 @@ il disegno del fotogramma, è necessario aggiungere l'opzione ''WAIT VBL''.
 Infine, si può indicare il nome di una animazione che sarà eseguita al termine di quella 
 attuale, laddove la stessa termini in modo naturale o sia inviato il segnale di passare alla 
 successiva. L'animazione viene indicata con la parola chiave NEXT e deve essere già definita.
+
+Una nota particolare merita la varable ''prefixNext''. Questa variabile si comporta come un 
+bus dati bidirezionale. Scrivendo in questa variabile, si possono inviare segnali al thread 
+dell'animazione. D'altra parte, questa variabile viene anche scritta, e quindi si possono 
+ottenere informazioni sull'andamento dell'animazione. In particolare il bit 0, se attivo, 
+indica che la parte "ease in" dell'animazione è stata eseguita; il bit 1, se attivo, indica 
+che il loop è stato completato; il bit 2, se attivo, indica che la parte "ease out" 
+dell'animazione è stata eseguita; il bit 3, se impostato dall'esterno come attivo, indica 
+la richiesta di uscire da un loop di animazione.
 
 @syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT [WITH EASIN] anim] [WAIT VBL] [PRESERVE BACKGROUND]
 
@@ -170,7 +188,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
 	// DIM [prefix]Next AS SIGNED BYTE
     char prefixNext[MAX_TEMPORARY_STORAGE]; sprintf( prefixNext, "%sNext", _prefix );
-    Variable * prefixNextVar = variable_define( _environment, prefixNext, VT_SBYTE, 0 );
+    Variable * prefixNextVar = variable_define( _environment, prefixNext, VT_BYTE, 0 );
 
     char prefixDummy[MAX_TEMPORARY_STORAGE]; sprintf( prefixDummy, "%sDummy", _prefix );
 
@@ -358,6 +376,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
     }
 
+    // Ease in finished!
+    cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x01, prefixNextVar->realName );
+    yield( _environment );
+
     switch( _environment->animationType ) {
         case AT_SIMPLE: {
 
@@ -400,7 +422,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
                 // 	EXIT IF [prefix]Frame = ofrom / last frame
                 cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, lastFrame, simpleDoneLabel, 1 );
-            
+
+                // EXIT if NEXT signal
+                cpu_compare_and_branch_8bit_const( _environment, variable_and_const( _environment, prefixNextVar->name, 0x80 )->realName, 0x80, simpleDoneLabel, 1 );
+
             // LOOP
             cpu_jump( _environment, simpleLabel );
 
@@ -453,8 +478,8 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 end_if_then( _environment );  
                 // ENDIF
             
-                // 	EXIT IF [prefix]Next != 0
-                cpu_compare_and_branch_8bit_const( _environment, prefixNextVar->realName, 0, bounceDoneLabel, 0 );
+                // EXIT if NEXT signal
+                cpu_compare_and_branch_8bit_const( _environment, variable_and_const( _environment, prefixNextVar->name, 0x80 )->realName, 0x80, bounceDoneLabel, 1 );
 
             // LOOP
             cpu_jump( _environment, bounceLabel );
@@ -489,7 +514,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
 
                 // ADD [prefix]Frame, [prefix]FrameDirection
-                variable_add_inplace( _environment, prefixFrameVar->name, 1 );
+                variable_add_inplace( _environment, prefixFrameVar->name, _environment->animationReverse ? -1 : 1 );
 
                 int lastFrame = 0;
                 int firstFrame = 0;
@@ -511,8 +536,8 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 end_if_then( _environment );  
                 // ENDIF
 
-                // 	EXIT IF [prefix]Next != 0
-                cpu_compare_and_branch_8bit_const( _environment, prefixNextVar->realName, 0, loopDoneLabel, 0 );
+                // EXIT if NEXT signal
+                cpu_compare_and_branch_8bit_const( _environment, variable_and_const( _environment, prefixNextVar->name, 0x80 )->realName, 0x80, loopDoneLabel, 1 );
             
             // LOOP
             cpu_jump( _environment, loopLabel );
@@ -523,6 +548,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
             break;
     }
+
+    // Loop finished!
+    cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x02, prefixNextVar->realName );
+    yield( _environment );
 
     if ( _environment->animationEaseOutFrames ) {
 
@@ -563,7 +592,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         cpu_label( _environment, easeOutDoneLabel );
     }
 
-    variable_store( _environment, prefixNextVar->name, 0x0 );
+    // Ease out finished!
+    cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x04, prefixNextVar->realName );
+    yield( _environment );
 
     if ( _next ) {
         ((struct _Environment *)_environment)->parameters = 0;

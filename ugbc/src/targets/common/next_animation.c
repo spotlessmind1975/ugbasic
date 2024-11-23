@@ -88,11 +88,11 @@ void next_animation( Environment * _environment, char * _prefix ) {
 
     Variable * prefixNextVar = variable_retrieve( _environment, prefixNext );
 
-    variable_store( _environment, prefixNextVar->name, 1 );
+    cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x80, prefixNextVar->realName );
 
     begin_loop( _environment, 1 );
         variable_compare_and_branch_const( _environment, 
-            prefixNextVar->name, 0x00, doneLabel, 1 );
+            variable_and_const( _environment, prefixNextVar->name, 0x02)->name, 0x02, doneLabel, 1 );
         run_parallel( _environment );
     end_loop( _environment, 1 );
 

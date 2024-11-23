@@ -3318,6 +3318,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_ABSOLUTE_MOVE_WITHOUT_ABSOLUTE_MOVEMENT(n)  CRITICAL2("E330 - cannot use absolute MOVE without an absolute MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_STOP_WITHOUT_MOVEMENT(n)  CRITICAL2("E331 - cannot use STOP MOVEMENT without a MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_MOVING_WITHOUT_MOVEMENT(n)  CRITICAL2("E332 - cannot use MOVING without a MOVEMENT", n ); 
+#define CRITICAL_CANNOT_USE_MOVE_SYNC_WITHOUT_ANIMATIOn(n,m)  CRITICAL3("E333 - using a not existing animation on MOVE", n, m ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4829,7 +4830,7 @@ Variable *              minimum( Environment * _environment, char * _source, cha
 void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
-void                    move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y );
+void                    move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y, char * _animation );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 void                    movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix );
 Variable *              moving( Environment * _environment, char * _prefix, char * _movement );
@@ -4926,6 +4927,7 @@ void                    print_newline( Environment * _environment );
 void                    print_question_mark( Environment * _environment );
 void                    print_tab( Environment * _environment, int _new_line );
 void                    proc( Environment * _environment, char * _label );
+int                     procedure_exists( Environment * _environment, char * _name );
 void                    put_key( Environment * _environment, char * _string );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );

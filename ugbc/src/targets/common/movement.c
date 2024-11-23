@@ -138,6 +138,14 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
     char prefixTY[MAX_TEMPORARY_STORAGE]; sprintf( prefixTY, "%sTY", _prefix );
     Variable * prefixTYVar;
 
+	// DIM [prefix]Sync AS BYTE
+    char prefixSync[MAX_TEMPORARY_STORAGE]; sprintf( prefixSync, "%sSync", _prefix );
+    Variable * prefixSyncVar = variable_define( _environment, prefixSync, VT_BYTE, 0 );;
+
+	// DIM [prefix]Next AS BYTE
+    char prefixNext[MAX_TEMPORARY_STORAGE]; sprintf( prefixNext, "%sNext", _prefix );
+    Variable * prefixNextVar = variable_define( _environment, prefixNext, VT_BYTE, 0 );;
+
 	// DIM [prefix]Steps AS BYTE
     char prefixSteps[MAX_TEMPORARY_STORAGE]; sprintf( prefixSteps, "%sSteps", _prefix );
     Variable * prefixStepsVar = NULL;
@@ -215,11 +223,19 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
         char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%sloop", label );
         char loopDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopDoneLabel, "%sdone", label );
 
+        cpu_compare_and_branch_8bit_const( _environment, prefixSyncVar->realName, 0x00, loopLabel, 1 );
+
+        char waitSyncLabel[MAX_TEMPORARY_STORAGE]; sprintf( waitSyncLabel, "%swaitsync", label );
+        cpu_label( _environment, waitSyncLabel );
+            cpu_compare_and_branch_8bit_const( _environment, variable_and_const( _environment, prefixNextVar->name, 0x01 )->realName, 0x01, loopLabel, 1 );
+            yield( _environment );
+        cpu_jump( _environment, waitSyncLabel );
+
         // 	DO
         cpu_label( _environment, loopLabel );
 
             yield( _environment );
-            
+
             if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
                 //      TRAVEL t TO x, y
                 travel_path( _environment, prefixPathVar->name, prefixXVar->name, prefixYVar->name );
@@ -265,6 +281,22 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
         cpu_jump( _environment, loopLabel );
             
         cpu_label( _environment, loopDoneLabel );
+
+        char reallyDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( reallyDoneLabel, "%sreallydone", label );
+
+        cpu_compare_and_branch_8bit_const( _environment, prefixSyncVar->realName, 0x00, reallyDoneLabel, 1 );
+
+        cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x80, prefixNextVar->realName );
+
+        yield( _environment );
+
+        char waitSyncLabel2[MAX_TEMPORARY_STORAGE]; sprintf( waitSyncLabel2, "%swaitsync2", label );
+        cpu_label( _environment, waitSyncLabel2 );
+            cpu_compare_and_branch_8bit_const( _environment, variable_and_const( _environment, prefixNextVar->name, 0x04 )->realName, 0x04, reallyDoneLabel, 1 );
+            yield( _environment );
+        cpu_jump( _environment, waitSyncLabel2 );
+
+        cpu_label( _environment, reallyDoneLabel );
 
     }
 

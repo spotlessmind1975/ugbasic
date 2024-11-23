@@ -51,7 +51,14 @@
 
 The ''MOVE'' command allows you to activate a specific movement from the current 
 position. If a movement is already active, it will be abruptly interrupted and 
-the indicated one will be started
+the indicated one will be started.
+
+It is also possible to indicate an animation to be run in a "synchronized" way 
+with respect to the movement, using the keyword ''SYNC''. In particular, 
+the synchronization will occur by executing the ease in of the animation and, 
+at the end of the same, by starting the movement and the loop of the animation 
+(which must therefore have one). At the end of the movement, the animation 
+will be eased out.
 
 @italian
 
@@ -59,13 +66,19 @@ Il comando ''MOVE'' consente di attivare un movimento specifico dalla posizione
 corrente. Se un movimento è già attivo, verrà interrotto bruscamente e verrà 
 avviato quello indicato.
 
-@syntax MOVE id WITH movement
-@syntax MOVE id TO x,y WITH movement
+E' possibile indicare anche una animazione da far viaggiare in modo "sincronizzato" 
+rispetto al movimento, usando la parola chiave ''SYNC''. In particolare, il 
+sincronismo avverrà facendo eseguire l'ease in dell'animazione e, al termine 
+della stessa, facendo partire lo spostamento e il loop dell'animazione (che deve 
+quindi averne uno). Al termine del movimento, si avrà l'ease out dell'animazione.
 
-@example MOVE airplane WITH moveRight
+@syntax MOVE id WITH movement [SYNC animation]
+@syntax MOVE id TO x,y WITH movement [SYNC animation]
+
+@example MOVE player TO 10, 10 WITH moveTo SYNC animWalking
 
 </usermanual> */
-void move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y ) {
+void move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y, char * _animation ) {
 
     char prefixMovement[MAX_TEMPORARY_STORAGE]; sprintf( prefixMovement, "%sMovement", _prefix );
 
@@ -77,6 +90,21 @@ void move( Environment * _environment, char * _prefix, char * _movement, char * 
 
     if ( prefixMovementVar->type != VT_THREAD ) {
         CRITICAL_CANNOT_USE_MOVE_WITHOUT_MOVEMENT(_prefix);
+    }
+
+    char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
+    if ( _animation ) {
+
+        if ( ! procedure_exists( _environment, _animation ) ) {
+            CRITICAL_CANNOT_USE_MOVE_SYNC_WITHOUT_ANIMATIOn( _prefix, _animation );
+        }
+
+        animate_semivars( _environment, _prefix, _animation, NULL, NULL );
+
+        char prefixSync[MAX_TEMPORARY_STORAGE]; sprintf( prefixSync, "%sSync", _prefix );
+        Variable * prefixSyncVar = variable_retrieve( _environment, prefixSync );
+        variable_store( _environment, prefixSyncVar->name, 0x01 );
+
     }
 
     // DIM [prefix]TX AS POSITION
@@ -115,5 +143,6 @@ void move( Environment * _environment, char * _prefix, char * _movement, char * 
 
     // playerAnimation = SPAWN animPlayerPunch
     variable_move( _environment, spawn_procedure( _environment, _movement, 0 )->name, prefixMovementVar->name );
+   
 
 }
