@@ -95,8 +95,15 @@ void animate_semivars( Environment * _environment, char * _prefix, char * _anim,
         variable_move( _environment, y->name, prefixYVar->name );
     }
 
+    MAKE_LABEL
+
+    char skipKillLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipKillLabel, "%sskip", label );
+    cpu_compare_and_branch_8bit_const( _environment, prefixAnimationVar->realName, 0xff, skipKillLabel, 1 );
+
     // KILL playerAnimation
     kill_procedure( _environment, prefixAnimationVar->name );
+
+    cpu_label( _environment, skipKillLabel );
 
     // playerAnimation = SPAWN animPlayerPunch
     variable_move( _environment, spawn_procedure( _environment, _anim, 0 )->name, prefixAnimationVar->name );

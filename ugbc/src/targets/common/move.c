@@ -103,8 +103,15 @@ void move( Environment * _environment, char * _prefix, char * _movement, char * 
         variable_move( _environment, y->name, prefixTYVar->name );
     }
 
+    MAKE_LABEL
+
+    char skipKillLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipKillLabel, "%sskip", label );
+    cpu_compare_and_branch_8bit_const( _environment, prefixMovementVar->realName, 0xff, skipKillLabel, 1 );
+
     // KILL playerAnimation
     kill_procedure( _environment, prefixMovementVar->name );
+
+    cpu_label( _environment, skipKillLabel );
 
     // playerAnimation = SPAWN animPlayerPunch
     variable_move( _environment, spawn_procedure( _environment, _movement, 0 )->name, prefixMovementVar->name );

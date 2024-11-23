@@ -92,8 +92,9 @@ l'oggetto. Se è richiesto uno spostamento verso una posizione, le variabili
 ''prefixTX'' e ''prefixTY'' conterranno la posizione di destinazione, mentre 
 verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 
-@syntax MOVEMENT id TO LEFT|RIGHT|UP|DOWN WITH atlas [DELAY delay] USING player
+@syntax MOVEMENT id LEFT|RIGHT|UP|DOWN WITH atlas [DELAY delay] USING player
 @syntax MOVEMENT id TO POSITION [DELAY delay] USING player
+@syntax MOVEMENT id STEADY USING player
 
 @example MOVEMENT moveLeft TO LEFT WITH playerForward USING player
 
@@ -108,6 +109,8 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
     
     if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
 
+    } else if ( (_environment->movementDeltaX == 2) && (_environment->movementDeltaY == 2) ) {
+
     } else {
         atlas = variable_retrieve( _environment, _atlas );
         if ( atlas->type != VT_IMAGES ) {
@@ -117,7 +120,7 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
 
 	// DIM [prefix]Movement AS THREAD
     char prefixMovement[MAX_TEMPORARY_STORAGE]; sprintf( prefixMovement, "%sMovement", _prefix );
-    Variable * prefixMovementVar = variable_define( _environment, prefixMovement, VT_THREAD, 0 );
+    Variable * prefixMovementVar = variable_define( _environment, prefixMovement, VT_THREAD, 0xff );
 
 	// DIM [prefix]X AS POSITION
     char prefixX[MAX_TEMPORARY_STORAGE]; sprintf( prefixX, "%sX", _prefix );
@@ -197,66 +200,73 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
 
     MAKE_LABEL
 
-    outline0("; -----!!!!----");
-    if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
-        // t = CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP
-        variable_move( _environment, create_path( _environment, prefixXVar->name, prefixYVar->name, prefixTXVar->name, prefixTYVar->name )->name, prefixPathVar->name );
+    if ( (_environment->movementDeltaX == 2) && (_environment->movementDeltaY == 2) ) {
+
     } else {
-        // 	[prefix]Steps = FRAMES( [atlas] )
-        variable_store( _environment, prefixStepsVar->name, atlas->frameCount );		
+
+        if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
+            // t = CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP
+            variable_move( _environment, create_path( _environment, prefixXVar->name, prefixYVar->name, prefixTXVar->name, prefixTYVar->name )->name, prefixPathVar->name );
+        } else {
+            // 	[prefix]Steps = FRAMES( [atlas] )
+            variable_store( _environment, prefixStepsVar->name, atlas->frameCount );		
+        }
+
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%sloop", label );
+        char loopDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopDoneLabel, "%sdone", label );
+
+        // 	DO
+        cpu_label( _environment, loopLabel );
+
+            yield( _environment );
+            
+            if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
+                //      TRAVEL t TO x, y
+                travel_path( _environment, prefixPathVar->name, prefixXVar->name, prefixYVar->name );
+            } else {
+                if ( _environment->movementDeltaX == 1) {
+                    // 		INC prefixXVar
+                    variable_increment( _environment, prefixXVar->name );
+                } else if ( _environment->movementDeltaX == -1) {
+                    // 		DEC playerX
+                    variable_decrement( _environment, prefixXVar->name );
+                }
+
+                if ( _environment->movementDeltaY == 1) {
+                    // 		INC playerX
+                    variable_increment( _environment, prefixYVar->name );
+                } else if ( _environment->movementDeltaY == -1) {
+                    // 		DEC playerX
+                    variable_decrement( _environment, prefixYVar->name );
+                }
+            }
+        // 		WAIT 50 MS
+            wait_milliseconds( _environment, _environment->movementDelay );
+
+            if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
+                //      EXIT IF x = x1 AND y = y1
+                cpu_compare_and_branch_16bit_const( _environment, 
+                    variable_or( 
+                        _environment,
+                        variable_xor( _environment, prefixXVar->name, prefixTXVar->name )->name, 
+                        variable_xor( _environment, prefixYVar->name, prefixTYVar->name )->name
+                    )->realName,
+                    0, loopDoneLabel, 1 );
+            } else {
+            // 		DEC playerSteps
+                variable_decrement( _environment, prefixStepsVar->name );
+
+            // 		EXIT IF playerSteps = 0
+                cpu_compare_and_branch_8bit_const( _environment, prefixStepsVar->realName, 0, loopDoneLabel, 1 );
+
+            }
+
+        // 	LOOP
+        cpu_jump( _environment, loopLabel );
+            
+        cpu_label( _environment, loopDoneLabel );
+
     }
-
-    char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%sloop", label );
-    char loopDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopDoneLabel, "%sdone", label );
-
-	// 	DO
-    cpu_label( _environment, loopLabel );
-
-        if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
-            //      TRAVEL t TO x, y
-            travel_path( _environment, prefixPathVar->name, prefixXVar->name, prefixYVar->name );
-        } else {
-            if ( _environment->movementDeltaX == 1) {
-                // 		INC prefixXVar
-                variable_increment( _environment, prefixXVar->name );
-            } else if ( _environment->movementDeltaX == -1) {
-                // 		DEC playerX
-                variable_decrement( _environment, prefixXVar->name );
-            }
-
-            if ( _environment->movementDeltaY == 1) {
-                // 		INC playerX
-                variable_increment( _environment, prefixYVar->name );
-            } else if ( _environment->movementDeltaY == -1) {
-                // 		DEC playerX
-                variable_decrement( _environment, prefixYVar->name );
-            }
-        }
-	// 		WAIT 50 MS
-        wait_milliseconds( _environment, _environment->movementDelay );
-
-        if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
-            //      EXIT IF x = x1 AND y = y1
-            cpu_compare_and_branch_16bit_const( _environment, 
-                variable_or( 
-                    _environment,
-                    variable_xor( _environment, prefixXVar->name, prefixTXVar->name )->name, 
-                    variable_xor( _environment, prefixYVar->name, prefixTYVar->name )->name
-                )->realName,
-                0, loopDoneLabel, 1 );
-        } else {
-        // 		DEC playerSteps
-            variable_decrement( _environment, prefixStepsVar->name );
-
-        // 		EXIT IF playerSteps = 0
-            cpu_compare_and_branch_8bit_const( _environment, prefixStepsVar->realName, 0, loopDoneLabel, 1 );
-
-        }
-
-	// 	LOOP
-    cpu_jump( _environment, loopLabel );
-		
-    cpu_label( _environment, loopDoneLabel );
 
 	// END PROC
     end_procedure( _environment, NULL );

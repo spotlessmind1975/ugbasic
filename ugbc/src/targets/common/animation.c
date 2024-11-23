@@ -146,7 +146,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
 	// DIM [prefix]Animation AS THREAD
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
-    Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0 );
+    Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0xff );
 
 	// DIM [prefix]AllowedEaseIn AS SIGNED BYTE
     char prefixAllowedEaseIn[MAX_TEMPORARY_STORAGE]; sprintf( prefixAllowedEaseIn, "%sAllowedEaseIn", _prefix );
@@ -300,7 +300,6 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             cpu_label( _environment, skipIfSamePositionLabel );
             variable_store( _environment, prefixDummyVar->name, 0xff );
             cpu_return( _environment );
-        
         cpu_label( _environment, skipToRealCodeStart );
 
     }
