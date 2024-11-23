@@ -3316,6 +3316,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_ATLAS(n)  CRITICAL2("E328 - cannot use MOVEMENT without an ATLAS", n ); 
 #define CRITICAL_CANNOT_USE_MOVE_WITHOUT_MOVEMENT(n)  CRITICAL2("E329 - cannot use MOVE without a MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_ABSOLUTE_MOVE_WITHOUT_ABSOLUTE_MOVEMENT(n)  CRITICAL2("E330 - cannot use absolute MOVE without an absolute MOVEMENT", n ); 
+#define CRITICAL_CANNOT_USE_STOP_WITHOUT_MOVEMENT(n)  CRITICAL2("E331 - cannot use STOP MOVEMENT without a MOVEMENT", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5040,7 +5041,8 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
-void                    stop_procedure( Environment * _environment, char * _prefix );
+void                    stop_animation( Environment * _environment, char * _prefix );
+void                    stop_movement( Environment * _environment, char * _prefix );
 StaticString *          string_reserve( Environment * _environment, char * _value );
 Variable *              strptr( Environment * _environment, char * _name );
 void                    suspend_vars( Environment * _environment, char * _thread );

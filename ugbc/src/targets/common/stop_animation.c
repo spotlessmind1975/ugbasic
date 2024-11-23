@@ -39,29 +39,29 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>KILL ...</strong>
+ * @brief Emit code for <strong>STOP ...</strong>
  * 
  * @param _environment Current calling environment
  * @param _handle Identifier of the thread
  */
 /* <usermanual>
-@keyword STOP
+@keyword STOP ANIMATION
 
 @english
 
-This command can be run to abruptly end an animation.
+This command can be used to abruptly end an animation.
 
 @italian
 
-Questo comando può essere eseguito per interrompere 
+Questo comando può essere usato  per interrompere 
 una animazione in modo brusco.
 
-@syntax STOP prefix
+@syntax STOP [ANIMATION] prefix
 
 @example STOP airplane
 
 </usermanual> */
-void stop_procedure( Environment * _environment, char * _prefix ) {
+void stop_animation( Environment * _environment, char * _prefix ) {
 
     MAKE_LABEL
 
