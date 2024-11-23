@@ -82,23 +82,13 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y ) 
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "10" ), stepy->realName );
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "12" ), fraction->realName );
 
-        if_then( _environment, variable_less_than_const( _environment, fraction->name, 0, 0 )->name );
-    #if CPU_BIG_ENDIAN
-            cpu_and_8bit_const( _environment, fraction->realName, 0x7f, fraction->realName );
-    #else
-            cpu_and_8bit_const( _environment, address_displacement( _environment, fraction->realName, "1" ), 0x7f, address_displacement( _environment, fraction->realName, "1" ) );
-    #endif
+        if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
             variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
             if_then( _environment, variable_greater_than_const( _environment, fraction->name, 0, 1 )->name );
                 variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
                 variable_move( _environment, variable_sub( _environment, fraction->name, dx2->name )->name, fraction->name );
             end_if_then( _environment );
             variable_move( _environment, variable_add( _environment, fraction->name, dy2->name )->name, fraction->name );
-    #if CPU_BIG_ENDIAN
-            cpu_or_8bit_const( _environment, fraction->realName, 0x80, fraction->realName );
-    #else
-            cpu_or_8bit_const( _environment, address_displacement( _environment, fraction->realName, "1" ), 0x80, address_displacement( _environment, fraction->realName, "1" ) );
-    #endif            
         else_if_then_label( _environment );
         else_if_then( _environment, NULL );
             if_then( _environment, variable_greater_than_const( _environment, fraction->name, 0, 1 )->name );

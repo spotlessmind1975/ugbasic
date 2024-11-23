@@ -110,11 +110,6 @@ Variable * create_path( Environment * _environment, char * _x0, char * _y0, char
 
         if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
             variable_move( _environment, variable_sub( _environment, dy2->name, dx->name)->name, fraction->name);
-    #if CPU_BIG_ENDIAN
-            cpu_or_8bit_const( _environment, fraction->realName, 0x80, fraction->realName );
-    #else
-            cpu_or_8bit_const( _environment, address_displacement( _environment, fraction->realName, "1" ), 0x80, address_displacement( _environment, fraction->realName, "1" ) );
-    #endif
         else_if_then_label( _environment );
         else_if_then( _environment, NULL );
             variable_move( _environment, variable_sub( _environment, dx2->name, dy->name)->name, fraction->name);
