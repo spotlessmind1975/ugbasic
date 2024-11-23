@@ -165,12 +165,9 @@ void begin_procedure( Environment * _environment, char * _name ) {
 
     if ( procedure->protothread ) {
         _environment->anyProtothread = 1;
-        char protothreadLabel[MAX_TEMPORARY_STORAGE]; sprintf(protothreadLabel, "%spt%d", _environment->procedureName, 0 );
         char procedureParallelDispatch[MAX_TEMPORARY_STORAGE]; sprintf(procedureParallelDispatch, "%sdispatch", _environment->procedureName );
         cpu_jump( _environment, procedureParallelDispatch  );
-        cpu_label( _environment, protothreadLabel );        
-        cpu_protothread_set_state( _environment, "PROTOTHREADCT", PROTOTHREAD_STATUS_RUNNING );
-        ++_environment->protothreadStep;
+        yield( _environment );
     }
 
 }
