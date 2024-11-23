@@ -70,4 +70,29 @@ void vars_emit_constants( Environment * _environment ) {
 
 }
 
+
+void vars_emit_byte( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s: .db 0x%2.2x", _name, (unsigned char)( _value & 0xff ) );
+    } else {
+        outline1(" .db 0x%2.2x", (unsigned char)( _value & 0xff ) );
+    }
+}
+
+void vars_emit_word( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s:  .db 0x%2.2x, 0x%2.2x", _name, (unsigned char)(_value&0xff), (unsigned char)((_value>>8)&0xff) );
+    } else {
+        outline1(" .db 0x%2.2x, 0x%2.2x", _name, (unsigned char)(_value&0xff), (unsigned char)((_value>>8)&0xff) );
+    }
+}
+
+void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s: .db 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x", _name, (unsigned char)(_value&0xff), (unsigned char)((_value>>8)&0xff), (unsigned char)((_value>>16)&0xff), (unsigned char)((_value>>24)&0xff) );
+    } else {
+        outline1(" .db 0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x", _name, (unsigned char)(_value&0xff), (unsigned char)((_value>>8)&0xff), (unsigned char)((_value>>16)&0xff), (unsigned char)((_value>>24)&0xff) );
+    }
+}
+
 #endif

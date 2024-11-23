@@ -80,4 +80,28 @@ void vars_emit_constants( Environment * _environment ) {
 
 }
 
+void vars_emit_byte( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s fcb $%2.2x", _name, (unsigned char)( _value & 0xff ) );
+    } else {
+        outline1(" fcb $%2.2x", (unsigned char)( _value & 0xff ) );
+    }
+}
+
+void vars_emit_word( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s  fdb $%4.4x", _name, (unsigned int)( _value & 0xffff ) );
+    } else {
+        outline1(" fdb $%4.4x", (unsigned int)( _value & 0xffff ) );
+    }
+}
+
+void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline3("%s  fdb $%4.4x,$%4.4x", _name, (unsigned int)( (_value>>16) & 0xffff ), , (unsigned int)( _value & 0xffff ) );
+    } else {
+        outline2(" fdb $%4.4x,$%4.4x", (unsigned int)( (_value>>16) & 0xffff ), , (unsigned int)( _value & 0xffff ) );
+    }
+}
+
 #endif

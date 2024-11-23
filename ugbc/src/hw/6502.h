@@ -726,4 +726,8 @@ typedef enum _CPU6502Stack {
 
 } CPU6502Stack;
 
+void vars_emit_byte( Environment * _environment, char * _name, int _value );
+void vars_emit_word( Environment * _environment, char * _name, int _value );
+void vars_emit_dword( Environment * _environment, char * _name, int _value );
+
 #endif
