@@ -5584,15 +5584,17 @@ del risultato è un tipo numerico appropriato per i tipi di dati di entrambe le 
 </usermanual> */
 Variable * variable_and_const( Environment * _environment, char * _destination, int _mask ) {
     Variable * destination = variable_retrieve( _environment, _destination );
-    switch( VT_BITWIDTH( destination->type ) ) {
+    Variable * result = variable_temporary( _environment, destination->type, "(result)");
+    variable_move( _environment, destination->name, result->name );
+    switch( VT_BITWIDTH( result->type ) ) {
         case 32:
-            cpu_math_and_const_32bit( _environment, destination->realName, _mask );
+            cpu_math_and_const_32bit( _environment, result->realName, _mask );
             break;
         case 16:
-            cpu_math_and_const_16bit( _environment, destination->realName, _mask );
+            cpu_math_and_const_16bit( _environment, result->realName, _mask );
             break;
         case 8:
-            cpu_math_and_const_8bit( _environment, destination->realName, _mask );
+            cpu_math_and_const_8bit( _environment, result->realName, _mask );
             break;
         case 1:
         case 0:
@@ -5600,7 +5602,7 @@ Variable * variable_and_const( Environment * _environment, char * _destination, 
             break;
 
     }
-    return destination;
+    return result;
 }
 
 /**
@@ -13167,4 +13169,19 @@ int system_move_safe( Environment * _environment, char * _source, char * _destin
         return 1;
     }
     
+}
+
+int procedure_exists( Environment * _environment, char * _name ) {
+
+    Procedure * current = _environment->procedures;
+
+    while( current ) {
+        current = current->next;
+        if ( strcmp( _name, current->name ) ) {
+            return 1;
+        }
+    }
+
+    return 0;
+
 }
