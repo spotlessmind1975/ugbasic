@@ -39,45 +39,45 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>RUN PARALLEL</strong>
+ * @brief Emit code for <strong>MOVING</strong>
  * 
  * @param _environment Current calling environment
  */
 /* <usermanual>
-@keyword ANIMATING
+@keyword MOVING
 
 @english
 
-This statement lets you know if there is a specific animation running 
-on an animatable element.
+This statement lets you know if there is a specific movement running 
+on a movable element.
 
 @italian
 
-Questa istruzione permette di sapere se vi è una specifica animazione 
-in corso su un elemento animabile.
+Questa istruzione permette di sapere se vi è uno specifico movimento in corso
+su un elemento spostabile.
 
-@syntax = ANIMATING(prefix)
-@syntax = ANIMATING(prefix,animation)
+@syntax = MOVING(prefix)
+@syntax = MOVING(prefix,movement)
 
-@example IF NOT ANIMATING(wheel,animRotating) THEN
-@example    ANIM wheel WITH animBrake
+@example IF NOT MOVING(wheel,moveLeft) THEN
+@example    MOVE wheel WITH moveRight
 @example ENDIF
 </usermanual> */
-Variable * animating( Environment * _environment, char * _prefix, char * _animation ) {
+Variable * moving( Environment * _environment, char * _prefix, char * _movement ) {
 
-    char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
+    char prefixMovement[MAX_TEMPORARY_STORAGE]; sprintf( prefixMovement, "%sMovement", _prefix );
 
-    if ( ! variable_exists( _environment, prefixAnimation ) ) {
-        CRITICAL_CANNOT_USE_ANIMATING_WITHOUT_ANIMATION(_prefix);
+    if ( ! variable_exists( _environment, prefixMovement ) ) {
+        CRITICAL_CANNOT_USE_MOVING_WITHOUT_MOVEMENT(_prefix);
     }
 
-    Variable * prefixAnimationVar = variable_retrieve( _environment, prefixAnimation );
+    Variable * prefixMovementVar = variable_retrieve( _environment, prefixMovement );
 
-    if ( prefixAnimationVar->type != VT_THREAD ) {
-        CRITICAL_CANNOT_USE_ANIMATING_WITHOUT_ANIMATION(_prefix);
+    if ( prefixMovementVar->type != VT_THREAD ) {
+        CRITICAL_CANNOT_USE_MOVING_WITHOUT_MOVEMENT(_prefix);
     }
     
-    return running( _environment, prefixAnimationVar->name, _animation );
+    return running( _environment, prefixMovementVar->name, _movement );
     
 }
 

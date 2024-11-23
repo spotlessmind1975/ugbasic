@@ -3317,6 +3317,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_MOVE_WITHOUT_MOVEMENT(n)  CRITICAL2("E329 - cannot use MOVE without a MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_ABSOLUTE_MOVE_WITHOUT_ABSOLUTE_MOVEMENT(n)  CRITICAL2("E330 - cannot use absolute MOVE without an absolute MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_STOP_WITHOUT_MOVEMENT(n)  CRITICAL2("E331 - cannot use STOP MOVEMENT without a MOVEMENT", n ); 
+#define CRITICAL_CANNOT_USE_MOVING_WITHOUT_MOVEMENT(n)  CRITICAL2("E332 - cannot use MOVING without a MOVEMENT", n ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4831,6 +4832,7 @@ void                    mmove_video_memory( Environment * _environment, char * _
 void                    move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 void                    movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix );
+Variable *              moving( Environment * _environment, char * _prefix, char * _movement );
 Variable *              msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    msprite_update( Environment * _environment );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
