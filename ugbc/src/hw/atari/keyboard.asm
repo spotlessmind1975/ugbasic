@@ -39,7 +39,7 @@ SCANCODEREAD:
     .BYTE $00, $00, $00, $00, $00, $00, $00, $00
     .BYTE $00, $00, $00, $00, $00, $00, $00, $00
 
-SCANCODEPTR = $9
+SCANCODEPTR = $4c
 
 KEYBOARDSHIFT:           .BYTE $00
 
