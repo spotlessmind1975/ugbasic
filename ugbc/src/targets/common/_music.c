@@ -192,6 +192,8 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
         int alreadyAllocated = MAX_AUDIO_CHANNELS;
         int imfChannelIndex = 0;
 
+        // printf( "LOOKING FOR MIDI CHANNEL = %2.2x\n", _payload->MsgData.NoteOn.iChannel );
+
         for( imfChannelIndex=0; imfChannelIndex<MAX_AUDIO_CHANNELS; ++imfChannelIndex ) {
             // We exit as soon as we found one.
             if ( lastChannelOnChannel[ imfChannelIndex ] == _payload->MsgData.NoteOn.iChannel &&
@@ -243,6 +245,9 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
 
             if ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] != lastProgramOnChannel[ imfChannelIndex ] ) {
                 if ( ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] & 0xff ) != 0xff ) {
+                    if ( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] == 0 ) {
+                        lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] = IMF_INSTRUMENT_CELLO;
+                    }
                     imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
                     imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ] );
                     // printf( " -> set program $%2.2x on on %d\n", lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], imfChannelIndex );
@@ -250,8 +255,8 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
                     lastChannelOnChannel[ imfChannelIndex ] = _payload->MsgData.NoteOn.iChannel;
                     // printf( "%d: SET PROGRAM %2.2x (channel=%2.2x)\n", imfChannelIndex, lastProgramOnMIDITrack[ _payload->MsgData.NoteOn.iChannel ], _payload->MsgData.NoteOn.iChannel );
                 } else {
-                    // imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
-                    // imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_PROGRAM( 0 );
+                    lastProgramOnChannel[ imfChannelIndex ] = IMF_INSTRUMENT_CELLO;
+                    lastChannelOnChannel[ imfChannelIndex ] = _payload->MsgData.NoteOn.iChannel;
                 }
             } else {
 
@@ -297,6 +302,8 @@ static int decode_midi_payload_note_on( MidiMessagePayload * _payload ) {
 static int decode_midi_payload_set_program( MidiMessagePayload * _payload ) {
 
     int imfChannelIndex;
+
+    // printf( "MIDI CHANNEL = %2.2x, PROGRAM = %2.2x\n", _payload->MsgData.ChangeProgram.iChannel, _payload->MsgData.ChangeProgram.iProgram );
 
     // // Produce the 2 bytes data on the stream
     // imfBuffer[imfStreamPos++] = IMF_SET_PROGRAM_CHANNEL( imfChannelIndex );
