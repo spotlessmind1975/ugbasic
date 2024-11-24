@@ -181,6 +181,11 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_POSITION;
     ++((struct _Environment *)_environment)->parameters;
 
+	// 	SHARED  [prefix]Sync
+    ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixSync );
+    ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_BYTE;
+    ++((struct _Environment *)_environment)->parameters;
+
     if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
         // 	SHARED  [prefix]TX
         ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixTX );
@@ -299,6 +304,8 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
         cpu_label( _environment, reallyDoneLabel );
 
     }
+
+    variable_store( _environment, prefixSyncVar->name, 0x00 );
 
 	// END PROC
     end_procedure( _environment, NULL );
