@@ -279,7 +279,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SBYTE:
         case VT_COLOR:
         case VT_THREAD:
-            vars_emit_byte( _environment, NULL, variable->initialValue);
+            vars_emit_byte( _environment, NULL, _variable->initialValue);
             break;
         case VT_DOJOKA:
             outline0(" .res 8" );
@@ -294,11 +294,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SWORD:
         case VT_POSITION:
         case VT_ADDRESS:
-            vars_emit_word( _environment, NULL, variable->initialValue);
+            vars_emit_word( _environment, NULL, _variable->initialValue);
             break;
         case VT_DWORD:
         case VT_SDWORD:
-            vars_emit_dword( _environment, NULL, variable->initialValue);
+            vars_emit_dword( _environment, NULL, _variable->initialValue);
             break;
         case VT_FLOAT: {
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
