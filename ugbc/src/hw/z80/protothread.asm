@@ -88,7 +88,7 @@ PROTOTHREADREGAT:
     SRL A
     SRL A
     SRL A
-    ADD 7
+    ADD 6
     LD D, 0
     LD E, A
     AND A
@@ -106,10 +106,10 @@ PROTOTHREADGETADDRESS:
     PUSH HL
     LD HL, PROTOTHREADLOOP
     LD A, B
-    SRL A
-    SRL A
-    SRL A
-    ADD 7
+    SLA A
+    SLA A
+    SLA A
+    ADD 6
     LD D, 0
     LD E, A
     AND A
