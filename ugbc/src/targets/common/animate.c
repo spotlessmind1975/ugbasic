@@ -108,5 +108,7 @@ void animate_semivars( Environment * _environment, char * _prefix, char * _anim,
     // playerAnimation = SPAWN animPlayerPunch
     variable_move( _environment, spawn_procedure( _environment, _anim, 0 )->name, prefixAnimationVar->name );
 
+    run_parallel( _environment );
+
 }
 

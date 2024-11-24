@@ -144,5 +144,6 @@ void move( Environment * _environment, char * _prefix, char * _movement, char * 
     // playerAnimation = SPAWN animPlayerPunch
     variable_move( _environment, spawn_procedure( _environment, _movement, 0 )->name, prefixMovementVar->name );
    
+    run_parallel( _environment );
 
 }
