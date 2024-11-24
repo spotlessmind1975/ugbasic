@@ -349,7 +349,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             if ( strcmp( _variable->name, "PEN" ) == 0 ) {
                 outhead1("%s = 646", _variable->realName);
             } else {        
-                vars_emit_byte( _environment, variable->realName, variable->initialValue );
+                vars_emit_byte( _environment, _variable->realName, _variable->initialValue );
             }
             break;
         case VT_DOJOKA:
@@ -366,11 +366,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_SWORD:
         case VT_POSITION:
         case VT_ADDRESS:
-            vars_emit_word( _environment, variable->realName, variable->initialValue );
+            vars_emit_word( _environment, _variable->realName, _variable->initialValue );
             break;
         case VT_DWORD:
         case VT_SDWORD:
-            vars_emit_dword( _environment, variable->realName, variable->initialValue );
+            vars_emit_dword( _environment, _variable->realName, _variable->initialValue );
             break;
         case VT_FLOAT: {
             outhead1("%s:", _variable->realName );
