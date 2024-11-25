@@ -152,9 +152,9 @@ void sc61860_math_and_const_8bit( Environment * _environment, char *_source, int
 void sc61860_math_complement_const_16bit( Environment * _environment, char *_source, int _value );
 void sc61860_math_complement_const_32bit( Environment * _environment, char *_source, int _value );
 void sc61860_math_complement_const_8bit( Environment * _environment, char *_source, int _value );
-void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, int _value, int _signed );
-void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, int _value, int _signed );
-void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, int _value, int _signed );
+void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, int _value, int _signed, char * _remainder );
+void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, int _value, int _signed, char * _remainder );
+void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, int _value, int _signed, char * _remainder );
 void sc61860_math_double_16bit( Environment * _environment, char *_source, char *_name, int _signed );
 void sc61860_math_double_32bit( Environment * _environment, char *_source, char *_name, int _signed );
 void sc61860_math_double_8bit( Environment * _environment, char *_source, char *_name, int _signed );
@@ -166,6 +166,9 @@ void sc61860_math_mul2_const_8bit( Environment * _environment, char *_source, in
 void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
 void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
 void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed );
+void sc61860_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
+void sc61860_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
+void sc61860_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed );
 void sc61860_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void sc61860_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void sc61860_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -274,6 +277,7 @@ void sc61860_dsfree( Environment * _environment, char * _index );
 void sc61860_dswrite( Environment * _environment, char * _index );
 void sc61860_dsresize( Environment * _environment, char * _index, char * _size );
 void sc61860_dsresize_size( Environment * _environment, char * _index, int _size );
+void sc61860_dsinit( Environment * _environment );
 void sc61860_dsgc( Environment * _environment );
 void sc61860_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
 void sc61860_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset );
@@ -302,6 +306,7 @@ void sc61860_protothread_set_state( Environment * _environment, char * _index, i
 void sc61860_protothread_get_state( Environment * _environment, char * _index, char * _state );
 void sc61860_protothread_current( Environment * _environment, char * _current );
 void sc61860_set_callback( Environment * _environment, char * _callback, char * _label );
+void sc61860_protothread_get_address( Environment * _environment, char * _index, char * _address );
 
 void sc61860_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output );
 void sc61860_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output );
@@ -463,9 +468,9 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_math_complement_const_16bit( _environment, _source, _value  ) sc61860_math_complement_const_16bit( _environment, _source, _value  )
 #define cpu_math_complement_const_32bit( _environment, _source, _value  ) sc61860_math_complement_const_32bit( _environment, _source, _value  )
 #define cpu_math_complement_const_8bit( _environment, _source, _value  ) sc61860_math_complement_const_8bit( _environment, _source, _value  )
-#define cpu_math_div2_const_16bit( _environment, _source, _value, _signed  ) sc61860_math_div2_const_16bit( _environment, _source, _value, _signed  )
-#define cpu_math_div2_const_32bit( _environment, _source, _value, _signed  ) sc61860_math_div2_const_32bit( _environment, _source, _value, _signed  )
-#define cpu_math_div2_const_8bit( _environment, _source, _value, _signed  ) sc61860_math_div2_const_8bit( _environment, _source, _value, _signed  )
+#define cpu_math_div2_const_16bit( _environment, _source, _value, _signed, _remainder  ) sc61860_math_div2_const_16bit( _environment, _source, _value, _signed, _remainder  )
+#define cpu_math_div2_const_32bit( _environment, _source, _value, _signed, _remainder  ) sc61860_math_div2_const_32bit( _environment, _source, _value, _signed, _remainder  )
+#define cpu_math_div2_const_8bit( _environment, _source, _value, _signed, _remainder  ) sc61860_math_div2_const_8bit( _environment, _source, _value, _signed, _remainder  )
 #define cpu_math_double_16bit( _environment, _source, _name, _signed  ) sc61860_math_double_16bit( _environment, _source, _name, _signed  )
 #define cpu_math_double_32bit( _environment, _source, _name, _signed  ) sc61860_math_double_32bit( _environment, _source, _name, _signed  )
 #define cpu_math_double_8bit( _environment, _source, _name, _signed  ) sc61860_math_double_8bit( _environment, _source, _name, _signed  )
@@ -569,6 +574,9 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_math_div_32bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder, _signed  ) sc61860_math_div_32bit_to_16bit( _environment, _source, _destination, _other, _other_remainder, _signed )
 #define cpu_math_div_16bit_to_16bit( _environment, _source, _destination,  _other, _other_remainder, _signed  ) sc61860_math_div_16bit_to_16bit( _environment, _source, _destination, _other, _other_remainder, _signed )
 #define cpu_math_div_8bit_to_8bit( _environment, _source, _destination,   _other, _other_remainder, _signed  ) sc61860_math_div_8bit_to_8bit( _environment, _source, _destination,  _other, _other_remainder, _signed )
+#define cpu_math_div_32bit_to_16bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed  ) sc61860_math_div_32bit_to_16bit_const( _environment, _source, _destination, _other, _other_remainder, _signed )
+#define cpu_math_div_16bit_to_16bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed  ) sc61860_math_div_16bit_to_16bit_const( _environment, _source, _destination, _other, _other_remainder, _signed )
+#define cpu_math_div_8bit_to_8bit_const( _environment, _source, _destination,   _other, _other_remainder, _signed  ) sc61860_math_div_8bit_to_8bit_const( _environment, _source, _destination,  _other, _other_remainder, _signed )
 #define cpu_bit_check( _environment, _value, _position, _result, _bitwidth ) sc61860_bit_check( _environment, _value, _position, _result, _bitwidth )
 #define cpu_bit_inplace_8bit( _environment, _value, _position, _bit ) sc61860_bit_inplace_8bit( _environment, _value, _position, _bit );
 #define cpu_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit ) sc61860_bit_inplace_8bit_extended_indirect( _environment, _address, _position, _bit );
@@ -583,6 +591,7 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_dswrite( _environment, _index ) sc61860_dswrite( _environment, _index )
 #define cpu_dsresize( _environment, _index, _size ) sc61860_dsresize( _environment, _index, _size )
 #define cpu_dsresize_size( _environment, _index, _size ) sc61860_dsresize_size( _environment, _index, _size )
+#define cpu_dsinit( _environment ) sc61860_dsinit( _environment )
 #define cpu_dsgc( _environment ) sc61860_dsgc( _environment )
 #define cpu_dsdescriptor( _environment, _index, _address, _size ) sc61860_dsdescriptor( _environment, _index, _address, _size )
 #define cpu_dsalloc_size( _environment, _size, _index ) sc61860_dsalloc_size( _environment, _size, _index ) 
@@ -613,6 +622,7 @@ void sc61860_float_single_exp( Environment * _environment, char * _value, char *
 #define cpu_protothread_set_state( _environment, _index, _state ) sc61860_protothread_set_state( _environment, _index, _state )
 #define cpu_protothread_get_state( _environment, _index, _state ) sc61860_protothread_get_state( _environment, _index, _state )
 #define cpu_protothread_current( _environment, _current ) sc61860_protothread_current( _environment, _current )
+#define cpu_protothread_get_address( _environment, _index, _address ) sc61860_protothread_get_address( _environment, _index, _address )
 
 #define cpu_msc1_uncompress_direct_direct( _environment, _input, _output ) sc61860_msc1_uncompress_direct_direct( _environment, _input, _output )
 #define cpu_msc1_uncompress_direct_indirect( _environment, _input, _output ) sc61860_msc1_uncompress_direct_indirect( _environment, _input, _output )

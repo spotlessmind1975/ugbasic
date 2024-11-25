@@ -96,7 +96,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
 
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
-        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0, NULL );
         // ay8910_set_duration_vars( _environment, _channels, duration->realName );
     } else {
         // ay8910_set_duration_vars( _environment, _channels, NULL );

@@ -91,7 +91,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
 
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0 );
+        cpu_math_div2_const_16bit( _environment, duration->realName, 4, 0, NULL );
         // ay8910_set_duration_vars( _environment, _channels, duration->realName );
     } else {
         // ay8910_set_duration_vars( _environment, _channels, NULL );

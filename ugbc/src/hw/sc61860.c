@@ -2012,13 +2012,19 @@ void sc61860_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sc61860_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     MAKE_LABEL
 
     no_inline( cpu_math_div2_const_8bit )
 
     embedded( cpu_math_div2_const_8bit, src_hw_sc61860_cpu_math_div2_const_8bit_asm );
+
+        if ( _remainder ) {
+            op_lda( _environment, _source );
+            op_anda_direct( _environment, 0x01 );
+            op_sta( _environment, _remainder );
+        }
 
         if ( _signed ) {
 
@@ -2707,13 +2713,19 @@ void sc61860_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sc61860_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     MAKE_LABEL
 
     no_inline( cpu_math_div2_const_16bit )
 
     embedded( cpu_math_div2_const_16bit, src_hw_sc61860_cpu_math_div2_const_16bit_asm );
+
+        if ( _remainder ) {
+            op_lda( _environment, _source );
+            op_anda_direct( _environment, 0x01 );
+            op_sta( _environment, _remainder );
+        }
 
         if ( _signed ) {
 
@@ -3351,9 +3363,15 @@ void sc61860_math_complement_const_32bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     MAKE_LABEL
+
+    if ( _remainder ) {
+        op_lda( _environment, _source );
+        op_anda_direct( _environment, 0x01 );
+        op_sta( _environment, _remainder );
+    }
 
     if ( _signed ) {
 
@@ -5556,6 +5574,12 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
  
 }
 
+void sc61860_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_32bit_to_16bit_const" );
+
+}
+
 void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     CRITICAL_UNIMPLEMENTED( "sc61860_math_div_16bit_to_16bit" );
@@ -5659,6 +5683,12 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
     
 }
 
+void sc61860_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_16bit_to_16bit_const" );
+
+}
+
 void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     CRITICAL_UNIMPLEMENTED( "sc61860_math_div_8bit_to_8bit" );
@@ -5749,6 +5779,14 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline1("LD (%s), A", _other);
 
     }
+}
+
+void sc61860_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_math_div_8bit_to_8bit_const" );
+
+    MAKE_LABEL
+
 }
 
 void sc61860_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
@@ -6171,6 +6209,16 @@ void sc61860_dsresize_size( Environment * _environment, char * _index, int _resi
 
 }
 
+void sc61860_dsinit( Environment * _environment ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_dsinit" );
+
+    // deploy( dstring,src_hw_sc61860_dstring_asm );
+
+    // outline0( "CALL DSGC" );
+
+}
+
 void sc61860_dsgc( Environment * _environment ) {
 
     CRITICAL_UNIMPLEMENTED( "sc61860_dsgc" );
@@ -6467,6 +6515,12 @@ void sc61860_protothread_current( Environment * _environment, char * _current ) 
 
     // outline0("LD A, (PROTOTHREADCT)" );
     // outline1("LD (%s), A", _current );
+
+}
+
+void sc61860_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+
+    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_address" );
 
 }
 
