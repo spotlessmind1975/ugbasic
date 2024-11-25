@@ -98,7 +98,7 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    Variable * realTiming = variable_div_const( _environment, variable_retrieve( _environment, _timing )->name, 20, NULL );
+    Variable * realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 )->name, 20, NULL );
 
     if ( _environment->protothread && !_environment->protothreadForbid ) {
 

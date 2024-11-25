@@ -58,9 +58,9 @@ the time to wait. The suffix ''CYCLES'' can be used to indicate CPU cycles,
 and ''MS'' (''MILLISECONDS'') to indicate a number of milliseconds.
 
 The pause is of the "busy" type, so the entire program is suspended, except for 
-the timer-related mechanisms but including the multithreading mechanism. To 
-avoid this, you can follow the instruction with the ''PARALLEL'' keyword, 
-which allows parallel processes to continue executing while waiting for the time.
+the timer-related mechanisms. The multhtireading mechanism, instead, will continue
+to run. Note that the maximum duration you can expect is 65535 milliseconds, or 
+approximately 65.5 seconds. 
 
 The ''PARALLEL'' keyword can only be used with waits related to ''CYCLES''.
 
@@ -72,11 +72,10 @@ misura del tempo da attendere. Si può usare il suffisso ''CYCLES'' per indicare
 cicli di CPU, ''TICKS'' per indicare il numero di blank verticali a 50Hz (PAL) 
 o 60Hz (NTSC), e ''MS'' (''MILLISECONDS'') per indicare un numero di millisecondi.
 
-La pausa è di tipo "busy", quindi tutto il programma viene sospeso, ad esclusione 
-dei meccanismi legati ai timer ma compreso il meccanismo di multithreading. Per 
-evitarlo è possibile far seguire l'istruzione dalla parola chiave ''PARALLEL'', 
-che consente di far proseguire l'esecuzione di processi paralleli mentre viene 
-atteso il tempo.
+The pause is of the "busy" type, so the entire program is suspended, except for 
+the timer-related mechanisms. The multhtireading mechanism, instead, will continue 
+to run. Note that the maximum duration you can expect is 65535 milliseconds, or 
+approximately 65.5 seconds.
 
 La parola chiave ''PARALLEL'' può essere usata solo con attese legate ai ''CYCLES''.
 
