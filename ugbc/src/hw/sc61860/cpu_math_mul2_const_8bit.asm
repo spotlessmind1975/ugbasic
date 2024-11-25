@@ -29,26 +29,26 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           MUL2 CONST 8 BIT ON SC618060                      *
+;*                           DIV2 CONST 8 BIT ON SC618060                      *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; A * 2^I -> A (unsigned)
-CPUMUL2CONST8U:
-CPUMUL2CONST8UL1:
+; A / 2^I -> A (unsigned)
+CPUDIV2CONST8U:
+CPUDIV2CONST8UL1:
     SL
     DECI
-    JRNZM CPUMUL2CONST8UL1
+    JRNZM CPUDIV2CONST8UL1
     RTN
 
-; A * 2^I -> A (signed)
-CPUMUL2CONST8S:
-CPUMUL2CONST8SL1:
+; A / 2^I -> A (signed)
+CPUDIV2CONST8S:
+CPUDIV2CONST8SL1:
     PUSH
     ANIA 0x7F
-    CALL CPUMUL2CONST8U
+    CALL CPUDIV2CONST8U
     LP 0
     EXAM    
     POP
