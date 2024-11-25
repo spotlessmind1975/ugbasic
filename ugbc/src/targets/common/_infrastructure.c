@@ -5423,7 +5423,7 @@ Variable * variable_div2_const( Environment * _environment, char * _destination,
     Variable * destination = variable_retrieve( _environment, _destination );    
     Variable * result = variable_temporary( _environment, destination->type, "(div2)" );    
     variable_move_naked( _environment, destination->name, result->name );
-    Variable * remainder;
+    Variable * remainder = NULL;
     if ( _remainder ) {
         remainder = variable_retrieve_or_define( _environment, _remainder, destination->type, 0 );
     }
