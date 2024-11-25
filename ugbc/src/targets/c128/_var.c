@@ -804,10 +804,10 @@ void variable_cleanup( Environment * _environment ) {
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
         int i=0;
-        out1("%s:", dataSegment->realName );
+        out1("%s: .BYTE ", dataSegment->realName );
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
-            out0(".BYTE ");
+            out0(" ");
             int binary = 0;
             for(int j=0; j<dataDataSegment->size; ++j  ) {
                 if (dataDataSegment->data[j] == 34 || dataDataSegment->data[j] < 32 || dataDataSegment->data[j] > 128 ) {
