@@ -676,7 +676,7 @@ void z80_store_8bit_with_offset2( Environment * _environment, char *_destination
     inline( cpu_store_8bit_with_offset2 )
 
         outline1("LD HL, %s", _destination);
-        outline1("LD A, %s", _offset);
+        outline1("LD A, (%s)", _offset);
         outline0("LD E, A");
         outline0("LD D, 0");
         outline0("ADD HL, DE" );
