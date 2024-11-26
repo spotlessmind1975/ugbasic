@@ -1597,6 +1597,13 @@ Variable * variable_store_string( Environment * _environment, char * _destinatio
     switch( destination->type ) {
         case VT_STRING: {
             if ( !_environment->emptyProcedure ) {
+
+                if ( _environment->vestigialConfig.rchack_4gravity_1164 ) {
+                    if ( strcmp( _value, "  1   2   3   4   5   6   7" ) == 0 ) {
+                        _value = strdup( "Press 1-9 key to play" );
+                    }
+                }
+               
                 destination->valueString = string_reserve( _environment, _value );
                 destination->size = strlen( destination->valueString->value ) + 1;
                 // memory_area_assign( _environment->memoryAreas, destination );
