@@ -520,15 +520,16 @@ void variable_cleanup( Environment * _environment ) {
     // Prologo per compatibilità con BASIC
 
     outline0("LP 0");
-    outline0("LIDP 0x4a"); // sreg
+    outline0("LIDP sreg");
     outline0("LII 0x11");
     outline0("EXWD");
     outline0("CALL CODESTARTMAIN");
     outline0("LP 0");
-    outline0("LIDP 0x4a"); // sreg
+    outline0("LIDP sreg");
     outline0("LII 0x11");
     outline0("MVWD");
     outline0("RTN");
+    outhead0("sreg: .dw 0, 0, 0, 0, 0, 0");
 
     outhead0("CODESTARTMAIN:");
     outline0("JP CODESTART2");
