@@ -56,7 +56,7 @@
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
     sid_start( _environment, _channels );
-    sid_set_program( _environment, _channels, IMF_INSTRUMENT_REED_ORGAN );
+    sid_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
     sid_set_frequency( _environment, _channels, _freq );
     if ( _delay ) {
         sid_set_duration( _environment, _channels, _delay / 20 /* approx! */ );
@@ -82,7 +82,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
         sid_start_var( _environment, channels->realName );
-        sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_REED_ORGAN );
+        sid_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         sid_set_frequency_vars( _environment, channels->realName, freq->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
@@ -92,7 +92,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         }
     } else {
         sid_start_var( _environment, NULL );
-        sid_set_program_semi_var( _environment, _channels, IMF_INSTRUMENT_REED_ORGAN );
+        sid_set_program_semi_var( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
         sid_set_frequency_vars( _environment, NULL, freq->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
