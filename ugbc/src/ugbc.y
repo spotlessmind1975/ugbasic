@@ -11977,6 +11977,7 @@ int main( int _argc, char *_argv[] ) {
     // version of the compiler (>1.16.3).
     if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
         _environment->vestigialConfig.rchack_4gravity_1163 = 1;
+        _environment->vestigialConfig.rchack_4gravity_1164 = 1;
     }
 
     /* retrocompatible hacks */
