@@ -304,17 +304,12 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_WAVEFORM(_channels, WAVEFORM_TRIANGLE);
-            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE(_channels, 1024);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
+            PROGRAM_PULSE(_channels, 0x600);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 5, 0);
             break;
 
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
@@ -325,9 +320,9 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_WAVEFORM(_channels, WAVEFORM_RECTANGLE);
-            PROGRAM_ATTACK_DECAY(_channels, 0, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 14);
+            PROGRAM_PULSE(_channels, 1024);
+            PROGRAM_ATTACK_DECAY(_channels, 0, 9);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 0);
             break;
 
         default:
@@ -340,9 +335,9 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_WAVEFORM(_channels, WAVEFORM_TRIANGLE);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            PROGRAM_PULSE(_channels, 0x800);
+            PROGRAM_ATTACK_DECAY(_channels, 0, 9);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 9, 0);
             break;
 
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
@@ -352,17 +347,7 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
-            break;
-
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
-            break;
-
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
         case IMF_INSTRUMENT_ACOUSTIC_BASS:
         case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
@@ -371,10 +356,10 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_SLAP_BASS_1:
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
-        case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_WAVEFORM(_channels, WAVEFORM_TRIANGLE);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
+        case IMF_INSTRUMENT_SYNTH_BASS_2:        
+            PROGRAM_WAVEFORM(_channels, WAVEFORM_SAW);
+            PROGRAM_ATTACK_DECAY(_channels, 0, 9);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 2, 1);
             break;
 
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
@@ -391,8 +376,8 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
             PROGRAM_WAVEFORM(_channels, WAVEFORM_TRIANGLE | WAVEFORM_RECTANGLE );
             PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 5, 8);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 5, 9);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 8);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 10, 9);
             break;
 
         case IMF_INSTRUMENT_PAD_4_CHOIR:
@@ -446,9 +431,9 @@ void sid_set_program( Environment * _environment, int _channels, int _program ) 
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_WAVEFORM(_channels, WAVEFORM_TRIANGLE);
-            PROGRAM_ATTACK_DECAY(_channels, 0, 15);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 2, 6);
+            PROGRAM_WAVEFORM(_channels, WAVEFORM_SAW);
+            PROGRAM_ATTACK_DECAY(_channels, 8, 9);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 1);
             break;
 
         case IMF_INSTRUMENT_SITAR:
@@ -752,8 +737,8 @@ void sid_set_program_semi_var( Environment * _environment, char * _channels, int
         case IMF_INSTRUMENT_TELEPHONE_RING:
         case IMF_INSTRUMENT_HELICOPTER:
             PROGRAM_WAVEFORM_SV(_channels, WAVEFORM_SAW);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 0, 9);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 2, 1);
             break;
     }
 
