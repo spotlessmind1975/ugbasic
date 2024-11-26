@@ -8622,13 +8622,13 @@ void variable_store_array_const_bit( Environment * _environment, Variable * _arr
 
     variable_move( _environment, offset->name, position->name );
 
-    variable_and_const( _environment, position->name, 7 );
+    Variable * positionInside = variable_and_const( _environment, position->name, 7 );
 
     offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, value->realName );
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, positionInside->realName, value->realName );
     
 }
 
@@ -8772,13 +8772,13 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 
     variable_move( _environment, offset->name, position->name );
 
-    variable_and_const( _environment, position->name, 7 );
+    Variable * positionInside = variable_and_const( _environment, position->name, 7 );
 
     offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, position->realName, _value->realName );
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, positionInside->realName, _value->realName );
 
 }
 
@@ -9042,7 +9042,7 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
     Variable * position = variable_temporary( _environment, VT_BYTE, "(position)");
     variable_move( _environment, offset->name, position->name );
-    variable_and_const( _environment, position->name, 7 );
+    Variable * positionInside = variable_and_const( _environment, position->name, 7 );
     offset = variable_sr_const( _environment, offset->name, 3 );
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
@@ -9051,7 +9051,7 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
 
     MAKE_LABEL
  
-    cpu_bit_check_extended( _environment, tmp->realName, position->realName, NULL, 8 );
+    cpu_bit_check_extended( _environment, tmp->realName, positionInside->realName, NULL, 8 );
 
     cpu_bit_inplace_8bit( _environment, result->realName, result->bitPosition, NULL );
 
