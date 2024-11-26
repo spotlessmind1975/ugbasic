@@ -1844,8 +1844,7 @@ typedef struct _VestigialConfig {
     // If 1 we are compiling "4 gravity" game with
     // a recent version of the compiler.
     
-    char rchack_4gravity_1163; // up to 1.16.3
-    char rchack_4gravity_1164; // up to 1.16.4
+    char rchack_4gravity_1163;
 
     // If 1 we are compiling "falling balls" game with
     // a recent version of the compiler.
