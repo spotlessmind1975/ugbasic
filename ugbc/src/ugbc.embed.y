@@ -439,6 +439,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_pick_the_star_1163;
             } else if ( strcmp( $3, "rchack_4gravity_1163" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_4gravity_1163;
+            } else if ( strcmp( $3, "rchack_4gravity_1164" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_4gravity_1164;
             } else {
                 $$ = 0;
             }
