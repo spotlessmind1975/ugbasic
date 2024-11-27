@@ -103,10 +103,15 @@ appearance of the sprite. In this case, it is necessary to provide a reference t
 the previously defined sprite (''previous''), and ensure that the graphic 
 characteristics (such as the number of colors) are identical.
 
+An additional syntax allows you to "duplicate" a sprite, thus sharing its 
+graphic resources. Simply pass the reference to a previous MSPRITE to define 
+it.
+
 @italian
 
 @syntax = MSPRITE ( name flags )
 @syntax = MSPRITE ( name, previous flags )
+@syntax = MSPRITE ( msprite )
 
 @example spaceshift = MSPRITE( LOAD IMAGE( "spaceship.png" ) IGNORE COLOR GREEN )
 @example alien = MSPRITE( LOAD IMAGE( "alien1.png" ) )
