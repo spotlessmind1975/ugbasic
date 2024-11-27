@@ -83,6 +83,10 @@ NMISVC:
     RTI
 
 IRQSVC:
+    PHA
+    LDA #$1
+    STA $D019
+    PLA
 @IF deployed.msprites
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
