@@ -1472,6 +1472,49 @@ void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
 }
 
+void vic2_sprite_duplicate( Environment * _environment, char * _sprite, char * _original ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * original = variable_retrieve( _environment, _original );
+
+    switch ( original->type) {
+
+        case VT_SPRITE:
+
+            CRITICAL_CANNOT_DUPLICATE_NOT_MPSRITE( _original );
+
+        case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+
+            outline1("LDA %s", original->realName );
+            outline0("STA MSPRITEDUPLICATEY0+1" );
+
+            outline1("LDA %s", sprite->realName );
+            outline0("STA MSPRITEDUPLICATEY1+1" );
+
+            outline1("LDA %s", original->realName );
+            outline0("STA MSPRITEDUPLICATEY2+1" );
+
+            outline1("LDA %s", sprite->realName );
+            outline0("STA MSPRITEDUPLICATEY3+1" );
+
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+
+            outline0("JSR MSPRITEDUPLICATE" );
+            break;
+
+    }
+
+}
+
 void vic2_sprite_enable( Environment * _environment, char * _sprite ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );

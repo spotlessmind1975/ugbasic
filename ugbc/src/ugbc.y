@@ -4005,7 +4005,12 @@ exponential_less:
         $$ = csprite_init( _environment, $3, $5, $6 )->name;
     }
     | MSPRITE OP expr sprite_flags CP {
-        $$ = msprite_init( _environment, $3, NULL, $4 )->name;
+        Variable * original = variable_retrieve( _environment, $3 );
+        if ( original->type == VT_MSPRITE ) {
+            $$ = msprite_duplicate( _environment, $3 )->name;
+        } else {
+            $$ = msprite_init( _environment, $3, NULL, $4 )->name;
+        }
     }
     | MSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = msprite_init( _environment, $3, $5, $6 )->name;
