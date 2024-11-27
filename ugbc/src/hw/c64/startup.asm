@@ -83,6 +83,10 @@ NMISVC:
     RTI
 
 IRQSVC:
+    PHA
+    LDA #$1
+    STA $D019
+    PLA
 @IF deployed.msprites
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
@@ -109,6 +113,8 @@ MSPRITESMANAGERADDRESS:
 IRQSVC2:
     PHA
     LDA $DC0D
+    LDA #$1
+    STA $D019
     PLA
     RTI
 
@@ -162,7 +168,7 @@ C64STARTUPDONE:
 
 @IF deployed.msprites
 
-    ; msprites
+   ; msprites
     LDA #$7f                    ;CIA interrupt off
     STA $DC0D
     LDA #$01                    ;Raster interrupt on
