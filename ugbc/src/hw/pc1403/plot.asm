@@ -117,7 +117,7 @@ CALCPOSGR2:
 CALCPOSGY:
     LIP 0x06
     EXAM
-    LIP 0x05
+    LIP 0x07
     LIA 0x30
     EXAM
 
