@@ -529,7 +529,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("LII 0x11");
     outline0("MVWD");
     outline0("RTN");
-    outhead0("sreg: .dw 0, 0, 0, 0, 0, 0");
+    outhead0("sreg: .dw 0, 0, 0, 0, 0, 0, 0, 0, 0");
 
     outhead0("CODESTARTMAIN:");
     outline0("JP CODESTART2");
