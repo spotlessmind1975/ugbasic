@@ -65,7 +65,11 @@ void end_compilation( Environment * _environment ) {
         end_do_loop( _environment );
     }
 
-    halt( _environment );
+    if ( _environment->finalReturn ) {
+        cpu_return( _environment );
+    } else {
+        halt( _environment );
+    }
 
     Label * first = _environment->referredLabels;
     while( first ) {

@@ -2183,6 +2183,11 @@ typedef struct _Environment {
     int optionExplicit;
 
     /*
+     * Progam ends with a return to the operating system?
+     */
+    int finalReturn;
+
+    /*
      * Graphical operation has to be clipped?
      */
     int optionClip;
