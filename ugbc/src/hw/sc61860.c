@@ -1711,95 +1711,85 @@ void sc61860_less_than_8bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    no_inline( cpu_less_than_8bit )
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_8bit(signed)" );
+    embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
 
-    } else {
+        if ( _signed ) {
 
-        char doneLabel[MAX_TEMPORARY_STORAGE];
-        sprintf( doneLabel, "%sb2", label );
+            op_ldi( _environment, _source );
+            op_lda( _environment, _destination );
+            if ( _equal ) {
+                op_call( _environment, "CPULTE8S" );
+            } else {
+                op_call( _environment, "CPULT8S" );
+            }
+            if ( _other ) {
+                op_sta( _environment, _other );
+            } else {
+                op_sta( _environment, _destination );
+            }
 
-        op_ldx( _environment, _destination );
-
-        op_lda_x( _environment );
-
-        op_xab( _environment );
-
-        op_lda( _environment, _source );
-
-        op_cpb( _environment );
-
-        op_jc( _environment, label );
-        if ( _equal ) {
-            op_jnz( _environment, label );
-        }
-
-        op_lda_direct( _environment, 0 );
-
-        if ( _other ) {
-            op_sta( _environment, _other );
         } else {
-            op_sta( _environment, _destination );
+
+            op_ldi( _environment, _source );
+            op_lda( _environment, _destination );
+            if ( _equal ) {
+                op_call( _environment, "CPULTE8U" );
+            } else {
+                op_call( _environment, "CPULT8U" );
+            }
+            if ( _other ) {
+                op_sta( _environment, _other );
+            } else {
+                op_sta( _environment, _destination );
+            }
+
         }
 
-        op_jp( _environment, doneLabel );
-
-        outhead1("%s:", label);
-
-        op_lda_direct( _environment, 0xff );
-
-        if ( _other ) {
-            op_sta( _environment, _other );
-        } else {
-            op_sta( _environment, _destination );
-        }
-        outhead1("%s:", doneLabel);
-
-    }
-
+    done(  )
+	
 }
 
 void sc61860_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    if ( _signed ) {
+    no_inline( cpu_less_than_8bit )
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_8bit_const(signed)" );
+    embedded( cpu_less_than_8bit, src_hw_sc61860_cpu_less_than_8bit_asm );
 
-    } else {
+        if ( _signed ) {
 
-        char doneLabel[MAX_TEMPORARY_STORAGE];
-        sprintf( doneLabel, "%sb2", label );
+            op_ldi( _environment, _source );
 
-        op_lda( _environment, _source );
+            op_lda_direct( _environment, _destination );
 
-        op_cp_direct( _environment, _destination );
+            if ( _equal ) {
+                op_call( _environment, "CPULTE8S" );
+            } else {
+                op_call( _environment, "CPULT8S" );
+            }
 
-        op_jc( _environment, label );
-        if ( _equal ) {
-            op_jnz( _environment, label );
-        }
-
-        op_lda_direct( _environment, 0 );
-
-        if ( _other ) {
             op_sta( _environment, _other );
-        }
 
-        op_jp( _environment, doneLabel );
+        } else {
 
-        outhead1("%s:", label);
+            op_ldi( _environment, _source );
 
-        op_lda_direct( _environment, 0xff );
+            op_lda_direct( _environment, _destination );
 
-        if ( _other ) {
+            if ( _equal ) {
+                op_call( _environment, "CPULTE8U" );
+            } else {
+                op_call( _environment, "CPULT8U" );
+            }
+
             op_sta( _environment, _other );
-        }
-        outhead1("%s:", doneLabel);
 
-    }
+        }
+
+    done(  )
 
 }
 
