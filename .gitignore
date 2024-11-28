@@ -50,5 +50,5 @@ examples/*.sym
 examples/*.dsk
 examples/*.ram
 examples/*.rel
-
+examples/.*
 
