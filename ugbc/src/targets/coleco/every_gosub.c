@@ -68,7 +68,7 @@ rate of your computer, and from the parameter ''value'' given. A
 higher frame rate means that actions will be executed more frequently,
 while an higher ''value'' means that actions will be executed less frequently.
 
-Note that the procedure execution time should be less than the interval time, 
+Note that the subroutine execution time should be less than the interval time, 
 or the main program timings will be affected!
 
 There are 8 delay timers from 0 to 7 which can be specified with ''timer''. 
@@ -76,9 +76,9 @@ If omitted ''timer'' defaults to 0. In the case of parallel task has 0 the
 highest and 8 the lowest priority.
 
 With ''EVERY OFF'' and ''EVERY ON'' you can disable or enable the timed 
-calls. Procedures run as long as the main loop / program runs, even the 
+calls. Subroutines run as long as the main loop / program runs, even the 
 main programm is paused. It is important to know or realise that 
-low-priority-procedures which occurs simultanously to higher-priority-procedures 
+low-priority-subroutines which occurs simultanously to higher-priority-subroutines 
 are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
 
 Important: the meaning of this command is not altered by ''OPTION CALL'' pragma,
@@ -113,10 +113,10 @@ Se omesso, ''timer'' è impostato di default su 0. Nel caso di attività paralle
 0 ha la priorità più alta e 8 la priorità più bassa.
 
 Con ''EVERY OFF'' e ''EVERY ON'' puoi disabilitare o abilitare le chiamate 
-temporizzate. Le procedure vengono eseguite finché il ciclo/programma principale 
+temporizzate. Le subroutine vengono eseguite finché il ciclo/programma principale 
 è in esecuzione, anche il programma principale è in pausa. È importante sapere
-o realizzare che le procedure a bassa priorità che si verificano simultaneamente 
-a procedure a priorità più alta non vengono perse. Il loro compito rimane o viene
+o realizzare che le subroutine a bassa priorità che si verificano simultaneamente 
+a subroutine a priorità più alta non vengono perse. Il loro compito rimane o viene
 gestito di nuovo dopo aver terminato l'interruzione a priorità più alta.
 
 Importante: il significato di questo comando non viene alterato dalla direttiva 
