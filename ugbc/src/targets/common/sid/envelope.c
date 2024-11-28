@@ -74,9 +74,9 @@ tamburi, effetti sonori e altro ancora. Crea melodie e armonie più
 complesse e dinamiche e può essere utilizzato per creare effetti 
 sonori per i giochi, come esplosioni, spari o suoni ambientali.
 
-@syntax ENVELOPE voice, attack, decay, release
+@syntax ENVELOPE voice, attack, decay, sustain, release
 
-@example ENVELOPE 1, 1, 8, 10
+@example ENVELOPE 1, 2, 11, 5, 0
 
 </usermanual> */
 
