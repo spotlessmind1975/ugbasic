@@ -51,4 +51,4 @@ examples/*.dsk
 examples/*.ram
 examples/*.rel
 examples/.*
-
+8bit-lucky/
