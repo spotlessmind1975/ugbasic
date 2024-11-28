@@ -36,4 +36,19 @@ mokong*/
 *.sh
 *.log
 book/
+bugs/
+badapple/
+karate/
+examples/*.xex
+examples/*.listing
+examples/*.prg
+examples/*.reu
+examples/*.d64
+examples/*.bin
+examples/*.rom
+examples/*.sym
+examples/*.dsk
+examples/*.ram
+examples/*.rel
+
 
