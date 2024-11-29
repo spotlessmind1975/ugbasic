@@ -2969,6 +2969,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
+                                    if ( ! source->valueBuffer ) {
+                                        CRITICAL_CANNOT_MOVE_PLACEHOLDERS_TO_IMAGE( source->name );
+                                    }
                                     target->originalBitmap = source->originalBitmap;
                                     target->originalWidth = source->originalWidth;
                                     target->originalHeight = source->originalHeight;

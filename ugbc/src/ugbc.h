@@ -3326,6 +3326,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_MOVING_WITHOUT_MOVEMENT(n)  CRITICAL2("E332 - cannot use MOVING without a MOVEMENT", n ); 
 #define CRITICAL_CANNOT_USE_MOVE_SYNC_WITHOUT_ANIMATIOn(n,m)  CRITICAL3("E333 - using a not existing animation on MOVE", n, m ); 
 #define CRITICAL_CANNOT_DUPLICATE_NOT_MPSRITE(n)  CRITICAL2("E334 - cannot init from something that is not MSPRITE", n ); 
+#define CRITICAL_CANNOT_MOVE_PLACEHOLDERS_TO_IMAGE(v)  CRITICAL2("E335 - cannot move PLACEHOLDER to IMAGE", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

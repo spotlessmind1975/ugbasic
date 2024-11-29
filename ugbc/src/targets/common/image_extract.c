@@ -70,8 +70,8 @@ cercare un frame specifico per nome, usando il parametro ''NAMED''.
 @syntax = IMAGE( resource STRIP seq FRAME num )
 @syntax = IMAGE( resource NAMED name )
 
-@example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME 1 )
-@example starship = IMAGE( LOAD SEQUENCE("tiles.png") STRIP 1 FRAME 2 )
+@example starship = IMAGE( LOAD IMAGES(("tiles.png") FRAME SIZE(32,32) FRAME 1 )
+@example starship = IMAGE( LOAD SEQUENCE("tiles.png") FRAME SIZE(32, 32) STRIP 1 FRAME 2 )
 @example tile = IMAGE( LOAD TILESET("tiles.tsx") NAMED pavimento )
 
 </usermanual> */

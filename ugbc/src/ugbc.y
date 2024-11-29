@@ -3521,7 +3521,7 @@ exponential_less:
     }
     | FREE {
         cpu_dsgc( _environment );
-        $$ = variable_retrieve( _environment, "FREE_STRING" )->name;
+        $$ = strdup( "FREE_STRING" );
     }
     | SCREEN {
         $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
@@ -4351,6 +4351,30 @@ exponential_less:
         $$ = variable_temporary( _environment, VT_BYTE, "(note)" )->name;
         variable_store( _environment, $$, $2 );
     }
+    | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+        $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(if)" )->name;
+        if ( $3 ) {
+          variable_store( _environment, $$, $5 );
+        } else {
+          variable_store( _environment, $$, $7 );
+        }
+    }
+    | IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP {
+        $$ = variable_temporary( _environment, VT_FLOAT, "(iff)" )->name;
+        if ( $3 ) {
+          variable_store_float( _environment, $$, $5 );
+        } else {
+          variable_store_float( _environment, $$, $7 );
+        }
+      }
+    | IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP {
+        $$ = variable_temporary( _environment, VT_STRING, "(ifs)" )->name;
+        if ( $3 ) {
+          variable_store_string( _environment, $$, $5 );
+        } else {
+          variable_store_string( _environment, $$, $7 );
+        }
+    }      
     ;
 
 exponential:

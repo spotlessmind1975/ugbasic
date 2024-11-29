@@ -51,7 +51,7 @@ Il comando ''FILL'' permette di riempire lo schermo con un carattere specifico.
 
 @syntax FILL x,y,w,h,char,color
 
-@example FILL 0, 0, COLUMNS / 2, ROWS / 2, ASC('A')
+@example FILL 0, 0, COLUMNS / 2, ROWS / 2, ASC('A'), RED
 
 @target all
 </usermanual> */
