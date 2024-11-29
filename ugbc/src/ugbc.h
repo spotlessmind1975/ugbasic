@@ -3245,6 +3245,7 @@ typedef struct _Environment {
 #define CRITICAL_WAIT_UNTIL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E313 - cannot call WAIT UNTIL outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_WHILE_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE() CRITICAL("E314 - cannot call WAIT WHILE outside a PARALLEL procedure" );
 #define CRITICAL_WAIT_CYCLES_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE()  CRITICAL("E315 - cannot call WAIT CYCLES PARALLEL outside a PARALLEL procedure" );
+#define CRITICAL_CANNOT_MOVE_PLACEHOLDERS_TO_IMAGE(v)  CRITICAL2("E164 - cannot move PLACEHOLDER to IMAGE", v );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
