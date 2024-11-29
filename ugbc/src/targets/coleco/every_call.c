@@ -75,7 +75,8 @@ low-priority-procedures which occurs simultanously to higher-priority-procedures
 are not lost. Their task remains or handled again after finishing the higher-prio interrupt.
 
 Important: the meaning of this command is not altered by ''OPTION CALL'' pragma,
-so this is always a ''GOSUB'' and not a ''GOTO''!
+so this will always work like a ''CALL'' command and never as an unconditional
+jump to a label (''GOTO'').
 
 @italian
 
