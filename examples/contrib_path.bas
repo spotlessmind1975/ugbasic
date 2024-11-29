@@ -1,0 +1,20 @@
+﻿'BITMAP ENABLE
+
+CLS
+
+DIM t AS PATH
+DIM x AS POSITION, y AS POSITION
+DIM x0 AS POSITION, y0 AS POSITION
+DIM x1 AS POSITION, y1 AS POSITION
+
+x0 = 0: y0 = 10
+x1 = 5: y1 = 5
+
+t = CREATE PATH( x0, y0 TO x1, y1 )
+DO
+     TRAVEL t TO x, y
+     'PLOT x, y
+     PRINT x, y
+     WAIT KEY RELEASE
+     EXIT IF x = x1 AND y = y1
+LOOP
