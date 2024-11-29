@@ -3505,7 +3505,7 @@ exponential_less:
     }
     | FREE {
         cpu_dsgc( _environment );
-        $$ = variable_retrieve( _environment, "FREE_STRING" )->name;
+        $$ = strdup( "FREE_STRING" );
     }
     | SCREEN {
         $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
