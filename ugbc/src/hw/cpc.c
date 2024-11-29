@@ -1212,7 +1212,7 @@ void cpc_hscroll_line( Environment * _environment, int _direction ) {
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LD A, (%s)", y->realName );
     outline0("LD B, A");
-    outline1("LD A, 0x%2.2x", _direction);
+    outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
     outline0("CALL HSCROLLLINE");
 
 }
