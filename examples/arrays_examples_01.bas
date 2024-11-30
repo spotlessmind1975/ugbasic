@@ -27,10 +27,10 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
     year(1)=1967
     price(1)=8
 
-    PRINT title$(0) 
-    PRINT price(0)
-    PRINT title$(1) 
-    PRINT year(1)
-    PRINT price(1)
+    PRINT title$(0); " (exp. Girls Just..)"
+    PRINT price(0); " (exp. 10)"
+    PRINT title$(1); " (exp. Space Oddity)" 
+    PRINT year(1); " (exp. 1967)" 
+    PRINT price(1); " (exp. 8)" 
 
 
