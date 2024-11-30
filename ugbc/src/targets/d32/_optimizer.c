@@ -1117,6 +1117,10 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         if ( v ) {
             v->nb_rd = 1;
         }
+        struct var *v2 = vars_get(tmp);
+        if ( v2 ) {
+            v2->nb_rd = 1;
+        }
     }
 
     /* variable in RAMs are not eligibile to inlining */
