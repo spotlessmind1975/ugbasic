@@ -156,7 +156,11 @@ TEXTATTMGO:
 ; ******************************************************************************
 ; MAIN LOOP
 ; ******************************************************************************
+    JSR TEXTATTMCALCPOS
 
+    LDX TEXTSIZE
+    LDY #$0
+    
 TEXTATTMPRECHKCONSOLE:
     LDA XCURSYS
     CMP CONSOLEX2
@@ -168,10 +172,7 @@ TEXTATTMINCYX:
 
 TEXTATTMPOSTCHKCONSOLE:
 
-    JSR TEXTATTMCALCPOS
 
-    LDX TEXTSIZE
-    LDY #$0
 TEXTATTMLOOP:
 
     LDA TABSTODRAW
