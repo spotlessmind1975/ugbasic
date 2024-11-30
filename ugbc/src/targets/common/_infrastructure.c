@@ -5099,7 +5099,12 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                 case VT_STRING:
                     switch( target->type ) {
                         case VT_STRING: {
+                            char differentLabel[MAX_TEMPORARY_STORAGE]; sprintf(differentLabel, "%s", label );
+                            cpu_store_8bit( _environment, result->realName, 0 );
+                            cpu_compare_and_branch_8bit( _environment, source->realName, target->realName, differentLabel, 0 );
+                            cpu_compare_and_branch_8bit_const( _environment, source->realName, 0, differentLabel, 0 );
                             cpu_compare_memory( _environment, source->realName, target->realName, source->realName, result->realName, 1 );
+                            cpu_label( _environment, differentLabel );
                             break;
                         }
                         case VT_DSTRING: {
@@ -5110,8 +5115,10 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, source->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+                            cpu_store_8bit( _environment, result->realName, 0 );
+                            cpu_compare_and_branch_8bit( _environment, size->realName, size2->realName, differentLabel, 0 );
+                            cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, differentLabel, 0 );
                             cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
-                            cpu_bveq( _environment, result->realName, differentLabel );
                             cpu_addressof_16bit( _environment, source->realName, address->realName );
                             cpu_inc_16bit(  _environment, address->realName );
                             cpu_compare_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
@@ -5138,8 +5145,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_move_8bit( _environment, target->realName, size2->realName );
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
-                            cpu_bveq( _environment, result->realName, differentLabel );
+                            cpu_store_8bit( _environment, result->realName, 0 );
+                            cpu_compare_and_branch_8bit( _environment, size->realName, size2->realName, differentLabel, 0 );
+                            cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, differentLabel, 0 );
                             cpu_addressof_16bit( _environment, target->realName, address2->realName );
                             cpu_inc_16bit(  _environment, address2->realName );
                             cpu_compare_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
@@ -5154,8 +5162,9 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of STRING)");
                             cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
                             cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                            cpu_compare_8bit( _environment, size->realName, size2->realName, result->realName, 1 );
-                            cpu_bveq( _environment, result->realName, differentLabel );
+                            cpu_store_8bit( _environment, result->realName, 0 );
+                            cpu_compare_and_branch_8bit( _environment, size->realName, size2->realName, differentLabel, 0 );
+                            cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, differentLabel, 0 );
                             cpu_compare_memory( _environment, address->realName, address2->realName, size->realName, result->realName, 1 );
                             cpu_label( _environment, differentLabel );
                             break;
