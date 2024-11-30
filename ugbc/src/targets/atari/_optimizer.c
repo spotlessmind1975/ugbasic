@@ -943,6 +943,10 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         if ( v ) {
             v->nb_rd = 1;
         }
+        struct var *v2 = vars_get(tmp);
+        if ( v2 ) {
+            v2->nb_rd = 1;
+        }
     } else if( 
         po_buf_match(buf[0], " * = *", tmp, arg) ||
         po_buf_match(buf[0], "* = *", tmp, arg)
