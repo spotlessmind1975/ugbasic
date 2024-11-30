@@ -14,9 +14,10 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 
     DIM hi AS BYTE, lo AS BYTE
     
-    hi = &H0f
+    hi = &H05
     lo = &H0f
     
-    PRINT COMBINE NIBBLE( hi, lo )
+    PRINT COMBINE NIBBLE( hi, lo ); " (exp: 245)"
+    PRINT COMBINE NIBBLE( lo, hi ); " (exp: 95)"
     
 
