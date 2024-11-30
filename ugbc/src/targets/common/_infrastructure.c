@@ -9078,7 +9078,6 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
             cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, result->realName );
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
-
             if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
                 if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
 
@@ -9109,8 +9108,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
             cpu_move_8bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 16 ) {
             Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
-            cpu_math_mul2_const_8bit( _environment, offset->realName, 1, 0 );
-            cpu_move_8bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
+            cpu_move_16bit_indirect2_8bit( _environment, _array->realName, offset->realName, result->realName );
         } else {
 
             // @bit2: ok
