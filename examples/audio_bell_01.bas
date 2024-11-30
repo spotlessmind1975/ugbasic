@@ -12,6 +12,7 @@ REM
     CLS
 
     FOR f=0 TO 107
+        PRINT "BELL ";f
         BELL f
         WAIT (f/10+1)*1000 MS
     NEXT
