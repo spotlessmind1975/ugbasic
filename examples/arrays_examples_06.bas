@@ -14,6 +14,6 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
 
 DIM number(5,4,3)
 
-PRINT "UBOUND(number) should be 5: "; UBOUND(number)
-PRINT "UBOUND(number,0) should be 5: "; UBOUND(number,0)
-PRINT "UBOUND(number,2) should be 3: "; UBOUND(number,2)
+PRINT "UBOUND(number) should be 4: "; UBOUND(number)
+PRINT "UBOUND(number,0) should be 4: "; UBOUND(number,0)
+PRINT "UBOUND(number,2) should be 2: "; UBOUND(number,2)

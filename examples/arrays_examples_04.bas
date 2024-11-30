@@ -32,6 +32,6 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
     PRINT "array(0,0) = ";array(0,0)
     PRINT "array(5,0) = ";array(5,0)
     PRINT "array(0,6) = ";array(0,6)
-    PRINT "array(5,6) = ";array(#5,#6)
+    PRINT "array(5,6) = ";array(#5,#6); " (exp. 42)"
 
 

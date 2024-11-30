@@ -31,7 +31,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
     NEXT
 
     PRINT "a(0,0) = ";a(0,0);" (expected 66)"
-    PRINT "a(1,0) = ";a(1,0);" (expected 132)"
-    PRINT "a(0,1) = ";a(0,1);" (expected 16)"
+    PRINT "a(1,0) = ";a(1,0);" (expected 16)"
+    PRINT "a(0,1) = ";a(0,1);" (expected 132)"
     PRINT "a(1,1) = ";a(1,1);" (expected 32)"
 

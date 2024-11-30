@@ -23,9 +23,9 @@ CONST littleEndian = LITTLE ENDIAN
 
 IF littleEndian THEN
 	PRINT "integers3(1,0) should be 48: ";integers3(1,0)
-	PRINT "integers3(2,0) should be 0: ";integers3(2,0)
+	PRINT "integers3(2,0) should be 12288: ";integers3(2,0)
 ELSE
-	PRINT "integers3(1,0) should be 0: ";integers3(1,0)
+	PRINT "integers3(1,0) should be 12288: ";integers3(1,0)
 	PRINT "integers3(2,0) should be 48: ";integers3(2,0)
 ENDIF
 
