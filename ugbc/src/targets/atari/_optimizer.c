@@ -1600,7 +1600,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         // printf( "found!\n\n" );
                         // printf(" APPLIED #1\n");
                         // optim( buf[0], RULE "unused temporary", NULL );
-                        optim( buf[1], RULE "unused temporary", NULL );
+                        //optim( buf[1], RULE "unused temporary", NULL );
                         optim( buf[2], RULE "unused temporary", NULL );
                         ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
@@ -1946,7 +1946,7 @@ static void optim_remove_comments( Environment * _environment ) {
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     optim_remove_unused_temporary( _environment );
-    //_environment->peepholeOptimizationLimit = 0;
+    _environment->peepholeOptimizationLimit = 0;
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
         int i;
