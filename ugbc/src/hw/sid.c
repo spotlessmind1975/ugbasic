@@ -604,6 +604,7 @@ void sid_set_program_semi_var( Environment * _environment, char * _channels, int
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
             PROGRAM_WAVEFORM_SV(_channels, WAVEFORM_TRIANGLE);
             PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
             PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
@@ -675,7 +676,6 @@ void sid_set_program_semi_var( Environment * _environment, char * _channels, int
         case IMF_INSTRUMENT_FX_7_ECHOES:
         case IMF_INSTRUMENT_FX_8_SCI_FI:
         case IMF_INSTRUMENT_TIMPANI:
-        case IMF_INSTRUMENT_ORCHESTRA_HIT:
         case IMF_INSTRUMENT_APPLAUSE:
             PROGRAM_WAVEFORM_SV(_channels, WAVEFORM_NOISE);
             PROGRAM_ATTACK_DECAY_SV(_channels, 1, 14);
