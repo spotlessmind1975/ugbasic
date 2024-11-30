@@ -24,5 +24,5 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
 
     vector(42) = 100
 
-    PRINT "vector(42) = ";vector(42)
+    PRINT "vector(42) = ";vector(42); " (exp. 100)"
 
