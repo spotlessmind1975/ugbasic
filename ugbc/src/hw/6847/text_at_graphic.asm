@@ -38,14 +38,29 @@
 TEXTATSET
     PSHS D
     CMPA #0 ; COLOR_BLACK
-    BEQ TEXTATRED
+    BEQ TEXTATGREEN
     CMPA #1 ; COLOR_RED
     BEQ TEXTATRED
     CMPA #2 ; COLOR_YELLOW
     BEQ TEXTATYELLOW
     CMPA #3 ; COLOR_BLUE
     BEQ TEXTATBLUE
-    
+
+TEXTATGREEN
+    LDD #TEXTATBMC0
+    ; STD   <MATHPTR5
+    STA   <MATHPTR4
+    STB   <MATHPTR5
+    ; PSHS X,D
+    ; LDX <MATHPTR4
+    ; TFR X, D
+    ; LDX <MATHPTR5
+    ; TFR X, D
+    ; LDX <MATHPTR6
+    ; TFR X, D
+    ; PULS D,X
+    JMP TEXTATBMCNOPEN
+
 TEXTATYELLOW
     LDD #TEXTATBMC1
     ; STD   <MATHPTR5
@@ -526,6 +541,23 @@ TEXTATBMEND2
 TEXTATBMEND
     RTS
 
+TEXTATBMC0
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
+    fcb   %00000000
 
 TEXTATBMC1
     fcb   %00000000

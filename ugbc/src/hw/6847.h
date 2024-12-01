@@ -66,8 +66,8 @@
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
 
-#define DEFAULT_PEN_COLOR           COLOR_WHITE
-#define DEFAULT_PAPER_COLOR         COLOR_BLACK
+#define DEFAULT_PEN_COLOR           COLOR_YELLOW
+#define DEFAULT_PAPER_COLOR         COLOR_GREEN
 
 #define COLOR_COUNT                 4
 
