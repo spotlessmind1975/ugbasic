@@ -681,7 +681,7 @@ void z80_store_8bit_with_offset2( Environment * _environment, char *_destination
         outline0("LD D, 0");
         outline0("ADD HL, DE" );
         outline1("LD A, $%2.2x", ( _value & 0xff ) );
-        outline0("LD (DE), A");
+        outline0("LD (HL), A");
 
     no_embedded( cpu_store_8bit_with_offset2 )
 
