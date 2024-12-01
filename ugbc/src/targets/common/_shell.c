@@ -40,8 +40,10 @@
 
 void shell_injection( Environment * _environment ) {
 
+    char versionString[MAX_TEMPORARY_STORAGE]; sprintf( versionString, "ugBASIC Runtime version %s", UGBASIC_VERSION )
+
     Variable * presentationLine = variable_define( _environment, "SHELL_PRESENTATION", VT_STRING, 0 );
-    variable_store_string( _environment, presentationLine->name, "ugBASIC Runtime version 1.16.4" );
+    variable_store_string( _environment, presentationLine->name, versionString );
     Variable * prompt = variable_define( _environment, "SHELL_PROMPT", VT_STRING, 0 );
     variable_store_string( _environment, prompt->name, "READY" );
     Variable * command = variable_define( _environment, "SHELL_COMMAND", VT_DSTRING, 0 );

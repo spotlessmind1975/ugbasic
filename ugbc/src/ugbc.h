@@ -58,7 +58,7 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
-#define UGBASIC_VERSION                 "1.16.4"
+#define UGBASIC_VERSION                 "1.16.5"
 
 #ifdef _WIN32
     #define PATH_SEPARATOR              '\\'
