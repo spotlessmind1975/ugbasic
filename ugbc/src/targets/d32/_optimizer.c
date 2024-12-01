@@ -2155,7 +2155,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     // printf( "\n" );
                     if ( tmp ) {
                         // printf(" APPLIED #2\n");
-                        optim( buf[0], RULE "unused temporary", NULL );
+                        // optim( buf[0], RULE "unused temporary", NULL );
                         optim( buf[1], RULE "unused temporary", NULL );
                         ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
