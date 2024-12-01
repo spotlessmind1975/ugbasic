@@ -99,13 +99,17 @@ JOYSTICKREAD:
     RET
 
 JOYSTICKREAD0:
+    PUSH BC
     LD	B, 0
     CALL JOYSTICKREAD
+    POP BC
     RET
 
 JOYSTICKREAD1:
+    PUSH BC
     LD	B, 1
     CALL JOYSTICKREAD
+    POP BC
     RET
 
 @IF joystickConfig.sync
