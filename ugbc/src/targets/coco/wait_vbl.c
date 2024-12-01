@@ -53,9 +53,11 @@ void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     MAKE_LABEL
 
-    outhead1("%sa", label);
-    outline0("LDD COCOTIMER");
-    outline0("CMPD COCOTIMER" );
-    outline1("BEQ %sa", label);
+    if ( !_environment->vestigialConfig.rchack_4gravity_1164 ) {
+        outhead1("%sa", label);
+        outline0("LDD COCOTIMER");
+        outline0("CMPD COCOTIMER" );
+        outline1("BEQ %sa", label);
+    }
     
 }
