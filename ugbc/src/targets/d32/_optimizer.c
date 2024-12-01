@@ -478,8 +478,27 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " ST* ",v1))
     && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
-    && po_buf_strcmp(v1, v2)==0) {
-        optim(buf[1], RULE "(LOAD/STORE,CMP#0)->(LOAD/STORE)", NULL);
+    && ( (strcmp( v1->str, "D" ) == 0) && (strcmp( v1->str, "X" ) == 0) && (strcmp( v1->str, "Y" ) == 0) )
+    && po_buf_strcmp(v1, v2)==0
+     ) {
+        optim(buf[1], RULE "(LOAD/STORE(8 bit),CMP#0)->(LOAD/STORE)", NULL);
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " ST* ",v1))
+    && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
+    && ( strcmp( v1->str, "D" ) || strcmp( v1->str, "X" ) || strcmp( v1->str, "Y" ) )
+    && (po_buf_match(buf[2], " BLS *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BLO *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BLE *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BLT *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BGT *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BGE *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BHI *", v4) == NULL) 
+    && (po_buf_match(buf[2], " BHS *", v4) == NULL) 
+    && po_buf_strcmp(v1, v2)==0
+     ) {
+        optim(buf[1], RULE "(LOAD/STORE(16 bit),CMP#0,!check carry)->(LOAD/STORE)", NULL);
         ++_environment->removedAssemblyLines;
     }
 
