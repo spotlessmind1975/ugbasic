@@ -6079,3 +6079,22 @@ Restituisci la posizione verticale dell'ultima posizione grafica.
 @syntax = YGR
 
 </usermanual> */
+
+/* <usermanual>
+@keyword IMAGEREF (data type)
+
+@english
+
+The ''IMAGEREF'' data type maintains a (dynamic) reference to ''IMAGE'',
+''ATLAS'' or ''SEQUENCE'', that can be used to draw any image to the screen.
+
+@italian
+
+Il tipo di dati ''IMAGEREF'' mantiene un riferimento (dinamico) a ''IMAGE'', 
+''ATLAS'' o ''SEQUENCE'', che può essere utilizzato per disegnare qualsiasi 
+immagine sullo schermo.
+
+@syntax ... AS IMAGEREF
+
+</usermanual> */
+
