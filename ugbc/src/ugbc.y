@@ -3395,8 +3395,14 @@ exponential_less:
     | INSTR OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
     }
+    | UCASE OP expr CP {
+        $$ = variable_string_upper( _environment, $3 )->name;
+    }
     | UPPER OP expr CP {
         $$ = variable_string_upper( _environment, $3 )->name;
+    }
+    | LCASE OP expr CP {
+        $$ = variable_string_lower( _environment, $3 )->name;
     }
     | LOWER OP expr CP {
         $$ = variable_string_lower( _environment, $3 )->name;
