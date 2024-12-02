@@ -4794,7 +4794,7 @@ In pratica, ciò che accade è che il contenuto del file, senza alcuna
 interpretazione, viene copiato "così com'è" nel punto in cui è stata inserita 
 l'istruzione. Tutte le variabili e gli ambiti verranno mantenuti.
 
-@syntax INCLUDE "filename"
+@syntax INCLUDE filename
 
 </usermanual> */
 
