@@ -4248,7 +4248,7 @@ exponential_less:
     }
     | JOY FIRE {
         $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
-        variable_store( _environment, $$, JOY_FIRE );
+        variable_store( _environment, $$, 1 << JOY_FIRE );
     }
     | INPUT OP expr CP {
         $$ = input_string( _environment, $3 )->name;
