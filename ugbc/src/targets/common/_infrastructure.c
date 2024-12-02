@@ -6781,9 +6781,9 @@ nella stringa, viene restituita l'intera stringa, intatta.
 Per determinare il numero di caratteri nella stringa, dovresti 
 usare la funzione ''LEN''.
 
-@syntax = LEFT( text, position )
+@syntax LEFT( text, position ) = expression
 
-@example x = LEFT( "TEST", 2 )
+@example LEFT( x, 2 ) = "TE"
 
 @usedInExample strings_left_01.bas
 
