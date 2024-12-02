@@ -57,12 +57,12 @@ In order for this to work, you need to indicate a variable prefix that will be
 associated with the object that will have this animation. This can be indicated with 
 the ''USING'' keyword. 
 
-This statement will generate a series of variables: ''prefixFrame'', which will 
-contain the next frame to be displayed for the animation; ''prefixFrameDirection'', 
-which will be 1 if the animation proceeds from the smallest frame to the largest frame 
-and -1 vice versa; ''prefixX'' and ''prefixY'', which will contain the position where 
-the animation will be displayed, while ''prefixOX'' and ''prefixOY'' will contain
-the previous coordinates; ''prefixNext'', to signal / receive a synchonization event (see below);
+This statement will generate a series of variables: 
+''prefixFrame'', which will contain the next frame to be displayed for the animation; 
+''prefixFrameDirection'', which will be 1 if the animation proceeds from the smallest frame to the largest frame and -1 vice versa; 
+''prefixX'' and ''prefixY'', which will contain the position where the animation will be displayed;
+''prefixOX'' and ''prefixOY'' will contain the previous coordinates; 
+''prefixNext'', to signal / receive a synchonization event (see below);
 ''prefixAnimation'' that mantains the thread handle for this animation.
 
 It is possible to indicate that a certain number of frames at the beginning of the 
@@ -143,7 +143,14 @@ che il loop è stato completato; il bit 2, se attivo, indica che la parte "ease 
 dell'animazione è stata eseguita; il bit 3, se impostato dall'esterno come attivo, indica 
 la richiesta di uscire da un loop di animazione.
 
-@syntax ANIMATION type name WITH atlas [DELAY delay] [EASEIN ito [DELAY delay]] [EASEOUT ofrom [DELAY delay]] USING prefix [NEXT [WITH EASIN] anim] [WAIT VBL] [PRESERVE BACKGROUND]
+@syntax ANIMATION type name WITH atlas [od] [in] [out] USING prefix [nx] [vbl] [bg]
+@syntax    type: SIMPLE | LOOP | BOUNCE
+@syntax    od: DELAY delay
+@syntax    in: EASEIN upframe [DELAY delay]
+@syntax    out: EASEOUT ofrom [DELAY delay]
+@syntax    nx: NEXT [WITH EASIN] anim
+@syntax    vbl: WAIT VBL
+@syntax    bg: PRESERVE BACKGROUND
 
 @example flyingAirplane := LOAD ATLAS("airplane.png") FRAME SIZE (16, 16)
 @example ANIMATION BOUNCE anim WITH flyingAirplane USING airplane
