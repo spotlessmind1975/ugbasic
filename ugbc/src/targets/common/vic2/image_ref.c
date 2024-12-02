@@ -40,6 +40,38 @@
 
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
 
+/* <usermanual>
+@keyword IMAGEREF (function)
+
+@english
+
+With the ''IMAGEREF'' instruction you can retrieve the reference to an image, an 
+''ATLAS'' or a ''SEQUENCE'', which can then be used in place of the original 
+image, as a placeholder. This instruction is very useful when you want to diversify 
+the graphics to use, while maintaining the same game logic.
+
+@italian
+
+Con l'istruzione ''IMAGEREF'' è possibile recuperare il riferimento a una immagine, 
+un ''ATLAS'' o una ''SEQUENCE'', da poter poi essere usato al posto dell'immagine 
+originale, come un segnaposto. Questa istruzione risulta molto utile nel momento 
+in cui si vogliano diversificare le grafiche da utilizzare, pur mantenendo la 
+stessa logica di gioco.
+
+@syntax ... = IMAGEREF( atlas )
+
+@example airplane := LOAD ATLAS( "airplane.png" )
+@example elicopter := LOAD ATLAS( "elicopter.png" )
+@example DIM vehicle AS IMAGEREF
+@example IF vehicleType = 0 THEN
+@example    vehicle = IMAGEREF( airplane )
+@example ELSE
+@example    vehicle = IMAGEREF( elicopter )
+@example ENDIF
+@example PUT IMAGE vehicle FRAME 1 AT 0, 0
+
+</usermanual> */
+
 Variable * image_ref( Environment * _environment, char * _image ) {
 
     Variable * image = variable_retrieve( _environment, _image );

@@ -50,7 +50,17 @@
 /* <usermanual>
 @keyword CREATE PATH
 
+@english
+
+This command allows you to generate a ''PATH'' element that calculates the shortest (linear) 
+path between two given points. The points can be purely geometric or referable to the user 
+screen. The path can then be "navigated" using the ''TRAVEL'' command.
+
 @italian
+
+Questo comando consente di generare un elemento di tipo ''PATH'' che calcoli il percorso più 
+breve (lineare) tra i due punti dati. I punti possono essere puramente geometrici o riferibili allo 
+schermo utente. Il percorso potrà poi essere "navigato" usando il comando ''TRAVEL''.
 
 @syntax = CREATE PATH( x0, y0 TO x1, y1 )
 

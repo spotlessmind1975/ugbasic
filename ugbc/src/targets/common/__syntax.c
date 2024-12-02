@@ -3619,7 +3619,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = LEFT ARROW
 
-@example IF SCANCODE = LEFT ARROW THEN
+@example IF SCANCODE = KEY LEFT ARROW THEN
 @example    PRINT "LEFT ARROW has been pressed!"
 @example ENDIF
 
@@ -3673,7 +3673,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = UP ARROW
 
-@example IF SCANCODE = UP ARROW THEN
+@example IF SCANCODE = KEY UP ARROW THEN
 @example    PRINT "UP ARROW has been pressed!"
 @example ENDIF
 
@@ -4794,7 +4794,7 @@ In pratica, ciò che accade è che il contenuto del file, senza alcuna
 interpretazione, viene copiato "così com'è" nel punto in cui è stata inserita 
 l'istruzione. Tutte le variabili e gli ambiti verranno mantenuti.
 
-@syntax INCLUDE "filename"
+@syntax INCLUDE filename
 
 </usermanual> */
 
@@ -5264,7 +5264,7 @@ quando viene utilizzata come valore da confrontare con ''SCANCODE''.
 
 @syntax = NONE
 
-@example IF SCANCODE = NONE THEN
+@example IF SCANCODE = KEY NONE THEN
 @example    PRINT "No key has been pressed"
 @example ENDIF
 
@@ -5839,7 +5839,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = SLASH
 
-@example IF SCANCODE = SLASH THEN
+@example IF SCANCODE = KEY SLASH THEN
 @example    PRINT "SLASH has been pressed!"
 @example ENDIF
 
@@ -5864,7 +5864,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = SPACE
 
-@example IF SCANCODE = SPACE THEN
+@example IF SCANCODE = KEY SPACE THEN
 @example    PRINT "SPACE has been pressed!"
 @example ENDIF
 
@@ -5904,7 +5904,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = TAB
 
-@example IF SCANCODE = TAB THEN
+@example IF SCANCODE = KEY TAB THEN
 @example    PRINT "TAB has been pressed!"
 @example ENDIF
 
@@ -6079,3 +6079,22 @@ Restituisci la posizione verticale dell'ultima posizione grafica.
 @syntax = YGR
 
 </usermanual> */
+
+/* <usermanual>
+@keyword IMAGEREF (data type)
+
+@english
+
+The ''IMAGEREF'' data type maintains a (dynamic) reference to ''IMAGE'',
+''ATLAS'' or ''SEQUENCE'', that can be used to draw any image to the screen.
+
+@italian
+
+Il tipo di dati ''IMAGEREF'' mantiene un riferimento (dinamico) a ''IMAGE'', 
+''ATLAS'' o ''SEQUENCE'', che può essere utilizzato per disegnare qualsiasi 
+immagine sullo schermo.
+
+@syntax ... AS IMAGEREF
+
+</usermanual> */
+

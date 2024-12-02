@@ -119,8 +119,8 @@ void insert( Environment * _environment, char * _string, char * _x, char * _y, c
     variable_move( _environment, h->name, j->name );
     variable_decrement( _environment, j->name );
     variable_decrement( _environment, j->name );
-    locate( _environment, x->name, NULL );
     cpu_label( _environment, lineLabel );
+        locate( _environment, x->name, NULL );
         variable_move( _environment, w->name, i->name );
         variable_decrement( _environment, i->name );
         variable_decrement( _environment, i->name );
