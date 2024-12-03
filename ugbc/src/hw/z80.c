@@ -6663,15 +6663,21 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
 
     deploy( dstring,src_hw_z80_dstring_asm );
 
-    outline1( "LD A, (%s)", _index );
-    outline0( "LD B, A" );
-    outline0( "CALL DSDESCRIPTOR" );
-    outline0( "LD A, (IX)" );
-    outline1( "LD (%s), A", _size );
-    outline0( "LD A, (IX+1)" );
-    outline1( "LD (%s), A", _address );
-    outline0( "LD A, (IX+2)" );
-    outline1( "LD (%s), A", address_displacement(_environment, _address, "1") );
+    if ( _address || _size ) {
+        outline1( "LD A, (%s)", _index );
+        outline0( "LD B, A" );
+        outline0( "CALL DSDESCRIPTOR" );
+        if ( _size ) {
+            outline0( "LD A, (IX)" );
+            outline1( "LD (%s), A", _size );
+        }
+        if ( _address ) {
+            outline0( "LD A, (IX+1)" );
+            outline1( "LD (%s), A", _address );
+            outline0( "LD A, (IX+2)" );
+            outline1( "LD (%s), A", address_displacement(_environment, _address, "1") );
+        }
+    }
 
 }
 

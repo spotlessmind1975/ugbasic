@@ -5546,12 +5546,18 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
     deploy( dstring,src_hw_6809_dstring_asm );
 
-    outline1( "LDB %s", _index );
-    outline0( "JSR DSDESCRIPTOR" );
-    outline0( "LDD 1, X" );
-    outline1( "STD %s", _address );
-    outline0( "LDA , X" );
-    outline1( "STA %s", _size );
+    if ( _address || _size ) {
+        outline1( "LDB %s", _index );
+        outline0( "JSR DSDESCRIPTOR" );
+        if ( _address ) {
+            outline0( "LDD 1, X" );
+            outline1( "STD %s", _address );
+        }
+        if ( _size ) {
+            outline0( "LDA , X" );
+            outline1( "STA %s", _size );
+        }
+    }
 
 }
 
