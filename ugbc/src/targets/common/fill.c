@@ -85,6 +85,7 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
     print( _environment, NULL, 1, 0 );
 
     variable_move( _environment, h->name, j->name );
+    variable_decrement( _environment, j->name );
     locate( _environment, x->name, NULL );
     cpu_label( _environment, lineLabel );
         variable_move( _environment, w->name, i->name );
