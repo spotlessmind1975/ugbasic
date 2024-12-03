@@ -6805,14 +6805,20 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
     deploy( dstring,src_hw_6502_dstring_asm );
 
-    outline1( "LDX %s", _index );
-    outline0( "JSR DSDESCRIPTOR" );
-    outline0( "LDA DSADDRLO" );
-    outline1( "STA %s", _address );
-    outline0( "LDA DSADDRHI" );
-    outline1( "STA %s", address_displacement(_environment, _address, "1") );
-    outline0( "LDA DSSIZE" );
-    outline1( "STA %s", _size );
+    if ( _address || _size ) {
+        outline1( "LDX %s", _index );
+        outline0( "JSR DSDESCRIPTOR" );
+        if ( _address ) {
+            outline0( "LDA DSADDRLO" );
+            outline1( "STA %s", _address );
+            outline0( "LDA DSADDRHI" );
+            outline1( "STA %s", address_displacement(_environment, _address, "1") );
+        }
+        if ( _size ) {
+            outline0( "LDA DSSIZE" );
+            outline1( "STA %s", _size );
+        }
+    }
 
 }
 
