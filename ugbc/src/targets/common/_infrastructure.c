@@ -12669,15 +12669,40 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
     Variable * altstring = variable_retrieve_or_define( _environment, _altstring, VT_DSTRING, 0 );
     Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
     Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
+    Variable * len = variable_temporary( _environment, VT_BYTE, 0 );
+
+    switch( string->type ) {
+        case VT_STRING:
+            variable_move( _environment, string->name, len->name );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, string->realName, NULL, len->realName );
+            break;
+    }
+
+    Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
+
+    MAKE_LABEL
+    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+    char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf( finishedLabel, "%sfinish", label );
+
+    cpu_compare_and_branch_8bit_const( _environment, variable_greater_than( _environment, pos->name, len->name, 1 )->realName, 0xff, doneLabel, 1 );
 
     variable_move( _environment, pos->name, pos1->name );
-    variable_increment( _environment, pos1->name );
 
     Variable * left = variable_string_left( _environment, altstring->name, pos1->name );
     variable_increment( _environment, pos1->name );
     Variable * right = variable_string_mid( _environment, altstring->name, pos1->name, NULL );
 
-    Variable * result = variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name );
+    variable_move( _environment, variable_add( _environment, variable_add( _environment, left->name, string->name )->name, right->name )->name, result->name );
+
+    cpu_jump( _environment, finishedLabel );
+
+    cpu_label( _environment, doneLabel );
+
+    variable_move( _environment, variable_add( _environment, altstring->name, string->name )->name, result->name );
+
+    cpu_label( _environment, finishedLabel );
 
     return result;
 
