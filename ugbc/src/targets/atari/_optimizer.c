@@ -959,6 +959,10 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
                 v->offset = -3;
             }
         }
+        struct var *v2 = vars_get(arg);
+        if ( v2 ) {
+            v2->nb_rd = 1;
+        }
     }
 
 
