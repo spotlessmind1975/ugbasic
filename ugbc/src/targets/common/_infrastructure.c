@@ -6662,11 +6662,6 @@ The numbering of characters in a string always starts at 1. If the specified
 number_of_characters is greater than the length of the string, ''LEFT$'' will 
 return the entire string.
 
-Make sure both string$ and substring$ are declared as strings (typically using 
-a $ at the end of the variable name). ''LEFT$'' is a very useful function for 
-manipulating strings in BASIC, allowing you to extract specific areas from 
-a longer string.
-
 @italian
 
 La funzione ''LEFT$'' consente di estrarre una porzione di caratteri da 
@@ -6681,11 +6676,6 @@ la lunghezza o il contenuto iniziale di una stringa.
 La numerazione dei caratteri in una stringa inizia sempre da 1. Se 
 il numero_di_caratteri specificato è maggiore della lunghezza della stringa, 
 ''LEFT$'' restituirà l'intera stringa.
-
-Assicurarsi che sia string$ che substring$ siano dichiarate come stringhe 
-(in genere utilizzando un $ alla fine del nome della variabile). LEFT$ è 
-una funzione molto utile per manipolare stringhe in BASIC, che consente
-di estrarre aree specifiche da una stringa più lunga.
 
 @syntax = LEFT( text, position )
 
@@ -6758,12 +6748,11 @@ strings. The command has two parameters.
 The first parameter is the string expression to change. 
 
 The second parameter is a numeric expression, indicating how 
-many characters to return. If 0, an empty string (''""'') is returned. 
+many characters to replace. If 0, no characters will be replaced. 
 On the other hand, if greater than or equal to the number of characters 
-in string, the entire string is returned, untouched. 
-
-To determine the number of characters in string, you should use 
-the ''LEN'' function.
+in string, the entire string is replaced, up to the characters in ''expression''.
+If ''position'' is greater than lenght of ''expression'', only the
+characters of ''expression'' will be replaced.
 
 @italian
 
