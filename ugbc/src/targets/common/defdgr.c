@@ -51,6 +51,11 @@
 
 This command allows you to customize a single character from those used in graphical
 mode. The character is defined by means of an 8 pixel by 8 pixel monochrome matrix. 
+The ''char'' parameter must be intended as the "screen code" of the character to replace.
+The screen code is the character representation mechanism of the target chipset, and is 
+different from the ASCII system. Each video chipset can have its own specific set of screen 
+codes and, therefore, it is necessary to retrieve the corresponding character code to 
+be redefined.
 
 If the system font has fewer pixels along one or both directions, the character 
 will be aligned to the top left and the extra pixels will be ignored. The 
@@ -64,7 +69,12 @@ you must use the ''LOAD FONT'' command.
 
 Questo comando consente di personalizzare un singolo carattere tra quelli 
 utilizzati in modalità grafica. Il carattere è definito tramite una matrice 
-monocromatica di 8 pixel per 8 pixel.
+monocromatica di 8 pixel per 8 pixel. Il parametro ''char'' deve essere 
+inteso come "codice schermo" del carattere da sostituire.
+Il codice schermo è il meccanismo di rappresentazione dei caratteri del 
+chipset di destinazione, ed è diverso dal sistema ASCII. Ogni chipset video 
+può avere il suo set specifico di codici schermo e, pertanto, è necessario 
+recuperare il codice carattere corrispondente da ridefinire.
 
 Se il font di sistema ha meno pixel lungo una o entrambe le direzioni, il 
 carattere verrà allineato in alto a sinistra e i pixel in più verranno 
@@ -73,7 +83,7 @@ ignorati. La personalizzazione del carattere avviene in fase di esecuzione.
 Se si desidera personalizzare i caratteri utilizzati in modalità testo o 
 durante la compilazione, è necessario utilizzare il comando ''LOAD FONT''.
 
-@syntax DEFDGR[$](x) = b0, b1, ... , b7
+@syntax DEFDGR[$](char) = b0, b1, ... , b7
 
 @example DEFDGR(0) = $ff, $ff, $ff, $ff, $00, $00, $00, $00
 @example DEFDGR$(1) = $ff, $ff, $ff, $ff, $00, $00, $00, $00
