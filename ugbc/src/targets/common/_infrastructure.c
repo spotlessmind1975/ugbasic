@@ -12659,6 +12659,7 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
     Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
     Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
     Variable * len = variable_temporary( _environment, VT_BYTE, 0 );
+    Variable * tmpLen = variable_temporary( _environment, VT_BYTE, 0 );
 
     switch( string->type ) {
         case VT_STRING:
@@ -12669,13 +12670,18 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
             break;
     }
 
+    variable_move( _environment, len->name, tmpLen->name );
+    variable_increment( _environment, tmpLen->name );
+
     Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
 
     MAKE_LABEL
     char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf( finishedLabel, "%sfinish", label );
 
-    cpu_compare_and_branch_8bit_const( _environment, variable_greater_than( _environment, pos->name, len->name, 1 )->realName, 0xff, doneLabel, 1 );
+    variable_move( _environment, pos->name, pos1->name );
+
+    cpu_compare_and_branch_8bit_const( _environment, variable_greater_than( _environment, pos->name, tmpLen->name, 0 )->realName, 0xff, doneLabel, 1 );
 
     variable_move( _environment, pos->name, pos1->name );
 
