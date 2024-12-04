@@ -1968,8 +1968,6 @@ static void cpc_load_image_address_to_hl( Environment * _environment, char * _so
 
 static void cpc_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    outline0("; cpc_load_image_address_to_register()");
-
     if ( !_sequence && !_frame ) {
         if ( _source->isAddress ) {
             outline1("LD HL, (%s)", _source->realName );
@@ -2039,8 +2037,6 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
     if ( _register ) {
         outline1("LD (%s), HL", _register );
     }
-
-    outline0("; end cpc_load_image_address_to_register()");
 
 }
 
