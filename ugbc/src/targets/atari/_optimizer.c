@@ -1946,7 +1946,7 @@ static void optim_remove_comments( Environment * _environment ) {
 /* main entry-point for this service */
 void target_peephole_optimizer( Environment * _environment ) {
     optim_remove_unused_temporary( _environment );
-    _environment->peepholeOptimizationLimit = 0;
+    //_environment->peepholeOptimizationLimit = 0;
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
         int i;
