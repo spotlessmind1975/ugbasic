@@ -99,7 +99,7 @@ SPRITEDATAL1:
 
     LDA #$00
     STA TMPPTR
-    LDA #$84
+    LDA #$8C
     STA TMPPTR+1
 
     CLC

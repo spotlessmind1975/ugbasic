@@ -11131,6 +11131,9 @@ statement2nc:
 
         }
 
+        variable->frameSize = expr->frameSize;
+        variable->frameCount = expr->frameCount;
+
   }
   | Identifier as_datatype_suffix OP_ASSIGN expr {
         VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;

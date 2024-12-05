@@ -47,11 +47,11 @@
  * @param _y1 Left ordinate of the line
  */
 /* <usermanual>
-@keyword TRAVEL PATH
+@keyword TRAVEL
 
 @italian
 
-@syntax TRAVEL PATH path TO x, y
+@syntax TRAVEL path TO x, y
 
 </usermanual> */
 

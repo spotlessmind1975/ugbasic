@@ -1982,7 +1982,7 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
         }
 
         if ( _sequence ) {
-            outline0("LD DE, 0x0003" );
+            outline0("LD DE, $0003" );
             outline0("ADD HL, DE" );
             if ( strlen(_sequence) == 0 ) {
 
@@ -1990,7 +1990,11 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
                 outline1("LD A, (%s)", _sequence );
                 outline0("PUSH HL" );
                 outline0("POP IX" );
-                outline1("CALL %soffsetsequence", _source->realName );
+                if ( _frame_size ) {
+                    outline1("CALL fs%4.4xoffsetsequence", _frame_size * _frame_count );
+                } else {
+                    outline1("CALL %soffsetsequence", _source->realName );
+                }
             }
             if ( _frame ) {
                 if ( strlen(_frame) == 0 ) {
@@ -1999,14 +2003,19 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
                     outline1("LD A, (%s)", _frame );
                     outline0("PUSH HL" );
                     outline0("POP IX" );
-                    outline1("CALL %soffsetframe", _source->realName );
+                    if ( _frame_size ) {
+                        outline1("CALL fs%4.4xoffsetframe", _frame_size );
+                    } else {
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+
                 }
             }
 
         } else {
 
             if ( _frame ) {
-                outline0("LD DE, 0x0003" );
+                outline0("LD DE, $0003" );
                 outline0("ADD HL, DE" );
                 if ( strlen(_frame) == 0 ) {
 
@@ -2014,7 +2023,11 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
                     outline0("PUSH HL" );
                     outline0("POP IX" );
                     outline1("LD A, (%s)", _frame );
-                    outline1("CALL %soffsetframe", _source->realName );
+                    if ( _frame_size ) {
+                        outline1("CALL fs%4.4xoffsetframe", _frame_size );
+                    } else {
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
                 }
             }
 

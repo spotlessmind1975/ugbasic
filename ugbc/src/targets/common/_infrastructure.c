@@ -6662,11 +6662,6 @@ The numbering of characters in a string always starts at 1. If the specified
 number_of_characters is greater than the length of the string, ''LEFT$'' will 
 return the entire string.
 
-Make sure both string$ and substring$ are declared as strings (typically using 
-a $ at the end of the variable name). ''LEFT$'' is a very useful function for 
-manipulating strings in BASIC, allowing you to extract specific areas from 
-a longer string.
-
 @italian
 
 La funzione ''LEFT$'' consente di estrarre una porzione di caratteri da 
@@ -6681,11 +6676,6 @@ la lunghezza o il contenuto iniziale di una stringa.
 La numerazione dei caratteri in una stringa inizia sempre da 1. Se 
 il numero_di_caratteri specificato è maggiore della lunghezza della stringa, 
 ''LEFT$'' restituirà l'intera stringa.
-
-Assicurarsi che sia string$ che substring$ siano dichiarate come stringhe 
-(in genere utilizzando un $ alla fine del nome della variabile). LEFT$ è 
-una funzione molto utile per manipolare stringhe in BASIC, che consente
-di estrarre aree specifiche da una stringa più lunga.
 
 @syntax = LEFT( text, position )
 
@@ -6758,12 +6748,11 @@ strings. The command has two parameters.
 The first parameter is the string expression to change. 
 
 The second parameter is a numeric expression, indicating how 
-many characters to return. If 0, an empty string (''""'') is returned. 
+many characters to replace. If 0, no characters will be replaced. 
 On the other hand, if greater than or equal to the number of characters 
-in string, the entire string is returned, untouched. 
-
-To determine the number of characters in string, you should use 
-the ''LEN'' function.
+in string, the entire string is replaced, up to the characters in ''expression''.
+If ''position'' is greater than lenght of ''expression'', only the
+characters of ''expression'' will be replaced.
 
 @italian
 
@@ -12670,6 +12659,7 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
     Variable * pos = variable_retrieve_or_define( _environment, _pos, VT_BYTE, 0 );
     Variable * pos1 = variable_temporary( _environment, VT_BYTE, 0 );
     Variable * len = variable_temporary( _environment, VT_BYTE, 0 );
+    Variable * tmpLen = variable_temporary( _environment, VT_BYTE, 0 );
 
     switch( string->type ) {
         case VT_STRING:
@@ -12680,13 +12670,18 @@ Variable * variable_string_insert( Environment * _environment, char * _string, c
             break;
     }
 
+    variable_move( _environment, len->name, tmpLen->name );
+    variable_increment( _environment, tmpLen->name );
+
     Variable * result = variable_temporary( _environment, VT_DSTRING, 0 );
 
     MAKE_LABEL
     char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf( finishedLabel, "%sfinish", label );
 
-    cpu_compare_and_branch_8bit_const( _environment, variable_greater_than( _environment, pos->name, len->name, 1 )->realName, 0xff, doneLabel, 1 );
+    variable_move( _environment, pos->name, pos1->name );
+
+    cpu_compare_and_branch_8bit_const( _environment, variable_greater_than( _environment, pos->name, tmpLen->name, 0 )->realName, 0xff, doneLabel, 1 );
 
     variable_move( _environment, pos->name, pos1->name );
 

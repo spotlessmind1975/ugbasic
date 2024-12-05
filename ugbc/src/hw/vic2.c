@@ -918,9 +918,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 1;
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64).
+            // Move the screen address to $8C00 to have
+            // more space for sprites (0011....)
             outline0("LDA $D018" );
             outline0("AND #%11110111");
-            outline0("ORA #%00001000" );
+            outline0("ORA #%00111000" );
             outline0("STA $D018" );
 #if __c128__
             outline0("STA $0A2D" );
@@ -938,7 +940,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA #$21" );
             outline0("STA $D8" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x8c00 );
 
             cpu_store_8bit( _environment, "_PEN", 0X01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -947,7 +949,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            _environment->mspriteMsbokAddress = 0x87f8;
+            _environment->mspriteMsbokAddress = 0x8ff8;
 
             break;
         case BITMAP_MODE_MULTICOLOR:
@@ -959,9 +961,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // This fix is necessary to set the starting address of the bitmap 
             // to $A000 (which is an address available on C=64) instead of the 
             // address $8000.
+            // Move the screen address to $8C00 to have
+            // more space for sprites (0011....)            
             outline0("LDA $D018" );
             outline0("AND #%11110111");
-            outline0("ORA #%00001000" );
+            outline0("ORA #%00111000" );
             outline0("STA $D018" );
 #if __c128__
             outline0("STA $0A2D" );
@@ -979,7 +983,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA #$23" );
             outline0("STA $d8" );
 
-            cpu_store_16bit( _environment, colormapAddress->realName, 0x8400 );
+            cpu_store_16bit( _environment, colormapAddress->realName, 0x8c00 );
 
             cpu_store_8bit( _environment, "_PEN", 0X01 );
             cpu_store_8bit( _environment, "_PAPER", 0x00 );
@@ -989,7 +993,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 199 );
 
-            _environment->mspriteMsbokAddress = 0x87f8;
+            _environment->mspriteMsbokAddress = 0x8ff8;
 
             break;
         case TILEMAP_MODE_STANDARD:
