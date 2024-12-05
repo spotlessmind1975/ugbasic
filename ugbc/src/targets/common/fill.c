@@ -59,6 +59,7 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
 
     MAKE_LABEL
 
+    char emptyLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyLabel, "%sempty", label );
     char topLabel[MAX_TEMPORARY_STORAGE]; sprintf( topLabel, "%stop", label );
     char lineLabel[MAX_TEMPORARY_STORAGE]; sprintf( lineLabel, "%sline", label );
     char edgeLabel[MAX_TEMPORARY_STORAGE]; sprintf( edgeLabel, "%sedge", label );
@@ -76,18 +77,14 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
 
     pen( _environment, c->name );
 
+    cpu_compare_and_branch_8bit_const( _environment, h->realName, 0, emptyLabel, 1 );
+    cpu_compare_and_branch_8bit_const( _environment, w->realName, 0, emptyLabel, 1 );
+
     locate( _environment, x->name, y->name );
-    variable_move( _environment, w->name, i->name );
-    cpu_label( _environment, topLabel );
-        print( _environment, ch->name, 0, 0 );
-        variable_decrement( _environment, i->name );
-        variable_compare_and_branch_const( _environment, i->name, 0, topLabel, 0 );
-    print( _environment, NULL, 1, 0 );
 
     variable_move( _environment, h->name, j->name );
-    variable_decrement( _environment, j->name );
-    locate( _environment, x->name, NULL );
     cpu_label( _environment, lineLabel );
+        locate( _environment, x->name, NULL );
         variable_move( _environment, w->name, i->name );
         cpu_label( _environment, edgeLabel );
             print( _environment, ch->name, 0, 0 );
@@ -97,16 +94,7 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
         variable_decrement( _environment, j->name );
         variable_compare_and_branch_const( _environment, j->name, 0, lineLabel, 0 );
 
-    locate( _environment, x->name, NULL );
-    variable_move( _environment, w->name, i->name );
-    cpu_label( _environment, bottomLabel );
-        print( _environment, ch->name, 0, 0 );
-        variable_decrement( _environment, i->name );
-        variable_compare_and_branch_const( _environment, i->name, 0, bottomLabel, 0 );
-
-    // The next two parameters specify the location of the top left corner of the frame: <zl> = line 
-    // (value range 0 to 23) and <sp> = column (value range 0 to 38). 
-    // The following two determine its size: <bt> = width (value range 2 to 40) and <ho> = height (value range 2 to 25). If one of these values ​​is exceeded or undershot, the interpreter reports a BAD MODE ERROR. A width or height of 1 is still possible, but is automatically increased to 2 because otherwise no box can be created. A width or height of 2 omits the edges and only outputs the corners. The last parameter (<f>) defines the color of the frames (value range: 0..15).
+    cpu_label( _environment, emptyLabel );
 
 }
 

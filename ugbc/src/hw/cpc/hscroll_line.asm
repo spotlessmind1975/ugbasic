@@ -102,6 +102,8 @@ HSCROLLLINER1:
     LD D, A
     INC HL
 
+    PUSH DE
+
     LD HL, DE
     LD DE, $50
     ADD HL, DE
@@ -110,6 +112,11 @@ HSCROLLLINER1:
 
     LD BC, $4F
     LDDR
+
+    POP DE
+    LD (DE), 0
+    INC DE
+    LD (DE), 0
 
     POP HL
     POP BC

@@ -3527,7 +3527,9 @@ exponential_less:
     }
     | FREE {
         cpu_dsgc( _environment );
-        $$ = strdup( "FREE_STRING" );
+        Variable * var = variable_temporary( _environment, VT_WORD, "(free)" );
+        cpu_move_16bit( _environment, "FREE_STRING", var->realName );
+        $$ = var->name;
     }
     | SCREEN {
         $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
