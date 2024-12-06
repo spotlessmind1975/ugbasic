@@ -87,6 +87,7 @@ endif
 # HARDWARE DEPENDENCIES
 #------------------------------------------------ 
 
+main=$(target)
 ifeq ($(target),atari)
   cpu=6502
   video=antic
@@ -95,6 +96,7 @@ ifeq ($(target),atari)
   io=pokey
 endif
 ifeq ($(target),atarixl)
+  main=atari
   cpu=6502
   video=antic
   video2=gtia
@@ -943,32 +945,24 @@ CSOURCES := $(wildcard src/*.c)
 CSOURCES += $(wildcard src/libs/*.c)
 CSOURCES += $(wildcard src/outputs/*.c)
 CSOURCES += $(wildcard src/targets/common/*.c)
-CSOURCES += $(wildcard src/hw/$(target).c)
-CSOURCES += $(wildcard src/targets/$(target)/*.c)
+CSOURCES += $(wildcard src/hw/$(main).c)
+CSOURCES += $(wildcard src/targets/$(main)/*.c)
 CSOURCES += $(wildcard src/targets/common/k7mo/*.c)
 ifneq ($(video),)
-ifneq ($(target),$(video))
 	CSOURCES += $(wildcard src/hw/$(video).c)
 	CSOURCES += $(wildcard src/targets/common/$(video)/*.c)
 endif
-endif
 ifneq ($(video2),)
-ifneq ($(target),$(video2))
 	CSOURCES += $(wildcard src/hw/$(video2).c)
 	CSOURCES += $(wildcard src/targets/common/$(video2)/*.c)
 endif
-endif
 ifneq ($(audio),)
-ifneq ($(target),$(audio))
 	CSOURCES += $(wildcard src/hw/$(audio).c)
 	CSOURCES += $(wildcard src/targets/common/$(audio)/*.c)
 endif
-endif
 ifneq ($(io),)
-ifneq ($(target),$(io))
 	CSOURCES += $(wildcard src/hw/$(io).c)
 	CSOURCES += $(wildcard src/targets/common/$(io)/*.c)
-endif
 endif
 CSOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 SOURCES = $(sort $(CSOURCES))
