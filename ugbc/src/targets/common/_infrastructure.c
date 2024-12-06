@@ -7053,9 +7053,10 @@ restituire. Se omesso o se nel testo sono presenti meno caratteri della
 lunghezza (incluso il carattere iniziale), vengono restituiti tutti i 
 caratteri dalla posizione iniziale alla fine della stringa.
 
-@syntax = MID( text, position )
+@syntax = MID( text, position[, len] )
 
-@example x = MID( "TEST", 2 )
+@example x = MID( "TEST", 2 ): ' x = "TE"
+@example y = MID( "TEST", 2, 1 ): ' y = "T"
 
 @usedInExample strings_mid_01.bas
 
@@ -7322,7 +7323,7 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
     }
     switch( string->type ) {
         case VT_STRING: {            
-            CRITICAL_MID_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+            CRITICAL_MID_UNSUPPORTED_FOR_STRING( string->valueString->value);
         }
         case VT_DSTRING: {            
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );

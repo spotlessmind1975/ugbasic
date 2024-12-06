@@ -1078,7 +1078,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
 
-            for( i=0; i<95; ++i ) {
+            for( i=0; i<94; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
                 DLI_MODE_VHSCROLL( dliListCurrent, 15 );
             }

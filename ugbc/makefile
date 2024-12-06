@@ -50,7 +50,8 @@ BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
 
-all: paths compiler
+all: compiler
+compiler: paths
 
 test: paths-test tester
 
@@ -81,6 +82,173 @@ endif
 #-----------------------------------------------------------------------------
 #--- MAKEFILE's VARIABLES
 #-----------------------------------------------------------------------------
+
+#------------------------------------------------ 
+# HARDWARE DEPENDENCIES
+#------------------------------------------------ 
+
+main=$(target)
+ifeq ($(target),atari)
+  cpu=6502
+  video=antic
+  video2=gtia
+  audio=pokey
+  io=pokey
+endif
+ifeq ($(target),atarixl)
+  main=atari
+  cpu=6502
+  video=antic
+  video2=gtia
+  audio=pokey
+  io=pokey
+endif
+ifeq ($(target),c128)
+  cpu=6502
+  video=vic2
+  video2=
+  audio=sid
+  io=cia
+endif
+ifeq ($(target),c128z)
+  cpu=z80
+  video=vdcz
+  video2=
+  audio=sidz
+  io=
+endif
+ifeq ($(target),c64)
+  cpu=6502
+  video=vic2
+  video2=
+  audio=sid
+  io=cia
+endif
+ifeq ($(target),c64reu)
+  cpu=6502
+  video=vic2
+  video2=
+  audio=sid
+  io=cia
+endif
+ifeq ($(target),coco)
+  cpu=6809
+  video=6847
+  video2=
+  audio=sn76489m
+  io=pia
+endif
+ifeq ($(target),coco3)
+  cpu=6809
+  video=gime
+  video2=
+  audio=sn76489m
+  io=pia
+endif
+ifeq ($(target),coleco)
+  cpu=z80
+  video=tms9918
+  video2=
+  audio=sn76489z
+  io=
+endif
+ifeq ($(target),cpc)
+  cpu=z80
+  video=
+  video2=
+  audio=ay8910
+  io=
+endif
+ifeq ($(target),d32)
+  cpu=6809
+  video=6847
+  video2=
+  audio=
+  io=pia
+endif
+ifeq ($(target),d64)
+  cpu=6809
+  video=6847
+  video2=
+  audio=
+  io=pia
+endif
+ifeq ($(target),mo5)
+  cpu=6809
+  video=ef936x
+  video2=
+  audio=
+  io=
+endif
+ifeq ($(target),msx1)
+  cpu=z80
+  video=tms9918
+  video2=
+  audio=ay8910
+  io=
+endif
+ifeq ($(target),pc128op)
+  cpu=6809
+  video=ef936x
+  video2=
+  audio=sn76489m
+  io=
+endif
+ifeq ($(target),to8)
+  cpu=6809
+  video=ef936x
+  video2=
+  audio=
+  io=
+endif
+ifeq ($(target),plus4)
+  cpu=6502
+  video=ted
+  video2=
+  audio=ted
+  io=ted
+endif
+ifeq ($(target),sc3000)
+  cpu=z80
+  video=tms9918
+  video2=
+  audio=sn76489z
+  io=
+endif
+ifeq ($(target),sg1000)
+  cpu=z80
+  video=tms9918
+  video2=
+  audio=sn76489z
+  io=
+endif
+ifeq ($(target),vg5000)
+  cpu=z80
+  video=ef9345
+  video2=
+  audio=
+  io=
+endif
+ifeq ($(target),vic20)
+  cpu=6502
+  video=vic1
+  video2=
+  audio=vic1
+  io=
+endif
+ifeq ($(target),zx)
+  cpu=z80
+  video=
+  video2=
+  audio=
+endif
+ifeq ($(target),pc1403)
+  cpu=sc61860
+  video=
+  video2=
+  audio=
+  io=
+endif
 
 #------------------------------------------------ 
 # BISON
@@ -773,38 +941,37 @@ src-generated/ugbc.embed.tab.c: bison src/ugbc.embed.lex src/ugbc.embed.y
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-SOURCES := $(wildcard src/*.c)
-SOURCES += $(wildcard src/libs/*.c)
-SOURCES += $(wildcard src/targets/*.c)
-SOURCES += $(wildcard src/hw/*.c)
-SOURCES += $(wildcard src/outputs/*.c)
-SOURCES += $(wildcard src/targets/common/*.c)
-SOURCES += $(wildcard src/targets/$(target)/*.c)
-SOURCES += $(wildcard src/targets/common/k7mo/*.c)
-SOURCES += $(wildcard src/targets/common/sid/*.c)
-SOURCES += $(wildcard src/targets/common/sn76489z/*.c)
-SOURCES += $(wildcard src/targets/common/vic2/*.c)
-SOURCES += $(wildcard src/targets/common/gtia/*.c)
-SOURCES += $(wildcard src/targets/common/6847/*.c)
-SOURCES += $(wildcard src/targets/common/tms9918/*.c)
-SOURCES += $(wildcard src/targets/common/cpc/*.c)
-SOURCES += $(wildcard src/targets/common/ef936x/*.c)
-SOURCES += $(wildcard src/targets/common/ted/*.c)
-SOURCES += $(wildcard src/targets/common/vic1/*.c)
-SOURCES += $(wildcard src/targets/common/zx/*.c)
-SOURCES += $(wildcard src/targets/common/gime/*.c)
-SOURCES += $(wildcard src/targets/common/vdcz/*.c)
-SOURCES += $(wildcard src/targets/common/cia/*.c)
-SOURCES += $(wildcard src/targets/common/pia/*.c)
-SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
+CSOURCES := $(wildcard src/*.c)
+CSOURCES += $(wildcard src/libs/*.c)
+CSOURCES += $(wildcard src/outputs/*.c)
+CSOURCES += $(wildcard src/targets/common/*.c)
+CSOURCES += $(wildcard src/hw/$(main).c)
+CSOURCES += $(wildcard src/targets/$(main)/*.c)
+CSOURCES += $(wildcard src/targets/common/$(main)/*.c)
+CSOURCES += $(wildcard src/targets/common/k7mo/*.c)
+ifneq ($(video),)
+	CSOURCES += $(wildcard src/hw/$(video).c)
+	CSOURCES += $(wildcard src/targets/common/$(video)/*.c)
+endif
+ifneq ($(video2),)
+	CSOURCES += $(wildcard src/hw/$(video2).c)
+	CSOURCES += $(wildcard src/targets/common/$(video2)/*.c)
+endif
+ifneq ($(audio),)
+	CSOURCES += $(wildcard src/hw/$(audio).c)
+	CSOURCES += $(wildcard src/targets/common/$(audio)/*.c)
+endif
+ifneq ($(io),)
+	CSOURCES += $(wildcard src/hw/$(io).c)
+	CSOURCES += $(wildcard src/targets/common/$(io)/*.c)
+endif
+CSOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
+SOURCES = $(sort $(CSOURCES))
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
-SOURCES_CPU := $(wildcard src/targets/common/pia/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/6502/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/6809/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/sc61860/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/z80/*.c)
+SOURCES_CPU += $(wildcard src/hw/$(cpu).c)
+SOURCES_CPU += $(wildcard src/targets/common/$(cpu)/*.c)
 OBJS_CPU = $(SOURCES_CPU:%.c=objs.$(target)/%.o)
 
 SOURCESTEST := $(wildcard src/*.c)

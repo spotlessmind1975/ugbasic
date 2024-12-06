@@ -683,7 +683,7 @@ embed2:
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
         }
         if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
-            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart2 );
         }
         if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->multiplexingSpriteConfig.async ) {
