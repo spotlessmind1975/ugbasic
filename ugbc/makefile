@@ -88,138 +88,161 @@ endif
 
 ifeq ($(target),atari)
   cpu=6502
-  video=gtia
+  video=antic
+  video2=gtia
   audio=pokey
   io=pokey
 endif
 ifeq ($(target),atarixl)
   cpu=6502
-  video=gtia
+  video=antic
+  video2=gtia
   audio=pokey
   io=pokey
 endif
 ifeq ($(target),c128)
   cpu=6502
   video=vic2
+  video2=
   audio=sid
   io=cia
 endif
 ifeq ($(target),c128z)
   cpu=z80
   video=vdcz
+  video2=
   audio=
   io=
 endif
 ifeq ($(target),c64)
   cpu=6502
   video=vic2
+  video2=
   audio=sid
   io=cia
 endif
 ifeq ($(target),c64reu)
   cpu=6502
   video=vic2
+  video2=
   audio=sid
   io=cia
 endif
 ifeq ($(target),coco)
   cpu=6809
   video=6847
+  video2=
   audio=sn76489m
   io=pia
 endif
 ifeq ($(target),coco3)
   cpu=6809
   video=gime
+  video2=
   audio=sn76489m
   io=pia
 endif
 ifeq ($(target),coleco)
   cpu=z80
   video=tms9918
+  video2=
   audio=sn76489z
   io=
 endif
 ifeq ($(target),cpc)
   cpu=z80
   video=
+  video2=
   audio=ay8910
   io=
 endif
 ifeq ($(target),d32)
   cpu=6809
   video=6847
+  video2=
   audio=
   io=pia
 endif
 ifeq ($(target),d64)
   cpu=6809
   video=6847
+  video2=
   audio=
   io=pia
 endif
 ifeq ($(target),mo5)
   cpu=6809
   video=ef936x
+  video2=
   audio=
   io=
 endif
 ifeq ($(target),msx1)
   cpu=z80
   video=tms9918
+  video2=
   audio=ay8910
   io=
 endif
 ifeq ($(target),pc128op)
   cpu=6809
   video=ef936x
+  video2=
   audio=sn76489m
   io=
 endif
 ifeq ($(target),to8)
   cpu=6809
   video=ef936x
+  video2=
   audio=
   io=
 endif
 ifeq ($(target),plus4)
   cpu=6502
   video=ted
+  video2=
   audio=ted
   io=ted
 endif
 ifeq ($(target),sc3000)
   cpu=z80
   video=tms9918
+  video2=
   audio=sn76489z
   io=
 endif
 ifeq ($(target),sg1000)
   cpu=z80
   video=tms9918
+  video2=
   audio=sn76489z
   io=
 endif
 ifeq ($(target),vg5000)
   cpu=z80
   video=ef9345
+  video2=
   audio=
   io=
 endif
 ifeq ($(target),vic20)
   cpu=6502
   video=vic1
+  video2=
   audio=vic1
   io=
 endif
 ifeq ($(target),zx)
   cpu=z80
   video=
+  video2=
   audio=
 endif
 ifeq ($(target),pc1403)
   cpu=sc61860
   video=
+  video2=
   audio=
   io=
 endif
@@ -915,32 +938,39 @@ src-generated/ugbc.embed.tab.c: bison src/ugbc.embed.lex src/ugbc.embed.y
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 
-SOURCES := $(wildcard src/*.c)
-SOURCES += $(wildcard src/libs/*.c)
-SOURCES += $(wildcard src/outputs/*.c)
-SOURCES += $(wildcard src/targets/common/*.c)
-SOURCES += $(wildcard src/hw/$(target).c)
-SOURCES += $(wildcard src/targets/$(target)/*.c)
-SOURCES += $(wildcard src/targets/common/k7mo/*.c)
+CSOURCES := $(wildcard src/*.c)
+CSOURCES += $(wildcard src/libs/*.c)
+CSOURCES += $(wildcard src/outputs/*.c)
+CSOURCES += $(wildcard src/targets/common/*.c)
+CSOURCES += $(wildcard src/hw/$(target).c)
+CSOURCES += $(wildcard src/targets/$(target)/*.c)
+CSOURCES += $(wildcard src/targets/common/k7mo/*.c)
 ifneq ($(video),)
 ifneq ($(target),$(video))
-	SOURCES += $(wildcard src/hw/$(video).c)
-	SOURCES += $(wildcard src/targets/common/$(video)/*.c)
+	CSOURCES += $(wildcard src/hw/$(video).c)
+	CSOURCES += $(wildcard src/targets/common/$(video)/*.c)
+endif
+endif
+ifneq ($(video2),)
+ifneq ($(target),$(video2))
+	CSOURCES += $(wildcard src/hw/$(video2).c)
+	CSOURCES += $(wildcard src/targets/common/$(video2)/*.c)
 endif
 endif
 ifneq ($(audio),)
 ifneq ($(target),$(audio))
-	SOURCES += $(wildcard src/hw/$(audio).c)
-	SOURCES += $(wildcard src/targets/common/$(audio)/*.c)
+	CSOURCES += $(wildcard src/hw/$(audio).c)
+	CSOURCES += $(wildcard src/targets/common/$(audio)/*.c)
 endif
 endif
 ifneq ($(io),)
 ifneq ($(target),$(io))
-	SOURCES += $(wildcard src/hw/$(io).c)
-	SOURCES += $(wildcard src/targets/common/$(io)/*.c)
+	CSOURCES += $(wildcard src/hw/$(io).c)
+	CSOURCES += $(wildcard src/targets/common/$(io)/*.c)
 endif
 endif
-SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
+CSOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
+SOURCES = $(sort $(CSOURCES))
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
