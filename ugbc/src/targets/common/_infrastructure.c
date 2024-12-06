@@ -7053,9 +7053,10 @@ restituire. Se omesso o se nel testo sono presenti meno caratteri della
 lunghezza (incluso il carattere iniziale), vengono restituiti tutti i 
 caratteri dalla posizione iniziale alla fine della stringa.
 
-@syntax = MID( text, position )
+@syntax = MID( text, position[, len] )
 
-@example x = MID( "TEST", 2 )
+@example x = MID( "TEST", 2 ): ' x = "TE"
+@example y = MID( "TEST", 2, 1 ): ' y = "T"
 
 @usedInExample strings_mid_01.bas
 
