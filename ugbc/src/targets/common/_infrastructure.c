@@ -7323,7 +7323,7 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
     }
     switch( string->type ) {
         case VT_STRING: {            
-            CRITICAL_MID_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
+            CRITICAL_MID_UNSUPPORTED_FOR_STRING( string->valueString->value);
         }
         case VT_DSTRING: {            
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
