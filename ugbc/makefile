@@ -50,7 +50,8 @@ BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
 
-all: paths compiler
+all: compiler
+compiler: paths
 
 test: paths-test tester
 

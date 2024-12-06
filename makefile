@@ -279,7 +279,7 @@ toolchain: toolchain.$(target)
 # for the specific target.
 #
 compiler:
-	@cd ugbc && $(MAKE) target=$(target) debug=$(debug) all
+	@cd ugbc && $(MAKE) -j 2 target=$(target) debug=$(debug) all
 
 #------------------------------------------------ 
 # test: 
