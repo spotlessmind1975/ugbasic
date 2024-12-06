@@ -83,6 +83,80 @@ endif
 #-----------------------------------------------------------------------------
 
 #------------------------------------------------ 
+# HARDWARE DEPENDENCIES
+#------------------------------------------------ 
+
+ifeq ($(target),atari)
+  cpu=6502
+endif
+ifeq ($(target),atarixl)
+  cpu=6502
+endif
+ifeq ($(target),c128)
+  cpu=6502
+endif
+ifeq ($(target),c128z)
+  cpu=z80
+endif
+ifeq ($(target),c64)
+  cpu=6502
+endif
+ifeq ($(target),c64reu)
+  cpu=6502
+endif
+ifeq ($(target),coco)
+  cpu=6809
+endif
+ifeq ($(target),coco3)
+  cpu=6809
+endif
+ifeq ($(target),coleco)
+  cpu=z80
+endif
+ifeq ($(target),cpc)
+  cpu=z80
+endif
+ifeq ($(target),d32)
+  cpu=6809
+endif
+ifeq ($(target),d64)
+  cpu=6809
+endif
+ifeq ($(target),mo5)
+  cpu=6809
+endif
+ifeq ($(target),msx1)
+  cpu=z80
+endif
+ifeq ($(target),pc128op)
+  cpu=6809
+endif
+ifeq ($(target),to8)
+  cpu=6809
+endif
+ifeq ($(target),plus4)
+  cpu=6502
+endif
+ifeq ($(target),sc3000)
+  cpu=z80
+endif
+ifeq ($(target),sg1000)
+  cpu=z80
+endif
+ifeq ($(target),vg5000)
+  cpu=z80
+endif
+ifeq ($(target),vic20)
+  cpu=6502
+endif
+ifeq ($(target),zx)
+  cpu=zx80
+endif
+ifeq ($(target),pc1403)
+  cpu=sc61860
+endif
+
+#------------------------------------------------ 
 # BISON
 #------------------------------------------------ 
 ifeq ($(OS),Windows_NT)
@@ -801,10 +875,7 @@ SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.e
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
 
 SOURCES_CPU := $(wildcard src/targets/common/pia/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/6502/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/6809/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/sc61860/*.c)
-SOURCES_CPU += $(wildcard src/targets/common/z80/*.c)
+SOURCES_CPU += $(wildcard src/targets/common/${cpu}/*.c)
 OBJS_CPU = $(SOURCES_CPU:%.c=objs.$(target)/%.o)
 
 SOURCESTEST := $(wildcard src/*.c)
