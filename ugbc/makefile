@@ -114,7 +114,7 @@ ifeq ($(target),c128z)
   cpu=z80
   video=vdcz
   video2=
-  audio=
+  audio=sidz
   io=
 endif
 ifeq ($(target),c64)
