@@ -88,72 +88,95 @@ endif
 
 ifeq ($(target),atari)
   cpu=6502
+  video=gtia
 endif
 ifeq ($(target),atarixl)
   cpu=6502
+  video=gtia
 endif
 ifeq ($(target),c128)
   cpu=6502
+  video=vic2
 endif
 ifeq ($(target),c128z)
   cpu=z80
+  video=vdcz
 endif
 ifeq ($(target),c64)
   cpu=6502
+  video=vic2
 endif
 ifeq ($(target),c64reu)
   cpu=6502
+  video=vic2
 endif
 ifeq ($(target),coco)
   cpu=6809
+  video=6847
 endif
 ifeq ($(target),coco3)
   cpu=6809
+  video=gime
 endif
 ifeq ($(target),coleco)
   cpu=z80
+  video=tms9918
 endif
 ifeq ($(target),cpc)
   cpu=z80
+  video=cpc
 endif
 ifeq ($(target),d32)
   cpu=6809
+  video=6847
 endif
 ifeq ($(target),d64)
   cpu=6809
+  video=6847
 endif
 ifeq ($(target),mo5)
   cpu=6809
+  video=ef936x
 endif
 ifeq ($(target),msx1)
   cpu=z80
+  video=tms9918
 endif
 ifeq ($(target),pc128op)
   cpu=6809
+  video=ef936x
 endif
 ifeq ($(target),to8)
   cpu=6809
+  video=ef936x
 endif
 ifeq ($(target),plus4)
   cpu=6502
+  video=ted
 endif
 ifeq ($(target),sc3000)
   cpu=z80
+  video=tms9918
 endif
 ifeq ($(target),sg1000)
   cpu=z80
+  video=tms9918
 endif
 ifeq ($(target),vg5000)
   cpu=z80
+  video=ef9345
 endif
 ifeq ($(target),vic20)
   cpu=6502
+  video=vic1
 endif
 ifeq ($(target),zx)
   cpu=zx80
+  video=zx
 endif
 ifeq ($(target),pc1403)
   cpu=sc61860
+  video=pc1403
 endif
 
 #------------------------------------------------ 
@@ -857,19 +880,10 @@ SOURCES += $(wildcard src/targets/$(target)/*.c)
 SOURCES += $(wildcard src/targets/common/k7mo/*.c)
 SOURCES += $(wildcard src/targets/common/sid/*.c)
 SOURCES += $(wildcard src/targets/common/sn76489z/*.c)
-SOURCES += $(wildcard src/targets/common/vic2/*.c)
-SOURCES += $(wildcard src/targets/common/gtia/*.c)
-SOURCES += $(wildcard src/targets/common/6847/*.c)
-SOURCES += $(wildcard src/targets/common/tms9918/*.c)
-SOURCES += $(wildcard src/targets/common/cpc/*.c)
-SOURCES += $(wildcard src/targets/common/ef936x/*.c)
-SOURCES += $(wildcard src/targets/common/ted/*.c)
-SOURCES += $(wildcard src/targets/common/vic1/*.c)
-SOURCES += $(wildcard src/targets/common/zx/*.c)
-SOURCES += $(wildcard src/targets/common/gime/*.c)
-SOURCES += $(wildcard src/targets/common/vdcz/*.c)
+ifneq ($(target),$(video))
+	SOURCES += $(wildcard src/targets/common/$(video)/*.c)
+endif
 SOURCES += $(wildcard src/targets/common/cia/*.c)
-SOURCES += $(wildcard src/targets/common/pia/*.c)
 SOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 
 OBJS = $(SOURCES:%.c=objs.$(target)/%.o)
