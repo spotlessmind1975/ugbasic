@@ -1632,9 +1632,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         outline0("STA LASTCOLOR");
     }
 
-    if (_environment->vestigialConfig.clsImplicit ) {
-        gtia_cls( _environment );
-    }
+    outline0("JSR GTIAAFTERINIT");
 
 }
 
@@ -2076,10 +2074,18 @@ void gtia_initialization( Environment * _environment ) {
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        gtia_cls( _environment );
+    }
+
 }
 
 void gtia_finalization( Environment * _environment ) {
-    
+
+    if (_environment->vestigialConfig.clsImplicit ) {
+        deploy( cls, src_hw_gtia_cls_asm );
+    }
+
 }
 
 void gtia_hscroll_line( Environment * _environment, int _direction ) {

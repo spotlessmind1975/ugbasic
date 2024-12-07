@@ -99,3 +99,8 @@ GTIASTARTUPDONE:
     SEI
     RTS
 
+GTIAAFTERINIT:
+@IF vestigialConfig.clsImplicit
+	JSR CLS
+@ENDIF
+    RTS    

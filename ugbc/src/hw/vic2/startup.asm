@@ -171,6 +171,10 @@ VIC2STARTUPL1:
 
     CLI
 
+@IF vestigialConfig.clsImplicit
+	JSR CLST
+@ENDIF
+
     RTS
 
 @IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer

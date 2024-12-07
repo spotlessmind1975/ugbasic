@@ -169,6 +169,10 @@ SYSCALLDONE:
 	EXX
 	EI
 
+@IF vestigialConfig.clsImplicit
+	CALL CLSG
+@ENDIF
+
     RET
 
 @IF sysCallUsed

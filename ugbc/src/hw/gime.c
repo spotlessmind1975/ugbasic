@@ -1652,6 +1652,10 @@ void gime_initialization( Environment * _environment ) {
 
 void gime_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy_preferred( clsText, src_hw_gime_cls_text_asm );
+    }
+    
 }
 
 void gime_hscroll_line( Environment * _environment, int _direction ) {

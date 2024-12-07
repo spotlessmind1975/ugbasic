@@ -118,6 +118,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_TILE:
                 case VT_TILESET:
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
@@ -417,6 +418,7 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("JP CODESTART" );
 
     deploy_inplace( startup, src_hw_c128z_startup_asm);
+    deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
     deploy( startup, src_hw_c128z_startup2_asm);
 
     generate_cgoto_address_table( _environment );

@@ -60,6 +60,11 @@ EF936XSTARTUPL1
     STA ,Y
     LEAX -1,X
     BNE EF936XSTARTUPL1
+
+@IF vestigialConfig.clsImplicit
+	JSR CLS
+@ENDIF
+
     RTS
 
     ; ===========[ VERTICAL BLANK ]===========

@@ -802,6 +802,10 @@ void vic1_finalization( Environment * _environment ) {
         outline0( "RTS" );
     }
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( cls, src_hw_vic1_cls_asm );
+    }
+
 }
 
 void vic1_hscroll_line( Environment * _environment, int _direction ) {

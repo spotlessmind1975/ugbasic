@@ -1201,6 +1201,10 @@ void cpc_initialization( Environment * _environment ) {
 
 void cpc_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsGraphic, src_hw_cpc_cls_graphic_asm );
+    }
+    
 }
 
 void cpc_hscroll_line( Environment * _environment, int _direction ) {

@@ -11371,6 +11371,7 @@ program :
 %%
 
 char version[MAX_TEMPORARY_STORAGE] = UGBASIC_VERSION;
+char revision[MAX_TEMPORARY_STORAGE] = UGBASIC_REVISION;
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
@@ -11825,7 +11826,7 @@ int main( int _argc, char *_argv[] ) {
                     _environment->profileCycles = atoi(optarg);
                     break;
                 case 'V':
-                    fprintf(stderr, "%s", version );
+                    fprintf(stderr, "%s\n%s\n", version, revision );
                     exit(0);
                     break;
                 case '1':

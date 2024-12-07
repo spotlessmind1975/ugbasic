@@ -115,6 +115,10 @@ TEDSTARTUP:
     STA $0315
     CLI
 
+@IF vestigialConfig.clsImplicit
+	JSR CLST
+@ENDIF
+
     RTS
 
 IMF_TOKEN_WAIT1								= $ff

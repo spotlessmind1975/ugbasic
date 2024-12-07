@@ -2362,7 +2362,7 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size, int
 void vdcz_initialization( Environment * _environment ) {
 
     deploy( vdczvars, src_hw_vdcz_vars_asm );
-    deploy( vdczstartup, src_hw_vdcz_startup_asm );
+    deploy_preferred( vdczstartup, src_hw_vdcz_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
@@ -2521,6 +2521,10 @@ static RGBi * multicolorSpritePalette[2];
 
 void vdcz_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_vdcz_cls_text_asm );
+    }
+    
 }
 
 void vdcz_hscroll_line( Environment * _environment, int _direction ) {

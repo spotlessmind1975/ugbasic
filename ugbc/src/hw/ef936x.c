@@ -698,7 +698,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, i
 void ef936x_initialization( Environment * _environment ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
-    deploy( ef936xstartup, src_hw_ef936x_startup_asm );
+    deploy_preferred( ef936xstartup, src_hw_ef936x_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
@@ -888,7 +888,12 @@ void ef936x_finalization( Environment * _environment ) {
         }
     }
     outline4("$%1.1x%1.1x%1.1x%1.1x", 0, EF936X_COMPONENT_BITMASK * 0x10 | ( ( palette[15].blue >> 4 ) & 0x0f ) , ( ( palette[15].green >> 4 ) & 0x0f ) , ( ( palette[15].red >> 4 ) & 0x0f )  );
-    
+
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsGraphic, src_hw_ef936x_cls_asm );
+
+    }
+
 }
 
 void ef936x_hscroll_line( Environment * _environment, int _direction ) {

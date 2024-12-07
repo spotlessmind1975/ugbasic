@@ -131,6 +131,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
@@ -557,6 +558,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( startup, src_hw_msx1_startup_asm);
+    deploy_inplace_preferred( startup, src_hw_tms9918_startup_asm);
 
     buffered_prepend_output( _environment );
 
