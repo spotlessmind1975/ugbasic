@@ -88,6 +88,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_DSTRING:
                     outline1("%s: db 0", variable->realName);
                     break;
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     outline1("%s: db 0", variable->realName);
                     break;

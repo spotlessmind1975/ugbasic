@@ -114,6 +114,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_TILE:
                 case VT_SPRITE:
+                case VT_MSPRITE:
                 case VT_TILESET:
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -314,6 +315,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_STRING:
             break;
         case VT_DSTRING:
+        case VT_MSPRITE:
         case VT_SPRITE:
         case VT_TILE:
         case VT_TILESET:

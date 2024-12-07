@@ -121,6 +121,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s: .res 1,0", variable->realName);
                     }
                     break;
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);

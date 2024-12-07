@@ -103,6 +103,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline1("%s: db 0", variable->realName);
                     }
                     break;
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);

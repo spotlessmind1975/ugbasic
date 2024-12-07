@@ -53,8 +53,8 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
             switch( variable->type ) {
                 case VT_STRING:
                 case VT_DSTRING:
-                case VT_SPRITE:
                 case VT_MSPRITE:
+                case VT_SPRITE:
                 case VT_DOJOKA:
                 case VT_TILESET:
                 case VT_TILES:
@@ -88,7 +88,6 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
             switch( variable->type ) {
                 case VT_STRING:
                 case VT_DSTRING:
-                case VT_SPRITE:
                 case VT_MSPRITE:
                 case VT_DOJOKA:
                 case VT_TILESET:

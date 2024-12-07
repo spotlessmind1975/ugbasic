@@ -131,6 +131,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
