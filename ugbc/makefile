@@ -40,10 +40,11 @@ LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
 endif
 
+REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=--locations -d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
 LIBS=-lm $(LIBXML2)
 BETA=$(shell cat ../.git/HEAD | grep beta)
