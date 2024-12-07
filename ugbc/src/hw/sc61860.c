@@ -1799,7 +1799,43 @@ void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_and_branch_8bit_const(signed)" );
+        char positiveLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( positiveLabel, "%spos", label );
+
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sb2", label );
+
+        op_lda( _environment, _source );
+
+        op_anda_direct( _environment, 0x80 );
+        op_cp_direct( _environment, 0x00 );
+        op_jz( _environment, positiveLabel );
+
+        op_cp_direct( _environment, _destination );
+
+        if ( _equal ) {
+            op_jz( _environment, label );
+        }
+        op_jnc( _environment, label );
+
+        op_jp( _environment, doneLabel );
+
+        outhead1("%s:", positiveLabel);
+
+        op_cp_direct( _environment, _destination );
+
+        op_jc( _environment, label );
+        if ( _equal ) {
+            op_jnz( _environment, label );
+        }
+
+        op_jp( _environment, doneLabel );
+
+        outhead1("%s:", label);
+
+        op_jp( _environment, _label );
+
+        outhead1("%s:", doneLabel);
 
     } else {
 
