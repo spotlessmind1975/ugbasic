@@ -1389,6 +1389,10 @@ void ted_finalization( Environment * _environment ) {
         outline0( "RTS" );
     }
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_ted_cls_text_asm );
+    }
+
 }
 
 void ted_hscroll_line( Environment * _environment, int _direction ) {

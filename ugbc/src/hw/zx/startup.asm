@@ -154,6 +154,11 @@ ZXNTSC:
     JP ZXSTARTUPDONE    
 
 ZXSTARTUPDONE:
+
+@IF vestigialConfig.clsImplicit
+	CALL CLS
+@ENDIF
+
     RET
     
 WAITTIMER:

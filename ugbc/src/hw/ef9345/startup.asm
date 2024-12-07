@@ -127,6 +127,10 @@ EF9345STARTUP:
     ; Re-enable interrupts.
     EI
 
+@IF vestigialConfig.clsImplicit
+	CALL CLS
+@ENDIF
+
     RET
 
 EF9345CONFIG:

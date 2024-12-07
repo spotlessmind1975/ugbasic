@@ -230,6 +230,10 @@ VIC1STARTUP:
     LDA #$0
     STA YCURSYS
 
+@IF vestigialConfig.clsImplicit
+	JSR CLST
+@ENDIF
+
     RTS
 
 IMF_TOKEN_WAIT1								= $ff

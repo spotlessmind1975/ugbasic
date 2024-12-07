@@ -375,6 +375,10 @@ void pc1403_initialization( Environment * _environment ) {
 
 void pc1403_finalization( Environment * _environment ) {
 
+    // if (_environment->vestigialConfig.clsImplicit ) {
+    //     pc1403_cls( _environment, NULL, NULL );
+    // }
+    
 }
 
 void pc1403_screen_rows( Environment * _environment, char * _rows ) {

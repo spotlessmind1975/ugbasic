@@ -320,7 +320,6 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                         outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
-                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
@@ -815,6 +814,7 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( startup, src_hw_pc128op_startup_asm);
+    deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     if ( _environment->keyboardFullSupport ) {

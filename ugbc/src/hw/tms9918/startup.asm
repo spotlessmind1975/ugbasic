@@ -545,6 +545,12 @@ TMS9918STARTUPL1:
 
         RET
 
+TMS9918AFTERINIT:
+@IF vestigialConfig.clsImplicit
+	CALL CLST
+@ENDIF
+        RET
+
 TMS9918SPRITEINIT:
         PUSH HL
         LD HL, (SPRITEAADDRESS)

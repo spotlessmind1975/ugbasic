@@ -1066,6 +1066,10 @@ void c6847_initialization( Environment * _environment ) {
 
 void c6847_finalization( Environment * _environment ) {
 
+    if (_environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_6847_cls_text_asm );
+    }
+    
 }
 
 void c6847_hscroll_line( Environment * _environment, int _direction ) {

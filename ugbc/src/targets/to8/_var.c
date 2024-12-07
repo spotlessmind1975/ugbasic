@@ -786,6 +786,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("fcb $ff");
 
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( scancode, src_hw_to8_scancode_asm );

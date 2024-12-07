@@ -187,6 +187,9 @@ VDCZGETCHAR:
     RET
 
 VDCZSTARTUP:
+@IF vestigialConfig.clsImplicit
+	CALL CLST
+@ENDIF
     RET
 
 VDCZVIDEOSTARTUP:

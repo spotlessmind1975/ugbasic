@@ -121,6 +121,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
     deploy( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );
     deploy( textEncodedAt, src_hw_zx_text_at_asm );
+    deploy( cls, src_hw_zx_cls_asm );
 
     // z80_move_8bit( _environment, _tab, "TABCOUNT");
 
@@ -427,6 +428,10 @@ void zx_initialization( Environment * _environment ) {
 
 void zx_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( cls, src_hw_zx_cls_asm );
+    }
+    
 }
 
 void zx_screen_rows( Environment * _environment, char * _rows ) {

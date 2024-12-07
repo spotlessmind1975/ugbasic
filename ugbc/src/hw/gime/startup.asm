@@ -256,6 +256,10 @@ GIMESTARTUP
     ; Turn on ROM/RAM
     JSR GIMEBANKROM
 
+@IF vestigialConfig.clsImplicit
+	JSR CLST
+@ENDIF
+
     RTS
 
 ; Look for a specific (pen) color into the palette.

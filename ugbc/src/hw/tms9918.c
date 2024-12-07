@@ -1445,7 +1445,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
 void tms9918_initialization( Environment * _environment ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm );
-    deploy( tms9918startup, src_hw_tms9918_startup_asm );
+    deploy_preferred( tms9918startup, src_hw_tms9918_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
@@ -1633,10 +1633,16 @@ void tms9918_initialization( Environment * _environment ) {
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
 
+    outline0("CALL TMS9918AFTERINIT");
+
 }
 
 void tms9918_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_tms9918_cls_text_asm );
+    }
+    
 }
 
 void tms9918_hscroll_line( Environment * _environment, int _direction ) {

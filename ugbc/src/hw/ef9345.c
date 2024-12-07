@@ -858,6 +858,10 @@ void ef9345_initialization( Environment * _environment ) {
 
 void ef9345_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_ef9345_cls_asm );
+    }
+    
 }
 
 void ef9345_hscroll_line( Environment * _environment, int _direction ) {
