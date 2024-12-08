@@ -556,6 +556,26 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         v->init = strdup(arg->str);
     }
 
+    if( po_buf_match(buf[0], " * = *+$*", tmp, arg, ofs) && vars_ok(arg) ) {
+        struct var *v1 = vars_get(tmp);
+        if ( v1 ) {
+            v1->nb_rd++;
+        }
+        struct var *v2 = vars_get(arg);
+        if ( v2 ) {
+            v2->nb_rd++;
+        }
+    } else if( po_buf_match(buf[0], "* = *+$*", tmp, arg, ofs) && vars_ok(arg) ) {
+        struct var *v1 = vars_get(tmp);
+        if ( v1 ) {
+            v1->nb_rd++;
+        }
+        struct var *v2 = vars_get(arg);
+        if ( v2 ) {
+            v2->nb_rd++;
+        }
+    }
+
 }
 
 /* compares two variables according to their access-count */
