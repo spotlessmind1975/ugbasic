@@ -177,15 +177,18 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         colorTransparency = _flags & 0x000f;
     }
 
+    RGBi palette[MAX_PALETTE];
+    int colorUsed = vic2_palette_extract( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, _flags, &palette[0] );
+    
     int c_slots = 0;
-    for (int i=0; i<image->originalColors; ++i ) {
-        if ( image->originalPalette[i].index == colorTransparency ) continue;
+    for (int i=0; i<colorUsed; ++i ) {
+        if ( palette[i].index == colorTransparency ) continue;
         ++c_slots;
         for (int y=0; y<y_slots; ++y ) {
             for (int x=0; x<x_slots; ++x ) {
                 
                 cpu_move_8bit( _environment, startIndex->realName, index->realName );
-                Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, x, y );
+                Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &palette[i], _flags, x, y );
                 vic2_sprite_data_from( _environment, index->name, realImage->name );
 
                 // if ( _flags & SPRITE_FLAG_MULTICOLOR) {
