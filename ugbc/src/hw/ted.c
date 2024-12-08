@@ -1494,6 +1494,24 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 8 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 8 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 8 ) {
+            _height = ( ( ( _height - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_height % 8 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
@@ -1553,6 +1571,24 @@ static Variable * ted_image_converter_bitmap_mode_standard( Environment * _envir
 static Variable * ted_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 8 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 8 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 8 ) {
+            _height = ( ( ( _height - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_height % 8 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     

@@ -8430,7 +8430,13 @@ audio_source :
     };
 
 define_definition :
-      COLOR IMPLICIT {
+    IMAGE FREE HEIGHT {
+        ((struct _Environment *)_environment)->freeImageHeight = 1;
+    }
+    | IMAGE FREE WIDTH {
+        ((struct _Environment *)_environment)->freeImageWidth = 1;
+    }
+    | COLOR IMPLICIT {
         ((struct _Environment *)_environment)->colorImplicit = 1;
     }
     | COLOR EXPLICIT {

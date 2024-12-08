@@ -2800,6 +2800,10 @@ typedef struct _Environment {
 
     int defaultNarrowType;
 
+    int freeImageHeight;
+    
+    int freeImageWidth;
+
     /*
      * Used for deferred writing of assembly file.
      */
