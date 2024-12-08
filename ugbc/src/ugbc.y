@@ -9975,6 +9975,14 @@ raw_optional :
 travel_definition :
     Identifier TO expr OP_COMMA expr {
         travel_path( _environment, $1, $3, $5 );
+    }
+    | Identifier OP {
+        parser_array_init( _environment );
+    } indexes CP TO expr OP_COMMA expr {
+        Variable * path = variable_move_from_array( _environment, $1 );
+        travel_path( _environment, path->name, $7, $9 );
+        variable_move_array( _environment, $1, path->name );
+        parser_array_cleanup( _environment );
     };
 
 animation_type :
