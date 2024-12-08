@@ -54,6 +54,8 @@ HSCROLLSCREENL1:
     LD D, A
     INC HL
 
+    PUSH DE
+
     LD HL, DE
 
     INC HL
@@ -87,6 +89,8 @@ HSCROLLSCREENRL1:
     LD A, (HL)
     LD D, A
     INC HL
+    
+    PUSH DE
 
     LD HL, DE
     LD DE, $50
@@ -96,6 +100,11 @@ HSCROLLSCREENRL1:
 
     LD BC, $4F
     LDDR
+
+    POP DE
+    LD (DE), 0
+    INC DE
+    LD (DE), 0
 
     POP HL
     POP BC
