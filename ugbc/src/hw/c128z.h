@@ -33,7 +33,7 @@
 
 #include "../ugbc.h"
 
-#define KEY_NONE					64
+#define KEY_NONE					255
 #define KEY_0						35
 #define KEY_1						56
 #define KEY_2						59

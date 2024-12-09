@@ -750,7 +750,7 @@ KEYBOARDQUEUERPOS       FCB $00
 KEYBOARDQUEUEWPOS       FCB $00
 KEYBOARDACTUAL          FCB $00
 KEYBOARDSHIFT           FCB $00
-KEYBOARDINKEY           FCB $00
+KEYBOARDINKEY           FCB $FF
 
 ; ----------------------------------------------------------------------------
 ; PUT KEY

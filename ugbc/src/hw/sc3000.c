@@ -100,6 +100,7 @@ void sc3000_scancode( Environment * _environment, char * _pressed, char * _scanc
 
     outline0("LD A, 0");
     outline1("LD (%s), A", _pressed);
+    outline0("LD A, $40");
     outline1("LD (%s), A", _scancode);
     outline0("CALL SCANCODE");
     outline0("CP 0");
