@@ -55,7 +55,7 @@ PC128TIMER  set *-2       ; (variable within code)
 @IF deployed.timer
     JSR   TIMERMANAGER
 @ENDIF
-@IF deployed.keyboard && keyboardFullSupport
+@IF deployed.keyboard && ( keyboardFullSupport || ! keyboardConfig.sync )
     JSR KEYBOARDMANAGER
 @ENDIF
     PULS  D
