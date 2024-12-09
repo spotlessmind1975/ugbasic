@@ -95,8 +95,8 @@ void pokey_set_volume( Environment * _environment, int _channels, int _volume ) 
     // overmodulation of the audio output. The sound produced tends to actually
     // lose volume and assume a buzzing quality.
 
-    outline1("LDA #%2.2x", _channels );
-    outline1("LDX #%2.2x", ( _volume >> 5 ) & 0x07 );
+    outline1("LDA #$%2.2x", _channels );
+    outline1("LDX #$%2.2x", ( _volume >> 5 ) & 0x07 );
     outline0("JSR POKEYSETVOL");
 
 }

@@ -108,8 +108,8 @@ void music_stop( Environment * _environment ) {
 
     deploy( music, src_hw_pokey_music_asm );
 
-    variable_store( _environment, "SN76489MUSICLOOP", 0x0 );
-    variable_store( _environment, "SN76489MUSICREADY", 0x0 );
+    cpu_store_8bit( _environment, "POKEYMUSICLOOP", 0x0 );
+    cpu_store_8bit( _environment, "POKEYMUSICREADY", 0x0 );
     volume( _environment, 0, 0xf );
 
 }
