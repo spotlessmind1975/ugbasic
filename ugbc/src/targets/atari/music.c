@@ -126,6 +126,6 @@ void music_seek_var( Environment * _environment, char * _position ) {
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_WORD, 0 );
 
     cpu_move_8bit( _environment, address_displacement( _environment, position->realName, "1" ), "SN76489BLOCKS" );
-    cpu_move_8bit( _environment, position->realName, "SN76489LASTBLOCK" );
+    cpu_move_8bit( _environment, position->realName, "POKEYLASTBLOCK" );
 
 }
