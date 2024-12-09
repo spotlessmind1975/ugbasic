@@ -413,6 +413,10 @@ const_note :
     note OP_HASH octave {
         $$ = ( $1 + 1 ) + ( $3 * 12 );
     }
+    |
+    CONST octave {
+        $$ = ( 0 + 1 ) + ( $2 * 12 );
+    }
     ;
 
 const_expr_floating :
@@ -11379,7 +11383,7 @@ statements_complex:
 
 program : 
   statements_complex 
-  { ++yylineno; ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
+  { /*printf( "  %d:\n", yylineno ); ++yylineno; ((Environment *)_environment)->yylineno = yylineno; */ outline1("; L:%d", yylineno); }
   emit_additional_info;
 
 %%
