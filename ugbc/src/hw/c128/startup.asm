@@ -86,7 +86,9 @@ NMISVC:
 
 IRQSVC:
     PHA
+    LDA $DD0D
     LDA $DC0D
+    LDA #$1
     STA $D019
     PLA    
 @IF deployed.msprites
