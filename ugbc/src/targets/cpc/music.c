@@ -110,7 +110,7 @@ void music_stop( Environment * _environment ) {
     variable_store( _environment, "AY8910MUSICREADY", 0x0 );
     volume( _environment, 0, 0x7 );
 
-}
+} 
 
 /* <usermanual>
 @keyword MUSIC SEEK
