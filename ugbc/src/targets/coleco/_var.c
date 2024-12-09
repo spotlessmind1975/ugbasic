@@ -508,6 +508,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( startup, src_hw_coleco_startup_asm);
     deploy_inplace_preferred( startup2, src_hw_coleco_startup2_asm);
     deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
 
     buffered_prepend_output( _environment );
 
