@@ -413,6 +413,10 @@ const_note :
     note OP_HASH octave {
         $$ = ( $1 + 1 ) + ( $3 * 12 );
     }
+    |
+    CONST octave {
+        $$ = ( 0 + 1 ) + ( $2 * 12 );
+    }
     ;
 
 const_expr_floating :
@@ -8430,7 +8434,13 @@ audio_source :
     };
 
 define_definition :
-      COLOR IMPLICIT {
+    IMAGE FREE HEIGHT {
+        ((struct _Environment *)_environment)->freeImageHeight = 1;
+    }
+    | IMAGE FREE WIDTH {
+        ((struct _Environment *)_environment)->freeImageWidth = 1;
+    }
+    | COLOR IMPLICIT {
         ((struct _Environment *)_environment)->colorImplicit = 1;
     }
     | COLOR EXPLICIT {
@@ -9975,6 +9985,14 @@ raw_optional :
 travel_definition :
     Identifier TO expr OP_COMMA expr {
         travel_path( _environment, $1, $3, $5 );
+    }
+    | Identifier OP {
+        parser_array_init( _environment );
+    } indexes CP TO expr OP_COMMA expr {
+        Variable * path = variable_move_from_array( _environment, $1 );
+        travel_path( _environment, path->name, $7, $9 );
+        variable_move_array( _environment, $1, path->name );
+        parser_array_cleanup( _environment );
     };
 
 animation_type :
@@ -11365,7 +11383,7 @@ statements_complex:
 
 program : 
   statements_complex 
-  { ++yylineno; ((Environment *)_environment)->yylineno = yylineno; outline1("; L:%d", yylineno); }
+  { /*printf( "  %d:\n", yylineno ); ++yylineno; ((Environment *)_environment)->yylineno = yylineno; */ outline1("; L:%d", yylineno); }
   emit_additional_info;
 
 %%

@@ -89,6 +89,9 @@ ISVCIRQ
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+@IF deployed.keyboard && !keyboardConfig.sync
+    JSR KEYBOARDMANAGER
+@ENDIF
 @IF deployed.joystick && !joystickConfig.sync
     DEC JOYSTICKCOUNTER
     BNE ISVCIRQJ

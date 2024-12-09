@@ -97,7 +97,7 @@ verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 @syntax MOVEMENT id TO POSITION [DELAY delay] USING player
 @syntax MOVEMENT id STEADY USING player
 
-@example MOVEMENT left TO LEFT WITH playerForward USING player
+@example MOVEMENT left TLEFT WITH playerForward USING player
 
 </usermanual> */
 void movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix ) {

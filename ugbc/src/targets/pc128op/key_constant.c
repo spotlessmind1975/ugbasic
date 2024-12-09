@@ -40,7 +40,7 @@
 
 int key_constant( Environment * _environment, int _key ) {
 
-    if ( _environment->keyboardFullSupport ) {
+    if ( _environment->keyboardFullSupport || !_environment->keyboardConfig.sync ) {
         return _key;
     } else {
         switch( _key ) {

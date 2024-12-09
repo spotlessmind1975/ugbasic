@@ -415,7 +415,7 @@
 
 #endif
 
-#define KEY2_NONE				   255
+#define KEY2_NONE				     0
 #define KEY2_AT					    '@'
 #define KEY2_H						'H'
 #define KEY2_P						'P'

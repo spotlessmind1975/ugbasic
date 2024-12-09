@@ -448,6 +448,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
 	if( ! po_buf_match( buf[0], " LDA *,Y", v3 ) && 
         po_buf_match( buf[0], " LDA *", v1 ) && po_buf_match( buf[1], " LDA *", v2 )
+        && strstr( v1->str, "$" ) == NULL
         ) {
         optim( buf[0], RULE "(LDA x, LDA x)->(LDA x) [1]", NULL );
         ++_environment->removedAssemblyLines;
@@ -695,8 +696,8 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
-    if(po_buf_match(name, "$"))  return 0;
-    if(po_buf_match(name, "("))  return 0;
+    if(po_buf_match(name, "$^"))  return 0;
+    if(po_buf_match(name, "(^"))  return 0;
 
     // if(name->str[0]=='_')      return 1;
     // if(po_buf_match(name, "CLIP"))    return 1;

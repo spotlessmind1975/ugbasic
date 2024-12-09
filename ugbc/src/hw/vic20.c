@@ -125,7 +125,7 @@ void vic20_scancode( Environment * _environment, char * _pressed, char * _scanco
 
     outline0("LDA #$0");
     outline1("STA %s", _pressed );
-    outline0("LDA #$0");
+    outline0("LDA #$40");
     outline1("STA %s", _scancode );
 
     outline0("LDY $c5");

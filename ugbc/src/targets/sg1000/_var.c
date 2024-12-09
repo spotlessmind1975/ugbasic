@@ -445,6 +445,7 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
+    deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
 
     generate_cgoto_address_table( _environment );
 

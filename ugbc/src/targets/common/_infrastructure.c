@@ -8841,6 +8841,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
 
     switch( _array->arrayType ) {
+        case VT_PATH:
         case VT_IMAGEREF:
             offset = variable_sl_const( _environment, offset->name, 4 );
             break;
@@ -8871,6 +8872,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
         switch( _array->arrayType ) {
+            case VT_PATH:
+                cpu_move_nbit_indirect( _environment, 14 * 8, _value->realName, offset->realName );
+                break;
             case VT_IMAGEREF:
                 cpu_move_nbit_indirect( _environment, 12 * 8, _value->realName, offset->realName );
                 break;
@@ -9131,6 +9135,17 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
                     cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+
+                    break;
+
+                }
+                case VT_PATH: {
+
+                    offset = variable_sl_const( _environment, offset->name, 4 );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_nbit_indirect2( _environment, 14*8, offset->realName, result->realName );
 
                     break;
 
@@ -10183,7 +10198,8 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
         *_frame_width = _width;
     }
 
-    if ( *_frame_width % 8 ) {
+
+    if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
     }
 
@@ -10195,11 +10211,11 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
         *_frame_height = _height;
     }
 
-    if ( *_frame_height % 8 ) {
+    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
     }
 
-    if ( *_frame_height % 8 ) {
+    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
     }
 
@@ -10248,11 +10264,11 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
         *_frame_height = _height;
     }
 
-    if ( *_frame_height % 8 ) {
+    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
     }
 
-    if ( *_frame_height % 8 ) {
+    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
     }
 
@@ -10268,7 +10284,7 @@ void image_converter_asserts_free_height( Environment * _environment, int _width
         *_frame_width = _width;
     }
 
-    if ( *_frame_width % 8 ) {
+    if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
     }
 

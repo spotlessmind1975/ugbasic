@@ -146,7 +146,7 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARDQUEUE", VT_BUFFER, 10 );
     variable_global( _environment, "KEYBOARDQUEUE" );
 
-    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0 );
+    variable_import( _environment, "KEYBOARDINKEY", VT_BYTE, 0xff );
     variable_global( _environment, "KEYBOARDINKEY" );
 
     variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );

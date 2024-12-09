@@ -64,6 +64,7 @@ sarà interrotta bruscamente e sarà fatta partire quella indicata.
 @example flyingAirplane := LOAD ATLAS("airplane.png") FRAME SIZE (16, 16)
 @example ANIMATION BOUNCE anim WITH flyingAirplane USING airplane
 @example ANIMATE airplane WITH anim AT 20, 20
+@example DO: RUN PARALLEL: LOOP
 
 @target all
 </usermanual> */
