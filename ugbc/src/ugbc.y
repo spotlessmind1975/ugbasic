@@ -3645,7 +3645,7 @@ exponential_less:
         variable_store( _environment, $$, 255 );
     }
     | FALSE {
-        $$ = variable_temporary( _environment, VT_BYTE, "(false)" )->name;
+        $$ = variable_temporary( _environment, VT_SBYTE, "(false)" )->name;
         variable_store( _environment, $$, 0 );
     }
     | COLORS {
