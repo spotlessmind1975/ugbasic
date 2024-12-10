@@ -54,8 +54,6 @@ HSCROLLSCREENL1:
     LD D, A
     INC HL
 
-    PUSH DE
-
     LD HL, DE
 
     INC HL
