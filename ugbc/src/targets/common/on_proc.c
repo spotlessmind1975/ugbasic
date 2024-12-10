@@ -125,6 +125,10 @@ void on_proc_index( Environment * _environment, char * _label ) {
         CRITICAL_INTERNAL_ERROR("on_proc_index called out of order (1)");
     }
 
+    if ( !procedure_exists( _environment, _label ) ) {
+        CRITICAL_ON_CALL_WITH_NOT_EXISTENT_PROCEDURE(_label);
+    }
+
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
     
     variable_store( _environment, index->name, conditional->index );

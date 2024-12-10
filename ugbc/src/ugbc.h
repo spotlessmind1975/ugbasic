@@ -3332,7 +3332,14 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_DUPLICATE_NOT_MPSRITE(n)  CRITICAL2("E334 - cannot init from something that is not MSPRITE", n ); 
 #define CRITICAL_CANNOT_MOVE_PLACEHOLDERS_TO_IMAGE(v)  CRITICAL2("E335 - cannot move PLACEHOLDER to IMAGE", v );
 #define CRITICAL_MID_UNSUPPORTED_FOR_STRING(s)  CRITICAL2("E336 - MID assignment not supported for constant strings", s );
-#define CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_STEPS(s) CRITICAL2("E337 - cannot use relative MOVEMENT without using a steps count", s );
+#define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E337 - ON...GOSUB with an unexistent label", s );
+#define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E338 - ON...GOSUB with an unexistent line number", n );
+#define CRITICAL_ON_CALL_WITH_NOT_EXISTENT_PROCEDURE(s)  CRITICAL2("E339 - ON...CALL with an unexistent PROCEDURE", s );
+#define CRITICAL_ON_GOTO_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E340 - ON...GOTO with an unexistent label", s );
+#define CRITICAL_ON_GOTO_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E341 - ON...GOTO with an unexistent line number", n );
+#define CRITICAL_ON_SCROLL_GOSUB_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E342 - ON SCROLL...GOSUB with an unexistent label", s );
+#define CRITICAL_ON_SCROLL_CALL_WITH_NOT_EXISTENT_PROCEDURE(s)  CRITICAL2("E343 - ON SCROLL...CALL with an unexistent PROCEDURE", s );
+#define CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_STEPS(s) CRITICAL2("E344 - cannot use relative MOVEMENT without using a steps count", s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

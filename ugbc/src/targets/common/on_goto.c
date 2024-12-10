@@ -114,6 +114,10 @@ void on_goto_index( Environment * _environment, char * _label ) {
         CRITICAL_INTERNAL_ERROR("on_goto_index called out of order (2)");
     }
 
+    if ( !label_exists_named( _environment, _label ) ) {
+        CRITICAL_ON_GOTO_WITH_NOT_EXISTENT_LABEL(_label);
+    }
+
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
 
     variable_store( _environment, index->name, conditional->index );
@@ -137,6 +141,10 @@ void on_goto_index( Environment * _environment, char * _label ) {
  */
 void on_goto_number( Environment * _environment, int _number ) {
 
+    if ( !label_exists_numeric( _environment, _number ) ) {
+        CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LINE_NUMBER(_number);
+    }
+    
     char label[MAX_TEMPORARY_STORAGE]; sprintf( label, "_linenumber%d", _number );
 
     on_goto_index( _environment, label );
