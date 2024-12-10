@@ -259,7 +259,11 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
             if ( atlas->type == VT_IMAGES ) {
                 variable_store( _environment, prefixStepsVar->name, atlas->frameCount );		
             } else if ( VT_BITWIDTH( atlas->type ) > 1 ) {
-                variable_move( _environment, atlas->name, prefixStepsVar->name );		
+                if ( atlas->initializedByConstant ) {
+                    variable_store( _environment, prefixStepsVar->name, atlas->value );		
+                } else {
+                    variable_move( _environment, atlas->name, prefixStepsVar->name );		
+                }
             } else {
                 CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_STEPS( _prefix );
             }
