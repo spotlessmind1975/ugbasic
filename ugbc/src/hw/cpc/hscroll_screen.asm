@@ -91,7 +91,7 @@ HSCROLLSCREENRL1:
     PUSH DE
 
     LD HL, DE
-    LD DE, $50
+    LD DE, $4F
     ADD HL, DE
     LD DE, HL
     DEC HL
@@ -100,8 +100,6 @@ HSCROLLSCREENRL1:
     LDDR
 
     POP DE
-    LD (DE), 0
-    INC DE
     LD (DE), 0
 
     POP HL
