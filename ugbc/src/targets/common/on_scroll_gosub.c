@@ -70,6 +70,10 @@ da una intera riga o colonna.
 </usermanual> */
 void on_scroll_gosub( Environment * _environment, int _x, int _y, char * _label ) {
 
+    if ( !label_exists_named( _environment, _label ) ) {
+        CRITICAL_ON_SCROLL_GOSUB_WITH_NOT_EXISTENT_LABEL(_label);
+    }
+
     switch( _y ) {
         case -1:
             cpu_set_callback( _environment, "ONSCROLLUP", _label );

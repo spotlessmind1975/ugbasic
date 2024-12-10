@@ -74,6 +74,10 @@ Importante: questo comando non segue il pragma ''OPTION CALL AS GOTO''.
 </usermanual> */
 void on_scroll_call( Environment * _environment, int _x, int _y, char * _label ) {
 
+    if ( !procedure_exists( _environment, _label ) ) {
+        CRITICAL_ON_SCROLL_CALL_WITH_NOT_EXISTENT_PROCEDURE(_label);
+    }
+
     on_scroll_gosub( _environment, _x, _y, _label );
 
 }
