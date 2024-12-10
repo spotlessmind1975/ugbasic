@@ -3333,7 +3333,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_MOVE_PLACEHOLDERS_TO_IMAGE(v)  CRITICAL2("E335 - cannot move PLACEHOLDER to IMAGE", v );
 #define CRITICAL_MID_UNSUPPORTED_FOR_STRING(s)  CRITICAL2("E336 - MID assignment not supported for constant strings", s );
 #define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E337 - ON...GOSUB with an unexistent label", s );
-#define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E337 - ON...GOSUB with an unexistent line number", n );
+#define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E338 - ON...GOSUB with an unexistent line number", n );
+#define CRITICAL_ON_CALL_WITH_NOT_EXISTENT_PROCEDURE(s)  CRITICAL2("E339 - ON...CALL with an unexistent PROCEDURE", s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
