@@ -3335,6 +3335,8 @@ typedef struct _Environment {
 #define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E337 - ON...GOSUB with an unexistent label", s );
 #define CRITICAL_ON_GOSUB_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E338 - ON...GOSUB with an unexistent line number", n );
 #define CRITICAL_ON_CALL_WITH_NOT_EXISTENT_PROCEDURE(s)  CRITICAL2("E339 - ON...CALL with an unexistent PROCEDURE", s );
+#define CRITICAL_ON_GOTO_WITH_NOT_EXISTENT_LABEL(s)  CRITICAL2("E340 - ON...GOTO with an unexistent label", s );
+#define CRITICAL_ON_GOTO_WITH_NOT_EXISTENT_LINE_NUMBER(n)  CRITICAL2i("E341 - ON...GOTO with an unexistent line number", n );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
