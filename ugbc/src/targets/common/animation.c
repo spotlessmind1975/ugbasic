@@ -57,6 +57,10 @@ In order for this to work, you need to indicate a variable prefix that will be
 associated with the object that will have this animation. This can be indicated with 
 the ''USING'' keyword. 
 
+If the ''prefix'' is a variable of type ''SPRITE'', ''CSPRITE'' or ''MSPRITE'',
+this movement will be bounded to that object. Otherwise, the following logic
+will be applied.
+
 This statement will generate a series of variables: 
 ''prefixFrame'', which will contain the next frame to be displayed for the animation; 
 ''prefixFrameDirection'', which will be 1 if the animation proceeds from the smallest frame to the largest frame and -1 vice versa; 
@@ -102,6 +106,10 @@ Il comando ''ANIMATION'' permette di definire una animazione a partire da un ''A
 dato. L'animazione potrà essere caratterizzata da un tipo e da parametri, che ne 
 descrivono il funzionamento. Una volta definita, l'animazione potrà poi essere usata 
 in qualsiasi momento.
+
+Se il ''prefisso'' è una variabile di tipo ''SPRITE'', ''CSPRITE'' o ''MSPRITE'',
+questo movimento sarà vincolato a quell'oggetto. In caso contrario, verrà applicata 
+la seguente logica.
 
 Per poter funzionare, è necessario indicare un prefisso di variabile che sarà associato 
 all'oggetto che avrà questa animazione. Questo è possibile indicarlo con la parola 
@@ -169,6 +177,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         CRITICAL_cANNOT_DEFINE_ANIMATION_WITHOUT_ATLAS( _identifier );
     }
 
+    Variable * prefix;
+
+    int spriteLogic = 0;
+
+    if ( variable_exists( _environment, _prefix ) ) {
+        prefix = variable_retrieve( _environment, _prefix );
+        if ( prefix->type == VT_SPRITE || prefix->type == VT_MSPRITE ) {
+            spriteLogic = 1;
+        }
+    }
+
 	// DIM [prefix]Animation AS THREAD
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
     Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0xff );
@@ -210,7 +229,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     char prefixOX[MAX_TEMPORARY_STORAGE]; sprintf( prefixOX, "%sOX", _prefix );
     char prefixOY[MAX_TEMPORARY_STORAGE]; sprintf( prefixOY, "%sOY", _prefix );
 
-    if ( _environment->animationPreserveBackground ) {
+    if ( !spriteLogic && _environment->animationPreserveBackground ) {
         if ( ! variable_exists( _environment, prefixDummy ) ) {
 
             // DIM [prefix]Background AS IMAGE
@@ -230,6 +249,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             prefixOYVar = variable_retrieve( _environment, prefixOY );
         }
     }
+
 	// PARALLEL PROCEDURE [identifier]
 
     ((struct _Environment *)_environment)->parameters = 0;
@@ -272,7 +292,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_POSITION;
     ++((struct _Environment *)_environment)->parameters;
 
-    if ( _environment->animationPreserveBackground ) {
+    if ( !spriteLogic && _environment->animationPreserveBackground ) {
 
         // 	SHARED  [prefix]Background
         ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixBackground );
@@ -305,8 +325,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
     char skipToRealCodeStart[MAX_TEMPORARY_STORAGE]; sprintf( skipToRealCodeStart, "%scodestart", _identifier );
     char updateIfPositionChanged[MAX_TEMPORARY_STORAGE]; sprintf( updateIfPositionChanged, "%supdate", _prefix );
+    char updateSpriteDataWithImage[MAX_TEMPORARY_STORAGE]; sprintf( updateSpriteDataWithImage, "%supdatesprite", _prefix );
+    char updateSpriteDataWithImageDone[MAX_TEMPORARY_STORAGE]; sprintf( updateSpriteDataWithImageDone, "%supdatespritedone", _prefix );
 
-    if ( _environment->animationPreserveBackground && ! variable_exists( _environment, prefixDummy ) ) {
+    if ( !spriteLogic && _environment->animationPreserveBackground && ! variable_exists( _environment, prefixDummy ) ) {
 
         prefixDummyVar = variable_define( _environment, prefixDummy, VT_BYTE, 0 );
 
@@ -324,6 +346,30 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             variable_move( _environment, prefixYVar->name, prefixOYVar->name );
             cpu_label( _environment, skipIfSamePositionLabel );
             variable_store( _environment, prefixDummyVar->name, 0xff );
+            cpu_return( _environment );
+        cpu_label( _environment, skipToRealCodeStart );
+
+    }
+
+    if ( spriteLogic ) {
+
+        cpu_jump( _environment, skipToRealCodeStart );
+
+        cpu_label( _environment, updateSpriteDataWithImage );
+            cpu6502_prepare_for_compare_and_branch_8bit( _environment, prefixFrameVar->realName );
+            for( int i=0; i<atlas->frameCount; ++i ) {
+                char assignFrameLabelSkip[MAX_TEMPORARY_STORAGE]; sprintf( assignFrameLabelSkip, "%sassign%dframeskip", _prefix, i );
+                cpu_execute_compare_and_branch_8bit_const( _environment, i, assignFrameLabelSkip, 0 );
+                Variable * extraction = image_extract( _environment, atlas->name, i, NULL );
+                if ( prefix->type == VT_SPRITE ) {
+                    sprite_init( _environment, extraction->name, prefix->name, 0 );
+                } else {
+                    msprite_init( _environment, extraction->name, prefix->name, 0 );
+                }
+                cpu_jump( _environment, updateSpriteDataWithImageDone );
+                cpu_label( _environment, assignFrameLabelSkip );
+            }
+            cpu_label( _environment, updateSpriteDataWithImageDone );
             cpu_return( _environment );
         cpu_label( _environment, skipToRealCodeStart );
 
@@ -360,12 +406,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
             }
 
-            if ( _environment->animationPreserveBackground ) {
+            if ( !spriteLogic && _environment->animationPreserveBackground ) {
                 cpu_call( _environment, updateIfPositionChanged );                
             }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
-            put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+            if ( spriteLogic ) {
+                cpu_call( _environment, updateSpriteDataWithImage );
+                sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+            } else {
+                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+            }
 
     		// 	INC [prefix]Frame
             cpu_inc( _environment, prefixFrameVar->realName );
@@ -404,12 +455,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
                 }
 
-                if ( _environment->animationPreserveBackground ) {
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
                     cpu_call( _environment, updateIfPositionChanged );                
                 }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
-                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
 
                 if ( _environment->animationReverse ) {
                     // 	INC [prefix]Frame
@@ -456,12 +512,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
                 }
 
-                if ( _environment->animationPreserveBackground ) {
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
                     cpu_call( _environment, updateIfPositionChanged );                
                 }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
-                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
 
                 // ADD [prefix]Frame, [prefix]FrameDirection
                 variable_add_inplace_vars( _environment, prefixFrameVar->name, prefixFrameDirectionVar->name );
@@ -513,12 +574,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
                 }
 
-                if ( _environment->animationPreserveBackground ) {
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
                     cpu_call( _environment, updateIfPositionChanged );                
                 }
 
                 // 	PUT IMAGE [atlas] FRAME [prefix]Frame AT [prefix]X, [prefix]Y
-                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
 
                 // ADD [prefix]Frame, [prefix]FrameDirection
                 variable_add_inplace( _environment, prefixFrameVar->name, _environment->animationReverse ? -1 : 1 );
@@ -580,12 +646,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
             }
 
-            if ( _environment->animationPreserveBackground ) {
+            if ( !spriteLogic && _environment->animationPreserveBackground ) {
                 cpu_call( _environment, updateIfPositionChanged );                
             }
 
     		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
-            put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+            if ( spriteLogic ) {
+                cpu_call( _environment, updateSpriteDataWithImage );
+                sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+            } else {
+                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+            }
 
     		// 	INC [prefix]Frame
             cpu_inc( _environment, prefixFrameVar->realName );
