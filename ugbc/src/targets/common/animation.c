@@ -316,6 +316,13 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
     }
 
+    if ( spriteLogic  ) {
+        // 	SHARED  [prefix]
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefix->name );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = prefix->type;
+        ++((struct _Environment *)_environment)->parameters;
+    }
+
 	// 	SHARED  [prefix]Next
     ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixNext );
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_SBYTE;
