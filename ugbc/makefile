@@ -52,7 +52,6 @@ BETA=$(shell cat ../.git/HEAD | grep beta)
 .PHONY: paths clean all bison flex
 
 all: compiler
-compiler: paths
 
 test: paths-test tester
 
@@ -327,7 +326,9 @@ endif
 # processes XSLT-1.0 stylesheets.
 #
 $(LIBXML2): 
-	@cd $(LIBXML2PATH) && ./autogen.sh --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no && make
+	@cd $(LIBXML2PATH) && ./autogen.sh --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no
+	@cd $(LIBXML2PATH) && ./configure --with-http=no --with-ftp=no --with-lzma=no --with-iconv=no --with-python=no --with-zlib=no --enable-static=yes --enable-shared=no 
+	@cd $(LIBXML2PATH) && $(MAKE)
 
 libxml2: paths $(LIBXML2)
 
@@ -1016,10 +1017,12 @@ paths-test:
 lib-cpu: $(OBJS_CPU)
 	@$(AR) -rc objs.$(target)/libcpu.a $^
 
-compiler: $(LIBXML2) $(OBJS) lib-cpu
+compiler: compiler2 lib-cpu $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
 		-lm objs.$(target)/libcpu.a $(LIBS) 
-	
+
+compiler2: paths libxml2 
+
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
