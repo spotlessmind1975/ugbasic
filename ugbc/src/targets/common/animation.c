@@ -363,7 +363,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         cpu_jump( _environment, skipToRealCodeStart );
 
         cpu_label( _environment, updateSpriteDataWithImage );
-            cpu6502_prepare_for_compare_and_branch_8bit( _environment, prefixFrameVar->realName );
+            cpu_prepare_for_compare_and_branch_8bit( _environment, prefixFrameVar->realName );
             for( int i=0; i<atlas->frameCount; ++i ) {
                 char assignFrameLabelSkip[MAX_TEMPORARY_STORAGE]; sprintf( assignFrameLabelSkip, "%sassign%dframeskip", _prefix, i );
                 cpu_execute_compare_and_branch_8bit_const( _environment, i, assignFrameLabelSkip, 0 );
