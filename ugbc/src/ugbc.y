@@ -1010,11 +1010,11 @@ const_factor:
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
-      | PAGE "0" {
-          $$ = DOUBLE_BUFFER_PAGE_0;
-      }
-      | PAGE "1" {
-          $$ = DOUBLE_BUFFER_PAGE_1;
+      | PAGE Integer {
+          if ( ($2 != 0) && ($2 != 1) ) {
+            CRITICAL_PAGE01();
+          }
+          $$ = $2;
       }
       | PAGE "A" {
           $$ = DOUBLE_BUFFER_PAGE_0;
@@ -4027,13 +4027,12 @@ exponential_less:
     | MSPRITE OP expr OP_COMMA expr sprite_flags CP {
         $$ = msprite_init( _environment, $3, $5, $6 )->name;
     }
-    | PAGE "0" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
-        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_0 );
-    }
-    | PAGE "1" {
-        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
-        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
+    | PAGE Integer {
+        if ( ( $2 != 0 ) && ( $2 != 1 ) ) {
+            CRITICAL_PAGE01();
+        }
+        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE)" )->name;
+        variable_store( _environment, $$, $2 );
     }
     | PAGE A {
         $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
