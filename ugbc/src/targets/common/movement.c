@@ -306,8 +306,6 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
                 }
             }
 
-            outline0("plutero:");
-
             if ( prefix && spriteLogic ) {
                 sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
             }
