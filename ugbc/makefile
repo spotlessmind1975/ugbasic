@@ -1017,9 +1017,11 @@ paths-test:
 lib-cpu: $(OBJS_CPU)
 	@$(AR) -rc objs.$(target)/libcpu.a $^
 
-compiler: paths libxml2 compiler2
+compiler: paths libxml2 
 
-compiler2: lib-cpu $(OBJS)
+compiler2: compiler3
+
+compiler3: lib-cpu $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
 		-lm objs.$(target)/libcpu.a $(LIBS) 
 
