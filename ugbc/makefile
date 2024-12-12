@@ -52,7 +52,6 @@ BETA=$(shell cat ../.git/HEAD | grep beta)
 .PHONY: paths clean all bison flex
 
 all: compiler
-compiler: paths
 
 test: paths-test tester
 
@@ -1016,7 +1015,7 @@ paths-test:
 lib-cpu: $(OBJS_CPU)
 	@$(AR) -rc objs.$(target)/libcpu.a $^
 
-compiler: $(LIBXML2) $(OBJS) lib-cpu
+compiler: paths $(LIBXML2) $(OBJS) lib-cpu
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
 		-lm objs.$(target)/libcpu.a $(LIBS) 
 	
