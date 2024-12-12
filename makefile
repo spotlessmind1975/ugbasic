@@ -124,6 +124,10 @@ ifeq ($(target),pc1403)
 endif
 endif
 
+ifndef threads
+  threads=4
+endif
+
 #-----------------------------------------------------------------------------
 #--- MAKEFILE's ENVIRONMENT
 #-----------------------------------------------------------------------------
@@ -279,7 +283,7 @@ toolchain: toolchain.$(target)
 # for the specific target.
 #
 compiler:
-	@cd ugbc && $(MAKE) -j 4 target=$(target) debug=$(debug) all
+	@cd ugbc && $(MAKE) -j $(threads) target=$(target) debug=$(debug) all
 
 #------------------------------------------------ 
 # test: 
