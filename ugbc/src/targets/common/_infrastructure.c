@@ -12791,7 +12791,7 @@ carattere presente in una stringa, purché sia fornito l'offset all'interno dell
 
 Variable * variable_string_pick( Environment * _environment, char * _string, int _position ) {
 
-    Variable * result = variable_temporary( _environment, VT_CHAR, "(char)");
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(char)");
 
     Variable * source = variable_retrieve( _environment, _string );
     Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING1)");
