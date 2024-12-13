@@ -7436,7 +7436,7 @@ numero di caratteri nella stringa da cercare.
 @example x = PLACE( "ugBASIC", "A" )
 @example x = PLACE( "ugBASIC", "A", 2 )
 
-@alias PLACE
+@alias INSTR
 </usermanual> */
  
 

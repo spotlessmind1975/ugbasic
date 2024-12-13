@@ -3391,7 +3391,10 @@ exponential_less:
         $$ = variable_string_substring( _environment, $3, $5, $7 )->name;
     }
     | PLACE OP expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $5, $3, NULL )->name;
+        $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
+    }
+    | PLACE OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
     }
     | INSTR OP expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
