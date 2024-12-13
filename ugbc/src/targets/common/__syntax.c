@@ -5540,7 +5540,7 @@ target corrispondente, il valore sarà zero.
 
 @syntax = HOME
 
-@example IF KEY STATE(KEY HOME) THEN
+@example IF KEY STATE(KEY PERIOD) THEN
 @example    PRINT "HOME has been pressed!"
 @example ENDIF
 
