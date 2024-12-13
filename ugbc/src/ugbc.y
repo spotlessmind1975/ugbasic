@@ -3391,7 +3391,10 @@ exponential_less:
         $$ = variable_string_substring( _environment, $3, $5, $7 )->name;
     }
     | PLACE OP expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $5, $3, NULL )->name;
+        $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
+    }
+    | PLACE OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
     }
     | INSTR OP expr OP_COMMA expr CP {
         $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
@@ -9411,9 +9414,22 @@ clear_definition :
     ;
 
 pmode_definition :
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+    expr OP_COMMA expr {
+        Variable * expr1 = variable_retrieve( _environment, $1 );
+        if ( ! expr1->initializedByConstant ) {
+            CRITICAL_PMODE_NEEDS_CONSTANTS( );
+        }
+        Variable * expr2 = variable_retrieve( _environment, $3 );
+        if ( ! expr2->initializedByConstant ) {
+            CRITICAL_PMODE_NEEDS_CONSTANTS( );
+        }
+        pmode( _environment, expr1->value, expr2->value );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         pmode( _environment, $2, $5 );
-    };
+    }
+
+    ;
 
 paint_definition :
     expr OP_COMMA expr OP_COMMA expr  {

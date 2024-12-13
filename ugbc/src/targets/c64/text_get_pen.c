@@ -54,7 +54,7 @@ The ''PEN$'' command create a special control sequence (string) that define the 
 the screen. This means that, whenever the string is printed on the screen, the pre-set pen colour 
 is automatically assigned  to it. The format of the string returned by ''PEN$'' is not specific 
 for the target.  The parameter ''color'' is represented  by a value in the available colors, 
-from 0 to maximum (''PAPER COLORS''). 
+from 0 to maximum (''PEN COLORS''). 
 
 @italian
 

@@ -245,7 +245,7 @@ void z80_pokew( Environment * _environment, char * _address, char * _source ) {
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-        outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" ) );
+        outline0("INC HL");
         outline0("LD (HL), A");
 
     no_embedded( cpu_poke )
@@ -281,13 +281,13 @@ void z80_poked( Environment * _environment, char * _address, char * _source ) {
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-        outline1("LD HL, (%s)", address_displacement( _environment, _address, "1" )  );
+        outline0("INC HL");
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "2" ) );
-        outline1("LD HL, (%s)", address_displacement( _environment, _address, "2" )  );
+        outline0("INC HL");
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "3" ) );
-        outline1("LD HL, (%s)", address_displacement( _environment, _address, "3" )  );
+        outline0("INC HL");
         outline0("LD (HL), A");
 
     no_embedded( cpu_poke )
