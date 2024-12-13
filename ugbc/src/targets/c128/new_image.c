@@ -56,21 +56,43 @@ store an image coming from the screen (with the ''GET IMAGE'' command), or
 from another graphic resource. 
 
 The area must be defined by (constant) width and (constant) height, expressed in pixels. The actual size, 
-in terms of bytes of RAM, will depend on the graphics mode selected at the time. 
+in terms of bytes of RAM, will depend on the graphics mode selected at the time. If it is not 
+possible to define an image in that screen mode, a specific error will be issued.
 
-If it is not possible to define an image in that screen mode, a specific error will be issued.
+Generally speaking, it is not advisable to do a ''PUT IMAGE'' of a ''NEW IMAGE'' that has not 
+been initialized, at least once, by a ''GET IMAGE''. Infact, the ''PUT IMAGE'' tries to draw 
+the contents of an uninitialized frame (i.e.: all zeros), including the palette. So it 
+could draw everything empty in terms of bitmap, and then overwrites the entire palette 
+with zeros, giving rise to unexpected result. So you have to use a preliminary ''GET IMAGE'' 
+on any ''NEW IMAGE''. 
+
+If you want to use the ''PUT IMAGE'' without 
+side effects on palette, you can opt for the ''PUT BITMAP''. In this case, ugBASIC 
+will draw only the component related to the pixels, leaving the palette component 
+unchanged.
 
 @italian
 
-Il comando ''NEW IMAGE'' permette di definire un'area di memoria dove poter 
-memorizzare una immagine proveniente dallo schermo (con il comando ''GET IMAGE''), 
-oppure da un'altra risorsa grafica. 
+Il comando ''NEW IMAGE'' consente di definire un'area di memoria in cui è possibile 
+memorizzare un'immagine dallo schermo (con il comando ''GET IMAGE'') o da un'altra 
+risorsa grafica.
 
-L'area deve essere definita per mezzo della larghezza (costante) e dell'altezza (costante), espressa in pixel. 
+L'area deve essere definita da una larghezza (costante) e un'altezza (costante), 
+espresse in pixel. La dimensione effettiva, in termini di byte RAM, dipenderà 
+dalla modalità grafica attualmente selezionata. Se non è possibile definire 
+un'immagine in quella modalità schermo, verrà emesso un errore specifico.
 
-La dimensione effettiva, in termini di bytes in memoria, dipenderà dalla modalità grafica 
-selezionata in quel momento. Se non è possibile definire una immagine in quella modalità, 
-sarà emesso uno specifico errore.
+In generale, non è consigliabile eseguire un ''PUT IMAGE'' di una ''NEW IMAGE'' 
+che non sia stata inizializzata, almeno una volta, da un ''GET IMAGE''. Infatti, 
+il ''PUT IMAGE'' tenta di disegnare il contenuto di un frame non inizializzato 
+(ad esempio: tutti zeri), inclusa la palette. Quindi potrebbe disegnare tutto vuoto
+in termini di bitmap e quindi sovrascrivere l'intera palette con zeri, con un 
+risultato inaspettato. Quindi devi usare un ''GET IMAGE'' preliminare su qualsiasi 
+''NEW IMAGE''.
+
+Se vuoi usare ''PUT IMAGE'' senza effetti collaterali sulla palette, puoi optare 
+per ''PUT BITMAP''. In questo caso, ugBASIC disegnerà solo il componente pixel, 
+lasciando intatto il componente palette.
 
 @syntax = NEW IMAGE( width, height )
 
