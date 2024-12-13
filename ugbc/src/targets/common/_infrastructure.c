@@ -4267,15 +4267,16 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
 @english
 
 The ''DIV'' statement allows you to make a division using the dividend 
-as a variable where the result will be stored. Optionally, it is possible 
-to indicate a variable where to store the remainder of the division operation. 
+as a variable where the result will be stored. Optionally, and only with
+integer types, it is possible to indicate a variable where to store the 
+remainder of the division operation. 
 
 @italian
 
 L'istruzione ''DIV'' consente di effettuare una divisione utilizzando il 
 dividendo come variabile dove sarà memorizzato il risultato. In opzione, 
-è possibile indicare una variabile dove memorizzare il resto dell'operazione 
-di divisione.
+ma solo per i tipi interi, è possibile indicare una variabile dove 
+memorizzare il resto dell'operazione di divisione.
 
 @syntax DIV var, divisor[, remainder]
 
