@@ -3341,6 +3341,7 @@ typedef struct _Environment {
 #define CRITICAL_ON_SCROLL_CALL_WITH_NOT_EXISTENT_PROCEDURE(s)  CRITICAL2("E343 - ON SCROLL...CALL with an unexistent PROCEDURE", s );
 #define CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_STEPS(s) CRITICAL2("E344 - cannot use relative MOVEMENT without using a steps count", s );
 #define CRITICAL_PAGE01() CRITICAL("E345 - PAGE can be 0 or 1" );
+#define CRITICAL_PMODE_NEEDS_CONSTANTS() CRITICAL("E346 - PMODE needs constant values" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

@@ -9411,9 +9411,22 @@ clear_definition :
     ;
 
 pmode_definition :
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+    expr OP_COMMA expr {
+        Variable * expr1 = variable_retrieve( _environment, $1 );
+        if ( ! expr1->initializedByConstant ) {
+            CRITICAL_PMODE_NEEDS_CONSTANTS( );
+        }
+        Variable * expr2 = variable_retrieve( _environment, $3 );
+        if ( ! expr2->initializedByConstant ) {
+            CRITICAL_PMODE_NEEDS_CONSTANTS( );
+        }
+        pmode( _environment, expr1->value, expr2->value );
+    }
+    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
         pmode( _environment, $2, $5 );
-    };
+    }
+
+    ;
 
 paint_definition :
     expr OP_COMMA expr OP_COMMA expr  {

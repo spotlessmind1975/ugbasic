@@ -52,14 +52,16 @@
 
 The instruction ''PMODE'' allow to select the mode and startpage, using the
 Dragon BASIC syntax. The ''mode'' is a number from 0 to 4, and startpage 
-is the page in video RAM you wish to start writing to.
+is the page in video RAM you wish to start writing to. Note that ''mode''
+and ''startpage'' must be constants.
 
 @italian
 
 L'istruzione ''PMODE'' permette di selezionare la modalità e la pagina 
 iniziale, utilizzando la sintassi Dragon BASIC. La "modalità" è un numero 
 da 0 a 4 e la pagina iniziale è la pagina nella RAM video su cui desideri 
-iniziare a scrivere.
+iniziare a scrivere. Da notare che i parametri ''mode'' e ''startpage''
+devono essere delle costanti.
 
 @syntax PMODE mode, startpage
 
