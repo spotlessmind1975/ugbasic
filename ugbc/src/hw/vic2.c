@@ -1604,10 +1604,11 @@ void vic2_sprite_at( Environment * _environment, char * _sprite, char * _x, char
             deploy( sprite, src_hw_vic2_sprites_asm );
 
             outline1("LDA %s", x->realName );
-            outline0("LSR" );
             outline0("STA MATHPTR0"  );
             outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
             outline0("STA MATHPTR1"  );
+            outline0("LSR MATHPTR1" );
+            outline0("ROR MATHPTR0" );
             outline1("LDX %s", y->realName );
             outline1("LDY %s", sprite->realName );
             outline0("JSR SPRITEAT" );
