@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -915,6 +915,12 @@ const_color_enumeration:
           $$ = COLOR_PEACH;
       };
 
+filesize :
+    FILEX SIZE
+    | FILESIZE
+    | FSIZE
+    ;
+
 const_factor: 
         Integer {
             $$ = $1;
@@ -1177,6 +1183,9 @@ const_factor:
         #else
             $$ = 0;
         #endif
+      }
+      | filesize OP const_expr_string CP {
+          $$ = file_size( _environment, $3 );
       }
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
@@ -3269,10 +3278,10 @@ exponential_less:
     | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
         $$ = distance( _environment, $3, $5, $7, $9 )->name;
     }
+    | dojo_functions
     | READ END {
         $$ = read_end( _environment )->name;
       }
-    | dojo_functions
     | DOJO dojo_functions {
         $$ = $2;
     }
