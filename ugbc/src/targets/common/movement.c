@@ -116,13 +116,7 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
 
     Variable * atlas;
     
-    if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
-
-    } else if ( (_environment->movementDeltaX == 2) && (_environment->movementDeltaY == 2) ) {
-
-    } else {
-        atlas = variable_retrieve( _environment, _atlas );
-    }
+    atlas = variable_retrieve( _environment, _atlas );
 
     Variable * prefix;
 
