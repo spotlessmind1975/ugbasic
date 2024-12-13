@@ -5619,10 +5619,26 @@ un certo numero di linee concatenate.
 @english
 
 The ''POSITION'' is a data type that represent a coordinate into the video chipset.
+So, it should be used where you are working with coordinates. For example, 
+to draw a point, a line, or to draw an entire frame, it is advisable to use this 
+data type that is sized appropriately to the target you are working on. 
+
+In general, the ''POSITION'' type is usually a ''SIGNED WORD'', so it can range from 
+-32767 to 32767. In some specific cases it may be more efficient to work directly 
+with the single ''BYTE'', where the coordinate extension does not exceed the value 
+of 255 (and there are no negative coordinates).
 
 @italian
 
 ''POSITION'' è un tipo di dati che rappresenta una coordinata nel chipset video.
+In generale, il tipo ''POSITION'' dovrebbe essere utilizzato quando si lavora 
+con le coordinate. Ad esempio, per disegnare un punto, una linea o un intero 
+frame, è consigliabile utilizzare questo tipo di dati che è dimensionato in 
+modo appropriato per il target su cui si sta lavorando. In generale, il tipo 
+''POSITION'' è solitamente una SIGNED WORD, quindi può variare da -32767 
+a 32767. In alcuni casi specifici potrebbe essere più efficiente lavorare 
+direttamente con il singolo byte, dove l'estensione delle coordinate non supera 
+il valore di 255 (e non ci sono coordinate negative).
 
 @syntax ... AS POSITION
 
