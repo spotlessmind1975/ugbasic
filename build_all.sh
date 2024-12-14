@@ -36,3 +36,9 @@ build to8
 build vg5000
 build vic20
 build zx
+
+mkdir ugbc/compressed
+rm ugbc/compressed/ugbc.zip
+cd ugbc/exe
+zip ../compressed/ugbc.zip ugbc.*
+cd ../..
