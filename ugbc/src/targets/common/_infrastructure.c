@@ -11775,10 +11775,12 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
     if ( !((struct _Environment *)_environment)->originUsed && !((struct _Environment *)_environment)->resolutionUsed ) {
 
         if ( _x ) {
+            Variable * originX = variable_retrieve( _environment, _x );
             x = variable_retrieve( _environment, _x );
             if ( _is_relative ) {
                 x = variable_add( _environment, "XGR", x->name );
             }
+            x->origin = originX;
         } else {
             x = variable_retrieve( _environment, "XGR" );
         }
@@ -11790,8 +11792,11 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
         Variable * result = variable_temporary( _environment, VT_POSITION, "(x)" );
 
         result->reflected = _x;
-        
+
+        Variable * originX = NULL;
+
         if ( _x ) {
+            originX = variable_retrieve( _environment, _x );    
             x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
             if ( _is_relative ) {
                 x = variable_add( _environment, "XGR", x->name );
@@ -11819,6 +11824,8 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
             variable_move( _environment, x->name, result->name );
         }
 
+        result->origin = originX;
+
         return result;
 
     }
@@ -11837,10 +11844,12 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
     if ( !((struct _Environment *)_environment)->originUsed && !((struct _Environment *)_environment)->resolutionUsed ) {
 
         if ( _y ) {
+            Variable * originY = variable_retrieve( _environment, _y );
             y = variable_retrieve( _environment, _y );
             if ( _is_relative ) {
                 y = variable_add( _environment, "YGR", y->name );
             }
+            y->origin = originY;
         } else {
             y = variable_retrieve( _environment, "YGR" );
         }
@@ -11853,7 +11862,10 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
 
         result->reflected = _y;
         
+        Variable * originY = NULL;
+
         if ( _y ) {
+            originY = variable_retrieve( _environment, _y );
             y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
             if ( _is_relative ) {
                 y = variable_add( _environment, "YGR", y->name );
@@ -11885,6 +11897,8 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
         } else {
             variable_move( _environment, y->name, result->name );
         }
+
+        result->origin = originY;
 
         return result;
 

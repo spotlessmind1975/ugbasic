@@ -963,6 +963,12 @@ typedef struct _Variable {
     unsigned char * valueBuffer;
 
     /** 
+     * Original coordinate variable referred to this one
+     * when ORIGIN is in effect.
+     */
+    struct _Variable * origin;
+
+    /** 
      * Reflected variable.
      */
     unsigned char * reflected;
