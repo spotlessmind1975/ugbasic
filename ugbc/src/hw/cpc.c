@@ -1201,6 +1201,33 @@ void cpc_initialization( Environment * _environment ) {
 
 void cpc_finalization( Environment * _environment ) {
 
+    if ( ! _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
+        outhead0("PALETTE:");
+        int defaultPalette[] = { 
+                4,  10,  19,  12,
+                11,  20,  21,  13,
+                6,  30,  31,   7,
+                18, 25,  10,   7
+        };
+
+        if ( ! commonPalette ) {
+            out0("DB ");
+            for( int i=0; i<15; ++i ) {
+                out1("%d,", defaultPalette[i] );
+            }
+            outline1("%d", defaultPalette[15] );
+        } else {
+            out0("DB ");
+            for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                out1("%d,", commonPalette[i].hardwareIndex );
+            }
+            for( int i=lastUsedSlotInCommonPalette; i<16; ++i ) {
+                out1("%d,", defaultPalette[i] );
+            }
+            outline0("0");
+        }
+    }
+
     if ( _environment->vestigialConfig.clsImplicit ) {
         deploy( clsGraphic, src_hw_cpc_cls_graphic_asm );
     }
