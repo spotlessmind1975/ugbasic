@@ -63,8 +63,10 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
             CRITICAL_CANNOT_MUSIC( _music );
         }
 
-        sn76489z_start( _environment, 0xff );
-        sn76489z_music( _environment, music->realName, music->size, _loop, MUSIC_TYPE_IAF );
+        if ( ! music->sidFile ) {
+            sn76489z_start( _environment, 0xff );
+            sn76489z_music( _environment, music->realName, music->size, _loop, MUSIC_TYPE_IAF );
+        }
 
     }
     

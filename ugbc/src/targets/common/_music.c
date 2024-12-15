@@ -34,6 +34,7 @@
 
 #include "../../ugbc.h"
 #include "../../libs/midi.h"
+#include "../../libs/sid_file.h"
 #include "../../libs/msc1.h"
 
 /****************************************************************************
@@ -702,24 +703,34 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
 
     } else {
 
-        check_if_filename_is_valid( _environment,  _filename );
+        SIDFILE * sidFile = sidFileRead( _filename );
 
-        FILE * file = fopen( _filename, "rb" );
+        if ( sidFile ) {
 
-        if ( !file ) {
-            CRITICAL_LOAD_MISSING_FILE( _filename );
+            result->sidFile = sidFile;
+
+        } else {
+
+            check_if_filename_is_valid( _environment,  _filename );
+
+            FILE * file = fopen( _filename, "rb" );
+
+            if ( !file ) {
+                CRITICAL_LOAD_MISSING_FILE( _filename );
+            }
+            
+            fseek( file, 0, SEEK_END );
+            size = ftell( file );
+            fseek( file, 0, SEEK_SET );
+
+            imfBuffer = malloc( size );
+
+            (void)!fread( imfBuffer, size, 1, file );
+
+            fclose( file );
+
         }
-        
-        fseek( file, 0, SEEK_END );
-        size = ftell( file );
-        fseek( file, 0, SEEK_SET );
-
-        imfBuffer = malloc( size );
-
-        (void)!fread( imfBuffer, size, 1, file );
-
-        fclose( file );
-
+    
     }
 
     variable_store_buffer( _environment, result->name, imfBuffer, size, 0 );

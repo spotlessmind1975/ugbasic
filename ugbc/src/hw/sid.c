@@ -892,4 +892,27 @@ void sid_wait_duration_vars( Environment * _environment, char * _channels ) {
 
 }
 
+void sid_player_init( Environment * _environment, int _init_address ) {
+
+    deploy( sidplayer, src_hw_sid_player_asm );
+
+    outline0( "SEI" );
+    outline1( "JSR $%4.4x", (unsigned int)(_init_address&0xffff) );
+    outline0( "CLI" );
+
+}
+
+void sid_player_play( Environment * _environment, int _play_address ) {
+
+    deploy( sidplayer, src_hw_sid_player_asm );
+
+    outline0( "SEI" );
+    outline1( "LDA #$%2.2x", (unsigned char)(_play_address&0xff) );
+    outline0( "STA SIDPLAYER+1" );
+    outline1( "LDA #$%2.2x", (unsigned char)((_play_address>>8)&0xff) );
+    outline0( "STA SIDPLAYER+2" );
+    outline0( "CLI" );
+
+}
+
 #endif

@@ -495,6 +495,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.music;
             } else if ( strcmp( $3, "sidstartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.sidstartup;
+            } else if ( strcmp( $3, "sidplayer" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.sidplayer;
             } else if ( strcmp( $3, "pokeystartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.pokeystartup;
             } else if ( strcmp( $3, "ay8910startup" ) == 0 ) {

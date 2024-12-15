@@ -95,6 +95,9 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
+@IF deployed.sidplayer
+    JSR SIDPLAYER
+@ENDIF
 @IF deployed.sidstartup
     JSR SIDMANAGER
 @ENDIF

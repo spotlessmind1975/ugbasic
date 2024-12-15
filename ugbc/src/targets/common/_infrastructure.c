@@ -3077,6 +3077,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             }
                             break;
                         case VT_MUSIC:
+                            if ( source->sidFile ) {
+                                CRITICAL_CANNOT_COPY_SID_FILE(source->name);
+                            }
                             switch( target->type ) {
                                 case VT_MUSIC:
                                 case VT_BUFFER:
@@ -3126,10 +3129,13 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 }
                                 case VT_STRING:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                case VT_MUSIC:
+                                    if ( target->sidFile ) {
+                                        CRITICAL_CANNOT_COPY_SID_FILE(target->name);
+                                    }
                                 case VT_IMAGE:
                                 case VT_IMAGES:
                                 case VT_SEQUENCE:
-                                case VT_MUSIC:
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -3395,9 +3401,12 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                     break;
                 }
-                case VT_SEQUENCE:
                 case VT_MUSIC:
+                    if ( target->sidFile ) {
+                        CRITICAL_CANNOT_COPY_SID_FILE(source->name);
+                    }                
                 case VT_TARRAY:
+                case VT_SEQUENCE:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -5179,17 +5188,23 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             break;
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                    }
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                            }
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                         default:
@@ -6240,17 +6255,23 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                    }                
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                            }                           
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -6554,17 +6575,23 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(target->name);
+                    }
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(target->name);
+                            }
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -12133,6 +12160,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         var->absoluteAddress = expr->absoluteAddress;
         var->variableUniqueId = expr->variableUniqueId;
     }
+    var->sidFile = expr->sidFile;
     var->memoryArea = expr->memoryArea;
     var->arrayDimensions = expr->arrayDimensions;
     memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );

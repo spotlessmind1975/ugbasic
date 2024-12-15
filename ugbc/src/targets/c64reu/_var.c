@@ -209,6 +209,27 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_MUSIC:
+                    if ( variable->sidFile ) {
+                        if ( variable->sidFile->loadAddress ) {
+                            outhead1(".segment \"%s\"", variable->name);
+                            outhead1("%s:", variable->realName );
+                            out0( ".BYTE ");
+                            for( int i=0; i<variable->sidFile->size; ++i ) {
+                                out1("$%2.2x", (unsigned char)(variable->sidFile->data[i]) );
+                                if ( ( ( i + 1 ) % 8 ) == 0 ) {
+                                    outline0("");
+                                    out0( ".BYTE ");
+                                } else {
+                                    if ( i < (variable->sidFile->size-1) ) {
+                                        out0( ",");
+                                    }
+                                }
+                            }
+                            outline0("");
+                            outhead0(".segment \"MAIN\"");
+                            break;
+                        }
+                    }        
                 case VT_BUFFER:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );

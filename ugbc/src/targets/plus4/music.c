@@ -63,8 +63,10 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
             CRITICAL_CANNOT_MUSIC( _music );
         }
 
-        ted_start( _environment, 0xff );
-        ted_music( _environment, music->realName, music->size, _loop );
+        if ( ! music->sidFile ) {
+            ted_start( _environment, 0xff );
+            ted_music( _environment, music->realName, music->size, _loop );
+        }
     }
     
 }
