@@ -222,7 +222,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 }
                             }
                             outline0("");
-                            outhead0(".segment \"MAIN\"");
+                            outhead0(".segment \"CODE\"");
                             break;
                         }
                     }                
