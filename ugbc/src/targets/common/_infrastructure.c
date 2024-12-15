@@ -7346,10 +7346,15 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             MAKE_LABEL
 
             char emptyLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyLabel, "%sempty", label );
+            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
             Variable * flag = variable_temporary( _environment, VT_BYTE, "(flag for resizing)");
             cpu_less_than_8bit( _environment, size2->realName, len->realName, flag->realName, 1, 0 );
-            cpu_bveq( _environment, flag->realName,  emptyLabel );
+            if ( _environment->midReplace ) {
+                cpu_bveq( _environment, flag->realName,  doneLabel );
+            } else {
+                cpu_bveq( _environment, flag->realName,  emptyLabel );
+            }
 
             Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(tmp)");
             Variable * addressTmp = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
@@ -7368,6 +7373,9 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             cpu_dec_16bit( _environment, address2->realName );
 
             cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
+
+            cpu_label( _environment, doneLabel );
+
             break;
         }
         default:

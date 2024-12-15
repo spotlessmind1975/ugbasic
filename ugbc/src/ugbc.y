@@ -9225,6 +9225,12 @@ option_read :
     };
 
 option_definitions :
+    | MID REPLACE {
+        ((struct _Environment *)_environment)->midReplace = 1;
+    }
+    | MID INSERT {
+        ((struct _Environment *)_environment)->midReplace = 0;
+    }
     FINAL HALT {
         ((struct _Environment *)_environment)->finalReturn = 0;
     }

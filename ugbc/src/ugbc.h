@@ -2935,6 +2935,8 @@ typedef struct _Environment {
     int movementDeltaX;
     int movementDeltaY;
 
+    int midReplace;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
