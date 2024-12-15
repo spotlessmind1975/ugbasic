@@ -49,6 +49,7 @@ void target_finalization( Environment * _environment ) {
     // outhead0("section code_user");
 
     ay8910_finalization( _environment );
+    cpc_finalization( _environment );
 
     if ( ! _environment->anyProtothread ) {
         outhead0("PROTOTHREADINIT:" );
