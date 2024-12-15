@@ -90,30 +90,40 @@ void gr_locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
         Variable * x = variable_retrieve( _environment, _x );
-        if ( x->reflected ) {
+        if ( x->origin ) {
             Variable * xgr = variable_retrieve( _environment, "XGR" );
-            variable_move( _environment, x->name, xgr->name );
+            variable_move( _environment, x->origin->name, xgr->name );
         } else {
-            Variable * xgr = variable_retrieve( _environment, "XGR" );
-            if ( x->initializedByConstant ) {
-                variable_store( _environment, xgr->name, x->value );
-            } else {
+            if ( x->reflected ) {
+                Variable * xgr = variable_retrieve( _environment, "XGR" );
                 variable_move( _environment, x->name, xgr->name );
+            } else {
+                Variable * xgr = variable_retrieve( _environment, "XGR" );
+                if ( x->initializedByConstant ) {
+                    variable_store( _environment, xgr->name, x->value );
+                } else {
+                    variable_move( _environment, x->name, xgr->name );
+                }
             }
         }
     }
 
     if ( _y ) {
         Variable * y = variable_retrieve( _environment, _y );
-        if ( y->reflected ) {
+        if ( y->origin ) {
             Variable * ygr = variable_retrieve( _environment, "YGR" );
-            variable_move( _environment, y->name, ygr->name );
+            variable_move( _environment, y->origin->name, ygr->name );
         } else {
-            Variable * ygr = variable_retrieve( _environment, "YGR" );
-            if ( y->initializedByConstant ) {
-                variable_store( _environment, ygr->name, y->value );
-            } else {
+            if ( y->reflected ) {
+                Variable * ygr = variable_retrieve( _environment, "YGR" );
                 variable_move( _environment, y->name, ygr->name );
+            } else {
+                Variable * ygr = variable_retrieve( _environment, "YGR" );
+                if ( y->initializedByConstant ) {
+                    variable_store( _environment, ygr->name, y->value );
+                } else {
+                    variable_move( _environment, y->name, ygr->name );
+                }
             }
         }
     }
