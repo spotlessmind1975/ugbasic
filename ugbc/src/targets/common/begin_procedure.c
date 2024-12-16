@@ -53,10 +53,6 @@ then followed by a list of parameters and the procedure must be ended
 with an ''END PROC'' command. ''PROCEDURE'' and ''END PROC'' commands 
 should be placed on their own individual lines, but it is not mandatory.
 
-Following the convention in other BASICs of the time, such as Simon's BASIC 
-or Tuned Simon's BASIC, the procedure name can also contain spaces. In this 
-case, the trailing space will not be considered as part of the name.
-
 It is possible to place the procedure definition anywhere in the program. 
 When ugBASIC encounters a procedure statement, the procedure is recognised 
 and a jump is made to the final ''END PROC''. In this way, there is no 

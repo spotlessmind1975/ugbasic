@@ -48,27 +48,32 @@ command is not already defined, this can be used to give a label (name)
 to a pat of the program. This makes subprograms independent of their 
 position in the program and makes it easier for the programmer to keep 
 track of things (names are easier to assign to a purpose than line numbers).
+
 The ''PROC'' command is used to define the name of such a subprogram 
-(or jump target). The name may consist of several words separated by spaces. 
-A leading space is not significant. Other BASIC commands may be in the same
-line as ''PROC''.
+(or jump target). Following the convention in other BASICs of the time, 
+such as Simon's BASIC or Tuned Simon's BASIC, the procedure name can also 
+contain spaces. In this case, the trailing space will not be considered as
+part of the name.
 
 If, instead, the identifier has been already used for a procedure, then this
 command will call the procedure, as the instruction ''CALL''.
 
 @italian
-Questa parola chiave ha molteplici significati. Se l'identificatore che segue
-questo comando non è già definito, questo può essere utilizzato per dare 
-un'etichetta (nome) ad una parte del programma. Ciò rende i sottoprogrammi 
-indipendenti dalla loro posizione nel programma e rende più semplice per il
-programmatore tenere traccia delle cose (i nomi sono più facili da assegnare
-a uno scopo rispetto ai numeri di riga). Il comando ''PROC'' viene utilizzato
-per definire il nome di tale sottoprogramma (o destinazione del salto). Il
-nome può essere composto da più parole separate da spazi. Uno spazio
-principale non è significativo. Altri comandi BASIC possono trovarsi nella 
-stessa riga di ''PROC''. Se invece l'identificatore è già stato utilizzato 
-per una procedura, allora questo comando chiamerà la procedura, come 
-l'istruzione ''CALL''.
+
+Questa parola chiave ha molteplici significati. Se l'identificatore che 
+segue questo comando non è già definito, può essere utilizzato per assegnare 
+un'etichetta (nome) a una parte del programma. Ciò rende i sottoprogrammi 
+indipendenti dalla loro posizione nel programma e semplifica per il programmatore 
+il monitoraggio delle cose (è più facile assegnare uno scopo ai nomi rispetto 
+ai numeri di riga).
+
+Il comando ''PROC'' viene utilizzato per definire il nome di tale sottoprogramma 
+(o destinazione di salto). Seguendo la convenzione di altri BASIC dell'epoca, 
+come Simon BASIC o Tuned Simon BASIC, il nome della procedura può anche contenere 
+spazi. In questo caso, lo spazio finale non verrà considerato parte del nome.
+
+Se, tuttavia, l'identificatore è già stato utilizzato per una procedura, questo 
+comando chiamerà la procedura, come l'istruzione ''CALL''.
 
 @syntax PROC name
 
