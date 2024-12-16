@@ -3354,6 +3354,9 @@ exponential_less:
     | CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP {
         $$ = create_path( _environment, $4, $6, $8, $10  )->name;
     }
+    | CREATE PATH OP optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr CP {
+        $$ = create_path( _environment, $4, $6, $8, $10  )->name;
+    }
     | VARBANK OP Identifier CP {
         Variable * variable = variable_retrieve( _environment, $3 );
         Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");

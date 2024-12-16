@@ -85,6 +85,10 @@ void end_compilation( Environment * _environment ) {
         first = first->next;
     }
     
+    if ( _environment->procedureName ) {
+        CRITICAL_MISSING_END_PROC( _environment->procedureName );
+    }
+
     if ( _environment->conditionals ) {
 
         switch( _environment->conditionals->type ) {

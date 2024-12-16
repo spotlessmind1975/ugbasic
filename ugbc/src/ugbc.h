@@ -3355,8 +3355,10 @@ typedef struct _Environment {
 #define CRITICAL_PAGE01() CRITICAL("E345 - PAGE can be 0 or 1" );
 #define CRITICAL_PMODE_NEEDS_CONSTANTS() CRITICAL("E346 - PMODE needs constant values" );
 #define CRITICAL_FILE_SIZE_ON_MISSING_FILE(f) CRITICAL2("E347 - FILE SIZE on missing file", f );
-#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E348 - music variables referring to sid files cannot be copied", f );
-#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E349 - music variables referring to sid files cannot be compared", f );
+#define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
+#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
+#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E350 - music variables referring to sid files cannot be copied", f );
+#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be compared", f );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
