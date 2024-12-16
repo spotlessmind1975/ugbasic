@@ -65,7 +65,7 @@ will preserve the cursor position after the operation, and a comma will place th
 cursor to the next ''TAB'' stop before proceeding.
 
 All data printed to the screen is formatted by using the specific formatter for numbers,
-and "as is" for strings, while complex data will be printed out with an unique decription string.
+and "as is" for strings, while complex data will be printed out with an unique self descriptive string.
  For the numeric data, the numbers are always translated into decimal system. Nothing is written 
  if parameter is omitted. 
 
@@ -102,7 +102,7 @@ prima di procedere.
 
 Tutti i dati stampati sullo schermo vengono formattati utilizzando il formattatore specifico per i numeri 
 e "così come sono" per le stringhe, mentre i dati complessi verranno stampati con una stringa di descrizione 
-univoca. Per i dati numerici, i numeri sono sempre tradotti nel sistema decimale. Non viene scritto nulla 
+univoca e autoeplicativa. Per i dati numerici, i numeri sono sempre tradotti nel sistema decimale. Non viene scritto nulla 
 se il parametro viene omesso.
 
 Poiché l'istruzione ''PRINT'' stampa con caratteri a spaziatura fissa, esiste una correlazione tra il 
