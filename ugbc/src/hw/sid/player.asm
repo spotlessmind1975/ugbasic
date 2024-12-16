@@ -39,4 +39,16 @@ SIDPLAYENONE:
     RTS
 
 SIDPLAYER:
-    JMP SIDPLAYENONE
+    PHA
+    TXA
+    PHA
+    TYA
+    PHA
+SIDPLAYERADDR:
+    JSR SIDPLAYENONE
+    PLA
+    TAY
+    PLA
+    TAX
+    PLA
+    RTS

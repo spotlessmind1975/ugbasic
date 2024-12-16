@@ -908,9 +908,9 @@ void sid_player_play( Environment * _environment, int _play_address ) {
 
     outline0( "SEI" );
     outline1( "LDA #$%2.2x", (unsigned char)(_play_address&0xff) );
-    outline0( "STA SIDPLAYER+1" );
+    outline0( "STA SIDPLAYERADDR+1" );
     outline1( "LDA #$%2.2x", (unsigned char)((_play_address>>8)&0xff) );
-    outline0( "STA SIDPLAYER+2" );
+    outline0( "STA SIDPLAYERADDR+2" );
     outline0( "CLI" );
 
 }
