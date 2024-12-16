@@ -90,8 +90,6 @@ SIDFILE * sidFileRead( char * _filename ) {
 
     SIDFILE * result = NULL;
 
-    // SID files use the .sid file extension.
-
     FILE * fhandle = fopen( _filename, "rb" );
 
     if ( !fhandle ) {
