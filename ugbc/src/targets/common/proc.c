@@ -45,7 +45,7 @@
 @english
 This keyword has multiple meaning. If the identifier that follows this
 command is not already defined, this can be used to give a label (name)
-to a pat of the program. This makes subprograms independent of their 
+to a part of the program. This makes subprograms independent of their 
 position in the program and makes it easier for the programmer to keep 
 track of things (names are easier to assign to a purpose than line numbers).
 
