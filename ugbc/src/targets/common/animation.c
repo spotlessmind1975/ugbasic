@@ -169,6 +169,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         CRITICAL_cANNOT_DEFINE_ANIMATION_WITHOUT_ATLAS( _identifier );
     }
 
+    if ( atlas->frameCount <= ( _environment->animationEaseInFrames + _environment->animationEaseOutFrames ) ) {
+        CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION( _identifier );
+    }
+
 	// DIM [prefix]Animation AS THREAD
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
     Variable * prefixAnimationVar = variable_define( _environment, prefixAnimation, VT_THREAD, 0xff );
@@ -422,9 +426,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 int lastFrame = 0;
 
                 if ( _environment->animationReverse ) {
-                    lastFrame = 0;
+                    lastFrame = _environment->animationEaseInFrames;
                 } else {
-                    lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : atlas->frameCount;
+                    lastFrame =  _environment->animationEaseOutFrames ? ( atlas->frameCount - _environment->animationEaseOutFrames ) : atlas->frameCount;
                 }
 
                 // 	EXIT IF [prefix]Frame = ofrom / last frame
@@ -466,7 +470,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // ADD [prefix]Frame, [prefix]FrameDirection
                 variable_add_inplace_vars( _environment, prefixFrameVar->name, prefixFrameDirectionVar->name );
 
-                int lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : ( atlas->frameCount - 1 );
+                int lastFrame = _environment->animationEaseOutFrames ? ( atlas->frameCount - _environment->animationEaseOutFrames ) : ( atlas->frameCount );
                 int firstFrame = _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0;
 
                 // IF framePlayer = FRAMES( playerIdle ) - 1 THEN
@@ -526,11 +530,11 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 int lastFrame = 0;
                 int firstFrame = 0;
                 if ( _environment->animationReverse ) {
-                    firstFrame = atlas->frameCount - 1;
-                    lastFrame = 0;
+                    lastFrame = _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0 ;
+                    firstFrame = _environment->animationEaseOutFrames ? ( atlas->frameCount - _environment->animationEaseOutFrames ) : ( atlas->frameCount );
                 } else {
                     firstFrame = _environment->animationEaseInFrames ? _environment->animationEaseInFrames : 0 ;
-                    lastFrame = _environment->animationEaseOutFrames ? _environment->animationEaseOutFrames : ( atlas->frameCount - 1 );
+                    lastFrame = _environment->animationEaseOutFrames ? ( atlas->frameCount - _environment->animationEaseOutFrames ) : ( atlas->frameCount );
                 }
 
                 // IF [prefix]Frame = FRAMES( [atlas] ) THEN

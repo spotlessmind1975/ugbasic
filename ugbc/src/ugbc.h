@@ -3350,6 +3350,7 @@ typedef struct _Environment {
 #define CRITICAL_PMODE_NEEDS_CONSTANTS() CRITICAL("E346 - PMODE needs constant values" );
 #define CRITICAL_FILE_SIZE_ON_MISSING_FILE(f) CRITICAL2("E347 - FILE SIZE on missing file", f );
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
+#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
