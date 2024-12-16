@@ -52,3 +52,6 @@
 [submodule "modules/nasm"]
 	path = modules/nasm
 	url = https://github.com/spotlessmind1975/nasm.git
+[submodule "modules/sidreloc"]
+	path = modules/sidreloc
+	url = https://github.com/spotlessmind1975/sidreloc.git

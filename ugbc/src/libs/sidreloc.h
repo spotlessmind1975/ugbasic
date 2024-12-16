@@ -1,5 +1,5 @@
-#ifndef __SID_FILE__
-#define __SID_FILE__
+#ifndef __SIDRELOC__
+#define __SIDRELOC__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -31,20 +31,24 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
+int sidreloc_set_page( int _page );
+int sidreloc_set_page0( int _first, int _last );
+int sidreloc_set_nopage0( );
+int sidreloc_set_reloc( int _start, int _end );
+int sidreloc_set_tolerance( int _tolerance );
+int sidreloc_set_strict( );
+int sidreloc_set_force( );
+int sidreloc_set_verbosity( int _verbose );
+int sidreloc_set_frames( int _frames );
+int sidreloc_set_init_cycles( int _cycles );
+int sidreloc_set_play_cycles( int _cycles );
+int sidreloc_set_nmi_cycles( int _cycles );
+int sidreloc_set_nmi_calls( int _cycles );
+int sidreloc_set_input_data( unsigned char * _data, int _size );
+int sidreloc_set_output_data( unsigned char * _data );
 
-typedef struct _SIDFILE {
-  int loadAddress;
-  int initAddress;
-  int playAddress;
-  int songs;
-  int startSong;
-  unsigned char * data;
-  int size;
-} SIDFILE;
+char * sidreloc_get_lasterror_string( );
 
-SIDFILE * sidFileRead( char * _filename );
-int sidFileSize( SIDFILE * _sid_file );
-unsigned char * sidFileData( SIDFILE * _sid_file );
-void sidfileFree( SIDFILE * _sid_file );
+int sidreloc_main();
 
  #endif
