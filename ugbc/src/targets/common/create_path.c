@@ -63,9 +63,11 @@ breve (lineare) tra i due punti dati. I punti possono essere puramente geometric
 schermo utente. Il percorso potrà poi essere "navigato" usando il comando ''TRAVEL''.
 
 @syntax = CREATE PATH( x0, y0 TO x1, y1 )
+@syntax = CREATE PATH( x0, y0,  x1, y1 )
 
 @example DIM p AS PATH
 @example    p = CREATE PATH( 0, 0 TO 100, 100 )
+@example    p = CREATE PATH( 0, 0, 100, 100 )
 
 </usermanual> */
 
