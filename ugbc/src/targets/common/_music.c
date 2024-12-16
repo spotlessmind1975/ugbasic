@@ -708,6 +708,8 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
         if ( sidFile ) {
 
             result->sidFile = sidFile;
+            sidFile->next = _environment->sidFiles;
+            _environment->sidFiles = sidFile;
 
         } else {
 

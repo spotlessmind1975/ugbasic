@@ -40,6 +40,9 @@ typedef struct _SIDFILE {
   int startSong;
   unsigned char * data;
   int size;
+
+  struct _SIDFILE * next;
+  
 } SIDFILE;
 
 SIDFILE * sidFileRead( char * _filename );

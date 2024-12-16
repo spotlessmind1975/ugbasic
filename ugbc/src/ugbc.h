@@ -2941,6 +2941,8 @@ typedef struct _Environment {
 
     int midReplace;
 
+    SIDFILE * sidFiles;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3359,6 +3361,7 @@ typedef struct _Environment {
 #define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
 #define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E350 - music variables referring to sid files cannot be copied", f );
 #define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be compared", f );
+#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E352 - not enough space to load sid file, consider relocation" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

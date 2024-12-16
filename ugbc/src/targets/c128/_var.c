@@ -214,7 +214,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("$%2.2x", (unsigned char)(variable->sidFile->data[i]) );
                                 if ( ( ( i + 1 ) % 8 ) == 0 ) {
                                     outline0("");
-                                    out0( ".BYTE ");
+                                    if ( i < (variable->sidFile->size-1) ) {
+                                        out0( ".BYTE ");
+                                    }
                                 } else {
                                     if ( i < (variable->sidFile->size-1) ) {
                                         out0( ",");
@@ -223,7 +225,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline0("");
                             outhead0(".segment \"CODE\"");
-                            break;
                         }
                     }                
                 case VT_BUFFER:
@@ -813,6 +814,20 @@ void variable_cleanup( Environment * _environment ) {
     outline0("LDA #%00111110");
     outline0("STA $FF00");
     outline0("JMP CODESTART")
+    if ( _environment->sidFiles ) {
+        int lastAddress = 0;
+        SIDFILE * actual = _environment->sidFiles;
+        while( actual ) {
+            if ( lastAddress < actual->loadAddress + actual->size ) {
+                lastAddress = actual->loadAddress + actual->size;
+            }
+            actual = actual->next;
+        }
+        if ( lastAddress < ( _environment->program.startingAddress - 5 ) ) {
+            CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE( );
+        }
+        outline1("   .RES $%4.4x", lastAddress - _environment->program.startingAddress - 5 );;
+    }
     deploy_inplace_preferred( vars, src_hw_c128_vars_asm);
     deploy_inplace_preferred( startup, src_hw_c128_startup_asm);
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
