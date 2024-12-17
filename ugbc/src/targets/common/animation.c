@@ -433,9 +433,9 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
-                 cpu_dec( _environment, prefixFrameVar->realName );
+                cpu_dec( _environment, prefixFrameVar->realName );
 
-                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, ( atlas->frameCount - _environment->animationEaseOutFrames ), easeOutDoneLabel, 1 );
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, ( atlas->frameCount - _environment->animationEaseOutFrames - 1 ), easeOutDoneLabel, 1 );
             
             cpu_jump( _environment, easeOutLabel );
 
@@ -688,14 +688,16 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
 
         if ( _environment->animationEaseInFrames ) {
 
-            char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
-            char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
+            char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
+            char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
+
+            cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEaseInVar->realName, 0xff, easeInDoneLabel, 1 );
 
             // DO
-            cpu_label( _environment, easeOutLabel );
+            cpu_label( _environment, easeInLabel );
 
-                // 	WAIT [odelay] MS
-                wait_milliseconds( _environment, _environment->animationEaseOutDelay );
+                // 	WAIT [idelay] MS
+                wait_milliseconds( _environment, _environment->animationEaseInDelay );
 
                 // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
                 if ( _environment->animationWaitVbl ) {
@@ -717,13 +719,17 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 // 	INC [prefix]Frame
                 cpu_dec( _environment, prefixFrameVar->realName );
 
-                // 	EXIT IF [prefix]Frame = last frame
-                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, 0, easeOutDoneLabel, 1 );
+                // 	EXIT IF [prefix]Frame = ito
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, 0xff, easeInDoneLabel, 1 );
             
             // LOOP
-            cpu_jump( _environment, easeOutLabel );
+            cpu_jump( _environment, easeInLabel );
 
-            cpu_label( _environment, easeOutDoneLabel );
+            cpu_label( _environment, easeInDoneLabel );
+
+            variable_store( _environment, prefixAllowedEaseInVar->name, 0x0 );
+            variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
+
         }
 
     } else {
