@@ -2941,6 +2941,8 @@ typedef struct _Environment {
 
     int midReplace;
 
+    int leftReplace;
+
     SIDFILE * sidFiles;
 
     /* --------------------------------------------------------------------- */

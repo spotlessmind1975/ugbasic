@@ -6822,18 +6822,42 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             break;
         }
         case VT_DSTRING: {            
+
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of left)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of left)" );
 
-            cpu_dswrite( _environment, string->realName );
-
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
 
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
 
-            cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
+            MAKE_LABEL
+
+            char labelLesser[MAX_TEMPORARY_STORAGE]; sprintf( labelLesser, "%slesser", label );
+            char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
+
+            Variable * flag = variable_temporary( _environment, VT_BYTE, "(flag)" );
+            
+            if ( _environment->leftReplace ) {
+                
+                cpu_dswrite( _environment, string->realName );
+                
+                cpu_less_than_8bit( _environment, size2->realName, position->realName, flag->realName, 0, 0 );
+                cpu_compare_and_branch_8bit_const( _environment, flag->realName, 0xff, labelLesser, 1 );
+                cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
+                cpu_jump( _environment, labelDone );
+                cpu_label( _environment, labelLesser );
+                cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
+                cpu_label( _environment, labelDone );
+
+            } else {
+
+                Variable * left = variable_string_left( _environment, expression->name, position->name );                
+                Variable * right = variable_string_mid( _environment, string->name, variable_add_const( _environment, position->name, 1 )->name, NULL );
+                variable_move( _environment, variable_add( _environment, left->name, right->name )->name, string->name );
+
+            }
             break;
         }
         default:

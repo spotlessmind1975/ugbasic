@@ -9230,6 +9230,12 @@ option_read :
     };
 
 option_definitions :
+    LEFT REPLACE {
+        ((struct _Environment *)_environment)->leftReplace = 1;
+    }
+    | LEFT INSERT {
+        ((struct _Environment *)_environment)->leftReplace = 0;
+    }
     | MID REPLACE {
         ((struct _Environment *)_environment)->midReplace = 1;
     }
