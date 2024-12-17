@@ -37,6 +37,8 @@
 
 @IF vestigialConfig.rchack_pick_the_star_1163
 
+PALETTEB:
+	DB      1
 PALETTE:    
     DB      4,  10,  19,  12 
     DB     11,  20,  21,  13
@@ -44,6 +46,9 @@ PALETTE:
     DB      18, 25,  10,   0
 
 @ELSE
+
+PALETTEB:
+	DB      1
 
 @ENDIF
 
@@ -65,6 +70,26 @@ SETHWPALETTE:
 	POP AF
 	POP BC
     RET
+
+RESETPALETTE:
+	LD B, 0
+	LD HL, PALETTE
+RESETPALETTEL1:
+	LD IXH, B
+	LD A, (HL)
+	LD IXL, A
+	CALL SETHWPALETTE
+	INC HL
+	INC B
+	LD A, B
+	CP 16
+	JR NZ, RESETPALETTEL1
+	LD BC, $7F10
+    OUT (C), C
+    LD A, (PALETTEB)
+    OR A, 0x40
+    OUT (C), A
+	RET
 
 IRQTIMERVOID:
 	RET
