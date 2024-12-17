@@ -151,7 +151,7 @@ che il loop è stato completato; il bit 2, se attivo, indica che la parte "ease 
 dell'animazione è stata eseguita; il bit 3, se impostato dall'esterno come attivo, indica 
 la richiesta di uscire da un loop di animazione.
 
-@syntax ANIMATION type name WITH atlas [od] [in] [out] USING prefix [nx] [vbl] [bg]
+@syntax [DEFINE] ANIMATION type name WITH atlas [od] [in] [out] USING prefix [nx] [vbl] [bg]
 @syntax    type: SIMPLE | LOOP | BOUNCE
 @syntax    od: DELAY delay
 @syntax    in: EASEIN upframe [DELAY delay]
@@ -162,6 +162,18 @@ la richiesta di uscire da un loop di animazione.
 
 @example flyingAirplane := LOAD ATLAS("airplane.png") FRAME SIZE (16, 16)
 @example ANIMATION BOUNCE anim WITH flyingAirplane USING airplane
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword DEFINE ANIMATION
+
+@english
+
+@italian
+
+@alias ANIMATION
 
 @target all
 </usermanual> */

@@ -8655,6 +8655,8 @@ define_definition :
     | PALETTE NOT PRESERVE {
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
     }    
+    | ANIMATION animation_definition
+    | MOVEMENT movement_definition
     | BLIT blit_definition_define_expression
     | KEYBOARD RATE const_expr {
         if ( $3 <= 0 ) {

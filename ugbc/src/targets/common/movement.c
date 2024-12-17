@@ -100,7 +100,7 @@ l'oggetto. Se è richiesto uno spostamento verso una posizione, le variabili
 ''prefixTX'' e ''prefixTY'' conterranno la posizione di destinazione, mentre 
 verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 
-@syntax MOVEMENT id [rel] WITH atlas [DELAY delay] USING prefix
+@syntax [DEFINE] MOVEMENT id [rel] WITH atlas [DELAY delay] USING prefix
 @syntax  rel: LEFT|RIGHT|UP|DOWN
 @syntax MOVEMENT id TO POSITION [DELAY delay] USING prefix
 @syntax MOVEMENT id STEADY USING prefix
@@ -108,6 +108,18 @@ verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 @example MOVEMENT left TLEFT WITH playerForward USING player
 
 </usermanual> */
+
+/* <usermanual>
+@keyword DEFINE MOVEMENT
+
+@english
+
+@italian
+
+@alias MOVEMENT
+
+</usermanual> */
+
 void movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix ) {
 
     if ( _environment->procedureName ) {
