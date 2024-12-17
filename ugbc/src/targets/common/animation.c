@@ -407,53 +407,88 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     // [prefix]Next = 0
     variable_store( _environment, prefixNextVar->name, 0 );
     
-    if ( _environment->animationEaseInFrames ) {
+    if ( _environment->animationReverse ) {
 
-        if ( _environment->animationReverse ) {
-            CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING( _identifier );
+        if ( _environment->animationEaseOutFrames ) {
+
+            char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
+            char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
+
+            cpu_label( _environment, easeOutLabel );
+
+                wait_milliseconds( _environment, _environment->animationEaseOutDelay );
+
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
+
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
+
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
+
+                 cpu_dec( _environment, prefixFrameVar->realName );
+
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, ( atlas->frameCount - _environment->animationEaseOutFrames ), easeOutDoneLabel, 1 );
+            
+            cpu_jump( _environment, easeOutLabel );
+
+            cpu_label( _environment, easeOutDoneLabel );
         }
 
-        char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
-        char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
+    } else {
 
-        cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEaseInVar->realName, 0xff, easeInDoneLabel, 1 );
+        if ( _environment->animationEaseInFrames ) {
 
-        // DO
-        cpu_label( _environment, easeInLabel );
+            char easeInLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInLabel, "%seasein", _identifier );
+            char easeInDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeInDoneLabel, "%seaseindone", _identifier );
 
-    		// 	WAIT [idelay] MS
-            wait_milliseconds( _environment, _environment->animationEaseInDelay );
+            cpu_compare_and_branch_8bit_const( _environment, prefixAllowedEaseInVar->realName, 0xff, easeInDoneLabel, 1 );
 
-	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
-            if ( _environment->animationWaitVbl ) {
-                wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
-            }
+            // DO
+            cpu_label( _environment, easeInLabel );
 
-            if ( !spriteLogic && _environment->animationPreserveBackground ) {
-                cpu_call( _environment, updateIfPositionChanged );                
-            }
+                // 	WAIT [idelay] MS
+                wait_milliseconds( _environment, _environment->animationEaseInDelay );
 
-    		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
-            if ( spriteLogic ) {
-                cpu_call( _environment, updateSpriteDataWithImage );
-                sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
-            } else {
-                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
-            }
+                // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
 
-    		// 	INC [prefix]Frame
-            cpu_inc( _environment, prefixFrameVar->realName );
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
 
-		    // 	EXIT IF [prefix]Frame = ito
-            cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, _environment->animationEaseInFrames, easeInDoneLabel, 1 );
-		
-        // LOOP
-        cpu_jump( _environment, easeInLabel );
+                // 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
 
-        cpu_label( _environment, easeInDoneLabel );
+                // 	INC [prefix]Frame
+                cpu_inc( _environment, prefixFrameVar->realName );
 
-        variable_store( _environment, prefixAllowedEaseInVar->name, 0x0 );
-        variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
+                // 	EXIT IF [prefix]Frame = ito
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, _environment->animationEaseInFrames, easeInDoneLabel, 1 );
+            
+            // LOOP
+            cpu_jump( _environment, easeInLabel );
+
+            cpu_label( _environment, easeInDoneLabel );
+
+            variable_store( _environment, prefixAllowedEaseInVar->name, 0x0 );
+            variable_store( _environment, prefixFrameVar->name, _environment->animationEaseInFrames );
+
+        }
 
     }
 
@@ -501,7 +536,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                 int lastFrame = 0;
 
                 if ( _environment->animationReverse ) {
-                    lastFrame = _environment->animationEaseInFrames;
+                    lastFrame = _environment->animationEaseInFrames - 1 ;
                 } else {
                     lastFrame =  _environment->animationEaseOutFrames ? ( atlas->frameCount - _environment->animationEaseOutFrames ) : atlas->frameCount;
                 }
@@ -649,48 +684,90 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
     cpu_or_8bit_const( _environment, prefixNextVar->realName, 0x02, prefixNextVar->realName );
     yield( _environment );
 
-    if ( _environment->animationEaseOutFrames ) {
+    if ( _environment->animationReverse ) {
 
-        if ( _environment->animationReverse ) {
-            CRITICAL_cANNOT_DEFINE_REVERSE_ANIMATION_WITH_EASING( _identifier );
+        if ( _environment->animationEaseInFrames ) {
+
+            char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
+            char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
+
+            // DO
+            cpu_label( _environment, easeOutLabel );
+
+                // 	WAIT [odelay] MS
+                wait_milliseconds( _environment, _environment->animationEaseOutDelay );
+
+                // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
+
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
+
+                // 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
+
+                // 	INC [prefix]Frame
+                cpu_dec( _environment, prefixFrameVar->realName );
+
+                // 	EXIT IF [prefix]Frame = last frame
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, 0, easeOutDoneLabel, 1 );
+            
+            // LOOP
+            cpu_jump( _environment, easeOutLabel );
+
+            cpu_label( _environment, easeOutDoneLabel );
         }
 
-        char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
-        char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
+    } else {
 
-        // DO
-        cpu_label( _environment, easeOutLabel );
+        if ( _environment->animationEaseOutFrames ) {
 
-    		// 	WAIT [odelay] MS
-            wait_milliseconds( _environment, _environment->animationEaseOutDelay );
+            char easeOutLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutLabel, "%seaseout", _identifier );
+            char easeOutDoneLabel[MAX_TEMPORARY_STORAGE]; sprintf( easeOutDoneLabel, "%seaseoutdone", _identifier );
 
-	    	// 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
-            if ( _environment->animationWaitVbl ) {
-                wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
-            }
+            // DO
+            cpu_label( _environment, easeOutLabel );
 
-            if ( !spriteLogic && _environment->animationPreserveBackground ) {
-                cpu_call( _environment, updateIfPositionChanged );                
-            }
+                // 	WAIT [odelay] MS
+                wait_milliseconds( _environment, _environment->animationEaseOutDelay );
 
-    		// 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
-            if ( spriteLogic ) {
-                cpu_call( _environment, updateSpriteDataWithImage );
-                sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
-            } else {
-                put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
-            }
+                // 	WAIT VBL [prefix]Y + IMAGE HEIGHT( [atlas] )
+                if ( _environment->animationWaitVbl ) {
+                    wait_vbl( _environment, variable_add_const( _environment, prefixYVar->name, atlas->frameHeight )->name );
+                }
 
-    		// 	INC [prefix]Frame
-            cpu_inc( _environment, prefixFrameVar->realName );
+                if ( !spriteLogic && _environment->animationPreserveBackground ) {
+                    cpu_call( _environment, updateIfPositionChanged );                
+                }
 
-		    // 	EXIT IF [prefix]Frame = last frame
-            cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, atlas->frameCount, easeOutDoneLabel, 1 );
-		
-        // LOOP
-        cpu_jump( _environment, easeOutLabel );
+                // 	PUT IMAGE playerIdle FRAME framePlayer AT playerX, playerY
+                if ( spriteLogic ) {
+                    cpu_call( _environment, updateSpriteDataWithImage );
+                    sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
+                } else {
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
+                }
 
-        cpu_label( _environment, easeOutDoneLabel );
+                // 	INC [prefix]Frame
+                cpu_inc( _environment, prefixFrameVar->realName );
+
+                // 	EXIT IF [prefix]Frame = last frame
+                cpu_compare_and_branch_8bit_const( _environment, prefixFrameVar->realName, atlas->frameCount, easeOutDoneLabel, 1 );
+            
+            // LOOP
+            cpu_jump( _environment, easeOutLabel );
+
+            cpu_label( _environment, easeOutDoneLabel );
+        }
+
     }
 
     // Ease out finished!
