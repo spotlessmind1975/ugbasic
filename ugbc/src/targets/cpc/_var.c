@@ -435,10 +435,6 @@ void variable_cleanup( Environment * _environment ) {
     buffered_push_output( _environment );
 
     // outhead0("SECTION code_user");
-    outhead0("SECTION bankmem");
-    outhead0("ORG $4000");
-    outline0("pippero:   DEFB 42");
-    outhead0("SECTION mainprogram");
     outhead1("ORG $%4.4x", _environment->program.startingAddress);
     outline0("JP CODESTART");
     // outhead0("SECTION data_user");
