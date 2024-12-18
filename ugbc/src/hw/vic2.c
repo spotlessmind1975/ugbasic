@@ -3828,7 +3828,11 @@ void vic2_wait_vbl( Environment * _environment, char * _raster_line ) {
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
     deploy( vbl, src_hw_vic2_vbl_asm);
 
-    outline0("JSR VBL");
+    if ( ! _raster_line ) {
+        outline0("JSR VBL");
+    } else {
+        outline0("JSR VBLLINE");
+    }
 
 }
 
