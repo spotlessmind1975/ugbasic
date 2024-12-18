@@ -225,6 +225,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             }
                             outline0("");
                             outhead0(".segment \"CODE\"");
+                            break;
                         }
                     }                
                 case VT_BUFFER:
@@ -814,7 +815,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("LDA #%00111110");
     outline0("STA $FF00");
     outline0("JMP CODESTART")
-    if ( _environment->sidFiles ) {
+    if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
         int lastAddress = 0;
         SIDFILE * actual = _environment->sidFiles;
         while( actual ) {

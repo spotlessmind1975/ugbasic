@@ -1036,7 +1036,7 @@ static int emulate(struct core *core, uint16_t start_addr, uint8_t acc, int max_
 	do_insns(dispatch);
 
 illegal_instr:
-	fprintf(stderr, "Illegal opcode: $%02x (PC = $%04x)\n", opcode, PC);
+	// fprintf(stderr, "Illegal opcode: $%02x (PC = $%04x)\n", opcode, PC);
 	return ERR_ILLEGAL;
 }
 
@@ -1994,9 +1994,13 @@ static void writefile(uint8_t *data, char *filename, int filesize) {
 static void report_oob(uint16_t first, uint16_t last) {
 	if(!quiet && first != 0xd400) {
 		if(first == last) {
-			fprintf(stderr, "Warning: Write out of bounds at address $%04x\n", first);
+			if ( verbose > 0 ) {
+				fprintf(stderr, "Warning: Write out of bounds at address $%04x\n", first);
+			}
 		} else {
-			fprintf(stderr, "Warning: Write out of bounds at address $%04x-$%04x\n", first, last);
+			if ( verbose > 0 ) {
+				fprintf(stderr, "Warning: Write out of bounds at address $%04x-$%04x\n", first, last);
+			}
 		}
 	}
 }
@@ -2171,7 +2175,7 @@ int sidreloc_main() {
 		errx(RET_HEADER, "Bad SID file header");
 		return 0;
 	}
-	if(verbose >= 0) {
+	if(verbose > 0) {
 		fprintf(stdout, "%s, %s, %s, $%04x-$%04x, %d subtunes\n",
 			head.title,
 			head.author,
@@ -2205,11 +2209,13 @@ int sidreloc_main() {
 
 	reloc_offset = (dest_page << 8) - reloc_start;
 
-	fprintf(stdout, "Relocating from $%04x-$%04x to $%04x-$%04x\n",
-		reloc_start,
-		reloc_end,
-		(reloc_start + reloc_offset) & 0xffff,
-		(reloc_end + reloc_offset) & 0xffff);
+	if ( verbose > 0 ) {
+		fprintf(stdout, "Relocating from $%04x-$%04x to $%04x-$%04x\n",
+			reloc_start,
+			reloc_end,
+			(reloc_start + reloc_offset) & 0xffff,
+			(reloc_end + reloc_offset) & 0xffff);
+	}
 
 	if(reloc_start < 0x100 || reloc_end < reloc_start
 	|| ((reloc_start + reloc_offset) & 0xffff) < 0x100
@@ -2226,7 +2232,9 @@ int sidreloc_main() {
 	add_constraints = 1;
 
 	for(i = 0; i < head.nsubtune; i++) {
-		fprintf(stderr, "Analysing subtune %d\n", i + 1);
+		if ( verbose > 0 ) {
+			fprintf(stderr, "Analysing subtune %d\n", i + 1);
+		}
 		nmi_reported = 0;
 		init_core(&oldcore, &data[head.dataoffset], head.loadaddr, head.loadsize);
 		init_tune(&oldcore, head.initaddr, i);
@@ -2247,10 +2255,12 @@ int sidreloc_main() {
 		} else if(i >= 2 && i < 0x100) {
 			if(oldcore.read[i] && !oldcore.written[i]) {
 				if(!quiet) {
-					fprintf(stderr,
-						"Warning: Zero-page address $%02x read but never written.%s\n",
-						i,
-						(do_zp_reloc? " Not relocating it." : ""));
+					if ( verbose > 0 ) {
+						fprintf(stderr,
+							"Warning: Zero-page address $%02x read but never written.%s\n",
+							i,
+							(do_zp_reloc? " Not relocating it." : ""));
+					}
 				}
 				for(j = 0; j < progsize; j++) {
 					struct progbyte *pb = &progbytes[j + 2];
@@ -2391,7 +2401,9 @@ int sidreloc_main() {
 	add_constraints = 0;
 
 	for(i = 0; i < head.nsubtune; i++) {
-		fprintf(stderr, "Verifying relocated subtune %d\n", i + 1);
+		if ( verbose > 0 ) {
+			fprintf(stderr, "Verifying relocated subtune %d\n", i + 1);
+		}
 		init_core(&oldcore, &data[head.dataoffset], head.loadaddr, head.loadsize);
 		init_core(&newcore, &newdata[head.dataoffset], (head.loadaddr + reloc_offset) & 0xffff, head.loadsize);
 
@@ -2440,8 +2452,10 @@ int sidreloc_main() {
 	if(!n_check) n_check = 1;
 	perc_badpitch = round(n_badpitch * 100.0 / n_check);
 	perc_badpw = round(n_badpw * 100.0 / n_check);
-	fprintf(stderr, "Bad pitches:               %d, %d%%\n", n_badpitch, perc_badpitch);
-	fprintf(stderr, "Bad pulse widths:          %d, %d%%\n", n_badpw, perc_badpw);
+	if ( verbose > 0 ) {
+		fprintf(stderr, "Bad pitches:               %d, %d%%\n", n_badpitch, perc_badpitch);
+		fprintf(stderr, "Bad pulse widths:          %d, %d%%\n", n_badpw, perc_badpw);
+	}
 	if(n_badpitch || n_badpw) {
 		exitbits |= RETF_TOLERANCE;
 		if(!force) {

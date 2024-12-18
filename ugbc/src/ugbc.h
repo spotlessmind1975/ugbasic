@@ -2945,6 +2945,8 @@ typedef struct _Environment {
 
     SIDFILE * sidFiles;
 
+    int sidRelocAddress;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3364,6 +3366,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E350 - music variables referring to sid files cannot be copied", f );
 #define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be compared", f );
 #define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E352 - not enough space to load sid file, consider relocation" );
+#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E353 - cannot load MUSIC, unknown format", f );
+#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E354 - cannot load midi file", f );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3390,6 +3394,7 @@ typedef struct _Environment {
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 
 int assemblyLineIsAComment( char * _buffer );
+const char* strstrcase( const char* _x, const char* _y );
 
 typedef unsigned char MemoryBlock;
 
@@ -4122,7 +4127,7 @@ char * basename( char * _path );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+    sprintf( commandLine, "\"%s\" -Ln /tmp/xmas.lbl -g %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \

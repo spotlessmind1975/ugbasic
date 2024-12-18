@@ -13318,3 +13318,29 @@ int procedure_exists( Environment * _environment, char * _name ) {
     return 0;
 
 }
+
+// Function to implement `strstr()` function
+const char* strstrcase( const char* _x, const char* _y ) {
+    int equal = 0;
+    while (*_x != '\0' && !equal) {
+        if ((*_x == *_y) ) {
+
+            int done = 0;
+            const char *cX = _x, *cY = _y;
+
+            while (*cX && *cY && !done) {
+                if (tolower(*cX) != tolower(*cY)) {
+                    done = 1;
+                } else {
+                    cX++;
+                    cY++;
+                }
+            }
+            
+            equal = (*cY == '\0');
+        }
+        _x++;
+    }
+ 
+    return (*_x == '\0') ? NULL : _x;
+}

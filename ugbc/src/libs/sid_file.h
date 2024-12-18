@@ -45,9 +45,10 @@ typedef struct _SIDFILE {
   
 } SIDFILE;
 
-SIDFILE * sidFileRead( char * _filename );
-int sidFileSize( SIDFILE * _sid_file );
-unsigned char * sidFileData( SIDFILE * _sid_file );
-void sidfileFree( SIDFILE * _sid_file );
+SIDFILE * sid_file_read( char * _filename, int _reloc_address );
+int sid_file_size( SIDFILE * _sid_file );
+unsigned char * sid_file_data( SIDFILE * _sid_file );
+void sid_file_free( SIDFILE * _sid_file );
+char * sid_file_get_lasterror_string( );
 
  #endif

@@ -38,6 +38,7 @@
 #include <stdlib.h>
 
 #include "sid_file.h"
+#include "sidreloc.h"
 
 /****************************************************************************
  * DATA TYPES 
@@ -82,13 +83,17 @@ typedef struct _SIDFILEHeader {
 
 } SIDFILEHeader;
 
+static char lastErrorString[1024];
+
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-SIDFILE * sidFileRead( char * _filename ) {
+SIDFILE * sid_file_read( char * _filename, int _reloc_address ) {
 
     SIDFILE * result = NULL;
+
+    char * entireFile = NULL;
 
     FILE * fhandle = fopen( _filename, "rb" );
 
@@ -103,10 +108,44 @@ SIDFILE * sidFileRead( char * _filename ) {
     int fileSize = ftell( fhandle );
     fseek( fhandle, 0, SEEK_SET );
 
+    entireFile = malloc( fileSize );
+    memset( entireFile, 0, fileSize );
+
+    (void)!fread( entireFile, fileSize, 1, fhandle );
+
+    if ( _reloc_address ) {
+
+        char * relocatedFile = malloc( fileSize );
+        memset( relocatedFile, 0, fileSize );
+
+        if ( !sidreloc_set_page( ( _reloc_address >> 8 ) ) ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+        if ( !sidreloc_set_force( ) ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+        if ( !sidreloc_set_verbosity( 0 ) ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+        if ( !sidreloc_set_input_data( entireFile, fileSize ) ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+        if ( !sidreloc_set_output_data( relocatedFile ) ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+        if ( !sidreloc_main() ) {
+            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+        }
+
+        free(entireFile);
+        entireFile = relocatedFile;
+
+    }
+
     SIDFILEHeader * header = NULL;
 
     char signature[4];
-    (void)!fread( signature, 4, 1, fhandle );
+    memcpy( signature, entireFile, 4 );
 
     // This is a four byte long ASCII character string containing the value
     // 0x50534944 or 0x52534944. 'RSID' (Real SID) denotes that the file strictly
@@ -115,15 +154,14 @@ SIDFILE * sidFileRead( char * _filename ) {
     // too.
 
     if ( memcmp( signature, "RSID", 4 ) && memcmp( signature, "PSID", 4 ) ) {
-        printf( "Signature wrong: %2.2x%2.2x%2.2x%2.2x\n", signature[0], signature[1], signature[2], signature[3] );
+        sprintf( lastErrorString, "Unable to load sid file, wrong signature: %2.2x%2.2x%2.2x%2.2x", signature[0], signature[1], signature[2], signature[3] );
         goto failed;
     }
 
     header = malloc( sizeof( SIDFILEHeader ) );
     memset( header, 0, sizeof( SIDFILEHeader ) );
 
-    fseek( fhandle, 0, SEEK_SET );
-    (void)!fread( header, sizeof( SIDFILEHeader ), 1, fhandle );
+    memcpy( header, entireFile, sizeof( SIDFILEHeader ) );
 
     // RSID is based on PSIDv2NG with the following modifications:
 
@@ -153,7 +191,7 @@ SIDFILE * sidFileRead( char * _filename ) {
     switch ( header->version[1] ) {
         case 1:
             if ( dataOffset != 0x76 ) {
-                printf( "Data offset wrong: %2.2x\n", dataOffset );
+                sprintf( lastErrorString, "Unable to load sid, wrong offset for v1: %4.4x", dataOffset );
                 goto failed;
             }
             break;
@@ -161,13 +199,14 @@ SIDFILE * sidFileRead( char * _filename ) {
         case 3:
         case 4:
             if ( dataOffset != 0x7c ) {
-                printf( "Data offset wrong: %2.2x\n", dataOffset );
+                sprintf( lastErrorString, "Unable to load sid, wrong offset for v%d: %4.4x", header->version[1], dataOffset );
                 goto failed;
             }
             break;
+        default:
+            sprintf( lastErrorString, "Unknown version (%d)", header->version[1] );
+            goto failed;
     }
-
-    (void)!fseek( fhandle, dataOffset, SEEK_SET );
 
     // The C64 memory location where to put the C64 data. 0 means the data are in
     // original C64 binary file format, i.e. the first two bytes of the data contain
@@ -185,7 +224,8 @@ SIDFILE * sidFileRead( char * _filename ) {
     // load address which is present in the C64 file already.
 
     if ( result->loadAddress == 0 ) {
-        (void)!fread( &header->loadAddress[0], 2, 1, fhandle );
+        memcpy( &header->loadAddress[0], &entireFile[dataOffset], 2 );
+        dataOffset += 2; 
         result->loadAddress = (header->loadAddress[1]<<8) | header->loadAddress[0];
     }
 
@@ -223,11 +263,11 @@ SIDFILE * sidFileRead( char * _filename ) {
 
     if ( memcmp( signature, "RSID", 4 ) == 0 ) {
         if ( (result->initAddress >= 0xa000) && (result->initAddress <= 0xbfff) ) {
-            printf( "RSID on ROM: %4.4x\n", result->initAddress );
+            sprintf( lastErrorString, "Unable to load sid, RSID on ROM: %4.4x", result->initAddress );
             goto failed;
         }
         if ( (result->initAddress < 0x07e8) ) {
-            printf( "RSID on ZERO PAGE: %4.4x\n", result->initAddress );
+            sprintf( lastErrorString, "Unable to load sid, RSID on ZERO PAGE: %4.4x\n", result->initAddress );
             goto failed;
         }
     }
@@ -288,7 +328,7 @@ SIDFILE * sidFileRead( char * _filename ) {
     fileSize -= dataOffset;
     result->data = malloc( fileSize );
     memset( result->data, 0, fileSize );
-    (void)!fread( result->data, fileSize, 1, fhandle );
+    memcpy( result->data, &entireFile[dataOffset], fileSize );
     result->size = fileSize;
     
     free( header );
@@ -309,20 +349,28 @@ failed:
         free(result);
     }
 
+    if ( entireFile ) {
+        free(entireFile);
+    }
+
     return NULL;
 }
 
-int sidFileSize( SIDFILE * _sid_file ) {
+int sid_file_size( SIDFILE * _sid_file ) {
     return _sid_file->size;
 }
 
-unsigned char * sidFileData( SIDFILE * _sid_file ) {
+unsigned char * sid_file_data( SIDFILE * _sid_file ) {
     return _sid_file->data;
 }
 
-void sidfileFree( SIDFILE * _sid_file ) {
+void sid_file_free( SIDFILE * _sid_file ) {
 
     free( _sid_file->data );
     free( _sid_file );
 
+}
+
+char * sid_file_get_lasterror_string( ) {
+    return lastErrorString;
 }
