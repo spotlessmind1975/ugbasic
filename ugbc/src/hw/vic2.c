@@ -4168,4 +4168,24 @@ void vic2_flip_image( Environment * _environment, Resource * _image, char * _fra
 
 }
 
+void vic2_fade( Environment * _environment, char * _ticks ) {
+
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+    deploy( fade, src_hw_vic2_fade_asm );
+
+    outline0( "SEI" );
+    outline0( "LDA #0" );
+    outline0( "STA FADESTEP" );
+    outline1( "LDA %s", _ticks );
+    outline0( "STA FADEDURATION" );
+    outline0( "STA FADERESETDURATION" );
+    outline1( "LDA %s", address_displacement( _environment, _ticks, "1" ) );
+    outline0( "STA FADEDURATION+1" );
+    outline0( "STA FADERESETDURATION+1" );
+    outline0( "CLI" );
+
+}
+
+
 #endif

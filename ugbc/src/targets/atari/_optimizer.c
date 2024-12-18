@@ -693,6 +693,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "MSPRITE^"))   return 0;
     if(po_buf_match(name, "SID^"))   return 0;
     if(po_buf_match(name, "BLIT^"))   return 0;
+    if(po_buf_match(name, "FADE^"))   return 0;
     if(po_buf_match(name, "TIMER^"))   return 0;
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;

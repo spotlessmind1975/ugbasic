@@ -1694,6 +1694,7 @@ typedef struct _Deployed {
     int ellipse;
     int create_path;
     int travel_path;
+    int fade;
 
     Embedded embedded;
 
@@ -4730,6 +4731,8 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
+void                    fade_ticks_var( Environment * _environment, char * _ticks );
+void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );

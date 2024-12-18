@@ -101,6 +101,9 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.sidstartup
     JSR SIDMANAGER
 @ENDIF
+@IF deployed.fade
+    JSR FADET
+@ENDIF
 @IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF

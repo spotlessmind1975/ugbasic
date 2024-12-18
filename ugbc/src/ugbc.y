@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4696,6 +4696,15 @@ wait_definition_expression:
 wait_definition:
     wait_definition_simple
   | wait_definition_expression;
+
+fade_definition:
+    expr ticks {
+      fade_ticks_var( _environment, $1 );
+    }
+    | expr milliseconds {
+      fade_milliseconds_var( _environment, $1 );
+    }
+    ;
 
 sprite_definition_action_simple:
     MULTICOLOR {
@@ -11348,6 +11357,7 @@ statement2nc:
         variable_move_array( _environment, $2, x->name );
         parser_array_cleanup( _environment );
   }
+  | FADE fade_definition
   | Remark
   ;
 

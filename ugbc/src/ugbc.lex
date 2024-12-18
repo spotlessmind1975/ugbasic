@@ -696,6 +696,8 @@ Ev { RETURN(EVERY,1); }
 
 %{ /* --------------------------------- F --------------------------------- */ %}
 
+FADE { RETURN(FADE,1); }
+FAd { RETURN(FADE,1); }
 FALSE { RETURN(FALSE,1); }
 Fa { RETURN(FALSE,1); }
 FAST { RETURN(FAST,1); } 
