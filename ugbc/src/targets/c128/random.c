@@ -62,19 +62,16 @@
 
 @english
 This function allows you to calculate a random number, in the range
-that can be represented by the type of data indicated as a parameter,
-or as data type conversion.
+that can be represented by the type of data indicated as a parameter.
 
 @italian
 Questa funzione permette di calcolare un numero casuale, compreso tra 0 e 
-il massimo numero rappresentabile dal tipo di dato indicato come parametro,
-or come conversione di tipo.
+il massimo numero rappresentabile dal tipo di dato indicato come parametro.
 
 @syntax = RANDOM type
-@syntax = (type) RANDOM
 
 @example randomScore = RANDOM BYTE
-@example randomColor = (COLOR) RANDOM
+@example randomColor = RANDOM COLOR
 
 @seeAlso RND
 
