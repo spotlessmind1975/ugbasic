@@ -2906,4 +2906,19 @@ void cpc_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 
+void cpc_fade( Environment * _environment, char * _ticks ) {
+
+    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( fade, src_hw_cpc_fade_asm );
+
+    outline0( "DI" );
+    outline0( "LD A, 0" );
+    outline0( "LD (FADESTEP), A" );
+    outline1( "LD HL, (%s)", _ticks );
+    outline0( "LD (FADEDURATION), HL" );
+    outline0( "LD (FADERESETDURATION), HL" );
+    outline0( "EI" );
+
+}
 #endif

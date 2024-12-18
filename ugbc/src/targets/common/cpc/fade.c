@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
+#if defined(__cpc__)
 
 /**
  * @brief Emit code for <strong>FADE</strong>
@@ -47,37 +47,14 @@
 /* <usermanual>
 @keyword FADE
 
-@english
-
-This instruction allow you to perform a "fade". The fade, in graphic terms, consists of gradually passing 
-from one image or color to another. Fade to black implies a gradual transition to the color black (RGB: 0, 0, 0). 
-To implement this transition, ugBASIC will progressively vary the color values ​​of the pixels on the screen. The 
-function takes the desired fade time in ticks or milliseconds (it will be rouded to the next tick). The accuracy 
-and smoothness of the fade depends on the number of colors available in the palette and the number of steps. 
-
-@italian
-
-Questa istruzione consente di eseguire una "dissolvenza". La dissolvenza, in termini grafici, consiste 
-nel passaggio graduale da un'immagine o colore a un altro. La dissolvenza al nero implica una transizione 
-graduale al colore nero (RGB: 0, 0, 0). Per implementare questa transizione, ugBASIC varierà progressivamente 
-i valori di colore dei pixel sullo schermo. La funzione impiega il tempo di dissolvenza desiderato in 
-ticks o millisecondi (che saranno arrotondati al tick più vicino). La precisione e la fluidità della dissolvenza 
-dipendono dal numero di colori disponibili nella tavolozza e dal numero di passaggi.
-
-@syntax FADE time [TICKS|MILLISECONDS|MS]
-
-@example FADE 1000 MS
-
-@target c64
-@target c128
-@target c64reu
+@target cpc
 </usermanual> */
 
 void fade_ticks_var( Environment * _environment, char * _ticks ) {
 
     Variable * ticks =  variable_div_const( _environment, variable_retrieve_or_define( _environment, _ticks, VT_WORD, 0 )->name, 8, NULL );
 
-    vic2_fade( _environment, _ticks );
+    cpc_fade( _environment, _ticks );
 
 }
 
@@ -85,7 +62,7 @@ void fade_milliseconds_var( Environment * _environment, char * _millliseconds ) 
 
     Variable * realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _millliseconds, VT_WORD, 0 )->name, 20 * 8, NULL );
 
-    vic2_fade( _environment, realTiming->realName );
+    cpc_fade( _environment, realTiming->realName );
 
 }
 

@@ -319,6 +319,7 @@ void cpc_colormap_at( Environment * _environment, char * _address );
 void cpc_textmap_at( Environment * _environment, char * _address );
 void cpc_tiles_at( Environment * _environment, char * _address );
 void cpc_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
+void cpc_fade( Environment * _environment, char * _ticks );
 
 void cpc_bank_select( Environment * _environment, int _bank );
 void cpc_screen_on( Environment * _environment );
