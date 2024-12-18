@@ -3724,4 +3724,24 @@ void gtia_flip_image( Environment * _environment, Resource * _image, char * _fra
 
 }
 
+void gtia_fade( Environment * _environment, char * _ticks ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
+    deploy( fade, src_hw_gtia_fade_asm );
+
+    outline0( "SEI" );
+    outline0( "LDA #0" );
+    outline0( "STA FADESTEP" );
+    outline1( "LDA %s", _ticks );
+    outline0( "STA FADEDURATION" );
+    outline0( "STA FADERESETDURATION" );
+    outline1( "LDA %s", address_displacement( _environment, _ticks, "1" ) );
+    outline0( "STA FADEDURATION+1" );
+    outline0( "STA FADERESETDURATION+1" );
+    outline0( "CLI" );
+
+}
+
 #endif

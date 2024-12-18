@@ -265,6 +265,7 @@ void gtia_colormap_at( Environment * _environment, char * _address );
 void gtia_textmap_at( Environment * _environment, char * _address );
 void gtia_tiles_at( Environment * _environment, char * _address );
 void gtia_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
+void gtia_fade( Environment * _environment, char * _ticks );
 
 void gtia_bank_select( Environment * _environment, int _bank );
 void gtia_screen_on( Environment * _environment );
