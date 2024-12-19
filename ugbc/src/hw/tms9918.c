@@ -1133,6 +1133,24 @@ void tms9918_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void tms9918_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprites_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", address->realName );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEDATASET");
+    } else {
+        outline0("CALL SPRITEDATASETNMI2");
+    }
+
+}
+
 void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
@@ -1285,6 +1303,10 @@ void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _c
     } else {
         outline0("CALL SPRITECOLORNMI2");
     }
+
+}
+
+void tms9918_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 
