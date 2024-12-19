@@ -274,6 +274,7 @@ void gtia_screen_rows( Environment * _environment, char * _rows );
 void gtia_screen_columns( Environment * _environment, char * _columns );
 
 void gtia_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void gtia_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void gtia_sprite_enable( Environment * _environment, char *_sprite );
 void gtia_sprite_disable( Environment * _environment, char * _sprite );
 void gtia_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -284,6 +285,7 @@ void gtia_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void gtia_sprite_multicolor( Environment * _environment, char * _sprite );
 void gtia_sprite_monocolor( Environment * _environment, char * _sprite );
 void gtia_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void gtia_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void gtia_vertical_scroll( Environment * _environment, char * _displacement );
 void gtia_horizontal_scroll( Environment * _environment, char * _displacement );
 void gtia_busy_wait( Environment * _environment, char * _timing );

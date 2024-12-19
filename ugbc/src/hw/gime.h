@@ -267,6 +267,7 @@ void gime_screen_rows( Environment * _environment, char * _rows );
 void gime_screen_columns( Environment * _environment, char * _columns );
 
 void gime_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void gime_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void gime_sprite_enable( Environment * _environment, char *_sprite );
 void gime_sprite_disable( Environment * _environment, char * _sprite );
 void gime_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -277,6 +278,7 @@ void gime_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void gime_sprite_multicolor( Environment * _environment, char * _sprite );
 void gime_sprite_monocolor( Environment * _environment, char * _sprite );
 void gime_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void gime_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void gime_vertical_scroll( Environment * _environment, char * _displacement );
 void gime_horizontal_scroll( Environment * _environment, char * _displacement );
 

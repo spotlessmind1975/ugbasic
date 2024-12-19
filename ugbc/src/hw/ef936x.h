@@ -179,6 +179,7 @@ void ef936x_screen_rows( Environment * _environment, char * _rows );
 void ef936x_screen_columns( Environment * _environment, char * _columns );
 
 void ef936x_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void ef936x_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void ef936x_sprite_enable( Environment * _environment, char *_sprite );
 void ef936x_sprite_disable( Environment * _environment, char * _sprite );
 void ef936x_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -189,6 +190,7 @@ void ef936x_sprite_compress_horizontal( Environment * _environment, char * _spri
 void ef936x_sprite_multicolor( Environment * _environment, char * _sprite );
 void ef936x_sprite_monocolor( Environment * _environment, char * _sprite );
 void ef936x_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void ef936x_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void ef936x_vertical_scroll( Environment * _environment, char * _displacement );
 void ef936x_horizontal_scroll( Environment * _environment, char * _displacement );
 

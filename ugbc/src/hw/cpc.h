@@ -327,7 +327,8 @@ void cpc_screen_off( Environment * _environment );
 void cpc_screen_rows( Environment * _environment, char * _rows );
 void cpc_screen_columns( Environment * _environment, char * _columns );
 
-void cpc_sprite_data_from( Environment * _environment, char * _sprite, char * _image );
+void cpc_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void cpc_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void cpc_sprite_enable( Environment * _environment, char *_sprite );
 void cpc_sprite_disable( Environment * _environment, char * _sprite );
 void cpc_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -338,6 +339,7 @@ void cpc_sprite_compress_horizontal( Environment * _environment, char * _sprite 
 void cpc_sprite_multicolor( Environment * _environment, char * _sprite );
 void cpc_sprite_monocolor( Environment * _environment, char * _sprite );
 void cpc_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void cpc_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void cpc_vertical_scroll( Environment * _environment, char * _displacement );
 void cpc_horizontal_scroll( Environment * _environment, char * _displacement );
 void cpc_busy_wait( Environment * _environment, char * _timing );

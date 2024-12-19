@@ -1357,6 +1357,10 @@ void gime_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
 }
 
+void gime_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void gime_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1394,6 +1398,10 @@ void gime_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void gime_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void gime_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

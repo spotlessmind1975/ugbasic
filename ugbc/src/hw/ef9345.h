@@ -131,7 +131,8 @@ void ef9345_screen_off( Environment * _environment );
 void ef9345_screen_rows( Environment * _environment, char * _rows );
 void ef9345_screen_columns( Environment * _environment, char * _columns );
 
-void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _image );
+void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void ef9345_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void ef9345_sprite_enable( Environment * _environment, char *_sprite );
 void ef9345_sprite_disable( Environment * _environment, char * _sprite );
 void ef9345_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -142,6 +143,7 @@ void ef9345_sprite_compress_horizontal( Environment * _environment, char * _spri
 void ef9345_sprite_multicolor( Environment * _environment, char * _sprite );
 void ef9345_sprite_monocolor( Environment * _environment, char * _sprite );
 void ef9345_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void ef9345_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void ef9345_vertical_scroll( Environment * _environment, char * _displacement );
 void ef9345_horizontal_scroll( Environment * _environment, char * _displacement );
 void ef9345_busy_wait( Environment * _environment, char * _timing );

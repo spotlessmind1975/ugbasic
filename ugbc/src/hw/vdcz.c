@@ -2216,7 +2216,11 @@ void vdcz_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
-void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
+void vdcz_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
+void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -2285,6 +2289,13 @@ void vdcz_sprite_color( Environment * _environment, char * _sprite, char * _colo
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+    
+}
+
+void vdcz_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_BYTE, 0 );
     
 }
 

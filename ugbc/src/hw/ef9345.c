@@ -596,6 +596,10 @@ void ef9345_sprite_data_from( Environment * _environment, char * _sprite, char *
 
 }
 
+void ef9345_sprite_data_set( Environment * _environment, char * _sprite, char * _image ) {
+
+}
+
 void ef9345_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -633,6 +637,10 @@ void ef9345_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void ef9345_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void ef9345_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

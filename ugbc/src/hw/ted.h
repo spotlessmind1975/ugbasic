@@ -139,6 +139,7 @@ void ted_screen_rows( Environment * _environment, char * _rows );
 void ted_screen_columns( Environment * _environment, char * _columns );
 
 void ted_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void ted_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void ted_sprite_enable( Environment * _environment, char *_sprite );
 void ted_sprite_disable( Environment * _environment, char * _sprite );
 void ted_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -149,6 +150,7 @@ void ted_sprite_compress_horizontal( Environment * _environment, char * _sprite 
 void ted_sprite_multicolor( Environment * _environment, char * _sprite );
 void ted_sprite_monocolor( Environment * _environment, char * _sprite );
 void ted_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void ted_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void ted_vertical_scroll( Environment * _environment, char * _displacement );
 void ted_horizontal_scroll( Environment * _environment, char * _displacement );
 void ted_busy_wait( Environment * _environment, char * _timing );

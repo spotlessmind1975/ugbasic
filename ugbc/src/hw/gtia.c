@@ -1793,6 +1793,10 @@ void gtia_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
 }
 
+void gtia_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void gtia_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1830,6 +1834,10 @@ void gtia_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void gtia_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void gtia_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

@@ -562,6 +562,10 @@ void vic1_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void vic1_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void vic1_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
 }
@@ -603,6 +607,10 @@ void vic1_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void vic1_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void vic1_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

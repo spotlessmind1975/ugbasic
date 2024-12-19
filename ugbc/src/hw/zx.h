@@ -280,6 +280,7 @@ Variable * zx_new_sequence( Environment * _environment, int _sequences, int _fra
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count,  int _palette );
 
 void zx_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void zx_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void zx_sprite_enable( Environment * _environment, char *_sprite );
 void zx_sprite_disable( Environment * _environment, char * _sprite );
 void zx_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -290,6 +291,7 @@ void zx_sprite_compress_horizontal( Environment * _environment, char * _sprite )
 void zx_sprite_multicolor( Environment * _environment, char * _sprite );
 void zx_sprite_monocolor( Environment * _environment, char * _sprite );
 void zx_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void zx_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void zx_vertical_scroll( Environment * _environment, char * _displacement );
 void zx_horizontal_scroll( Environment * _environment, char * _displacement );
 void zx_busy_wait( Environment * _environment, char * _timing );

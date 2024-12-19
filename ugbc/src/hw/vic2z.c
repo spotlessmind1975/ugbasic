@@ -1235,6 +1235,10 @@ void vic2z_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void vic2z_sprite_data_set( Environment * _environment, char * _sprite, char * _image ) {
+
+}
+
 void vic2z_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     _environment->bitmaskNeeded = 1;
@@ -1375,6 +1379,19 @@ void vic2z_sprite_color( Environment * _environment, char * _sprite, char * _col
     outline1("LDA %s", color->realName );
     outline1("LDY %s", sprite->realName );
     outline0("JSR SPRITECOLOR" );
+
+}
+
+void vic2z_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2z_sprites_asm );
+    
+    outline1("LDA %s", priority->realName );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEPRIORITY" );
 
 }
 

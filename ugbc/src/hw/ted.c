@@ -1142,6 +1142,10 @@ void ted_sprite_data_from( Environment * _environment, char * _sprite, char * _a
 
 }
 
+void ted_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void ted_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1179,6 +1183,10 @@ void ted_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void ted_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void ted_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

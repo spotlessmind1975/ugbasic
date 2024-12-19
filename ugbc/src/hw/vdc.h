@@ -161,6 +161,7 @@ void vdc_screen_rows( Environment * _environment, char * _rows );
 void vdc_screen_columns( Environment * _environment, char * _columns );
 
 void vdc_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void vdc_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void vdc_sprite_enable( Environment * _environment, char *_sprite );
 void vdc_sprite_disable( Environment * _environment, char * _sprite );
 void vdc_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -171,6 +172,7 @@ void vdc_sprite_compress_horizontal( Environment * _environment, char * _sprite 
 void vdc_sprite_multicolor( Environment * _environment, char * _sprite );
 void vdc_sprite_monocolor( Environment * _environment, char * _sprite );
 void vdc_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void vdc_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void vdc_vertical_scroll( Environment * _environment, char * _displacement );
 void vdc_horizontal_scroll( Environment * _environment, char * _displacement );
 void vdc_busy_wait( Environment * _environment, char * _timing );

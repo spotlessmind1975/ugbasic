@@ -830,6 +830,10 @@ void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * 
 
 }
 
+void c6847_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void c6847_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -839,6 +843,10 @@ void c6847_sprite_disable( Environment * _environment, char * _sprite ) {
 }
 
 void c6847_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
+
+}
+
+void c6847_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

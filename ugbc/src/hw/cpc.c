@@ -889,7 +889,11 @@ void cpc_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
-void cpc_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
+void cpc_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
+void cpc_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
 
 }
 
@@ -930,6 +934,10 @@ void cpc_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void cpc_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void cpc_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 

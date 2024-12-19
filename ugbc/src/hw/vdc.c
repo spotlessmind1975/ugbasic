@@ -765,6 +765,10 @@ void vdc_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void vdc_sprite_data_set( Environment * _environment, char * _sprite, char * _image ) {
+
+}
+
 void vdc_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     _environment->bitmaskNeeded = 1;
@@ -854,6 +858,15 @@ void vdc_sprite_color( Environment * _environment, char * _sprite, char * _color
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
+
+    deploy( sprite, src_hw_vdc_sprites_asm );
+    
+}
+
+void vdc_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_COLOR, COLOR_WHITE );
 
     deploy( sprite, src_hw_vdc_sprites_asm );
     
