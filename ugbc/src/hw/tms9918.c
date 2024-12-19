@@ -2034,11 +2034,11 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
             *(buffer + offset) |= bitmask;
 
-            _source += _depth;
+            source += _depth;
 
         }
 
-        _source += _depth * ( _width - image_x );
+        source += _depth * ( _width - image_x );
 
         if ( _environment->debugImageLoad ) {
             printf("\n" );
