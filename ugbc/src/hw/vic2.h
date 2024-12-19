@@ -164,6 +164,7 @@ void vic2_screen_rows( Environment * _environment, char * _rows );
 void vic2_screen_columns( Environment * _environment, char * _columns );
 
 void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void vic2_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void vic2_sprite_duplicate( Environment * _environment, char * _sprite, char * _original );
 void vic2_sprite_enable( Environment * _environment, char *_sprite );
 void vic2_sprite_disable( Environment * _environment, char * _sprite );
@@ -175,6 +176,7 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite );
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite );
 void vic2_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void vic2_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2_busy_wait( Environment * _environment, char * _timing );
