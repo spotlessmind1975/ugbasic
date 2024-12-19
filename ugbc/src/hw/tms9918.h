@@ -160,6 +160,7 @@ void tms9918_screen_rows( Environment * _environment, char * _rows );
 void tms9918_screen_columns( Environment * _environment, char * _columns );
 
 void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _image );
+void tms9918_sprite_data_set( Environment * _environment, char * _sprite, char * _image );
 void tms9918_sprite_enable( Environment * _environment, char *_sprite );
 void tms9918_sprite_disable( Environment * _environment, char * _sprite );
 void tms9918_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -170,6 +171,7 @@ void tms9918_sprite_compress_horizontal( Environment * _environment, char * _spr
 void tms9918_sprite_multicolor( Environment * _environment, char * _sprite );
 void tms9918_sprite_monocolor( Environment * _environment, char * _sprite );
 void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void tms9918_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void tms9918_vertical_scroll( Environment * _environment, char * _displacement );
 void tms9918_horizontal_scroll( Environment * _environment, char * _displacement );
 void tms9918_busy_wait( Environment * _environment, char * _timing );
