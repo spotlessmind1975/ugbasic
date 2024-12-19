@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE MMOB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10209,6 +10209,28 @@ movement_definition :
     }
 ;
 
+mmob_definition : 
+    expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, NULL, NULL, NULL, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, NULL, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, $11, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, $11, $13 );
+
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11137,6 +11159,7 @@ statement2nc:
   | SCREEN SWAP {
       screen_swap( _environment );
   }
+  | MMOB mmob_definition
   | MMOVE memory_video expr TO memory_video expr SIZE expr {
       if ( $2 == 0 ) {
         if ( $5 == 0 ) {

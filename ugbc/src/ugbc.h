@@ -3369,6 +3369,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E352 - not enough space to load sid file, consider relocation" );
 #define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E353 - cannot load MUSIC, unknown format", f );
 #define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E354 - cannot load midi file", f );
+#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E355 - MMOB can be called only with SPRITE/MSPRITE", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4881,6 +4882,7 @@ void                    memory_area_assign( MemoryArea * _first, Variable * _var
 float                   min_of_two(float _x, float _y);
 float                   min_of_three(float _m, float _n, float _p);
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
+void                    mmob( Environment * _environment, char * _sprite, char * _sx, char * _sy, char * _zx, char * _zy, char * _gr, char * _sp );
 void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
