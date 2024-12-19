@@ -1011,6 +1011,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("STA $D016" );
             outline0("LDA $D018" );
             outline0("AND #%11110111");
+            if ( _environment->fontConfig.schema || _environment->descriptors ) {
+                outline0("ORA #$09");
+            } else {
+                outline0("ORA #$07");
+            }
             outline0("STA $D018" );
 
             // // This fix is necessary to reset the lookup for rom character.
@@ -1051,6 +1056,11 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("STA $D016" );
             outline0("LDA $D018" );
             outline0("AND #%11110111");
+            if ( _environment->fontConfig.schema || _environment->descriptors ) {
+                outline0("ORA #$09");
+            } else {
+                outline0("ORA #$07");
+            }
             outline0("STA $D018" );
             
             // // This fix is necessary to reset the lookup for rom character.
@@ -1088,6 +1098,13 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             outline0("LDA $D016" );
             outline0("AND #%11101111");
             outline0("STA $D016" );
+            outline0("AND #%11110111");
+            if ( _environment->fontConfig.schema || _environment->descriptors ) {
+                outline0("ORA #$09");
+            } else {
+                outline0("ORA #$07");
+            }
+            outline0("STA $D018" );
 
             // // This fix is necessary to reset the lookup for rom character.
             // outline0("LDA $D018" );
@@ -1433,6 +1450,33 @@ void vic2_screen_columns( Environment * _environment, char * _columns ) {
     outline0("STA $D016" );
     outline1("JMP %s_2", label);
     outhead1("%s_2:", label );
+
+}
+
+void vic2_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_BYTE, 0 );
+
+    switch ( sprite->type) {
+
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+
+            outline1("LDA %s", address->realName );
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEDATASET" );
+            break;
+
+        case VT_MSPRITE:
+
+            break;
+
+    }
+
 
 }
 
@@ -1871,6 +1915,44 @@ void vic2_sprite_color( Environment * _environment, char * _sprite, char * _colo
             outline1("LDY %s", sprite->realName );
             outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
             outline0("JSR MSPRITECOLOR" );
+            break;
+
+    }
+
+
+}
+
+void vic2_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_BYTE, 0 );
+
+    switch ( sprite->type) {
+
+        case VT_BYTE:
+        case VT_SPRITE:
+
+            deploy( sprite, src_hw_vic2_sprites_asm );
+            
+            outline1("LDA %s", priority->realName );
+            outline1("LDY %s", sprite->realName );
+            outline0("JSR SPRITEPRIORITY" );
+            break;
+
+        case VT_MSPRITE:
+
+            if ( !_environment->deployed.msprite ) {
+                cpu_store_16bit( _environment, "MSPRITESMANAGER2MSBOKADDRESS+1", _environment->mspriteMsbokAddress );
+            }
+
+            deploy( msprite, src_hw_vic2_msprites_asm );
+    
+            outline1("LDA %s", priority->realName );
+            outline1("LDY %s", sprite->realName );
+            outline1("LDX %s", address_displacement( _environment, sprite->realName, "1" ) );
+            outline0("JSR MSPRITEPRIORITY" );
             break;
 
     }
