@@ -6114,3 +6114,52 @@ immagine sullo schermo.
 
 </usermanual> */
 
+/* <usermanual>
+@keyword RANDOM WIDTH
+
+@english
+
+This instruction allows you to get a random number between 0 and the current width of the screen 
+(intended as ''SCREEN WIDTH'') minus one. It is particularly useful for positioning pixels or 
+graphic elements, randomly, on the screen.
+
+@italian
+
+Questa istruzione permette di ottenere un numero casuale compreso tra 0 e la larghezza attuale 
+dello schermo (intesa come ''SCREEN WIDTH'') meno uno. E' particolarmente utile per posizionare 
+pixel o elementi grafici, in modo casuale, sullo schermo.
+
+@syntax = RANDOM WIDTH
+
+@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
+
+@seeAlso RANDOM HEIGHT
+@seeAlso RANDOMIZE
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword RANDOM HEIGHT
+
+@english
+
+This instruction allows you to get a random number between 0 and the current height of the screen 
+(intended as ''SCREEN HEIGHT'') minus one. It is particularly useful for positioning pixels or 
+graphic elements, randomly, on the screen.
+
+@italian
+
+Questa istruzione permette di ottenere un numero casuale compreso tra 0 e la larghezza attuale 
+dello schermo (intesa come ''SCREEN HEIGHT'') meno uno. E' particolarmente utile per posizionare 
+pixel o elementi grafici, in modo casuale, sullo schermo.
+
+@syntax = RANDOM HEIGHT
+
+@example POINT AT (RANDOM WIDTH, RANDOM HEIGHT)
+
+@seeAlso RANDOM WIDTH
+@seeAlso RANDOMIZE
+
+@target all
+</usermanual> */
