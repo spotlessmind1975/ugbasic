@@ -2014,10 +2014,10 @@ random_definition_simple:
         $$ = random_value( _environment, VT_COLOR )->name;
     }
     | WIDTH {
-        $$ = random_width( _environment )->name;
+        $$ = rnd( _environment, screen_get_width( _environment )->name )->name;
     }
     | HEIGHT {
-        $$ = random_height( _environment )->name;
+        $$ = rnd( _environment, screen_get_height( _environment )->name )->name;
     };
 
 random_definition:

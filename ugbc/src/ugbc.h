@@ -4978,9 +4978,7 @@ void                    put_tilemap_inline( Environment * _environment, char * _
 // *R*
 //----------------------------------------------------------------------------
 
-Variable *              random_height( Environment * _environment );
 Variable *              random_value( Environment * _environment, VariableType _type );
-Variable *              random_width( Environment * _environment );
 void                    randomize( Environment * _environment, char * _seed );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
