@@ -50,7 +50,7 @@
 @english
 
 This statement can be used to temporarily suspend the execution of a 
-thread. The thread will stop executing until it receives the ''CONTINUE''
+thread. The thread will stop executing until it receives the ''RESUME''
 command. When queried with the ''RUNNING'' function, the thread will 
 be reported as "not running".
 
@@ -58,7 +58,7 @@ be reported as "not running".
 
 Questa istruzione può essere utilizzata per sospendere temporaneamente 
 l'esecuzione di un thread. Il thread interromperà la propria esecuzione 
-fino al ricevimento del comando ''CONTINUE''. Se interrogato con la 
+fino al ricevimento del comando ''RESUME''. Se interrogato con la 
 funzione ''RUNNING'', il thread risulterà "non in esecuzione".
 
 @syntax SUSPEND thread

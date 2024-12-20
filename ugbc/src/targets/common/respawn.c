@@ -76,9 +76,9 @@ Questa parola chiave fa ricominciare una funzione terminata,
 affinché sia eseguita in parallelo, restituendo il codice
 identificativo del thread.
 
-@syntax = RESPAWN(identifier)
+@syntax = RESPAWN identifier 
 
-@example newHandle = RESPAWN(factorialHandle)
+@example newHandle = RESPAWN factorialHandle 
 
 </usermanual> */
 
