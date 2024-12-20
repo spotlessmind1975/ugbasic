@@ -12287,7 +12287,7 @@ VariableType variable_type_from_numeric_value( Environment * _environment, int _
             } else {
                 if ( _number > (0xffff) ) {
                     return VT_DWORD;
-                } else if ( _number > (0x7f) ) {
+                } else if ( _number > (0xff) ) {
                     return VT_WORD;
                 } else {
                     return VT_BYTE;
