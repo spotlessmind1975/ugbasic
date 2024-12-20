@@ -1975,7 +1975,18 @@ void sc61860_math_double_8bit( Environment * _environment, char *_source, char *
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_double_8bit(signed)" );
+        op_lda( _environment, _source );
+        op_anda_direct( _environment, 0x80 );
+        op_swab( _environment );
+
+        op_lda( _environment, _source );
+        op_sla( _environment );
+        op_orab( _environment );
+        if ( _other ) {
+            op_sta( _environment, _other );
+        } else {
+            op_sta( _environment, _source );
+        }
 
     } else {
 
