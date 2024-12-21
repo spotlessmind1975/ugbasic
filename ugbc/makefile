@@ -173,6 +173,13 @@ ifeq ($(target),d64)
   audio=
   io=pia
 endif
+ifeq ($(target),gb)
+  cpu=z80
+  video=gb
+  video2=
+  audio=
+  io=
+endif
 ifeq ($(target),mo5)
   cpu=6809
   video=ef936x
@@ -738,6 +745,19 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
+
+# Gameboy 
+
+MODULES_GB := $(wildcard src/hw/gb/*.asm)
+SOURCES_GB := $(subst src/hw/gb/,src-generated/gb_,$(MODULES_GB:.asm=.c)) $(FONTS)
+
+src-generated/gb_%.c: $(MODULES_GB)
+	@xxd -i $(subst src-generated/gb_,src/hw/gb/,$(@:.c=.asm)) >$@
+
+src-generated/modules_gb.c: $(SOURCES_Z80) $(SOURCES_GB)
+	@cat $(SOURCES_Z80) $(SOURCES_GB) >src-generated/modules_gb.c
+	@grep "src" src-generated/modules_gb.c | awk -f modules.awk >src-generated/modules_gb.h
+	@grep "data" src-generated/modules_gb.c | awk -f modules.awk >>src-generated/modules_gb.h
 
 # TRS-80 Color Computer 1 and 2
 

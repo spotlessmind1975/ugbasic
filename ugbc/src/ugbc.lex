@@ -40,6 +40,8 @@ extern char * importPath;
     char targetName[] = "d32";
 #elif defined(__d64__)
     char targetName[] = "d64";
+#elif defined(__gb__)
+    char targetName[] = "gb";
 #elif defined(__pc128op__)
     char targetName[] = "pc128op";
 #elif defined(__to8__)
@@ -762,6 +764,7 @@ FX { RETURN(FX,1); }
 
 G { RETURN(G,1); }
 GAMELOOP { RETURN(GAMELOOP,1); }
+GB { RETURN(GB,1); }
 Gl { RETURN(GAMELOOP,1); }
 GET { RETURN(GET,1); }
 Ge { RETURN(GET,1); }

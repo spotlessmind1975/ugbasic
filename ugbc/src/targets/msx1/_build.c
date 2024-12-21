@@ -57,7 +57,7 @@ void generate_bin( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "msx1", executableName, listingFileName );
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "msx1", executableName, listingFileName, "z80" );
 
     char * p;
 

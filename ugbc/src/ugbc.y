@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE MMOB
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE MMOB GB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1169,7 +1169,7 @@ const_factor:
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__) || defined(__pc1403__) 
+            defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__)
             $$ = 1;
         #else
             $$ = 0;
@@ -3059,7 +3059,7 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3070,7 +3070,7 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3869,7 +3869,7 @@ exponential_less:
         defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
         defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
         defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__)
+        defined( __c64reu__) || defined(__gb__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -8815,7 +8815,8 @@ target :
     CPUZ80 {
         #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
             defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+            defined(__gb__)
             $$ = 1;
         #else
             $$ = 0;
@@ -8928,6 +8929,14 @@ target :
     |
     CPC {
         #ifdef __cpc__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    GB {
+        #ifdef __gb__
             $$ = 1;
         #else
             $$ = 0;
@@ -9107,7 +9116,8 @@ target :
     SPRITE NOT AVAILABLE {
         #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
             || defined(__msx1__) || defined(__coleco__) \
-            || defined(__sc3000__) || defined(__sg1000__)
+            || defined(__sc3000__) || defined(__sg1000__) \
+            || defined(__gb__)
             $$ = 0;
         #else
             $$ = 1;
@@ -11480,6 +11490,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (ZILOG Z80 native)";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
+#elif __gb__
+    char target[MAX_TEMPORARY_STORAGE] = "Gameboy";
 #elif __plus4__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore PLUS/4";
 #elif __zx__
@@ -11625,6 +11637,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
     printf("\t                dsk - DSK image\n" );
     #define defaultExtension "rom"
+#elif __gb__
+    printf("\t                gb - cartridge ROM\n" );
+    #define defaultExtension "gb"
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
@@ -11650,7 +11665,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
@@ -11731,6 +11746,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __msx1__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __gb__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
 #elif __coleco__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sc3000__
@@ -11880,6 +11897,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
                     } else if ( strcmp( optarg, "ram") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+                    } else if ( strcmp( optarg, "gb") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

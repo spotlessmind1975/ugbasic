@@ -40,7 +40,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__) || defined(__gb__)
 
 void z80_init( Environment * _environment ) {
 

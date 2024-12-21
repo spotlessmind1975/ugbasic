@@ -55,7 +55,7 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "sc3000", executableName, listingFileName );
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "sc3000", executableName, listingFileName, "z80" );
 
     char * p;
 

@@ -254,7 +254,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_DSK = 9,
     OUTPUT_FILE_TYPE_ATR = 10,
     OUTPUT_FILE_TYPE_REU = 11,
-    OUTPUT_FILE_TYPE_RAM = 12
+    OUTPUT_FILE_TYPE_RAM = 12,
+    OUTPUT_FILE_TYPE_GB = 13
 
 } OutputFileType;
 
@@ -1621,6 +1622,7 @@ typedef struct _Deployed {
     int gimestartup;
     int zxvars;
     int msx1vars;
+    int gbvars;
     int sc3000vars;
     int sg1000vars;
     int vg5000vars;
@@ -4166,9 +4168,10 @@ char * basename( char * _path );
         strcpy( listingFileName, "-m -s -g" ); \
     }
 
-#define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName ) \
-    sprintf( commandLine, "\"%s\" %s -D__%s__ -b \"%s\"", \
+#define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName, cpu ) \
+    sprintf( commandLine, "\"%s\" -m=%s %s -D__%s__ -b \"%s\"", \
         executableName, \
+        cpu, \
         listingFileName, \
         target, \
         _environment->asmFileName ); \
@@ -5462,6 +5465,10 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_pc1403.h"
     #include "hw/sc61860.h"
     #include "hw/pc1403.h"
+#elif __gb__
+    #include "../src-generated/modules_gb.h"
+    #include "hw/z80.h"
+    #include "hw/gb.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN
