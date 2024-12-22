@@ -66,7 +66,7 @@ void sprite_data_set( Environment * _environment, int _sprite, int _address ) {
  */
 void sprite_data_set_vars( Environment * _environment, char * _sprite, char * _address ) {
 
-    vdcz_sprite_data_set( _environment, _sprite, _image );
+    vdcz_sprite_data_set( _environment, _sprite, _address );
 
 }
 

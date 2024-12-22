@@ -2225,7 +2225,7 @@ void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _
     _environment->bitmaskNeeded = 1;
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
+    Variable * image = variable_retrieve_or_define( _environment, _sprite, VT_IMAGE, 0 );
 
 }
 

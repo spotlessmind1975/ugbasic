@@ -64,6 +64,6 @@ void sprite_priority( Environment * _environment, int _sprite, int _priority ) {
  */
 void sprite_priority_vars( Environment * _environment, char * _sprite, char * _priority ) {
 
-    vdcz_sprite_priority( _environment, _sprite, _color );
+    vdcz_sprite_priority( _environment, _sprite, _priority );
 
 }
