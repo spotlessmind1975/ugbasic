@@ -88,8 +88,56 @@ void generate_gb( Environment * _environment ) {
     if ( p ) {
         *p = 0;
         --p;
+        strcat( p, "_code.bin");
+    }
+
+    FILE * binaryFile = fopen( binaryName, "rb" );
+    fseek( binaryFile, 0, SEEK_END );
+    long size = ftell( binaryFile );
+    fseek( binaryFile, 0, SEEK_SET );
+    char * part = malloc( size );
+    (void)!fread( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
         strcat( p, ".bin");
     }
+
+    binaryFile = fopen( binaryName, "wb" );
+    fwrite( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, "_data.bin");
+    }
+
+    binaryFile = fopen( binaryName, "rb" );
+    fseek( binaryFile, 0, SEEK_END );
+    size = ftell( binaryFile );
+    fseek( binaryFile, 0, SEEK_SET );
+    part = malloc( size );
+    (void)!fread( part, size, 1, binaryFile );
+    fclose( binaryFile );
+
+    strcpy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *p = 0;
+        --p;
+        strcat( p, ".bin");
+    }
+
+    binaryFile = fopen( binaryName, "a+b" );
+    fwrite( part, size, 1, binaryFile );
+    fclose( binaryFile );
 
     strcpy( binaryNameDefinitive, _environment->exeFileName );
     p = strstr( binaryNameDefinitive, ".gb" );

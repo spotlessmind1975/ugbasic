@@ -499,7 +499,7 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
-    // outhead0("SECTION code_user");
+    outhead0("SECTION code");
     // if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
     outhead0("ORG $0000");
 	outline0("DEFS $100, 0");
@@ -509,9 +509,10 @@ void variable_cleanup( Environment * _environment ) {
     // } else {
     //     outhead0("ORG $8100");
     // }
-    // outhead0("SECTION data_user");
-    // outhead0("ORG $C000");
-    // outhead0("SECTION code_user");
+    outhead0("SECTION data");
+    outhead0("ORG $C000");
+    outline0("DB $0");
+    outhead0("SECTION code");
 
     // if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
     //     // +0	ID	Put these first two bytes at 041H and 042H ("AB") to indicate that it is an additional ROM.

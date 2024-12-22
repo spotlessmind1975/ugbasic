@@ -42,7 +42,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    // // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
+    MEMORY_AREA_DEFINE( MAT_RAM, 0xc000, 0xdfff );
 
     // banks_init( _environment );
 
