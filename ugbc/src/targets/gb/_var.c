@@ -562,9 +562,12 @@ void variable_cleanup( Environment * _environment ) {
     // outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( startup, src_hw_gb_startup_asm);
+
+    outhead0("CODESTART:");;
+    
     // deploy_inplace_preferred( tms9918startup, src_hw_// tms9918_startup_asm);
 
-    // buffered_prepend_output( _environment );
+    buffered_prepend_output( _environment );
 
     // variable_on_memory_init( _environment, 1 );
 
