@@ -42,7 +42,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    MEMORY_AREA_DEFINE( MAT_RAM, 0xc000, 0xdfff );
+    // MEMORY_AREA_DEFINE( MAT_RAM, 0xc000, 0xdfff );
 
     // banks_init( _environment );
 
@@ -167,8 +167,8 @@ void target_initialization( Environment * _environment ) {
     //     }
     // } 
     
-    // bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
-    // bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
+    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
+    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     // outhead0("SECTION code_user");
     // if ( _environment->outputFileType == OUTPUT_FILE_TYPE_ROM ) {
@@ -229,7 +229,7 @@ void target_initialization( Environment * _environment ) {
 
     // outhead0("CODESTART2:");
 
-    // outline0("CALL VARINIT2");
+    outline0("CALL VARINIT2");
     // cpu_call( _environment, "VARINIT" );
     // outline0("CALL PROTOTHREADINIT" );
 

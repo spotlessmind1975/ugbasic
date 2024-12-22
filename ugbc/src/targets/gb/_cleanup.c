@@ -47,22 +47,30 @@ void target_finalization( Environment * _environment ) {
     // // tms9918_finalization( _environment );
     // // ay8910_finalization( _environment );
 
-    // outhead0("section data_user");
-    // outhead0("LASTVAR: db $00");
-    // outhead0("section code_user");
+    outhead0("section data");
+    outhead0("LASTVAR: db $00");
+    outhead0("section code");
 
-    // if ( ! _environment->anyProtothread ) {
-    //     outhead0("PROTOTHREADINIT:" );
-    //     outline0("RET");
-    // }
+    if ( ! _environment->anyProtothread ) {
+        outhead0("PROTOTHREADINIT:" );
+        outline0("RET");
+    }
 
-    // outhead0("VARINIT2:");
-    // outline0("LD HL, CODEEND");
-    // outline0("LD DE, $C000");
-    // outline0("LD BC, LASTVAR - $C000" );
-    // outline0("LDIR" );
-    // outline0("RET");
-    // outhead0("CODEEND:");
+    outhead0("VARINIT2:");
+    outline0("LD HL, CODEEND");
+	outline0("LD DE, $C000");
+	outline0("LD BC, LASTVAR - $C000");
+
+    outhead0("VARINIT2L1:");
+	outline0("LD A, (HL+)");
+	outline0("LD (DE+), A");
+	outline0("DEC BC");
+	outline0("LD A, B");
+	outline0("OR C");
+	outline0("JR NZ, VARINIT2L1");
+	outline0("RET");
+
+    outhead0("CODEEND:");
 
 }
 
