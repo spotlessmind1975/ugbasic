@@ -96,10 +96,61 @@ MSPRITESMANAGERADDRESS:
     STA $D019
 @ENDIF
     LDA $DC0D
+IRQSVCXX:
     PLA
     RTI
+
+TIMERLATCHED:
+    .BYTE $0, $0
+
 IRQSVCX:
     LDA $DC0D
+
+@IF deployed.msprites
+    LDA $D012
+    CMP #$80
+    BCS IRQSVCX2
+
+    EOR #$FF
+    CLC
+    ADC #1
+    STA TIMERLATCHED
+    LDA #$0
+    STA TIMERLATCHED+1
+    CLC
+    ASL TIMERLATCHED
+    ROL TIMERLATCHED+1
+    ASL TIMERLATCHED
+    ROL TIMERLATCHED+1
+    ASL TIMERLATCHED
+    ROL TIMERLATCHED+1
+    ASL TIMERLATCHED
+    ROL TIMERLATCHED+1
+    LDA TIMERLATCHED
+    STA $dc04
+    LDA TIMERLATCHED+1
+    STA $dc05
+    LDA #%00010001
+    STA $DC0E
+    LDA #0
+    STA $DC0F
+    PLA
+    RTI
+
+IRQSVCX2:
+
+    LDA #$20
+    STA $dc04
+    LDA #$4e
+    STA $dc05
+
+    LDA #%00010001
+    STA $DC0E
+    LDA #0
+    STA $DC0F
+
+@ENDIF
+
     JSR JIFFYUPDATE
 @IF deployed.music
     JSR MUSICPLAYER
@@ -113,7 +164,7 @@ IRQSVCX:
 @IF deployed.fade
     JSR FADET
 @ENDIF
-@IF deployed.joystick && ! joystickConfig.sync
+@IF deployed.joystick
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard
@@ -124,7 +175,7 @@ IRQSVCX:
 @ENDIF
     PLA
     JMP ($0314)    
-
+    
 IRQSVC2:
     PHA
     LDA $DC0D
