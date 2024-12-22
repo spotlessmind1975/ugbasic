@@ -89,6 +89,9 @@ endif
 ifeq ($(target),d64)
   output=bin
 endif
+ifeq ($(target),gb)
+  output=gb
+endif
 ifeq ($(target),mo5)
   output=k7
 endif
@@ -686,6 +689,30 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d64/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -l ../$(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
+# gb:
+#    Gameboy (Z80)
+#------------------------------------------------ 
+# 
+toolchain.gb: z88dk
+
+generated/gb/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.gb$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/gb/asm/,,$(@:.asm=.bas)) ../$@ 
+
+generated/gb/exe/%.gb: compiler
+	$(Z80ASM) -l -m=gbz80 -s -g -b $(subst /exe/,/asm/,$(@:.gb=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.gb=.sym)) $(subst /exe/,/asm/,$(@:.gb=.osym))
+	@php sym2gb.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.gb=.o))
+	@mv $(subst /exe/,/asm/,$(@:.gb=_code.bin)) $(@:.gb=_code.bin)
+	@mv $(subst /exe/,/asm/,$(@:.gb=_data.bin)) $(@:.gb=_data.bin)
+	@cat $(@:.gb=_code.bin) $(@:.gb=_data.bin) >$(@:.gb=.bin)
+	@$(Z80APPMAKE) +gb -b $(@:.gb=.bin) 
+	@rm -f $(@:.gb=.bin) $(@:.gb=_*.bin)
+
+generated/gb/exeso/%.gb: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.gb=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.gb$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.gb=.info) -o ../$@ -O gb $(subst generated/gb/exeso/,,$(@:.gb=.bas))
 
 #------------------------------------------------ 
 # mo5:

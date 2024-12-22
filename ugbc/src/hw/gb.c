@@ -2877,12 +2877,20 @@ void gb_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
 }
 
-void gb_wait_vbl( Environment * _environment ) {
+void gb_wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    // // deploy( vbl, src_hw_gb_vbl_asm);
+    deploy( vbl, src_hw_gb_vbl_asm);
 
-    // outline0("JSR VBL");
+    outline0("CALL WAITVBL");
+
+}
+
+void gb_screen_on_off( Environment * _environment, int _on_off ) {
+
+    deploy( vbl, src_hw_gb_screen_on_off_asm);
+
+    outline1("LD A, $%2.2x", _on_off );
+    outline0("CALL WAITVBL");
 
 }
 

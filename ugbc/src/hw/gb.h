@@ -255,11 +255,15 @@
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
+void gb_wait_vbl( Environment * _environment, char * _raster_line );
+void gb_screen_on_off( Environment * _environment, int _on_off );
+
 void gb_wait_key( Environment * _environment, int _release );
 void gb_wait_fire( Environment * _environment, int _port, int _release );
 void gb_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void gb_wait_key_or_fire( Environment * _environment, int _port, int _release );
 void gb_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
+
 void gb_key_state( Environment * _environment, char *_scancode, char * _result );
 void gb_scancode( Environment * _environment, char * _scacode );
 void gb_asciicode( Environment * _environment, char * _asciicode );
@@ -298,5 +302,7 @@ void gb_dojo_put_message( Environment * _environment, char * _port_id, char * _m
 void gb_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
 void gb_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void gb_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
+
+
 
 #endif

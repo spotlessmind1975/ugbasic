@@ -47,4 +47,6 @@
  */
 void screen_on( Environment * _environment ) {
 
+    gb_screen_on_off( _environment, 0xff );
+
 }

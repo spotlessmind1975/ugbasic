@@ -47,6 +47,6 @@
  */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    // TODO: implementation
+    gb_wait_vbl( _environment, _raster_line );
 
 }

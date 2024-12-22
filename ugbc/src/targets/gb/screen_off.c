@@ -47,4 +47,6 @@
  */
 void screen_off( Environment * _environment ) {
 
+    gb_screen_on_off( _environment, 0x00 );
+
 }
