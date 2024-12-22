@@ -86,26 +86,36 @@ NMISVC:
 
 IRQSVC:
     PHA
-    LDA $DD0D
-    LDA $DC0D
-    LDA #$1
-    STA $D019
-    PLA    
 @IF deployed.msprites
+    LDA $D019
+    AND #1
+    BEQ IRQSVCX 
+    STA $D019
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
+@ELSE
+    LDA #1
+    STA $D019
 @ENDIF
+    LDA $DC0D
+    PLA
+    RTI
+IRQSVCX:
+    LDA $DC0D
     JSR JIFFYUPDATE
-@IF deployed.sidstartup
-    JSR SIDMANAGER
-@ENDIF
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
 @IF deployed.sidplayer
     JSR SIDPLAYER
 @ENDIF
-@IF deployed.joystick && ! joystickConfig.sync
+@IF deployed.sidstartup
+    JSR SIDMANAGER
+@ENDIF
+@IF deployed.fade
+    JSR FADET
+@ENDIF
+@IF deployed.joystick
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard
@@ -114,6 +124,7 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+    PLA
     JMP ($0314)    
 
 IRQSVC2:
@@ -147,6 +158,8 @@ C128STARTUPDONE:
     STA $FFFA
     LDA #>NMISVC
     STA $FFFB
+
+    JSR TIMERAINIT
 
     LDA #<IRQSVC
     STA $FFFE
@@ -319,4 +332,26 @@ WAITTIMERL1:
     DEY
     CPY #$FF
     BNE WAITTIMER
+    RTS
+
+TIMERAINIT:
+
+TIMERAINITL1:
+    LDA $D012
+    CMP #230
+    BCC TIMERAINITL1
+
+    LDA #$81
+    STA $DC0D
+
+    LDA #$20
+    STA $dc04
+    LDA #$4e
+    STA $dc05
+
+    LDA #%00010001
+    STA $DC0E
+    LDA #0
+    STA $DC0F
+    
     RTS

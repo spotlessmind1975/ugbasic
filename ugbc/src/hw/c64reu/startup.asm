@@ -84,13 +84,22 @@ NMISVC:
 
 IRQSVC:
     PHA
-    LDA $DC0D
-    STA $D019
-    PLA
 @IF deployed.msprites
+    LDA $D019
+    AND #1
+    BEQ IRQSVCX 
+    STA $D019
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
+@ELSE
+    LDA #1
+    STA $D019
 @ENDIF
+    LDA $DC0D
+    PLA
+    RTI
+IRQSVCX:
+    LDA $DC0D
     JSR JIFFYUPDATE
 @IF deployed.music
     JSR MUSICPLAYER
@@ -101,6 +110,9 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.sidstartup
     JSR SIDMANAGER
 @ENDIF
+@IF deployed.fade
+    JSR FADET
+@ENDIF
 @IF deployed.joystick
     JSR JOYSTICKMANAGER
 @ENDIF
@@ -110,6 +122,7 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+    PLA
     JMP ($0314)    
 
 IRQSVC2:
@@ -199,6 +212,8 @@ C64REUSTARTUPDONE:
     LDA #>NMISVC
     STA $FFFB
 
+    JSR TIMERAINIT
+
     LDA #<IRQSVC
     STA $FFFE
     LDA #>IRQSVC
@@ -212,8 +227,8 @@ C64REUSTARTUPDONE:
 @IF deployed.msprites
 
     ; msprites
-    LDA #$7f                    ;CIA interrupt off
-    STA $DC0D
+    ; LDA #$7f                    ;CIA interrupt off
+    ; STA $DC0D
     LDA #$01                    ;Raster interrupt on
     STA $D01A
     LDA #$30
@@ -454,4 +469,25 @@ WAITTIMERL1:
     CPY #$FF
     BNE WAITTIMER
     RTS
+
+TIMERAINIT:
+
+TIMERAINITL1:
+    LDA $D012
+    CMP #230
+    BCC TIMERAINITL1
+
+    LDA #$81
+    STA $DC0D
+
+    LDA #$20
+    STA $dc04
+    LDA #$4e
+    STA $dc05
+
+    LDA #%00010001
+    STA $DC0E
+    LDA #0
+    STA $DC0F
     
+    RTS
