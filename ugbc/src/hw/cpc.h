@@ -45,56 +45,56 @@
 #define KEY_8						48
 #define KEY_9						33
 #define KEY_A						69
-#define KEY_ASTERISK				0xff
-#define KEY_AT						0xff
+#define KEY_ASTERISK				0xfe
+#define KEY_AT						0xfe
 #define KEY_B						54
 #define KEY_C						62
-#define KEY_CLEAR					0xff
-#define KEY_COLON					0xff
+#define KEY_CLEAR					0xfe
+#define KEY_COLON					0xfe
 #define KEY_COMMA					38
-#define KEY_COMMODORE				0xff
+#define KEY_COMMODORE				0xfe
 #define KEY_CONTROL					23
-#define KEY_CRSR_LEFT_RIGHT			0xff
-#define KEY_CRSR_UP_DOWN			0xff
+#define KEY_CRSR_LEFT_RIGHT			0xfe
+#define KEY_CRSR_UP_DOWN			0xfe
 #define KEY_D						61
 #define KEY_DELETE					24
 #define KEY_E						58
-#define KEY_EQUAL					0xff
+#define KEY_EQUAL					0xfe
 #define KEY_F						53
-#define KEY_F1						0xff
-#define KEY_F2						0xff
-#define KEY_F3						0xff
-#define KEY_F4						0xff
-#define KEY_F5						0xff
-#define KEY_F6						0xff
-#define KEY_F7						0xff
-#define KEY_F8						0xff
+#define KEY_F1						0xfe
+#define KEY_F2						0xfe
+#define KEY_F3						0xfe
+#define KEY_F4						0xfe
+#define KEY_F5						0xfe
+#define KEY_F6						0xfe
+#define KEY_F7						0xfe
+#define KEY_F8						0xfe
 #define KEY_G					    52
 #define KEY_H						44
-#define KEY_HOME					0xff
+#define KEY_HOME					0xfe
 #define KEY_I						35
-#define KEY_INSERT					0xff
+#define KEY_INSERT					0xfe
 #define KEY_J						45
 #define KEY_K						37
 #define KEY_L						36
-#define KEY_LEFT_ARROW				0xff
+#define KEY_LEFT_ARROW				0xfe
 #define KEY_LEFT_SHIFT				21
 #define KEY_M						29
-#define KEY_MINUS					0xff
+#define KEY_MINUS					0xfe
 #define KEY_N						46
 #define KEY_O						34
 #define KEY_P						27
 #define KEY_PERIOD					39
 #define KEY_PLUS					32
-#define KEY_POUND					0xff
+#define KEY_POUND					0xfe
 #define KEY_Q						69
 #define KEY_R						50
 #define KEY_RETURN					18
 #define KEY_RIGHT_SHIFT				21
-#define KEY_RUNSTOP					0xff
+#define KEY_RUNSTOP					0xfe
 #define KEY_S						60
-#define KEY_SEMICOLON				0xff
-#define KEY_SLASH					0xff
+#define KEY_SEMICOLON				0xfe
+#define KEY_SLASH					0xfe
 #define KEY_SPACE					47
 #define KEY_T						51
 #define KEY_U						42
@@ -105,30 +105,30 @@
 #define KEY_Y						43
 #define KEY_Z						59
 #define KEY_BACKSLASH               19
-#define KEY_SQUARE_OPEN             0xff
-#define KEY_SQUARE_CLOSED           0xff
-#define KEY_SEMICOMMA               0xff
-#define KEY_QUOTE                   0xff
-#define KEY_APIX                    0xff
-#define KEY_DEAD                    0xff
+#define KEY_SQUARE_OPEN             0xfe
+#define KEY_SQUARE_CLOSED           0xfe
+#define KEY_SEMICOMMA               0xfe
+#define KEY_QUOTE                   0xfe
+#define KEY_APIX                    0xfe
+#define KEY_DEAD                    0xfe
 #define KEY_SHIFT                   21
 #define KEY_CTRL                    23
-#define KEY_GRAPH                   0xff
+#define KEY_GRAPH                   0xfe
 #define KEY_CAPS                    70
-#define KEY_CODE                    0xff
+#define KEY_CODE                    0xfe
 #define KEY_ESC                     66
 #define KEY_TAB                     68
-#define KEY_STOP                    0xff
+#define KEY_STOP                    0xfe
 #define KEY_BS                      79
-#define KEY_SELECT                  0xff
-#define KEY_RET                     0xff
-#define KEY_INS                     0xff
+#define KEY_SELECT                  0xfe
+#define KEY_RET                     0xfe
+#define KEY_INS                     0xfe
 #define KEY_DEL                     24
 #define KEY_LEFT                    8
 #define KEY_UP                      0
 #define KEY_DOWN                    2
 #define KEY_RIGHT                   1
-#define KEY_DIVISION                0xff
+#define KEY_DIVISION                0xfe
 
 #define KEYBOARD_CONFIG_DEFAULT_SYNC       1
 
@@ -279,8 +279,8 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define CPC_GA_MASK( mask, value ) \
                             outline0( "LD B, $7F" ) \
                             outline0( "LD A, (GAVALUE)" ); \
-                            outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xff ) ); \
-                            outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xff ) ); \
+                            outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xfe ) ); \
+                            outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xfe ) ); \
                             outline0( "LD (GAVALUE), A" ); \
                             outline0( "LD C, A" ); \
                             outline0( "OUT (C), C" );
