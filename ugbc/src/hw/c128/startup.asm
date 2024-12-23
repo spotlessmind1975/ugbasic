@@ -93,9 +93,25 @@ IRQSVC:
     STA $D019
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
+
+@IF deployed.joystick
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+
 @ELSE
     LDA #1
     STA $D019
+
+@IF deployed.joystick
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+
 @ENDIF
     LDA $DC0D
 
@@ -122,12 +138,6 @@ IRQSVCX:
 @ENDIF
 @IF deployed.fade
     JSR FADET
-@ENDIF
-@IF deployed.joystick
-    JSR JOYSTICKMANAGER
-@ENDIF
-@IF deployed.keyboard
-    JSR KEYBOARDMANAGER
 @ENDIF
 @IF deployed.timer
     JSR TIMERMANAGER
