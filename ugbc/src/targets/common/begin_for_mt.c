@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void begin_for_prepare_mt( Environment * _environment ) {
+void begin_for_prepare_mt( Environment * _environment, char * _index ) {
 
     MAKE_LABEL
 
@@ -53,6 +53,15 @@ void begin_for_prepare_mt( Environment * _environment ) {
 
     cpu_jump( _environment, beginForPrepareAfter );
 
+    Variable * index = NULL;
+    if ( variable_exists( _environment, _index ) ) {
+        index = variable_retrieve( _environment, _index );
+    } else {
+        index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
+    }
+
+    loop->index = index;
+    
 }
 
 void begin_for_from_prepare_mt( Environment * _environment ) {
@@ -73,7 +82,7 @@ void begin_for_from_assign_mt( Environment * _environment, char * _from ) {
     Variable * fromResident = variable_resident( _environment, VT_TARRAY, "(from)" );
     _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
     _environment->arrayDimensions = 1;
-    variable_array_type( _environment, fromResident->name, from->type );
+    variable_array_type( _environment, fromResident->name, loop->index->arrayType );
 
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -109,7 +118,7 @@ void begin_for_to_assign_mt( Environment * _environment, char * _to ) {
     Variable * toResident = variable_resident( _environment, VT_TARRAY, "(to)" );
     _environment->arrayDimensionsEach[0] = _environment->protothreadConfig.count;
     _environment->arrayDimensions = 1;
-    variable_array_type( _environment, toResident->name, to->type );
+    variable_array_type( _environment, toResident->name, loop->index->arrayType );
 
     parser_array_init( _environment );    
     parser_array_index_symbolic( _environment, "PROTOTHREADCT" );

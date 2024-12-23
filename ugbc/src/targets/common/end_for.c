@@ -106,6 +106,9 @@ void end_for( Environment * _environment ) {
             variable_compare_and_branch_const( _environment, loop->index->name, 0, endFor, 1 );
         }
 
+        Variable * isLastStep = variable_compare( _environment, loop->index->name, loop->fromResident->name );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
+
     } else {
         parser_array_init( _environment );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -121,6 +124,11 @@ void end_for( Environment * _environment ) {
         Variable * stepValue = variable_move_from_array( _environment, loop->stepResident->name );
         parser_array_cleanup( _environment );
 
+        parser_array_init( _environment );    
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+        Variable * fromValue = variable_move_from_array( _environment, loop->fromResident->name );
+        parser_array_cleanup( _environment );        
+
         variable_add_inplace_vars( _environment, value->name, stepValue->name );
 
         parser_array_init( _environment );
@@ -131,6 +139,13 @@ void end_for( Environment * _environment ) {
         }
         variable_move_array( _environment, loop->index->name, value->name );
         parser_array_cleanup( _environment );
+
+        if ( !VT_SIGNED( value->type ) ) {
+            variable_compare_and_branch_const( _environment, value->name, 0, endFor, 1 );
+        }
+
+        Variable * isLastStep = variable_compare( _environment, value->name, fromValue->name );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
 
     }
 
