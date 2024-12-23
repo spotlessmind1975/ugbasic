@@ -10567,7 +10567,7 @@ statement2nc:
     } else {
         index = variable_define( _environment, $2, vt, 0 );
     }
-    begin_for_prepare( _environment );
+    begin_for_prepare( _environment, $2 );
     begin_for_from_prepare( _environment );
   } expr { 
       begin_for_from_assign( _environment, $6 );
@@ -10601,7 +10601,7 @@ statement2nc:
         index = variable_define( _environment, $3, VT_TARRAY, 0 );
         variable_array_type( _environment, $3, vt );
      }
-     begin_for_prepare_mt( _environment );
+     begin_for_prepare_mt( _environment, $3 );
      begin_for_from_prepare_mt( _environment );
   } expr { 
       begin_for_from_assign_mt( _environment, $8 );

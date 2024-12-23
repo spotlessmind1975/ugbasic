@@ -118,7 +118,7 @@ semplice ed efficace.
 
 </usermanual> */
 
-void begin_for_prepare( Environment * _environment ) {
+void begin_for_prepare( Environment * _environment, char * _index ) {
 
     MAKE_LABEL
 
@@ -132,6 +132,15 @@ void begin_for_prepare( Environment * _environment ) {
     unsigned char beginForPrepareAfter[MAX_TEMPORARY_STORAGE]; sprintf(beginForPrepareAfter, "%sprepa", label );
 
     cpu_jump( _environment, beginForPrepareAfter );
+
+    Variable * index = NULL;
+    if ( variable_exists( _environment, _index ) ) {
+        index = variable_retrieve( _environment, _index );
+    } else {
+        index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
+    }
+
+    loop->index = index;
 
 }
 
@@ -150,7 +159,7 @@ void begin_for_from_assign( Environment * _environment, char * _from ) {
     Loop * loop = _environment->loops;
 
     Variable * from = variable_retrieve( _environment, _from );
-    Variable * fromResident = variable_resident( _environment, from->type, "(from)" );
+    Variable * fromResident = variable_resident( _environment, loop->index->type, "(from)" );
 
     variable_move( _environment, from->name, fromResident->name );
 
@@ -179,7 +188,7 @@ void begin_for_to_assign( Environment * _environment, char * _to ) {
 
     Loop * loop = _environment->loops;
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * toResident = variable_resident( _environment, to->type, "(to)" );
+    Variable * toResident = variable_resident( _environment, loop->index->type, "(to)" );
 
     variable_move( _environment, to->name, toResident->name );
 
@@ -206,8 +215,8 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
 
     Loop * loop = _environment->loops;
 
-    Variable * from = loop->from;
-    Variable * to = loop->to;
+    Variable * from = loop->fromResident;
+    Variable * to = loop->toResident;
 
     // Calculate the maximum rappresentable size for the index, based on from and to.
     int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
