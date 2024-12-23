@@ -98,6 +98,9 @@ MSPRITESMANAGERADDRESS:
     STA $D019
 @ENDIF
     LDA $DC0D
+
+@IF deployed.msprites
+
 IRQSVCXX:
     PLA
     RTI
@@ -108,7 +111,6 @@ TIMERLATCHED:
 IRQSVCX:
     LDA $DC0D
 
-@IF deployed.msprites
     LDA $D012
     CMP #$80
     BCS IRQSVCX2
@@ -389,15 +391,15 @@ TIMERAINIT:
 
 TIMERAINITL1:
     LDA $D012
-    CMP #230
+    CMP #252
     BCC TIMERAINITL1
 
     LDA #$81
     STA $DC0D
 
-    LDA #$20
+    LDA #$c7
     STA $dc04
-    LDA #$4e
+    LDA #$4c
     STA $dc05
 
     LDA #%00010001
