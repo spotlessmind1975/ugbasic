@@ -40,11 +40,12 @@ DUFFDEVICE:
     OR C
     RET Z
 
-    LD A, 16
-    SUB C
-    AND 15
-    ADD A, A
-    LD (DUFFDEVICEL0+1), A
-    CALL DUFFDEVICEL0
+DUFFDEVICEL1:
+    LD A, (HL)
+    LD (DE), A
+    DEC BC
+    LD A, B
+    OR C
+    JR NZ, DUFFDEVICEL1
 
     RET

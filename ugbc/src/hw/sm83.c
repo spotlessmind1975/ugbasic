@@ -6543,6 +6543,9 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
 
     embedded( cpu_string_sub, src_hw_sm83_cpu_string_sub_asm );
 
+        outline1("LD HL, (%s)", _pattern);
+        outline0("LD (IX), HL");
+        
         outline1("LD A, (%s)", _source);
         outline0("LD L, A");
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
@@ -6550,10 +6553,6 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
         outline1("LD A, (%s)", _source_size);
         outline0("LD (IYL), A");
 
-        outline1("LD A, (%s)", _pattern);
-        outline0("LD (IXL), A");
-        outline1("LD A, (%s)", address_displacement(_environment, _pattern, "1"));
-        outline0("LD (IXH), A");
         outline1("LD A, (%s)", _pattern_size);
         outline0("LD IYH, A");
 

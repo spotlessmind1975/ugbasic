@@ -42,14 +42,26 @@ DSEQUAL:
     PUSH HL
     LD A, (HL)
     LD B, A
-    LD A, (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    LD A, (HL)
+    POP HL
+
     CP B
     JR NZ, DSEQUALNO
     INC HL
-    LD A, (IX)
+    ; LD A, (IX)
     LD B, A
-    LD E, (IX+1)
-    LD D, (IX+2)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    POP HL
+
 DSEQUALL1:
     LD A, (DE)
     CP (HL)
@@ -77,7 +89,15 @@ DSFINDEQUAL:
     LD B, 1
 DSFINDEQUALL:
     CALL DSDESCRIPTOR
-    LD A, (IX+3)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
+    POP HL
+
     AND $C0
     CP $C0
     JR Z, DSFINDEQUALF1
@@ -108,11 +128,19 @@ DSDEFINE:
     CALL DSDESCRIPTOR
     LD A, (HL)
     INC HL
-    LD (IX),A
-    LD (IX+1),L
-    LD (IX+2),H
+
+    PUSH DE
+    LD DE, (IX)
+    LD (DE), A
+    INC DE
+    LD (DE), L
+    INC DE
+    LD (DE), H
+    INC DE
     LD A, $C0
-    LD (IX+3),A
+    LD (DE),A
+    POP DE
+
 DSDEFINEE:
     RET
 
@@ -120,9 +148,17 @@ DSDEFINEE:
 DSALLOC:
     CALL DSFINDFREE
     CALL DSDESCRIPTOR
-    LD A, (IX+3)
+
+    PUSH DE
+    LD DE, (IX)
+    INC DE
+    INC DE
+    INC DE
+    LD A, (DE)
     OR A, $40
-    LD (IX+3),A
+    LD (DE),A
+    POP DE
+
     CALL DSCHECKFREE
 DSALLOCOK:
     CALL DSUSING
@@ -132,37 +168,99 @@ DSALLOCOK:
 ; DSFREE(B)
 DSFREE:
     CALL DSDESCRIPTOR
+
+    PUSH DE
+    LD DE, (IX)
+    INC DE
+    INC DE
+    INC DE
     LD A, 0
-    LD (IX+3), A
+    LD (DE),A
+    POP DE
+
     RET
 
 ; DSWRITE(B)
 DSWRITE:
     CALL DSDESCRIPTOR
-    LD A, (IX+3)
+
+    PUSH DE
+    LD DE, (IX)
+    INC DE
+    INC DE
+    INC DE
+    LD A, (DE)
+    POP DE
+
     AND $80
     CP $0
     JR Z, DSWRITED
-    LD C, (IX)
+
+    PUSH DE
+    LD DE, (IX)
+    LD A, (DE)
+    LD C, A
+    POP DE
+
     CALL DSCHECKFREE
-    LD A, (IX+3)
+
+    PUSH DE
+    LD DE, (IX)
+    INC DE
+    INC DE
+    INC DE
+    LD A, (DE)
     AND $7F
-    LD (IX+3),A
+    LD (DE), A
+    POP DE
+
     LD D, B
 DSWRITEOK:
-    LD C, (IX+1)
-    LD B, (IX+2)
+
+    PUSH DE
+    LD DE, (IX)
+    INC DE
+    LD A, (DE)
+    LD C, A
+    INC DE
+    LD A, (DE)
+    LD B, A
+    POP DE
+
     PUSH BC
     CALL DSUSING
-    LD C, (IX)
+
+    PUSH DE
+    LD DE, (IX)
+    LD A, (DE)
+    LD C, A
+    POP DE
+
     LD B, D
+
     CALL DSMALLOC
     POP BC
+
     LD HL, BC
-    LD E, (IX+1)
-    LD D, (IX+2)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    POP DE
+
 DSCOPY:
-    LD C, (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    LD A, (HL)
+    LD C, A
+    POP DE
+
     LD A, C
     JR Z,DSWRITED
 DSWRITECOPY:
@@ -179,18 +277,36 @@ DSWRITED:
 DSRESIZE:
     CALL DSDESCRIPTOR
     LD A, C
-    LD (IX), A    
+
+    PUSH HL
+    LD HL, (IX)
+    LD (HL), A
+    POP HL
+
     CP 0
     JR NZ, DSRESIZEDONE
-    LD A, (IX+3)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
     OR $80
-    LD (IX+3), A
+    LD (HL), A
+    POP HL
+
 DSRESIZEDONE:
     RET
 
 ; DSGC()
 DSGC:
-    PUSH IX
+
+    PUSH HL
+    LD HL, (IX)
+    LD (IY), HL
+    POP HL
+
     LD HL, FREE_STRING
     LD DE, max_free_string
     LD (HL), E
@@ -211,36 +327,82 @@ BSGCLOOP0:
 DSGCLOOP:
     PUSH BC
     CALL DSDESCRIPTOR
-    LD A, (IX+3)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
+    POP HL
+
     AND $80
     CP $0
     JR NZ, DSGCLOOP2
-    LD A, (IX+3)
+
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
+    POP HL
+
     AND $40
     CP $0
     JR Z, DSGCLOOP2
-    LD A, (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    LD A, (HL)
+    POP HL
+
     CP 0
     JR Z, DSGCLOOP3
     LD A, B
-    LD C, (IX+1)
-    LD B, (IX+2)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD A, (HL)
+    LD B, A
+    INC HL
+    LD A, (HL)
+    LD C, A
+    POP HL
+
     PUSH BC
     LD B, A
-    LD C, (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    LD C, (HL)
+    POP HL
+
     CALL DSMALLOC
     POP BC
-    LD E, (IX+1)
-    LD D, (IX+2)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    POP HL
+
     PUSH HL
     LD HL, BC
-    LD C, (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    LD C, (HL)
+    POP HL
+
     CALL DSWRITECOPY
     POP HL
     JMP DSGCLOOP3
 DSGCLOOP2:
-    ; LD A, 0
-    ; LD (IX), A
     JMP DSGCLOOP3
 DSGCLOOP3:
     POP BC
@@ -255,7 +417,12 @@ DSGCEND:
     LD A, (USING)
     XOR $FF
     LD (USING),A
-    POP IX
+
+    PUSH HL
+    LD HL, (IY)
+    LD (IX), HL
+    POP HL
+
     RET
 
 ; DSFINDFREE() -> B
@@ -264,7 +431,15 @@ DSFINDFREE:
     LD B, 1; // fix denote 0 as "unused slot"
 DSFINDFREEL:
     CALL DSDESCRIPTOR
-    LD A, (IX+3)
+
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
+    POP HL
+
     AND $40
     CP $0
     JR Z, DSFINDFREEN
@@ -297,9 +472,17 @@ DSMALLOC:
     POP HL
     PUSH HL
     ADD HL, DE
-    LD (IX), C
-    LD (IX+1), L
-    LD (IX+2), H
+
+    PUSH HL
+    LD HL, (IX)
+    LD (HL), C
+    INC HL
+    LD (HL), L
+    INC HL
+    LD (HL), H
+    INC HL
+    POP HL
+
     POP HL
     RET
 
@@ -363,8 +546,7 @@ DSDESCRIPTOR:
     POP DE
     LD HL, DESCRIPTORS
     ADD HL, DE
-    PUSH HL
-    POP IX
+    LD (IX), HL
     POP BC
     POP HL
     RET

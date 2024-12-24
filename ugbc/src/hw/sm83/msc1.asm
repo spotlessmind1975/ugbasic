@@ -98,12 +98,12 @@ MSC1DUPESNE:
     INC HL
     LD E, A
     SBC HL, DE
-    LD IX, HL
+    LD (IX), HL
     POP DE
     POP HL
 
     PUSH HL
-    LD HL, IX
+    LD HL, (IX)
 
     ; Recalculate the address from which to copy
     ; the output into the output again.

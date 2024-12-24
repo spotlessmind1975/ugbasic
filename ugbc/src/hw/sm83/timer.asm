@@ -51,14 +51,14 @@ TIMERMANAGERGO:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	PUSH	IX
-	PUSH	IY
-	EX	AF,AF'
-	PUSH	AF
-	EXX
-	PUSH	BC
-	PUSH	DE
-	PUSH	HL
+	; PUSH	IX
+	; PUSH	IY
+	; EX	AF,AF'
+	; PUSH	AF
+	; EXX
+	; PUSH	BC
+	; PUSH	DE
+	; PUSH	HL
 
     LD A, 1
     LD (TIMERRUNNING), A
@@ -226,14 +226,14 @@ TIMERMANAGERL2:
     LD A, 0
     LD (TIMERRUNNING), A
     
-	POP	HL
-	POP	DE
-	POP	BC
-	EXX
-	POP	AF
-	EX	AF,AF'
-	POP	IY
-	POP	IX
+	; POP	HL
+	; POP	DE
+	; POP	BC
+	; EXX
+	; POP	AF
+	; EX	AF,AF'
+	; POP	IY
+	; POP	IX
 	POP	HL
 	POP	DE
 	POP	BC
@@ -282,7 +282,7 @@ TIMERSETSTATUS0:
 TIMERSETCOUNTER:
     PUSH AF
     PUSH BC
-    PUSH IX
+    ; PUSH IX
     PUSH DE
 
     LD A, B
@@ -300,7 +300,7 @@ TIMERSETCOUNTER:
     LD (HL), A
 
     POP DE
-    POP IX
+    ; POP IX
     POP BC
     POP AF
 
@@ -310,7 +310,7 @@ TIMERSETCOUNTER:
 TIMERSETINIT:
     PUSH AF
     PUSH BC
-    PUSH IX
+    ; PUSH IX
     PUSH DE
 
     LD A, B
@@ -328,7 +328,7 @@ TIMERSETINIT:
     LD (HL), A
 
     POP DE
-    POP IX
+    ; POP IX
     POP BC
     POP AF
 
@@ -339,7 +339,7 @@ TIMERSETINIT:
 TIMERSETADDRESS:
     PUSH AF
     PUSH BC
-    PUSH IX
+    ; PUSH IX
     PUSH DE
 
     LD A, B
@@ -357,7 +357,7 @@ TIMERSETADDRESS:
     LD (HL), A
 
     POP DE
-    POP IX
+    ; POP IX
     POP BC
     POP AF
 

@@ -54,19 +54,31 @@ CPUSTRINGSUB:
     LD C, A
 
     ; Save original pattern's pointer.
-    PUSH IX
+    PUSH HL
+    LD HL, (IX)
+    LD (IY), HL
+    POP HL
 
     ; Main comparison loop.
 CPUSTRINGSUBL1:
     ; Load the character from the source string. If they are
     ; different from the actual letter of pattern...
     LD A, (HL)
-    CP (IX)
+
+    PUSH HL
+    LD HL, (IX)
+    CP (HL)
+    POP HL
+
     ; go to copy it on the target string.
     JR NZ, CPUSTRINGSUBL2
 
     ; Move ahead on the pattern.
-    INC IX
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD (IX), HL
+    POP HL
 
     ; Move ahead on the original string
     INC HL
@@ -84,8 +96,10 @@ CPUSTRINGSUBL1:
     JR NZ, CPUSTRINGSUBL1
 
     ; Reset the original pointer and length of the pattern
-    POP IX
-    PUSH IX
+    PUSH HL
+    LD HL, (IY)
+    LD (IX), HL
+    POP HL
     LD A, C
     LD (IYH), A
 
@@ -97,8 +111,10 @@ CPUSTRINGSUBL2:
     LD (DE), A
 
     ; Reset the original pointer and length of the pattern
-    POP IX
-    PUSH IX
+    PUSH HL
+    LD HL, (IY)
+    LD (IX), HL
+    POP HL
     LD A, C
     LD (IYH), A
 
@@ -115,6 +131,6 @@ CPUSTRINGSUBL2:
     JR NZ, CPUSTRINGSUBL1
 
 CPUSTRINGSUBDONE:    
-    POP IX
+    ; POP IX
 
     RET
