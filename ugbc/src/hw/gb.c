@@ -1924,67 +1924,31 @@ void gb_scroll_text( Environment * _environment, int _direction ) {
 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+    // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
-    // outline1("LD DE, (%s)", _text);
-    // outline1("LD A, (%s)", _text_size);
-    // outline0("LD C, A");
+    outline1("LD HL, (%s)", _text);
+    outline0("PUSH HL");
+    outline0("POP DE");
+    outline1("LD A, (%s)", _text_size);
+    outline0("LD C, A");
 
-    // if ( _raw ) {
+    if ( _raw ) {
 
-    //     if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
-    //         // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
-    //         // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    //         // deploy( textEncodedAt, src_hw_gb_text_asm );
-    //         // deploy( textEncodedAtGraphicRaw, src_hw_gb_text_at_graphic_raw_asm );
-    //         if ( ! _environment->hasGameLoop ) {
-    //             outline0("CALL TEXTATBITMAPMODERAW");
-    //         } else {
-    //             outline0("CALL TEXTATBITMAPMODENMI2RAW");
-    //         }
-    //     } else {
-    //         // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    //         // deploy( clsText, src_hw_gb_cls_text_asm );
-    //         #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-    //                 // deploy( textEncodedAt, src_hw_gb_text_asm );
-    //         #endif
-    //         // deploy( textEncodedAtTextRaw, src_hw_gb_text_at_text_raw_asm );
-    //         if ( ! _environment->hasGameLoop ) {
-    //             outline0("CALL TEXTATTILEMODERAW");
-    //         } else {
-    //             outline0("CALL TEXTATTILEMODENMI2RAW");
-    //         }
-    //     }
+        // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
+        // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+        // deploy( textEncodedAt, src_hw_gb_text_asm );
+        // deploy( textEncodedAtGraphicRaw, src_hw_gb_text_at_raw_asm );
+        outline0("CALL TEXTATBITMAPMODERAW");
 
-    // } else {
+    } else {
 
-    //     if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
-    //         // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
-    //         // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    //         // deploy( textEncodedAt, src_hw_gb_text_asm );
-    //         // deploy( textEncodedAtGraphic, src_hw_gb_text_at_graphic_asm );
-    //         if ( ! _environment->hasGameLoop ) {
-    //             outline0("CALL TEXTATBITMAPMODE");
-    //         } else {
-    //             outline0("CALL TEXTATBITMAPMODENMI2");
-    //         }
-    //     } else {
-    //         // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    //         // deploy( clsText, src_hw_gb_cls_text_asm );
-    //         #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-    //                 // deploy( textEncodedAt, src_hw_gb_text_asm );
-    //         #endif
-    //         // deploy( textEncodedAtText, src_hw_gb_text_at_text_asm );
-    //         if ( ! _environment->hasGameLoop ) {
-    //             outline0("CALL TEXTATTILEMODE");
-    //         } else {
-    //             outline0("CALL TEXTATTILEMODENMI2");
-    //         }
-    //     }
+        // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
+        // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+        // deploy( textEncodedAt, src_hw_gb_text_asm );
+        deploy( textEncodedAtGraphic, src_hw_gb_text_at_asm );
+        outline0("CALL TEXTATBITMAPMODE");
 
-
-    // }
+    }
 
 }
 
@@ -2060,20 +2024,20 @@ void gb_initialization( Environment * _environment ) {
     // variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     // variable_global( _environment, "RESOLUTIONY" );
     
-    // variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
-    // variable_global( _environment, "TABCOUNT" );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    variable_global( _environment, "TABCOUNT" );
 
-    // variable_import( _environment, "CLINEX", VT_BYTE, 0 );
-    // variable_global( _environment, "CLINEX" );
+    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEX" );
 
-    // variable_import( _environment, "CLINEY", VT_BYTE, 0 );
-    // variable_global( _environment, "CLINEY" );
+    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEY" );
 
     // variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
     // variable_global( _environment, "PLOTCPE" );
 
-    // variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
-    // variable_global( _environment, "TABSTODRAW" );
+    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    variable_global( _environment, "TABSTODRAW" );
 
     // variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     // variable_global( _environment, "CURRENTMODE" );
@@ -2172,7 +2136,9 @@ void gb_initialization( Environment * _environment ) {
 
     // gb_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
-    // font_descriptors_init( _environment, 0 );
+    _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
+
+    font_descriptors_init( _environment, 0 );
     
     // console_calculate( _environment );
 

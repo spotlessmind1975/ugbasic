@@ -129,17 +129,17 @@ DSDEFINE:
     LD A, (HL)
     INC HL
 
-    PUSH DE
-    LD DE, (IX)
-    LD (DE), A
-    INC DE
-    LD (DE), L
-    INC DE
-    LD (DE), H
-    INC DE
+    PUSH HL
+    LD HL, (IX)
+    LD (HL), A
+    INC HL
+    LD (HL), L
+    INC HL
+    LD (HL), H
+    INC HL
     LD A, $C0
-    LD (DE),A
-    POP DE
+    LD (HL),A
+    POP HL
 
 DSDEFINEE:
     RET
@@ -149,15 +149,15 @@ DSALLOC:
     CALL DSFINDFREE
     CALL DSDESCRIPTOR
 
-    PUSH DE
-    LD DE, (IX)
-    INC DE
-    INC DE
-    INC DE
-    LD A, (DE)
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
     OR A, $40
-    LD (DE),A
-    POP DE
+    LD (HL),A
+    POP HL
 
     CALL DSCHECKFREE
 DSALLOCOK:
@@ -169,14 +169,14 @@ DSALLOCOK:
 DSFREE:
     CALL DSDESCRIPTOR
 
-    PUSH DE
-    LD DE, (IX)
-    INC DE
-    INC DE
-    INC DE
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
     LD A, 0
-    LD (DE),A
-    POP DE
+    LD (HL),A
+    POP HL
 
     RET
 
@@ -184,57 +184,57 @@ DSFREE:
 DSWRITE:
     CALL DSDESCRIPTOR
 
-    PUSH DE
-    LD DE, (IX)
-    INC DE
-    INC DE
-    INC DE
-    LD A, (DE)
-    POP DE
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
+    POP HL
 
     AND $80
     CP $0
     JR Z, DSWRITED
 
-    PUSH DE
-    LD DE, (IX)
-    LD A, (DE)
+    PUSH HL
+    LD HL, (IX)
+    LD A, (HL)
     LD C, A
-    POP DE
+    POP HL
 
     CALL DSCHECKFREE
 
-    PUSH DE
-    LD DE, (IX)
-    INC DE
-    INC DE
-    INC DE
-    LD A, (DE)
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    INC HL
+    INC HL
+    LD A, (HL)
     AND $7F
-    LD (DE), A
-    POP DE
+    LD (HL), A
+    POP HL
 
     LD D, B
 DSWRITEOK:
 
-    PUSH DE
-    LD DE, (IX)
-    INC DE
-    LD A, (DE)
+    PUSH HL
+    LD HL, (IX)
+    INC HL
+    LD A, (HL)
     LD C, A
-    INC DE
-    LD A, (DE)
+    INC HL
+    LD A, (HL)
     LD B, A
-    POP DE
+    POP HL
 
     PUSH BC
     CALL DSUSING
 
-    PUSH DE
-    LD DE, (IX)
-    LD A, (DE)
+    PUSH HL
+    LD HL, (IX)
+    LD A, (HL)
     LD C, A
-    POP DE
+    POP HL
 
     LD B, D
 
@@ -564,6 +564,8 @@ DSINIT:
     LDIR
     LD A, stringscount
     LD (MAXSTRINGS), A
-    LD DE, stringsspace
-    LD (FREE_STRING), DE
+    PUSH HL
+    LD HL, stringsspace
+    LD (FREE_STRING), HL
+    POP HL
     RET

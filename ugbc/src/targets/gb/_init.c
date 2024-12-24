@@ -241,8 +241,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    // // tms9918_initialization( _environment );
-    // // ay8910_initialization( _environment );
+    gb_initialization( _environment );
     
     // if ( _environment->tenLinerRulesEnforced ) {
     //     shell_injection( _environment );

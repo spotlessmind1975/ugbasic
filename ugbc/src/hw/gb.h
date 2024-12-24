@@ -303,6 +303,103 @@ void gb_dojo_peek_message( Environment * _environment, char * _port_id, char * _
 void gb_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void gb_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
+void gb_initialization( Environment * _environment );
+void gb_finalization( Environment * _environment );
+
+int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
+
+void gb_back( Environment * _environment );
+void gb_background_color( Environment * _environment, int _index, int _background_color );
+void gb_background_color_vars( Environment * _environment, char * _index, char * _background_color );
+void gb_background_color_semivars( Environment * _environment, int _index, char * _background_color );
+void gb_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color );
+void gb_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
+void gb_border_color( Environment * _environment, char * _border_color );
+Variable * gb_collision( Environment * _environment, char * _sprite );
+void gb_hit( Environment * _environment, char * _sprite_mask, char * _result );
+void gb_next_raster( Environment * _environment );
+void gb_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+void gb_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+void gb_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
+void gb_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
+void gb_bitmap_disable( Environment * _environment );
+void gb_bitmap_at( Environment * _environment, char * _address );
+void gb_colormap_at( Environment * _environment, char * _address );
+void gb_textmap_at( Environment * _environment, char * _address );
+void gb_tiles_at( Environment * _environment, char * _address );
+void gb_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
+void gb_fade( Environment * _environment, char * _ticks );
+
+void gb_bank_select( Environment * _environment, int _bank );
+void gb_screen_on( Environment * _environment );
+void gb_screen_off( Environment * _environment );
+void gb_screen_rows( Environment * _environment, char * _rows );
+void gb_screen_columns( Environment * _environment, char * _columns );
+
+void gb_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void gb_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
+void gb_sprite_enable( Environment * _environment, char *_sprite );
+void gb_sprite_disable( Environment * _environment, char * _sprite );
+void gb_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
+void gb_sprite_expand_vertical( Environment * _environment, char * _sprite );
+void gb_sprite_expand_horizontal( Environment * _environment, char * _sprite );
+void gb_sprite_compress_vertical( Environment * _environment, char * _sprite );
+void gb_sprite_compress_horizontal( Environment * _environment, char * _sprite );
+void gb_sprite_multicolor( Environment * _environment, char * _sprite );
+void gb_sprite_monocolor( Environment * _environment, char * _sprite );
+void gb_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void gb_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
+void gb_vertical_scroll( Environment * _environment, char * _displacement );
+void gb_horizontal_scroll( Environment * _environment, char * _displacement );
+void gb_busy_wait( Environment * _environment, char * _timing );
+
+void gb_tiles_get( Environment * _environment, char * _result );
+void gb_get_width( Environment * _environment, char * _result );
+void gb_get_height( Environment * _environment, char * _result );
+
+void gb_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void gb_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
+void gb_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
+void gb_cls( Environment * _environment );
+void gb_scroll_text( Environment * _environment, int _direction );
+void gb_hscroll_line( Environment * _environment, int _direction );
+void gb_hscroll_screen( Environment * _environment, int _direction );
+void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw );
+void gb_cline( Environment * _environment, char * _characters );
+void gb_scroll( Environment * _environment, int _dx, int _dy );
+
+Variable * gb_get_raster_line( Environment * _environment );
+
+int gb_image_size( Environment * _environment, int _width, int _height, int _mode );
+Variable * gb_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+Variable * gb_sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y );
+void gb_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
+void gb_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
+void gb_wait_vbl( Environment * _environment, char * _raster_line );
+Variable * gb_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * gb_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
+Variable * gb_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
+void gb_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
+
+void gb_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
+void gb_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
+void gb_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void gb_use_tileset( Environment * _environment, char * _tileset );
+void gb_tile_at( Environment * _environment, char * _x, char * _y, char *_result );
+
+void gb_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
+void gb_move_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
+void gb_move_video_video( Environment * _environment, char * _from, char * _to, char * _size );
+
+typedef void (*CpcSliceImageFunction)(Environment *, char *, char *, char *, int, int, char *);
+
+void gb_slice_image_copy( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+void gb_slice_image_extract( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+void gb_sys_call( Environment * _environment, int _destination );
+int gb_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+void gb_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
+
+void gb_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 
 
 #endif
