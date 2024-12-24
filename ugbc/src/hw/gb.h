@@ -187,9 +187,9 @@
 #define MAX_AUDIO_CHANNELS  3
 
 #define COLOR_TRANSPARENT			0x00
-#define COLOR_BLACK					0x01
+#define COLOR_BLACK					0x00
 #define COLOR_DARK_WHITE			0x0e // GREY
-#define COLOR_WHITE					0x0f
+#define COLOR_WHITE					0x01
 #define COLOR_LIGHT_WHITE			COLOR_WHITE
 #define COLOR_DARK_RED				0x06 // BROWN
 #define COLOR_RED					0x08
@@ -226,13 +226,10 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define TILEMAP_MODE_STANDARD       0           // Text Mode
-#define TILEMAP_MODE_GRAPHIC1       1           // Graphics I Mode
-#define BITMAP_MODE_GRAPHIC2        2           // Graphics II Mode
-#define BITMAP_MODE_MULTICOLOR      3           // Multicolor Mode
-#define BITMAP_MODE_STANDARD        BITMAP_MODE_GRAPHIC2
+#define TILEMAP_MODE_STANDARD       0           
+#define BITMAP_MODE_STANDARD        TILEMAP_MODE_STANDARD
 
-#define BITMAP_MODE_DEFAULT         BITMAP_MODE_GRAPHIC2
+#define BITMAP_MODE_DEFAULT         TILEMAP_MODE_STANDARD
 
 #define SPRITE_COUNT                32
 #define SPRITE_WIDTH                8

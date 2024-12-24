@@ -1119,245 +1119,21 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    // cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    // cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
+    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
 
-// #ifdef __coleco__
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenTilesWidth = 20;
+    _environment->screenTilesHeight = 18;
+    _environment->screenTiles = 255;
+    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+    _environment->screenColors = 4;
+    _environment->currentModeBW = 0;
 
-//     MAKE_LABEL
-        
-//     if ( ! _environment->hasGameLoop ) {
-//         outline1("JP %sdone", label );
-//         outhead1("%s:", label );
-//     }
-
-// #endif
-
-    // switch( _screen_mode->id ) {
-    //     // M1 M2 M3 Display Mode
-    //     // 0  0  0  Graphics I Mode
-    //     // 0  0  1  Graphics II Mode
-    //     // 0  1  0  Multicolor Mode
-    //     // 1  0  0  Text Mode
-    //     case TILEMAP_MODE_STANDARD:
-    //         _environment->fontWidth = 6;
-    //         _environment->fontHeight = 8;
-    //         _environment->screenTilesWidth = 40;
-    //         _environment->screenTilesHeight = 24;
-    //         _environment->screenTiles = 255;
-    //         _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-    //         _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
-    //         _environment->screenColors = 16;
-    //         _environment->currentModeBW = 0;
-
-    //         // M3 = 0
-    //         WVDP_R0( 0x00 );
-    //         //  1 + = Selects 16K bytes of VRAM.
-    //         //  2 + = Enables the active display
-    //         //  4 + = Enables VDP interrupt
-    //         //  8 + = M1 x 1 = 8
-    //         //      = M2 x 0 = 0
-    //         //      = Reserved Bit (must be set to O)
-    //         //      = Selects Size 1 sprites (16x16 pixels)
-    //         //      = Selects no magnification
-    //         WVDP_R1( 0xb2 );
-
-    //         // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-    //         // range of its contents is from O-F. The contents of the register form the upper four bits of
-    //         // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-    //         // (Register 2) * 400 (Hex)
-    //         WVDP_RNAME( 0x06 );
-
-    //         cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
-
-    //         // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-    //         // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-    //         // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-    //         // (Register 4) * 800 (Hex).
-    //         // 5-3
-    //         // NOTE
-    //         // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-    //         // mode the Pattern Table can only be located in one of two places in VRAM, either
-    //         // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-    //         // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-    //         // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-    //         // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-    //         // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-    //         // 03 and Hex 07.
-    //         WVDP_RPATTERN( 0x00 );
-
-    //         cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
-
-    //         WVDP_RSPRITEA( 0xff );
-    //         WVDP_RSPRITEP( 0xff );
-
-    //         outline0("CALL TMS9918AUDCCHAR01");
-    //         outline0("CALL TMS9918SPRITEINIT");
-
-    //         WVDP_R1( 0xf2 );
-
-    //         break;
-    //     case TILEMAP_MODE_GRAPHIC1:
-    //         _environment->fontWidth = 8;
-    //         _environment->fontHeight = 8;
-    //         _environment->screenTilesWidth = 32;
-    //         _environment->screenTilesHeight = 24;
-    //         _environment->screenTiles = 255;
-    //         _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-    //         _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
-    //         _environment->screenColors = 16;    
-    //         _environment->currentModeBW = 1;
-
-    //         // M3 = 0
-    //         WVDP_R0( 0x00 );
-    //         //  1 + = Selects 16K bytes of VRAM.
-    //         //  2 + = Enables the active display
-    //         //  4 + = Enables VDP interrupt
-    //         //  8 + = M1 x 0 = 0
-    //         //      = M2 x 0 = 0
-    //         //      = Reserved Bit (must be set to O)
-    //         //      = Selects Size 1 sprites (16x16 pixels)
-    //         //      = Selects no magnification
-    //         WVDP_R1( 0xa2 );
-
-    //         // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-    //         // range of its contents is from O-F. The contents of the register form the upper four bits of
-    //         // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-    //         // (Register 2) * 400 (Hex)
-    //         WVDP_RNAME( 0x06 );
-
-    //         cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
-
-    //         // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
-    //         // range of its contents is from O-FF. The contents of the register form the upper eight bits of
-    //         // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
-    //         // (Register 3) * 40 (Hex).
-    //         // NOTE
-    //         // Register 3 functions differently when the VDP is in Graphics II Mode. In this
-    //         // mode the Color Table can only be located ~n one of two places in VRAM, either
-    //         // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Color Table to be
-    //         // located, then the MSB in Register 3 has to be a O. If Hex 2000 is the location
-    //         // choice for your Color Table, then the MSB in Register 3 must be a 1. In either
-    //         // case, all the LSBs in Register 3 must be set to ls. Therefore, in Graphics II
-    //         // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
-    //         // FF.
-    //         WVDP_RCOLORTABLE( 0x12 );
-
-    //         cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
-
-    //         // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-    //         // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-    //         // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-    //         // (Register 4) * 800 (Hex).
-    //         // 5-3
-    //         // NOTE
-    //         // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-    //         // mode the Pattern Table can only be located in one of two places in VRAM, either
-    //         // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-    //         // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-    //         // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-    //         // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-    //         // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-    //         // 03 and Hex 07.
-    //         WVDP_RPATTERN( 0x0 );
-
-    //         cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
-
-    //         WVDP_RSPRITEA( 0x20 ); // 1000
-    //         WVDP_RSPRITEP( 0x00 ); // 0000
-
-    //         cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1000 );
-    //         cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
-
-    //         outline0("CALL TMS9918AUDCCHAR01");
-    //         outline0("CALL TMS9918SPRITEINIT");
-
-    //         WVDP_R1( 0xe2 );
-
-    //         break;
-    //     case BITMAP_MODE_GRAPHIC2:
-    //     case BITMAP_MODE_MULTICOLOR:
-    //         _environment->fontWidth = 8;
-    //         _environment->fontHeight = 8;
-    //         _environment->screenTilesWidth = 32;
-    //         _environment->screenTilesHeight = 24;
-    //         _environment->screenTiles = 255;
-    //         _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-    //         _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
-    //         _environment->screenColors = 16;    
-    //         _environment->currentModeBW = 1;
-
-    //         // M3 = 1
-    //         WVDP_R0( 0x02 );
-    //         //  1 + = Selects 16K bytes of VRAM.
-    //         //  2 + = Enables the active display
-    //         //  4 + = Enables VDP interrupt
-    //         //  8 + = M1 x 0 = 0
-    //         //      = M2 x 0 = 0
-    //         //      = Reserved Bit (must be set to O)
-    //         //      = Selects Size 1 sprites (16x16 pixels)
-    //         //      = Selects no magnification
-    //         WVDP_R1( 0x80 );
-
-    //         // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-    //         // range of its contents is from O-F. The contents of the register form the upper four bits of
-    //         // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-    //         // (Register 2) * 400 (Hex)
-    //         WVDP_RNAME( 0x0e );
-
-    //         cpu_store_16bit( _environment, "TEXTADDRESS", 0x0e * 0x0400 );
-
-    //         // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
-    //         // range of its contents is from O-FF. The contents of the register form the upper eight bits of
-    //         // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
-    //         // (Register 3) * 40 (Hex).
-    //         // NOTE
-    //         // Register 3 functions differently when the VDP is in Graphics II Mode. In this
-    //         // mode the Color Table can only be located ~n one of two places in VRAM, either
-    //         // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Color Table to be
-    //         // located, then the MSB in Register 3 has to be a O. If Hex 2000 is the location
-    //         // choice for your Color Table, then the MSB in Register 3 must be a 1. In either
-    //         // case, all the LSBs in Register 3 must be set to ls. Therefore, in Graphics II
-    //         // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
-    //         // FF.
-    //         WVDP_RCOLORTABLE( 0xff );
-
-    //         cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
-
-    //         // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-    //         // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-    //         // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-    //         // (Register 4) * 800 (Hex).
-    //         // 5-3
-    //         // NOTE
-    //         // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-    //         // mode the Pattern Table can only be located in one of two places in VRAM, either
-    //         // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-    //         // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-    //         // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-    //         // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-    //         // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-    //         // 03 and Hex 07.
-    //         WVDP_RPATTERN( 0x03 );
-
-    //         cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
-
-    //         WVDP_RSPRITEA( 0x76 ); // 1000
-    //         WVDP_RSPRITEP( 0x03 ); // 0000
-
-    //         cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
-    //         cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
-
-    //         outline0("CALL TMS9918AUDCCHAR23");
-    //         outline0("CALL TMS9918SPRITEINIT");
-
-    //         WVDP_R1( 0xe2 );
-
-    //         break;
-    // }
-
-    // _environment->consoleTilesWidth = _environment->screenTilesWidth;
-    // _environment->consoleTilesHeight = _environment->screenTilesHeight;
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
     // cpu_store_16bit( _environment, "CLIPX1", 0 );
     // cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
@@ -1367,16 +1143,16 @@ int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     // cpu_store_16bit( _environment, "ORIGINX", 0 );
     // cpu_store_16bit( _environment, "ORIGINY", 0 );
 
-    // cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
-    // cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    // cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
-    // cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
-    // cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    // cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    // cpu_store_8bit( _environment, "CURRENTTILESWIDTHX8", _environment->screenTilesWidth * 8 );
-    // cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-    // cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
-    // cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTHX8", _environment->screenTilesWidth * 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     cpu_store_8bit( _environment, "CONSOLEX1", 0 );
     cpu_store_8bit( _environment, "CONSOLEY1", 0 );
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
@@ -1384,85 +1160,55 @@ int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
     cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
 
-    // console_calculate( _environment );
+    console_calculate( _environment );
     
-// #ifdef __coleco__
-
-//     if ( ! _environment->hasGameLoop ) {
-//         outline0("RET");
-//         outline1("%sdone:", label );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//         outline1("LD HL, %s", label );
-//         outline0("CALL SET_VDP_HOOK0" );
-//         outline0("CALL WAIT_VDP_HOOK");
-//     }
-    
-// #endif
-
-    // printf("gb_tilemap_enable() -> screen tiles width %d\n", _environment->screenTilesWidth );
-
-    // if (_environment->vestigialConfig.clsImplicit ) {
-    //     gb_cls( _environment );
-    // }
+    if (_environment->vestigialConfig.clsImplicit ) {
+        gb_cls( _environment );
+    }
 
 }
 
 void console_calculate( Environment * _environment ) {
 
-    // int startAddress = 0;
+    int startAddress = 0x9000;
 
-    // switch( _environment->currentMode ) {
-    //     // M1 M2 M3 Display Mode
-    //     // 0  0  0  Graphics I Mode
-    //     // 0  0  1  Graphics II Mode
-    //     // 0  1  0  Multicolor Mode
-    //     // 1  0  0  Text Mode
-    //     case TILEMAP_MODE_STANDARD:
-    //     case TILEMAP_MODE_GRAPHIC1:
-    //         startAddress = 6 * 0x0400;
-    //         break;
-    //     case BITMAP_MODE_GRAPHIC2:
-    //     case BITMAP_MODE_MULTICOLOR:
-    //         startAddress = 0x0e * 0x0400;
-    //         break;
-    // }
+    int consoleSA = startAddress + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
 
-    // int consoleSA = startAddress + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
-    // int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
-    // int consoleHB = _environment->activeConsole.height * 8;
-
-    // cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
-    // cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
-    // cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
 
 }
 
 void console_calculate_vars( Environment * _environment ) {
 
-    // outline0( "CALL CONSOLECALCULATE" );
+    outline0( "CALL CONSOLECALCULATE" );
 
 }
 
 void gb_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
-    // if ( mode ) {
-    //     gb_screen_mode_enable( _environment, mode );
+    if ( mode ) {
+        gb_screen_mode_enable( _environment, mode );
 
-    //     cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    //     cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
 
-    //     _environment->currentMode = mode->id;
-    //     _environment->currentTileMode = 0;
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
 
-    //     if (_environment->vestigialConfig.clsImplicit ) {
-    //         gb_cls( _environment );
-    //     }
+        if (_environment->vestigialConfig.clsImplicit ) {
+            gb_cls( _environment );
+        }
 
-    // } else {
-    //     WARNING_SCREEN_MODE( -1 );
-    // }
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
+
 }
 
 void gb_bitmap_disable( Environment * _environment ) {
@@ -1473,28 +1219,28 @@ void gb_bitmap_disable( Environment * _environment ) {
 
 void gb_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    // ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
-    // if ( mode ) {
+    if ( mode ) {
 
-    //     // printf("gb_tilemap_enable() -> %d\n", mode->id );
+        // printf("gb_tilemap_enable() -> %d\n", mode->id );
         
-    //     gb_screen_mode_enable( _environment, mode );
+        gb_screen_mode_enable( _environment, mode );
 
-    //     _environment->currentMode = mode->id;
-    //     _environment->currentTileMode = 1;
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
 
-    //     cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
-    //     cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
-    //     if (_environment->vestigialConfig.clsImplicit ) {
-    //         gb_cls( _environment );
-    //     }
+        if (_environment->vestigialConfig.clsImplicit ) {
+            gb_cls( _environment );
+        }
 
-    // } else {
-    //     // printf("gb_tilemap_enable() -> -1\n" );
-    //     WARNING_SCREEN_MODE( -1 );
-    // }
+    } else {
+        // printf("gb_tilemap_enable() -> -1\n" );
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -1957,22 +1703,22 @@ void gb_initialization( Environment * _environment ) {
     // // deploy( tms9918vars, src_hw_gb_vars_asm );
     // deploy_preferred( tms9918startup, src_hw_gb_startup_asm );
 
-    // variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
-    // variable_global( _environment, "CURRENTWIDTH" );
-    // variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
-    // variable_global( _environment, "CURRENTHEIGHT" );
-    // variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
-    // variable_global( _environment, "CURRENTTILES" );
-    // variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
-    // variable_global( _environment, "CURRENTTILESWIDTH" );
-    // variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
-    // variable_global( _environment, "CURRENTTILESWIDTHX8" );
-    // variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
-    // variable_global( _environment, "CURRENTTILESHEIGHT" );
-    // variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
-    // variable_global( _environment, "FONTWIDTH" );
-    // variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
-    // variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
+    variable_global( _environment, "CURRENTTILES" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
+    variable_global( _environment, "CURRENTTILESWIDTHX8" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
+    variable_global( _environment, "FONTHEIGHT" );
     // variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
     // variable_global( _environment, "SPRITEADDRESS" );    
     // variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
@@ -1989,13 +1735,8 @@ void gb_initialization( Environment * _environment ) {
     // char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     // variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, 8, 8, "Graphic I" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 20, 18, 4, 8, 8, "Tilemap mode" );
 
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, 8, 8, "Graphic II" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_MULTICOLOR, 1, 256, 192, 16, 8, 8, "Multicolor" );
- 
     // outline0("CALL TMS9918STARTUP");
 
     // variable_import( _environment, "XGR", VT_POSITION, 0 );
@@ -2019,10 +1760,10 @@ void gb_initialization( Environment * _environment ) {
     // variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
     // variable_global( _environment, "ORIGINY" );
 
-    // variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
-    // variable_global( _environment, "RESOLUTIONX" );
-    // variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
-    // variable_global( _environment, "RESOLUTIONY" );
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
     
     variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
     variable_global( _environment, "TABCOUNT" );
@@ -2039,10 +1780,10 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );
 
-    // variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
-    // variable_global( _environment, "CURRENTMODE" );
-    // variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
-    // variable_global( _environment, "CURRENTTILEMODE" );
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
 
     // variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     // variable_global( _environment, "SPRITECOUNT" );
@@ -2127,20 +1868,20 @@ void gb_initialization( Environment * _environment ) {
     // variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
     // variable_global( _environment, "SLICEDTARGET" );
 
-    // variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
-    // variable_global( _environment, "CONSOLESA" );
-    // variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
-    // variable_global( _environment, "CONSOLEHB" );
-    // variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
-    // variable_global( _environment, "CONSOLEWB" );
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
 
-    // gb_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    gb_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
 
     font_descriptors_init( _environment, 0 );
     
-    // console_calculate( _environment );
+    console_calculate( _environment );
 
     // _environment->currentRgbConverterFunction = rgbConverterFunction;
     // _environment->screenShades = 16;
