@@ -279,8 +279,8 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define CPC_GA_MASK( mask, value ) \
                             outline0( "LD B, $7F" ) \
                             outline0( "LD A, (GAVALUE)" ); \
-                            outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xfe ) ); \
-                            outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xfe ) ); \
+                            outline1( "AND A, $%2.2x", (unsigned char) ~( (unsigned char) mask & 0xff ) ); \
+                            outline1( "OR A, $%2.2x", (unsigned char) ( (unsigned char) value & 0xff ) ); \
                             outline0( "LD (GAVALUE), A" ); \
                             outline0( "LD C, A" ); \
                             outline0( "OUT (C), C" );
