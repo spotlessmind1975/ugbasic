@@ -943,3 +943,9 @@ OAMA_X:              DB  1   ; x pos
 OAMA_TILEID:         DB  1   ; tile id
 OAMA_FLAGS:          DB  1   ; flags (see below)
 sizeof_OAM_ATTRS:    DB  0
+
+WAITSTATE:
+    LDH  A, (rSTAT)
+    AND STATF_BUSY
+    JR NZ, WAITSTATE
+    RET

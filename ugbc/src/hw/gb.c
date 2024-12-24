@@ -1670,6 +1670,8 @@ void gb_scroll_text( Environment * _environment, int _direction ) {
 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
+    deploy( gbvars, src_hw_gb_vars_asm );
+
     // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
     outline1("LD HL, (%s)", _text);
@@ -1681,7 +1683,6 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
     if ( _raw ) {
 
         // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
-        // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
         // deploy( textEncodedAt, src_hw_gb_text_asm );
         // deploy( textEncodedAtGraphicRaw, src_hw_gb_text_at_raw_asm );
         outline0("CALL TEXTATBITMAPMODERAW");
@@ -1689,7 +1690,6 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
     } else {
 
         // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
-        // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
         // deploy( textEncodedAt, src_hw_gb_text_asm );
         deploy( textEncodedAtGraphic, src_hw_gb_text_at_asm );
         outline0("CALL TEXTATBITMAPMODE");

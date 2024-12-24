@@ -237,7 +237,7 @@ void target_initialization( Environment * _environment ) {
 
     deploy_preferred( startup, src_hw_gb_startup_asm);
 
-    // outline0("CALL GBSTARTUP" );
+    outline0("CALL GBSTARTUP" );
 
     setup_text_variables( _environment );
 
