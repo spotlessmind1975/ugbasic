@@ -40,39 +40,48 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__)
+#if defined(__gb__)
 
-void z80_init( Environment * _environment ) {
+void sm83_init( Environment * _environment ) {
 
-    char duffDevice[38] = {
-        // +00
-        0x18, 0x00, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-        // +08
-        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-        // +16
-        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-        // +24
-        0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-        // +32
-        0xED, 0xA0, 0xEA, 0x00, 0x00, 0xC9
-    };
+    // char duffDevice[38] = {
+    //     // +00
+    //     0x18, 0x00, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+    //     // +08
+    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+    //     // +16
+    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+    //     // +24
+    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
+    //     // +32
+    //     0xED, 0xA0, 0xEA, 0x00, 0x00, 0xC9
+    // };
 
-    variable_import( _environment, "DUFFDEVICEL0", VT_BUFFER, 36 );
-    variable_global( _environment, "DUFFDEVICEL0" );
-    variable_import( _environment, "DUFFDEVICEL1", VT_ADDRESS, 0 );
-    variable_global( _environment, "DUFFDEVICEL1" );
+    // variable_import( _environment, "DUFFDEVICEL0", VT_BUFFER, 36 );
+    // variable_global( _environment, "DUFFDEVICEL0" );
+    // variable_import( _environment, "DUFFDEVICEL1", VT_ADDRESS, 0 );
+    // variable_global( _environment, "DUFFDEVICEL1" );
 
-    variable_retrieve( _environment, "DUFFDEVICEL0" )->readonly = 0;
+    // variable_retrieve( _environment, "DUFFDEVICEL0" )->readonly = 0;
 
-    variable_store_buffer( _environment, "DUFFDEVICEL0", duffDevice, sizeof( duffDevice ), 0 );
+    // variable_store_buffer( _environment, "DUFFDEVICEL0", duffDevice, sizeof( duffDevice ), 0 );
 
-    outline0( "LD HL, DUFFDEVICEL0");
-    outline0( "LD DE, 35");
-    outline0( "ADD HL, DE");
-    outline0( "LD DE, DUFFDEVICEL0");
-    outline0( "INC DE");
-    outline0( "INC DE");
-    outline0( "LD (HL), DE");
+    // outline0( "LD HL, DUFFDEVICEL0");
+    // outline0( "LD DE, 35");
+    // outline0( "ADD HL, DE");
+    // outline0( "LD DE, DUFFDEVICEL0");
+    // outline0( "INC DE");
+    // outline0( "INC DE");
+    // outline0( "LD (HL), DE");
+
+    variable_import( _environment, "(IXL)", VT_BYTE, 0 );
+    variable_global( _environment, "(IXL)" );
+    variable_import( _environment, "(IXH)", VT_BYTE, 0 );
+    variable_global( _environment, "(IXH)" );
+    variable_import( _environment, "(IYL)", VT_BYTE, 0 );
+    variable_global( _environment, "(IYL)" );
+    variable_import( _environment, "IYH", VT_BYTE, 0 );
+    variable_global( _environment, "IYH" );
 
     variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
     variable_global( _environment, "CALLINDIRECTSAVEHL" );
@@ -90,13 +99,13 @@ void z80_init( Environment * _environment ) {
 
 }
 
-void z80_nop( Environment * _environment ) {
+void sm83_nop( Environment * _environment ) {
 
     outline0("NOP");
 
 }
 
-void z80_ztoa( Environment * _environment ) {
+void sm83_ztoa( Environment * _environment ) {
 
     inline( cpu_ztoa )
 
@@ -113,7 +122,7 @@ void z80_ztoa( Environment * _environment ) {
 
 }
 
-void z80_ctoa( Environment * _environment ) {
+void sm83_ctoa( Environment * _environment ) {
 
     inline( cpu_ctoa )
 
@@ -144,7 +153,7 @@ void z80_ctoa( Environment * _environment ) {
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
  */
-void z80_beq( Environment * _environment, char * _label ) {
+void sm83_beq( Environment * _environment, char * _label ) {
 
     inline( cpu_beq )
 
@@ -160,7 +169,7 @@ void z80_beq( Environment * _environment, char * _label ) {
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
  */
-void z80_bneq( Environment * _environment, char * _label ) {
+void sm83_bneq( Environment * _environment, char * _label ) {
 
     inline( cpu_bneq )
 
@@ -170,35 +179,35 @@ void z80_bneq( Environment * _environment, char * _label ) {
 
 }
 
-void z80_bveq( Environment * _environment, char * _value, char * _label ) {
+void sm83_bveq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bveq )
 
         outline1("LD A, (%s)", _value);
         outline0("CP 0");
-        z80_beq( _environment, _label );
+        sm83_beq( _environment, _label );
 
     no_embedded( cpu_bneq )
 
 }
 
-void z80_bvneq( Environment * _environment, char * _value, char * _label ) {
+void sm83_bvneq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bvneq )
 
         outline1("LD A, (%s)", _value);
         outline0("CP 0");
-        z80_bneq( _environment, _label );
+        sm83_bneq( _environment, _label );
 
     no_embedded( cpu_bvneq )
 
 }
 
-void z80_label( Environment * _environment, char * _label ) {
+void sm83_label( Environment * _environment, char * _label ) {
     outhead1("%s:", _label);
 }
 
-void z80_peek( Environment * _environment, char * _address, char * _target ) {
+void sm83_peek( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -210,7 +219,7 @@ void z80_peek( Environment * _environment, char * _address, char * _target ) {
 
 }
 
-void z80_poke( Environment * _environment, char * _address, char * _source ) {
+void sm83_poke( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -222,7 +231,7 @@ void z80_poke( Environment * _environment, char * _address, char * _source ) {
 
 }
 
-void z80_peekw( Environment * _environment, char * _address, char * _target ) {
+void sm83_peekw( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -237,7 +246,7 @@ void z80_peekw( Environment * _environment, char * _address, char * _target ) {
 
 }
 
-void z80_pokew( Environment * _environment, char * _address, char * _source ) {
+void sm83_pokew( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -252,7 +261,7 @@ void z80_pokew( Environment * _environment, char * _address, char * _source ) {
 
 }
 
-void z80_peekd( Environment * _environment, char * _address, char * _target ) {
+void sm83_peekd( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -273,7 +282,7 @@ void z80_peekd( Environment * _environment, char * _address, char * _target ) {
 
 }
 
-void z80_poked( Environment * _environment, char * _address, char * _source ) {
+void sm83_poked( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -307,7 +316,7 @@ void z80_poked( Environment * _environment, char * _address, char * _source ) {
  * @param _blocks Number of 256 bytes blocks to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
+void sm83_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
     inline( cpu_fill_blocks )
 
@@ -340,7 +349,7 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
         outline0("LDIR");
         outhead1("%sdone:", label);
 
-    embedded( cpu_fill_blocks, src_hw_z80_cpu_fill_blocks_asm );
+    embedded( cpu_fill_blocks, src_hw_sm83_cpu_fill_blocks_asm );
 
         outline1("LD A, (%s)", _blocks);
         outline0("LD B, A");
@@ -365,13 +374,13 @@ void z80_fill_blocks( Environment * _environment, char * _address, char * _block
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
+void sm83_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     MAKE_LABEL
 
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         if ( _bytes_width == 8 ) {
             outline1("LD A, (%s)", _bytes);
@@ -408,13 +417,13 @@ void z80_fill( Environment * _environment, char * _address, char * _bytes, int _
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+void sm83_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
@@ -451,13 +460,13 @@ void z80_fill_size( Environment * _environment, char * _address, int _bytes, cha
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+void sm83_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
 
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
@@ -494,13 +503,13 @@ void z80_fill_size_value( Environment * _environment, char * _address, int _byte
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void sm83_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         outline1("LD A, (%s)", _bytes);
         outline0("LD C, A");
@@ -527,13 +536,13 @@ void z80_fill_direct( Environment * _environment, char * _address, char * _bytes
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+void sm83_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
@@ -570,13 +579,13 @@ void z80_fill_direct_size( Environment * _environment, char * _address, int _byt
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void z80_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+void sm83_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
     
     no_inline( cpu_fill )
 
-    embedded( cpu_fill, src_hw_z80_cpu_fill_asm );
+    embedded( cpu_fill, src_hw_sm83_cpu_fill_asm );
 
         outline1("LD A, $%2.2x", (unsigned char) ( _bytes & 0xff ) );
         outline0("LD C, A");
@@ -611,7 +620,7 @@ void z80_fill_direct_size_value( Environment * _environment, char * _address, in
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void z80_move_8bit( Environment * _environment, char *_source, char *_destination ) {
+void sm83_move_8bit( Environment * _environment, char *_source, char *_destination ) {
     
     inline( cpu_move_8bit )
 
@@ -629,7 +638,7 @@ void z80_move_8bit( Environment * _environment, char *_source, char *_destinatio
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void z80_store_8bit( Environment * _environment, char *_destination, int _value ) {
+void sm83_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_8bit )
 
@@ -647,7 +656,7 @@ void z80_store_8bit( Environment * _environment, char *_destination, int _value 
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void z80_store_char( Environment * _environment, char *_destination, int _value ) {
+void sm83_store_char( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_char )
 
@@ -658,7 +667,7 @@ void z80_store_char( Environment * _environment, char *_destination, int _value 
 
 }
 
-void z80_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
+void sm83_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
     inline( cpu_store_8bit_with_offset )
 
@@ -671,7 +680,7 @@ void z80_store_8bit_with_offset( Environment * _environment, char *_destination,
 
 }
 
-void z80_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
+void sm83_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
 
     inline( cpu_store_8bit_with_offset2 )
 
@@ -696,7 +705,7 @@ void z80_store_8bit_with_offset2( Environment * _environment, char *_destination
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void z80_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void sm83_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -735,7 +744,7 @@ void z80_compare_8bit( Environment * _environment, char *_source, char *_destina
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void z80_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void sm83_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -756,7 +765,7 @@ void z80_compare_8bit_const( Environment * _environment, char *_source, int _des
 
 }
 
-void z80_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit )
 
@@ -785,7 +794,7 @@ void z80_compare_and_branch_8bit( Environment * _environment, char *_source, cha
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit_const )
 
@@ -812,7 +821,7 @@ void z80_compare_and_branch_8bit_const( Environment * _environment, char *_sourc
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
+void sm83_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
 
     inline( cpu_compare_and_branch_8bit_const )
 
@@ -831,7 +840,7 @@ void z80_prepare_for_compare_and_branch_8bit( Environment * _environment, char *
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
+void sm83_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit_const )
 
@@ -857,7 +866,7 @@ void z80_execute_compare_and_branch_8bit_const( Environment * _environment, int 
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_8bit_const )
 
@@ -884,7 +893,7 @@ void z80_compare_and_branch_char_const( Environment * _environment, char *_sourc
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -949,7 +958,7 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
         }
 
-    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+    embedded( cpu_less_than_8bit, src_hw_sm83_cpu_less_than_8bit_asm );
 
         if ( _signed ) {
 
@@ -989,7 +998,7 @@ void z80_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
 }
 
-void z80_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1038,7 +1047,7 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         }
 
-    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+    embedded( cpu_less_than_8bit, src_hw_sm83_cpu_less_than_8bit_asm );
 
         if ( _signed ) {
 
@@ -1070,7 +1079,7 @@ void z80_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
 }
 
-void z80_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
+void sm83_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1113,7 +1122,7 @@ void z80_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
         }
 
-    embedded( cpu_less_than_8bit, src_hw_z80_cpu_less_than_8bit_asm );
+    embedded( cpu_less_than_8bit, src_hw_sm83_cpu_less_than_8bit_asm );
 
         if ( _signed ) {
 
@@ -1160,21 +1169,21 @@ void z80_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_not_8bit( _environment, _other, _other );
+        sm83_not_8bit( _environment, _other, _other );
     } else {
-        z80_not_8bit( _environment, _destination, _destination );
+        sm83_not_8bit( _environment, _destination, _destination );
     }
 
 }
 
-void z80_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-    z80_not_8bit( _environment, _other, _other );
+    sm83_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_not_8bit( _environment, _other, _other );
 
 }
 
@@ -1186,7 +1195,7 @@ void z80_greater_than_8bit_const( Environment * _environment, char *_source, int
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_8bit )
 
@@ -1205,7 +1214,7 @@ void z80_math_add_8bit( Environment * _environment, char *_source, char *_destin
 
 }
 
-void z80_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void sm83_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_8bit )
 
@@ -1229,7 +1238,7 @@ void z80_math_add_8bit_const( Environment * _environment, char *_source, int _de
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_8bit )
 
@@ -1256,7 +1265,7 @@ void z80_math_sub_8bit( Environment * _environment, char *_source, char *_destin
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void sm83_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     inline( cpu_math_double_8bit )
 
@@ -1293,7 +1302,7 @@ void z80_math_double_8bit( Environment * _environment, char *_source, char *_oth
  * @param _other Destination address for result (16 bit)
  */
 
-void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
+void sm83_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -1359,7 +1368,7 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z,%snc", label );
-            z80_complement2_16bit( _environment, _other, NULL );
+            sm83_complement2_16bit( _environment, _other, NULL );
             outhead1("%snc:", label );
 
         } else {
@@ -1385,23 +1394,23 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
 
         }
 
-    embedded( cpu_math_mul_8bit_to_16bit, src_hw_z80_cpu_math_mul_8bit_to_16bit_asm );
+    embedded( cpu_math_mul_8bit_to_16bit, src_hw_sm83_cpu_math_mul_8bit_to_16bit_asm );
 
         if ( _signed ) {
 
             outline1("LD A, (%s)", _destination);
-            outline0("LD IYL, A");
+            outline0("LD (IYL), A");
             outline1("LD A, (%s)", _source);
-            outline0("LD IXL, A");
+            outline0("LD (IXL), A");
             outline0("CALL CPUMUL8B8T16S");
             outline1("LD (%s), HL", _other);
 
         } else {
 
             outline1("LD A, (%s)", _destination);
-            outline0("LD IYL, A");
+            outline0("LD (IYL), A");
             outline1("LD A, (%s)", _source);
-            outline0("LD IXL, A");
+            outline0("LD (IXL), A");
             outline0("CALL CPUMUL8B8T16U");
             outline1("LD (%s), HL", _other);
 
@@ -1418,7 +1427,7 @@ void z80_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
+void sm83_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_8bit )
 
@@ -1435,7 +1444,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline0("PUSH AF" );
             outline0("CP 0" );
             outline1("JR Z, %spos", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
@@ -1449,7 +1458,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z, %sdone", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
             outline1("LD A, (%s)", _source );
@@ -1460,7 +1469,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD (%s), A", _source );
         }
 
-    embedded( cpu_math_div2_const_8bit, src_hw_z80_cpu_math_div2_const_8bit_asm );
+    embedded( cpu_math_div2_const_8bit, src_hw_sm83_cpu_math_div2_const_8bit_asm );
 
         if ( _remainder ) {
             outline1("LD A, (%s)", _source );
@@ -1490,7 +1499,7 @@ void z80_math_div2_const_8bit( Environment * _environment, char *_source, int _s
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sm83_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_8bit )
 
@@ -1518,7 +1527,7 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
             outline1("LD (%s), A", _source );
         }
 
-    embedded( cpu_math_mul2_const_8bit, src_hw_z80_cpu_math_mul2_const_8bit_asm );
+    embedded( cpu_math_mul2_const_8bit, src_hw_sm83_cpu_math_mul2_const_8bit_asm );
 
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
@@ -1543,7 +1552,7 @@ void z80_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void z80_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
+void sm83_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_8bit )
 
@@ -1564,7 +1573,7 @@ void z80_math_complement_const_8bit( Environment * _environment, char *_source, 
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
  */
-void z80_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
+void sm83_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_8bit )
 
@@ -1587,7 +1596,7 @@ void z80_math_and_const_8bit( Environment * _environment, char *_source, int _ma
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void z80_move_16bit( Environment * _environment, char *_source, char *_destination ) {
+void sm83_move_16bit( Environment * _environment, char *_source, char *_destination ) {
     
     inline( cpu_move_16bit )
 
@@ -1598,7 +1607,7 @@ void z80_move_16bit( Environment * _environment, char *_source, char *_destinati
 
 }
 
-void z80_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
+void sm83_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
     
     inline( cpu_addressof_16bit )
 
@@ -1616,7 +1625,7 @@ void z80_addressof_16bit( Environment * _environment, char *_source, char *_dest
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void z80_store_16bit( Environment * _environment, char *_destination, int _value ) {
+void sm83_store_16bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_16bit )
 
@@ -1635,7 +1644,7 @@ void z80_store_16bit( Environment * _environment, char *_destination, int _value
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void sm83_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -1667,11 +1676,12 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
         }
         outhead1("%sb2:", label);
 
-    embedded( cpu_compare_16bit, src_hw_z80_cpu_compare_16bit_asm )
+    embedded( cpu_compare_16bit, src_hw_sm83_cpu_compare_16bit_asm )
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
+        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
         outline0("CALL CPUCOMPARE16");
         if ( _other ) {
             outline1("LD (%s), A", _other);
@@ -1691,7 +1701,7 @@ void z80_compare_16bit( Environment * _environment, char *_source, char *_destin
  * @param _destination Second value to compare and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void sm83_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -1715,11 +1725,12 @@ void z80_compare_16bit_const( Environment * _environment, char *_source, int _de
         outline1("LD (%s), A", _other);
         outhead1("%sb2:", label);
 
-    embedded( cpu_compare_16bit, src_hw_z80_cpu_compare_16bit_asm )
+    embedded( cpu_compare_16bit, src_hw_sm83_cpu_compare_16bit_asm )
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, $%4.4x", _destination);
-        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
+        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
         outline0("CALL CPUCOMPARE16CONST");
         outline1("LD (%s), A", _other);
 
@@ -1727,7 +1738,7 @@ void z80_compare_16bit_const( Environment * _environment, char *_source, int _de
 
 }
 
-void z80_compare_and_branch_16bit( Environment * _environment, char *_source, char *_destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_16bit( Environment * _environment, char *_source, char *_destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_16bit )
 
@@ -1766,7 +1777,7 @@ void z80_compare_and_branch_16bit( Environment * _environment, char *_source, ch
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_16bit_const )
 
@@ -1801,7 +1812,7 @@ void z80_compare_and_branch_16bit_const( Environment * _environment, char *_sour
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1878,7 +1889,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
         }
 
-    embedded( cpu_less_than_16bit, src_hw_z80_cpu_less_than_16bit_asm );
+    embedded( cpu_less_than_16bit, src_hw_sm83_cpu_less_than_16bit_asm );
 
         if ( _signed ) {
 
@@ -1916,7 +1927,7 @@ void z80_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
 }
 
-void z80_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1977,7 +1988,7 @@ void z80_less_than_16bit_const( Environment * _environment, char *_source, int _
 
         }
 
-    embedded( cpu_less_than_16bit, src_hw_z80_cpu_less_than_16bit_asm );
+    embedded( cpu_less_than_16bit, src_hw_sm83_cpu_less_than_16bit_asm );
 
         if ( _signed ) {
 
@@ -2016,21 +2027,21 @@ void z80_less_than_16bit_const( Environment * _environment, char *_source, int _
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_not_8bit( _environment, _other, _other );
+        sm83_not_8bit( _environment, _other, _other );
     } else {
-        z80_not_8bit( _environment, _destination, _destination );
+        sm83_not_8bit( _environment, _destination, _destination );
     }
 
 }
 
-void z80_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-    z80_not_8bit( _environment, _other, _other );
+    sm83_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_not_8bit( _environment, _other, _other );
 
 }
 
@@ -2042,7 +2053,7 @@ void z80_greater_than_16bit_const( Environment * _environment, char *_source, in
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_16bit )
 
@@ -2059,7 +2070,7 @@ void z80_math_add_16bit( Environment * _environment, char *_source, char *_desti
 
 }
 
-void z80_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void sm83_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_16bit )
 
@@ -2072,7 +2083,7 @@ void z80_math_add_16bit_const( Environment * _environment, char *_source, int _d
 
 }
 
-void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_16bit_with_16bit )
 
@@ -2093,7 +2104,7 @@ void z80_math_add_16bit_with_16bit( Environment * _environment, char *_source, c
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void sm83_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
     
     inline( cpu_math_double_16bit )
 
@@ -2118,7 +2129,7 @@ void z80_math_double_16bit( Environment * _environment, char *_source, char *_ot
  * @param _destination Second value to multipy (16 bit)
  * @param _other Destination address for result (32 bit)
  */
-void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
+void sm83_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -2139,7 +2150,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
             outline0("PUSH AF");
             outline0("CP 0");
             outline1("JR Z,%spositive", label);
-            z80_complement2_16bit( _environment, _source, NULL );
+            sm83_complement2_16bit( _environment, _source, NULL );
             outhead1("%spositive:", label);
 
             outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
@@ -2147,7 +2158,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
             outline0("PUSH AF");
             outline0("CP 0");
             outline1("JR Z,%spositive2", label);
-            z80_complement2_16bit( _environment, _destination, NULL );
+            sm83_complement2_16bit( _environment, _destination, NULL );
             outhead1("%spositive2:", label);
 
             outline1("LD BC, (%s)", _source );
@@ -2174,17 +2185,17 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
             outline0("POP AF" );
             outline1("JR Z, %srepositive", label );
-            z80_complement2_16bit( _environment, _destination, NULL );
+            sm83_complement2_16bit( _environment, _destination, NULL );
             outhead1("%srepositive:", label);
 
             outline0("POP AF" );
             outline1("JR Z, %srepositive2", label );
-            z80_complement2_16bit( _environment, _source, NULL );
+            sm83_complement2_16bit( _environment, _source, NULL );
             outhead1("%srepositive2:", label);
 
             outline0("POP AF" );
             outline1("JR Z, %srepositive3", label );
-            z80_complement2_32bit( _environment, _other, NULL );
+            sm83_complement2_32bit( _environment, _other, NULL );
             outhead1("%srepositive3:", label);
 
         } else {
@@ -2213,7 +2224,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
         }
 
-    embedded( cpu_math_mul_16bit_to_32bit, src_hw_z80_cpu_math_mul_16bit_to_32bit_asm );
+    embedded( cpu_math_mul_16bit_to_32bit, src_hw_sm83_cpu_math_mul_16bit_to_32bit_asm );
 
         if ( _signed ) {
 
@@ -2245,7 +2256,7 @@ void z80_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_16bit )
 
@@ -2270,7 +2281,7 @@ void z80_math_sub_16bit( Environment * _environment, char *_source, char *_desti
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void z80_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
+void sm83_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_16bit )
 
@@ -2297,7 +2308,7 @@ void z80_math_complement_const_16bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
+void sm83_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_16bit )
 
@@ -2314,7 +2325,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
             outline0("CP 0" );
             outline0("PUSH AF" );
             outline1("JR Z, %spos", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
@@ -2329,7 +2340,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z, %sdone", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
             outline1("LD HL, (%s)", _source );
@@ -2342,7 +2353,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
             
         }
 
-    embedded( cpu_math_div2_const_16bit, src_hw_z80_cpu_math_div2_const_16bit_asm )
+    embedded( cpu_math_div2_const_16bit, src_hw_sm83_cpu_math_div2_const_16bit_asm )
 
         if ( _remainder ) {
             outline1("LD A, (%s)", _source );
@@ -2379,7 +2390,7 @@ void z80_math_div2_const_16bit( Environment * _environment, char *_source, int _
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sm83_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_16bit )
 
@@ -2391,7 +2402,7 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
             outline0("PUSH AF" );
             outline0("CP 0" );
             outline1("JR Z, %spos", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
@@ -2406,7 +2417,7 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z, %sdone", label );
-            z80_complement2_16bit( _environment, _source, _source );
+            sm83_complement2_16bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
             outline1("LD HL, (%s)", _source );
@@ -2429,7 +2440,7 @@ void z80_math_mul2_const_16bit( Environment * _environment, char *_source, int _
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
  */
-void z80_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
+void sm83_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_16bit )
 
@@ -2455,7 +2466,7 @@ void z80_math_and_const_16bit( Environment * _environment, char *_source, int _m
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void z80_move_32bit( Environment * _environment, char *_source, char *_destination ) {
+void sm83_move_32bit( Environment * _environment, char *_source, char *_destination ) {
 
     inline( cpu_move_32bit )
 
@@ -2479,7 +2490,7 @@ void z80_move_32bit( Environment * _environment, char *_source, char *_destinati
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void z80_store_32bit( Environment * _environment, char *_destination, int _value ) {
+void sm83_store_32bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_32bit )
 
@@ -2501,7 +2512,7 @@ void z80_store_32bit( Environment * _environment, char *_destination, int _value
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void z80_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void sm83_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     inline( cpu_compare_32bit )
 
@@ -2543,11 +2554,12 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
         }
         outhead1("%s_2:", label);
 
-    embedded( cpu_compare_32bit, src_hw_z80_cpu_compare_32bit_asm )
+    embedded( cpu_compare_32bit, src_hw_sm83_cpu_compare_32bit_asm )
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
+        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
         outline0("CALL CPUCOMPARE32");
         if ( _other ) {
             outline1("LD (%s), A", _other);
@@ -2568,7 +2580,7 @@ void z80_compare_32bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void z80_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void sm83_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     inline( cpu_compare_32bit )
 
@@ -2602,12 +2614,13 @@ void z80_compare_32bit_const( Environment * _environment, char *_source, int _de
         outline1("LD (%s), A", _other);
         outhead1("%s_2:", label);
 
-    embedded( cpu_compare_32bit, src_hw_z80_cpu_compare_32bit_asm )
+    embedded( cpu_compare_32bit, src_hw_sm83_cpu_compare_32bit_asm )
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, $%4.4x", (unsigned int)(_destination&0xffff));
         outline1("LD IY, $%4.4x", (unsigned int)((_destination>>16)&0xffff));
-        outline1("LD IX, $%4.4x", ( (0xff*_positive) << 8 ) | ( 0xff*(1-_positive)) );
+        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
+        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
         outline0("CALL CPUCOMPARE32CONST");
         outline1("LD (%s), A", _other);
 
@@ -2624,7 +2637,7 @@ void z80_compare_32bit_const( Environment * _environment, char *_source, int _de
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void z80_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void sm83_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     inline( cpu_compare_and_branch_32bit_const )
 
@@ -2666,130 +2679,13 @@ void z80_compare_and_branch_32bit_const( Environment * _environment, char *_sour
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    inline( cpu_less_than_32bit )
+    no_inline( cpu_less_than_32bit )
 
-        if ( _signed ) {
-
-            outline1("LD IX, %s", _source);
-            outline1("LD IY, %s", _destination);
-            outline0("LD B, (IX+3)");
-            outline0("LD A, B");
-            outline0("AND $80");
-            outline0("CP 0" );
-            outline1("JR NZ,%sNEGM1", label);
-            outline0("BIT 7, (IY+3)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, B");
-            outline0("CP (IY+3)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX+2)");
-            outline0("CP (IY+2)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX+1)");
-            outline0("CP (IY+1)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX)");
-            outline0("CP (IY)");
-            outline1("JMP %sdone", label);
-            outhead1("%sNEGM1:", label);
-            outline0("XOR (IY+3)");
-            outline0("RLA");
-            outline1("JR C,%sdone", label);
-            outline0("LD A, B");
-            outline0("CP (IY+3)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX+2)");
-            outline0("CP (IY+2)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX+1)");
-            outline0("CP (IY+1)");
-            outline1("JR NZ,%sdone", label);
-            outline0("LD A, (IX)");
-            outline0("CP (IY)");
-            outline1("JMP %sdone", label);
-            outhead1("%sdone:", label);
-            if ( _equal ) {
-                outline1("JR Z,%smi", label);
-            }
-            outline1("JR C,%smi", label);
-            outhead1("%spl:", label);
-            outline0("LD A, 0");
-            if ( _other ) {
-                outline1("LD (%s), A", _other);
-            } else {
-                outline1("LD (%s), A", _destination);
-            }
-            outline1("JMP %sdone2", label);
-            outhead1("%smi:", label);
-            outline0("LD A, $ff");
-            if ( _other ) {
-                outline1("LD (%s), A", _other);
-            } else {
-                outline1("LD (%s), A", _destination);
-            }
-            outline1("JMP %sdone2", label);
-            outhead1("%sdone2:", label);
-
-        } else {
-
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-            outline0("LD B, A");
-            outline1("LD A, (%s)", address_displacement(_environment, _destination, "3"));
-            outline0("CP B");
-            outline1("JR Z, %s_2", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_2:", label);
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-            outline0("LD B, A");
-            outline1("LD A, (%s)", address_displacement(_environment, _destination, "2"));
-            outline0("CP B");
-            outline1("JR Z, %s_1", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_1:", label);
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-            outline0("LD B, A");
-            outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-            outline0("CP B");
-            outline1("JR Z, %s_0", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_0:", label);
-            outline1("LD A, (%s)", _source);
-            outline0("LD B, A");
-            outline1("LD A, (%s)", _destination);
-            outline0("CP B");
-            if ( _equal ) {
-                outline1("JR Z, %s_ok", label);
-            } else {
-                outline1("JR Z, %s", label);
-            }
-            outline1("JR C, %s", label);
-            outhead1("%s_ok:", label);
-            outline0("LD A, $ff");
-            if ( _other ) {
-                outline1("LD (%s), A", _other);
-            } else {
-                outline1("LD (%s), A", _destination);
-            }
-            outline1("JMP %s_xx", label);
-            outhead1("%s:", label);
-            outline0("LD A, $0");
-            if ( _other ) {
-                outline1("LD (%s), A", _other);
-            } else {
-                outline1("LD (%s), A", _destination);
-            }
-            outhead1("%s_xx:", label);
-
-        }
-
-    embedded( cpu_less_than_32bit, src_hw_z80_cpu_less_than_32bit_asm );
+    embedded( cpu_less_than_32bit, src_hw_sm83_cpu_less_than_32bit_asm );
 
         if ( _signed ) {
 
@@ -2828,119 +2724,13 @@ void z80_less_than_32bit( Environment * _environment, char *_source, char *_dest
 
 }
 
-void z80_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
-    inline( cpu_less_than_32bit )
+    no_inline( cpu_less_than_32bit )
 
-        if ( _signed ) {
-
-            // outline1("LD IX, %s", _source);
-            // outline1("LD IY, %s", _destination);
-            // outline0("LD B, (IX+3)");
-            // outline0("LD A, B");
-            // outline0("AND $80");
-            // outline1("JR NZ,%sNEGM1", label);
-            // outline0("BIT 7, (IY+3)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, B");
-            // outline0("CP (IY+3)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX+2)");
-            // outline0("CP (IY+2)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX+1)");
-            // outline0("CP (IY+1)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX)");
-            // outline0("CP (IY)");
-            // outline1("JMP %sdone", label);
-            // outhead1("%sNEGM1:", label);
-            // outline0("XOR (IY+3)");
-            // outline0("RLA");
-            // outline1("JR C,%sdone", label);
-            // outline0("LD A, B");
-            // outline0("CP (IY+3)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX+2)");
-            // outline0("CP (IY+2)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX+1)");
-            // outline0("CP (IY+1)");
-            // outline1("JR NZ,%sdone", label);
-            // outline0("LD A, (IX)");
-            // outline0("CP (IY)");
-            // outline1("JMP %sdone", label);
-            // outhead1("%sdone:", label);
-            // if ( _equal ) {
-            //     outline1("JR Z,%smi", label);
-            // }
-            // outline1("JR C,%smi", label);
-            // outhead1("%spl:", label);
-            // outline0("LD A, 0");
-            // if ( _other ) {
-            //     outline1("LD (%s), A", _other);
-            // } else {
-            //     outline1("LD (%s), A", _destination);
-            // }
-            // outline1("JMP %sdone2", label);
-            // outhead1("%smi:", label);
-            // outline0("LD A, $ff");
-            // if ( _other ) {
-            //     outline1("LD (%s), A", _other);
-            // } else {
-            //     outline1("LD (%s), A", _destination);
-            // }
-            // outline1("JMP %sdone2", label);
-            // outhead1("%sdone2:", label);
-
-        } else {
-
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-            outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 24 ) && 0xff ) );
-            outline0("CP B");
-            outline1("JR Z, %s_2", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_2:", label);
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-            outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 16 ) && 0xff ) );
-            outline0("CP B");
-            outline1("JR Z, %s_1", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_1:", label);
-            outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-            outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 8 ) && 0xff ) );
-            outline0("CP B");
-            outline1("JR Z, %s_0", label);
-            outline1("JR C, %s", label);
-            outline1("JR %s_ok", label);
-            outhead1("%s_0:", label);
-            outline1("LD A, (%s)", _source);
-            outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( _destination && 0xff ) );
-            outline0("CP B");
-            outline1("JR C, %s", label);
-            if ( _equal ) {
-                outline1("JR Z, %s", label);
-            }
-            outhead1("%s_ok:", label);
-            outline0("LD A, $ff");
-            outline1("LD (%s), A", _other);
-            outline1("JMP %s_xx", label);
-            outhead1("%s:", label);
-            outline0("LD A, $0");
-            outline1("LD (%s), A", _other);
-            outhead1("%s_xx:", label);
-
-        }
-
-    embedded( cpu_less_than_32bit, src_hw_z80_cpu_less_than_32bit_asm );
+    embedded( cpu_less_than_32bit, src_hw_sm83_cpu_less_than_32bit_asm );
 
         if ( _signed ) {
 
@@ -2993,21 +2783,21 @@ void z80_less_than_32bit_const( Environment * _environment, char *_source, int _
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void z80_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
     if ( _other ) {
-        z80_not_8bit( _environment, _other, _other );
+        sm83_not_8bit( _environment, _other, _other );
     } else {
-        z80_not_8bit( _environment, _destination, _destination );
+        sm83_not_8bit( _environment, _destination, _destination );
     }
 
 }
 
-void z80_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void sm83_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
-    z80_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-    z80_not_8bit( _environment, _other, _other );
+    sm83_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+    sm83_not_8bit( _environment, _other, _other );
 
 }
 
@@ -3019,7 +2809,7 @@ void z80_greater_than_32bit_const( Environment * _environment, char *_source, in
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_32bit )
 
@@ -3047,7 +2837,7 @@ void z80_math_add_32bit( Environment * _environment, char *_source, char *_desti
 
 }
 
-void z80_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void sm83_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_32bit_const )
 
@@ -3077,14 +2867,14 @@ void z80_math_add_32bit_const( Environment * _environment, char *_source, int _d
  * @param _other Destination address for result
  * @todo Not yet implemented
  */
-void z80_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void sm83_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     inline( cpu_math_double_32bit )
 
         if ( _other ) {
-            z80_math_add_32bit( _environment, _source, _source, _other );
+            sm83_math_add_32bit( _environment, _source, _source, _other );
         } else {
-            z80_math_add_32bit( _environment, _source, _source, _source );
+            sm83_math_add_32bit( _environment, _source, _source, _source );
         }
 
     no_embedded( cpu_math_double_32bit )
@@ -3099,7 +2889,7 @@ void z80_math_double_32bit( Environment * _environment, char *_source, char *_ot
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void z80_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_32bit )
 
@@ -3157,7 +2947,7 @@ void z80_math_sub_32bit( Environment * _environment, char *_source, char *_desti
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void z80_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
+void sm83_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_32bit )
 
@@ -3200,7 +2990,7 @@ void z80_math_complement_const_32bit( Environment * _environment, char *_source,
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
+void sm83_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_32bit )
 
@@ -3217,7 +3007,7 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
             outline0("CP 0" );
             outline0("PUSH AF" );
             outline1("JR Z, %spos", label );
-            z80_complement2_32bit( _environment, _source, _source );
+            sm83_complement2_32bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
@@ -3236,7 +3026,7 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z, %sdone", label );
-            z80_complement2_32bit( _environment, _source, _source );
+            sm83_complement2_32bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
             outline1("LD DE, (%s)", _source );
@@ -3264,7 +3054,7 @@ void z80_math_div2_const_32bit( Environment * _environment, char *_source, int _
  * @param _steps Times to double
  * @todo Not yet implemented
  */
-void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void sm83_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_32bit )
 
@@ -3276,7 +3066,7 @@ void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _
             outline0("CP 0" );
             outline0("PUSH AF" );
             outline1("JR Z, %spos", label );
-            z80_complement2_32bit( _environment, _source, _source );
+            sm83_complement2_32bit( _environment, _source, _source );
             outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
@@ -3295,7 +3085,7 @@ void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _
             outline0("AND $80" );
             outline0("CP 0" );
             outline1("JR Z, %sdone", label );
-            z80_complement2_32bit( _environment, _source, _source );
+            sm83_complement2_32bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
             outline1("LD HL, (%s)", _source );
@@ -3323,7 +3113,7 @@ void z80_math_mul2_const_32bit( Environment * _environment, char *_source, int _
  * @param _mask Mask to use
  * @todo Not yet implemented
  */
-void z80_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
+void sm83_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_32bit )
 
@@ -3349,11 +3139,11 @@ void z80_math_and_const_32bit( Environment * _environment, char *_source, int _m
  * 
  * @todo Not yet implemented
  */
-void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
+void sm83_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
     no_inline( cpu_combine_nibbles )
 
-    embedded( cpu_combine_nibbles, src_hw_z80_cpu_combine_nibbles_asm );
+    embedded( cpu_combine_nibbles, src_hw_sm83_cpu_combine_nibbles_asm );
 
         outline1("LD A, (%s)", _low_nibble );
         outline1("LD HL, %s", _hi_nibble );
@@ -3364,25 +3154,25 @@ void z80_combine_nibbles( Environment * _environment, char * _low_nibble, char *
 
 }
 
-void z80_jump( Environment * _environment, char * _label ) {
+void sm83_jump( Environment * _environment, char * _label ) {
 
     outline1("jp %s", _label );
 
 }
 
-void z80_call_addr( Environment * _environment, int _address ) {
+void sm83_call_addr( Environment * _environment, int _address ) {
 
     outline1("call $%4.4x", _address );
 
 }
 
-void z80_call( Environment * _environment, char * _label ) {
+void sm83_call( Environment * _environment, char * _label ) {
 
     outline1("call %s", _label );
 
 }
 
-void z80_call_indirect( Environment * _environment, char * _value ) {
+void sm83_call_indirect( Environment * _environment, char * _value ) {
 
     MAKE_LABEL
 
@@ -3396,14 +3186,14 @@ void z80_call_indirect( Environment * _environment, char * _value ) {
 
 }
 
-void z80_jump_indirect( Environment * _environment, char * _value ) {
+void sm83_jump_indirect( Environment * _environment, char * _value ) {
 
     outline1( "LD HL, (%s)", _value )
     outline0( "JP (HL)" );
 
 }
 
-int z80_register_decode( Environment * _environment, char * _register ) {
+int sm83_register_decode( Environment * _environment, char * _register ) {
 
     Z80Register result = REGISTER_NONE;
 
@@ -3447,27 +3237,17 @@ int z80_register_decode( Environment * _environment, char * _register ) {
             if ( !_environment->emptyProcedure ) {
                 CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
             }
-            // result = REGISTER_PC;
-        } else if ( strcmp( _register, "IX" ) == 0 ) {
-            result = REGISTER_IX;
-        } else if ( strcmp( _register, "IY" ) == 0 ) {
-            result = REGISTER_IY;
-        } else if ( strcmp( _register, "AF" ) == 0 ) {
-            if ( !_environment->emptyProcedure ) {
-                CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-            }
-            // result = REGISTER_AF;
         } else if ( strcmp( _register, "BC" ) == 0 ) {
             result = REGISTER_BC;
         } else if ( strcmp( _register, "DE" ) == 0 ) {
             result = REGISTER_DE;
         } else if ( strcmp( _register, "HL" ) == 0 ) {
             result = REGISTER_HL;
-        } else if ( strcmp( _register, "IXL" ) == 0 ) {
+        } else if ( strcmp( _register, "(IXL)" ) == 0 ) {
             result = REGISTER_IXL;
-        } else if ( strcmp( _register, "IXH" ) == 0 ) {
+        } else if ( strcmp( _register, "(IXH)" ) == 0 ) {
             result = REGISTER_IXH;
-        } else if ( strcmp( _register, "IYL" ) == 0 ) {
+        } else if ( strcmp( _register, "(IYL)" ) == 0 ) {
             result = REGISTER_IYL;
         } else if ( strcmp( _register, "IYH" ) == 0 ) {
             result = REGISTER_IYH;
@@ -3487,7 +3267,7 @@ int z80_register_decode( Environment * _environment, char * _register ) {
 
 }
 
-void z80_set_asmio( Environment * _environment, int _asmio, int _value ) {
+void sm83_set_asmio( Environment * _environment, int _asmio, int _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -3545,12 +3325,6 @@ void z80_set_asmio( Environment * _environment, int _asmio, int _value ) {
                 outline0( "LD L, A" );
                 outline0( "POP AF" );
                 break;
-            case REGISTER_IX:
-                outline1( "LD IX, $%4.4x", (unsigned short)(_value & 0xffff) );
-                break;
-            case REGISTER_IY:
-                outline1( "LD IY, $%4.4x", (unsigned short)(_value & 0xffff) );
-                break;
             case REGISTER_BC:
                 outline0( "PUSH HL" );
                 outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
@@ -3569,19 +3343,19 @@ void z80_set_asmio( Environment * _environment, int _asmio, int _value ) {
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IXL, A" );
+                outline0( "LD (IXL), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IXH, A" );
+                outline0( "LD (IXH), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IYL, A" );
+                outline0( "LD (IYL), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYH:
@@ -3642,7 +3416,7 @@ void z80_set_asmio( Environment * _environment, int _asmio, int _value ) {
 
 }
 
-void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+void sm83_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -3700,12 +3474,6 @@ void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _val
                 outline0( "LD L, A" );
                 outline0( "POP AF" );
                 break;
-            case REGISTER_IX:
-                outline1( "LD IX, (%s)", _value );
-                break;
-            case REGISTER_IY:
-                outline1( "LD IY, (%s)", _value );
-                break;
             case REGISTER_BC:
                 outline0( "PUSH HL" );
                 outline1( "LD HL, (%s)", _value );
@@ -3724,19 +3492,19 @@ void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _val
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD IXL, A" );
+                outline0( "LD (IXL), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD IXH, A" );
+                outline0( "LD (IXH), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD IYL, A" );
+                outline0( "LD (IYL), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYH:
@@ -3800,7 +3568,7 @@ void z80_set_asmio_indirect( Environment * _environment, int _asmio, char * _val
 
 }
 
-void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+void sm83_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -3858,12 +3626,6 @@ void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _val
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
-            case REGISTER_IX:
-                outline1( "LD (%s), IX", _value );
-                break;
-            case REGISTER_IY:
-                outline1( "LD (%s), IY", _value );
-                break;
             case REGISTER_BC:
                 outline0( "PUSH HL" );
                 outline0( "LD HL, BC" );
@@ -3881,19 +3643,19 @@ void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _val
                 break;
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
-                outline0( "LD A, IXL" );
+                outline0( "LD A, (IXL)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
-                outline0( "LD A, IXH" );
+                outline0( "LD A, (IXH)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
-                outline0( "LD A, IYL" );
+                outline0( "LD A, (IYL)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
@@ -3963,19 +3725,19 @@ void z80_get_asmio_indirect( Environment * _environment, int _asmio, char * _val
 
 }
 
-void z80_return( Environment * _environment ) {
+void sm83_return( Environment * _environment ) {
 
     outline0("RET" );
 
 }
 
-void z80_pop( Environment * _environment ) {
+void sm83_pop( Environment * _environment ) {
 
-    outline0("POP IX" );
+    outline0("POP HL" );
 
 }
 
-void z80_halt( Environment * _environment ) {
+void sm83_halt( Environment * _environment ) {
 
     MAKE_LABEL
 
@@ -3984,14 +3746,14 @@ void z80_halt( Environment * _environment ) {
 
 }
 
-void z80_end( Environment * _environment ) {
+void sm83_end( Environment * _environment ) {
 
     outline0("DI");
     outline0("HLT");
 
 }
 
-void z80_random( Environment * _environment, char * _entropy ) {
+void sm83_random( Environment * _environment, char * _entropy ) {
 
     MAKE_LABEL
 
@@ -4034,16 +3796,16 @@ void z80_random( Environment * _environment, char * _entropy ) {
             outline0("ADD HL, BC");
         }
 
-    embedded( cpu_random, src_hw_z80_cpu_random_asm );
+    embedded( cpu_random, src_hw_sm83_cpu_random_asm );
        
     done()
 
 
 }
 
-void z80_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
+void sm83_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _entropy );
+    sm83_random( _environment, _entropy );
 
     if ( _result ) {
         outline0("CALL CPURANDOM16" );
@@ -4053,9 +3815,9 @@ void z80_random_8bit( Environment * _environment, char * _entropy, char * _resul
 
 }
 
-void z80_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
+void sm83_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _entropy );
+    sm83_random( _environment, _entropy );
 
     if ( _result ) {
         outline0("CALL CPURANDOM16" );
@@ -4064,9 +3826,9 @@ void z80_random_16bit( Environment * _environment, char * _entropy, char * _resu
 
 }
 
-void z80_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
+void sm83_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    z80_random( _environment, _entropy );
+    sm83_random( _environment, _entropy );
 
     if ( _result ) {
         outline0("CALL CPURANDOM32" );
@@ -4076,7 +3838,7 @@ void z80_random_32bit( Environment * _environment, char * _entropy, char * _resu
 
 }
 
-void z80_limit_16bit( Environment * _environment, char * _variable, int _value ) {
+void sm83_limit_16bit( Environment * _environment, char * _variable, int _value ) {
 
     MAKE_LABEL
 
@@ -4089,7 +3851,7 @@ void z80_limit_16bit( Environment * _environment, char * _variable, int _value )
 
 }
 
-void z80_busy_wait( Environment * _environment, char * _timing ) {
+void sm83_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
@@ -4107,14 +3869,14 @@ void z80_busy_wait( Environment * _environment, char * _timing ) {
  * @param _port Port to connect
  * @param _value Value to send
  */
-void z80_port_out( Environment * _environment, char * _port, char * _value ) {
+void sm83_port_out( Environment * _environment, char * _port, char * _value ) {
 
     outline1("LD A, (%s)", _value );
     outline1("OUT (%s), A", _port );
 
 }
 
-void z80_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4135,7 +3897,7 @@ void z80_logical_and_8bit( Environment * _environment, char * _left, char * _rig
 
 }
 
-void z80_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4148,7 +3910,7 @@ void z80_and_8bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
-void z80_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void sm83_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4158,7 +3920,7 @@ void z80_and_8bit_const( Environment * _environment, char * _left, int _right, c
 
 }
 
-void z80_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4176,7 +3938,7 @@ void z80_and_16bit( Environment * _environment, char * _left, char * _right, cha
 
 }
 
-void z80_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4204,7 +3966,7 @@ void z80_and_32bit( Environment * _environment, char * _left, char * _right, cha
 
 }
 
-void z80_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4223,7 +3985,7 @@ void z80_logical_or_8bit( Environment * _environment, char * _left, char * _righ
 
 }
 
-void z80_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4236,7 +3998,7 @@ void z80_or_8bit( Environment * _environment, char * _left, char * _right, char 
 
 }
 
-void z80_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void sm83_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4247,7 +4009,7 @@ void z80_or_8bit_const( Environment * _environment, char * _left, int _right, ch
 }
 
 
-void z80_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4267,7 +4029,7 @@ void z80_or_16bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
-void z80_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4295,7 +4057,7 @@ void z80_or_32bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
-void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4308,7 +4070,7 @@ void z80_xor_8bit( Environment * _environment, char * _left, char * _right, char
 
 }
 
-void z80_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void sm83_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4320,7 +4082,7 @@ void z80_xor_8bit_const( Environment * _environment, char * _left, int _right, c
 
 }
 
-void z80_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4340,7 +4102,7 @@ void z80_xor_16bit( Environment * _environment, char * _left, char * _right, cha
 
 }
 
-void z80_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void sm83_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4360,7 +4122,7 @@ void z80_xor_16bit_const( Environment * _environment, char * _left, int _right, 
 }
 
 
-void z80_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void sm83_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4388,7 +4150,7 @@ void z80_xor_32bit( Environment * _environment, char * _left, char * _right, cha
 
 }
 
-void z80_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void sm83_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4415,11 +4177,11 @@ void z80_xor_32bit_const( Environment * _environment, char * _left, int _right, 
 
 }
 
-void z80_swap_8bit( Environment * _environment, char * _left, char * _right ) {
+void sm83_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
     no_inline( cpu_swap_8bit )
 
-    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
+    embedded( cpu_swap_8bit, src_hw_sm83_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
         outline1("LD HL, %s", _right );
         outline1("LD DE, %s", _left );
@@ -4430,11 +4192,11 @@ void z80_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
 }    
 
-void z80_swap_16bit( Environment * _environment, char * _left, char * _right ) {
+void sm83_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
     no_inline( cpu_swap_8bit )
 
-    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
+    embedded( cpu_swap_8bit, src_hw_sm83_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
         outline1("LD HL, %s", _right );
         outline1("LD DE, %s", _left );
@@ -4445,11 +4207,11 @@ void z80_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
 }
 
-void z80_swap_32bit( Environment * _environment, char * _left, char * _right ) {
+void sm83_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
     no_inline( cpu_swap_8bit )
 
-    embedded( cpu_swap_8bit, src_hw_z80_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
+    embedded( cpu_swap_8bit, src_hw_sm83_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
 
         outline1("LD HL, %s", _right );
         outline1("LD DE, %s", _left );
@@ -4460,7 +4222,7 @@ void z80_swap_32bit( Environment * _environment, char * _left, char * _right ) {
     
 }
 
-void z80_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
+void sm83_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD A, (%s)", _value );
     outline0("XOR $FF" );
@@ -4468,7 +4230,7 @@ void z80_logical_not_8bit( Environment * _environment, char * _value, char * _re
 
 }
 
-void z80_not_8bit( Environment * _environment, char * _value, char * _result ) {
+void sm83_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD A, (%s)", _value );
     outline0("XOR $FF" );
@@ -4476,7 +4238,7 @@ void z80_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
 }
 
-void z80_not_16bit( Environment * _environment, char * _value, char * _result ) {
+void sm83_not_16bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD HL, %s", _value );
     outline1("LD DE, %s", _result );
@@ -4491,7 +4253,7 @@ void z80_not_16bit( Environment * _environment, char * _value, char * _result ) 
 
 }
 
-void z80_not_32bit( Environment * _environment, char * _value, char * _result ) {
+void sm83_not_32bit( Environment * _environment, char * _value, char * _result ) {
 
     outline1("LD HL, %s", _value );
     outline1("LD DE, %s", _result );
@@ -4516,19 +4278,19 @@ void z80_not_32bit( Environment * _environment, char * _value, char * _result ) 
 
 }
 
-void z80_di( Environment * _environment ) {
+void sm83_di( Environment * _environment ) {
 
     outline0("DI" );
 
 }
 
-void z80_ei( Environment * _environment ) {
+void sm83_ei( Environment * _environment ) {
 
     outline0("EI" );
 
 }
 
-void z80_inc( Environment * _environment, char * _variable ) {
+void sm83_inc( Environment * _environment, char * _variable ) {
 
     outline1("LD A, (%s)", _variable  );
     outline0("INC A" );
@@ -4536,7 +4298,7 @@ void z80_inc( Environment * _environment, char * _variable ) {
 
 }
 
-void z80_dec( Environment * _environment, char * _variable ) {
+void sm83_dec( Environment * _environment, char * _variable ) {
 
     outline1("LD A, (%s)", _variable  );
     outline0("DEC A" );
@@ -4544,7 +4306,7 @@ void z80_dec( Environment * _environment, char * _variable ) {
 
 }
 
-void z80_inc_16bit( Environment * _environment, char * _variable ) {
+void sm83_inc_16bit( Environment * _environment, char * _variable ) {
 
     outline1("LD HL, (%s)", _variable  );
     outline0("INC HL" );
@@ -4552,7 +4314,7 @@ void z80_inc_16bit( Environment * _environment, char * _variable ) {
 
 }
 
-void z80_inc_32bit( Environment * _environment, char * _variable ) {
+void sm83_inc_32bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -4572,7 +4334,7 @@ void z80_inc_32bit( Environment * _environment, char * _variable ) {
 
 }
 
-void z80_dec_16bit( Environment * _environment, char * _variable ) {
+void sm83_dec_16bit( Environment * _environment, char * _variable ) {
 
     outline1("LD HL, (%s)", _variable  );
     outline0("DEC HL" );
@@ -4580,9 +4342,9 @@ void z80_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
-void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void sm83_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_z80_duff_asm );
+    deploy( duff, src_hw_sm83_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
@@ -4593,9 +4355,9 @@ void z80_mem_move( Environment * _environment, char *_source, char *_destination
 
 }
 
-void z80_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void sm83_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_z80_duff_asm );
+    deploy( duff, src_hw_sm83_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
@@ -4604,9 +4366,9 @@ void z80_mem_move_16bit( Environment * _environment, char *_source, char *_desti
 
 }
 
-void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void sm83_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_z80_duff_asm );
+    deploy( duff, src_hw_sm83_duff_asm );
 
     outline1("LD HL, %s", _source);
     outline1("LD DE, %s", _destination);
@@ -4617,9 +4379,9 @@ void z80_mem_move_direct( Environment * _environment, char *_source, char *_dest
 
 }
 
-void z80_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void sm83_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    deploy( duff, src_hw_z80_duff_asm );
+    deploy( duff, src_hw_sm83_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, %s", _destination);
@@ -4628,9 +4390,9 @@ void z80_mem_move_direct2( Environment * _environment, char *_source, char *_des
 
 }
 
-void z80_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination,  int _size ) {
+void sm83_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination,  int _size ) {
 
-    deploy( duff, src_hw_z80_duff_asm );
+    deploy( duff, src_hw_sm83_duff_asm );
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, %s", _destination);
@@ -4639,11 +4401,11 @@ void z80_mem_move_direct2_size( Environment * _environment, char *_source, char 
 
 }
 
-void z80_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void sm83_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
 
-        deploy( duff, src_hw_z80_duff_asm );
+        deploy( duff, src_hw_sm83_duff_asm );
 
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, (%s)", _destination);
@@ -4656,11 +4418,11 @@ void z80_mem_move_size( Environment * _environment, char *_source, char *_destin
 
 }
 
-void z80_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void sm83_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size > 0 ) {
 
-        deploy( duff, src_hw_z80_duff_asm );
+        deploy( duff, src_hw_sm83_duff_asm );
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
@@ -4672,11 +4434,11 @@ void z80_mem_move_direct_size( Environment * _environment, char *_source, char *
 
 }
 
-void z80_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void sm83_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
-        deploy( duff, src_hw_z80_duff_asm );
+        deploy( duff, src_hw_sm83_duff_asm );
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, (%s)", _destination);
@@ -4688,11 +4450,11 @@ void z80_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
 }
 
-void z80_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void sm83_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
-        deploy( duff, src_hw_z80_duff_asm );
+        deploy( duff, src_hw_sm83_duff_asm );
 
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, %s", _destination);
@@ -4704,7 +4466,7 @@ void z80_mem_move_indirect_direct_size( Environment * _environment, char *_sourc
 
 }
 
-void z80_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void sm83_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4735,7 +4497,7 @@ void z80_compare_memory( Environment * _environment, char *_source, char *_desti
 
 }
 
-void z80_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void sm83_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4763,7 +4525,7 @@ void z80_compare_memory_size( Environment * _environment, char *_source, char *_
 
 }
 
-void z80_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void sm83_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4798,7 +4560,7 @@ void z80_less_than_memory( Environment * _environment, char *_source, char *_des
 
 }
 
-void z80_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void sm83_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4833,7 +4595,7 @@ void z80_less_than_memory_size( Environment * _environment, char *_source, char 
 
 }
 
-void z80_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void sm83_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4864,7 +4626,7 @@ void z80_greater_than_memory( Environment * _environment, char *_source, char *_
 
 }
 
-void z80_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void sm83_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
     MAKE_LABEL
 
@@ -4895,7 +4657,7 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
 
 }
 
-void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     outline1("LD HL, (%s)", _source );
     outline0("LD DE, 0" );
@@ -4910,7 +4672,7 @@ void z80_math_add_16bit_with_8bit( Environment * _environment, char *_source, ch
 
 }
 
-void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void sm83_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     outline1("LD HL, (%s)", _source );
     outline0("LD DE, 0" );
@@ -4925,7 +4687,7 @@ void z80_math_sub_16bit_with_8bit( Environment * _environment, char *_source, ch
 
 }
 
-void z80_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+void sm83_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
 
@@ -4962,7 +4724,7 @@ void z80_uppercase( Environment * _environment, char *_source, char *_size, char
 
 }
 
-void z80_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+void sm83_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
 
@@ -4998,23 +4760,23 @@ void z80_lowercase( Environment * _environment, char *_source, char *_size, char
 
 }
 
-void z80_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+void sm83_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     Variable * temp = variable_temporary( _environment, VT_WORD, "(temp)" );
 
-    z80_convert_string_into_16bit( _environment, _string, _len, temp->realName );
+    sm83_convert_string_into_16bit( _environment, _string, _len, temp->realName );
 
-    z80_move_8bit( _environment, temp->realName, _value );
+    sm83_move_8bit( _environment, temp->realName, _value );
   
 }
 
-void z80_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+void sm83_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL
 
     outline1("LD A, (%s)", _len );
     outline0("LD IX, 0" );
-    outline0("LD IXL, A" );
+    outline0("LD (IXL), A" );
 
     outline0("LD A, 0" );
     outline1("LD (%s), A", _value );
@@ -5052,7 +4814,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
     outline0("INC HL" );
     outline0("DEC IX" );
     outline0("LD A, 0" );
-    outline0("CP IXL" );
+    outline0("CP (IXL)" );
     outline1("JR Z,%send", label );
 
     outline0("PUSH HL" );
@@ -5076,7 +4838,7 @@ void z80_convert_string_into_16bit( Environment * _environment, char * _string, 
   
 }
 
-void z80_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
+void sm83_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
     MAKE_LABEL
 
@@ -5111,11 +4873,11 @@ void z80_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
-void z80_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
+void sm83_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )
 
-    embedded( cpu_flip, src_hw_z80_cpu_flip_asm );
+    embedded( cpu_flip, src_hw_sm83_cpu_flip_asm );
 
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, (%s)", _destination);
@@ -5126,7 +4888,7 @@ void z80_flip( Environment * _environment, char * _source, char * _size, char * 
 
 }
 
-void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void sm83_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
     outline1("LD A, (%s)", _source);
@@ -5134,7 +4896,7 @@ void z80_move_8bit_indirect( Environment * _environment, char *_source, char * _
 
 }
 
-void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+void sm83_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("LD HL, %s", _value);
     outline1("LD A, (%s)", _offset );
@@ -5146,7 +4908,7 @@ void z80_move_8bit_with_offset2( Environment * _environment, char *_source, char
 
 }
 
-void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+void sm83_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     outline1("LD HL, (%s)", _value);
     outline1("LD DE, $%2.2x", ( _offset & 0xff ) );
@@ -5156,7 +4918,7 @@ void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 
 }
 
-void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void sm83_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
     outline0("LD A, (DE)");
@@ -5164,7 +4926,7 @@ void z80_move_8bit_indirect2( Environment * _environment, char * _value, char *_
 
 }
 
-void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+void sm83_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
     outline1("LD HL, %s", _value);
     outline1("LD A, (%s)", _offset);
@@ -5177,7 +4939,7 @@ void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, ch
 
 }
 
-void z80_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+void sm83_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
     outline1("LD HL, %s", _value);
     outline1("LD DE, (%s)", _offset);
@@ -5187,7 +4949,7 @@ void z80_move_8bit_indirect2_16bit( Environment * _environment, char * _value, c
 
 }
 
-void z80_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void sm83_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
     outline1("LD HL, (%s)", _source);
@@ -5199,7 +4961,7 @@ void z80_move_16bit_indirect( Environment * _environment, char *_source, char * 
 
 }
 
-void z80_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void sm83_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
     outline0("LD A, (DE)");
@@ -5210,7 +4972,7 @@ void z80_move_16bit_indirect2( Environment * _environment, char * _value, char *
 
 }
 
-void z80_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+void sm83_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
     outline1("LD HL, %s", _value);
     outline1("LD A, (%s)", _offset);
@@ -5227,7 +4989,7 @@ void z80_move_16bit_indirect2_8bit( Environment * _environment, char * _value, c
 
 }
 
-void z80_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void sm83_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
     outline1("LD HL, (%s)", _source);
@@ -5247,7 +5009,7 @@ void z80_move_32bit_indirect( Environment * _environment, char *_source, char * 
 
 }
 
-void z80_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
+void sm83_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
 
     outline1("LD DE, (%s)", _value);
 
@@ -5330,7 +5092,7 @@ void z80_move_nbit_indirect( Environment * _environment, int _n, char *_source, 
     }
 }
 
-void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void sm83_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
     outline0("LD A, (DE)");
@@ -5350,7 +5112,7 @@ void z80_move_32bit_indirect2( Environment * _environment, char * _value, char *
 
 }
 
-void z80_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
+void sm83_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
 
     outline1("LD DE, (%s)", _value);
 
@@ -5434,7 +5196,7 @@ void z80_move_nbit_indirect2( Environment * _environment, int _n, char * _value,
 
 }
 
-void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -5445,61 +5207,15 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive", label);
-        z80_complement2_32bit( _environment, _source, NULL );
+        sm83_complement2_32bit( _environment, _source, NULL );
         outhead1("%spositive:", label);
         outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
         outline0("AND $80");
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive2", label);
-        z80_complement2_16bit( _environment, _destination, NULL );
+        sm83_complement2_16bit( _environment, _destination, NULL );
         outhead1("%spositive2:", label);
-
-        // outline1("LD HL, %s", _source);
-        // outline0("LD A, (HL)");
-        // outline0("PUSH AF");
-        // outline0("POP IX");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline0("LD C, A");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD DE, (%s)", _destination);
-
-        // outline0("LD HL, 0");
-        // outline0("LD B, 32");
-        // outhead1("%sloop:", label);
-        // outline0("ADD IX, IX");
-        // outline0("RL C");
-        // outline0("RLA");
-        // outline0("ADC HL, HL");
-        // outline1("JR C, %soverflow", label);
-        // outline0("SBC HL, DE");
-        // outline1("JR NC, %ssetbit", label);
-        // outline0("ADD HL, DE");
-        // outline1("DJNZ %sloop", label);
-        // outline1("JMP %send", label);
-        // outhead1("%soverflow:", label);
-        // outline0("OR A");
-        // outline0("SBC HL, DE");
-        // outhead1("%ssetbit:", label);
-        // outline0("INC IXL");
-        // outline1("DJNZ %sloop", label);
-        // outhead1("%send:", label);
-        // outline1("LD (%s), HL", _other_remainder);
-        // outline1("LD HL, %s", _other);
-        // outline0("PUSH AF");
-        // outline0("PUSH IX");
-        // outline0("POP AF");
-        // outline0("LD (HL), A");
-        // outline0("POP AF");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD (HL), A");
-        // outline0("DEC HL");
-        // outline0("LD C, (HL)");
 
         outline1("LD A, (%s)", _destination);
         outline0("LD E, A");
@@ -5544,71 +5260,23 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("LD B, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive", label);
-        z80_complement2_16bit( _environment, _destination, NULL );
+        sm83_complement2_16bit( _environment, _destination, NULL );
         outhead1("%srepositive:", label);
         outline0("POP AF");
         outline0("LD C, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive2", label );
-        z80_complement2_32bit( _environment, _source, NULL );
+        sm83_complement2_32bit( _environment, _source, NULL );
         outhead1("%srepositive2:", label);
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
         outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
-        z80_complement2_32bit( _environment, _other, NULL );
+        sm83_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
     } else {
-
-        // outline1("LD HL, %s", _source);
-        // outline0("LD A, (HL)");
-        // outline0("PUSH AF");
-        // outline0("POP IX");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline0("LD C, A");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD DE, (%s)", _destination);
-
-        // outline0("LD HL, 0");
-        // outline0("LD B, 32");
-        // outhead1("%sloop:", label);
-        // outline0("ADD IX, IX");
-        // outline0("RL C");
-        // outline0("RLA");
-        // outline0("ADC HL, HL");
-        // outline1("JR C, %soverflow", label);
-        // outline0("SBC HL, DE");
-        // outline1("JR NC, %ssetbit", label);
-        // outline0("ADD HL, DE");
-        // outline1("DJNZ %sloop", label);
-        // outline1("JMP %send", label);
-        // outhead1("%soverflow:", label);
-        // outline0("OR A");
-        // outline0("SBC HL, DE");
-        // outhead1("%ssetbit:", label);
-        // outline0("INC IXL");
-        // outline1("DJNZ %sloop", label);
-        // outhead1("%send:", label);
-        // outline1("LD (%s), HL", _other_remainder);
-        // outline1("LD HL, %s", _other);
-        // outline0("PUSH AF");
-        // outline0("PUSH IX");
-        // outline0("POP AF");
-        // outline0("LD (HL), A");
-        // outline0("POP AF");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD (HL), A");
-        // outline0("DEC HL");
-        // outline0("LD C, (HL)");
-        // ; IN:	ACIX=dividend, DE=divisor
-        // ; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
 
 	    outline1("LD HL, (%s)", _source);
 	    outline0("LD IX, HL");
@@ -5635,7 +5303,7 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("OR A");
         outline0("SBC HL, DE");
         outhead1("%sloop3:", label);
-        outline0("INC IXL");
+        outline0("INC (IXL)");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5651,7 +5319,7 @@ void z80_math_div_32bit_to_16bit( Environment * _environment, char *_source, cha
  
 }
 
-void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -5664,61 +5332,8 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive", label);
-        z80_complement2_32bit( _environment, _source, NULL );
+        sm83_complement2_32bit( _environment, _source, NULL );
         outhead1("%spositive:", label);
-        // outline1("LD A, $%2.2x", (unsigned char)( (_destination >> 8 ) & 0xff ));
-        // outline0("AND $80");
-        // outline0("CP 0" );
-        // outline0("PUSH AF");
-        // outline1("JR Z,%spositive2", label);
-        // z80_complement2_16bit( _environment, _destination, NULL );
-        // outhead1("%spositive2:", label);
-
-        // outline1("LD HL, %s", _source);
-        // outline0("LD A, (HL)");
-        // outline0("PUSH AF");
-        // outline0("POP IX");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline0("LD C, A");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD DE, (%s)", _destination);
-
-        // outline0("LD HL, 0");
-        // outline0("LD B, 32");
-        // outhead1("%sloop:", label);
-        // outline0("ADD IX, IX");
-        // outline0("RL C");
-        // outline0("RLA");
-        // outline0("ADC HL, HL");
-        // outline1("JR C, %soverflow", label);
-        // outline0("SBC HL, DE");
-        // outline1("JR NC, %ssetbit", label);
-        // outline0("ADD HL, DE");
-        // outline1("DJNZ %sloop", label);
-        // outline1("JMP %send", label);
-        // outhead1("%soverflow:", label);
-        // outline0("OR A");
-        // outline0("SBC HL, DE");
-        // outhead1("%ssetbit:", label);
-        // outline0("INC IXL");
-        // outline1("DJNZ %sloop", label);
-        // outhead1("%send:", label);
-        // outline1("LD (%s), HL", _other_remainder);
-        // outline1("LD HL, %s", _other);
-        // outline0("PUSH AF");
-        // outline0("PUSH IX");
-        // outline0("POP AF");
-        // outline0("LD (HL), A");
-        // outline0("POP AF");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD (HL), A");
-        // outline0("DEC HL");
-        // outline0("LD C, (HL)");
 
         outline1("LD DE, $%4.4x", destination);
         outline1("LD IX, (%s)", _source);
@@ -5756,75 +5371,23 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
         outline0("LD A, H");
         outline1("LD (%s), A", address_displacement(_environment, _other_remainder, "1"));
 
-        // outline0("POP AF");
         outline1("LD B, $%2.2x", (_destination < 0) ? 0x80 : 0x00 );
-        // outline0("CMP $80");
-        // outline1("JR NZ, %srepositive", label);
-        // z80_complement2_16bit( _environment, _destination, NULL );
         outhead1("%srepositive:", label);
         outline0("POP AF");
         outline0("LD C, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive2", label );
-        z80_complement2_32bit( _environment, _source, NULL );
+        sm83_complement2_32bit( _environment, _source, NULL );
         outhead1("%srepositive2:", label);
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
         outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
-        z80_complement2_32bit( _environment, _other, NULL );
+        sm83_complement2_32bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
     } else {
-
-        // outline1("LD HL, %s", _source);
-        // outline0("LD A, (HL)");
-        // outline0("PUSH AF");
-        // outline0("POP IX");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline0("LD C, A");
-        // outline0("INC HL");
-        // outline0("LD A, (HL)");
-        // outline1("LD DE, (%s)", _destination);
-
-        // outline0("LD HL, 0");
-        // outline0("LD B, 32");
-        // outhead1("%sloop:", label);
-        // outline0("ADD IX, IX");
-        // outline0("RL C");
-        // outline0("RLA");
-        // outline0("ADC HL, HL");
-        // outline1("JR C, %soverflow", label);
-        // outline0("SBC HL, DE");
-        // outline1("JR NC, %ssetbit", label);
-        // outline0("ADD HL, DE");
-        // outline1("DJNZ %sloop", label);
-        // outline1("JMP %send", label);
-        // outhead1("%soverflow:", label);
-        // outline0("OR A");
-        // outline0("SBC HL, DE");
-        // outhead1("%ssetbit:", label);
-        // outline0("INC IXL");
-        // outline1("DJNZ %sloop", label);
-        // outhead1("%send:", label);
-        // outline1("LD (%s), HL", _other_remainder);
-        // outline1("LD HL, %s", _other);
-        // outline0("PUSH AF");
-        // outline0("PUSH IX");
-        // outline0("POP AF");
-        // outline0("LD (HL), A");
-        // outline0("POP AF");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("INC HL");
-        // outline0("LD (HL), A");
-        // outline0("DEC HL");
-        // outline0("LD C, (HL)");
-        // ; IN:	ACIX=dividend, DE=divisor
-        // ; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
 
 	    outline1("LD HL, (%s)", _source);
 	    outline0("LD IX, HL");
@@ -5851,7 +5414,7 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
         outline0("OR A");
         outline0("SBC HL, DE");
         outhead1("%sloop3:", label);
-        outline0("INC IXL");
+        outline0("INC (IXL)");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5867,7 +5430,7 @@ void z80_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
  
 }
 
-void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -5878,14 +5441,14 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive", label);
-        z80_complement2_16bit( _environment, _source, NULL );
+        sm83_complement2_16bit( _environment, _source, NULL );
         outhead1("%spositive:", label);
         outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
         outline0("AND $80");
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive2", label);
-        z80_complement2_16bit( _environment, _destination, NULL );
+        sm83_complement2_16bit( _environment, _destination, NULL );
         outhead1("%spositive2:", label);
 
         outline1("LD HL, %s", _source);
@@ -5919,20 +5482,20 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
         outline0("LD B, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive", label);
-        z80_complement2_16bit( _environment, _destination, NULL );
+        sm83_complement2_16bit( _environment, _destination, NULL );
         outhead1("%srepositive:", label);
         outline0("POP AF");
         outline0("LD C, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive2", label );
-        z80_complement2_16bit( _environment, _source, NULL );
+        sm83_complement2_16bit( _environment, _source, NULL );
         outhead1("%srepositive2:", label);
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
         outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
-        z80_complement2_16bit( _environment, _other, NULL );
+        sm83_complement2_16bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
     } else {
@@ -5968,7 +5531,7 @@ void z80_math_div_16bit_to_16bit( Environment * _environment, char *_source, cha
     
 }
 
-void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -5981,14 +5544,14 @@ void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_sourc
         outline0("CP 0" );
         outline0("PUSH AF");
         outline1("JR Z,%spositive", label);
-        z80_complement2_16bit( _environment, _source, NULL );
+        sm83_complement2_16bit( _environment, _source, NULL );
         outhead1("%spositive:", label);
         // outline1("LD A, $%2.2x", (unsigned char)( (_destination>>8) & 0xff));
         // outline0("AND $80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive2", label);
-        // z80_complement2_16bit( _environment, _destination, NULL );
+        // sm83_complement2_16bit( _environment, _destination, NULL );
         // outhead1("%spositive2:", label);
 
         outline1("LD HL, %s", _source);
@@ -6022,20 +5585,20 @@ void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_sourc
         outline1("LD B, $%2.2x", _destination < 0 ? 0x80 : 0x00 );
         // outline0("CMP $80");
         // outline1("JR NZ, %srepositive", label);
-        // z80_complement2_16bit( _environment, _destination, NULL );
+        // sm83_complement2_16bit( _environment, _destination, NULL );
         outhead1("%srepositive:", label);
         outline0("POP AF");
         outline0("LD C, A");
         outline0("CMP $80");
         outline1("JR NZ, %srepositive2", label );
-        z80_complement2_16bit( _environment, _source, NULL );
+        sm83_complement2_16bit( _environment, _source, NULL );
         outhead1("%srepositive2:", label);
         outline0("LD A, B");
         outline0("XOR C");
         outline0("AND $80");
         outline0("CP $80");
         outline1("JR NZ, %srepositive3", label );
-        z80_complement2_16bit( _environment, _other, NULL );
+        sm83_complement2_16bit( _environment, _other, NULL );
         outhead1("%srepositive3:", label);
 
     } else {
@@ -6071,7 +5634,7 @@ void z80_math_div_16bit_to_16bit_const( Environment * _environment, char *_sourc
     
 }
 
-void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -6161,7 +5724,7 @@ void z80_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
     }
 }
 
-void z80_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void sm83_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -6251,11 +5814,11 @@ void z80_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
     }
 }
 
-void z80_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
+void sm83_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
     no_inline( cpu_bit_check_extended )
 
-    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
+    embedded( cpu_bit_check_extended, src_hw_sm83_cpu_bit_check_extended_asm );
 
         outline1("LD DE, %s", _value);
         outline1("LD A, $%2.2x", _position );
@@ -6269,13 +5832,13 @@ void z80_bit_check( Environment * _environment, char *_value, int _position, cha
 
 }
 
-void z80_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth ) {
+void sm83_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth ) {
 
     MAKE_LABEL
 
     no_inline( cpu_bit_check_extended )
 
-    embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
+    embedded( cpu_bit_check_extended, src_hw_sm83_cpu_bit_check_extended_asm );
 
         outline1("LD DE, %s", _value);
         outline1("LD A, (%s)", _position );
@@ -6289,7 +5852,7 @@ void z80_bit_check_extended( Environment * _environment, char *_value, char * _p
     
 }
 
-void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
+void sm83_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -6297,7 +5860,7 @@ void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
 
     no_inline( cpu_bit_inplace )
 
-    embedded( cpu_bit_inplace, src_hw_z80_cpu_bit_inplace_asm );
+    embedded( cpu_bit_inplace, src_hw_sm83_cpu_bit_inplace_asm );
 
         if ( _bit ) {
             if ( * _bit ) {
@@ -6315,7 +5878,7 @@ void z80_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
 
 }
 
-void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
+void sm83_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -6323,7 +5886,7 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
     no_inline( cpu_bit_inplace )
 
-    embedded( cpu_bit_inplace, src_hw_z80_cpu_bit_inplace_asm );
+    embedded( cpu_bit_inplace, src_hw_sm83_cpu_bit_inplace_asm );
 
         if ( _bit ) {
             outline1("LD A, (%s)", _bit );
@@ -6341,7 +5904,7 @@ void z80_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
 }
 
-void z80_number_to_string_vars( Environment * _environment ) {
+void sm83_number_to_string_vars( Environment * _environment ) {
 
     variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
     variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
@@ -6349,11 +5912,11 @@ void z80_number_to_string_vars( Environment * _environment ) {
 
 }
 
-void z80_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+void sm83_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
     MAKE_LABEL
         
-    deploy_with_vars( numberToString, src_hw_z80_number_to_string_asm, z80_number_to_string_vars );
+    deploy_with_vars( numberToString, src_hw_sm83_number_to_string_asm, sm83_number_to_string_vars );
 
     switch( _bits ) {
         case 8:
@@ -6452,7 +6015,7 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
     }
 
     outline1("LD DE, (%s)", _string);
-    outline0("LD A, IXH");
+    outline0("LD A, (IXH)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);
     outline0("LD A, '-'");
@@ -6466,15 +6029,15 @@ void z80_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
-void z80_bits_to_string_vars( Environment * _environment ) {
+void sm83_bits_to_string_vars( Environment * _environment ) {
 
     variable_import( _environment, "BINSTRBUF", VT_BUFFER, 32 );
     
 }
 
-void z80_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void sm83_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    deploy_with_vars( bitsToString,src_hw_z80_bits_to_string_asm, z80_bits_to_string_vars );
+    deploy_with_vars( bitsToString,src_hw_sm83_bits_to_string_asm, sm83_bits_to_string_vars );
 
     switch( _bits ) {
         case 32:
@@ -6509,16 +6072,16 @@ void z80_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void z80_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void sm83_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     MAKE_LABEL
 
     inline( cpu_hex_to_string )
 
-    embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
+    embedded( cpu_hex_to_string, src_hw_sm83_cpu_hex_to_string_asm );
 
         outline1("LD A, $%2.2x", _bits);
-        outline0("LD IXL, A");
+        outline0("LD (IXL), A");
 
         switch( _bits ) {
             case 8:
@@ -6564,9 +6127,9 @@ void z80_hex_to_string( Environment * _environment, char * _number, char * _stri
 }
 
 
-void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
+void sm83_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD HL, %s", _string );
     outline0( "CALL DSDEFINE" );
@@ -6575,9 +6138,9 @@ void z80_dsdefine( Environment * _environment, char * _string, char * _index ) {
     
 }
 
-void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
+void sm83_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _size );
     outline0( "LD C, A" );
@@ -6587,9 +6150,9 @@ void z80_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 }
 
-void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
+void sm83_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, $%2.2x", ( _size & 0xff ) );
     outline0( "LD C, A" );
@@ -6599,9 +6162,9 @@ void z80_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 }
 
-void z80_dsfree( Environment * _environment, char * _index ) {
+void sm83_dsfree( Environment * _environment, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -6609,9 +6172,9 @@ void z80_dsfree( Environment * _environment, char * _index ) {
 
 }
 
-void z80_dswrite( Environment * _environment, char * _index ) {
+void sm83_dswrite( Environment * _environment, char * _index ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -6619,9 +6182,9 @@ void z80_dswrite( Environment * _environment, char * _index ) {
 
 }
 
-void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
+void sm83_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -6631,9 +6194,9 @@ void z80_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 }
 
-void z80_dsresize_size( Environment * _environment, char * _index, int _resize ) {
+void sm83_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
@@ -6643,25 +6206,25 @@ void z80_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 }
 
-void z80_dsgc( Environment * _environment ) {
+void sm83_dsgc( Environment * _environment ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline0( "CALL DSGC" );
 
 }
 
-void z80_dsinit( Environment * _environment ) {
+void sm83_dsinit( Environment * _environment ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline0( "CALL DSINIT" );
 
 }
 
-void z80_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
+void sm83_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    deploy( dstring,src_hw_z80_dstring_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
 
     if ( _address || _size ) {
         outline1( "LD A, (%s)", _index );
@@ -6681,7 +6244,7 @@ void z80_dsdescriptor( Environment * _environment, char * _index, char * _addres
 
 }
 
-void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+void sm83_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("LD HL, (%s)", _value);
     outline1("LD A, (%s)", _offset );
@@ -6694,7 +6257,7 @@ void z80_move_8bit_indirect_with_offset2( Environment * _environment, char *_sou
 
 }
 
-void z80_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
+void sm83_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LD A, (%s)", _source );
     outline0( "XOR $FF" );
     if ( _destination ) {
@@ -6703,13 +6266,13 @@ void z80_complement2_8bit( Environment * _environment, char * _source, char * _d
         outline1( "LD (%s), A", _source );        
     }
     if ( _destination ) {
-        z80_inc( _environment, _destination );
+        sm83_inc( _environment, _destination );
     } else {
-        z80_inc( _environment, _source );
+        sm83_inc( _environment, _source );
     }
 }
 
-void z80_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
+void sm83_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LD A, (%s)", _source );
     outline0( "XOR $FF" );
     if ( _destination ) {
@@ -6725,13 +6288,13 @@ void z80_complement2_16bit( Environment * _environment, char * _source, char * _
         outline1( "LD (%s), A", address_displacement(_environment, _source, "1") );        
     }
     if ( _destination ) {
-        z80_inc_16bit( _environment, _destination );
+        sm83_inc_16bit( _environment, _destination );
     } else {
-        z80_inc_16bit( _environment, _source );
+        sm83_inc_16bit( _environment, _source );
     }
 }
 
-void z80_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+void sm83_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LD A, (%s)", _source );
     outline0( "XOR $FF" );
     if ( _destination ) {
@@ -6761,15 +6324,15 @@ void z80_complement2_32bit( Environment * _environment, char * _source, char * _
         outline1( "LD (%s), A", address_displacement(_environment, _source, "3") );        
     } 
     if ( _destination ) {
-        z80_inc_32bit( _environment, _destination );
+        sm83_inc_32bit( _environment, _destination );
     } else {
-        z80_inc_32bit( _environment, _source );
+        sm83_inc_32bit( _environment, _source );
     }
 }
 
-void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
+void sm83_sqroot( Environment * _environment, char * _number, char * _result ) {
 
-    deploy( sqr, src_hw_z80_sqr_asm );
+    deploy( sqr, src_hw_sm83_sqr_asm );
 
     outline1("LD HL, (%s)", _number );
 
@@ -6779,7 +6342,7 @@ void z80_sqroot( Environment * _environment, char * _number, char * _result ) {
 
 }
 
-void z80_dstring_vars( Environment * _environment ) {
+void sm83_dstring_vars( Environment * _environment ) {
 
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
@@ -6800,7 +6363,7 @@ void z80_dstring_vars( Environment * _environment ) {
 
 }
 
-void z80_protothread_vars( Environment * _environment ) {
+void sm83_protothread_vars( Environment * _environment ) {
 
     int count = _environment->protothreadConfig.count;
 
@@ -6816,17 +6379,17 @@ void z80_protothread_vars( Environment * _environment ) {
 }
 
 
-void z80_protothread_loop( Environment * _environment ) {
+void sm83_protothread_loop( Environment * _environment ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline0("CALL PROTOTHREADLOOP" );
 
 }
 
-void z80_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+void sm83_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD HL, %s", _label );
     outline1("LD A, (%s)", _index );
@@ -6836,9 +6399,9 @@ void z80_protothread_register_at( Environment * _environment, char * _index, cha
 
 }
 
-void z80_protothread_register( Environment * _environment, char * _label, char * _index ) {
+void sm83_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD HL, %s", _label );
 
@@ -6849,9 +6412,9 @@ void z80_protothread_register( Environment * _environment, char * _label, char *
 
 }
 
-void z80_protothread_unregister( Environment * _environment, char * _index ) {
+void sm83_protothread_unregister( Environment * _environment, char * _index ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6860,9 +6423,9 @@ void z80_protothread_unregister( Environment * _environment, char * _index ) {
 
 }
 
-void z80_protothread_save( Environment * _environment, char * _index, int _step ) {
+void sm83_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6872,9 +6435,9 @@ void z80_protothread_save( Environment * _environment, char * _index, int _step 
 
 }
 
-void z80_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+void sm83_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6885,9 +6448,9 @@ void z80_protothread_restore( Environment * _environment, char * _index, char * 
     
 }
 
-void z80_protothread_set_state( Environment * _environment, char * _index, int _state ) {
+void sm83_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6897,9 +6460,9 @@ void z80_protothread_set_state( Environment * _environment, char * _index, int _
 
 }
 
-void z80_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+void sm83_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6910,9 +6473,9 @@ void z80_protothread_get_state( Environment * _environment, char * _index, char 
 
 }
 
-void z80_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+void sm83_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
@@ -6923,16 +6486,16 @@ void z80_protothread_get_address( Environment * _environment, char * _index, cha
 
 }
 
-void z80_protothread_current( Environment * _environment, char * _current ) {
+void sm83_protothread_current( Environment * _environment, char * _current ) {
 
-    deploy_with_vars( protothread, src_hw_z80_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_sm83_protothread_asm, cpu_protothread_vars );
 
     outline0("LD A, (PROTOTHREADCT)" );
     outline1("LD (%s), A", _current );
 
 }
 
-void z80_set_callback( Environment * _environment, char * _callback, char * _label ) {
+void sm83_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
     outline1("LD DE, %s", _label );
     outline1("LD HL, %s", _callback );
@@ -6943,13 +6506,13 @@ void z80_set_callback( Environment * _environment, char * _callback, char * _lab
 
 }
 
-void z80_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+void sm83_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
     inline( cpu_msc1_uncompress )
 
-    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_sm83_msc1_asm );
 
         outline1("LD HL, %s", _input);
         outline1("LD DE, %s", _output);
@@ -6959,13 +6522,13 @@ void z80_msc1_uncompress_direct_direct( Environment * _environment, char * _inpu
 
 }
 
-void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
+void sm83_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
     inline( cpu_msc1_uncompress )
 
-    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_sm83_msc1_asm );
 
         outline1("LD HL, %s", _input);
         outline1("LD DE, (%s)", _output);
@@ -6975,13 +6538,13 @@ void z80_msc1_uncompress_direct_indirect( Environment * _environment, char * _in
 
 }
 
-void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+void sm83_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
     inline( cpu_msc1_uncompress )
 
-    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_sm83_msc1_asm );
 
         outline1("LD HL, (%s)", _input);
         outline1("LD DE, %s", _output);
@@ -6991,13 +6554,13 @@ void z80_msc1_uncompress_indirect_direct( Environment * _environment, char * _in
 
 }
 
-void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
+void sm83_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
     inline( cpu_msc1_uncompress )
 
-    embedded( cpu_msc1_uncompress, src_hw_z80_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_sm83_msc1_asm );
 
         outline1("LD HL, (%s)", _input);
         outline1("LD DE, (%s)", _output);
@@ -7007,7 +6570,7 @@ void z80_msc1_uncompress_indirect_indirect( Environment * _environment, char * _
 
 }
 
-void z80_out( Environment * _environment, char * _port, char * _value ) {
+void sm83_out( Environment * _environment, char * _port, char * _value ) {
 
     outline1("LD A, (%s)", _value );
     outline1("LD BC, (%s)", _port );
@@ -7015,7 +6578,7 @@ void z80_out( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void z80_in( Environment * _environment, char * _port, char * _value ) {
+void sm83_in( Environment * _environment, char * _port, char * _value ) {
 
     outline1("LD BC, (%s)", _port );
     outline0("IN A, (C)" );
@@ -7023,7 +6586,7 @@ void z80_in( Environment * _environment, char * _port, char * _value ) {
         
 }
 
-void z80_out_direct( Environment * _environment, char * _port, char * _value ) {
+void sm83_out_direct( Environment * _environment, char * _port, char * _value ) {
 
     outline1("LD A, (%s)", _value );
     outline1("LD BC, %s", _port );
@@ -7031,7 +6594,7 @@ void z80_out_direct( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void z80_in_direct( Environment * _environment, char * _port, char * _value ) {
+void sm83_in_direct( Environment * _environment, char * _port, char * _value ) {
 
     outline1("LD BC, %s", _port );
     outline0("IN A, (C)" );
@@ -7039,25 +6602,25 @@ void z80_in_direct( Environment * _environment, char * _port, char * _value ) {
         
 }
 
-void z80_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
+void sm83_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
     MAKE_LABEL
 
     inline( cpu_string_sub )
 
-    embedded( cpu_string_sub, src_hw_z80_cpu_string_sub_asm );
+    embedded( cpu_string_sub, src_hw_sm83_cpu_string_sub_asm );
 
         outline1("LD A, (%s)", _source);
         outline0("LD L, A");
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
         outline0("LD H, A");
         outline1("LD A, (%s)", _source_size);
-        outline0("LD IYL, A");
+        outline0("LD (IYL), A");
 
         outline1("LD A, (%s)", _pattern);
-        outline0("LD IXL, A");
+        outline0("LD (IXL), A");
         outline1("LD A, (%s)", address_displacement(_environment, _pattern, "1"));
-        outline0("LD IXH, A");
+        outline0("LD (IXH), A");
         outline1("LD A, (%s)", _pattern_size);
         outline0("LD IYH, A");
 
@@ -7068,7 +6631,7 @@ void z80_string_sub( Environment * _environment, char * _source, char * _source_
 
         outline0("CALL CPUSTRINGSUB");
 
-        outline0("LD A, IYL");
+        outline0("LD A, (IYL)");
         outline1("LD (%s), A", _destination_size);
 
     done()
@@ -7083,21 +6646,21 @@ static char Z80_BLIT_REGISTER[][2] = {
 
 #define Z80_BLII_REGISTER_COUNT ( sizeof( Z80_BLIT_REGISTER ) / 2 )
 
-void z80_blit_initialize( Environment * _environment ) {
+void sm83_blit_initialize( Environment * _environment ) {
 
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
 
-    // outline0("; z80_blit_initialize");
+    // outline0("; sm83_blit_initialize");
 
     outline0("PUSH HL");
     outline0("PUSH DE");
 
 }
 
-void z80_blit_finalize( Environment * _environment ) {
+void sm83_blit_finalize( Environment * _environment ) {
 
-    // outline0("; z80_blit_finalize");
+    // outline0("; sm83_blit_finalize");
 
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
@@ -7107,7 +6670,7 @@ void z80_blit_finalize( Environment * _environment ) {
     
 }
 
-char * z80_blit_register_name(  Environment * _environment, int _register ) {
+char * sm83_blit_register_name(  Environment * _environment, int _register ) {
     
     if ( _register < Z80_BLII_REGISTER_COUNT ) {
         return &Z80_BLIT_REGISTER[_register][0];
@@ -7116,7 +6679,7 @@ char * z80_blit_register_name(  Environment * _environment, int _register ) {
     }
 }
 
-int z80_blit_alloc_register(  Environment * _environment ) {
+int sm83_blit_alloc_register(  Environment * _environment ) {
 
     int reg = 0;
 
@@ -7125,8 +6688,8 @@ int z80_blit_alloc_register(  Environment * _environment ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "z80_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
-            // outline1("; z80_blit_alloc_register = %d", reg );
+            // printf( "sm83_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
+            // outline1("; sm83_blit_alloc_register = %d", reg );
             return reg;
         }
     }
@@ -7144,8 +6707,8 @@ int z80_blit_alloc_register(  Environment * _environment ) {
             outline1( "LD A, %s", &Z80_BLIT_REGISTER[reg][0] );
             outline2( "LD (%sbs+$%2.2x), A",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "z80_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
-            // outline1("; z80_blit_alloc_register = %d", ( ( (reg+1) << 8 ) | location ) );
+            // printf( "sm83_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
+            // outline1("; sm83_blit_alloc_register = %d", ( ( (reg+1) << 8 ) | location ) );
             return ( ( (reg+1) << 8 ) | location );
         }
     }
@@ -7154,11 +6717,11 @@ int z80_blit_alloc_register(  Environment * _environment ) {
 
 }
 
-void z80_blit_free_register(  Environment * _environment, int _register ) {
+void sm83_blit_free_register(  Environment * _environment, int _register ) {
 
-    // outline1("; z80_blit_free_register = %d", _register );
+    // outline1("; sm83_blit_free_register = %d", _register );
 
-    // printf( "z80_blit_free_register($%4.4x)\n", _register );
+    // printf( "sm83_blit_free_register($%4.4x)\n", _register );
 
     int location = _register & 0xff;
     int reg;
@@ -7195,7 +6758,7 @@ void z80_blit_free_register(  Environment * _environment, int _register ) {
  * @param _n bits to store (>32)
  * @param _value[] Value to store (segmented in 32 bit each)
  */
-void z80_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
+void sm83_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
 
     int i = 0;
     while( _n ) {
@@ -7204,43 +6767,43 @@ void z80_store_nbit( Environment * _environment, char *_destination, int _n, int
             switch( _n ) {
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
                 default:
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-                    z80_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+                    sm83_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
                     break;
             }
             _n = 0;
         } else {
-            z80_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+            sm83_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            z80_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+            sm83_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            z80_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+            sm83_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            z80_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+            sm83_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
             _n -= 32;
         }
         ++i;
@@ -7256,7 +6819,7 @@ void z80_store_nbit( Environment * _environment, char *_destination, int _n, int
  * @param _n bits to store (>32)
  * @param _value[] Value to store (segmented in 32 bit each)
  */
-void z80_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
+void sm83_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
 
     int i = 0;
     while( _n ) {
@@ -7266,52 +6829,52 @@ void z80_move_nbit( Environment * _environment, int _n, char * _source, char *_d
             switch( _n ) {
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
                 default:
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-                    z80_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sm83_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
             }
             _n = 0;
         } else {
-            z80_move_8bit( _environment, sourceAddress, destinationAddress );
+            sm83_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            z80_move_8bit( _environment, sourceAddress, destinationAddress );
+            sm83_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            z80_move_8bit( _environment, sourceAddress, destinationAddress );
+            sm83_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            z80_move_8bit( _environment, sourceAddress, destinationAddress );
+            sm83_move_8bit( _environment, sourceAddress, destinationAddress );
             _n -= 32;
         }
         ++i;
@@ -7327,7 +6890,7 @@ void z80_move_nbit( Environment * _environment, int _n, char * _source, char *_d
  * @param _n bits to store (>32)
  * @param _value[] Value to store (segmented in 32 bit each)
  */
-void z80_compare_nbit( Environment * _environment, int _n, char *_source, char *_destination,  char *_name, int _positive ) {
+void sm83_compare_nbit( Environment * _environment, int _n, char *_source, char *_destination,  char *_name, int _positive ) {
 
     MAKE_LABEL
 
@@ -7342,66 +6905,66 @@ void z80_compare_nbit( Environment * _environment, int _n, char *_source, char *
             switch( _n ) {
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
                 default:
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-                    z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-                    z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
                     break;
             }
             _n = 0;
         } else {
-            z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-            z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
             sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-            z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
             sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-            z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
             sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            z80_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-            z80_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sm83_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            sm83_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
             _n -= 32;
         }
         ++i;
@@ -7422,7 +6985,7 @@ void z80_compare_nbit( Environment * _environment, int _n, char *_source, char *
 //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
 // FAST	    (24)	seeeeeee mmmmmmmm mmmmmmmm
 
-void z80_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+void sm83_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
 
     double value = 0.0;
     double integral = 0.0;
@@ -7639,7 +7202,7 @@ void z80_float_fast_from_double_to_int_array( Environment * _environment, double
 // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
 //
 
-void z80_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+void sm83_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
     double value = 0.0;
     double integral = 0.0;
@@ -7872,19 +7435,19 @@ void z80_float_single_from_double_to_int_array( Environment * _environment, doub
 // EXTENDED (80)	seeeeeee eeeeeeee mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm mmmmmmmm
 //
 
-void z80_float_double_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+void sm83_float_double_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
 }
 
-void z80_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+void sm83_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
-    deploy( fp_fast_pow10_lut, src_hw_z80_fp_fast_pow10_lut_asm );
-    deploy( fp_format_str, src_hw_z80_fp_format_str_asm );
-    deploy( fp_fast_to_string, src_hw_z80_fp_fast_to_string_asm );
+    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
+    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
+    deploy( fp_fast_pow10_lut, src_hw_sm83_fp_fast_pow10_lut_asm );
+    deploy( fp_format_str, src_hw_sm83_fp_format_str_asm );
+    deploy( fp_fast_to_string, src_hw_sm83_fp_fast_to_string_asm );
 
     // ;converts a 24-bit float to a string
 
@@ -7924,19 +7487,19 @@ void z80_float_fast_to_string( Environment * _environment, char * _x, char * _st
 
 }
 
-void z80_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+void sm83_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
     MAKE_LABEL
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
-    deploy( fp_c_times_bde, src_hw_z80_fp_c_times_bde_asm );
-    deploy( fp_single_pow10_lut, src_hw_z80_fp_single_pow10_lut_asm );
-    deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    deploy( fp_mov4, src_hw_z80_fp_mov4_asm );
-    deploy( fp_common_str, src_hw_z80_fp_common_str_asm );
-    deploy( fp_format_str, src_hw_z80_fp_format_str_asm );
-    deploy( fp_single_to_string, src_hw_z80_fp_single_to_string_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
+    deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
+    deploy( fp_single_pow10_lut, src_hw_sm83_fp_single_pow10_lut_asm );
+    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    deploy( fp_mov4, src_hw_sm83_fp_mov4_asm );
+    deploy( fp_common_str, src_hw_sm83_fp_common_str_asm );
+    deploy( fp_format_str, src_hw_sm83_fp_format_str_asm );
+    deploy( fp_single_to_string, src_hw_sm83_fp_single_to_string_asm );
 
     // ;converts a 32-bit float to a string
 
@@ -7967,13 +7530,13 @@ void z80_float_single_to_string( Environment * _environment, char * _x, char * _
 
 }
 
-void z80_float_double_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+void sm83_float_double_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
     
 }
 
-void z80_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_fast_from_16, src_hw_z80_fp_fast_from_16_asm );
+    deploy( fp_fast_from_16, src_hw_sm83_fp_fast_from_16_asm );
 
     outline1( "LD HL, (%s)", _value );
     if ( _signed ) {
@@ -7989,9 +7552,9 @@ void z80_float_fast_from_16( Environment * _environment, char * _value, char * _
 
 }
 
-void z80_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_fast_from_8, src_hw_z80_fp_fast_from_8_asm );
+    deploy( fp_fast_from_8, src_hw_sm83_fp_fast_from_8_asm );
 
     outline1( "LD A, (%s)", _value );
     if ( _signed ) {
@@ -8007,9 +7570,9 @@ void z80_float_fast_from_8( Environment * _environment, char * _value, char * _r
 
 }
 
-void z80_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_fast_to_16, src_hw_z80_fp_fast_to_16_asm );
+    deploy( fp_fast_to_16, src_hw_sm83_fp_fast_to_16_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     outline0( "LD L, A" );
@@ -8025,9 +7588,9 @@ void z80_float_fast_to_16( Environment * _environment, char * _value, char * _re
 
 }
 
-void z80_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_fast_to_8, src_hw_z80_fp_fast_to_8_asm );
+    deploy( fp_fast_to_8, src_hw_sm83_fp_fast_to_8_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     outline0( "LD L, A" );
@@ -8043,9 +7606,9 @@ void z80_float_fast_to_8( Environment * _environment, char * _value, char * _res
 
 }
 
-void z80_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
+    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
     outline0( "LD E, A" );
@@ -8068,10 +7631,10 @@ void z80_float_fast_add( Environment * _environment, char * _x, char * _y, char 
 
 }
 
-void z80_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
+    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
+    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
     outline0( "LD E, A" );
@@ -8094,10 +7657,10 @@ void z80_float_fast_sub( Environment * _environment, char * _x, char * _y, char 
 
 }
 
-void z80_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
+    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
+    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
     outline0( "LD E, A" );
@@ -8119,9 +7682,9 @@ void z80_float_fast_mul( Environment * _environment, char * _x, char * _y, char 
 
 }
 
-void z80_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_fast_div, src_hw_z80_fp_fast_div_asm );
+    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
     outline0( "LD E, A" );
@@ -8143,13 +7706,13 @@ void z80_float_fast_div( Environment * _environment, char * _x, char * _y, char 
 
 }
 
-void z80_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
-    deploy( fp_fast_cmp, src_hw_z80_fp_fast_cmp_asm );
+    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
+    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
+    deploy( fp_fast_cmp, src_hw_sm83_fp_fast_cmp_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
     outline0( "LD E, A" );
@@ -8181,19 +7744,19 @@ void z80_float_fast_cmp( Environment * _environment, char * _x, char * _y, char 
 
 }
 
-void z80_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
-    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
-    deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
-    deploy( fp_fast_sin, src_hw_z80_fp_fast_sin_asm );
-    deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
-    deploy( fp_fast_cos, src_hw_z80_fp_fast_cos_asm );     
-    deploy( fp_fast_div, src_hw_z80_fp_fast_div_asm );
+    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
+    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
+    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
+    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
+    deploy( fp_fast_sin, src_hw_sm83_fp_fast_sin_asm );
+    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
+    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
+    deploy( fp_fast_cos, src_hw_sm83_fp_fast_cos_asm );     
+    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     outline0( "LD L, A" );
@@ -8211,18 +7774,18 @@ void z80_float_fast_sin( Environment * _environment, char * _angle, char * _resu
 
 }
 
-void z80_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
-    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
-    deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
-    deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
-    deploy( fp_fast_sin, src_hw_z80_fp_fast_cos_asm );
-    deploy( fp_fast_cos, src_hw_z80_fp_fast_sin_asm );
+    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
+    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
+    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
+    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
+    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
+    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
+    deploy( fp_fast_sin, src_hw_sm83_fp_fast_cos_asm );
+    deploy( fp_fast_cos, src_hw_sm83_fp_fast_sin_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     outline0( "LD L, A" );
@@ -8240,14 +7803,14 @@ void z80_float_fast_cos( Environment * _environment, char * _angle, char * _resu
 
 }
 
-void z80_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_fast_tan, src_hw_z80_fp_fast_tan_asm );
-    deploy( fp_fast_sin, src_hw_z80_fp_fast_sin_asm );
-    deploy( fp_fast_cos, src_hw_z80_fp_fast_cos_asm );     
-    deploy( fp_fast_div, src_hw_z80_fp_fast_div_asm );
+    deploy( fp_fast_tan, src_hw_sm83_fp_fast_tan_asm );
+    deploy( fp_fast_sin, src_hw_sm83_fp_fast_sin_asm );
+    deploy( fp_fast_cos, src_hw_sm83_fp_fast_cos_asm );     
+    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     outline0( "LD L, A" );
@@ -8265,13 +7828,13 @@ void z80_float_fast_tan( Environment * _environment, char * _angle, char * _resu
 
 }
 
-void z80_float_fast_sqr( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_fast_sqr( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul16, src_hw_z80_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_z80_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
+    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
+    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
+    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     outline0( "LD L, A" );
@@ -8289,11 +7852,11 @@ void z80_float_fast_sqr( Environment * _environment, char * _value, char * _resu
 
 }
 
-void z80_float_fast_mod1( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_fast_mod1( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
+    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     outline0( "LD L, A" );
@@ -8311,11 +7874,11 @@ void z80_float_fast_mod1( Environment * _environment, char * _value, char * _res
 
 }
 
-void z80_float_fast_neg( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_fast_neg( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_fast_neg, src_hw_z80_fp_fast_neg_asm );
+    deploy( fp_fast_neg, src_hw_sm83_fp_fast_neg_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     outline0( "LD L, A" );
@@ -8333,10 +7896,10 @@ void z80_float_fast_neg( Environment * _environment, char * _value, char * _resu
 
 }
 
-void z80_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_single_from_16, src_hw_z80_fp_single_from_16_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_single_from_16, src_hw_sm83_fp_single_from_16_asm );
 
     outline1( "LD HL, (%s)", _value );
     outline1( "LD BC, %s", _result );
@@ -8348,9 +7911,9 @@ void z80_float_single_from_16( Environment * _environment, char * _value, char *
 
 }
 
-void z80_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_single_from_8, src_hw_z80_fp_single_from_8_asm );
+    deploy( fp_single_from_8, src_hw_sm83_fp_single_from_8_asm );
 
     outline1( "LD A, (%s)", _value );
     outline1( "LD BC, %s", _result );
@@ -8363,9 +7926,9 @@ void z80_float_single_from_8( Environment * _environment, char * _value, char * 
 }
 
 
-void z80_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_single_to_16, src_hw_z80_fp_single_to_16_asm );
+    deploy( fp_single_to_16, src_hw_sm83_fp_single_to_16_asm );
 
     outline1( "LD HL, %s", _value );
     if ( _signed ) {
@@ -8377,9 +7940,9 @@ void z80_float_single_to_16( Environment * _environment, char * _value, char * _
 
 }
 
-void z80_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void sm83_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_single_to_8, src_hw_z80_fp_single_to_8_asm );
+    deploy( fp_single_to_8, src_hw_sm83_fp_single_to_8_asm );
 
     outline1( "LD HL, %s", _value );
     if ( _signed ) {
@@ -8391,10 +7954,10 @@ void z80_float_single_to_8( Environment * _environment, char * _value, char * _r
 
 }
 
-void z80_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_single_add, src_hw_z80_fp_single_add_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
 
     outline1( "LD DE, %s", _y );
     outline1( "LD HL, %s", _x );
@@ -8403,11 +7966,11 @@ void z80_float_single_add( Environment * _environment, char * _x, char * _y, cha
     
 }
 
-void z80_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    deploy( fp_single_add, src_hw_z80_fp_single_add_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
 
     outline1( "LD DE, %s", _y );
     outline1( "LD HL, %s", _x );
@@ -8416,11 +7979,11 @@ void z80_float_single_sub( Environment * _environment, char * _x, char * _y, cha
     
 }
 
-void z80_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
-    deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
+    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
 
     outline1( "LD DE, %s", _y );
     outline1( "LD HL, %s", _x );
@@ -8429,11 +7992,11 @@ void z80_float_single_mul( Environment * _environment, char * _x, char * _y, cha
     
 }
 
-void z80_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_div24_24, src_hw_z80_fp_div24_24_asm );
-    deploy( fp_single_div, src_hw_z80_fp_single_div_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_div24_24, src_hw_sm83_fp_div24_24_asm );
+    deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
 
     outline1( "LD DE, %s", _y );
     outline1( "LD HL, %s", _x );
@@ -8442,13 +8005,13 @@ void z80_float_single_div( Environment * _environment, char * _x, char * _y, cha
     
 }
 
-void z80_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+void sm83_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_pushpop, src_hw_z80_fp_pushpop_asm );
-    deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    deploy( fp_single_cmp, src_hw_z80_fp_single_cmp_asm );
+    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
+    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    deploy( fp_single_cmp, src_hw_sm83_fp_single_cmp_asm );
 
     outline1( "LD DE, %s", _y );
     outline1( "LD HL, %s", _x );
@@ -8471,17 +8034,17 @@ void z80_float_single_cmp( Environment * _environment, char * _x, char * _y, cha
 
 }
 
-void z80_float_single_neg( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_single_neg( Environment * _environment, char * _value, char * _result ) {
 
     // MAKE_LABEL
 
-    // deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    // deploy( fp_single_mod1, src_hw_z80_fp_single_mod1_asm );
-    // deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
-    // deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    // deploy( fp_single_sqr, src_hw_z80_fp_single_sqr_asm );
-    // deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );     
-    // deploy( fp_single_div, src_hw_z80_fp_single_div_asm );
+    // deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    // deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
+    // deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
+    // deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    // deploy( fp_single_sqr, src_hw_sm83_fp_single_sqr_asm );
+    // deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );     
+    // deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     // outline0( "LD L, A" );
@@ -8499,21 +8062,21 @@ void z80_float_single_neg( Environment * _environment, char * _value, char * _re
 
 }
 
-void z80_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
-    deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );
-    deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_z80_fp_single_add_asm );
-    deploy( fp_single_neg, src_hw_z80_fp_single_neg_asm );
-    deploy( fp_single_mod1, src_hw_z80_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_z80_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_z80_fp_single_horner_step_asm );
+    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
+    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
+    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
+    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
+    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
+    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
+    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
+    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
+    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
 
     outline1( "LD HL, %s", _angle );
     outline1( "LD BC, %s", _result );
@@ -8533,23 +8096,23 @@ void z80_float_single_sin( Environment * _environment, char * _angle, char * _re
 
 }
 
-void z80_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
-    deploy( fp_mov4, src_hw_z80_fp_mov4_asm );
-    deploy( fp_c_times_bde, src_hw_z80_fp_c_times_bde_asm );
-    deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );
-    deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_z80_fp_single_add_asm );
-    deploy( fp_single_neg, src_hw_z80_fp_single_neg_asm );
-    deploy( fp_single_mod1, src_hw_z80_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_z80_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_z80_fp_single_horner_step_asm );
+    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
+    deploy( fp_mov4, src_hw_sm83_fp_mov4_asm );
+    deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
+    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
+    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
+    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
+    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
+    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
+    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
+    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
+    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
 
     outline1( "LD HL, %s", _angle );
     outline1( "LD BC, %s", _result );
@@ -8569,24 +8132,24 @@ void z80_float_single_cos( Environment * _environment, char * _angle, char * _re
 
 }
 
-void z80_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
+void sm83_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
 
     MAKE_LABEL
 
-    deploy( fp_mul24_stack_based, src_hw_z80_fp_mul24_stack_based_asm );
-    deploy( fp_single_vars, src_hw_z80_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_z80_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_z80_fp_single_cos_asm );
-    deploy( fp_single_div, src_hw_z80_fp_single_div_asm );
-    deploy( fp_single_sin, src_hw_z80_fp_single_tan_asm );
-    deploy( fp_single_tan, src_hw_z80_fp_single_tan_asm );
-    deploy( fp_single_neg, src_hw_z80_fp_single_neg_asm );
-    deploy( fp_single_sub, src_hw_z80_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_z80_fp_single_add_asm );
-    deploy( fp_single_mod1, src_hw_z80_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_z80_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_z80_fp_single_horner_step_asm );
+    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
+    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
+    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
+    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
+    deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
+    deploy( fp_single_sin, src_hw_sm83_fp_single_tan_asm );
+    deploy( fp_single_tan, src_hw_sm83_fp_single_tan_asm );
+    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
+    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
+    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
+    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
+    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
+    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
 
 
     outline1( "LD HL, %s", _angle );
@@ -8607,12 +8170,12 @@ void z80_float_single_tan( Environment * _environment, char * _angle, char * _re
 
 }
 
-void z80_float_single_sqr( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_single_sqr( Environment * _environment, char * _value, char * _result ) {
 
     // MAKE_LABEL
 
-    // deploy( fp_single_mul, src_hw_z80_fp_single_mul_asm );
-    // deploy( fp_single_sqr, src_hw_z80_fp_single_sqr_asm );
+    // deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    // deploy( fp_single_sqr, src_hw_sm83_fp_single_sqr_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     // outline0( "LD L, A" );
@@ -8630,11 +8193,11 @@ void z80_float_single_sqr( Environment * _environment, char * _value, char * _re
 
 }
 
-void z80_float_single_mod1( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_single_mod1( Environment * _environment, char * _value, char * _result ) {
 
     // MAKE_LABEL
 
-    // deploy( fp_single_mod1, src_hw_z80_fp_single_mod1_asm );
+    // deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
 
     // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
     // outline0( "LD L, A" );
@@ -8652,7 +8215,7 @@ void z80_float_single_mod1( Environment * _environment, char * _value, char * _r
 
 }
 
-void z80_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
+void sm83_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
 
     outhead1("%s:", _table );
     for( int i=0; i<_count; ++i ) {
@@ -8661,7 +8224,7 @@ void z80_address_table_build( Environment * _environment, char * _table, int * _
 
 }
 
-void z80_address_table_lookup( Environment * _environment, char * _table, int _count ) {
+void sm83_address_table_lookup( Environment * _environment, char * _table, int _count ) {
 
     outhead1("LOOKFOR%s:", _table );
     if ( _count ) {
@@ -8701,7 +8264,7 @@ void z80_address_table_lookup( Environment * _environment, char * _table, int _c
 
 }
 
-void z80_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+void sm83_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
 
     outline1("LD DE, (%s)", _value );
     outline1("CALL LOOKFOR%s", _table );
@@ -8709,7 +8272,7 @@ void z80_address_table_call( Environment * _environment, char * _table, char * _
 
 }
 
-void z80_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
+void sm83_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8721,7 +8284,7 @@ void z80_move_8bit_signed_16bit_signed( Environment * _environment, char *_sourc
 
 }
 
-void z80_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8733,7 +8296,7 @@ void z80_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_sou
 
 }
 
-void z80_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8744,7 +8307,7 @@ void z80_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_sou
 
 }
 
-void z80_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8755,23 +8318,7 @@ void z80_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_s
 
 }
 
-void z80_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
-
-    outline1("LD DE, %s", _destination );
-    outline1("LD A, (%s)", _source );
-    outline0("LD (DE), A" );
-    outline0("INC DE" );
-    outline0("ADD A, A" );
-    outline0("SBC A" );
-    outline0("LD (DE), A" );
-    outline0("INC DE" );
-    outline0("LD (DE), A" );
-    outline0("INC DE" );
-    outline0("LD (DE), A" );
-
-}
-
-void z80_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8787,7 +8334,23 @@ void z80_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_sou
 
 }
 
-void z80_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LD DE, %s", _destination );
+    outline1("LD A, (%s)", _source );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("ADD A, A" );
+    outline0("SBC A" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+    outline0("INC DE" );
+    outline0("LD (DE), A" );
+
+}
+
+void sm83_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8803,7 +8366,7 @@ void z80_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_sou
     outline0("LD (DE), A" );
 
 }
-void z80_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
     
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8820,28 +8383,28 @@ void z80_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_s
 
 }
 
-void z80_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline0("LD A, L" );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline0("LD A, L" );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline0("LD A, L" );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline0("LD A, L" );
@@ -8849,7 +8412,7 @@ void z80_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_s
 
 }
 
-void z80_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8866,7 +8429,7 @@ void z80_move_16bit_signed_32bit_signed( Environment * _environment, char *_sour
 
 }
 
-void z80_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8883,7 +8446,7 @@ void z80_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_so
 
 }
 
-void z80_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8898,7 +8461,7 @@ void z80_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_so
     outline0("LD (DE), A" );
 
 }
-void z80_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD DE, %s", _destination );
     outline1("LD A, (%s)", _source );
@@ -8914,78 +8477,78 @@ void z80_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_
 
 }
 
-void z80_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD A, (%s)", _source );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD A, (%s)", _source );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD A, (%s)", _source );
     outline1("LD (%s), A", _destination );
 
 }
-void z80_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD A, (%s)", _source );
     outline1("LD (%s), A", _destination );
 
 }
 
-void z80_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline1("LD (%s), HL", _destination );
 
 }
 
-void z80_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline1("LD (%s), HL", _destination );
 
 }
 
-void z80_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LD HL, (%s)", _source );
     outline1("LD (%s), HL", _destination );
 
 }
 
-void z80_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void sm83_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
     
     outline1("LD HL, (%s)", _source );
     outline1("LD (%s), HL", _destination );
 
 }
 
-void z80_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_fast_log( Environment * _environment, char * _value, char * _result ) {
 
     CRITICAL_UNIMPLEMENTED("LOG");
 
 }
 
-void z80_float_single_log( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_single_log( Environment * _environment, char * _value, char * _result ) {
 
     CRITICAL_UNIMPLEMENTED("LOG");
 
 }
 
-void z80_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
 
     CRITICAL_UNIMPLEMENTED("EXP");
 
 }
 
-void z80_float_single_exp( Environment * _environment, char * _value, char * _result ) {
+void sm83_float_single_exp( Environment * _environment, char * _value, char * _result ) {
 
     CRITICAL_UNIMPLEMENTED("EXP");
 

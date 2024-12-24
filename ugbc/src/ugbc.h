@@ -5467,7 +5467,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pc1403.h"
 #elif __gb__
     #include "../src-generated/modules_gb.h"
-    #include "hw/z80.h"
+    #include "hw/sm83.h"
     #include "hw/gb.h"
 #endif
 

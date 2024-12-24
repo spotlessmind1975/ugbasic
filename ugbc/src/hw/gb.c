@@ -317,7 +317,7 @@ void gb_sys_call( Environment * _environment, int _destination ) {
 
 void gb_timer_set_status_on( Environment * _environment, char * _timer ) {
     
-    // // deploy( timer, src_hw_z80_timer_asm);
+    // // deploy( timer, src_hw_sm83_timer_asm);
 
     // if ( _timer ) {
     //     outline1("LD A, (%s)", _timer );
@@ -333,7 +333,7 @@ void gb_timer_set_status_on( Environment * _environment, char * _timer ) {
 
 void gb_timer_set_status_off( Environment * _environment, char * _timer ) {
 
-    // // deploy( timer, src_hw_z80_timer_asm);
+    // // deploy( timer, src_hw_sm83_timer_asm);
 
     // if ( _timer ) {
     //     outline1("LD A, (%s)", _timer );
@@ -349,7 +349,7 @@ void gb_timer_set_status_off( Environment * _environment, char * _timer ) {
 
 void gb_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
 
-    // // deploy( timer, src_hw_z80_timer_asm);
+    // // deploy( timer, src_hw_sm83_timer_asm);
 
     // if ( _counter ) {
     //     outline1("LD A, (%s)", _counter );
@@ -371,7 +371,7 @@ void gb_timer_set_counter( Environment * _environment, char * _timer, char * _co
 
 void gb_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
 
-    // // deploy( timer, src_hw_z80_timer_asm);
+    // // deploy( timer, src_hw_sm83_timer_asm);
 
     // if ( _init ) {
     //     outline1("LD A, (%s)", _init );
@@ -393,7 +393,7 @@ void gb_timer_set_init( Environment * _environment, char * _timer, char * _init 
 
 void gb_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
 
-    // // deploy( timer, src_hw_z80_timer_asm);
+    // // deploy( timer, src_hw_sm83_timer_asm);
 
     // if ( _address ) {
     //     outline1("LD HL, %s", _address );
@@ -927,7 +927,7 @@ void gb_background_color_vars( Environment * _environment, char * _index, char *
 
     // MAKE_LABEL
 
-    // z80_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
+    // sm83_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
 
     // gb_border_color( _environment, _background_color );
 
@@ -3239,7 +3239,7 @@ void gb_slice_image_copy( Environment * _environment, char * _image,  char * _fr
 
     // // deploy( tms9918vars, src_hw_gb_vars_asm);
     // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm);
-    // // deploy( duff, src_hw_z80_duff_asm );
+    // // deploy( duff, src_hw_sm83_duff_asm );
     // // deploy( sliceimagecopy, src_hw_gb_slice_image_copy_asm );
 
     // MAKE_LABEL
@@ -3259,7 +3259,7 @@ void gb_slice_image_extract( Environment * _environment, char * _image,  char * 
 
     // // deploy( tms9918vars, src_hw_gb_vars_asm);
     // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm);
-    // // deploy( duff, src_hw_z80_duff_asm );
+    // // deploy( duff, src_hw_sm83_duff_asm );
     // // deploy( sliceimageextract, src_hw_gb_slice_image_extract_asm );
 
     // MAKE_LABEL

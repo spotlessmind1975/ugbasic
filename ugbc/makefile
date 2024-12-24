@@ -174,7 +174,7 @@ ifeq ($(target),d64)
   io=pia
 endif
 ifeq ($(target),gb)
-  cpu=z80
+  cpu=sm83
   video=gb
   video2=
   audio=
@@ -587,6 +587,14 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c)) $(
 
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
+
+# Sharp SM83 ("embedded" in LR35902)
+
+MODULES_SM83 := $(wildcard src/hw/sm83/*.asm)
+SOURCES_SM83 := $(subst src/hw/sm83/,src-generated/sm83_,$(MODULES_SM83:.asm=.c))
+
+src-generated/sm83_%.c: $(MODULES_SM83)
+	@xxd -i $(subst src-generated/sm83_,src/hw/sm83/,$(@:.c=.asm)) >$@
 
 # Texas Instruments SN76489 (Zilog Z80 implementation)
 
