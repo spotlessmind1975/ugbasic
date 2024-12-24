@@ -92,7 +92,7 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
         char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "$%2.2x", _timing );
 
-        z80_busy_wait( _environment, timingString );
+        sm83_busy_wait( _environment, timingString );
 
     }
 
@@ -149,7 +149,7 @@ void wait_cycles_var( Environment * _environment, char * _timing, int _parallel 
 
     } else {
 
-       z80_busy_wait( _environment, timing->realName );
+       sm83_busy_wait( _environment, timing->realName );
 
     }
 

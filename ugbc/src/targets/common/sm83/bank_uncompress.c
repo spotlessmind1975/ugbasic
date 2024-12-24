@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>

@@ -34,44 +34,25 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__)
+#if defined(__gb__)
 
 /**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
+ * @brief Emit ASM code for instruction <b>= BANK( )</b>
  * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
+ * This function outputs the ASM code to get the current 
+ * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
+ * @return Current number of the bank selected
  */
-Variable * bank_get_address( Environment * _environment, int _bank ) {
+Variable * bank_get( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
-    char * address = banks_get_address( _environment, _bank );
-
-    cpu_addressof_16bit( _environment, address, result->realName );
+    variable_store( _environment, result->name, 0 );
 
     return result;
     
-}
-
-/**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
- * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
- * 
- * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
- */
-Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
-
-    return banks_get_address_var( _environment, _bank );
-
 }
 
 #endif

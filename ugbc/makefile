@@ -762,8 +762,8 @@ SOURCES_GB := $(subst src/hw/gb/,src-generated/gb_,$(MODULES_GB:.asm=.c)) $(FONT
 src-generated/gb_%.c: $(MODULES_GB)
 	@xxd -i $(subst src-generated/gb_,src/hw/gb/,$(@:.c=.asm)) >$@
 
-src-generated/modules_gb.c: $(SOURCES_Z80) $(SOURCES_GB)
-	@cat $(SOURCES_Z80) $(SOURCES_GB) >src-generated/modules_gb.c
+src-generated/modules_gb.c: $(SOURCES_SM83) $(SOURCES_GB)
+	@cat $(SOURCES_SM83) $(SOURCES_GB) >src-generated/modules_gb.c
 	@grep "src" src-generated/modules_gb.c | awk -f modules.awk >src-generated/modules_gb.h
 	@grep "data" src-generated/modules_gb.c | awk -f modules.awk >>src-generated/modules_gb.h
 

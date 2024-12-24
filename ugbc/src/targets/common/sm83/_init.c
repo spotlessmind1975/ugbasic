@@ -32,51 +32,49 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__gb__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>= RANDOM(...)</b>
- * 
- * This function outputs a code suitable for calculating a random value, 
- * the range of which depends on the type of data passed as a parameter:
- * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
- * 
- * The random value is passed back into a temporary variable.
- * 
- * @param _environment Current calling environment
- * @param _type Type of random number to generate
- * @return Variable* The random value calculated
- */
-Variable * random_value( Environment * _environment, VariableType _type ) {
+extern char DATATYPE_AS_STRING[][16];
 
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
+void setup_embedded( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, _type, "(random value)" );
-
-    switch( VT_BITWIDTH( _type ) ) {
-        case 8:
-            sm83_random_8bit( _environment, "$FC9E", result->realName );
-            break;
-        case 16:
-            sm83_random_16bit( _environment, "$FC9E", result->realName );
-            break;
-        case 32:
-            sm83_random_32bit( _environment, "$FC9E", result->realName );
-            break;
-        default:
-            CRITICAL_CANNOT_GENERATE_RANDOM( );     
-    }
-
-    return result;
-
+    _environment->embedded.cpu_fill_blocks = 1;
+    _environment->embedded.cpu_fill = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_8bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_8bit_to_8bit = 1;
+    _environment->embedded.cpu_math_div2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul2_const_8bit = 1;
+    _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
+    _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
+    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
+    _environment->embedded.cpu_random = 1;
+    _environment->embedded.cpu_mem_move = 1;
+    _environment->embedded.cpu_uppercase = 1;
+    _environment->embedded.cpu_lowercase = 1;
+    _environment->embedded.cpu_hex_to_string = 1;
+    _environment->embedded.cpu_string_sub = 1;
+    _environment->embedded.cpu_less_than_8bit = 1;
+    _environment->embedded.cpu_less_than_16bit = 1;
+    _environment->embedded.cpu_less_than_32bit = 1;
+    _environment->embedded.cpu_math_div2_const_16bit = 1;
+    _environment->embedded.cpu_msc1_uncompress = 1;
+    _environment->embedded.cpu_compare_16bit = 1;
+    _environment->embedded.cpu_compare_32bit = 1;
+    _environment->embedded.cpu_bit_inplace = 1;
+    _environment->embedded.cpu_bit_check_extended = 1;
+    _environment->embedded.cpu_flip = 1;
+    _environment->embedded.cpu_combine_nibbles = 1;
+    _environment->embedded.cpu_swap_8bit = 1; // useless, cpu_swap_8bit shares code
+    _environment->embedded.cpu_swap_16bit = 1; // useless, cpu_swap_8bit shares code
+    _environment->embedded.cpu_swap_32bit = 1; // useless, cpu_swap_8bit shares code
+    
 }
+
+#endif

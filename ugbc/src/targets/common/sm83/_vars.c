@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__c128z__) || defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__)
+#if defined(__gb__)
 
 /****************************************************************************
  * CODE SECTION 
@@ -42,55 +42,66 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void banks_generate( Environment * _environment ) {
-    
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
-    outhead0("section data_user");
-#endif
+void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
 
-    int anyExpansionBank = 0;
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        outhead1("%s:", bank->name );
-        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
-            int size = bank->space - bank->remains;
-            if ( bank->data ) {
-                out0("    db ");
-                int i=0;
-                for (i=0; i<(size-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
-                }
-                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
-            }
-            anyExpansionBank = 1;
-        }
-        bank = bank->next;
-    }
+    outhead2("%s = $%4.4x", _name, _value );
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
-    outhead0("section code_user");
-#endif
+}
 
-    if ( anyExpansionBank ) {
+void vars_emit_constant_integer_relative( Environment * _environment, char * _name, char * _relative, int _value ) {
 
-        int values[MAX_TEMPORARY_STORAGE];
-        char * address[MAX_TEMPORARY_STORAGE];
+    outhead3("%s = %s+$%4.4x", _name, _relative, _value );
 
-        Bank * actual = _environment->expansionBanks;
-        int count = 0;
+}
+
+void vars_emit_constants( Environment * _environment ) {
+
+    int i=0;
+
+    if ( _environment->constants ) {
+        Constant * actual = _environment->constants;
         while( actual ) {
-            values[count] = actual->id;
-            address[count] = strdup( actual->name );
+            if ( ! actual->emitted ) {
+                switch( actual->type ) {
+                    case CT_INTEGER:
+                        if ( actual->relative ) {
+                            vars_emit_constant_integer_relative( _environment, actual->realName, actual->relative, actual->value );
+                        } else {
+                            vars_emit_constant_integer( _environment, actual->realName, actual->value );
+                        }
+                        break;
+                    case CT_STRING:
+                    break;
+                }
+            }
             actual = actual->next;
-            ++count;
         }
-
-        cpu_address_table_build( _environment, "EXPBANKS", values, address, (count-1) );
-
-        cpu_address_table_lookup( _environment, "EXPBANKS", count );
-
     }
-    
+
+}
+
+void vars_emit_byte( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s: defb $%2.2x", _name, (unsigned char)( _value & 0xff ) );
+    } else {
+        outline1(" defb $%2.2x", (unsigned char)( _value & 0xff ) );
+    }
+}
+
+void vars_emit_word( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s:  defw $%4.4x", _name, (unsigned int)( _value & 0xffff ) );
+    } else {
+        outline1(" defw $%4.4x", (unsigned int)( _value & 0xffff ) );
+    }
+}
+
+void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+    } else {
+        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+    }
 }
 
 #endif

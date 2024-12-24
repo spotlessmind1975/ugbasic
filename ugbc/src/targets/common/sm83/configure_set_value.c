@@ -32,51 +32,15 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+#if defined(__gb__)
 
-/**
- * @brief Emit ASM code for <b>= RANDOM(...)</b>
- * 
- * This function outputs a code suitable for calculating a random value, 
- * the range of which depends on the type of data passed as a parameter:
- * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
- * 
- * The random value is passed back into a temporary variable.
- * 
- * @param _environment Current calling environment
- * @param _type Type of random number to generate
- * @return Variable* The random value calculated
- */
-Variable * random_value( Environment * _environment, VariableType _type ) {
-
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
-
-    Variable * result = variable_temporary( _environment, _type, "(random value)" );
-
-    switch( VT_BITWIDTH( _type ) ) {
-        case 8:
-            sm83_random_8bit( _environment, "$FC9E", result->realName );
-            break;
-        case 16:
-            sm83_random_16bit( _environment, "$FC9E", result->realName );
-            break;
-        case 32:
-            sm83_random_32bit( _environment, "$FC9E", result->realName );
-            break;
-        default:
-            CRITICAL_CANNOT_GENERATE_RANDOM( );     
-    }
-
-    return result;
+void configure_set_value( Environment * _environment, int _name, int _parameter, int _value ) {
 
 }
+void configure_set_value_var( Environment * _environment, int _name, int _parameter, char * _value ) {
+
+}
+
+#endif

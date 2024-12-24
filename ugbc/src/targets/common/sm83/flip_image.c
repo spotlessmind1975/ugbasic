@@ -32,51 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
+
+#if defined(__gb__)
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>= RANDOM(...)</b>
- * 
- * This function outputs a code suitable for calculating a random value, 
- * the range of which depends on the type of data passed as a parameter:
- * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
- * 
- * The random value is passed back into a temporary variable.
- * 
- * @param _environment Current calling environment
- * @param _type Type of random number to generate
- * @return Variable* The random value calculated
- */
-Variable * random_value( Environment * _environment, VariableType _type ) {
+void flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction ) {
 
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
-
-    Variable * result = variable_temporary( _environment, _type, "(random value)" );
-
-    switch( VT_BITWIDTH( _type ) ) {
-        case 8:
-            sm83_random_8bit( _environment, "$FC9E", result->realName );
-            break;
-        case 16:
-            sm83_random_16bit( _environment, "$FC9E", result->realName );
-            break;
-        case 32:
-            sm83_random_32bit( _environment, "$FC9E", result->realName );
-            break;
-        default:
-            CRITICAL_CANNOT_GENERATE_RANDOM( );     
+    char directionConstantName[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantName, "FLIPIMAGEDIRECTION%4.4x", _direction );
+    char directionConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantParameter, "FLIPIMAGEDIRECTION%4.4x", _direction );
+    
+    Constant * directionConstant = constant_find( _environment->constants, directionConstantName );
+    
+    if ( !directionConstant ) {
+        directionConstant = malloc( sizeof( Constant ) );
+        memset( directionConstant, 0, sizeof( Constant ) );
+        directionConstant->name = strdup( directionConstantName );
+        directionConstant->realName = strdup( directionConstantName );
+        directionConstant->value = _direction;
+        directionConstant->type = CT_INTEGER;
+        directionConstant->next = _environment->constants;
+        _environment->constants = directionConstant;
     }
 
-    return result;
-
+    flip_image_vars( _environment, _image, _frame, _sequence, directionConstantParameter );
+    
 }
+
+void flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
+    Variable * direction = variable_retrieve_or_define( _environment, _direction, VT_BYTE, 0 );
+    flip_image_vars( _environment, _image, _frame, _sequence, direction->realName );
+}
+
+#endif
