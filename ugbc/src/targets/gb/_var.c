@@ -562,11 +562,11 @@ void variable_cleanup( Environment * _environment ) {
     //     outhead0("DATAPTRE:");
     // }
     
-    // StaticString * staticStrings = _environment->strings;
-    // while( staticStrings ) {
-    //     outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
-    //     staticStrings = staticStrings->next;
-    // }
+    StaticString * staticStrings = _environment->strings;
+    while( staticStrings ) {
+        outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        staticStrings = staticStrings->next;
+    }
 
     // if ( _environment->descriptors ) {
     //     outhead0("UDCCHAR:" );

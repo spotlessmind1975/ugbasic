@@ -35,26 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is DE < HL ? (signed)
-;   A : $ff if true, $00 if false
-CPULT16S:
-    LD A, H
-    XOR D
-    JP M, CPULT16STE2
-    SBC HL, DE
-    JR Z, CPULT16STE1
-    JR NC, CPULT16STE3
-CPULT16STE1:
-    LD A, $00
-    RET
-CPULT16STE2:
-    BIT 7, D
-    JR Z, CPULT16STE1
-CPULT16STE3:
-    LD A, $ff
-    RET
-
 CPULT16U:
+CPULT16S:
     LD A, H
     LD B, A
     LD A, D
@@ -76,22 +58,6 @@ CPULT16UL:
     RET
 
 CPULTE16S:
-    LD A, H
-    XOR D
-    JP M, CPULTE16S2
-    SBC HL, DE
-    JR Z, CPULTE16S3
-    JR NC, CPULTE16S3 
-CPULTE16S1:
-    LD A, $00
-    RET
-CPULTE16S2:
-    BIT 7, D
-    JR Z, CPULTE16S1
-CPULTE16S3:
-    LD A, $ff
-    RET
-
 CPULTE16U:
     LD A, H
     LD B, A

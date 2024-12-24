@@ -35,24 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is A < B ? (signed)
-;   A : $ff if true, $00 if false
-CPULT8S:
-    SUB A, B
-    JP PO, CPULT8SNX
-    XOR $80
-CPULT8SNX:
-    JP M, CPULT8ST
-    JP PE, CPULT8SF
-CPULT8SF:
-    LD A, $00
-    RET
-CPULT8ST:
-    LD A, $ff
-    RET
-
 ; Is A < B ? (unsigned)
 ;   A : $ff if true, $00 if false
+CPULT8S:
 CPULT8U:
     CP B
     JR C, CPULT8UT
@@ -62,25 +47,9 @@ CPULT8UT:
     LD A, $ff
     RET
 
-; Is A <= B ? (signed)
-;   A : $ff if true, $00 if false
-CPULTE8S:
-    SUB A, B
-    JP  Z, CPULTE8ST
-    JP PO, CPULTE8SNX
-    XOR $80
-CPULTE8SNX:    
-    JP M, CPULTE8ST
-    JP PE, CPULTE8SF
-CPULTE8SF:    
-    LD A, $00
-    RET
-CPULTE8ST:    
-    LD A, $ff
-    RET
-
 ; Is A <= B ? (unsigned)
 ;   A : $ff if true, $00 if false
+CPULTE8S:
 CPULTE8U:
     CP B
     JR C, CPULTE8UT
