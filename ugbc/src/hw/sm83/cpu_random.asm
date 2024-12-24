@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                        RANDOM NUMBER GENERATOR FOR Z80                      *
+;*                        RANDOM NUMBER GENERATOR FOR SM83                      *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *

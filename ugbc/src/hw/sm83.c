@@ -2578,8 +2578,8 @@ void sm83_less_than_32bit( Environment * _environment, char *_source, char *_des
 
         if ( _signed ) {
 
-            outline1("LD IY, %s", _destination);
-            outline1("LD IX, %s", _source);
+            outline1("LD DE, %s", _destination);
+            outline1("LD HL, %s", _source);
             if ( _equal ) {
                 outline0("CALL CPULTE32S");
             } else {
@@ -2593,8 +2593,8 @@ void sm83_less_than_32bit( Environment * _environment, char *_source, char *_des
 
         } else {
 
-            outline1("LD IY, %s", _destination);
-            outline1("LD IX, %s", _source);
+            outline1("LD DE, %s", _destination);
+            outline1("LD HL, %s", _source);
             if ( _equal ) {
                 outline0("CALL CPULTE32U");
             } else {
@@ -2628,8 +2628,8 @@ void sm83_less_than_32bit_const( Environment * _environment, char *_source, int 
             outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
             outline0("PUSH DE" );
             outline0("LD DE, SP" );
-            outline0("LD IY, DE" );
-            outline1("LD IX, %s", _source);
+            // outline0("LD IY, DE" );
+            outline1("LD HL, %s", _source);
             if ( _equal ) {
                 outline0("CALL CPULTE32S");
             } else {
@@ -2646,8 +2646,8 @@ void sm83_less_than_32bit_const( Environment * _environment, char *_source, int 
             outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
             outline0("PUSH DE" );
             outline0("LD DE, SP" );
-            outline0("LD IY, DE" );
-            outline1("LD IX, %s", _source);
+            // outline0("LD IY, DE" );
+            outline1("LD HL, %s", _source);
             if ( _equal ) {
                 outline0("CALL CPULTE32U");
             } else {

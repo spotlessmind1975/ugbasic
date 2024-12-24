@@ -29,49 +29,63 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            lESS THAN (32 BIT) Z80                           *
+;*                            lESS THAN (32 BIT) SM83                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is [IX] < [IY] ? (signed)
+; Is [HL] < [DE] ? (signed)
 ;   A : $ff if true, $00 if false
 CPULT32S:
-    LD B, (IX+3)
+    ADD HL, 3
+    ADD DE, 3
+    LD B, (HL)
     LD A, B
     AND $80
     CP 0
     JR NZ, CPULT32SNEGM1
-    BIT 7, (IY+3)
+    BIT 7, (DE)
     JR NZ, CPULT32SDONE
     LD A, B
-    CP (IY+3)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX+2)
-    CP (IY+2)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX+1)
-    CP (IY+1)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX)
-    CP (IY)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JP CPULT32SDONE
 CPULT32SNEGM1:
-    XOR (IY+3)
+    XOR (DE)
     RLA
     JR C, CPULT32SDONE
     LD A, B
-    CP (IY+3)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX+2)
-    CP (IY+2)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX+1)
-    CP (IY+1)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULT32SDONE
-    LD A, (IX)
-    CP (IY)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JMP CPULT32SDONE
 CPULT32SDONE:
     JR C, CPULT32SMI
@@ -83,33 +97,41 @@ CPULT32SMI:
     RET
 
 CPULT32U:
-    LD A, (IX+3)
+    ADD HL, 3
+    ADD DE, 3
+    LD A, (HL)
     LD B, A
-    LD A, (IY+3)
+    LD A, (DE)
     CP B
     JR Z, CPULT32U2
     JR C, CPULT32UL
     JR CPULT32UOK
-CPULT32U2:            
-    LD A, (IX+2)
+CPULT32U2:   
+    DEC HL
+    DEC DE         
+    LD A, (HL)
     LD B, A
-    LD A, (IY+2)
+    LD A, (DE)
     CP B
     JR Z, CPULT32U1
     JR C, CPULT32UL
     JR CPULT32UOK
-CPULT32U1:            
-    LD A, (IX+1)
+CPULT32U1:   
+    DEC HL
+    DEC DE         
+    LD A, (HL)
     LD B, A
-    LD A, (IY+1)
+    LD A, (DE)
     CP B
     JR Z, CPULT32U0
     JR C, CPULT32UL
     JR CPULT32UOK
 CPULT32U0:
-    LD A, (IX)
+    DEC HL
+    DEC DE
+    LD A, (HL)
     LD B, A
-    LD A, (IY)
+    LD A, (DE)
     CP B
     JR Z, CPULT32UL
     JR C, CPULT32UL
@@ -121,40 +143,54 @@ CPULT32UL:
     RET
 
 CPULTE32S:
-    LD B, (IX+3)
+    ADD HL, 3
+    ADD DE, 3
+    LD B, (HL)
     LD A, B
     AND $80
     CP 0
     JR NZ, CPULTE32SNEGM1
-    BIT 7, (IY+3)
+    BIT 7, (DE)
     JR NZ, CPULTE32SDONE
     LD A, B
-    CP (IY+3)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX+2)
-    CP (IY+2)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX+1)
-    CP (IY+1)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX)
-    CP (IY)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JP CPULTE32SDONE
 CPULTE32SNEGM1:            
-    XOR (IY+3)
+    XOR (DE)
     RLA
     JR C, CPULTE32SDONE
     LD A, B
-    CP (IY+3)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX+2)
-    CP (IY+2)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX+1)
-    CP (IY+1)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JR NZ, CPULTE32SDONE
-    LD A, (IX)
-    CP (IY)
+    DEC HL
+    DEC DE
+    LD A, (HL)
+    CP (DE)
     JP CPULTE32SDONE
 CPULTE32SDONE:
     JR Z, CPULTE32SMI
@@ -167,33 +203,41 @@ CPULTE32SMI:
     RET
 
 CPULTE32U:
-    LD A, (IX+3)
+    ADD HL, 3
+    ADD DE, 3
+    LD A, (HL)
     LD B, A
-    LD A, (IY+3)
+    LD A, (DE)
     CP B
     JR Z, CPULTE32U2
     JR C, CPULTE32UL
     JR CPULTE32UOK
 CPULTE32U2:
-    LD A, (IX+2)
+    DEC HL
+    DEC DE
+    LD A, (HL)
     LD B, A
-    LD A, (IY+2)
+    LD A, (DE)
     CP B
     JR Z, CPULTE32U1
     JR C, CPULTE32UL
     JR CPULTE32UOK
 CPULTE32U1:
-    LD A, (IX+1)
+    DEC HL
+    DEC DE
+    LD A, (HL)
     LD B, A
-    LD A, (IY+1)
+    LD A, (DE)
     CP B
     JR Z, CPULTE32U0
     JR C, CPULTE32UL
     JR CPULTE32UOK
 CPULTE32U0:
-    LD A, (IX)
+    DEC HL
+    DEC DE
+    LD A, (HL)
     LD B, A
-    LD A, (IY)
+    LD A, (DE)
     CP B
     JR Z, CPULTE32UOK
     JR C, CPULTE32UL
