@@ -2500,43 +2500,14 @@ void sm83_compare_32bit( Environment * _environment, char *_source, char *_desti
  */
 void sm83_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
-    inline( cpu_compare_32bit )
-
-        MAKE_LABEL
-
-        outline1("LD A, (%s)", _source);
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", (unsigned char)(_destination & 0xff));
-        outline0("CP B");
-        outline1("JP NZ, %s", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", (unsigned char)((_destination>>8) & 0xff));
-        outline0("CP B");
-        outline1("JP NZ, %s", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", (unsigned char)((_destination>>16) & 0xff));
-        outline0("CP B");
-        outline1("JP NZ, %s", label);
-        outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-        outline0("LD B, A");
-        outline1("LD A, $%2.2x", (unsigned char)((_destination>>24) & 0xff));
-        outline0("CP B");
-        outline1("JP NZ, %s", label);
-        outline1("LD A, $%2.2x", 0xff*_positive);
-        outline1("LD (%s), A", _other);
-        outline1("JMP %s_2", label);
-        outhead1("%s:", label);
-        outline1("LD A, $%2.2x", 0xff*(1-_positive));
-        outline1("LD (%s), A", _other);
-        outhead1("%s_2:", label);
+    no_inline( cpu_compare_32bit )
 
     embedded( cpu_compare_32bit, src_hw_sm83_cpu_compare_32bit_asm )
 
         outline1("LD HL, %s", _source);
+        outline1("LD DE, $%4.4x", (unsigned int)((_destination>>16)&0xffff));
+        outline0("LD (IY), DE");
         outline1("LD DE, $%4.4x", (unsigned int)(_destination&0xffff));
-        outline1("LD IY, $%4.4x", (unsigned int)((_destination>>16)&0xffff));
         outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
         outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
         outline0("CALL CPUCOMPARE32CONST");
