@@ -1432,7 +1432,7 @@ static void vic1_image_converter_tiles( Environment * _environment, char * _sour
 
 ////////////////////////////////////////////////////////////////////////
 
-static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static Variable * OLD__vic1_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
@@ -1598,6 +1598,79 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
 
 }
 
+static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 8 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 8 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 8 ) {
+            _height = ( ( ( _height - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_height % 8 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+
+    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+
+    // timeslot: 1 byte
+    // width: 1 byte
+    // size: 1 byte
+    // (indexes): size bytes
+    // tiles' data
+
+    int size = ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+
+    int bufferSize = 3 + size + size * 8 + size;
+
+    char * buffer = malloc ( bufferSize );
+
+    memset( buffer, 0, bufferSize );
+
+    buffer[0] = 0xff; // force update at first PUT IMAGE
+    buffer[1] = ( _frame_width >> 3 );
+    buffer[2] = size;
+
+    int cx, cy;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    for( cy=0; cy<(_frame_height >> 3);++cy) {
+        for( cx=0; cx<(_frame_width >> 3);++cx) {
+
+            int tileDataOffset = 3 + size + ( (cy * ( _frame_width >> 3 ) ) + cx ) * ( 8 );
+            int tileColorOffset = 3 + size + size * 8 + ( cy * (_frame_width >> 3) ) + cx;
+
+            char * source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * _depth;
+
+            char convertedTile[9];
+
+            vic1_image_converter_tile( _environment, source, convertedTile, _width, _depth, _width );
+            
+            memcpy( &buffer[tileDataOffset], convertedTile, 8 );
+            buffer[tileColorOffset] = convertedTile[8];
+
+        }
+
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * vic1_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
    switch( _mode ) {
@@ -1728,18 +1801,18 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
     outline0("STA IMAGEY" );
     outline1("LDA %s", address_displacement(_environment, _y, "1") );
     outline0("STA IMAGEY+1" );
-    outline1("LDA %s", _flags);
-    if ( strchr( _flags, '#' ) ) {
-        outline1("LDA #((%s)&255)", _flags+1 );
-        outline0("STA IMAGEF" );
-        outline1("LDA #(((%s)>>8)&255)", _flags+1 );
-        outline0("STA IMAGET" );
-    } else {
-        outline1("LDA %s", _flags );
-        outline0("STA IMAGEF" );
-        outline1("LDA %s", address_displacement(_environment, _flags, "1") );
-        outline0("STA IMAGET" );
-    }    
+    // outline1("LDA %s", _flags);
+    // if ( strchr( _flags, '#' ) ) {
+    //     outline1("LDA #((%s)&255)", _flags+1 );
+    //     outline0("STA IMAGEF" );
+    //     outline1("LDA #(((%s)>>8)&255)", _flags+1 );
+    //     outline0("STA IMAGET" );
+    // } else {
+    //     outline1("LDA %s", _flags );
+    //     outline0("STA IMAGEF" );
+    //     outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+    //     outline0("STA IMAGET" );
+    // }    
 
     outline0("JSR PUTIMAGE");
 
