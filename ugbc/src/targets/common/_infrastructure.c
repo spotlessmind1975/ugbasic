@@ -99,7 +99,8 @@ char DATATYPE_AS_STRING[][16] = {
     "MSPRITE",
     "DOJOKA",
     "IMAGEREF",
-    "PATH"
+    "PATH",
+    "TILEDIMAGE"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -1773,6 +1774,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_MUSIC:
+        case VT_TILEDIMAGE:
         case VT_BUFFER:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
