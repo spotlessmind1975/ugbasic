@@ -507,7 +507,10 @@ typedef enum _VariableType {
     VT_IMAGEREF = 31,
 
     /** PATH */
-    VT_PATH = 32
+    VT_PATH = 32,
+
+    /** TILEDIMAGE */
+    VT_TILEDIMAGE = 33
 
 } VariableType;
 
@@ -622,7 +625,8 @@ typedef struct _Resource {
         ( t == VT_SEQUENCE ) + \
         ( t == VT_MUSIC ) + \
         ( t == VT_TILEMAP ) + \
-        ( t == VT_DOJOKA ) \
+        ( t == VT_DOJOKA ) + \
+        ( t == VT_TILEDIMAGE ) \
     )
 
 /**
