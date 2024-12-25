@@ -42,7 +42,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    _environment->program.startingAddress = 0x2001;
+    _environment->program.startingAddress = 0x2000;
 
     cpu6502_init( _environment );
 
