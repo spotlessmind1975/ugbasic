@@ -7206,7 +7206,8 @@ The ''SUBSTRING'' allows you to extract a specific portion of a text string
 the entire text from which you want to extract the substring. The starting position 
 is given by ''start'' and the ending position is given by ''end''.
 If you try to extract a substring that is longer than the original string, 
-the original string is retrieved. 
+the original string is retrieved. Moreover, if the start position is after
+the ending position, an empty string will be returned.
 
 There are many applications for ''SUBSTRING'': you can extract keywords, titles, 
 authors from documents, change the appearance of a text, for example by extracting 
@@ -7221,6 +7222,8 @@ substrings to create new strings.
 testo da cui si desidera estrarre la sottostringa. La posizione iniziale è data da 
 ''start'' e la posizione finale è data da ''end''. Se si tenta di estrarre una 
 sottostringa più lunga della stringa originale, viene recuperata la stringa originale.
+Inoltre, se la posizione di partenza è successiva alla posizione di arrivo, verrà 
+restituita una stringa vuota.
 
 Esistono molte applicazioni per ''SUBSTRING'': è possibile estrarre parole chiave, 
 titoli, autori da documenti, modificare l'aspetto di un testo, ad esempio estraendo 
@@ -7230,7 +7233,7 @@ concatenare più sottostringhe per creare nuove stringhe.
 
 @syntax = SUBSTRING( text, start, end )
 
-@example x = MID( "TEST", 2, 3 )
+@example x = SUBSTRING( "TEST", 2, 3 )
 
 @seeAlso MID (function)
 
@@ -7242,12 +7245,29 @@ Variable * variable_string_substring( Environment * _environment, char * _string
     Variable * start = variable_retrieve_or_define( _environment, _start, VT_BYTE, 0 );
     Variable * len = NULL;
     if ( _end ) {
+        Variable * result = variable_temporary( _environment, VT_DSTRING, "(result)");
+
         Variable * end = variable_retrieve_or_define( _environment, _end, VT_BYTE, 0 );
+        Variable * lessThanStart = variable_less_than( _environment, end->name, start->name, 0 );
+
+        MAKE_LABEL
+
+        char lessThanLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( lessThanLabel, "%slessthan", label );
+
+        cpu_compare_and_branch_8bit_const( _environment, lessThanStart->realName, 0xff, lessThanLabel, 1 );
         len = variable_sub( _environment, end->name, start->name );
         cpu_inc( _environment, len->realName );
-    }
+        variable_move( _environment, variable_string_mid( _environment, _string, start->name, len->name )->name, result->name );
+        cpu_jump( _environment, label );
+        cpu_label( _environment, lessThanLabel );
+        variable_store_string( _environment, result->name, "" );
+        cpu_label( _environment, label );
 
-    return variable_string_mid( _environment, _string, start->name, _end ? len->name : NULL );
+        return result;
+    } else {
+        return variable_string_mid( _environment, _string, start->name, NULL );
+    }
 
 }
 
