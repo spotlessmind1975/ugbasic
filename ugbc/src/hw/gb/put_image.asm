@@ -198,6 +198,8 @@ TILESETSLOTFOUNDFREEL1:
 TILESETSLOTFOUNDFREEDONE:
 
     LD A, B
+
+    PUSH AF
     
     PUSH HL
     LD HL, BITMASK
@@ -211,6 +213,8 @@ TILESETSLOTFOUNDFREEDONE:
     OR C
     LD (HL), C
     
+    POP AF
+
     POP BC
     POP DE
     POP HL
@@ -381,6 +385,8 @@ PUTIMAGEALLOCOK:
 
     LD (HL), A
 
+    LD (PUTIMAGETILEINDEX), A
+
     ; Now we have to copy the bitmap inside the TILESET.
     ; This means that we have to calculate the offset 
     ; inside the TILESET, multiplying the index by 16.
@@ -415,7 +421,7 @@ PUTIMAGEALLOCOK:
     
     PUSH HL
 
-    LD A, (PUTIMAGEINDEX)
+    LD A, (PUTIMAGETILEINDEX)
     LD C, A
     LD B, 0
 
@@ -432,8 +438,8 @@ PUTIMAGEALLOCOK:
     ; address, and then we add the current SIZE and,
     ; finally, the size of the header.
 
+    LD HL, _VRAM
     ADD HL, BC
-    ADD HL, _VRAM
 
     LD D, H
     LD E, L
@@ -448,6 +454,8 @@ PUTIMAGEALLOCOK:
 PUTIMAGEALLOCOKL1:
     LD A, (HL)
     LD (DE), A
+    INC HL
+    INC DE
     DEC B
     JR NZ, PUTIMAGEALLOCOKL1
 

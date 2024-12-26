@@ -1641,18 +1641,20 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    variable_import( _environment, "TILESETSLOTFIRST", VT_BYTE, 8 );
+    variable_import( _environment, "TILESETSLOTFIRST", VT_BYTE, 0 );
     variable_global( _environment, "TILESETSLOTFIRST" );
-    variable_import( _environment, "TILESETSLOTLAST", VT_BYTE, 8 );
+    variable_import( _environment, "TILESETSLOTLAST", VT_BYTE, 0 );
     variable_global( _environment, "TILESETSLOTLAST" );
 
-    variable_import( _environment, "PUTIMAGECOUNT", VT_BYTE, 8 );
+    variable_import( _environment, "PUTIMAGECOUNT", VT_BYTE, 0 );
     variable_global( _environment, "PUTIMAGECOUNT" );
-    variable_import( _environment, "PUTIMAGEWIDTH", VT_BYTE, 8 );
+    variable_import( _environment, "PUTIMAGEWIDTH", VT_BYTE, 0 );
     variable_global( _environment, "PUTIMAGEWIDTH" );
-    variable_import( _environment, "PUTIMAGEINDEX", VT_BYTE, 8 );
+    variable_import( _environment, "PUTIMAGEINDEX", VT_BYTE, 0 );
     variable_global( _environment, "PUTIMAGEINDEX" );
-    variable_import( _environment, "PUTIMAGEX", VT_BYTE, 8 );
+    variable_import( _environment, "PUTIMAGETILEINDEX", VT_BYTE, 0 );
+    variable_global( _environment, "PUTIMAGETILEINDEX" );
+    variable_import( _environment, "PUTIMAGEX", VT_BYTE, 0 );
     variable_global( _environment, "PUTIMAGEX" );
 
     variable_import( _environment, "IMAGEX", VT_POSITION, 0 );
