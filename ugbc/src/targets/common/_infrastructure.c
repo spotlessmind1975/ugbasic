@@ -4078,7 +4078,7 @@ larghezza di bit (in caso di tipo numerico) o dello stesso tipo (in caso di stri
 @syntax SWAP var1, var2
 
 @example a = 42 : b = 84
-@example AT a, b
+@example SWAP a, b
 @example PRINT a, b
 
 @seeAlso AT
