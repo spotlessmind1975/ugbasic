@@ -10920,7 +10920,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
+  | sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
         Variable * v = sequence_storage( 
             _environment, 
             $2, $4, 
@@ -10935,7 +10935,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = sequence_storage( 
             _environment, 
             $2, NULL, 
