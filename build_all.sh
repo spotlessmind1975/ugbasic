@@ -26,9 +26,11 @@ build coleco
 build cpc
 build d32
 build d64
+build gb
 build mo5
 build msx1
 build pc128op
+build pc1403
 build plus4
 build sc3000
 build sg1000
