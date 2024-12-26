@@ -684,6 +684,11 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, int
     deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
     deploy( cls, src_hw_vic1_cls_asm );
 
+    if ( _environment->currentMode > 0 ) {
+        _environment->fontConfig.schema = FONT_SCHEMA_ALPHA;
+        font_descriptors_init( _environment, 0 );
+    }
+
     outline1("LDA %s", _text);
     outline0("STA TEXTPTR" );
     outline1("LDA %s", address_displacement(_environment, _text, "1"));

@@ -37,8 +37,6 @@
 
 TILESETSLOTFIRST: .byte 0
 TILESETSLOTLAST: .byte 0
-TILESETSLOTUSED: .res 256, 0
-TILESETSLOTATTRIBUTE: .res 256, 0
 
 ; ------------------------------------------------------------------------------
 ; Allocate a new slot of used tiles.
@@ -120,6 +118,8 @@ TILESETSLOTALLOCL1:
 ;  Out: X - free slot, 255 = no free slot present
 ; ------------------------------------------------------------------------------
 
+FINDFREEFIRST: .BYTE 0
+
 TILESETSLOTFINDFREE:
 
     TYA
@@ -136,6 +136,7 @@ TILESETSLOTFINDFREE:
     ASL
     ASL
     TAX
+    STA FINDFREEFIRST
 
 TILESETSLOTFINDFREEL1:
 
@@ -169,18 +170,16 @@ TILESETSLOTFINDFREEL1:
 TILESETSLOTFOUNDFREE:
 
     ; Calculate the starting offset of the free tiles,
-    ; that is the ( group index - last ) x 32.
+    ; that is the ( group index - last ) x 8.
 
     PHA
     STX MATHPTR6
     TXA
-    LSR
-    LSR
-    LSR
-    LSR
-    LSR
     SEC
-    SBC TILESETSLOTLAST
+    SBC FINDFREEFIRST
+    ASL
+    ASL
+    ASL
     TAX
     PLA
 
@@ -398,6 +397,10 @@ PUTIMAGEALLOCOK:
     ; This means that we have to calculate the offset 
     ; inside the TILESET, multiplying the index by 8.
 
+    PHA
+    LDA PUTIMAGEINDEX
+    SEC
+    SBC #3
     STA MATHPTR2
     LDA #0
     STA MATHPTR3
@@ -441,6 +444,18 @@ PUTIMAGEALLOCOK:
     ; Now we do the same with the hardware TILESET.
     ; Since we want to optimize the calculation,
     ; we are going to use a self modify code.
+    
+    PLA
+    STA MATHPTR2
+    LDA #0
+    STA MATHPTR3
+
+    ASL MATHPTR2
+    ROL MATHPTR3
+    ASL MATHPTR2
+    ROL MATHPTR3
+    ASL MATHPTR2
+    ROL MATHPTR3
 
     CLC
     LDA MATHPTR2
@@ -476,9 +491,10 @@ PUTIMAGEALLOCOKL1ADDR:
     ; address, and then we add the current SIZE * 8 and,
     ; finally, the size of the header.
 
+    LDA PUTIMAGEINDEX
+    SEC
+    SBC #3
     CLC
-    PLA
-    PHA
     ADC TMPPTR
     STA TMPPTR2
     LDA #0
