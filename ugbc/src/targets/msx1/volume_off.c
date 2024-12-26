@@ -67,7 +67,7 @@ singola voce.
 </usermanual> */
 void volume_off( Environment * _environment, int _channels ) {
 
-    ay8910_set_volume( _environment, 0, _channels );
+    ay8910_set_volume( _environment, _channels, 0 );
 
 }
 
