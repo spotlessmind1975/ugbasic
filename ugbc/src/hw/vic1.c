@@ -318,39 +318,24 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->fontHeight = 8;
     _environment->screenTiles = 255;
     switch( _screen_mode->id ) {
-        // case BITMAP_MODE_STANDARD:
-        //     _environment->screenTilesWidth = 16;
-        //     _environment->screenTilesHeight = 16;
+        case BITMAP_MODE_STANDARD:
 
-        //     outline0("JSR BITMAPON1" );
+            outline0("LDA $9005");
+            outline0("AND #$F0");
+            outline0("ORA #$0E");
+            outline0("STA $9005");
 
-        //     cpu_store_8bit( _environment, "_PEN", 0X01 );
-        //     cpu_store_8bit( _environment, "_PAPER", 0x00 );
-        //     cpu_store_16bit( _environment, "CLIPX1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
-        //     cpu_store_16bit( _environment, "CLIPY1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
+            _environment->screenTilesWidth = 22;
+            _environment->screenTilesHeight = 23;
 
-        //     break;
-        // case BITMAP_MODE_EXTENDED:
-        //     _environment->screenTilesWidth = 22;
-        //     _environment->screenTilesHeight = 22;
-
-        //     outline0("JSR BITMAPON2" );
-
-        //     cpu_store_8bit( _environment, "_PEN", 0X01 );
-        //     cpu_store_8bit( _environment, "_PAPER", 0x00 );
-        //     cpu_store_16bit( _environment, "CLIPX1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPX2", (_environment->screenTilesWidth*8)-1 );
-        //     cpu_store_16bit( _environment, "CLIPY1", 0 );
-        //     cpu_store_16bit( _environment, "CLIPY2", (_environment->screenTilesHeight*8)-1 );
-
-        //     break;
+            break;
         case TILEMAP_MODE_STANDARD:
             _environment->screenTilesWidth = 22;
             _environment->screenTilesHeight = 23;
 
-            // outline0("JSR BITMAPOFF" );
+            outline0("LDA $9005");
+            outline0("AND #$F0");
+            outline0("STA $9005");
 
             vic1_cls( _environment );
 
@@ -742,7 +727,7 @@ void vic1_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 22, 23, 8, 8, 8, "Standard Character Mode" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 128, 64, 8, 8, 8, "Standard Bitmap Mode" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_STANDARD, 1, 176, 184, 8, 8, 8, "Standard Bitmap Mode (tilemapped)" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_EXTENDED, 1, 128, 128, 8, 8, 8, "Extended Bitmap Mode" );
 
     outline0("JSR VIC1STARTUP");
@@ -1377,7 +1362,7 @@ static void vic1_image_converter_tile( Environment * _environment, char * _sourc
 
     }
 
-    *( _dest + 8 ) = ( colorForeground << 4 ) | colorBackground ;
+    *( _dest + 8 ) = colorForeground | ( colorBackground << 4 ) ;
 
 }
 
@@ -1675,8 +1660,6 @@ Variable * vic1_image_converter( Environment * _environment, char * _data, int _
 
    switch( _mode ) {
         case BITMAP_MODE_STANDARD:
-            return vic1_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
-            break;
         case TILEMAP_MODE_STANDARD:
             return vic1_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
             break;
