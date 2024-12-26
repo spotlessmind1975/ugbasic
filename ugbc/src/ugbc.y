@@ -3899,6 +3899,9 @@ exponential_less:
     | SCREEN TILES HEIGHT {
         $$ = screen_tiles_get_height( _environment )->name;
     }
+    | TILES HEIGHT {
+        $$ = screen_tiles_get_height( _environment )->name;
+    }
     | SCREEN ROWS {
         $$ = screen_tiles_get_height( _environment )->name;
     }
