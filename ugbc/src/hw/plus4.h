@@ -64,6 +64,7 @@
 #define KEY_W						9
 #define KEY_E						14
 #define KEY_R						17
+#define KEY_TAB						0
 #define KEY_T						22
 #define KEY_Y						25
 #define KEY_U						30
