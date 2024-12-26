@@ -89,7 +89,7 @@ nei numeri interi.
 
 @syntax = SQR(expression)
 
-@example PRINT SNG(81)
+@example PRINT SQR(81)
 
 @usedInExample maths_sqr_01.bas
 
