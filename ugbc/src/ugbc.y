@@ -2652,6 +2652,9 @@ const_key_scancode_definition :
     | EQUAL {
         $$ = key_constant( _environment, KEY_EQUAL );
     }
+    | TAB {
+        $$ = key_constant( _environment, KEY_TAB );
+    }
     | const_key_scancode_function_digit {
         $$ = $1;
     }
