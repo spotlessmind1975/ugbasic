@@ -96,6 +96,7 @@
 #define KEY_SEMICOLON				50
 #define KEY_SLASH					55
 #define KEY_SPACE					60
+#define KEY_TAB						0
 #define KEY_T						22
 #define KEY_U						30
 #define KEY_UP_ARROW				54
