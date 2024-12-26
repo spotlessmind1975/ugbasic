@@ -448,10 +448,9 @@ PUTIMAGEALLOCOK:
 
     ; Let's repeat the copy for 16 bytes.
 
-    CALL WAITSTATE
-
     LD B, 16
 PUTIMAGEALLOCOKL1:
+    CALL WAITSTATE
     LD A, (HL)
     LD (DE), A
     INC HL
@@ -550,6 +549,8 @@ PUTIMAGEDRAWL1B:
     ; for the various tiles indexes.
 
 PUTIMAGEDRAWL2:
+
+    CALL WAITSTATE
 
     ; Load the index from the TILEDIMAGE.
 
