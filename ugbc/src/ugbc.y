@@ -11901,13 +11901,16 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+                    } else if ( strcmp( optarg, "gb") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; 
+                    } else if ( strcmp( optarg, "ram") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
                     } else if ( strcmp( optarg, "atr") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; ->outputFileType = OUTPUT_FILE_TYPE_RAM;
                         CRITICAL2("Unknown output format", optarg);
                     }
                     break;
