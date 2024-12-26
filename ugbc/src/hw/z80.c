@@ -8244,10 +8244,15 @@ void z80_float_fast_tan( Environment * _environment, char * _angle, char * _resu
 
     MAKE_LABEL
 
+    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
     deploy( fp_fast_tan, src_hw_z80_fp_fast_tan_asm );
     deploy( fp_fast_sin, src_hw_z80_fp_fast_sin_asm );
     deploy( fp_fast_cos, src_hw_z80_fp_fast_cos_asm );     
     deploy( fp_fast_div, src_hw_z80_fp_fast_div_asm );
+    deploy( fp_fast_mod1, src_hw_z80_fp_fast_mod1_asm );
+    deploy( fp_fast_add, src_hw_z80_fp_fast_add_asm );
+    deploy( fp_fast_sub, src_hw_z80_fp_fast_sub_asm );
+    deploy( fp_fast_sqr, src_hw_z80_fp_fast_sqr_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
     outline0( "LD L, A" );

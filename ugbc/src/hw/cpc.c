@@ -167,6 +167,7 @@ void cpc_wait_fire( Environment * _environment, int _port, int _release ) {
     _environment->bitmaskNeeded = 1;
 
     deploy( joystick, src_hw_cpc_joystick_asm );
+    deploy_deferred( keyboard, src_hw_cpc_keyboard_asm );
 
     switch( _port ) {
         case -1:

@@ -116,7 +116,8 @@ void ay8910_set_volume( Environment * _environment, int _channels, int _volume )
     deploy( ay8910startup, src_hw_ay8910_startup_asm );
 
     outline1("LD A, $%2.2x", ( _volume & 0x0f ) );
-    outline0("LD B, A" );
+    outline0("LD E, A" );
+    outline1("LD A, $%2.2x", ( _channels & 0x07 ) );
     outline0("CALL AY8910STARTVOL");
 
 }

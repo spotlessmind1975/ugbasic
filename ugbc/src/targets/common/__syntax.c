@@ -5980,7 +5980,7 @@ Questa costante mantiene il numero di tick che avvengono ad ogni secondo.
 </usermanual> */
 
 /* <usermanual>
-@keyword VOLUME MIN
+@keyword VOLUME MIN (constant)
 
 @english
 
@@ -5995,7 +5995,7 @@ Valore minimo utilizzabile per il volume audio.
 </usermanual> */
 
 /* <usermanual>
-@keyword VOLUME MAX
+@keyword VOLUME MAX (constant)
 
 @english
 

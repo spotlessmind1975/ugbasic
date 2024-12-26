@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE SID RELOC FADE MMOB GB
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2652,6 +2652,9 @@ const_key_scancode_definition :
     | EQUAL {
         $$ = key_constant( _environment, KEY_EQUAL );
     }
+    | TAB {
+        $$ = key_constant( _environment, KEY_TAB );
+    }
     | const_key_scancode_function_digit {
         $$ = $1;
     }
@@ -2718,7 +2721,7 @@ const_key_scancode_definition :
 
 load_image  : LOAD IMAGE | IMAGE LOAD;
 load_images : LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
-load_sequence : LOAD SEQUENCE | SEQUENCE LOAD;
+load_sequence : LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
 load_tileset  : LOAD TILESET | TILESET LOAD;
 load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
 
@@ -3899,6 +3902,9 @@ exponential_less:
     | SCREEN TILES HEIGHT {
         $$ = screen_tiles_get_height( _environment )->name;
     }
+    | TILES HEIGHT {
+        $$ = screen_tiles_get_height( _environment )->name;
+    }
     | SCREEN ROWS {
         $$ = screen_tiles_get_height( _environment )->name;
     }
@@ -4147,7 +4153,13 @@ exponential_less:
     | XCURS {
         $$ = text_get_xcurs( _environment )->name;
     }
+    | X CURS {
+        $$ = text_get_xcurs( _environment )->name;
+    }
     | YCURS {
+        $$ = text_get_ycurs( _environment )->name;
+    }
+    | Y CURS {
         $$ = text_get_ycurs( _environment )->name;
     }
     | TEXTADDRESS {
@@ -10966,7 +10978,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
+  | sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
         Variable * v = sequence_storage( 
             _environment, 
             $2, $4, 
@@ -10981,7 +10993,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | SEQUENCE const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = sequence_storage( 
             _environment, 
             $2, NULL, 
@@ -11895,11 +11907,7 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
-                    } else if ( strcmp( optarg, "ram") == 0 ) {
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
-                    } else if ( strcmp( optarg, "gb") == 0 ) {
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
-                    } else {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; ->outputFileType = OUTPUT_FILE_TYPE_RAM;
                         CRITICAL2("Unknown output format", optarg);
                     }
                     break;
