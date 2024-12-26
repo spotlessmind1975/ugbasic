@@ -36,19 +36,17 @@
 #include <math.h>
 
 static RGBi SYSTEM_PALETTE[] = {
-        { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-        { 0x00, 0x00, 0xff, 0xff, 1, "BLUE" },
-        { 0x88, 0x00, 0x00, 0xff, 2, "RED" },
-        { 0xff, 0x00, 0xff, 0xff, 3, "MAGENTA" },
-        { 0x00, 0xcc, 0x00, 0xff, 4, "GREEN" },
-        { 0xaa, 0xff, 0xe6, 0xff, 5, "CYAN" },
-        { 0xee, 0xee, 0x77, 0xff, 6, "YELLOW" },
-        { 0xff, 0xff, 0xff, 0xff, 7, "WHITE" }
+        { 0xff, 0xff, 0xff, 0xff, 0, "WHITE", 0 },
+        { 0xcc, 0xcc, 0xcc, 0xff, 1, "LIGHT GRAY", 1 },
+        { 0x66, 0x66, 0x66, 0xff, 2, "DARK GRAY", 2 },
+        { 0x00, 0x00, 0x00, 0xff, 3, "BLACK", 3 }
 };
 
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
+
+#define __gb__
 
 #ifdef __gb__
 
@@ -618,8 +616,8 @@ RGBi * gb_image_nearest_system_color( RGBi * _color ) {
  * This method can be used to convert 
  *     8x8 RGB (3/4 bytes) pixel (_source) [8x8x3/4 = 192/256 bytes]
  * into 
- *     8x8 bitmap (1 bit) pixel + 8 (byte) [8x1 + 8 = 16 bytes]
- *       foreground and background color (_dest)
+ *     8x8 bitmap (2 bit) pixel [8x2 = 16 bytes]
+ *       foreground and background color encoded (_dest)
  * 
  * Since the 8x8 pixel area belong to a larger picture,
  * this function will need the picture _width in order
@@ -627,135 +625,58 @@ RGBi * gb_image_nearest_system_color( RGBi * _color ) {
  */
 static void gb_image_converter_tile( Environment * _environment, char * _source, char * _dest, int _width, int _depth, int _source_width ) {
 
-    // int colorIndexesCount[COLOR_COUNT];
+    char * source = _source;
 
-    // int colorBackgroundMax = 0;
-    // int colorBackground[8];
-    // memset( colorBackground, 0, 8 * sizeof( int ) );
-    
-    // int colorForegroundMax = 0;
-    // int colorForeground[8];
-    // memset( colorForeground, 0, 8 * sizeof( int ) );
+    for (int y=0; y<8; ++y) {
+        for (int x=0; x<8; ++x) {
 
-    // char * source = _source;
+            RGBi rgb;
 
-    // // Clear the box and colors
-    // memset( _dest, 0, 16 );
+            memset( &rgb, 0, sizeof( RGBi ) );
 
-    // // Loop for all the box surface
-    // for (int y=0; y<8; ++y) {
+            rgb.red = *source;
+            rgb.green = *(source + 1);
+            rgb.blue = *(source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
 
-    //     memset(colorIndexesCount, 0, COLOR_COUNT * sizeof( int ) );
-    //     colorBackgroundMax = 0;
-    //     colorForegroundMax = 0;
+            RGBi *systemRgb = gb_image_nearest_system_color( &rgb );
 
-    //     for (int x=0; x<8; ++x) {
+            char bitmask = 1 << ( 7 - ((x) & 0x7) );
+            int pos0 = ( y * 2 );
+            int pos1 = ( y * 2 + 1 );
 
-    //         RGBi rgb;
+            if ( systemRgb->index & 0x01 ) {
+                *( _dest + pos0 ) |= bitmask;
+            } else {
+                *( _dest + pos0 ) &= ~bitmask;
+            }
 
-    //         memset( &rgb, 0, sizeof( RGBi ) );
+            if ( systemRgb->index & 0x02 ) {
+                *( _dest + pos1 ) |= bitmask;
+            } else {
+                *( _dest + pos1 ) &= ~bitmask;
+            }
 
-    //         // Take the color of the pixel
-    //         rgb.red = *source;
-    //         rgb.green = *(source + 1);
-    //         rgb.blue = *(source + 2);
-    //         if ( _depth > 3 ) {
-    //             rgb.alpha = *(source + 3);
-    //         } else {
-    //             rgb.alpha = 255;
-    //         }
-    //         if ( rgb.alpha == 0 ) {
-    //             rgb.red = 0;
-    //             rgb.green = 0;
-    //             rgb.blue = 0;
-    //         }
+            adilinepixel(systemRgb->index);
 
-    //         RGBi *systemRgb = gb_image_nearest_system_color( &rgb );
+            source += _depth;
 
-    //         ++colorIndexesCount[systemRgb->index];
-
-    //         source += _depth;
-
-    //     }
-
-    //     // printf( "\n" );
-
-    //     for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-    //         if ( colorIndexesCount[xx] > colorBackgroundMax ) {
-    //             colorBackground[y] = xx;
-    //             colorBackgroundMax = colorIndexesCount[xx];
-    //         };
-    //     }
-
-    //     colorIndexesCount[colorBackground[y]] = 0;
-
-    //     for( int xx = 0; xx<COLOR_COUNT; ++xx ) {
-    //         if ( colorIndexesCount[xx] > colorForegroundMax ) {
-    //             colorForeground[y] = xx;
-    //             colorForegroundMax = colorIndexesCount[xx];
-    //         };
-    //     }
-
-    //     if ( colorForeground[y] == 0 ) {
-    //         colorForeground[y] = colorBackground[y];
-    //     }
-
-    //     source += _depth * ( _source_width - 8 );
-
-    // }
-
-    // source = _source;
-
-    // for (int y=0; y<8; ++y) {
-    //     for (int x=0; x<8; ++x) {
-
-    //         RGBi rgb;
-
-    //         memset( &rgb, 0, sizeof( RGBi ) );
-
-    //         rgb.red = *source;
-    //         rgb.green = *(source + 1);
-    //         rgb.blue = *(source + 2);
-    //         if ( _depth > 3 ) {
-    //             rgb.alpha = *(source + 3);
-    //         } else {
-    //             rgb.alpha = 255;
-    //         }
-    //         if ( rgb.alpha == 0 ) {
-    //             rgb.red = 0;
-    //             rgb.green = 0;
-    //             rgb.blue = 0;
-    //         }
-
-    //         RGBi *systemRgb = gb_image_nearest_system_color( &rgb );
-
-    //         char bitmask = 1 << ( 7 - ((x) & 0x7) );
-
-    //         if ( systemRgb->index != colorBackground[y] ) {
-    //             adilinepixel(colorForeground[y]);
-    //             *( _dest + y ) |= bitmask;
-    //             // printf("%1.1x", colorForeground[y]);
-    //         } else {
-    //             adilinepixel(colorBackground[y]);
-    //             *( _dest + y ) &= ~bitmask;
-    //             // printf("%1.1x", colorBackground[y]);
-    //         }
-
-    //         source += _depth;
-
-    //     }
+        }
         
-    //     // printf("\n");
+        // printf("\n");
 
-    //     source += _depth * ( _source_width - 8 );
+        source += _depth * ( _source_width - 8 );
 
-    // }
-
-    // // printf("\n\n----\n\n");
-
-    // for( int i=0; i<8; ++i ) {
-    //     *( _dest + 8 + i ) = ( colorForeground[i] << 4 ) | colorBackground[i] ;
-    // }
+    }
 
 }
 
@@ -1719,12 +1640,32 @@ void gb_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+
+    variable_import( _environment, "TILESETSLOTFIRST", VT_BYTE, 8 );
+    variable_global( _environment, "TILESETSLOTFIRST" );
+    variable_import( _environment, "TILESETSLOTLAST", VT_BYTE, 8 );
+    variable_global( _environment, "TILESETSLOTLAST" );
+
+    variable_import( _environment, "PUTIMAGECOUNT", VT_BYTE, 8 );
+    variable_global( _environment, "PUTIMAGECOUNT" );
+    variable_import( _environment, "PUTIMAGEWIDTH", VT_BYTE, 8 );
+    variable_global( _environment, "PUTIMAGEWIDTH" );
+    variable_import( _environment, "PUTIMAGEINDEX", VT_BYTE, 8 );
+    variable_global( _environment, "PUTIMAGEINDEX" );
+    variable_import( _environment, "PUTIMAGEX", VT_BYTE, 8 );
+    variable_global( _environment, "PUTIMAGEX" );
+
+    variable_import( _environment, "IMAGEX", VT_POSITION, 0 );
+    variable_global( _environment, "IMAGEX" );    
+    variable_import( _environment, "IMAGEY", VT_POSITION, 0 );
+    variable_global( _environment, "IMAGEY" );    
+
     // variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
     // variable_global( _environment, "SPRITEADDRESS" );    
     // variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
     // variable_global( _environment, "SPRITEAADDRESS" );    
-    // variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
-    // variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x9800 );
+    variable_global( _environment, "TEXTADDRESS" );    
     // variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
     // variable_global( _environment, "COLORMAPADDRESS" );    
     // variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
@@ -1739,10 +1680,10 @@ void gb_initialization( Environment * _environment ) {
 
     // outline0("CALL TMS9918STARTUP");
 
-    // variable_import( _environment, "XGR", VT_POSITION, 0 );
-    // variable_global( _environment, "XGR" );
-    // variable_import( _environment, "YGR", VT_POSITION, 0 );
-    // variable_global( _environment, "YGR" );
+    variable_import( _environment, "XGR", VT_POSITION, 0 );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION, 0 );
+    variable_global( _environment, "YGR" );
     // variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
     // variable_global( _environment, "LINE" );
 
@@ -2135,6 +2076,77 @@ static Variable * gb_image_converter_bitmap_mode_standard( Environment * _enviro
 
 }
 
+static Variable * gb_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 8 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 8 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 8 ) {
+            _height = ( ( ( _height - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_height % 8 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+
+    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+
+    // timeslot: 1 byte
+    // width: 1 byte
+    // size: 1 byte
+    // (indexes): size bytes
+    // tiles' data
+
+    int size = ( ( _frame_width >> 3 ) * ( _frame_height >> 3 ) );
+
+    int bufferSize = 3 + size + size * 16;
+
+    char * buffer = malloc ( bufferSize );
+
+    memset( buffer, 0, bufferSize );
+
+    buffer[0] = 0xff; // force update at first PUT IMAGE
+    buffer[1] = ( _frame_width >> 3 );
+    buffer[2] = size;
+
+    int cx, cy;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    for( cy=0; cy<(_frame_height >> 3);++cy) {
+        for( cx=0; cx<(_frame_width >> 3);++cx) {
+
+            int tileDataOffset = 3 + size + ( (cy * ( _frame_width >> 3 ) ) + cx ) * ( 16 );
+
+            char * source = _source + ( ( cy * 8 * _width ) + cx * 8 ) * _depth;
+
+            char convertedTile[16];
+
+            gb_image_converter_tile( _environment, source, convertedTile, _width, _depth, _width );
+            
+            memcpy( &buffer[tileDataOffset], convertedTile, 16 );
+
+        }
+
+    }
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * gb_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y ) {
 
     // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
@@ -2336,18 +2348,18 @@ Variable * gb_sprite_converter( Environment * _environment, char * _source, int 
 
 Variable * gb_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    // switch( _mode ) {
+    switch( _mode ) {
 
-    //     case BITMAP_MODE_GRAPHIC2:
+        case TILEMAP_MODE_STANDARD:
 
-    //         return gb_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return gb_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 
-    //         break;
-    // }
+            break;
+    }
 
-    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
-    // return gb_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+    return gb_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD );
 
 }
 
@@ -2436,62 +2448,65 @@ static void gb_load_image_address_to_other_register( Environment * _environment,
 
 static void gb_load_image_address_to_register( Environment * _environment, char * _register, Resource * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
-    // if ( _source->isAddress ) {
-    //     outline1("LD HL, (%s)", _source->realName );
-    // } else {
-    //     outline1("LD HL, %s", _source->realName );
-    // }
+    if ( _source->isAddress ) {
+        outline1("LD HL, (%s)", _source->realName );
+    } else {
+        outline1("LD HL, %s", _source->realName );
+        char dataLabel[MAX_TEMPORARY_STORAGE];
+        sprintf(dataLabel, "%sdata", _source->realName);
+        outline1("LD DE, %s", dataLabel );
+    }
 
-    // if ( _frame_size ) {
+    if ( _frame_size ) {
 
-    //     if ( !_sequence && !_frame ) {
-    //     } else {
-    //         if ( _sequence ) {
-    //             outline0("LD DE, $0003" );
-    //             outline0("ADD HL, DE" );
-    //             if ( strlen(_sequence) == 0 ) {
+        if ( !_sequence && !_frame ) {
+        } else {
+            if ( _sequence ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_sequence) == 0 ) {
 
-    //             } else {
-    //                 outline1("LD A, (%s)", _sequence );
-    //                 outline0("PUSH HL" );
-    //                 outline0("POP IX" );
-    //                 outline1("CALL %soffsetsequence", _source->realName );
-    //             }
-    //             if ( _frame ) {
-    //                 if ( strlen(_frame) == 0 ) {
+                } else {
+                    outline1("LD A, (%s)", _sequence );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL %soffsetsequence", _source->realName );
+                }
+                if ( _frame ) {
+                    if ( strlen(_frame) == 0 ) {
 
-    //                 } else {
-    //                     outline1("LD A, (%s)", _frame );
-    //                     outline0("PUSH HL" );
-    //                     outline0("POP IX" );
-    //                     outline1("CALL %soffsetframe", _source->realName );
-    //                 }
-    //             }
+                    } else {
+                        outline1("LD A, (%s)", _frame );
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
 
-    //         } else {
+            } else {
 
-    //             if ( _frame ) {
-    //                 outline0("LD DE, $0003" );
-    //                 outline0("ADD HL, DE" );
-    //                 if ( strlen(_frame) == 0 ) {
+                if ( _frame ) {
+                    outline0("LD DE, $0003" );
+                    outline0("ADD HL, DE" );
+                    if ( strlen(_frame) == 0 ) {
 
-    //                 } else {
-    //                     outline0("PUSH HL" );
-    //                     outline0("POP IX" );
-    //                     outline1("LD A, (%s)", _frame );
-    //                     outline1("CALL %soffsetframe", _source->realName );
-    //                 }
-    //             }
+                    } else {
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("LD A, (%s)", _frame );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
 
-    //         }
+            }
 
-    //     }
+        }
 
-    // }
+    }
     
-    // if ( _register ) {
-    //     outline1("LD (%s), HL", _register );
-    // }
+    if ( _register ) {
+        outline1("LD (%s), HL", _register );
+    }
 
 }
 
@@ -2557,30 +2572,26 @@ void gb_blit_image( Environment * _environment, char * _sources[], int _source_c
 
 void gb_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    // // deploy( putimage, src_hw_gb_put_image_asm );
+    deploy( gbvars, src_hw_gb_vars_asm);
+    deploy( putimage, src_hw_gb_put_image_asm );
 
     // MAKE_LABEL
 
     // outhead1("putimage%s:", label);
 
-    // gb_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+    outline1("LD HL, (%s)", _x );
+    outline0("LD (IMAGEX), HL" );
+    outline1("LD HL, (%s)", _y );
+    outline0("LD (IMAGEY), HL" );
 
-    // outline1("LD A, (%s)", _x );
-    // outline0("LD E, A" );
-    // outline1("LD A, (%s)", _y );
-    // outline0("LD D, A" );
+    gb_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
+
     // outline1("LD A, (%s)", _flags );
     // outline0("LD (IMAGEF), A" );
     // outline1("LD A, (%s)", address_displacement(_environment, _flags, "1") );
     // outline0("LD (IMAGET), A" );
 
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL PUTIMAGE");
-    // } else {
-    //     outline0("CALL PUTIMAGENMI2");
-    // }
+    outline0("CALL PUTIMAGE");
 
 }
 

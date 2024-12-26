@@ -104,15 +104,15 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        gb_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        gb_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        gb_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        gb_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -125,20 +125,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        gb_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        gb_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        gb_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        gb_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -171,9 +171,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
-                    // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    gb_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    gb_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -185,18 +185,19 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    gb_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    gb_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
         case VT_IMAGE:
         case VT_TARRAY:
+        case VT_TILEDIMAGE:
             if ( image->bankAssigned != -1 ) {
 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
@@ -221,9 +222,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {
-                // tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                gb_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:
@@ -305,7 +306,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
 }
 
@@ -322,6 +323,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_ADDRESS:
+        case VT_TILEDIMAGE:
             put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
             break;
         case VT_IMAGEREF:

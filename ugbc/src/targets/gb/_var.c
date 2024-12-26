@@ -170,6 +170,78 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_BLIT:
                     break;
+                case VT_TILEDIMAGE: 
+                    {
+                        if ( variable->bankAssigned != -1 ) {
+                            outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                            outhead1("%s: db $0", variable->realName );
+                        } else {
+                            int writableSize = 3 + variable->valueBuffer[2];
+                            outhead0("section data");
+                            out1("%s: db ", variable->realName);
+                            int i=0;
+                            for (i=0; i<(writableSize-1); ++i ) {
+                                if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                    outline1("%d", variable->valueBuffer[i]);
+                                    out0("  db  " );
+                                } else {
+                                    out1("%d,", variable->valueBuffer[i]);
+                                }
+                            }
+                            outline1("%d", variable->valueBuffer[i]);
+                            outhead0("section code");
+                            if ( ! variable->absoluteAddress ) {
+                                if ( variable->valueBuffer ) {
+                                    if ( variable->printable ) {
+                                        char * string = malloc( variable->size + 1 );
+                                        memset( string, 0, variable->size + 1 );
+                                        memcpy( string, variable->valueBuffer, variable->size );
+                                        outline2("%s: db %s", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        if ( !variable->readonly ) {
+                                            outhead0("section data");
+                                        }
+                                        out1("%sdata: db ", variable->realName);
+                                        int i=0;
+                                        for (i=writableSize; i<(variable->size-1); ++i ) {
+                                            if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                                outline1("%d", variable->valueBuffer[i]);
+                                                out0("  db  " );
+                                            } else {
+                                                out1("%d,", variable->valueBuffer[i]);
+                                            }
+                                        }
+                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                        if ( !variable->readonly ) {
+                                            outhead0("section code");
+                                        }
+                                    }
+                                } else {
+                                    outhead0("section data");
+                                    outline2("%s: defs %d", variable->realName, variable->size - writableSize);
+                                    outhead0("section code");
+                                }
+                            } else {
+                                outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                                if ( variable->valueBuffer ) {
+                                    if ( variable->printable ) {
+                                        char * string = malloc( variable->size + 1 );
+                                        memset( string, 0, variable->size + 1 );
+                                        memcpy( string, variable->valueBuffer, variable->size );
+                                        outline2("%scopy: db %s", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        out1("%scopy: db ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("%d,", variable->valueBuffer[i]);
+                                        }
+                                        outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;                
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -580,6 +652,43 @@ void variable_cleanup( Environment * _environment ) {
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
     }
+
+    if ( _environment->descriptors ) {
+        int j;
+        outhead0("section data");
+        outhead0("TILESETSLOTUSED: ");
+        for(j=0;j<8;++j) {
+            int k;
+            out0("   DB " );
+            for(k=0;k<30;++k) {
+                if ( (k*8) < _environment->descriptors->firstFree ) {
+                    out0("$FF,");
+                } else {
+                    out0("$00,");
+                }
+            }
+            outline0("$00");
+        }
+        outhead0("TILESETSLOTATTRIBUTE: ");
+        out0("   DB " );
+        for(j=0;j<255;++j) {
+            int k;
+            if ( j < _environment->descriptors->firstFree ) {
+                out0("$07,");
+            } else {
+                out0("$00,");
+            }
+        }
+        outline0("$00");
+        outhead0("section code");
+    } else {
+        outhead0("section data");
+        outhead0("TILESETSLOTUSED: DS 256, $00 ");
+        outhead0("TILESETSLOTATTRIBUTE: DS 256, $00 ");
+        outhead0("section code");
+    }
+
+
 
     // for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
     //     if ( _environment->maxExpansionBankSize[i] ) {

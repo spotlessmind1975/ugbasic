@@ -949,3 +949,22 @@ WAITSTATE:
     AND STATF_BUSY
     JR NZ, WAITSTATE
     RET
+
+GBSTARTUP:
+    RET
+
+SUB_HL_DE:
+    PUSH    BC
+    LD      B, A
+
+    LD      A, L
+    SUB     A, E
+    LD      L, A
+
+    LD      A, H
+    SBC     A, D
+    LD      H, A
+
+    LD      A, B
+    POP     BC
+    RET
