@@ -178,6 +178,7 @@ TILESETSLOTFOUNDFREE:
     SLA B
     SLA B
     SLA B
+    LD C, 0
 
 TILESETSLOTFOUNDFREEL1:
 
@@ -193,6 +194,7 @@ TILESETSLOTFOUNDFREEL1:
     ; have at least one bit to zero.
 
     INC B
+    INC C
     JR TILESETSLOTFOUNDFREEL1
 
 TILESETSLOTFOUNDFREEDONE:
@@ -211,7 +213,7 @@ TILESETSLOTFOUNDFREEDONE:
     LD C, A
     LD A, (HL)
     OR C
-    LD (HL), C
+    LD (HL), A
     
     POP AF
 
@@ -316,6 +318,8 @@ TILESETSLOTRECALCL2:
 ; ------------------------------------------------------------------------------
 
 PUTIMAGE:
+
+    PUSH HL
 
     ; Retrieve the width of the TILEDIMAGE
 
@@ -464,6 +468,8 @@ PUTIMAGEALLOCOKL1:
 
     ; Move to the next index.
 
+    INC HL
+
     LD A, (PUTIMAGEINDEX)
     INC A
     LD (PUTIMAGEINDEX), A
@@ -477,15 +483,16 @@ PUTIMAGEALLOCOKL1:
 
 PUTIMAGEALLOCDONE:
 
-    DEC HL
-    DEC HL
-    DEC HL
+    POP HL
+    PUSH HL
 
     ; Set that the TILEDIMAGE has been already rendered at least once.
     LD A, 0
     LD (HL), A
 
 PUTIMAGEDRAW:
+
+    POP HL
 
     LD A, 0
     LD (PUTIMAGEX), A
@@ -543,8 +550,6 @@ PUTIMAGEDRAWL1B:
     LD DE, HL
     POP HL
 
-    CALL WAITSTATE
-
     ; Now we are already at the starting address inside the TILEDIMAGE
     ; for the various tiles indexes.
 
@@ -581,7 +586,7 @@ PUTIMAGEDRAWL2NEXT:
 
     LD A, (PUTIMAGEX)
     INC A
-    LD (PUTIMAGE), A
+    LD (PUTIMAGEX), A
     LD B, A
     LD A, (PUTIMAGEWIDTH)
     CP B
@@ -595,8 +600,7 @@ PUTIMAGEDRAWL2NEXT:
     PUSH HL
     LD H, D
     LD L, E
-    LD D, 0
-    LD A, (CURRENTTILESWIDTH)
+    LD DE, 32
     ADD HL, DE
     LD D, 0
     LD A, (PUTIMAGEWIDTH)
