@@ -453,8 +453,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     switch( _screen_mode->id ) {
         case TILEMAP_MODE_STANDARD:

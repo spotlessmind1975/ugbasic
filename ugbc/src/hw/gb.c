@@ -1038,8 +1038,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;

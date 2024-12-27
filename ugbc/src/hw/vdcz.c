@@ -742,8 +742,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     int horizontalCharactersPositions = 127;
     int horizontalVerticalSyncWidth = 0x49;

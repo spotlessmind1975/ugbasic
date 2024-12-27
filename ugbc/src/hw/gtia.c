@@ -747,8 +747,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int dliListStartOffset;
     int screenMemoryAddress2 = 0;
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
@@ -1664,8 +1664,8 @@ void gtia_tilemap_enable( Environment * _environment, int _width, int _height, i
     if ( mode ) {
         gtia_screen_mode_enable( _environment, mode );
 
-        cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-        cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+        cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+        cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );

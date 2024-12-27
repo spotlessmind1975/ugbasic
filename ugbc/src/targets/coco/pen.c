@@ -46,8 +46,8 @@
  */
 void pen( Environment * _environment, char * _color ) {
 
-    Variable * pen = variable_retrieve_or_define( _environment, "PEN", VT_COLOR, DEFAULT_PEN_COLOR );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, DEFAULT_PEN_COLOR );
+    Variable * pen = variable_retrieve_or_define( _environment, "PEN", VT_COLOR, _environment->defaultPenColor );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, _environment->defaultPenColor );
 
     outline1("; -v- pen( , %s )", _color );
     variable_move( _environment, color->name, pen->name );
