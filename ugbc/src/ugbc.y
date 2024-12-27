@@ -2535,6 +2535,10 @@ key_scancode_definition :
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode HOME)")->name;
         variable_store( _environment, $$, key_constant( _environment, KEY_HOME ) );
     }
+    | TAB {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode TAB)")->name;
+        variable_store( _environment, $$, key_constant( _environment, KEY_TAB ) );
+    }
     | INSERT {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode INSERT)")->name;
         variable_store( _environment, $$, key_constant( _environment, KEY_INSERT ) );
