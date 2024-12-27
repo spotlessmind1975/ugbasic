@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5169,6 +5169,17 @@ screen_definition_expression:
 screen_definition:
     screen_definition_simple
   | screen_definition_expression;
+
+graphics_definition_simple:
+    const_expr {   
+      screen_mode( _environment, $1 );
+   } 
+   | OP_HASH Integer {   
+      screen_mode( _environment, $2 );
+  };
+
+graphics_definition:
+    graphics_definition_simple;
 
 as_datatype_mandatory : 
     AS datatype {
@@ -10306,6 +10317,7 @@ statement2nc:
   | COLORMAP colormap_definition
   | COLOURMAP colormap_definition
   | SCREEN screen_definition
+  | GRAPHICS graphics_definition
   | POINT point_definition
   | PLOT plot_definition
   | CIRCLE circle_definition

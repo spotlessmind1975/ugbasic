@@ -2959,6 +2959,8 @@ typedef struct _Environment {
     int defaultPenColor;
     int defaultPaperColor;
 
+    int graphicsAtariBasicEnabled;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
