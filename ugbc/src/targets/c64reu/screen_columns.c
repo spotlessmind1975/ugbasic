@@ -49,10 +49,6 @@
  * @param _environment Current calling environment
  * @param _columns Number of columns
  */
-/* <usermanual>
-@keyword SCREEN COLUMNS (instructions)
-@target c64reu
-</usermanual> */
 void screen_columns( Environment * _environment, int _columns ) {
 
     char columnsString[MAX_TEMPORARY_STORAGE]; sprintf( columnsString, "#$%2.2x", _columns );

@@ -51,8 +51,24 @@
  */
 /* <usermanual>
 @keyword SCREEN COLUMNS (instruction)
+
+@english
+Changes the number of columns that can be displayed. Depending 
+on the hardware, the effect can be different as different 
+are the acceptable values.
+
+@italian
+Modifica il numero di colonne che possono essere visualizzate. A seconda
+dell'hardware, l'effetto può essere diverso come diversi sono i valori 
+accettabili.
+
+@syntax SCREEN COLUMNS rows
+
+@example SCREEN COLUMNS 24
+
 @target c128
 </usermanual> */
+
 void screen_columns( Environment * _environment, int _columns ) {
 
     char columnsString[MAX_TEMPORARY_STORAGE]; sprintf( columnsString, "#$%2.2x", _columns );

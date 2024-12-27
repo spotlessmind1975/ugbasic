@@ -64,10 +64,8 @@ data, e salvati in precedenza con il comando ''CONSOLE SAVE''.
 @keyword CONSOLE USE
 
 @english
-Alias for ''CONSOLE RESTORE''.
 
 @italian
-Alias per ''CONSOLE RESTORE''.
 
 @syntax CONSOLE USE number
 

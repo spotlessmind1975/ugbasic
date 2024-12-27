@@ -50,20 +50,20 @@
 @keyword STRIP (storage)
 
 @english
-The ''SEQUENCE'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
+The ''STRIP'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
 allows you to define the content of the mass storage element as a sequence of images. The basic 
 syntax requires indicating the name of the ''source'' file that will be converted
 and inserted into the medium. If you don't want to use the same name, you can indicate 
 an alias (''AS target'').
 
 @italian
-Il comando ''SEQUENCE'', inserita all'interno di un blocco ''BEGIN STORAGE'' - 
+Il comando ''STRIP'', inserita all'interno di un blocco ''BEGIN STORAGE'' - 
 ''ENDSTORAGE'', permette di definire il contenuto dell'elemento di memorizzazione
 di massa come una sequenza di immagini. La sintassi di base prevede di indicare il nome del file 
 sorgente che sarà convertito e inserito nel supporto. Se non si vuole utilizzare 
 lo stesso nome, è possibile indicare un alias (''AS target'').
 
-@syntax STRIP source [AS target] FRAME SIZE (widh, height)
+@syntax STRIP source [AS target] FRAME SIZE (width, height)
 
 @example STRIP "examples/data.png" FRAME SIZE (32, 32)
 @example STRIP "sprites.bmp" AS "sprites.dat" FRAME SIZE (32, 32)

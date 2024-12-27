@@ -76,10 +76,8 @@ di collisione, viene restituito TRUE, altrimenti FALSE.
 @keyword HIT
 
 @english
-Alias for ''COLLISION''.
 
 @italian
-Alias per ''COLLISION''.
 
 @alias COLLISION
 

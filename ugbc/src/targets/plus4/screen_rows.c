@@ -49,10 +49,6 @@
  * @param _environment Current calling environment
  * @param _rows Number of rows
  */
-/* <usermanual>
-@keyword SCREEN ROWS (instruction)
-@target plus4
-</usermanual> */
 void screen_rows( Environment * _environment, int _rows ) {
 
     

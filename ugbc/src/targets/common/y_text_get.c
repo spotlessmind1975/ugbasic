@@ -73,10 +73,8 @@ sul testo.
 @keyword YTEXT
 
 @english
-Alias for ''Y TEXT''.
 
 @italian
-Alias per ''Y TEXT''.
 
 @alias Y TEXT
 

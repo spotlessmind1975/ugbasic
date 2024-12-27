@@ -72,10 +72,8 @@ sul testo.
 @keyword XTEXT
 
 @english
-Alias for ''X TEXT''.
 
 @italian
-Alias per ''X TEXT''.
 
 @alias X TEXT
 

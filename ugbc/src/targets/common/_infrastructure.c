@@ -552,11 +552,7 @@ static Variable * variable_define_internal( Environment * _environment, Variable
 
 @english
 
-Alias for ''DIM''.
-
 @italian
-
-Alias per ''DIM''.
 
 @syntax VAR variable [AS datatype] [, variable [AS datatype] [ , variable [AS datatype] ] ]
 @syntax VAR variable [AS datatype] = constant
@@ -8005,8 +8001,9 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
 @english
 
 The ''STRING'' function is used to create a string by repeating a single 
-character or substring a certain number of times. This is very useful 
+character a certain number of times. This is very useful 
 for creating fixed-length strings, such as borders, padding, or separators.
+If a string of more than one character is given, only the first character will be used.
 
 The ''STRING'' function has several applications: it can be used to create
 borders for your tables or to delimit sections of text, and spaces to align 
@@ -8017,8 +8014,10 @@ repeating patterns of characters.
 @italian
 
 La funzione ''STRING'' viene utilizzata per creare una stringa ripetendo 
-un singolo carattere o sottostringa un certo numero di volte. Ciò è molto 
+un singolo carattere un certo numero di volte. Ciò è molto 
 utile per creare stringhe di lunghezza fissa, come bordi, padding o separatori.
+Se viene usata una stringa formata da più caratteri, solo il primo carattere sarà
+utilizzato per generare la sequenza.
 
 La funzione ''STRING'' ha diverse applicazioni: può essere utilizzata per 
 creare bordi per le tabelle o per delimitare sezioni di testo e spazi per 
@@ -8030,6 +8029,7 @@ o per creare modelli ripetuti di caratteri.
 
 @example x = STRING( "A", 42 )
 
+@seeAlso DUP
 @usedInExample strings_string_01.bas
 
  </usermanual> */
@@ -8115,6 +8115,8 @@ scrivere tabelle o report con colonne a larghezza fissa.
 @syntax = DUP( string, times )
 
 @example PRINT DUP( "***", 10 )
+
+@seeAlso STRING (function)
 
 </usermanual> */
 Variable * variable_string_dup( Environment * _environment, char * _string, char * _repetitions  ) {
