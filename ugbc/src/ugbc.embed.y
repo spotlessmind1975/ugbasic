@@ -480,6 +480,16 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "descriptors" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->descriptors ) {
+                if ( strcmp( $3, "firstFree" ) == 0 ) {
+                    $$ = ((struct _Environment *)_environment)->descriptors->firstFree;
+                } else {
+                    $$ = 0;
+                }
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "deployed" ) == 0 ) {
             if ( strcmp( $3, "dload" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.dload;
@@ -679,6 +689,12 @@ embed2:
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.delay );
             } else if ( strcmp( $5, "release" ) == 0 ) {
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.release );
+            }
+        } else if ( strcmp( $3, "descriptors" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->descriptors ) {
+                if ( strcmp( $5, "firstFree" ) == 0 ) {
+                    vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->descriptors->firstFree );
+                }
             }
         }
 

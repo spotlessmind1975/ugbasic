@@ -36,104 +36,31 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 WRITECHAR:
-    LD HL, PLOTVBASE
+    LD HL, (TEXTADDRESS)
     LD D, 0
     LD A, (YCURSYS)
-    RLCA
-    RLCA
-    RLCA
-    LD E,A
+    LD E, A
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
     ADD HL,DE
-    ADD HL,DE
-    LD A,(HL+)
-    LD B, A
-    LD H,(HL)
-    LD L,B
 
     LD A, (XCURSYS)
-    RLCA
-    RLCA
-    RLCA
+    LD D, 0
     LD E,A
     ADD HL,DE
-    ADD HL,DE
-
-    LD A,C
-    LD B,H
-    LD C,L
-
-    LD H,D
-    LD L,A
-    ADD HL,HL
-    ADD HL,HL
-    ADD HL,HL
-
-    LD DE, UDCCHAR
-
-    ADD HL,DE
-
-    LD D,H
-    LD E,L
-    LD H,B
-    LD L,C
-
-    LD A, (_PEN)
-    LD C, A
-WRITECHAR1:
-    LD A, (DE)
-    INC DE
-    PUSH DE
-
-    PUSH HL
-    LD HL, _PAPER
-    LD L, (HL)
-
-    LD B,A
-    XOR A
-    BIT 0,L
-    JR Z,WRITECHAR2
-    CPL
-WRITECHAR2: 
-    OR B
-    BIT 0,C
-    JR NZ, WRITECHAR3
-    XOR B
-WRITECHAR3: 
-    LD D,A
-    XOR A
-    BIT 1,L
-    JR Z, WRITECHAR4
-    CPL
-WRITECHAR4: 
-    OR B
-    BIT 1,C
-    JR NZ, WRITECHAR5
-    XOR B
-WRITECHAR5:
-    LD E,A
-    POP HL
 
     CALL WAITSTATE
 
-    LD A,D
-    LD (HL+),A
-    LD A,E
-    LD (HL+),A
-    POP DE
-    LD A,L
-    AND $F
-    JR NZ, WRITECHAR1
-    RET
-
-TEXTATDECODE:
-    CP 123
-    JR NC, TEXTATDECODEX1F
-    CP 97
-    JR C, TEXTATDECODEX1F
-    SUB 96
-    JP TEXTATDECODE0
-TEXTATDECODEX1F:
-TEXTATDECODE0:
+    LD A, C
+    LD (HL), A
     RET
 
 ; Read a char from the text buffer to print.
@@ -324,7 +251,6 @@ TEXTATBMCMOVESKIPYL2:
     JP TEXTATBMNEXT
 
 TEXTATBMPRINT:
-    CALL TEXTATDECODE
 
     PUSH HL
     PUSH DE

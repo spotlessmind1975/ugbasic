@@ -1,9 +1,9 @@
 ; /*****************************************************************************
-;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers   *
+;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
 ;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License
+;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza è proibito usare questo file se non in conformità alla
+;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,8 +29,21 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                              VARS FOR GB                                    *
+;*                         CLEAR SCREEN ROUTINE FOR GB                         *
 ;*                                                                             *
-;*                          by Marco Spedaletti                                *
+;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+CLS:
+    LD HL, (TEXTADDRESS)
+    LD BC, 32*32
+CLSL1:
+    CALL WAITSTATE
+    LD A, (EMPTYTILE)
+    LD (HL+), A
+    DEC BC
+    LD A, B
+    OR C
+    JR NZ, CLSL1
+    RET

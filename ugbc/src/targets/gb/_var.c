@@ -146,7 +146,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data");
-                        outline1("%s: db 0", variable->realName);
+                        outline2("%s: db %d", variable->realName, variable->initialValue );
                         outhead0("section code");
                     }
                     break;
@@ -584,8 +584,13 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( startup, src_hw_gb_startup_asm);
 
-    outhead0("CODESTART:");;
-    
+    outhead0("CODESTART:");
+
+    if ( _environment->descriptors ) {
+        outline0("CALL COPYUDCCHAR");
+    }
+
+
     // deploy_inplace_preferred( tms9918startup, src_hw_// tms9918_startup_asm);
 
     buffered_prepend_output( _environment );

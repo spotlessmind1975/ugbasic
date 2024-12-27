@@ -950,6 +950,30 @@ WAITSTATE:
     JR NZ, WAITSTATE
     RET
 
+@IF descriptors
+
+@EMIT descriptors.firstFree AS descriptorsCount
+
+COPYUDCCHAR:
+    LD HL, UDCCHAR
+    LD DE, $8000
+    LD BC, descriptorsCount * 8
+COPYUDCCHARL1:
+    CALL WAITSTATE
+    LD A, (HL)
+    INC HL
+    LD (DE), A
+    INC DE
+    LD (DE), A
+    INC DE
+    DEC BC
+    LD A, B
+    OR C
+    JR NZ, COPYUDCCHARL1
+    RET    
+
+@ENDIF
+
 GBSTARTUP:
     RET
 
@@ -968,3 +992,4 @@ SUB_HL_DE:
     LD      A, B
     POP     BC
     RET
+
