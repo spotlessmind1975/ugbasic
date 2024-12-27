@@ -109,7 +109,13 @@ CONSOLEID:     .byte $ff       ; <-- actual
 ;
 ; Text mode
 ;
-CONSOLEX1:     .byte 0         ; <-- input from program (chars)
+
+@IF lmarginAtariBasicEnabled
+CONSOLEX1 = 82                  ; <-- input from program (chars)
+@ELSE
+CONSOLEX1:     .byte 0          ; <-- input from program (chars)
+@ENDIF
+
 CONSOLEY1:     .byte 0         ; <-- input from program (chars)
 CONSOLEX2:     .byte 39        ; <-- recalculated (chars)
 CONSOLEY2:     .byte 24        ; <-- recalculated (chars)

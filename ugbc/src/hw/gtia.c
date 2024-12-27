@@ -1526,7 +1526,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    int consoleX1 = 0;
+    if ( _environment->lmarginAtariBasicEnabled && _environment->currentMode == TILEMAP_MODE_ANTIC2 ) {
+        consoleX1 = 2;
+    }
+    cpu_store_8bit( _environment, "CONSOLEX1", consoleX1 );
     cpu_store_8bit( _environment, "CONSOLEY1", 0 );
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
     cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
