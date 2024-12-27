@@ -90,11 +90,7 @@ insieme più istruzioni ''ENABLE'', ma ovviamente questo non avrà alcun effetto
 
 @english
 
-Alias for ''SPRITE ENABLE''.
-
 @italian
-
-Alias per ''SPRITE ENABLE''.
 
 @syntax SPRITE index ON [command [command ...]]
 

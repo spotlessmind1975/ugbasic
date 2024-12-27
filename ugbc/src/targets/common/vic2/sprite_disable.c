@@ -90,11 +90,7 @@ insieme più istruzioni ''DISABLE'', ma ovviamente questo non avrà alcun effett
 
 @english
 
-Alias for ''SPRITE DISABLE''.
-
 @italian
-
-Alias per ''SPRITE DISABLE''.
 
 @syntax SPRITE index OFF [command [command ...]]
 

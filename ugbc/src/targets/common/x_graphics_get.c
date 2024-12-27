@@ -72,10 +72,8 @@ utilizzato per posizionare il testo su un'area della grafica sullo schermo.
 @keyword XGRAPHIC
 
 @english
-Alias for ''X GRAPHIC''.
 
 @italian
-Alias per ''X GRAPHIC''.
 
 @alias X GRAPHIC
 

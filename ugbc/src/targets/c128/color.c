@@ -119,11 +119,7 @@ come afferente a TSB.
 
 @english
 
-Alias for ''COLOR''.
-
 @italian
-
-Alias for ''COLOR''.
 
 @syntax COLOUR index, shade
 

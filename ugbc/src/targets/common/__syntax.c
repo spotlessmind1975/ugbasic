@@ -2637,11 +2637,7 @@ disponibilità di colori.
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''.
 
 @syntax = SCREEN COLORS
 
@@ -2655,11 +2651,7 @@ Alias per ''COLORS''.
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''.
 
 @syntax = COLORS COUNT
 
@@ -2674,11 +2666,7 @@ Alias per ''COLORS''.
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''.
 
 @syntax = COLOR COUNT
 
@@ -2694,11 +2682,7 @@ Alias per ''COLORS''.
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''
 
 @syntax = COLOURS
 
@@ -2712,11 +2696,7 @@ Alias per ''COLORS''
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''.
 
 @syntax = SCREEN COLORS
 
@@ -2730,11 +2710,7 @@ Alias per ''COLORS''.
 
 @english
 
-Alias for ''COLORS''.
-
 @italian
-
-Alias per ''COLORS''.
 
 @syntax = COLOURS COUNT
 
@@ -2842,11 +2818,7 @@ caratteristiche specifiche del chipset video a disposizione.
 
 @english
 
-Alias for ''SHADES''.
-
 @italian
-
-Alias per ''SHADES''.
 
 @syntax = SCREEN SHADES
 
@@ -2903,11 +2875,7 @@ il bordo superiore dello schermo.
 
 @english
 
-Alias for ''COLOR BORDER''.
-
 @italian
-
-Alias per ''COLOR BORDER''.
 
 @syntax BORDER shade
 
@@ -3266,11 +3234,7 @@ in termini di pixel.
 
 @english
 
-Alias for ''SCREEN WIDTH''.
-
 @italian
-
-Alias per ''SCREEN WIDTH''.
 
 @syntax = WIDTH
 
@@ -3307,11 +3271,7 @@ in termini di pixel.
 
 @english
 
-Alias for ''SCREEN HEIGHT''.
-
 @italian
-
-Alias per ''SCREEN HEIGHT''.
 
 @syntax = HEIGHT
 
@@ -3351,11 +3311,7 @@ in termini di tiles (caratteri).
 
 @english
 
-Alias for ''SCREEN TILES WIDTH''.
-
 @italian
-
-Alias per ''SCREEN TILES WIDTH''.
 
 @syntax = TILES WIDTH
 
@@ -3371,11 +3327,7 @@ Alias per ''SCREEN TILES WIDTH''.
 
 @english
 
-Alias for ''SCREEN TILES WIDTH''.
-
 @italian
-
-Alias per ''SCREEN TILES WIDTH''.
 
 @syntax = SCREEN COLUMNS
 
@@ -3416,11 +3368,7 @@ in termini di tiles (caratteri).
 
 @english
 
-Alias for ''SCREEN TILES HEIGHT''.
-
 @italian
-
-Alias per ''SCREEN TILES HEIGHT''.
 
 @syntax = TILES HEIGHT
 
@@ -3436,11 +3384,7 @@ Alias per ''SCREEN TILES HEIGHT''.
 
 @english
 
-Alias for ''SCREEN TILES HEIGHT''.
-
 @italian
-
-Alias per ''SCREEN TILES HEIGHT''.
 
 @syntax = SCREEN ROWS
 
@@ -4008,12 +3952,12 @@ rappresentati direttamente in un byte.
 @english
 
 The ''SIGNED BYTE'' represent the data type for 8 bit numbers with sign. This kind of data can
-represent a relative number, integers between -127 and 127 could be represented directly in a byte. 
+represent a relative number, integers between -128 and 127 could be represented directly in a byte. 
 
 @italian
 
 Il ''SIGNED BYTE'' rappresenta il tipo di dati per numeri a 8 bit con segno. Questo tipo 
-di dati può rappresentare un numero relativo, gli interi tra -127 e 127 potrebbero essere 
+di dati può rappresentare un numero relativo, gli interi tra -128 e 127 potrebbero essere 
 rappresentati direttamente in un byte.
 
 @syntax ... AS SIGNED BYTE
@@ -4555,7 +4499,7 @@ parola (''WORD'') a 32 bit.
 
 @english
 
-The ''SIGNED DDWORD'' is a data type that allow to store a 32-bit word (''DWORD''), with sign. 
+The ''SIGNED DWORD'' is a data type that allow to store a 32-bit word (''DWORD''), with sign. 
 
 @italian
 
@@ -5538,7 +5482,7 @@ viene utilizzata come valore da confrontare con ''SCANCODE'',
 ''KEY STATE'' and ''KEY PRESSED''. Se il tasto non esiste nel 
 target corrispondente, il valore sarà zero.
 
-@syntax = HOME
+@syntax = PERIOD
 
 @example IF KEY STATE(KEY PERIOD) THEN
 @example    PRINT "HOME has been pressed!"
@@ -5750,8 +5694,7 @@ This constant gives you the number of rows of the actual console.
 Questa costante fornisce il numero effettivo di righe della console attiva.
 
 @syntax = ROWS
-
-@alias ROWS (constant)
+@seeAlso SCREEN ROWS (constant)
 
 </usermanual> */
 

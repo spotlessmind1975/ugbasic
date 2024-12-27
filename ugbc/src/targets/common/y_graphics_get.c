@@ -72,10 +72,8 @@ utilizzato per posizionare il testo su un'area della grafica sullo schermo.
 @keyword YGRAPHIC
 
 @english
-Alias for ''Y GRAPHIC''.
 
 @italian
-Alias per ''Y GRAPHIC''.
 
 @alias Y GRAPHIC
 
