@@ -2605,7 +2605,18 @@ void sc61860_math_double_16bit( Environment * _environment, char *_source, char 
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_double_16bit(signed)" );
+        op_ldab( _environment, _source );
+        op_xab( _environment );
+        op_clc( _environment );
+        op_sla( _environment );
+        op_xab( _environment );
+        op_sla( _environment );
+        op_anda_direct( _environment, 0x7f );
+        if ( _other ) {
+            op_stab( _environment, _other );
+        } else {
+            op_stab( _environment, _source );
+        }
 
     } else {
 
