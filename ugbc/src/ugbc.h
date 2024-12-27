@@ -2956,6 +2956,9 @@ typedef struct _Environment {
 
     int sidRelocAddress;
 
+    int defaultPenColor;
+    int defaultPaperColor;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

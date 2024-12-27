@@ -42,6 +42,8 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
 
     switch( _dialect ) {
         case DI_UGBASIC:
+            _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+            _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
             _environment->optionExecAsGosub = 1;
             _environment->optionCallAsGoto = 0;
             _environment->colorImplicit = 0;
@@ -58,7 +60,8 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->joystickConfig.values = 1;
             break;
         case DI_ATARI_BASIC:
-            
+            _environment->defaultPenColor = 0xca;
+            _environment->defaultPaperColor = 0x94;
             break;
     }
 

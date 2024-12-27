@@ -11732,6 +11732,9 @@ int main( int _argc, char *_argv[] ) {
     _environment->keyboardConfig.delay = 150 / 20;
     _environment->keyboardConfig.release = 150 / 20;
 
+    _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+    _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
 #endif
