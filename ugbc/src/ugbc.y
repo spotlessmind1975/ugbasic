@@ -11970,6 +11970,7 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
+                    } else {
                         CRITICAL2("Unknown output format", optarg);
                     }
                     break;
