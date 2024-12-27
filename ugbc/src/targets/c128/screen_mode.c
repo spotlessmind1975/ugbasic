@@ -83,8 +83,10 @@ da target a target.
 @example SCREEN #1, #0
 
 @seeAlso BITMAP ENABLE
+@seeAlso GRAPHICS
 
 </usermanual> */
+
 void screen_mode( Environment * _environment, int _mode ) {
 
     ScreenMode * mode = find_screen_mode_by_id( _environment, _mode );
