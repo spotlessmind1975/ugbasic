@@ -46,8 +46,6 @@ static RGBi SYSTEM_PALETTE[] = {
  * CODE SECTION
  ****************************************************************************/
 
-#define __gb__
-
 #ifdef __gb__
 
 void gb_joy( Environment * _environment, int _port, char * _value ) {
