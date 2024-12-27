@@ -8529,6 +8529,15 @@ define_definition :
     | KEY PRESSED SYNC {
         ((Environment *)_environment)->keyPressDutyCycle = 1;
     }
+    | KEY PRESSED ASYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 0;
+    }
+    | KEY PRESS SYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 1;
+    }
+    | KEY PRESS ASYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 0;
+    }
     | AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {
             CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
@@ -8679,6 +8688,13 @@ define_definition :
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
+    }
+    | KEYBOARD DELAY const_expr milliseconds {
+        int delay = $3 / 20;
+        if ( delay <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
     }
     | PAINT BUFFER const_expr {
         if ( $3 <= 0 ) {
