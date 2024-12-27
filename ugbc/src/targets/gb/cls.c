@@ -49,6 +49,6 @@ void cls( Environment * _environment, char * _paper ) {
         paper( _environment, _paper );
     }
 
-    // tms9918_cls( _environment );
+    gb_cls( _environment );
     
 }

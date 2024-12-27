@@ -1551,21 +1551,8 @@ void gb_get_height( Environment * _environment, char *_result ) {
 
 void gb_cls( Environment * _environment ) {
     
-    // if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
-    //     // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
-    //     if ( ! _environment->hasGameLoop ) {
-    //         outline0("CALL CLSG");
-    //     } else {
-    //         outline0("CALL CLSGNMI2");
-    //     }
-    // } else {
-    //     // deploy( clsText, src_hw_gb_cls_text_asm );
-    //     if ( ! _environment->hasGameLoop ) {
-    //         outline0("CALL CLST");
-    //     } else {
-    //         outline0("CALL CLSTNMI2");
-    //     }
-    // }
+    deploy( clsText, src_hw_gb_cls_asm );
+    outline0("CALL CLS");
 
 }
 
