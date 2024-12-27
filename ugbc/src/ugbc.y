@@ -100,7 +100,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS POKEY DAC1 AY8910 TED VIC
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2534,6 +2534,10 @@ key_scancode_definition :
     | HOME {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode HOME)")->name;
         variable_store( _environment, $$, key_constant( _environment, KEY_HOME ) );
+    }
+    | TAB {
+        $$ = variable_temporary( _environment, VT_BYTE, "(scancode TAB)")->name;
+        variable_store( _environment, $$, key_constant( _environment, KEY_TAB ) );
     }
     | INSERT {
         $$ = variable_temporary( _environment, VT_BYTE, "(scancode INSERT)")->name;
@@ -8477,6 +8481,24 @@ precision :
 audio_source :
     SN76489 {
         $$ = ADN_SN76489;
+    }
+    | POKEY {
+        $$ = ADN_POKEY;
+    }
+    | SID {
+        $$ = ADN_SID;
+    }
+    | DAC1 {
+        $$ = ADN_DAC1;
+    }
+    | AY8910 {
+        $$ = ADN_AY8910;
+    }
+    | TED {
+        $$ = ADN_TED;
+    }
+    | VIC {
+        $$ = ADN_VIC1;
     };
 
 define_definition :
@@ -8551,6 +8573,15 @@ define_definition :
     }
     | KEY PRESSED SYNC {
         ((Environment *)_environment)->keyPressDutyCycle = 1;
+    }
+    | KEY PRESSED ASYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 0;
+    }
+    | KEY PRESS SYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 1;
+    }
+    | KEY PRESS ASYNC {
+        ((Environment *)_environment)->keyPressDutyCycle = 0;
     }
     | AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {
@@ -8704,6 +8735,13 @@ define_definition :
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
+    }
+    | KEYBOARD DELAY const_expr milliseconds {
+        int delay = $3 / 20;
+        if ( delay <= 0 ) {
+            CRITICAL_INVALID_INPUT_DELAY( $3 );
+        }
+        ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
     }
     | PAINT BUFFER const_expr {
         if ( $3 <= 0 ) {
@@ -9311,7 +9349,7 @@ option_definitions :
     | EXEC AS GOTO {
         ((struct _Environment *)_environment)->optionExecAsGosub = 0;
     }
-     CALL AS GOSUB {
+    | CALL AS GOSUB {
         ((struct _Environment *)_environment)->optionCallAsGoto = 0;
     }
     | CALL AS GOTO {
