@@ -57,6 +57,9 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->vestigialConfig.clsImplicit = 1;
             _environment->joystickConfig.values = 1;
             break;
+        case DI_ATARI_BASIC:
+            
+            break;
     }
 
     if ( !_environment->clsCalledOnce ) {

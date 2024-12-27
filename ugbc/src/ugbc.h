@@ -96,6 +96,8 @@ typedef enum _Dialect {
 
     DI_TSB = 1,
 
+    DI_ATARI_BASIC = 2,
+
 } Dialect;
 
 /**
