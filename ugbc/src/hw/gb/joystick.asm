@@ -36,27 +36,31 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JOYSTICKREAD:
-    LD A, $20
+    PUSH DE
+	LD A, $20
     LD ($FF00), A
     LD A, ($FF00)
-    XOR $FF
-    AND $0F
-    LD (JOYSTICK0), A
-
-    LD A, $10
+    LD A, ($FF00)
+	AND	$0F
+	LD E, A
+	LD A, $10
     LD ($FF00), A
     LD A, ($FF00)
-    XOR $FF
-    AND $0F
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    LD B, A
-    LD A, (JOYSTICK0)
-    OR B
-    LD (JOYSTICK0), A
-    RET
+    LD A, ($FF00)
+    LD A, ($FF00)
+    LD A, ($FF00)
+    LD A, ($FF00)
+    LD A, ($FF00)
+	AND	$0F
+    SWAP A
+	OR E
+	CPL
+	LD E, A
+	LD A, $30
+    LD ($FF00), A
+	LD	A, E
+    POP DE
+	RET
 
 JOYSTICKREAD0:
 
@@ -66,4 +70,15 @@ JOYSTICKREAD0:
     LD A, (JOYSTICK0)
 @ENDIF
 
+    RET
+
+WAITFIRE:
+    CALL JOYSTICKREAD0
+    AND $F0
+    CP $00
+    JR Z, WAITFIRE
+    LD A, B
+    LD B, 0
+    CP $FF
+    JR Z, WAITFIRE
     RET

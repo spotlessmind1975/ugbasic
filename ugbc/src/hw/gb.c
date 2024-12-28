@@ -70,91 +70,49 @@ void gb_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
 void gb_inkey( Environment * _environment, char * _key ) {
 
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm);
-
-    // outline0("CALL INKEY");
-    // outline1("LD (%s), A", _key);
+    outline0("LD A, 255");
+    outline1("LD (%s), A", _key);
 
 }
 
 void gb_wait_key( Environment * _environment, int _release ) {
-
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-
-    // if ( _release ) {
-    //     outline0("CALL WAITKEYRELEASE");
-    // } else {
-    //     outline0("CALL WAITKEY");
-    // }
    
 }
 
 void gb_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
-    // _environment->bitmaskNeeded = 1;
+    deploy( joystick, src_hw_gb_joystick_asm );
 
-    // // deploy( joystick, src_hw_gb_joystick_asm );
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-    // // deploy( wait_key_or_fire, src_hw_gb_wait_key_or_fire_asm );
+    outline1("LD B, $%2.2x", _release );
+    outline0("CALL WAITFIRE" );
 
-    // if ( _port == -1 ) {
-    //     outline0("CALL WAITKEYFIRE");
-    // } else {
-    //     outline1("LD A, %2.2x", _port );
-    //     outline0("CALL WAITKEYFIREA");
-    // }
-   
 }
 
 void gb_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
-    // _environment->bitmaskNeeded = 1;
+    deploy( joystick, src_hw_gb_joystick_asm );
 
-    // // deploy( joystick, src_hw_gb_joystick_asm );
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-    // // deploy( wait_key_or_fire, src_hw_gb_wait_key_or_fire_asm );
-
-    // if ( !_port ) {
-    //     outline0("CALL WAITKEYFIRE");
-    // } else {
-    //     outline1("LD A, (%s)", _port );
-    //     outline0("CALL WAITKEYFIREA");
-    // }
+    outline1("LD B, $%2.2x", _release );
+    outline0("CALL WAITFIRE" );
    
 }
 
 void gb_wait_fire( Environment * _environment, int _port, int _release ) {
 
-    // _environment->bitmaskNeeded = 1;
+    deploy( joystick, src_hw_gb_joystick_asm );
 
-    // // deploy( joystick, src_hw_gb_joystick_asm );
-
-    // if ( _port == -1 ) {
-    //     outline0("CALL WAITFIRE");
-    // } else {
-    //     outline1("LD A, $%2.2x", _port );
-    //     outline0("CALL WAITKEYFIREA");
-    // }
-   
+    outline1("LD B, $%2.2x", _release );
+    outline0("CALL WAITFIRE" );
+  
 }
 
 void gb_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
-    // _environment->bitmaskNeeded = 1;
+    deploy( joystick, src_hw_gb_joystick_asm );
 
-    // // deploy( joystick, src_hw_gb_joystick_asm );
-
-    // if ( ! _port ) {
-    //     outline0("CALL WAITFIRE");
-    // } else {
-    //     outline1("LD A, (%s)", _port );
-    //     outline0("CALL WAITKEYFIREA");
-    // }
-   
+    outline1("LD B, $%2.2x", _release );
+    outline0("CALL WAITFIRE" );
+    
 }
 
 void gb_key_state( Environment * _environment, char *_scancode, char * _result ) {
