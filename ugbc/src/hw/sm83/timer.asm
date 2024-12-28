@@ -51,14 +51,6 @@ TIMERMANAGERGO:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-	; PUSH	IX
-	; PUSH	IY
-	; EX	AF,AF'
-	; PUSH	AF
-	; EXX
-	; PUSH	BC
-	; PUSH	DE
-	; PUSH	HL
 
     LD A, 1
     LD (TIMERRUNNING), A
@@ -79,7 +71,7 @@ TIMERMANAGERL1:
     SRA A
 
     ; If the carry is cleared, move to the next timer. 
-    JR NC, TIMERMANAGERL2
+    JP NC, TIMERMANAGERL2
 
     PUSH AF
     PUSH DE
@@ -226,14 +218,6 @@ TIMERMANAGERL2:
     LD A, 0
     LD (TIMERRUNNING), A
     
-	; POP	HL
-	; POP	DE
-	; POP	BC
-	; EXX
-	; POP	AF
-	; EX	AF,AF'
-	; POP	IY
-	; POP	IX
 	POP	HL
 	POP	DE
 	POP	BC
