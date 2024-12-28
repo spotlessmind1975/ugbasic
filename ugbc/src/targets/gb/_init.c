@@ -111,6 +111,17 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
     variable_global( _environment, "JOYSTICK0" );   
 
+    variable_import( _environment, "IRQHANDLER", VT_BUFFER, 3 );
+    variable_global( _environment, "IRQHANDLER" );
+
+    char irqHandler[3] = {
+        // +00
+        0xc3, 0x00, 0x00
+    };
+
+    variable_store_buffer( _environment, "IRQHANDLER", irqHandler, sizeof( irqHandler ), 0 );
+    variable_retrieve( _environment, "IRQHANDLER" )->readonly = 0;
+
     // variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
     // variable_global( _environment, "AY8910TIMER" );    
 

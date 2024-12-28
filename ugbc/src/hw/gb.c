@@ -112,98 +112,65 @@ void gb_wait_fire_semivar( Environment * _environment, char * _port, int _releas
 
     outline1("LD B, $%2.2x", _release );
     outline0("CALL WAITFIRE" );
-    
+
 }
 
 void gb_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
-    // _environment->bitmaskNeeded = 1;
-
-    // MAKE_LABEL
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-
-    // outline1("LD A, (%s)", _scancode);
-    // outline0("CALL KEYSTATE");
-    // cpu_ctoa( _environment );
-    // outline1("LD (%s), A", _result);
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _result);
 
 }
 
 void gb_scancode( Environment * _environment, char * _result ) {
 
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm);
-
-    // outline0("CALL SCANCODE");
-    // outline1("LD (%s), A", _result );
+    outline0("LD A, 255");
+    outline1("LD (%s), A", _result);
    
 }
 
 void gb_asciicode( Environment * _environment, char * _result ) {
 
-    // // deploy( keyboard, src_hw_gb_keyboard_asm);
-
-    // outline0("CALL ASCIICODE");
-    // outline1("LD A, (%s)", _result );
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _result);
    
 }
 
 void gb_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
-    // _environment->bitmaskNeeded = 1;
-
-    // MAKE_LABEL
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-
-    // outline1("LD A, (%s)", _scancode);
-    // outline0("CALL KEYPRESSED");
-    // cpu_ctoa( _environment );
-    // outline1("LD (%s), A", _result);
+    outline0("LD A, 255");
+    outline1("LD (%s), A", _scancode);
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _result);
 
 }
 
 
 void gb_scanshift( Environment * _environment, char * _shifts ) {
 
-    // gb_keyshift( _environment, _shifts );
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _shifts);
 
 }
 
 void gb_keyshift( Environment * _environment, char * _shifts ) {
 
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-
-    // outline0("CALL KEYSHIFT" );
-    // outline1("LD (%s), A", _shifts );
+    outline0("LD A, 0");
+    outline1("LD (%s), A", _shifts);
 
 }
 
 void gb_clear_key( Environment * _environment ) {
-
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm );
-
-    // outline0("CALL CLEARKEY" );
 
 }
 
 
 void gb_irq_at( Environment * _environment, char * _label ) {
 
-    // // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline0("DI" );
-    // outline0("LD A, $c3" );
-    // outline0("LD ($FD9F), A" );
-    // outline1("LD HL, %s", _label );
-    // outline0("LD ($FDA0), HL" );
-    // outline0("EI" );
+    outline0("DI" );
+    outline1("LD HL, %s", _label );
+    outline0("LD (IRQHANDLER+1), HL" );
+    outline0("EI" );
     
 }
 
