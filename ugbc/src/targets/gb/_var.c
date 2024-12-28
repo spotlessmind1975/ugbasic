@@ -574,12 +574,18 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("SECTION code");
 
     outhead0("ORG $0000");
-	outline0("DEFS $100, 0");
+	outline0("DEFS $40, 0");
+    outline0("JP IRQSVC");
+	outline0("DEFS $0d, 0");
+    outline0("JP IRQTMR");
+	outline0("DEFS $0d, 0");
+    outline0("JP IRQJOY");
+	outline0("DEFS $9d, 0");
 	outline0("JP CODESTART");
-	outline0("DEFS $4D, 0");
+	outline0("DEFS $4d, 0");
 
     outhead0("SECTION data");
-    outhead0("ORG $C000");
+    outhead0("ORG $c000");
     outhead0("SECTION code");
 
     deploy_inplace_preferred( startup, src_hw_gb_startup_asm);

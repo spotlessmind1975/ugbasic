@@ -950,6 +950,16 @@ WAITSTATE:
     JR NZ, WAITSTATE
     RET
 
+IRQSVC:
+    RETI
+
+IRQTMR:
+    RETI
+
+IRQJOY:
+    RETI
+
+
 @IF descriptors
 
 @EMIT descriptors.firstFree AS descriptorsCount
@@ -975,9 +985,19 @@ COPYUDCCHARL1:
 @ENDIF
 
 GBSTARTUP:
+    
+    ; Set the default palette.
+
     CALL WAITSTATE
     LD A, $e4
     LD ($FF47), A
+
+    LD A, $0
+    LD ($FF0F), A
+    LD A, $15
+    LD ($FFFF), A
+    EI
+
     RET
 
 SUB_HL_DE:
