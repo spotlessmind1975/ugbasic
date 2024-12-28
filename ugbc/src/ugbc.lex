@@ -1033,6 +1033,8 @@ MUTED { RETURN(MUTED,1); }
 
 %{ /* --------------------------------- N --------------------------------- */ %}
 
+NAME { RETURN(NAME,1); }
+NAm { RETURN(NAME,1); }
 NAMED { RETURN(NAMED,1); }
 Na { RETURN(NAMED,1); }
 NARROW { RETURN(NARROW,1); }

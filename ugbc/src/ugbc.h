@@ -2006,6 +2006,7 @@ typedef struct _Console {
 
 typedef struct _Program {
 
+    char * name;
     int startingAddress;
 
 } Program;

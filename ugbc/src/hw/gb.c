@@ -37,8 +37,8 @@
 
 static RGBi SYSTEM_PALETTE[] = {
         { 0xff, 0xff, 0xff, 0xff, 0, "WHITE", 0 },
-        { 0xcc, 0xcc, 0xcc, 0xff, 1, "LIGHT GRAY", 1 },
-        { 0x66, 0x66, 0x66, 0xff, 2, "DARK GRAY", 2 },
+        { 0xa0, 0xa0, 0xa0, 0xff, 1, "LIGHT GRAY", 1 },
+        { 0x50, 0x50, 0x50, 0xff, 2, "DARK GRAY", 2 },
         { 0x00, 0x00, 0x00, 0xff, 3, "BLACK", 3 }
 };
 
@@ -670,8 +670,6 @@ static void gb_image_converter_tile( Environment * _environment, char * _source,
 
         }
         
-        // printf("\n");
-
         source += _depth * ( _source_width - 8 );
 
     }
@@ -1663,7 +1661,8 @@ void gb_initialization( Environment * _environment ) {
     // char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     // variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
-    SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 20, 18, 4, 8, 8, "Tilemap mode" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_BGB, 0, 20, 18, 2, 8, 8, "Tilemap mode (BGB)" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_CGB, 0, 20, 18, 4, 8, 8, "Tilemap mode (CGB)" );
 
     // outline0("CALL TMS9918STARTUP");
 
@@ -2337,7 +2336,8 @@ Variable * gb_image_converter( Environment * _environment, char * _data, int _wi
 
     switch( _mode ) {
 
-        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_BGB:
+        case TILEMAP_MODE_CGB:
 
             return gb_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
 

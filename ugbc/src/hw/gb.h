@@ -226,9 +226,11 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define TILEMAP_MODE_STANDARD       0           
-#define BITMAP_MODE_STANDARD        TILEMAP_MODE_STANDARD
+#define TILEMAP_MODE_BGB            0                       // BGB
+#define TILEMAP_MODE_CGB            1                       // CGB
+#define TILEMAP_MODE_STANDARD       TILEMAP_MODE_BGB        // BGB
 
+#define BITMAP_MODE_STANDARD        TILEMAP_MODE_STANDARD
 #define BITMAP_MODE_DEFAULT         TILEMAP_MODE_STANDARD
 
 #define SPRITE_COUNT                32
