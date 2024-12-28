@@ -41,8 +41,8 @@ DUFFDEVICE:
     RET Z
 
 DUFFDEVICEL1:
-    LD A, (HL)
-    LD (DE), A
+    LD A, (HL+)
+    LD (DE+), A
     DEC BC
     LD A, B
     OR C

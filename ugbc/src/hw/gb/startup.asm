@@ -1000,6 +1000,10 @@ GBSTARTUP:
     LD A, $e4
     LD ($FF47), A
 
+@IF deployed.dstring
+    CALL DSINIT
+@ENDIF
+
     LD A, $0
     LD ($FF0F), A
     LD A, $15

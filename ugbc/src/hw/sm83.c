@@ -6084,7 +6084,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
     outline0("LD E, L");
     outline0("POP HL");
 
-    outline0("LD A, (IXHR)");
+    outline0("LD A, (IXR+1)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);
     outline0("LD A, '-'");
@@ -6448,17 +6448,17 @@ void sm83_dstring_vars( Environment * _environment ) {
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
 #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    outhead0("section data_user" );
+    outhead0("section data" );
 #endif
     outhead1("stringscount =                  %d", count );
     outhead1("stringsspace =                  %d", space );
     outhead0("MAXSTRINGS:                   DB stringscount" );
-    outhead0("DESCRIPTORS:                  DEFS stringscount*4" );
-    outhead0("WORKING:                      DEFS stringsspace" );
-    outhead0("TEMPORARY:                    DEFS stringsspace" );
+    outhead0("DESCRIPTORS:                  DEFS stringscount*4, $00" );
+    outhead0("WORKING:                      DEFS stringsspace, $00" );
+    outhead0("TEMPORARY:                    DEFS stringsspace, $00" );
     outhead0("FREE_STRING:                  DW (stringsspace-1)" );
 #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    outhead0("section code_user" );
+    outhead0("section code" );
 #endif
 
 }

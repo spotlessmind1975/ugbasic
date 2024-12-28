@@ -130,16 +130,16 @@ DSDEFINE:
     INC HL
 
     PUSH HL
+    POP DE
     LD HL, (IXR)
     LD (HL), A
     INC HL
-    LD (HL), L
+    LD (HL), E
     INC HL
-    LD (HL), H
+    LD (HL), D
     INC HL
     LD A, $C0
     LD (HL),A
-    POP HL
 
 DSDEFINEE:
     RET
@@ -216,50 +216,40 @@ DSWRITE:
 
     LD D, B
 DSWRITEOK:
-
     PUSH HL
     LD HL, (IXR)
     INC HL
-    LD A, (HL)
-    LD C, A
+    LD C, (HL)
     INC HL
-    LD A, (HL)
-    LD B, A
+    LD B, (HL)
     POP HL
-
     PUSH BC
     CALL DSUSING
 
     PUSH HL
     LD HL, (IXR)
-    LD A, (HL)
-    LD C, A
+    LD C, (HL)
     POP HL
 
     LD B, D
-
     CALL DSMALLOC
     POP BC
-
     LD HL, BC
 
     PUSH HL
     LD HL, (IXR)
     INC HL
-    LD A, (HL)
-    LD E, A
+    LD E, (HL)
     INC HL
-    LD A, (HL)
-    LD D, A
-    POP DE
+    LD D, (HL)
+    POP HL
 
 DSCOPY:
-
+    
     PUSH HL
     LD HL, (IXR)
-    LD A, (HL)
-    LD C, A
-    POP DE
+    LD C, (HL)
+    POP HL
 
     LD A, C
     JR Z,DSWRITED
@@ -474,14 +464,14 @@ DSMALLOC:
     ADD HL, DE
 
     PUSH HL
+    POP DE
     LD HL, (IXR)
     LD (HL), C
     INC HL
-    LD (HL), L
+    LD (HL), E
     INC HL
-    LD (HL), H
+    LD (HL), D
     INC HL
-    POP HL
 
     POP HL
     RET
@@ -532,6 +522,7 @@ DSUSINGW:
 
 ; DSDESCRIPTOR(B) -> IX
 DSDESCRIPTOR:
+    PUSH AF
     PUSH HL
     PUSH BC
     LD A, B
@@ -549,6 +540,7 @@ DSDESCRIPTOR:
     LD (IXR), HL
     POP BC
     POP HL
+    POP AF
     RET
 
 OUT_OF_MEMORY:
