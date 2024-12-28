@@ -44,18 +44,18 @@ DSEQUAL:
     LD B, A
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD A, (HL)
     POP HL
 
     CP B
     JR NZ, DSEQUALNO
     INC HL
-    ; LD A, (IX)
+    ; LD A, (IXR)
     LD B, A
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     LD E, (HL)
     INC HL
@@ -91,7 +91,7 @@ DSFINDEQUALL:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -130,7 +130,7 @@ DSDEFINE:
     INC HL
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD (HL), A
     INC HL
     LD (HL), L
@@ -150,7 +150,7 @@ DSALLOC:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -170,7 +170,7 @@ DSFREE:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -185,7 +185,7 @@ DSWRITE:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -197,7 +197,7 @@ DSWRITE:
     JR Z, DSWRITED
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD A, (HL)
     LD C, A
     POP HL
@@ -205,7 +205,7 @@ DSWRITE:
     CALL DSCHECKFREE
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -218,7 +218,7 @@ DSWRITE:
 DSWRITEOK:
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     LD A, (HL)
     LD C, A
@@ -231,7 +231,7 @@ DSWRITEOK:
     CALL DSUSING
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD A, (HL)
     LD C, A
     POP HL
@@ -244,7 +244,7 @@ DSWRITEOK:
     LD HL, BC
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     LD A, (HL)
     LD E, A
@@ -256,7 +256,7 @@ DSWRITEOK:
 DSCOPY:
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD A, (HL)
     LD C, A
     POP DE
@@ -279,7 +279,7 @@ DSRESIZE:
     LD A, C
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD (HL), A
     POP HL
 
@@ -287,7 +287,7 @@ DSRESIZE:
     JR NZ, DSRESIZEDONE
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -303,8 +303,8 @@ DSRESIZEDONE:
 DSGC:
 
     PUSH HL
-    LD HL, (IX)
-    LD (IY), HL
+    LD HL, (IXR)
+    LD (IYR), HL
     POP HL
 
     LD HL, FREE_STRING
@@ -329,7 +329,7 @@ DSGCLOOP:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -342,7 +342,7 @@ DSGCLOOP:
 
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -354,7 +354,7 @@ DSGCLOOP:
     JR Z, DSGCLOOP2
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD A, (HL)
     POP HL
 
@@ -363,7 +363,7 @@ DSGCLOOP:
     LD A, B
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     LD A, (HL)
     LD B, A
@@ -376,7 +376,7 @@ DSGCLOOP:
     LD B, A
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD C, (HL)
     POP HL
 
@@ -384,7 +384,7 @@ DSGCLOOP:
     POP BC
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     LD E, (HL)
     INC HL
@@ -395,7 +395,7 @@ DSGCLOOP:
     LD HL, BC
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD C, (HL)
     POP HL
 
@@ -412,15 +412,15 @@ DSGCLOOP3:
 	LD HL, MAXSTRINGS
     CP (HL)
     LD HL, DE
-    JR NZ, DSGCLOOP
+    JP NZ, DSGCLOOP
 DSGCEND:
     LD A, (USING)
     XOR $FF
     LD (USING),A
 
     PUSH HL
-    LD HL, (IY)
-    LD (IX), HL
+    LD HL, (IYR)
+    LD (IXR), HL
     POP HL
 
     RET
@@ -433,7 +433,7 @@ DSFINDFREEL:
     CALL DSDESCRIPTOR
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
     INC HL
     INC HL
@@ -465,7 +465,7 @@ DSMALLOC:
     LD A, C
     LD E, A
     LD HL, (FREE_STRING)
-    SBC HL, DE
+    CALL SBC_HL_DE
     LD (FREE_STRING), HL
     PUSH HL
     POP DE
@@ -474,7 +474,7 @@ DSMALLOC:
     ADD HL, DE
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     LD (HL), C
     INC HL
     LD (HL), L
@@ -546,7 +546,7 @@ DSDESCRIPTOR:
     POP DE
     LD HL, DESCRIPTORS
     ADD HL, DE
-    LD (IX), HL
+    LD (IXR), HL
     POP BC
     POP HL
     RET
@@ -561,7 +561,7 @@ DSINIT:
     LD DE, HL
     INC DE
     LD (HL), A
-    LDIR
+    CALL REPLACEMENT_LDIR
     LD A, stringscount
     LD (MAXSTRINGS), A
     PUSH HL

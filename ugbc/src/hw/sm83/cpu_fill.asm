@@ -64,5 +64,5 @@ CPUFILL16L1:
     LD DE, HL
     INC DE
     LD (HL), A
-    LDIR
+    CALL REPLACEMENT_LDIR
     RET    

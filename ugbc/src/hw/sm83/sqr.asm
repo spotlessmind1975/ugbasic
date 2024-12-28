@@ -73,7 +73,7 @@ SQROOT4:            ;/
 ; ----------
 
   LD A,E        ; 4
-  SBC HL, DE     ; 15
+  CALL SBC_HL_DE     ; 15
   JR NC, SQROOT3     ;\
   ADD HL, DE     ; | 12CC OR 18CC
 SQROOT3:            ;/
@@ -85,7 +85,7 @@ SQROOT3:            ;/
 ; ----------
 
   LD E, A        ; 4
-  SBC HL, DE     ; 15
+  CALL SBC_HL_DE     ; 15
   JR C,SQROOT2      ;\
   OR 20H        ; | BRANCH 1: 23CC
   DEFB 254        ; |   <-- START OF `CP *` WHICH IS 7CC TO SKIP THE NEXT BYTE.
@@ -99,7 +99,7 @@ SQROOT2:            ; | BRANCH 2: 21CC
 ; ----------
 
   LD E, A        ; 4
-  SBC HL, DE     ; 15
+  CALL SBC_HL_DE     ; 15
   JR C, SQROOT1      ;\
   OR 8          ; | BRANCH 1: 23CC
   DEFB 254        ; |   <-- START OF `CP *` WHICH IS 7CC TO SKIP THE NEXT BYTE.
@@ -113,7 +113,7 @@ SQROOT1:            ; | BRANCH 2: 21CC
 ; ----------
 
   LD E, A        ; 4
-  SBC HL, DE     ; 15
+  CALL SBC_HL_DE     ; 15
   JR NC, SQROOT1L1      ;    \
   ADD HL, DE     ; 15  |
   SRL D         ; 8   |

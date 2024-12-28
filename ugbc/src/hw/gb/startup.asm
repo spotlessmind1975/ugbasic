@@ -957,9 +957,17 @@ IRQTMR:
     RETI
 
 IRQJOY:
+
+@IF deployed.joystick && !joystickConfig.sync
+    PUSH AF
+    PUSH BC
+    CALL JOYSTICKREAD
+    POP BC
+    POP AF
+@ENDIF
+
     RETI
-
-
+    
 @IF descriptors
 
 @EMIT descriptors.firstFree AS descriptorsCount
@@ -1016,3 +1024,89 @@ SUB_HL_DE:
     POP     BC
     RET
 
+SBC_HL_DE:
+    PUSH    BC
+    LD      B, A
+
+    LD      A, L
+    SBC     A, E
+    LD      L, A
+
+    LD      A, H
+    SBC     A, D
+    LD      H, A
+
+    LD      A, B
+    POP     BC
+    RET
+
+SBC_HL_BC:
+    PUSH    DE
+    LD      D, A
+
+    LD      A, L
+    SBC     A, C
+    LD      L, A
+
+    LD      A, H
+    SBC     A, B
+    LD      H, A
+
+    LD      A, D
+    POP     DE
+    RET
+
+
+REPLACEMENT_LDIR:
+    PUSH    AF
+
+    ; SETUP LOOP
+    DEC     BC
+    INC     B
+    INC     C
+REPLACEMENT_LDIR_LOOP:
+    LD      A, (HL+)
+    LD      (DE+), A
+
+    ; ITERATE
+    DEC     C
+    JP      NZ, REPLACEMENT_LDIR_LOOP
+    DEC     B
+    JP      NZ, REPLACEMENT_LDIR_LOOP
+
+    POP     AF
+    RET
+ 
+ REPLACEMENT_RLD:
+ 
+    JR      NC, REPLACEMENT_RLD_DORLD
+
+    CALL    REPLACEMENT_RLD_DORLD
+    SCF
+    RET
+
+REPLACEMENT_RLD_DORLD:
+
+    RLCA
+    RLCA
+    RLCA
+    RLCA
+
+    SLA     A
+    RL      (HL)
+    ADC     A, 0
+
+    RLA
+    RL      (HL)
+    ADC     A, 0
+
+    RLA
+    RL      (HL)
+    ADC     A, 0
+
+    RLA
+    RL      (HL)
+    ADC     A, 0
+
+    OR      A
+    RET

@@ -37,41 +37,41 @@
 
 ; IX x IY -> BC:HL
 CPUMUL16B16T32S:
-    LD A, (IXH)
+    LD A, (IXHR)
     AND $80
     LD B, A
-    LD A, (IYH)
+    LD A, (IYHR)
     AND $80
     XOR A, B
     PUSH AF
 
-    LD A, (IXH)
+    LD A, (IXHR)
     AND $80
     CP 0
     JR Z, CPUMUL16B16T32SPOS 
 
-    LD A, (IXL)
+    LD A, (IXLR)
     XOR $FF
-    LD (IXL), A
+    LD (IXLR), A
     
-    LD A, (IXH)
+    LD A, (IXHR)
     XOR $FF
-    LD (IXH), A
+    LD (IXHR), A
     INC IX
 
 CPUMUL16B16T32SPOS:
-    LD A, (IYH)
+    LD A, (IYHR)
     AND $80
     CP 0
     JR Z, CPUMUL16B16T32SPOS2
 
-    LD A, (IYL)
+    LD A, (IYLR)
     XOR $FF
-    LD (IYL), A
+    LD (IYLR), A
     
-    LD A, (IYH)
+    LD A, (IYHR)
     XOR $FF
-    LD (IYH), A
+    LD (IYHR), A
     INC IY
 
 CPUMUL16B16T32SPOS2:

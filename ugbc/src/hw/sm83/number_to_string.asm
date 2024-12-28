@@ -71,7 +71,7 @@ N2D64:
          LD (HL), 32 ; space is ASCII 32
 N2DFILC: EQU $-1         ; address of fill-character
          LD BC,18
-         LDIR            ; fill 1st 19 bytes of buffer with spaces
+         CALL REPLACEMENT_LDIR            ; fill 1st 19 bytes of buffer with spaces
          LD (N2DEND-1),BC ;set BCD value to "0" & place terminating 0
          LD E,1          ; no. of bytes in BCD value
          LD HL,N2DINV+8  ; (address MSB input)+1
@@ -112,28 +112,28 @@ N2DNXT:  DEC C
 N2DSIZ:  LD HL,N2DEND    ; address of terminating 0
          LD C,E          ; size of BCD value in bytes
          OR A
-         SBC HL,BC       ; calculate address of MSB BCD
+         CALL SBC_HL_BC       ; calculate address of MSB BCD
          LD D,H
          LD E,L
-         SBC HL,BC
+         CALL SBC_HL_BC
          EX DE,HL        ; HL=address BCD value, DE=start of decimal value
          LD B,C          ; no. of bytes BCD
          SLA C           ; no. of bytes decimal (possibly 1 too high)
          LD A, 48 ; 0 is ASCII 48
-         RLD             ; shift bits 4-7 of (HL) into bit 0-3 of A
+         CALL REPLACEMENT_RLD             ; shift bits 4-7 of (HL) into bit 0-3 of A
          CP 48           ; 0 is ASCII 48, (HL) was > 9h?
          JR NZ,N2DEXPH   ; if yes, start with recording high digit
          DEC C           ; correct number of decimals
          INC DE          ; correct start address
          JR N2DEXPL      ; continue with converting low digit
-N2DEXP:  RLD             ; shift high digit (HL) into low digit of A
+N2DEXP:  CALL REPLACEMENT_RLD             ; shift high digit (HL) into low digit of A
 N2DEXPH: LD (DE),A       ; record resulting ASCII-code
          INC DE
-N2DEXPL: RLD
+N2DEXPL: CALL REPLACEMENT_RLD
          LD (DE),A
          INC DE
          INC HL          ; next BCD-byte
          DJNZ N2DEXP     ; and go on to convert each BCD-byte into 2 ASCII
-         SBC HL,BC       ; return with HL pointing to 1st decimal
+         CALL SBC_HL_BC       ; return with HL pointing to 1st decimal
          RET
 

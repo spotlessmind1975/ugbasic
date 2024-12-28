@@ -118,17 +118,17 @@ TIMERMANAGERL1:
     LD HL, TIMERINIT
     ADD HL, DE
     LD A, (HL)
-    LD (IXL), A
+    LD (IXLR), A
     INC HL
     LD A, (HL)
-    LD (IXH), A
+    LD (IXHR), A
 
     LD HL, TIMERCOUNTER 
     ADD HL, DE
-    LD A, (IXL)
+    LD A, (IXLR)
     LD (HL), A
     INC HL
-    LD A, (IXH)
+    LD A, (IXHR)
     LD (HL), A
 
 TIMERMANAGERJMP2:
@@ -157,18 +157,18 @@ TIMERMANAGERJMP2AL:
     LD HL, TIMERADDRESS
     ADD HL, DE
     LD A, (HL)
-    LD (IXL), A
+    LD (IXLR), A
     INC HL
     LD A, (HL)
-    LD (IXH), A
+    LD (IXHR), A
 
     PUSH AF
     PUSH HL
     PUSH DE
     
-    LD A, (IXL)
+    LD A, (IXLR)
     LD L, A
-    LD A, (IXH)
+    LD A, (IXHR)
     LD H, A
 
     ; Disable timer before calling
@@ -293,10 +293,10 @@ TIMERSETCOUNTER:
 
     LD HL, TIMERCOUNTER 
     ADD HL, DE
-    LD A, (IXL)
+    LD A, (IXLR)
     LD (HL), A
     INC HL
-    LD A, (IXH)
+    LD A, (IXHR)
     LD (HL), A
 
     POP DE
@@ -321,10 +321,10 @@ TIMERSETINIT:
 
     LD HL, TIMERINIT
     ADD HL, DE
-    LD A, (IXL)
+    LD A, (IXLR)
     LD (HL), A
     INC HL
-    LD A, (IXH)
+    LD A, (IXHR)
     LD (HL), A
 
     POP DE
@@ -350,10 +350,10 @@ TIMERSETADDRESS:
 
     LD HL, TIMERADDRESS
     ADD HL, DE
-    LD A, (IXL)
+    LD A, (IXLR)
     LD (HL), A
     INC HL
-    LD A, (IXH)
+    LD A, (IXHR)
     LD (HL), A
 
     POP DE

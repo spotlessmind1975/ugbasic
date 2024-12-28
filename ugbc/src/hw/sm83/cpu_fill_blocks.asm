@@ -55,7 +55,7 @@ CPUFILLBLOCKS:
     LD (DE), A
     LD C, 0
     DEC B
-    LDIR
+    CALL REPLACEMENT_LDIR
 
     LD (HL), A
     LD E, L
@@ -65,6 +65,6 @@ CPUFILLBLOCKS:
     LD C, 255
     LD A, 0
     LD B, A
-    LDIR
+    CALL REPLACEMENT_LDIR
 CPUFILLBLOCKSDONE:
     RET

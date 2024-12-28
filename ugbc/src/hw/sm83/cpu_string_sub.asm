@@ -33,21 +33,21 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; SOURCE: HL, LEN: (IYL)
-; PATTERN: IX, LEN: (IYH)
+; SOURCE: HL, LEN: (IYLR)
+; PATTERN: IX, LEN: (IYHR)
 ; DESTINATION: DE
 
 CPUSTRINGSUB:
 
     ; Check if source len is zero: if so, we can exit.
-    LD A, (IYL)
+    LD A, (IYLR)
     CP 0
     JR Z, CPUSTRINGSUBDONE
     ; Save the source len
     LD B, A
 
     ; Check if pattern len is zero: if so, we can exit.
-    LD A, (IYH)
+    LD A, (IYHR)
     CP 0
     JR Z, CPUSTRINGSUBDONE
     ; Save the pattern len
@@ -55,8 +55,8 @@ CPUSTRINGSUB:
 
     ; Save original pattern's pointer.
     PUSH HL
-    LD HL, (IX)
-    LD (IY), HL
+    LD HL, (IXR)
+    LD (IYR), HL
     POP HL
 
     ; Main comparison loop.
@@ -66,7 +66,7 @@ CPUSTRINGSUBL1:
     LD A, (HL)
 
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     CP (HL)
     POP HL
 
@@ -75,33 +75,33 @@ CPUSTRINGSUBL1:
 
     ; Move ahead on the pattern.
     PUSH HL
-    LD HL, (IX)
+    LD HL, (IXR)
     INC HL
-    LD (IX), HL
+    LD (IXR), HL
     POP HL
 
     ; Move ahead on the original string
     INC HL
 
     ; Decrement the lenght of original string
-    DEC (IYL)
+    DEC (IYLR)
 
     ; Decrement the lenght of the pattern.
-    DEC (IYH)
+    DEC (IYHR)
 
     ; If there are other characters in pattern,
     ; repeat the comparison loop.
-    LD A, (IYH)
+    LD A, (IYHR)
     CP 0
     JR NZ, CPUSTRINGSUBL1
 
     ; Reset the original pointer and length of the pattern
     PUSH HL
-    LD HL, (IY)
-    LD (IX), HL
+    LD HL, (IYR)
+    LD (IXR), HL
     POP HL
     LD A, C
-    LD (IYH), A
+    LD (IYHR), A
 
     ; Restart the loop.
     JMP CPUSTRINGSUBL1
@@ -112,11 +112,11 @@ CPUSTRINGSUBL2:
 
     ; Reset the original pointer and length of the pattern
     PUSH HL
-    LD HL, (IY)
-    LD (IX), HL
+    LD HL, (IYR)
+    LD (IXR), HL
     POP HL
     LD A, C
-    LD (IYH), A
+    LD (IYHR), A
 
     ; Go ahead on the original string
     INC HL

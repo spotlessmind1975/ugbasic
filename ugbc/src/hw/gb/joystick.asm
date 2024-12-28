@@ -1,8 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2024 Marco Spedaletti (asimov@mclink.it)
-;  * Inspired from modules/z80float, copyright 2018 Zeda A.K. Thomas
+;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -28,53 +27,43 @@
 ;  * implicite. Consultare la Licenza per il testo specifico che regola le
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+;*                                                                             *
+;*                          JOYSTICK ROUTINE FOR GB                            *
+;*                                                                             *
+;*                             by Marco Spedaletti                             *
+;*                                                                             *
+;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+JOYSTICKREAD:
+    LD A, $20
+    LD ($FF00), A
+    LD A, ($FF00)
+    XOR $FF
+    AND $0F
+    LD (JOYSTICK0), A
 
-FPDIV24_24:
-	XOR A
-	SUB E
-	LD E, A
+    LD A, $10
+    LD ($FF00), A
+    LD A, ($FF00)
+    XOR $FF
+    AND $0F
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD B, A
+    LD A, (JOYSTICK0)
+    OR B
+    LD (JOYSTICK0), A
+    RET
 
-	LD A, 0
-	SBC A, D
-	LD D, A
+JOYSTICKREAD0:
 
-	SBC A, A
-	SUB A, C
-	LD C, A
+@IF joystickConfig.sync
+    CALL JOYSTICKREAD
+@ELSE
+    LD A, (JOYSTICK0)
+@ENDIF
 
-	LD A, B
-	CALL FPDIV24_24_SUB_1
-	CALL FPDIV24_24_SUB_8
-	PUSH BC
-	CALL FPDIV24_24_SUB_8
-	PUSH BC
-	CALL FPDIV24_24_SUB_8
-
-	POP DE
-	LD E,B
-	POP BC
-	RET
-
-FPDIV24_24_SUB_8:
-	CALL FPDIV24_24_SUB_4
-FPDIV24_24_SUB_4:
-	CALL FPDIV24_24_SUB_2
-FPDIV24_24_SUB_2:
-	CALL FPDIV24_24_SUB_1
-FPDIV24_24_SUB_1:
-	RL B
-	ADD HL, HL
-	ADC A, A
-	JR C, FPDIV24_24_SUB_OVERFLOW
-	ADD HL, DE
-	ADC A, C
-	RET C
-	CALL SBC_HL_DE
-	SBC A, C
-	RET
-FPDIV24_24_SUB_OVERFLOW:
-	ADD HL, DE
-	ADC A, C
-	SCF
-	RET
+    RET

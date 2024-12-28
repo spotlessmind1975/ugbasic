@@ -35,39 +35,39 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; (IXL) * (IYL) -> HL (signed)
+; (IXLR) * (IYLR) -> HL (signed)
 CPUMUL8B8T16S:
     XOR A, B
     AND $80
     LD B, A
     PUSH B
 
-    LD A, (IXL)
+    LD A, (IXLR)
     AND $80
     CP 0
     JR Z, CPUMUL8B8T16SPOS
-    LD A, (IXL)
+    LD A, (IXLR)
     XOR $FF
     INC A
     JMP CPUMUL8B8T16S1
 
 CPUMUL8B8T16SPOS:
-    LD A, (IXL)
+    LD A, (IXLR)
 
 CPUMUL8B8T16S1:
     LD H, A
 
-    LD A, (IYL)
+    LD A, (IYLR)
     AND $80
     CP 0
     JR Z, CPUMUL8B8T16SPOS2
-    LD A, (IYL)
+    LD A, (IYLR)
     XOR $FF
     INC A
     JP CPUMUL8B8T16SDONE2
 
 CPUMUL8B8T16SPOS2:
-    LD A, (IYL)
+    LD A, (IYLR)
 
 CPUMUL8B8T16SDONE2:
     LD C, A
@@ -103,9 +103,9 @@ CPUMUL8B8T16SNC:
     RET
 
 CPUMUL8B8T16U:
-    LD A, (IXL)
+    LD A, (IXLR)
     LD H, A
-    LD A, (IYL)
+    LD A, (IYLR)
     LD E, A
 
     LD D, 0

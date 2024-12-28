@@ -74,19 +74,19 @@ void sm83_init( Environment * _environment ) {
     // outline0( "INC DE");
     // outline0( "LD (HL), DE");
 
-    variable_import( _environment, "IX", VT_WORD, 0 );
-    variable_global( _environment, "IX" );
-    variable_import( _environment, "IY", VT_WORD, 0 );
-    variable_global( _environment, "IY" );
+    variable_import( _environment, "IXR", VT_WORD, 0 );
+    variable_global( _environment, "IXR" );
+    variable_import( _environment, "IYR", VT_WORD, 0 );
+    variable_global( _environment, "IYR" );
 
-    variable_import( _environment, "IXL", VT_BYTE, 0 );
-    variable_global( _environment, "IXL" );
-    variable_import( _environment, "IXH", VT_BYTE, 0 );
-    variable_global( _environment, "IXH" );
-    variable_import( _environment, "IYL", VT_BYTE, 0 );
-    variable_global( _environment, "IYL" );
-    variable_import( _environment, "IYH", VT_BYTE, 0 );
-    variable_global( _environment, "IYH" );
+    variable_import( _environment, "IXLR", VT_BYTE, 0 );
+    variable_global( _environment, "IXLR" );
+    variable_import( _environment, "IXHR", VT_BYTE, 0 );
+    variable_global( _environment, "IXHR" );
+    variable_import( _environment, "IYLR", VT_BYTE, 0 );
+    variable_global( _environment, "IYLR" );
+    variable_import( _environment, "IYHR", VT_BYTE, 0 );
+    variable_global( _environment, "IYHR" );
 
     variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
     variable_global( _environment, "CALLINDIRECTSAVEHL" );
@@ -340,7 +340,7 @@ void sm83_fill_blocks( Environment * _environment, char * _address, char * _bloc
         outline1("JR Z, %sdone", label);
         outline0("DEC A");
         outline0("LD B,A");
-        outline0("LDIR");
+        outline0("CALL REPLACEMENT_LDIR");
 
         outline1("LD A, (%s)", _pattern);
         outline0("LD (HL),A")
@@ -351,7 +351,7 @@ void sm83_fill_blocks( Environment * _environment, char * _address, char * _bloc
         outline0("LD C,255");
         outline0("LD A,0");
         outline0("LD B,A");
-        outline0("LDIR");
+        outline0("CALL REPLACEMENT_LDIR");
         outhead1("%sdone:", label);
 
     embedded( cpu_fill_blocks, src_hw_sm83_cpu_fill_blocks_asm );
@@ -1404,18 +1404,18 @@ void sm83_math_mul_8bit_to_16bit( Environment * _environment, char *_source, cha
         if ( _signed ) {
 
             outline1("LD A, (%s)", _destination);
-            outline0("LD (IYL), A");
+            outline0("LD (IYLR), A");
             outline1("LD A, (%s)", _source);
-            outline0("LD (IXL), A");
+            outline0("LD (IXLR), A");
             outline0("CALL CPUMUL8B8T16S");
             outline1("LD (%s), HL", _other);
 
         } else {
 
             outline1("LD A, (%s)", _destination);
-            outline0("LD (IYL), A");
+            outline0("LD (IYLR), A");
             outline1("LD A, (%s)", _source);
-            outline0("LD (IXL), A");
+            outline0("LD (IXLR), A");
             outline0("CALL CPUMUL8B8T16U");
             outline1("LD (%s), HL", _other);
 
@@ -1832,7 +1832,7 @@ void sm83_less_than_16bit( Environment * _environment, char *_source, char *_des
             outline0("LD A, H" );
             outline0("XOR D" );
             outline1("JP M,%scmpgte2", label );
-            outline0("SBC HL, DE" );
+            outline0("CALL SBC_HL_DE" );
             if ( _equal ) {
                 outline1("JR Z,%scmpgte3", label );
             } else {
@@ -1953,7 +1953,7 @@ void sm83_less_than_16bit_const( Environment * _environment, char *_source, int 
             outline0("LD A, H" );
             outline0("XOR D" );
             outline1("JP M,%scmpgte2", label );
-            outline0("SBC HL, DE" );
+            outline0("CALL SBC_HL_DE" );
             if ( _equal ) {
                 outline1("JR Z,%scmpgte3", label );
             } else {
@@ -2159,9 +2159,9 @@ void sm83_math_mul_16bit_to_32bit( Environment * _environment, char *_source, ch
         if ( _signed ) {
 
             outline1("LD HL, (%s)", _source );
-            outline0("LD (IX), HL" );
+            outline0("LD (IXR), HL" );
             outline1("LD HL, (%s)", _destination );
-            outline0("LD (IY), HL" );
+            outline0("LD (IYR), HL" );
             outline0("CALL CPUMUL16B16T32S")
             outline1("LD (%s), HL", _other );
             outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
@@ -2199,7 +2199,7 @@ void sm83_math_sub_16bit( Environment * _environment, char *_source, char *_dest
         outline0("LD E, L");
         outline1("LD HL, (%s)", _source );
         outline0("AND A" );
-        outline0("SBC HL, DE" );
+        outline0("CALL SBC_HL_DE" );
         if ( _other ) {
             outline1("LD (%s), HL", _other );
         } else {
@@ -2525,7 +2525,7 @@ void sm83_compare_32bit_const( Environment * _environment, char *_source, int _d
     embedded( cpu_compare_32bit, src_hw_sm83_cpu_compare_32bit_asm )
 
         outline1("LD HL, $%4.4x", (unsigned int)((_destination>>16)&0xffff));
-        outline0("LD (IY), HL");
+        outline0("LD (IYR), HL");
         outline1("LD HL, $%4.4x", (unsigned int)(_destination&0xffff));
         outline0("LD E, L");
         outline0("LD D, H");
@@ -3176,11 +3176,11 @@ int sm83_register_decode( Environment * _environment, char * _register ) {
             result = REGISTER_DE;
         } else if ( strcmp( _register, "HL" ) == 0 ) {
             result = REGISTER_HL;
-        } else if ( strcmp( _register, "(IXL)" ) == 0 ) {
+        } else if ( strcmp( _register, "(IXLR)" ) == 0 ) {
             result = REGISTER_IXL;
-        } else if ( strcmp( _register, "(IXH)" ) == 0 ) {
+        } else if ( strcmp( _register, "(IXHR)" ) == 0 ) {
             result = REGISTER_IXH;
-        } else if ( strcmp( _register, "(IYL)" ) == 0 ) {
+        } else if ( strcmp( _register, "(IYLR)" ) == 0 ) {
             result = REGISTER_IYL;
         } else if ( strcmp( _register, "IYH" ) == 0 ) {
             result = REGISTER_IYH;
@@ -3276,19 +3276,19 @@ void sm83_set_asmio( Environment * _environment, int _asmio, int _value ) {
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD (IXL), A" );
+                outline0( "LD (IXLR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD (IXH), A" );
+                outline0( "LD (IXHR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD (IYL), A" );
+                outline0( "LD (IYLR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYH:
@@ -3425,19 +3425,19 @@ void sm83_set_asmio_indirect( Environment * _environment, int _asmio, char * _va
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD (IXL), A" );
+                outline0( "LD (IXLR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD (IXH), A" );
+                outline0( "LD (IXHR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD (IYL), A" );
+                outline0( "LD (IYLR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYH:
@@ -3576,19 +3576,19 @@ void sm83_get_asmio_indirect( Environment * _environment, int _asmio, char * _va
                 break;
             case REGISTER_IXL:
                 outline0( "PUSH AF" );
-                outline0( "LD A, (IXL)" );
+                outline0( "LD A, (IXLR)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IXH:
                 outline0( "PUSH AF" );
-                outline0( "LD A, (IXH)" );
+                outline0( "LD A, (IXHR)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
             case REGISTER_IYL:
                 outline0( "PUSH AF" );
-                outline0( "LD A, (IYL)" );
+                outline0( "LD A, (IYLR)" );
                 outline1( "LD (%s), A", _value );
                 outline0( "POP AF" );
                 break;
@@ -3844,7 +3844,7 @@ void sm83_and_8bit( Environment * _environment, char * _left, char * _right, cha
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("AND (IX)" );
+    outline0("AND (IXR)" );
     outline0("LD (DE), A" );
 
 }
@@ -3867,7 +3867,7 @@ void sm83_and_16bit( Environment * _environment, char * _left, char * _right, ch
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("AND (IX)" );
+    outline0("AND (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -3885,7 +3885,7 @@ void sm83_and_32bit( Environment * _environment, char * _left, char * _right, ch
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("AND (IX)" );
+    outline0("AND (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -3932,7 +3932,7 @@ void sm83_or_8bit( Environment * _environment, char * _left, char * _right, char
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("OR (IX)" );
+    outline0("OR (IXR)" );
     outline0("LD (DE), A" );
 
 }
@@ -3956,7 +3956,7 @@ void sm83_or_16bit( Environment * _environment, char * _left, char * _right, cha
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("OR (IX)" );
+    outline0("OR (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -3976,7 +3976,7 @@ void sm83_or_32bit( Environment * _environment, char * _left, char * _right, cha
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("OR (IX)" );
+    outline0("OR (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -4004,7 +4004,7 @@ void sm83_xor_8bit( Environment * _environment, char * _left, char * _right, cha
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX)" );
+    outline0("XOR (IXR)" );
     outline0("LD (DE), A" );
 
 }
@@ -4029,7 +4029,7 @@ void sm83_xor_16bit( Environment * _environment, char * _left, char * _right, ch
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX)" );
+    outline0("XOR (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -4069,7 +4069,7 @@ void sm83_xor_32bit( Environment * _environment, char * _left, char * _right, ch
     outline1("LD IX, %s", _right );
     outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX)" );
+    outline0("XOR (IXR)" );
     outline0("LD (DE), A" );
     outline0("INC HL" );
     outline0("INC DE" );
@@ -4637,7 +4637,7 @@ void sm83_math_sub_16bit_with_8bit( Environment * _environment, char *_source, c
     outline0("LD DE, 0" );
     outline1("LD A, (%s)", _destination );
     outline0("LD E, A" );
-    outline0("SBC HL, DE" );
+    outline0("CALL SBC_HL_DE" );
     if ( _other ) {
         outline1("LD (%s), HL", _other );
     } else {
@@ -4742,9 +4742,9 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
     MAKE_LABEL
 
     outline0("LD HL, 0" );
-    outline0("LD (IX), HL" );
+    outline0("LD (IXR), HL" );
     outline1("LD A, (%s)", _len );
-    outline0("LD (IX), A" );
+    outline0("LD (IXR), A" );
 
     outline0("LD A, 0" );
     outline1("LD (%s), A", _value );
@@ -4780,9 +4780,9 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
     // MULT x 10
 
     outline0("INC HL" );
-    outline0("DEC (IX)" );
+    outline0("DEC (IXR)" );
     outline0("LD A, 0" );
-    outline0("CP (IX)" );
+    outline0("CP (IXR)" );
     outline1("JR Z,%send", label );
 
     outline0("PUSH HL" );
@@ -5229,25 +5229,25 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outhead1("%sdiv32a:", label);
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline0("ADD HL, HL");
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
         outline0("POP HL");
         
         outline0("RL C");
         outline0("RLA");
         outline0("ADC HL, HL");
         outline1("JR C, %sdiv32ov", label);
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sdiv32setbit", label);
         outline0("ADD HL, DE");
         outline1("DJNZ %sdiv32a", label);
         outline1("JR %sdiv32end", label);
         outhead1("%sdiv32ov:", label);
         outline0("OR A");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outhead1("%sdiv32setbit:", label);
-        outline0("INC (IX)");
+        outline0("INC (IXR)");
         outline1("DJNZ %sdiv32a", label);
         outhead1("%sdiv32end:", label);
 
@@ -5256,7 +5256,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outline1("LD (%s), A", address_displacement(_environment, _other, "2"));
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline1("LD (%s), HL", _other);
         outline0("POP HL");
 
@@ -5288,7 +5288,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
     } else {
 
 	    outline1("LD HL, (%s)", _source);
-	    outline0("LD (IX), HL");
+	    outline0("LD (IXR), HL");
 	    outline1("LD HL, (%s)", address_displacement(_environment, _source, "2"));
 	    outline0("LD A, L");
 	    outline0("LD C, A");
@@ -5305,25 +5305,25 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outhead1("%sloop1:", label);
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline0("ADD HL, HL");
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
         outline0("POP HL");
 
         outline0("RL C");
         outline0("RLA");
         outline0("ADC HL, HL");
         outline1("JR C, %sloop2", label);
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sloop3", label);
         outline0("ADD HL, DE");
         outline1("DJNZ %sloop1", label);
         outline1("JR %sdone", label);
         outhead1("%sloop2:", label);
         outline0("OR A");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outhead1("%sloop3:", label);
-        outline0("INC (IX)");
+        outline0("INC (IXR)");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5332,7 +5332,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
 	    outline0("LD A, C");
 	    outline0("LD L, C");
 	    outline1("LD (%s), HL", _other);
-	    outline0("LD HL, (IX)");
+	    outline0("LD HL, (IXR)");
 	    outline1("LD (%s), HL", _other);
 
     }
@@ -5358,7 +5358,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outline1("LD DE, $%4.4x", destination);
 
         outline1("LD HL, (%s)", _source);
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
 
         outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
         outline0("LD C, A");
@@ -5369,25 +5369,25 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outhead1("%sdiv32a:", label);
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline0("ADD HL, HL");
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
         outline0("POP HL");
 
         outline0("RL C");
         outline0("RLA");
         outline0("ADC HL, HL");
         outline1("JR C, %sdiv32ov", label);
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sdiv32setbit", label);
         outline0("ADD HL, DE");
         outline1("DJNZ %sdiv32a", label);
         outline1("JR %sdiv32end", label);
         outhead1("%sdiv32ov:", label);
         outline0("OR A");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outhead1("%sdiv32setbit:", label);
-        outline0("INC (IX)");
+        outline0("INC (IXR)");
         outline1("DJNZ %sdiv32a", label);
         outhead1("%sdiv32end:", label);
 
@@ -5396,7 +5396,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outline1("LD (%s), A", address_displacement(_environment, _other, "2"));
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline1("LD (%s), HL", _other);
         outline0("POP HL");
 
@@ -5424,7 +5424,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
     } else {
 
 	    outline1("LD HL, (%s)", _source);
-	    outline0("LD (IX), HL");
+	    outline0("LD (IXR), HL");
 	    outline1("LD HL, (%s)", address_displacement(_environment, _source, "2"));
 	    outline0("LD A, L");
 	    outline0("LD C, A");
@@ -5436,25 +5436,25 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outhead1("%sloop1:", label);
 
         outline0("PUSH HL");
-        outline0("LD HL, (IX)");
+        outline0("LD HL, (IXR)");
         outline0("ADD HL, HL");
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
         outline0("POP HL");
 
         outline0("RL C");
         outline0("RLA");
         outline0("ADC HL, HL");
         outline1("JR C, %sloop2", label);
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sloop3", label);
         outline0("ADD HL, DE");
         outline1("DJNZ %sloop1", label);
         outline1("JR %sdone", label);
         outhead1("%sloop2:", label);
         outline0("OR A");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outhead1("%sloop3:", label);
-        outline0("INC (IXL)");
+        outline0("INC (IXLR)");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5463,7 +5463,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
 	    outline0("LD A, C");
 	    outline0("LD L, C");
 	    outline1("LD (%s), HL", _other);
-	    outline0("LD HL, (IX)");
+	    outline0("LD HL, (IXR)");
 	    outline1("LD (%s), HL", _other);
 
     }
@@ -5509,7 +5509,7 @@ void sm83_math_div_16bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("SLL C");
         outline0("RLA");
         outline0("ADC HL, HL");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
         outline0("DEC C");
@@ -5563,7 +5563,7 @@ void sm83_math_div_16bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("SLL C");
         outline0("RLA");
         outline0("ADC HL, HL");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
         outline0("DEC C");
@@ -5617,7 +5617,7 @@ void sm83_math_div_16bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("SLL C");
         outline0("RLA");
         outline0("ADC HL, HL");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
         outline0("DEC C");
@@ -5666,7 +5666,7 @@ void sm83_math_div_16bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("SLL C");
         outline0("RLA");
         outline0("ADC HL, HL");
-        outline0("SBC HL, DE");
+        outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
         outline0("DEC C");
@@ -5990,7 +5990,8 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline0("LD B, 0" );
                 outline0("PUSH BC");
             }
-            outline0("POP IX");
+            outline0("POP HL");
+            outline0("LD (IXR), HL");
             outline0("CALL N2D8");
             break;
         case 16:
@@ -6019,7 +6020,8 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline0("LD B, 0" );
                 outline0("PUSH BC");
             }
-            outline0("POP IX");
+            outline0("POP HL");
+            outline0("LD (IXR), HL");
             outline0("CALL N2D16");
             break;
         case 32:
@@ -6068,7 +6070,8 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline0("LD B, 0" );
                 outline0("PUSH BC");
             }
-            outline0("POP IX");
+            outline0("POP HL");
+            outline0("LD (IXR), HL");
             outline0("CALL N2D32");
             break;
         default:
@@ -6081,7 +6084,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
     outline0("LD E, L");
     outline0("POP HL");
 
-    outline0("LD A, (IXH)");
+    outline0("LD A, (IXHR)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);
     outline0("LD A, '-'");
@@ -6091,7 +6094,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
     outhead1("%spos:", label);
     outline0("LD A, C");
     outline1("LD (%s), A", _string_size);
-    outline0("LDIR");
+    outline0("CALL REPLACEMENT_LDIR");
 
 }
 
@@ -6143,7 +6146,7 @@ void sm83_bits_to_string( Environment * _environment, char * _number, char * _st
     outline1("LD A, $%2.2x", ( (_bits) & 0xff ) );
     outline0("LD C, A");
     outline0("LD B, 0");
-    outline0("LDIR");
+    outline0("CALL REPLACEMENT_LDIR");
 
     outline1("LD A, $%2.2x", ( _bits & 0xff ) );
     outline1("LD HL, %s", _string_size );
@@ -6160,7 +6163,7 @@ void sm83_hex_to_string( Environment * _environment, char * _number, char * _str
     embedded( cpu_hex_to_string, src_hw_sm83_cpu_hex_to_string_asm );
 
         outline1("LD A, $%2.2x", _bits);
-        outline0("LD (IXL), A");
+        outline0("LD (IXLR), A");
 
         switch( _bits ) {
             case 8:
@@ -6324,7 +6327,7 @@ void sm83_dsdescriptor( Environment * _environment, char * _index, char * _addre
         outline1( "LD A, (%s)", _index );
         outline0( "LD B, A" );
         outline0( "CALL DSDESCRIPTOR" );
-        outline0( "LD HL, (IX)" );
+        outline0( "LD HL, (IXR)" );
         if ( _size ) {
             outline0( "LD A, (HL)" );
             outline1( "LD (%s), A", _size );
@@ -6712,14 +6715,14 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
     embedded( cpu_string_sub, src_hw_sm83_cpu_string_sub_asm );
 
         outline1("LD HL, (%s)", _pattern);
-        outline0("LD (IX), HL");
+        outline0("LD (IXR), HL");
         
         outline1("LD A, (%s)", _source);
         outline0("LD L, A");
         outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
         outline0("LD H, A");
         outline1("LD A, (%s)", _source_size);
-        outline0("LD (IYL), A");
+        outline0("LD (IYLR), A");
 
         outline1("LD A, (%s)", _pattern_size);
         outline0("LD IYH, A");
@@ -6731,7 +6734,7 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
 
         outline0("CALL CPUSTRINGSUB");
 
-        outline0("LD A, (IYL)");
+        outline0("LD A, (IYLR)");
         outline1("LD (%s), A", _destination_size);
 
     done()

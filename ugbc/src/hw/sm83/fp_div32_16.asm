@@ -44,84 +44,84 @@ FPDIV32_16:
 	LD A, D
 	ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	LD D, A
 	LD A,E
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
     ADD HL, BC
     JR C, $+4
-    SBC HL, BC
+    CALL SBC_HL_BC
 	RLA
     ADC HL, HL
 	LD E, A
@@ -129,7 +129,7 @@ FPDIV32_16:
 	BIT 0, C
 	RET Z
 
-	SBC HL, DE
+	CALL SBC_HL_DE
 	RET NC
 	ADD HL, BC
 	DEC DE

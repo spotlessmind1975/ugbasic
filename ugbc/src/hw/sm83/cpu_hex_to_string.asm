@@ -39,7 +39,7 @@
 ; Output: ASCII string at (DE)
 
 H2STRING:
-    LD A, (IXL)
+    LD A, (IXLR)
     CP $8
     JR Z, H2STRING8
     LD A, H

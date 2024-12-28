@@ -74,7 +74,7 @@ void target_initialization( Environment * _environment ) {
     // variable_global( _environment, "TILESADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
-    // variable_import( _environment, "USING", VT_BYTE, 0 );
+    variable_import( _environment, "USING", VT_BYTE, 0 );
 
     // variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x0000 );
     // variable_global( _environment, "COPYOFBITMAPADDRESS" );
@@ -108,10 +108,8 @@ void target_initialization( Environment * _environment ) {
     // variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     // variable_global( _environment, "TICKSPERSECOND" );   
 
-    // variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
-    // variable_global( _environment, "JOYSTICK0" );   
-    // variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
-    // variable_global( _environment, "JOYSTICK1" );   
+    variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
+    variable_global( _environment, "JOYSTICK0" );   
 
     // variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
     // variable_global( _environment, "AY8910TIMER" );    
@@ -233,7 +231,7 @@ void target_initialization( Environment * _environment ) {
     // cpu_call( _environment, "VARINIT" );
     // outline0("CALL PROTOTHREADINIT" );
 
-    // sm83_init( _environment );
+    sm83_init( _environment );
 
     deploy_preferred( startup, src_hw_gb_startup_asm);
 
