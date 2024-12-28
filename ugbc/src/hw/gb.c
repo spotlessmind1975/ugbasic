@@ -277,119 +277,14 @@ void gb_timer_set_address( Environment * _environment, char * _timer, char * _ad
 
 void gb_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    // // deploy( dcommon, src_hw_gb_dcommon_asm );
-    // // deploy( dload, src_hw_gb_dload_asm );
-
-    // MAKE_LABEL
-    
-    // Variable * filename = variable_retrieve( _environment, _filename );
-    // Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
-    // Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
-
-    // Variable * address = NULL;
-    // if ( _address ) {
-    //     address = variable_retrieve( _environment, _address );
-    // }
-    // Variable * size = NULL;
-    // if ( _size ) {
-    //     size = variable_retrieve( _environment, _size );
-    // }
-    // Variable * offset = NULL;
-    // if ( _offset ) {
-    //     offset = variable_retrieve( _environment, _offset );
-    // }
-
-    // switch( filename->type ) {
-    //     case VT_STRING:
-    //         cpu_move_8bit( _environment, filename->realName, tnsize->realName );
-    //         cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
-    //         cpu_inc_16bit( _environment, tnaddress->realName );
-    //         break;
-    //     case VT_DSTRING:
-    //         cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
-    //         break;
-    // }
-
-    // outline1("LD HL, (%s)", tnaddress->realName);
-    // outline1("LD A, (%s)", tnsize->realName);
-    // outline0("LD B, A");
-
-    // if ( address ) {
-
-    //     outline1("LD DE, (%s)", address->realName);
-
-    // }
-
-    // outline0("CALL GBDLOAD");
-
 }
 
 void gb_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
-
-    // // deploy( dcommon, src_hw_gb_dcommon_asm );
-    // // deploy( dsave, src_hw_gb_dsave_asm );
-
-    // MAKE_LABEL
-    
-    // Variable * filename = variable_retrieve( _environment, _filename );
-    // Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
-    // Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
-
-    // Variable * address = NULL;
-    // if ( _address ) {
-    //     address = variable_retrieve( _environment, _address );
-    // }
-    // Variable * size = NULL;
-    // if ( _size ) {
-    //     size = variable_retrieve( _environment, _size );
-    // }
-    // Variable * offset = NULL;
-    // if ( _offset ) {
-    //     offset = variable_retrieve( _environment, _offset );
-    // }
-
-    // switch( filename->type ) {
-    //     case VT_STRING:
-    //         cpu_move_8bit( _environment, filename->realName, tnsize->realName );
-    //         cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
-    //         cpu_inc_16bit( _environment, tnaddress->realName );
-    //         break;
-    //     case VT_DSTRING:
-    //         cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
-    //         break;
-    // }
-
-    // outline1("LD HL, (%s)", tnaddress->realName);
-    // outline1("LD A, (%s)", tnsize->realName);
-    // outline0("LD B, A");
-
-    // if ( address ) {
-
-    //     outline1("LD DE, (%s)", address->realName);
-
-    // }
-
-    // if ( size ) {
-
-    //     outline1("LD IX, (%s)", size->realName);
-
-    // }
-
-    // outline0("CALL GBDSAVE");
 
 }
 
 
 void gb_put_key(  Environment * _environment, char *_string, char * _size ) {
-
-    // _environment->bitmaskNeeded = 1;
-
-    // // deploy( keyboard, src_hw_gb_keyboard_asm);
-
-    // outline1("LD HL, (%s)", _string );
-    // outline1("LD A, (%s)", _size );
-    // outline0("LD C, A" );
-    // outline0("CALL PUTKEY" );
 
 }
 
@@ -542,56 +437,7 @@ static void gb_image_converter_tile( Environment * _environment, char * _source,
 }
 
 /**
- * This method can be used to convert 
- *     WxH RGB (3/4 bytes) pixel (_source) [WxHx3/4 bytes]
- * into 
- *     WxH bitmap (1 bit) pixel + (W/8xH + W/8xH) (bytes)
- *       foreground and background color (_dest)
- * 
- * Since the WXH pixel area could belong to a larger picture,
- * this function will need the picture _source_width in order
- * to move to the next line to analyze.
- */
-static void gb_image_converter_tiles( Environment * _environment, char * _source, char * _dest, int _width, int _height, int _depth, int _source_width ) {
-
-    // int bitmapSize = ( _width>>3 ) * _height;
-    // int colormapSize = ( _width>>3 ) * _height;
-
-    // memset( _dest, 0, bitmapSize + colormapSize );
-
-    // adilinebeginbitmap("BMD2");
-
-    // for( int y=0; y<_height; y+=8 ) {
-    //     for( int x=0; x<_width; x+=8 ) {
-
-    //         char * source = _source + ( ( y * _source_width ) + x ) * _depth;
-    //         char tile[16];
-
-    //         gb_image_converter_tile( _environment, source, tile, _width, _depth, _source_width );
-
-    //         int offset = ((y>>3) * 8 *( _width >> 3 ) ) + ((x>>3) * 8) + ((y) & 0x07);
-    //         // x = 8, y = 8
-    //         // offset = ((8 >> 3) * 8 * (16>>3) ) + ((8>>3) * 8) + ((8) & 7)
-    //         // offset = (1 * 8 * 2 ) + (1 * 8)
-    //         // offset = 16 + 8 = 24
-
-    //         char * destBitmap = _dest + offset;
-    //         char * destColormap = _dest + bitmapSize + offset;
-    //         for( int i=0; i<8; ++i ) {
-    //             *destBitmap = tile[i];
-    //             *destColormap = tile[i+8];
-    //             ++destBitmap;
-    //             ++destColormap;
-    //         }
-    //     }
-    // }
-
-    // adilineendbitmap();
-
-}
-
-/**
- * @brief <i>TMS9918</i>: emit code to check for collision
+ * @brief <i>GB</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
  * had a collision with another sprite. The result (0 = no collision, 0xff = 
@@ -603,25 +449,14 @@ static void gb_image_converter_tiles( Environment * _environment, char * _source
  */
 Variable * gb_collision( Environment * _environment, char * _sprite ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    // Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision)" );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITECOL");
-    // } else {
-    //     outline0("CALL SPRITECOLNMI2");
-    // }
-
-    // outline1("LD (%s), A", result->realName )
-
-    // return result;
+    return result;
     
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to check for collision
+ * @brief <i>GB</i>: emit code to check for collision
  * 
  * This function can be used to issue code aimed at verifying if a sprite has 
  * had a collision with a tile. The result (0 = no collision, 0xff = 
@@ -633,12 +468,10 @@ Variable * gb_collision( Environment * _environment, char * _sprite ) {
  */
 void gb_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
 
-    //todo
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to change border color
+ * @brief <i>GB</i>: emit code to change border color
  * 
  * This function can be used to issue code aimed at changing the
  * border color of the screen.
@@ -648,37 +481,10 @@ void gb_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
  */
 void gb_border_color( Environment * _environment, char * _border_color ) {
 
-// #ifdef __coleco__
-//     MAKE_LABEL
-//     if ( ! _environment->hasGameLoop ) {
-//         outline1("JP %sskip", label );
-//         outhead1("%s:", label );
-//     }
-// #endif
-    // outline1("LD E, %2.2x", VDP_RCOLOR );
-    // outline0("CALL VDPREGIN" );
-    // outline0("AND $F0" );
-    // outline0("LD B, A" );
-    // outline1("LD E, %2.2x", VDP_RCOLOR );
-    // outline1("LD A, (%s)", _border_color );
-    // outline0("AND $0F" );
-    // outline0("OR B" );
-    // outline0("CALL VDPSETREG" );
-// #ifdef __coleco__
-//     if ( ! _environment->hasGameLoop ) {
-//         outline0("RET" );
-//         outhead1("%sskip:", label );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//         outline1("LD HL, %s", label );
-//         outline0("CALL SET_VDP_HOOK0" );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//     }
-// #endif
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to change background color
+ * @brief <i>GB</i>: emit code to change background color
  * 
  * This function can be used to issue code aimed at changing the
  * background color of the screen.
@@ -689,14 +495,10 @@ void gb_border_color( Environment * _environment, char * _border_color ) {
  */
 void gb_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    // char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _background_color );
-
-    // gb_background_color_vars( _environment, NULL, value );
-    
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to change background color
+ * @brief <i>GB</i>: emit code to change background color
  * 
  * This function can be used to issue code aimed at changing the
  * background color of the screen.
@@ -707,26 +509,10 @@ void gb_background_color( Environment * _environment, int _index, int _backgroun
  */
 void gb_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    // MAKE_LABEL
-
-    // sm83_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
-
-    // gb_border_color( _environment, _background_color );
-
-    // cpu_label( _environment, label );
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD E, A" );
-    // outline0( "LD A, 0" );
-    // outline0( "LD D, A" );
-    // outline0( "LD HL, PALETTE" );
-    // outline0( "ADD HL, DE" );
-    // outline1( "LD A, (%s)", _background_color );
-    // outline0( "LD (HL), A" );
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to change background color
+ * @brief <i>GB</i>: emit code to change background color
  * 
  * This function can be used to issue code aimed at changing the
  * background color of the screen.
@@ -737,23 +523,10 @@ void gb_background_color_vars( Environment * _environment, char * _index, char *
  */
 void gb_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    // if ( ! _index ) {
-    //     gb_border_color( _environment, _background_color );
-    // }
-
-    // outline1( "LD A, $%2.2x", _index );
-    // outline0( "LD E, A" );
-    // outline0( "LD A, 0" );
-    // outline0( "LD D, A" );
-    // outline0( "LD HL, PALETTE" );
-    // outline0( "ADD HL, DE" );
-    // outline1( "LD A, (%s)", _background_color );
-    // outline0( "LD (HL), A" );
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to retrieve background color
+ * @brief <i>GB</i>: emit code to retrieve background color
  * 
  * This function can be used to issue code aimed at retrieving the
  * background color of the screen.
@@ -764,19 +537,10 @@ void gb_background_color_semivars( Environment * _environment, int _index, char 
  */
 void gb_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD E, A" );
-    // outline0( "LD A, 0" );
-    // outline0( "LD D, A" );
-    // outline0( "LD HL, PALETTE" );
-    // outline0( "ADD HL, DE" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _background_color );
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to change common sprite's color 
+ * @brief <i>GB</i>: emit code to change common sprite's color 
  * 
  * This function can be used to issue code aimed at changing the
  * common color of the sprites.
@@ -787,43 +551,10 @@ void gb_background_color_get_vars( Environment * _environment, char * _index, ch
  */
 void gb_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
 
-// #ifdef __coleco__
-//     MAKE_LABEL
-//     if ( ! _environment->hasGameLoop ) {
-//         outline1("JP %sskip", label );
-//         outhead1("%s:", label );
-//     }
-// #endif
-    // outline0("LD HL, $1000");
-    // outline1("LD E, (%s)", _index );
-    // outline0("SLA E");
-    // outline0("SLA E");
-    // outline0("INC E");
-    // outline0("INC E");
-    // outline0("INC E");
-    // outline0("LD D, 0");
-    // outline0("ADD HL, DE");
-    // outline0("CALL VDPINCHAR");
-    // outline0("AND $F0");
-    // outline0("LD B, A");
-    // outline1("LD A, (%s)", _common_color );
-    // outline0("OR B");
-    // outline0("CALL VDPOUTCHAR");
-// #ifdef __coleco__
-//     if ( ! _environment->hasGameLoop ) {
-//         outline0("RET" );
-//         outhead1("%sskip:", label );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//         outline1("LD HL, %s", label );
-//         outline0("CALL SET_VDP_HOOK0" );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//     }
-// #endif
-
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to set raster irq
+ * @brief <i>GB</i>: emit code to set raster irq
  * 
  * This function outputs assembly code needed to initialize a raster routine. 
  * In other words, asynchronously and in parallel with the execution of the 
@@ -842,7 +573,7 @@ void gb_raster_at( Environment * _environment, char * _label, char * _positionlo
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to wait for next raster irq
+ * @brief <i>GB</i>: emit code to wait for next raster irq
  * 
  * This function outputs assembly code needed to wait for the
  * next raster. Meanwhile, the execution of the main code will resume 
@@ -856,7 +587,7 @@ void gb_next_raster( Environment * _environment ) {
 }
 
 /**
- * @brief <i>TMS9918</i>: emit code to wait for next raster irq at different position
+ * @brief <i>GB</i>: emit code to wait for next raster irq at different position
  * 
  * This function outputs assembly code needed to wait for the
  * next raster on a different position with a different code to
@@ -878,24 +609,24 @@ void gb_bank_select( Environment * _environment, int _bank ) {
 
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     
-    // int colorIndex = 0;
-    // unsigned int minDistance = 0xffffffff;
-    // int j;
+    int colorIndex = 0;
+    unsigned int minDistance = 0xffffffff;
+    int j;
 
-    // RGBi rgb;
-    // rgb.red = _red;
-    // rgb.green = _green;
-    // rgb.blue = _blue;
+    RGBi rgb;
+    rgb.red = _red;
+    rgb.green = _green;
+    rgb.blue = _blue;
 
-    // for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-    //     int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
-    //     if (distance < minDistance) {
-    //         minDistance = distance;
-    //         colorIndex = j;
-    //     }
-    // }
+    for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
+        int distance = rgbi_distance(&SYSTEM_PALETTE[j], &rgb);
+        if (distance < minDistance) {
+            minDistance = distance;
+            colorIndex = j;
+        }
+    }
 
-    // return colorIndex;
+    return colorIndex;
 
 }
 
@@ -952,7 +683,7 @@ int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
 
 void console_calculate( Environment * _environment ) {
 
-    int startAddress = 0x9000;
+    int startAddress = 0x9800;
 
     int consoleSA = startAddress + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
     int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
@@ -995,8 +726,6 @@ void gb_bitmap_enable( Environment * _environment, int _width, int _height, int 
 
 void gb_bitmap_disable( Environment * _environment ) {
 
-    //todo
-
 }
 
 void gb_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
@@ -1005,8 +734,6 @@ void gb_tilemap_enable( Environment * _environment, int _width, int _height, int
 
     if ( mode ) {
 
-        // printf("gb_tilemap_enable() -> %d\n", mode->id );
-        
         gb_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
@@ -1040,140 +767,29 @@ void gb_textmap_at( Environment * _environment, char * _address ) {
 
 void gb_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    // deploy( plot, src_hw_gb_plot_asm );
-    
-    // if ( _c ) {
-    //     outline1("LD A, #$%2.2x", ( *_c & 0xff ) );
-    // } else {
-    //     Variable * c = variable_retrieve( _environment, "PEN" );
-    //     outline1("LD A, (%s)", c->realName );
-    // }
-    // outline0("LD (PLOTCPE), A");
-    // outline1("LD A, $%2.2x", ( _y & 0xff ) );
-    // outline0("LD D, A");
-    // outline1("LD A, $%2.2x", ( _x & 0xff ) );
-    // outline0("LD E, A");
-    // outline1("LD A, $%2.2x", ( ( _x >> 8 ) & 0xff ) );
-    // outline0("LD IXH, A");
-    // outline0("LD A, 1");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL PLOT");
-    // } else {
-    //     outline0("CALL PLOTNMI2");
-    // }
-
 }
 
 void gb_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
-
-    // Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    // Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
-    // Variable * c;
-    
-    // if ( _c ) {
-    //     c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
-    // } else {
-    //     c = variable_retrieve( _environment, "PEN" );
-    // }
-
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    // // deploy( plot, src_hw_gb_plot_asm );
-    
-    // outline1("LD A, (%s)", c->realName );
-    // outline0("LD (PLOTCPE), A");
-    // outline1("LD A, (%s)", y->realName );
-    // outline0("LD D, A");
-    // outline1("LD A, (%s)", x->realName );
-    // outline0("LD E, A");
-    // outline1("LD A, (%s)", address_displacement(_environment, x->realName, "1") );
-    // outline0("LD IXH, A");
-    // outline0("LD A, 1");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL PLOT");
-    // } else {
-    //     outline0("CALL PLOTNMI2");
-    // }
 
 }
 
 void gb_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
-    // Variable * x = variable_retrieve( _environment, _x );
-    // Variable * y = variable_retrieve( _environment, _y );
-    // Variable * result = variable_retrieve( _environment, _result );
-
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
-    // // deploy( plot, src_hw_gb_plot_asm );
-    
-    // outline1("LD A, (%s)", y->realName );
-    // outline0("LD D, A");
-    // outline1("LD A, (%s)", x->realName );
-    // outline0("LD E, A");
-    // outline1("LD A, (%s)", address_displacement( _environment, x->realName, "1" ) );
-    // outline0("LD IXH, A");
-    // outline0("LD A, 3");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL PLOT");
-    // } else {
-    //     outline0("CALL PLOTNMI2");
-    // }    
-    // outline1("LD (%s), A", result->realName);
-
 }
 
 void gb_screen_on( Environment * _environment ) {
 
-// #ifdef __coleco__
-//     MAKE_LABEL
-//     if ( ! _environment->hasGameLoop ) {
-//         outline1("JP %sskip", label );
-//         outhead1("%s:", label );
-//     }
-// #endif
-    // outline1("LD E, %2.2x", VDP_R1 );
-    // outline0("CALL VDPREGIN" );
-    // outline0("OR $40" );
-    // outline0("CALL VDPSETREG" );
-// #ifdef __coleco__
-//     if ( ! _environment->hasGameLoop ) {
-//         outline0("RET" );
-//         outhead1("%sskip:", label );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//         outline1("LD HL, %s", label );
-//         outline0("CALL SET_VDP_HOOK0" );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//     }
-// #endif
+    outline0("LD A, (rLCDC)");
+    outline0("OR $80");
+    outline0("LD (rLCDC), A");
 
 }
 
 void gb_screen_off( Environment * _environment ) {
 
-// #ifdef __coleco__
-//     MAKE_LABEL
-//     if ( ! _environment->hasGameLoop ) {
-//         outline1("JP %sskip", label );
-//         outhead1("%s:", label );
-//     }
-// #endif
-    // outline1("LD E, %2.2x", VDP_R1 );
-    // outline0("CALL VDPREGIN" );
-    // outline0("AND $BF" );
-    // outline0("CALL VDPSETREG" );
-// #ifdef __coleco__
-//     if ( ! _environment->hasGameLoop ) {
-//         outline0("RET" );
-//         outhead1("%sskip:", label );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//         outline1("LD HL, %s", label );
-//         outline0("CALL SET_VDP_HOOK0" );
-//         outline0("CALL WAIT_VDP_HOOK" );
-//     }
-// #endif
+    outline0("LD A, (rLCDC)");
+    outline0("OR $7F");
+    outline0("LD (rLCDC), A");
 
 }
 
@@ -1376,37 +992,36 @@ void gb_horizontal_scroll( Environment * _environment, char * _displacement ) {
 
 void gb_busy_wait( Environment * _environment, char * _timing ) {
 
-    // MAKE_LABEL
+    deploy( vbl, src_hw_gb_vbl_asm );
 
-    // outline1("LD C, (%s)", _timing);
-    // outline0("CALL VDPREGIN");
-    // outhead1("%sfirst:", label );
-    // outline0("CALL VDPREGIN");
-    // outline0("AND $01");
-    // outline1("JP Z, %sfirst", label);
-    // outline0("DEC C");
-    // outline1("JP NZ, %sfirst", label);
+    MAKE_LABEL
+
+    outline1("LD C, (%s)", _timing);
+    outhead1("%sfirst:", label);
+    outline0("CALL WAITVBL");
+    outline0("DEC C");
+    outline1("JP NZ, %sfirst", label);
 
 }
 
 void gb_get_width( Environment * _environment, char *_result ) {
 
-    // outline0("LD HL, (CURRENTWIDTH)" );
-    // outline1("LD (%s), HL", _result );
+    outline0("LD HL, 160" );
+    outline1("LD (%s), HL", _result );
 
 }
 
 void gb_tiles_get( Environment * _environment, char *_result ) {
 
-    // outline0("LD A, (CURRENTTILES)" );
-    // outline1("LD (%s), A", _result );
+    outline0("LD A, 255" );
+    outline1("LD (%s), A", _result );
 
 }
 
 void gb_get_height( Environment * _environment, char *_result ) {
 
-    // outline0("LD HL, (CURRENTHEIGHT)" );
-    // outline1("LD (%s), HL", _result );
+    outline0("LD HL, 144" );
+    outline1("LD (%s), HL", _result );
 
 }
 
@@ -1419,21 +1034,13 @@ void gb_cls( Environment * _environment ) {
 
 void gb_scroll_text( Environment * _environment, int _direction ) {
 
-    // if ( _direction > 0 ) {
-    //     // deploy( vScrollTextDown, src_hw_gb_vscroll_text_down_asm );
-    //     if ( ! _environment->hasGameLoop ) {
-    //         outline0("CALL VSCROLLTDOWN");
-    //     } else {
-    //         outline0("CALL VSCROLLTDOWNNMI2");
-    //     }
-    // } else {
-    //     // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
-    //     if ( ! _environment->hasGameLoop ) {
-    //         outline0("CALL VSCROLLTUP");
-    //     } else {
-    //         outline0("CALL VSCROLLTUPNMI2");
-    //     }
-    // }
+    if ( _direction > 0 ) {
+        deploy( vScrollTextDown, src_hw_gb_vscroll_text_down_asm );
+        outline0("CALL VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+        outline0("CALL VSCROLLTUP");
+    }
 
 }
 
@@ -1469,8 +1076,8 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
 
 void gb_initialization( Environment * _environment ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm );
-    // deploy_preferred( tms9918startup, src_hw_gb_startup_asm );
+    // // deploy( GBvars, src_hw_gb_vars_asm );
+    // deploy_preferred( GBstartup, src_hw_gb_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
@@ -1529,7 +1136,7 @@ void gb_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_BGB, 0, 20, 18, 2, 8, 8, "Tilemap mode (BGB)" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_CGB, 0, 20, 18, 4, 8, 8, "Tilemap mode (CGB)" );
 
-    // outline0("CALL TMS9918STARTUP");
+    // outline0("CALL GBSTARTUP");
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
@@ -1678,7 +1285,7 @@ void gb_initialization( Environment * _environment ) {
     // _environment->currentRgbConverterFunction = rgbConverterFunction;
     // _environment->screenShades = 16;
 
-    // outline0("CALL TMS9918AFTERINIT");
+    // outline0("CALL GBAFTERINIT");
 
 }
 
@@ -1732,7 +1339,7 @@ void gb_back( Environment * _environment ) {
 
 void gb_cline( Environment * _environment, char * _characters ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
 
     // Variable * x = variable_retrieve( _environment, "XCURSYS" );
     // Variable * y = variable_retrieve( _environment, "YCURSYS" );
@@ -1824,7 +1431,7 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
 
 static Variable * gb_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // // ignored on bitmap mode
     // (void)!_transparent_color;
@@ -2000,7 +1607,7 @@ static Variable * gb_image_converter_tilemap_mode_standard( Environment * _envir
 
 Variable * gb_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // RGBi palette[MAX_PALETTE];
 
@@ -2365,8 +1972,8 @@ static void gb_load_image_address_to_register( Environment * _environment, char 
 
 void gb_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvars, src_hw_gb_vars_asm);
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
     // // deploy( blitimage, src_hw_gb_blit_image_asm );
 
     // if ( _source_count > 2 ) {
@@ -2466,7 +2073,7 @@ void gb_screen_on_off( Environment * _environment, int _on_off ) {
 
 Variable * gb_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // int size = gb_image_size( _environment, _width, _height, _mode );
 
@@ -2492,7 +2099,7 @@ Variable * gb_new_image( Environment * _environment, int _width, int _height, in
 
 Variable * gb_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
     // int frameSize = gb_image_size( _environment, _width, _height, _mode );
@@ -2526,7 +2133,7 @@ Variable * gb_new_images( Environment * _environment, int _frames, int _width, i
 
 Variable * gb_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     // int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
@@ -2561,8 +2168,8 @@ Variable * gb_new_sequence( Environment * _environment, int _sequences, int _fra
 
 void gb_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvars, src_hw_gb_vars_asm);
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
     // // deploy( getimage, src_hw_gb_get_image_asm );
 
     // MAKE_LABEL
@@ -2603,7 +2210,7 @@ void gb_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void gb_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
     // // deploy( tiles, src_hw_gb_tiles_asm );
 
     // outline1("LD A, (%s)", _tile );
@@ -2632,7 +2239,7 @@ void gb_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
     // Variable * x = variable_retrieve( _environment, _x );
     // Variable * y = variable_retrieve( _environment, _y );
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
     // // deploy( tiles, src_hw_gb_tiles_asm );
 
     // int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -2674,7 +2281,7 @@ void gb_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void gb_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
     // // deploy( tiles, src_hw_gb_tiles_asm );
 
     // outline1("LD A, (%s)", _tile );
@@ -2706,7 +2313,7 @@ void gb_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
 
 void gb_tile_at( Environment * _environment, char * _x, char * _y, char *_result ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
     // // deploy( tiles, src_hw_gb_tiles_asm );
 
     // outline1("LD A, (%s)", _x );
@@ -2727,7 +2334,7 @@ void gb_tile_at( Environment * _environment, char * _x, char * _y, char *_result
 
 void gb_use_tileset( Environment * _environment, char * _tileset ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
     // // deploy( tiles, src_hw_gb_tiles_asm );
 
     // outline1("LD A, (%s)", _tileset );
@@ -2807,8 +2414,8 @@ void gb_slice_image( Environment * _environment, char * _image, char * _frame, c
 
 void gb_slice_image_copy( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm);
     // // deploy( duff, src_hw_sm83_duff_asm );
     // // deploy( sliceimagecopy, src_hw_gb_slice_image_copy_asm );
 
@@ -2827,8 +2434,8 @@ void gb_slice_image_copy( Environment * _environment, char * _image,  char * _fr
 
 void gb_slice_image_extract( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm);
+    // // deploy( GBvars, src_hw_gb_vars_asm);
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm);
     // // deploy( duff, src_hw_sm83_duff_asm );
     // // deploy( sliceimageextract, src_hw_gb_slice_image_extract_asm );
 
@@ -2918,8 +2525,8 @@ void gb_calculate_sequence_frame_offset( Environment * _environment, char * _off
 
 void gb_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    // // deploy( tms9918vars, src_hw_gb_vars_asm);
-    // // deploy( tms9918varsGraphic, src_hw_gb_vars_graphic_asm );
+    // // deploy( GBvars, src_hw_gb_vars_asm);
+    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
 
     // MAKE_LABEL
 

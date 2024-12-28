@@ -1,9 +1,9 @@
 ; /*****************************************************************************
-;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers   *
 ;  *****************************************************************************
 ;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * Licensed under the Apache License, Version 2.0 (the "License
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * (la "Licenza è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,60 +29,25 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          JOYSTICK ROUTINE FOR GB                            *
+;*                         SCROLL TEXT ROUTINES FOR GB                         *
 ;*                                                                             *
-;*                             by Marco Spedaletti                             *
+;*                          by Marco Spedaletti                                *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-JOYSTICKREAD:
-    PUSH DE
-	LD A, $20
-    LD (rP1), A
-    LD A, (rP1)
-    LD A, (rP1)
-	AND	$0F
-	LD E, A
-	LD A, $10
-    LD (rP1), A
-    LD A, (rP1)
-    LD A, (rP1)
-    LD A, (rP1)
-    LD A, (rP1)
-    LD A, (rP1)
-    LD A, (rP1)
-	AND	$0F
-    SWAP A
-	OR E
-	CPL
-	LD E, A
-	LD A, $30
-    LD (rP1), A
-	LD	A, E
-    POP DE
-	RET
-
-JOYSTICKREAD0:
-
-@IF joystickConfig.sync
-    CALL JOYSTICKREAD
-@ELSE
-    LD A, (JOYSTICK0)
-@ENDIF
-
-    RET
-
-WAITFIRE:
-    CALL JOYSTICKREAD0
-    AND $F0
-    CP $00
-    JR Z, WAITFIRE
+VSCROLLTUP:
+    LD HL, _SCRN0 + 32
+    LD DE, _SCRN0
+    LD B, $02
+    LD C, $20
+VSCROLLTUPL1:
+    CALL WAITSTATE
+    LD A, (HL)
+    LD (DE), A
+    INC HL
+    INC DE
+    DEC BC
     LD A, B
-    CP $0
-    RET Z
-WAITFIREL1:
-    CALL JOYSTICKREAD0
-    AND $F0
-    CP $00
-    JR NZ, WAITFIREL1
+    OR C
+    JR NZ, VSCROLLTUPL1
     RET
