@@ -30,8 +30,9 @@
 ;  ****************************************************************************/
 
 FPSQRT32:
+	LD HL, (FPSCRAP+10)
+	LD (IXR), HL
 	LD HL, (FPSCRAP+10+2)
-	LD IX, (FPSCRAP+10)
 	CALL FPSQRTHLIX
 	PUSH HL
 	PUSH DE

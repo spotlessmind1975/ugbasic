@@ -3841,11 +3841,12 @@ void sm83_and_8bit( Environment * _environment, char * _left, char * _right, cha
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("AND (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", _result );
 
 }
 
@@ -3864,15 +3865,16 @@ void sm83_and_16bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("AND (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("AND (IX+1)" );
+    outline1("AND (%s)", address_displacement( _environment, _result, "1" ) );
     outline0("LD (DE), A" );
 
 }
@@ -3882,26 +3884,33 @@ void sm83_and_32bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("AND (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("AND (IX+1)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("AND (IX+2)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "2" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("AND (IX+3)" );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "3" ) );
 
 }
 
@@ -3929,11 +3938,10 @@ void sm83_or_8bit( Environment * _environment, char * _left, char * _right, char
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("OR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", _result );
 
 }
 
@@ -3953,16 +3961,15 @@ void sm83_or_16bit( Environment * _environment, char * _left, char * _right, cha
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("OR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("OR (IX+1)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
     outline0("INC DE" );
 
@@ -3973,26 +3980,25 @@ void sm83_or_32bit( Environment * _environment, char * _left, char * _right, cha
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("OR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("OR (IX+1)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("OR (IX+2)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "2" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("OR (IX+3)" );
-    outline0("LD (DE), A" );
+    outline0("OR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "3" ) );
 
 }
 
@@ -4001,11 +4007,10 @@ void sm83_xor_8bit( Environment * _environment, char * _left, char * _right, cha
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("XOR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", _result );
 
 }
 
@@ -4026,16 +4031,15 @@ void sm83_xor_16bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("XOR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX+1)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
     outline0("INC DE" );
 
@@ -4066,26 +4070,25 @@ void sm83_xor_32bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD IX, %s", _right );
-    outline1("LD DE, %s", _result );
+    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("XOR (IXR)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", _result );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX+1)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX+2)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "2" ) );
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (IX+3)" );
-    outline0("LD (DE), A" );
+    outline0("XOR (DE)" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "3" ) );
 
 }
 
@@ -5218,7 +5221,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("LD D, A");
         outline0("PUSH HL");
         outline1("LD HL, (%s)", _source);
-        outline0("LD IX, HL");
+        outline0("LD (IXR), HL");
         outline0("POP HL");
         outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
         outline0("LD C, A");
