@@ -283,25 +283,6 @@ void cpc_clear_key( Environment * _environment ) {
 
 }
 
-void cpc_irq_at( Environment * _environment, char * _label ) {
-
-    outline0("DI");
-    outline1("LD HL, %s", _label);
-    outline0("LD DE, IRQTIMERADDR");
-    outline0("INC DE");
-    outline0("LD A, L");
-    outline0("LD (DE), A");
-    outline0("INC DE");
-    outline0("LD A, H");
-    outline0("LD (DE), A");
-    outline0("EI");
-
-}
-
-void cpc_follow_irq( Environment * _environment ) {
-
-}
-
 void cpc_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;

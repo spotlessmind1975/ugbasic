@@ -234,19 +234,6 @@ void pc128op_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void pc128op_irq_at( Environment * _environment, char * _label ) {
-
-    outline1("LDX #%s", _label );
-    outline0("STX PC128IRQN" );
-    
-}
-
-void pc128op_follow_irq( Environment * _environment ) {
-
-    outline0("JMP [PC128IRQO]" );
-    
-}
-
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result ) {
 
     MAKE_LABEL

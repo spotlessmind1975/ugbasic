@@ -1324,36 +1324,6 @@ int pc1403_palette_extract( Environment * _environment, char * _data, int _width
 
 }
 
-void pc1403_irq_at( Environment * _environment, char * _label ) {
-
-    // outline0("DI" );
-    // outline1("LD DE, %s", _label );
-    // outline0("LD HL, IRQVECTOR" );
-    // outline0("LD A, $c3" );
-    // outline0("LD (HL), A" );
-    // outline0("INC HL" );
-    // outline0("LD A, E" );
-    // outline0("LD (HL), A" );
-    // outline0("INC HL" );
-    // outline0("LD A, D" );
-    // outline0("LD (HL), A" );
-    // outline0("LD A, 1" );
-    // outline0("LD (IRQVECTORREADY), A" );
-    // outline0("EI" );
-    
-}
-
-void pc1403_follow_irq( Environment * _environment ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline1("LD HL, (%s)", irq->realName );
-    // outline0("JP (HL)" );
-    
-    // outline0("RET" );
-
-}
-
 void pc1403_hscroll_line( Environment * _environment, int _direction ) {
 
     // deploy( textHScrollLine, src_hw_pc1403_hscroll_asm);

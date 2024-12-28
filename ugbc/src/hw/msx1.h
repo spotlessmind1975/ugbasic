@@ -201,8 +201,6 @@ void msx1_put_key(  Environment * _environment, char *_string, char * _size );
 void msx1_scanshift( Environment * _environment, char * _shifts );
 void msx1_keyshift( Environment * _environment, char * _shifts );
 void msx1_clear_key( Environment * _environment );
-void msx1_irq_at( Environment * _environment, char * _label );
-void msx1_follow_irq( Environment * _environment );
 void msx1_joy( Environment * _environment, int _port, char * _result );
 void msx1_joy_vars( Environment * _environment, char * _port, char * _result );
 

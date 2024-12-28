@@ -111,24 +111,6 @@ void coco3_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void coco3_irq_at( Environment * _environment, char * _label ) {
-
-    outline0("ORCC #$10" );
-    outline0("STX IRQSVC2+1" );
-    outline1("LDX #%s", _label );
-    outline0("STX IRQSVC2+1" );
-    outline0("LDA #$bd" );
-    outline0("STA IRQSVC2" );
-    outline0("ANDCC #$EF" );
-    
-}
-
-void coco3_follow_irq( Environment * _environment ) {
-
-    outline0("RTS" );
-    
-}
-
 void coco3_sys_call( Environment * _environment, int _destination ) {
 
     _environment->sysCallUsed = 1;

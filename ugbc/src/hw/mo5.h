@@ -182,8 +182,6 @@ void mo5_scanshift( Environment * _environment, char * _shifts );
 void mo5_keyshift( Environment * _environment, char * _shifts );
 void mo5_clear_key( Environment * _environment );
 void mo5_busy_wait( Environment * _environment, char * _timing );
-void mo5_irq_at( Environment * _environment, char * _label );
-void mo5_follow_irq( Environment * _environment );
 int convertbintok7(Environment * _environment);
 int convertbintok7_original(Environment * _environment);
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result );

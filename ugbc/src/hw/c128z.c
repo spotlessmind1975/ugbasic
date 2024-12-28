@@ -241,14 +241,6 @@ void c128z_clear_key( Environment * _environment ) {
 
 }
 
-void c128z_irq_at( Environment * _environment, char * _label ) {
-
-}
-
-void c128z_follow_irq( Environment * _environment ) {
-
-}
-
 void c128z_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
 }

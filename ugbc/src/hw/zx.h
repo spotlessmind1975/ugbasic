@@ -263,9 +263,6 @@ void zx_scroll( Environment * _environment, int _dx, int _dy );
 void zx_screen_rows( Environment * _environment, char * _rows );
 void zx_screen_columns( Environment * _environment, char * _columns );
 
-void zx_irq_at( Environment * _environment, char * _label );
-void zx_follow_irq( Environment * _environment );
-
 Variable * zx_get_raster_line( Environment * _environment );
 
 #define         JOY_COUNT           0

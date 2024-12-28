@@ -164,27 +164,6 @@ void gb_clear_key( Environment * _environment ) {
 
 }
 
-
-void gb_irq_at( Environment * _environment, char * _label ) {
-
-    outline0("DI" );
-    outline1("LD HL, %s", _label );
-    outline0("LD (IRQHANDLER+1), HL" );
-    outline0("EI" );
-    
-}
-
-void gb_follow_irq( Environment * _environment ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline1("LD HL, (%s)", irq->realName );
-    // outline0("JP (HL)" );
-    
-    // outline0("RET" );
-
-}
-
 void gb_sys_call( Environment * _environment, int _destination ) {
 
     // outline1("CALL $%4.4x", _destination );

@@ -154,32 +154,6 @@ void vg5000_clear_key( Environment * _environment ) {
 
 }
 
-
-void vg5000_irq_at( Environment * _environment, char * _label ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    outline0("DI" );
-    outline0("LD A, 0xc3" );
-    outline0("LD ($FD9F), A" );
-    outline1("LD HL, %s", _label );
-    outline0("LD ($FDA0), HL" );
-    outline0("EI" );
-    
-}
-
-void vg5000_follow_irq( Environment * _environment ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline1("LD HL, (%s)", irq->realName );
-    // outline0("JP (HL)" );
-    
-    outline0("EI" );
-    outline0("RET" );
-
-}
-
 void vg5000_sys_call( Environment * _environment, int _destination ) {
 
     outline1("CALL $%4.4x", _destination );

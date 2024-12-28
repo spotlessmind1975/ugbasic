@@ -175,19 +175,6 @@ void to8_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void to8_irq_at( Environment * _environment, char * _label ) {
-
-    outline1("LDX #%s", _label );
-    outline0("STX PC128IRQN" );
-    
-}
-
-void to8_follow_irq( Environment * _environment ) {
-
-    outline0("JMP [PC128IRQO]" );
-    
-}
-
 void to8_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
     MAKE_LABEL

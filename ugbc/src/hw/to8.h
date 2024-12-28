@@ -176,8 +176,6 @@ void to8_keyshift( Environment * _environment, char * _shifts );
 void to8_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void to8_clear_key( Environment * _environment );
 void to8_busy_wait( Environment * _environment, char * _timing );
-void to8_irq_at( Environment * _environment, char * _label );
-void to8_follow_irq( Environment * _environment );
 int convertbintok7(Environment * _environment);
 int to8_convertbintok7_original(Environment * _environment);
 void to8_joystick_semivars( Environment * _environment, char * _joystick, char * _result );

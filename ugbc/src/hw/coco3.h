@@ -48,8 +48,6 @@ void coco3_xpen( Environment * _environment, char * _destination );
 void coco3_ypen( Environment * _environment, char * _destination );
 
 void coco3_busy_wait( Environment * _environment, char * _timing );
-void coco3_irq_at( Environment * _environment, char * _label );
-void coco3_follow_irq( Environment * _environment );
 
 void coco3_sys_call( Environment * _environment, int _destination );
 

@@ -230,19 +230,6 @@ void mo5_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void mo5_irq_at( Environment * _environment, char * _label ) {
-
-    outline1("LDX #%s", _label );
-    outline0("STX MO5IRQN" );
-    
-}
-
-void mo5_follow_irq( Environment * _environment ) {
-
-    outline0("JMP [MO5IRQO]" );
-    
-}
-
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result ) {
 
     cpu_store_8bit( _environment, _result, 0 );

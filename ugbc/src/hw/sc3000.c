@@ -145,28 +145,6 @@ void sc3000_clear_key( Environment * _environment ) {
 
 }
 
-
-void sc3000_irq_at( Environment * _environment, char * _label ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    outline0("DI" );
-    cpu_set_callback( _environment, "IRQVECTOR", _label );
-    outline0("EI" );
-    
-}
-
-void sc3000_follow_irq( Environment * _environment ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline1("LD HL, (%s)", irq->realName );
-    // outline0("JP (HL)" );
-    
-    outline0("RET" );
-
-}
-
 void sc3000_sys_call( Environment * _environment, int _destination ) {
 
     outline1("CALL $%4.4x", _destination );

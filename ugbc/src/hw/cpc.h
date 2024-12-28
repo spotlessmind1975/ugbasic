@@ -171,8 +171,6 @@ void cpc_keyshift( Environment * _environment, char * _shifts );
 void cpc_clear_key( Environment * _environment );
 void cpc_put_key(  Environment * _environment, char *_string, char * _size );
 
-void cpc_irq_at( Environment * _environment, char * _label );
-void cpc_follow_irq( Environment * _environment );
 void cpc_joy( Environment * _environment, int _port, char * _value );
 void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 

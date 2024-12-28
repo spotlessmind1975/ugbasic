@@ -273,8 +273,6 @@ void gb_put_key(  Environment * _environment, char *_string, char * _size );
 void gb_scanshift( Environment * _environment, char * _shifts );
 void gb_keyshift( Environment * _environment, char * _shifts );
 void gb_clear_key( Environment * _environment );
-void gb_irq_at( Environment * _environment, char * _label );
-void gb_follow_irq( Environment * _environment );
 void gb_joy( Environment * _environment, int _port, char * _result );
 void gb_joy_vars( Environment * _environment, char * _port, char * _result );
 
