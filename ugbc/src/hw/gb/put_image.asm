@@ -65,9 +65,10 @@ TILESETSLOTALLOC:
 
     LD A, (TILESETSLOTLAST)
     INC A
+    LD (TILESETSLOTLAST), A
     CP 8
     JR NZ, TILESETSLOTALLOCDONE
-    LD A, 0
+    LD A, 1
     LD (TILESETSLOTLAST), A
 TILESETSLOTALLOCDONE:
 
@@ -161,11 +162,12 @@ TILESETSLOTFINDFREEL1:
 
     ; No free tiles left.
 
-    LD A, 255
-
     POP BC
     POP DE
     POP HL
+
+    SCF
+    CCF
 
     RET
 
@@ -200,9 +202,9 @@ TILESETSLOTFOUNDFREEL1:
 TILESETSLOTFOUNDFREEDONE:
 
     LD A, B
-
-    PUSH AF
     
+    PUSH AF
+
     PUSH HL
     LD HL, BITMASK
     LD D, 0
@@ -221,6 +223,8 @@ TILESETSLOTFOUNDFREEDONE:
     POP DE
     POP HL
 
+    SCF
+
     RET
 
 ; ------------------------------------------------------------------------------
@@ -236,14 +240,24 @@ TILESETSLOTRECALCFREESLOT:
     PUSH BC
 
     ; We are going to restore the actual slot with the previous one.
+    ; We must do it twice, since we already went forward by 1 slot.
 
     LD A, (TILESETSLOTLAST)
     DEC A
-    CP $FF
+    CP $0
     JR NZ, TILESETSLOTRECALCFREESLOTA1
     LD A, 7
 TILESETSLOTRECALCFREESLOTA1:
     LD (TILESETSLOTLAST), A
+
+    LD A, (TILESETSLOTLAST)
+    DEC A
+    CP $0
+    JR NZ, TILESETSLOTRECALCFREESLOTA2
+    LD A, 7
+TILESETSLOTRECALCFREESLOTA2:
+    LD (TILESETSLOTLAST), A
+
     CALL TILESETSLOTALLOC
 
     ; Now wwe retrieve the offset inside the
@@ -259,6 +273,10 @@ TILESETSLOTRECALCFREESLOTA1:
     LD D, 0
     LD HL, TILESETSLOTUSED
     ADD HL, DE
+@IF descriptors
+    LD DE, ( descriptorsCount / 8 ) + 1
+    ADD HL, DE
+@ENDIF
 
     ; Move to the next first slot: if LAST is reached,
     ; move to the first.
@@ -267,7 +285,7 @@ TILESETSLOTRECALCFREESLOTA1:
     INC A
     CP 8
     JR NZ, TILESETSLOTRECALCFREEDONE
-    LD A, 0
+    LD A, 1
 TILESETSLOTRECALCFREEDONE:
     LD (TILESETSLOTFIRST), A
 
@@ -285,6 +303,10 @@ TILESETSLOTRECALCFREEDONE:
     LD D, 0
     LD HL, TILESETSLOTUSED
     ADD HL, DE
+@IF descriptors
+    LD DE, ( descriptorsCount / 8 ) + 1
+    ADD HL, DE
+@ENDIF
     LD D, H
     LD E, L
     POP HL
@@ -292,7 +314,7 @@ TILESETSLOTRECALCFREEDONE:
     ; Mask the 32 bytes (256 used tiles) from
     ; the first to the actual slot.
 
-    LD B, 32
+    LD B, 32 - ( ( descriptorsCount / 8 ) + 1 )
 TILESETSLOTRECALCL2:
     LD A, (HL)
     XOR $FF
@@ -334,12 +356,12 @@ PUTIMAGE:
     ; If FLAGS / TIMESLOT == $ff, the TILEDIMAGE has never been rendered,
     ; so we need to allocate tiles to draw this image.
 
-    CMP $FF
-    JR Z, PUTIMAGEALLOC
+    ; CMP $FF
+    ; JR Z, PUTIMAGEALLOC
 
-    ; Tiles have been already set -- move to draw the image.
+    ; ; Tiles have been already set -- move to draw the image.
 
-    JP PUTIMAGEDRAW
+    ; JP PUTIMAGEDRAW
 
 PUTIMAGEALLOC:
 
@@ -368,8 +390,7 @@ PUTIMAGEALLOCL1:
 
     ; If no more tiles are free, we must free the oldest one.
 
-    CP 255
-    JR Z, PUTIMAGEALLOCFL1
+    JR NC, PUTIMAGEALLOCFL1
 
     JP PUTIMAGEALLOCOK
 
@@ -381,7 +402,7 @@ PUTIMAGEALLOCFL1:
 
     ; Repeat the allocation procedure
 
-    JP PUTIMAGEALLOC2
+    JP PUTIMAGEALLOCL1
 
 PUTIMAGEALLOCOK:
 

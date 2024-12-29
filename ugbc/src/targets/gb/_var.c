@@ -671,8 +671,8 @@ void variable_cleanup( Environment * _environment ) {
         for(j=0;j<8;++j) {
             int k;
             out0("   DB " );
-            for(k=0;k<30;++k) {
-                if ( (k*8) < _environment->descriptors->firstFree ) {
+            for(k=0;k<31;++k) {
+                if ( k < (( _environment->descriptors->firstFree / 8 ) + 1 ) ) {
                     out0("$FF,");
                 } else {
                     out0("$00,");
@@ -684,7 +684,7 @@ void variable_cleanup( Environment * _environment ) {
         out0("   DB " );
         for(j=0;j<255;++j) {
             int k;
-            if ( j < _environment->descriptors->firstFree ) {
+            if ( j < (( _environment->descriptors->firstFree / 8 ) + 1 ) ) {
                 out0("$07,");
             } else {
                 out0("$00,");

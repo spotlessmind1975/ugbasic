@@ -36,6 +36,8 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 WAITVBL:
-    LD C, (rLY)
+    CALL WAITSTATE
+    LD A, (rLY)
     CP 144
     JP C, WAITVBL
+    RET

@@ -1096,9 +1096,9 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
 
-    variable_import( _environment, "TILESETSLOTFIRST", VT_BYTE, 0 );
+    variable_import( _environment, "TILESETSLOTFIRST", VT_BYTE, 1 );
     variable_global( _environment, "TILESETSLOTFIRST" );
-    variable_import( _environment, "TILESETSLOTLAST", VT_BYTE, 0 );
+    variable_import( _environment, "TILESETSLOTLAST", VT_BYTE, 1 );
     variable_global( _environment, "TILESETSLOTLAST" );
 
     variable_import( _environment, "PUTIMAGECOUNT", VT_BYTE, 0 );
@@ -1559,6 +1559,8 @@ static Variable * gb_image_converter_tilemap_mode_standard( Environment * _envir
     }
 
     Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+
+    result->locked = 1;
 
     // timeslot: 1 byte
     // width: 1 byte
