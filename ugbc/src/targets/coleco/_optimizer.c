@@ -404,7 +404,10 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
         !po_buf_match( buf[1], " CALL *", v2 ) &&
         po_buf_match( buf[1], " LD A, *", v3 ) &&
         po_buf_strcmp( v1, v3 ) == 0 &&
-        strstr( v1->str, "$FF" ) == NULL
+        strstr( v1->str, "$FF" ) == NULL 
+#if defined(__gb__)        
+        && strstr( v1->str, "rP1" ) == NULL
+#endif
     ) {
 		optim( buf[0], RULE "(LD A, *; LD A, *)->(LD, A)", NULL );
     }
