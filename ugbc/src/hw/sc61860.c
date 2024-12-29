@@ -2020,7 +2020,17 @@ void sc61860_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
         if ( _signed ) {
 
-            CRITICAL_UNIMPLEMENTED( "sc61860_math_mul_8bit_to_16bit(signed)" );
+            op_ldi( _environment, _source );
+
+            op_lda( _environment, _destination );
+
+            op_call( _environment, "CPUMUL8B8T16S");
+            
+            op_sta( _environment, _other );
+
+            op_xab( _environment );
+
+            op_sta( _environment, address_displacement( _environment, _other, "1" ) );
 
         } else {
 
