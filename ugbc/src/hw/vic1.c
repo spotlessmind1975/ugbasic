@@ -1613,6 +1613,7 @@ static Variable * vic1_image_converter_tilemap_mode_standard( Environment * _env
     }
 
     Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+    result->locked = 1;
 
     // timeslot: 1 byte
     // width: 1 byte

@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF descriptors
+
+@EMIT descriptors.firstFree AS descriptorsCount
+
+@ENDIF
+
 VIC20STARTUP:
 
     LDA $EDE4

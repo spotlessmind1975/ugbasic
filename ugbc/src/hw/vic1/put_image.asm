@@ -35,8 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TILESETSLOTFIRST: .byte 0
-TILESETSLOTLAST: .byte 0
+TILESETSLOTFIRST: .byte 1
+TILESETSLOTLAST: .byte 1
 
 ; ------------------------------------------------------------------------------
 ; Allocate a new slot of used tiles.
@@ -68,7 +68,7 @@ TILESETSLOTALLOC:
     LDA TILESETSLOTLAST
     CMP #8
     BNE TILESETSLOTALLOCDONE
-    LDA #0
+    LDA #1
     STA TILESETSLOTLAST
 TILESETSLOTALLOCDONE:
 
@@ -160,10 +160,10 @@ TILESETSLOTFINDFREEL1:
 
     ; No free tiles left.
 
-    LDX #255
-
     PLA
     TAY
+
+    CLC
 
     RTS
 
@@ -221,6 +221,8 @@ TILESETSLOTFOUNDFREEDONE:
     PLA
     TAY
 
+    SEC
+
     RTS
 
 ; ------------------------------------------------------------------------------
@@ -237,13 +239,22 @@ TILESETSLOTRECALCFREESLOT:
     PHA
 
     ; We are going to restore the actual slot with the previous one.
+    ; We have to do it twice, since we already went forward by one.
 
     DEC TILESETSLOTLAST
     LDA TILESETSLOTLAST
-    CMP #$FF
+    CMP #$0
     BNE TILESETSLOTRECALCFREESLOTA1
     LDA #7
 TILESETSLOTRECALCFREESLOTA1:
+    STA TILESETSLOTLAST
+
+    DEC TILESETSLOTLAST
+    LDA TILESETSLOTLAST
+    CMP #$0
+    BNE TILESETSLOTRECALCFREESLOTA2
+    LDA #7
+TILESETSLOTRECALCFREESLOTA2:
     STA TILESETSLOTLAST
     JSR TILESETSLOTALLOC
 
@@ -265,7 +276,7 @@ TILESETSLOTRECALCFREESLOTA1:
     LDA TILESETSLOTFIRST
     CMP #8
     BNE TILESETSLOTRECALCFREEDONE
-    LDA #0
+    LDA #1
 TILESETSLOTRECALCFREEDONE:
     STA TILESETSLOTFIRST
 
@@ -289,10 +300,35 @@ TILESETSLOTRECALCFREEDONE:
     LDA #>TILESETSLOTUSED
     STA TMPPTR2+1
 
+@IF descriptors
+
+    CLC
+    LDA TMPPTR2
+    ADC #( ( descriptorsCount / 8 ) + 1 )
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    ADC #0
+    STA TMPPTR2+1
+
+    PHA
+    TXA
+    CLC
+    ADC #( ( descriptorsCount / 8 ) + 1 )
+    TAX
+
+    TYA
+    CLC
+    ADC #( ( descriptorsCount / 8 ) + 1 )
+    TAY
+
+    PLA
+
+@ENDIF
+
     ; Mask the 32 bytes (256 used tiles) from
     ; the first to the actual slot.
 
-    LDA #32
+    LDA #( 32 - ( ( descriptorsCount / 8 ) + 1 ) )
     STA MATHPTR0
 TILESETSLOTRECALCL2:
     LDA TILESETSLOTUSED,X
@@ -344,12 +380,12 @@ PUTIMAGEGO:
     ; If FLAGS / TIMESLOT == $ff, the TILEDIMAGE has never been rendered,
     ; so we need to allocate tiles to draw this image.
 
-    CMP #$FF
-    BEQ PUTIMAGEALLOC
+    ; CMP #$FF
+    ; BEQ PUTIMAGEALLOC
 
-    ; Tiles have been already set -- move to draw the image.
+    ; ; Tiles have been already set -- move to draw the image.
 
-    JMP PUTIMAGEDRAW
+    ; JMP PUTIMAGEDRAW
 
 PUTIMAGEALLOC:
 
@@ -376,8 +412,7 @@ PUTIMAGEALLOCL1:
 
     ; If no more tiles are free, we must free the oldest one.
 
-    CPX #255
-    BEQ PUTIMAGEALLOCFL1
+    BCC PUTIMAGEALLOCFL1
 
     JMP PUTIMAGEALLOCOK
 
@@ -389,7 +424,7 @@ PUTIMAGEALLOCFL1:
 
     ; Repeat the allocation procedure
 
-    JMP PUTIMAGEALLOC2
+    JMP PUTIMAGEALLOCL1
 
 PUTIMAGEALLOCOK:
 
@@ -498,6 +533,7 @@ PUTIMAGEALLOCOKL1ADDR:
     ; address, and then we add the current SIZE * 8 and,
     ; finally, the size of the header.
 
+PUTIMAGEALLOCOKL2ADDRTMP:    
     LDA PUTIMAGEINDEX
     SEC
     SBC #3
@@ -520,14 +556,22 @@ PUTIMAGEALLOCOKL1ADDR:
 
     LDY #2
     LDA (TMPPTR), Y
-    ASL
-    ASL
-    ASL
+    STA MATHPTR2
+    LDA #0
+    STA MATHPTR3
+
+    ASL MATHPTR2
+    ROL MATHPTR3
+    ASL MATHPTR2
+    ROL MATHPTR3
+    ASL MATHPTR2
+    ROL MATHPTR3
 
     CLC
+    LDA MATHPTR2
     ADC TMPPTR2
     STA TMPPTR2
-    LDA #0
+    LDA MATHPTR3
     ADC TMPPTR2+1
     STA TMPPTR2+1
 
@@ -661,6 +705,9 @@ PUTIMAGEDRAWL1B:
     LDA TMPPTR+1
     ADC #0
     STA TMPPTR2+1
+
+    LDA #0
+    STA PUTIMAGEX
 
 PUTIMAGEDRAWL2:
 

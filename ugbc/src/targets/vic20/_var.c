@@ -546,7 +546,7 @@ void variable_cleanup( Environment * _environment ) {
         for(j=0;j<8;++j) {
             int k;
             out0("   .byte " );
-            for(k=0;k<30;++k) {
+            for(k=0;k<31;++k) {
                 if ( (k*8) < _environment->descriptors->firstFree ) {
                     out0("$FF,");
                 } else {
