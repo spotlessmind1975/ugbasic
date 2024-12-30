@@ -50,8 +50,8 @@ void randomize( Environment * _environment, char * _other_seed ) {
     Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
 
     if ( _other_seed ) {
-        Variable * external_seed = variable_retrieve( _environment, _other_seed );
-        variable_move( _environment, external_seed->name, seed->name );
+        Variable * external_seed = variable_retrieve_or_define( _environment, _other_seed, VT_DWORD, 0xff11ff00 );
+        variable_move( _environment, variable_xor( _environment, external_seed->name, seed->name )->name, seed->name );
     } else {
         variable_store( _environment, seed->name, 0xf0f0f0f0 );
     }
