@@ -4393,6 +4393,10 @@ exponential_less:
         $$ = variable_temporary( _environment, VT_BYTE, "(note)" )->name;
         variable_store( _environment, $$, $2 );
     }
+    | filesize OP const_expr_string CP {
+        $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
+        variable_store( _environment, $$, file_size( _environment, $3 ) );
+    }
     | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
         $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(if)" )->name;
         if ( $3 ) {
