@@ -841,13 +841,13 @@ immagini per individuare il colore da utilizzare.
 
 @english
 To get the (static) size of a buffer you can use the ''SIZE'' command. This command 
-will restore, in bytes, the size of the given buffer. It is possible to apply this 
+will return, in bytes, the size of the given buffer. It is possible to apply this 
 command to any type of static data, such as ''BUFFER'', ''IMAGE'', ''IMAGES'' and 
 constant strings.
 
 @italian
 Per ottenere la dimensione (statica) di un buffer è possibile utilizzare il comando ''SIZE''. 
-Tale comando ripristinare, in bytes, la dimensione del buffer dato. E' possibile applicare 
+Tale comando restituisce, in bytes, la dimensione del buffer dato. E' possibile applicare 
 questo comando a qualsiasi tipo di dato statico, quali ''BUFFER'', ''IMAGE'', ''IMAGES'' e
 stringe costanti.
 
