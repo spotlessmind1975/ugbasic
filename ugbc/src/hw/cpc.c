@@ -426,6 +426,7 @@ void cpc_border_color( Environment * _environment, char * _border_color ) {
     outline0("LD BC,$7F10");
     outline0("OUT (C), C");
     outline1("LD A, (%s)", _border_color);
+    outline0("AND $0f");
     outline0("OR A, 0x40");
     outline0("OUT (C), A");
 
