@@ -160,18 +160,18 @@ VSCROLLTUPYSCR2
     JMP VSCROLLTE
 
 VSCROLLTDOWN
+    LDX TEXTADDRESS
     LDA CURRENTTILESWIDTH
-    LDB CURRENTTILESHEIGHT
+    LDB CONSOLEY2
     MUL
     LSLB
     ROLA
-    TFR D, U
-
-    LDX TEXTADDRESS
-    LDY TEXTADDRESS
-    LEAY D, Y
     LEAX D, X
+    LDB CONSOLEX1
+    LSLB
+    LEAX B, X
 
+    TFR X, Y
     LDA #0
     LDB CURRENTTILESWIDTH
     LSLB
@@ -180,8 +180,6 @@ VSCROLLTDOWN
     NEGB
     SBCA #0
     LEAY D, Y
-    ADDD #2
-    LEAU D, U
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -189,18 +187,34 @@ VSCROLLTDOWN
 
     JSR GIMEBANKVIDEO
 
+    LDB CONSOLEH
+VSCROLLTDOWNSCR1L2
+    PSHS D
+    LDB CONSOLEW
+    LSLB
+    DECB
 VSCROLLTDOWNSCR1
-    LDD ,Y
-    STD ,X
-    LEAX -2, X
-    LEAY -2, Y
-    LEAU -2, U
-    CMPU #0
+    LDA B, Y
+    STA B, X
+    DECB
+    CMPB #$FF
     BNE VSCROLLTDOWNSCR1
 
     LDA #0
     LDB CURRENTTILESWIDTH
-    TFR D, U
+
+    LSLB
+    ROLA
+    NEGA
+    NEGB
+    SBCA #0
+    LEAX D, X
+    LEAY D, Y
+
+    PULS D
+
+    DECB
+    BNE VSCROLLTDOWNSCR1L2
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -217,11 +231,18 @@ VSCROLLTDOWNSCR1
 
     JSR GIMEBANKVIDEO
     
+    TFR D, U
+
+    LDB CONSOLEW
+    LSLB
+    DECB
+    DECB
+
 VSCROLLTDOWNSCR2
-    STD , Y
-    LEAY 2, Y
-    LEAU -1, U
-    CMPU #0
+    STU B, X
+    DECB
+    DECB
+    CMPB #$FE
     BNE VSCROLLTDOWNSCR2
 
     JMP VSCROLLTE
