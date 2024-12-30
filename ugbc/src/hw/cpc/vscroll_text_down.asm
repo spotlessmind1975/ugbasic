@@ -37,13 +37,31 @@
 
 VSCROLLTDOWN:
 
-    LD BC, 199
+    LD A, (CONSOLEHB)
+    SUB 1
+    LD C, A
+    LD B, 0
     LD HL, PLOTVBASE
-
     ADD HL, BC
     ADD HL, BC
 
-    LD BC, 191
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
+
+    LD A, (CONSOLEHB)
+    SUB 8
+    LD C, A
+    LD B, 0
 
 VSCROLLTDOWNL1:
 
@@ -57,7 +75,17 @@ VSCROLLTDOWNL1:
     LD D, A
     INC HL
 
-    LD BC, 16
+    PUSH HL    
+    LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+    POP HL
+
+    AND 0
+    LD BC, 18
     SBC HL, BC
 
     LD A, (HL)
@@ -67,7 +95,16 @@ VSCROLLTDOWNL1:
     LD B, A
     LD HL, BC
 
-    LD BC, $50
+    PUSH DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    POP DE
+
+    LD A, (CONSOLEW)
+    LD C, A
+    LD B, 0
     LDIR
 
     POP HL
@@ -79,7 +116,24 @@ VSCROLLTDOWNL1:
     JP NZ, VSCROLLTDOWNL1
 
     LD HL, PLOTVBASE
-    LD BC, 7
+
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
+
+    DEC HL
+    DEC HL
+
+    LD BC, 8
 
 VSCROLLTDOWNL2:
 
@@ -94,8 +148,18 @@ VSCROLLTDOWNL2:
     INC HL
 
     LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
 
-    LD BC, $50
+    LD HL, DE
+
+    LD A, (CONSOLEW)
+    LD C, A
+    LD B, 0
+
     LD A, 0
 VSCROLLTDOWNL2L:
     LD (HL), A
