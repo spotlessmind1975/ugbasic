@@ -5485,7 +5485,7 @@ target corrispondente, il valore sarà zero.
 @syntax = PERIOD
 
 @example IF KEY STATE(KEY PERIOD) THEN
-@example    PRINT "HOME has been pressed!"
+@example    PRINT "PERIOD has been pressed!"
 @example ENDIF
 
 </usermanual> */
