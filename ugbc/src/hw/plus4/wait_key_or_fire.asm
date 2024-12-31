@@ -29,67 +29,16 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          JOYSTICK DETECTION ON CIA                          *
+;*                            WAIT KEY OR FIRE ON PLUS/4                       *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF joystickConfig.values
-
-    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-    ;- (TUNED) SIMON'S BASIC COMPATIBLE LAYER
-    ;-
-    ;- Change the reading values based on its convention.
-    ;-
-    ;- To enable: DEFINE JOYSTICK VALUES TSB
-    ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-    ; This is the four bit map used to "map" each read value with the TSB.
-    JOYSTICKTSBREMAP:
-        .BYTE   $0, $1, $5, $0
-        .BYTE   $7, $8, $6, $0
-        .BYTE   $3, $2, $4, $0
-        .BYTE   $0, $0, $0, $0
-
-    JOYSTICKTSB:
-        PHA
-        AND #$0F
-        TAY
-        LDA JOYSTICKTSBREMAP, Y
-        TAX
-        PLA
-        AND #$10
-        BEQ JOYSTICKNOFIRE0
-        TXA
-        ORA #$80
-        TAX
-    JOYSTICKNOFIRE0:
-        TXA
-        RTS
-
-@ENDIF
-
-; Read the position and button for first joystick (JOY(0))
-; (using the ugBASIC convention)
-JOYSTICKREAD0:
-    LDA #$7F
-    STA $DC00
-    LDA $DC01
-    AND #$1F
-    EOR #$1F
-    RTS
-
-; Read the position and button for second joystick (JOY(1))
-JOYSTICKREAD1:
-    LDA #$E0
-    LDY #$FF
-    STA $DC02
-    LDA $DC00
-    STY $DC02
-    AND #$1F
-    EOR #$1F
-    RTS
+; ----------------------------------------------------------------------------
+; WAITKEYFIRE
+; ----------------------------------------------------------------------------
+; This routine will wait for a key press OR a fire press. 
 
 @IF joystickConfig.sync
 
@@ -103,35 +52,60 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK SYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    ; Wait for any fire is pressed on JOY(0)
-
-    WAITFIRE0:
+    WAITKEYFIREA0:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIREA0X
+    WAITKEYFIREA1:        
         JSR JOYSTICKREAD0
-        AND #$10
-        BEQ WAITFIRE0
+        AND #$40
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        LDA MATHPTR0
+        BEQ WAITKEYFIREA1
         RTS
 
-    WAITFIREA:
+    WAITKEYFIREA:
         CMP #0
-        BEQ WAITFIRE0
+        BEQ WAITKEYFIREA0
 
-    ; Wait for any fire is pressed on JOY(1)
-
-    WAITFIRE1:
+    WAITKEYFIREB0:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIREB0X
+    WAITKEYFIREB1:
         JSR JOYSTICKREAD1
-        AND #$10
-        BEQ WAITFIRE1
-        RTS
-
-    ; Wait for any fire is pressed, for any joystick.
-    WAITFIRE:
-        JSR JOYSTICKREAD0
         AND #$10
         STA MATHPTR0
-        JSR JOYSTICKREAD1
-        AND #$10
+        LDA KEYBOARDASFSTATE
         ORA MATHPTR0
-        BEQ WAITFIRE
+        LDA MATHPTR0
+        BEQ WAITKEYFIREB1
+        RTS
+
+    WAITKEYFIRE:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIRE1
+    WAITKEYFIRE0:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIRE0
+    WAITKEYFIRE1:        
+        JSR JOYSTICKREAD0
+        AND #$40
+        STA MATHPTR0
+        JSR JOYSTICKREAD1
+        AND #$40
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        LDA MATHPTR0
+        BEQ WAITKEYFIRE1
         RTS
 
 @ELSE
@@ -145,90 +119,59 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK ASYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-; Dedicated storage space for JOY(0) and JOY(1)
-
-JOYSTICK0:      .BYTE   $0
-JOYSTICK1:      .BYTE   $0
-
-    ; IRQ service for joystick
-
-    JOYSTICKMANAGER:
-
-        ; Save registers on stack, just in case.
-
-        PHP
-        PHA
-        TXA
-        PHA
-        TYA
-        PHA
-
-        ; Read JOY(0)
-
-        JSR JOYSTICKREAD0
-
-        ; Store the value into the dedicated storage.
-
-        STA JOYSTICK0
-
-        ; Read JOY(1)
-
-        JSR JOYSTICKREAD1
-
-        ; Store value into the dedicated storage.
-        
-        STA JOYSTICK1
-
-        ; Restore registers on stack, just in case.
-
-        PLA
-        TAY
-        PLA
-        TAX
-        PLA
-        PLP
-
-        RTS
-
-    ; Wait for any fire is pressed on JOY(0)
-
-    WAITFIRE0:
+    WAITKEYFIREA0:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIREA1
+    WAITKEYFIREA0X:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIREA0X
+    WAITKEYFIREA1:
         LDA JOYSTICK0
-        AND #$10
-        BEQ WAITFIRE0
-        RTS
-
-    WAITFIREA:
-        CMP #0
-        BEQ WAITFIRE0
-
-    ; Wait for any fire is pressed on JOY(1)
-
-    WAITFIRE1:
-        LDA JOYSTICK1
-        AND #$10
-        BEQ WAITFIRE1
-        RTS
-
-    ; Wait for any fire is pressed, for any joystick.
-    
-    WAITFIRE:
-
-        ; Read dedicated storage for JOY(0)
-
-        LDA JOYSTICK0
-        AND #$10
-        STA MATHPTR0
-
-        ; Read dedicated storage for JOY(1)
-
-        LDA JOYSTICK1
-        AND #$10
+        AND #$40
         ORA MATHPTR0
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        BEQ WAITKEYFIREA1
+        RTS
 
-        ; If both are zero, recheck again.
-        BEQ WAITFIRE
+    WAITKEYFIREA:
+        CMP #0
+        BEQ WAITKEYFIREA0
 
+    WAITKEYFIREB0:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIREB1
+    WAITKEYFIREB0X:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIREB0X
+    WAITKEYFIREB1:
+        LDA JOYSTICK1
+        AND #$40
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        BEQ WAITKEYFIREA1
+        RTS
+
+    WAITKEYFIRE:
+        LDA KEYBOARDASFSTATE
+        BEQ WAITKEYFIRE1
+    WAITKEYFIRE0:
+        LDA KEYBOARDASFSTATE
+        BNE WAITKEYFIRE0
+    WAITKEYFIRE1:
+        LDA JOYSTICK0
+        AND #$40
+        STA MATHPTR0
+        LDA JOYSTICK1
+        AND #$40
+        ORA MATHPTR0
+        STA MATHPTR0
+        LDA KEYBOARDASFSTATE
+        ORA MATHPTR0
+        BEQ WAITKEYFIRE1
         RTS
 
 @ENDIF

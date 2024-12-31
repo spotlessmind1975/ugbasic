@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          JOYSTICK DETECTION ON CIA                          *
+;*                          JOYSTICK DETECTION ON PLUS/4                       *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -73,22 +73,31 @@
 ; Read the position and button for first joystick (JOY(0))
 ; (using the ugBASIC convention)
 JOYSTICKREAD0:
-    LDA #$7F
-    STA $DC00
-    LDA $DC01
-    AND #$1F
-    EOR #$1F
+    LDA #$02
+    STA $FF08
+    LDA $FF08
+    EOR #$FF
+    AND #$4F
     RTS
 
 ; Read the position and button for second joystick (JOY(1))
+; (using the ugBASIC convention)
 JOYSTICKREAD1:
-    LDA #$E0
-    LDY #$FF
-    STA $DC02
-    LDA $DC00
-    STY $DC02
-    AND #$1F
-    EOR #$1F
+
+    LDA #$04
+    STA $FF08
+    LDA $FF08
+    EOR #$FF
+    PHA
+    LSL
+    BCC JOYSTICKREAD1B
+    PLA
+    ORA #$40
+    JMP JOYSTICKREAD1C
+JOYSTICKREAD1B:
+    PLA
+JOYSTICKREAD1C:
+    AND #$4F
     RTS
 
 @IF joystickConfig.sync
@@ -107,7 +116,7 @@ JOYSTICKREAD1:
 
     WAITFIRE0:
         JSR JOYSTICKREAD0
-        AND #$10
+        AND #$40
         BEQ WAITFIRE0
         RTS
 
@@ -119,17 +128,17 @@ JOYSTICKREAD1:
 
     WAITFIRE1:
         JSR JOYSTICKREAD1
-        AND #$10
+        AND #$40
         BEQ WAITFIRE1
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
     WAITFIRE:
         JSR JOYSTICKREAD0
-        AND #$10
+        AND #$40
         STA MATHPTR0
         JSR JOYSTICKREAD1
-        AND #$10
+        AND #$40
         ORA MATHPTR0
         BEQ WAITFIRE
         RTS
@@ -194,7 +203,7 @@ JOYSTICK1:      .BYTE   $0
 
     WAITFIRE0:
         LDA JOYSTICK0
-        AND #$10
+        AND #$40
         BEQ WAITFIRE0
         RTS
 
@@ -206,7 +215,7 @@ JOYSTICK1:      .BYTE   $0
 
     WAITFIRE1:
         LDA JOYSTICK1
-        AND #$10
+        AND #$40
         BEQ WAITFIRE1
         RTS
 
@@ -217,13 +226,13 @@ JOYSTICK1:      .BYTE   $0
         ; Read dedicated storage for JOY(0)
 
         LDA JOYSTICK0
-        AND #$10
+        AND #$40
         STA MATHPTR0
 
         ; Read dedicated storage for JOY(1)
 
         LDA JOYSTICK1
-        AND #$10
+        AND #$40
         ORA MATHPTR0
 
         ; If both are zero, recheck again.

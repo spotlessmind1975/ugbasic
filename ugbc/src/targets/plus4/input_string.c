@@ -42,6 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * input_string( Environment * _environment, char * _size ) {
 
+
     MAKE_LABEL
     
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
@@ -61,9 +62,8 @@ Variable * input_string( Environment * _environment, char * _size ) {
 
     cpu_label( _environment, repeatLabel );
 
-    plus4_inkey( _environment, pressed->realName, key->realName );
+    plus4_inkey( _environment, key->realName );
 
-    cpu_bveq( _environment, pressed->realName, repeatLabel );
     cpu_bveq( _environment, key->realName, repeatLabel );
 
     cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );

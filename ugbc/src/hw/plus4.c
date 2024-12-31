@@ -50,169 +50,212 @@ void plus4_ypen( Environment * _environment, char * _destination ) {
    
 }
 
-void plus4_inkey( Environment * _environment, char * _pressed, char * _key ) {
+void plus4_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
-    MAKE_LABEL
+    _environment->bitmaskNeeded = 1;
 
-    // Keyboard buffer lies between 1319-1328 memory area ($0527-$0530), and the index 
-    // assigned for its length is 239 ($EF), but you can change the overall length of the buffer 
-    // changing the value 10 ($0A) in 1343 ($053F).
-    
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _key );
+    deploy( joystick, src_hw_plus4_joystick_asm );
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_plus4_wait_key_or_fire_asm );
 
-    outline0("LDX $ef");
-    outline0("CPX #$0");
-    outline1("BEQ %snokey", label );
-
-    outline0("LDA $0527" );
-    outline0("CMP #$FF");
-    outline1("BEQ %snopetscii", label );
-    outline1("STA %s", _key );
-    outline0("LDA #$FF");
-    outline1("STA %s", _pressed );
-
-    outline0("LDX #0");
-    outhead1("%sclkeys:", label);
-    outline0("LDA $0528,X" );
-    outline0("LDA $0527,X" );
-    outline0("INX");
-    outline0("CPX $ef");
-    outline1("BNE %sclkeys", label);
-    outline0("DEC $ef");
-
-    outline1("JMP %snokey", label );
-
-    outhead1("%snopetscii:", label );
-    outline0("LDA #0");
-    outline1("STA %s", _key );
-    outhead1("%snokey:", label );
+    if ( _port == -1 ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDA #$%2.2x", _port );
+        outline0("JSR WAITKEYFIREA");
+    }
    
 }
 
-void plus4_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void plus4_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_plus4_joystick_asm );
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_plus4_wait_key_or_fire_asm );
+
+    if ( !_port ) {
+        outline0("JSR WAITKEYFIRE");
+    } else {
+        outline1("LDA %s", _port );
+        outline0("JSR WAITKEYFIREA");
+    }
+   
+}
+
+void plus4_wait_fire( Environment * _environment, int _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_plus4_joystick_asm );
+
+    switch( _port ) {
+        case -1:
+            outline0("JSR WAITFIRE");
+            break;
+        case 0:
+            outline0("JSR WAITFIRE0");
+            break;
+        case 1:
+            outline0("JSR WAITFIRE1");
+            break;
+    }
+   
+}
+
+void plus4_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_plus4_joystick_asm );
+
+    if ( ! _port ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDA %s", _port );
+        outline0("JSR WAITFIREA");
+    }
+   
+}
+
+void plus4_inkey( Environment * _environment, char * _key ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_plus4_keyboard_asm);
+
+    outline0("JSR INKEY");
+    outline1("STA %s", _key);
+
+}
+
+void plus4_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
+
+    if ( _release ) {
+        outline0("JSR WAITKEYRELEASE");
+    } else {
+        outline0("JSR WAITKEY");
+    }
+   
+}
+
+void plus4_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    // The KERNAL ROM contains four tables used by the system to convert keyboard codes into PETSCII character codes:
-    // Each table contains 65 bytes; one PETSCII code for each of the 64 keys assigned a keyboard code, plus a 
-    // 255/$FF which will be returned for the keyboard code of 64/$40 (indicating no key pressed).
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
 
-    // 60289–60353/$EB81–$EBC1: PETSCII codes for keys pressed without simultaneously using Shift, Commodore or Ctrl keys. 
-    // In this table, the entries for those three keys are 1, 2 and 4; values which get "sorted out" by the keyboard scan 
-    // routines in ROM and thus never "show up" in the adresses 203 and 197.
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
-    // 60354–60418/$EBC2–$EC02: PETSCII codes for keys pressed simultaneously with a Shift or the Shift Lock keys.
-    // 60419–60483/$EC03–$EC43: PETSCII codes for keys pressed simultaneously with the Commodore logo key.
-    // 60536–60600/$EC78–$ECB8: PETSCII codes for keys pressed simultaneously with the Ctrl key. 
-    // This table has several bytes with 255/$FF, indicating no character; if you press Ctrl along with e.g. Inst/Del, 
-    // the 64 behaves as if nothing was typed at all.
+}
 
-    outline0("LDA #$0");
-    outline1("STA %s", _pressed );
-    outline0("LDA #$0");
-    outline1("STA %s", _scancode );
+void plus4_scancode( Environment * _environment, char * _result ) {
 
-    outline0("LDX $ef");
-    outline0("CPX #$0");
-    outline1("BEQ %snokey", label );
+    _environment->bitmaskNeeded = 1;
 
-    outline0("LDY $0527");
-    outline0("CPY #0");
-    outline1("BEQ %snokey", label );
+    deploy( keyboard, src_hw_plus4_keyboard_asm);
 
-    outline0("DEC $ef");
+    outline0("JSR SCANCODE");
+    outline1("STA %s", _result );
+   
+}
 
-    outline1("STY %s", _scancode );
-    outline0("LDA #$ff");
-    outline1("STA %s", _pressed );
+void plus4_asciicode( Environment * _environment, char * _result ) {
 
-    outhead1("%snokey:", label );
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_plus4_keyboard_asm);
+
+    outline0("JSR ASCIICODE");
+    outline1("STA %s", _result );
    
 }
 
 void plus4_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
     MAKE_LABEL
 
-    char nokeyLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( nokeyLabel, "%slabel", label );
-    
-    Variable * temp = variable_temporary( _environment, VT_BYTE, "(pressed)" );
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
 
-    plus4_scancode( _environment, temp->realName, _result );
-    cpu_compare_8bit( _environment, _result, _scancode,  temp->realName, 1 );
-    cpu_compare_and_branch_8bit_const( _environment, temp->realName, 0, nokeyLabel, 1 );
-    cpu_store_8bit( _environment, _result, 0xff );
-    cpu_jump( _environment, label );
-    cpu_label( _environment, nokeyLabel );
-    cpu_store_8bit( _environment, _result, 0x00 );
-    cpu_label( _environment, label );
+    outline1("LDX %s", _scancode);
+    outline0("JSR KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("STA %s", _result);
 
 }
 
 void plus4_scanshift( Environment * _environment, char * _shifts ) {
 
-    // 653	
-    // Shift key indicator. Bits:
-    // Bit #0: 1 = One or more of left Shift, right Shift or Shift Lock is currently being pressed or locked.
-    // Bit #1: 1 = Commodore is currently being pressed.
-    // Bit #2: 1 = Control is currently being pressed.
-    // NO SHIFT (0) - if no SHIFT key pressed;
-    // LEFT SHIFT (1) - if the left SHIFT pressed;
-    // RIGHT SHIFT (2) - if the right SHIFT pressed;
-    // BOTH SHIFTS (3) - if both keys pressed.
-
     MAKE_LABEL
 
     outline0("LDA #0");
     outline1("STA %s", _shifts);
-    outline0("LDA $0543");
-    outline0("AND #$01");
-    outline1("BEQ %se", label);
-    outline0("LDA #$03");
+    outline0("LDA #$10");
+    outline0("STA $DC00");
+    outline0("LDA $DC01");
+    outline0("AND #$80");
+    outline1("BNE %snoleft", label);
+    outline0("LDA #1");
     outline1("STA %s", _shifts);
-    outhead1("%se:", label);
+    outhead1("%snoleft:", label );
+
+    outline0("LDA #$20");
+    outline0("STA $DC00");
+    outline0("LDA $DC01");
+    outline0("AND #$10");
+    outline1("BNE %snoright", label);
+    outline1("LDA %s", _shifts);
+    outline0("ORA #2");
+    outline1("STA %s", _shifts);
+    outhead1("%snoright:", label );
 
 }
 
 void plus4_keyshift( Environment * _environment, char * _shifts ) {
 
-    // On the same way, KEY SHIFT is used to report the current status of those keys 
-    // which cannot be detected by either INKEY$ or SCANCODE because they do not 
-    // carry the relevant codes. These control keys cannot be tested individually, or a test 
-    // can be set up for any combination of such keys pressed together. A single call to the KEY SHIFT 
-    // function can test for all eventualities, by examining a bit map in the following format:
+    _environment->bitmaskNeeded = 1;
 
-    MAKE_LABEL
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
 
-    outline0("LDA #0");
-    outline1("STA %s", _shifts);
-    outline0("LDA $0543");
-    outline0("AND #$01");
-    outline1("BEQ %snoshift", label);
-    outline0("LDA #3");
-    outline1("STA %s", _shifts);
-    outhead1("%snoshift:", label );
-    outline0("LDA $0543");
-    outline0("AND #$04");
-    outline1("BEQ %snoctrl", label);
-    outline1("LDA %s", _shifts);
-    outline0("ORA #8");
-    outline1("STA %s", _shifts);
-    outhead1("%snoctrl:", label );
+    outline0("JSR KEYSHIFT" );
+    outline1("STA %s", _shifts );
 
 }
 
 void plus4_clear_key( Environment * _environment ) {
 
-    outline0("LDA #$0");
-    outline0("STA $ef");
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_plus4_keyboard_asm );
+
+    outline0("JSR CLEARKEY");
    
 }
 
+void plus4_put_key(  Environment * _environment, char *_string, char * _size ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    outline1("LDA %s", _string );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _string, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDX %s", _size );
+    outline0("JSR PUTKEY" );
+
+}
 
 void plus4_sys_call( Environment * _environment, int _destination ) {
 
