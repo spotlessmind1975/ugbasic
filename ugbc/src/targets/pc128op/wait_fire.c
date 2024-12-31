@@ -48,6 +48,8 @@ void wait_fire( Environment * _environment, int _port, int _release ) {
 
 void wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
-    pc128op_wait_fire_semivar( _environment, _port, _release );
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
+
+    pc128op_wait_fire_semivar( _environment, port->realName, _release );
 
 }
