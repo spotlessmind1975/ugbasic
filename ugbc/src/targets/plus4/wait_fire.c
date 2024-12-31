@@ -42,8 +42,14 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_fire( Environment * _environment, int _port, int _release ) {
 
+    plus4_wait_fire( _environment, _port, _release );
+
 }
 
 void wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
+
+    plus4_wait_fire_semivar( _environment, port->realName, _release );
 
 }

@@ -73,23 +73,30 @@
 ; Read the position and button for first joystick (JOY(0))
 ; (using the ugBASIC convention)
 JOYSTICKREAD0:
-    LDA #$02
+    LDA #$FF
+    STA $FD30
+    LDA #$FB
     STA $FF08
     LDA $FF08
     EOR #$FF
     AND #$4F
+    BEQ JOYSTICKREAD0X
+JOYSTICKREAD0Y:    
+    NOP
+JOYSTICKREAD0X:
     RTS
 
 ; Read the position and button for second joystick (JOY(1))
 ; (using the ugBASIC convention)
 JOYSTICKREAD1:
-
-    LDA #$04
+    LDA #$FF
+    STA $FD30
+    LDA #$FD
     STA $FF08
     LDA $FF08
     EOR #$FF
     PHA
-    LSL
+    ASL
     BCC JOYSTICKREAD1B
     PLA
     ORA #$40
@@ -118,6 +125,13 @@ JOYSTICKREAD1C:
         JSR JOYSTICKREAD0
         AND #$40
         BEQ WAITFIRE0
+        CPX #0
+        BEQ WAITFIRE0DONE
+    WAITFIRE0L1:
+        JSR JOYSTICKREAD0
+        AND #$40
+        BNE WAITFIRE0L1
+    WAITFIRE0DONE:
         RTS
 
     WAITFIREA:
@@ -130,6 +144,13 @@ JOYSTICKREAD1C:
         JSR JOYSTICKREAD1
         AND #$40
         BEQ WAITFIRE1
+        CPX #0
+        BEQ WAITFIRE1DONE
+    WAITFIRE1L1:
+        JSR JOYSTICKREAD1
+        AND #$40
+        BNE WAITFIRE1L1
+    WAITFIRE1DONE:
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
@@ -141,6 +162,19 @@ JOYSTICKREAD1C:
         AND #$40
         ORA MATHPTR0
         BEQ WAITFIRE
+        CPX #0
+        BEQ WAITFIREDONE
+
+    WAITFIREL1:
+        JSR JOYSTICKREAD0
+        AND #$40
+        STA MATHPTR0
+        JSR JOYSTICKREAD1
+        AND #$40
+        ORA MATHPTR0
+        BNE WAITFIREL1
+
+    WAITFIREDONE:
         RTS
 
 @ELSE
@@ -205,6 +239,13 @@ JOYSTICK1:      .BYTE   $0
         LDA JOYSTICK0
         AND #$40
         BEQ WAITFIRE0
+        CPX #0
+        BEQ WAITFIRE0DONE
+    WAITFIRE0L1:
+        LDA JOYSTICK0
+        AND #$40
+        BNE WAITFIRE0L1
+    WAITFIRE0DONE:
         RTS
 
     WAITFIREA:
@@ -217,6 +258,15 @@ JOYSTICK1:      .BYTE   $0
         LDA JOYSTICK1
         AND #$40
         BEQ WAITFIRE1
+        CPX #0
+        BEQ WAITFIRE1DONE
+        CPX #0
+        BEQ WAITFIRE1DONE
+    WAITFIRE1L1:
+        LDA JOYSTICK1
+        AND #$40
+        BNE WAITFIRE1L1
+    WAITFIRE1DONE:
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
@@ -238,6 +288,26 @@ JOYSTICK1:      .BYTE   $0
         ; If both are zero, recheck again.
         BEQ WAITFIRE
 
+        CPX #0
+        BEQ WAITFIREDONE
+    
+    WAITFIREL1:
+        ; Read dedicated storage for JOY(0)
+
+        LDA JOYSTICK0
+        AND #$40
+        STA MATHPTR0
+
+        ; Read dedicated storage for JOY(1)
+
+        LDA JOYSTICK1
+        AND #$40
+        ORA MATHPTR0
+
+        ; If both are zero, recheck again.
+        BNE WAITFIREL1
+
+    WAITFIREDONE:
         RTS
 
 @ENDIF

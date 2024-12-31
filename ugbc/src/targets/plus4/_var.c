@@ -664,6 +664,8 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    deploy_inplace_preferred( tedstartup, src_hw_ted_startup_asm );
+
     outhead0(".segment \"CODE\"" );
 
     variable_on_memory_init( _environment, 0 );

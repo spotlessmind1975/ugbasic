@@ -66,6 +66,12 @@ TEDISRSVC:
     JSR JIFFYUPDATE
     JSR TEDISRSVC2
     JSR MUSICPLAYER
+@IF deployed.joystick && !joystickConfig.sync
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard && !keyboardConfig.sync
+    JSR KEYBOARDMANAGER
+@ENDIF
     PHA
     LDA $FF09
     STA $FF09
