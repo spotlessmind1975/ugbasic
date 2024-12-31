@@ -63,6 +63,11 @@ TEDISRSVC2:
     RTS
 
 TEDISRSVC:
+    PHA
+    TXA
+    PHA
+    TYA
+    PHA
     JSR JIFFYUPDATE
     JSR TEDISRSVC2
     JSR MUSICPLAYER
@@ -76,7 +81,15 @@ TEDISRSVC:
     LDA $FF09
     STA $FF09
     PLA
+    
+    PLA
+    TAY
+    PLA
+    TAX
+    PLA
+
     JMP $FCBE
+
 
 TEDSTARTUP:
 
