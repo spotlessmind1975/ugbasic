@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -61,13 +61,13 @@
 ; Title:	ZX Spectrum Standard Output Routines
 ; Author:	Dean Belfield
 ; Created:	29/07/2011
-; Last Updated:	13/05/2024
+; Last Updated:	13/05/2025
 ;
 ; Requires:
 ;
 ; Modinfo:
 ;
-; 13/05/2024:	Adapted for ugBASIC by Marco Spedaletti
+; 13/05/2025:	Adapted for ugBASIC by Marco Spedaletti
 ; 02/07/2012:	Added Pixel_Address_Down and Pixel_Address_Up routines
 ; 04/07/2012:	Moved Clear_Screen to Screen_Buffer
 ; 08/02/2010:	Added Print_BC

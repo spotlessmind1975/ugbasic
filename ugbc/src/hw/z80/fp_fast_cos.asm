@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2024 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2025 Marco Spedaletti (asimov@mclink.it)
 ;  * Inspired from modules/z80float, copyright 2018 Zeda A.K. Thomas
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
