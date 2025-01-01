@@ -303,6 +303,7 @@ void zx_slice_image( Environment * _environment, char * _image, char * _frame, c
 void zx_sys_call( Environment * _environment, int _destination );
 int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 void zx_hscroll_line( Environment * _environment, int _direction );
+void zx_hscroll_screen( Environment * _environment, int _direction );
 
 void zx_timer_set_status_on( Environment * _environment, char * _timer );
 void zx_timer_set_status_off( Environment * _environment, char * _timer );

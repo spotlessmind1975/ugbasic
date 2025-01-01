@@ -49,6 +49,33 @@ static RGBi SYSTEM_PALETTE[] = {
 static RGBi * commonPalette;
 static int lastUsedSlotInCommonPalette = 0;
 
+static int RowsAddress[] = {
+    16384,    16640,    16896,    17152,    17408,    17664,    17920,    18176,
+    16416,    16672,    16928,    17184,    17440,    17696,    17952,    18208,
+    16448,    16704,    16960,    17216,    17472,    17728,    17984,    18240,
+    16480,    16736,    16992,    17248,    17504,    17760,    18016,    18272,
+    16512,    16768,    17024,    17280,    17536,    17792,    18048,    18304,
+    16544,    16800,    17056,    17312,    17568,    17824,    18080,    18336,
+    16576,    16832,    17088,    17344,    17600,    17856,    18112,    18368,
+    16608,    16864,    17120,    17376,    17632,    17888,    18144,    18400,
+    18432,    18688,    18944,    19200,    19456,    19712,    19968,    20244,
+    18464,    18720,    18976,    19232,    19488,    19744,    20000,    20256,
+    18496,    18752,    19008,    19264,    19520,    19776,    20032,    20288,
+    18528,    18784,    19040,    19296,    19552,    19808,    20064,    20320,
+    18560,    18816,    19072,    19328,    19584,    19840,    20096,    20352,
+    18592,    18848,    19104,    19360,    19616,    19872,    20128,    20384,
+    18624,    18880,    19136,    19392,    19648,    19904,    20160,    20416,
+    18656,    18912,    19168,    19424,    19680,    19936,    20192,    20448,
+    20480,    20736,    20992,    21248,    21504,    21760,    22016,    22272,
+    20512,    20768,    21024,    21280,    21536,    21792,    22048,    22304,
+    20544,    20800,    21056,    21312,    21568,    21824,    22080,    22336,
+    20576,    20832,    21088,    21344,    21600,    21856,    22112,    22368,
+    20608,    20864,    21120,    21376,    21632,    21888,    22144,    22400,
+    20640,    20896,    21152,    21408,    21664,    21920,    22176,    22432,
+    20672,    20928,    21184,    21440,    21696,    21952,    22208,    22464,
+    20704,    20960,    21216,    21472,    21728,    21984,    22240,    22496
+};
+
 /****************************************************************************
  * CODE SECTION
  ****************************************************************************/
@@ -396,6 +423,13 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0 );
     variable_global( _environment, "TEXTADDRESS" );
 
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
+
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     _environment->screenWidth = 256;
@@ -444,9 +478,19 @@ void zx_screen_columns( Environment * _environment, char * _columns ) {
 
 void console_calculate( Environment * _environment ) {
 
+    int consoleSA = RowsAddress[ ( _environment->activeConsole.y1 * 8 ) ] + ( _environment->activeConsole.x1 * _environment->currentModeBW ) ;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
 }
 
 void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "CALL CONSOLECALCULATE" );
 
 }
 
@@ -460,7 +504,8 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     if (_environment->vestigialConfig.clsImplicit ) {
         zx_cls( _environment, NULL, NULL );
     }
-
+    console_calculate( _environment );
+    
 }
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
@@ -1053,7 +1098,7 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
 void zx_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( blitimage, src_hw_zx_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1226,7 +1271,7 @@ void zx_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void zx_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1251,7 +1296,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -1289,7 +1334,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1317,7 +1362,7 @@ void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
 
 void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _x );
@@ -1334,7 +1379,7 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 
 void zx_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tileset );
@@ -1379,13 +1424,24 @@ int zx_palette_extract( Environment * _environment, char * _data, int _width, in
 
 void zx_hscroll_line( Environment * _environment, int _direction ) {
 
-    deploy( textHScrollLine, src_hw_zx_hscroll_asm);
+    deploy( vars, src_hw_zx_vars_asm);
+    deploy( textHScrollLine, src_hw_zx_hscroll_line_asm );
 
-    outline0("LD A, (YCURSYS)" );
-    outline0("LD B, A" );
-    outline1("LD A, $%2.2x", ( _direction & 0xff ) );
-
+    Variable * y = variable_retrieve( _environment, "YCURSYS" );
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD B, A");
+    outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
     outline0("CALL HSCROLLLINE");
+
+}
+
+void zx_hscroll_screen( Environment * _environment, int _direction ) {
+
+    deploy( vars, src_hw_zx_vars_asm);
+    deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
+
+    outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
+    outline0("CALL HSCROLLSCREEN");
 
 }
 
