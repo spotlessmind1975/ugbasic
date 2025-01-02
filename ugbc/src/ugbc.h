@@ -2644,6 +2644,7 @@ typedef struct _Environment {
 
     /*
      * Set of consoles.
+     * Additional for internal usage of ugBASIC
      */
     Console consoles[MAX_CONSOLES];
 
@@ -2962,6 +2963,8 @@ typedef struct _Environment {
 
     int graphicsAtariBasicEnabled;
     int lmarginAtariBasicEnabled;
+
+    int verticalOverlapRequired;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -4704,6 +4707,8 @@ Variable *              dojo_ping( Environment * _environment );
 Variable *              dojo_ready( Environment * _environment );
 Variable *              dojo_receive( Environment * _environment );
 void                    dojo_send( Environment * _environment, char * _value );
+void                    downw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
@@ -5135,15 +5140,15 @@ void                    text_at( Environment * _environment, char * _x, char * _
 void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, int _raw );
 Variable *              text_get_xcurs( Environment * _environment );
 Variable *              text_get_ycurs( Environment * _environment );
-void                    text_hscroll_line( Environment * _environment, int _direction );
-void                    text_hscroll_screen( Environment * _environment, int _direction );
+void                    text_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void                    text_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
 void                    text_tab( Environment * _environment );
 void                    text_text( Environment * _environment, char * _text, int _raw );
 void                    text_vscroll( Environment * _environment );
-void                    text_vscroll_screen( Environment * _environment, int _direction );
+void                    text_vscroll_screen( Environment * _environment, int _direction, int _overlap );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 Variable *              tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y, char * _layer );
@@ -5182,6 +5187,8 @@ void                    use_tileset( Environment * _environment, char * _tileset
 char *                  unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size );
 Variable *              uncompress( Environment * _environment, char * _value );
 void                    unfreeze_vars( Environment * _environment, char * _prefix );
+void                    upw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    upb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 
 //----------------------------------------------------------------------------
 // *V*

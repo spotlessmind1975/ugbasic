@@ -42,8 +42,8 @@
 @keyword HSCROLL
 @target vic20
 </usermanual> */
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    vic1_hscroll_line( _environment, _direction );
+    vic1_hscroll_line( _environment, _direction, _overlap );
     
 }

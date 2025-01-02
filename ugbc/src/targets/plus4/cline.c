@@ -156,7 +156,7 @@ void cline( Environment * _environment, char * _characters ) {
         outline0("JMP lib_cline_next"); // x
         outhead0("lib_cline_nextxx:");
 
-        text_vscroll_screen( _environment, -1 );
+        text_vscroll_screen( _environment, -1, 0 );
 
         outline0("DEC CLINEY"); // y
         outline0("SEC");

@@ -477,7 +477,10 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART")
 
-    deploy_inplace( vars, src_hw_vic20_vars_asm);
+    deploy_inplace( vars, src_hw_vic20_vars_asm );
+    deploy_inplace_preferred( vic1vars, src_hw_vic1_vars_asm );
+    deploy_inplace_preferred( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy_inplace_preferred( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
 
     variable_on_memory_init( _environment, 0 );
 

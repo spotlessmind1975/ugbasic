@@ -453,7 +453,7 @@ void vic1_textmap_at( Environment * _environment, char * _address ) {
 
 void vic1_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( plot, src_hw_vic1_plot_asm );
     
     if ( _c ) {
@@ -487,7 +487,7 @@ void vic1_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) 
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( plot, src_hw_vic1_plot_asm );
     
     outline1("LDA %s", c->realName );
@@ -514,7 +514,7 @@ void vic1_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( plot, src_hw_vic1_plot_asm );
     
     outline1("LDA %s", x->realName );
@@ -665,13 +665,17 @@ void vic1_cls( Environment * _environment ) {
 
 }
 
-void vic1_scroll_text( Environment * _environment, int _direction ) {
+void vic1_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
-        deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+        deploy_preferred( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+        outline1("LDA #$%2.2x", (unsigned char)(_overlap&0xff) );
+        outline0("STA PORT" );
         outline0("JSR VSCROLLTDOWN");
     } else {
-        deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+        deploy_preferred( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+        outline1("LDA #$%2.2x", (unsigned char)(_overlap&0xff) );
+        outline0("STA PORT" );
         outline0("JSR VSCROLLTUP");
     }
 
@@ -679,9 +683,9 @@ void vic1_scroll_text( Environment * _environment, int _direction ) {
 
 void vic1_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
-    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
-    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
     deploy( cls, src_hw_vic1_cls_asm );
 
     if ( _environment->currentMode > 0 ) {
@@ -708,7 +712,7 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, int
 
 void vic1_initialization( Environment * _environment ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy_deferred( vic1startup, src_hw_vic1_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
@@ -806,13 +810,15 @@ void vic1_finalization( Environment * _environment ) {
 
 }
 
-void vic1_hscroll_line( Environment * _environment, int _direction ) {
+void vic1_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
 
@@ -820,12 +826,14 @@ void vic1_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void vic1_hscroll_screen( Environment * _environment, int _direction ) {
+void vic1_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR HSCROLLST");
 }
@@ -1775,7 +1783,7 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
     // currently unused
     (void)!_flags;
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( putimage, src_hw_vic1_put_image_asm );
 
     if ( _frame_size ) {
@@ -1809,7 +1817,7 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
 
 void vic1_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( blitimage, src_hw_vic1_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1935,11 +1943,11 @@ void vic1_get_image( Environment * _environment, char * _image, char * _x, char 
 
 void vic1_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( scroll, src_hw_vic1_scroll_asm);
     deploy( textHScroll, src_hw_vic1_hscroll_text_asm );
-    deploy( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
-    deploy( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+    deploy_preferred( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );
@@ -1951,7 +1959,7 @@ void vic1_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void vic1_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
 
     outline1("LDA %s", _tile );
@@ -1976,7 +1984,7 @@ void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
 
     outline1("LDA %s", tile->realName );
@@ -2013,7 +2021,7 @@ void vic1_move_tiles( Environment * _environment, char * _tile, char * _x, char 
 
 void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
 
     outline1("LDA %s", _tile );
@@ -2041,7 +2049,7 @@ void vic1_put_tiles( Environment * _environment, char * _tile, char * _x, char *
 
 void vic1_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
 
     outline1("LDA %s", _x );
@@ -2058,7 +2066,7 @@ void vic1_tile_at( Environment * _environment, char * _x, char * _y, char * _res
 
 void vic1_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm);
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( tiles, src_hw_vic1_tiles_asm );
 
     outline1("LDA %s", _tileset );
@@ -2101,7 +2109,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void vic1_start( Environment * _environment, int _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy_deferred( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels & 0x01 ) {
@@ -2118,7 +2126,7 @@ void vic1_start( Environment * _environment, int _channels ) {
 
 void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline1("LDX #%2.2x", ( _volume & 0x0f ) );
@@ -2348,7 +2356,7 @@ void vic1_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 void vic1_set_program( Environment * _environment, int _channels, int _program ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     switch (_program) {
@@ -2554,7 +2562,7 @@ void vic1_set_parameter( Environment * _environment, int _channels, int _paramet
 
 void vic1_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     PROGRAM_FREQUENCY( _channels, _frequency );
@@ -2563,7 +2571,7 @@ void vic1_set_frequency( Environment * _environment, int _channels, int _frequen
 
 void vic1_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     PROGRAM_PITCH( _channels, _pitch );
@@ -2578,7 +2586,7 @@ void vic1_set_note( Environment * _environment, int _channels, int _note ) {
 
 void vic1_stop( Environment * _environment, int _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     STOP_FREQUENCY( _channels );
@@ -2587,7 +2595,7 @@ void vic1_stop( Environment * _environment, int _channels ) {
 
 void vic1_start_var( Environment * _environment, char * _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels ) {
@@ -2601,7 +2609,7 @@ void vic1_start_var( Environment * _environment, char * _channels ) {
 
 void vic1_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline1("LDA %s", _volume );
@@ -2616,7 +2624,7 @@ void vic1_set_volume_vars( Environment * _environment, char * _channels, char * 
 
 void vic1_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline1("LDX #$%2.2x", _volume );
@@ -2626,7 +2634,7 @@ void vic1_set_volume_semi_var( Environment * _environment, char * _channel, int 
 
 void vic1_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     switch (_program) {
@@ -2828,7 +2836,7 @@ void vic1_set_program_semi_var( Environment * _environment, char * _channels, in
 
 void vic1_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels ) {
@@ -2845,7 +2853,7 @@ void vic1_set_frequency_vars( Environment * _environment, char * _channels, char
 
 void vic1_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels ) {
@@ -2862,7 +2870,7 @@ void vic1_set_pitch_vars( Environment * _environment, char * _channels, char * _
 
 void vic1_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline0("LDA #<VIC1FREQTABLE");
@@ -2891,7 +2899,7 @@ void vic1_set_note_vars( Environment * _environment, char * _channels, char * _n
 
 void vic1_stop_vars( Environment * _environment, char * _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline1("LDA %s", _channels );
@@ -2901,7 +2909,7 @@ void vic1_stop_vars( Environment * _environment, char * _channels ) {
 
 void vic1_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     outline0("SEI");
@@ -2940,7 +2948,7 @@ int vic1_palette_extract( Environment * _environment, char * _data, int _width, 
 
 void vic1_set_duration( Environment * _environment, int _channels, int _duration ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     PROGRAM_DURATION( _channels, _duration );
@@ -2949,7 +2957,7 @@ void vic1_set_duration( Environment * _environment, int _channels, int _duration
 
 void vic1_wait_duration( Environment * _environment, int _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     WAIT_DURATION( _channels );
@@ -2958,7 +2966,7 @@ void vic1_wait_duration( Environment * _environment, int _channels ) {
 
 void vic1_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
 
     if ( _channels ) {
@@ -2978,7 +2986,7 @@ void vic1_set_duration_vars( Environment * _environment, char * _channels, char 
 
 void vic1_wait_duration_vars( Environment * _environment, char * _channels ) {
 
-    deploy( vic1vars, src_hw_vic1_vars_asm );
+    deploy_preferred( vic1vars, src_hw_vic1_vars_asm );
     deploy( vic1startup, src_hw_vic1_startup_asm );
     
     if ( _channels ) {

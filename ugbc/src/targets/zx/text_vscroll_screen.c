@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_vscroll_screen( Environment * _environment, int _direction ) {
+void text_vscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    zx_vscroll( _environment, 8 * _direction );
+    zx_vscroll( _environment, 8 * _direction, _overlap );
 
 }

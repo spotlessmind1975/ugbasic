@@ -923,17 +923,21 @@ void c6847_cls( Environment * _environment ) {
 
 }
 
-void c6847_scroll_text( Environment * _environment, int _direction ) {
+void c6847_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _environment->currentMode < 7 ) {
-        deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+        deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
         outline1("LDA #$%2.2x", ( _direction & 0xff ) );
         outline0("STA <DIRECTION" );
+        outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+        outline0("STA <PORT" );
         outline0("JSR VSCROLLT");
     } else {
-        deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+        deploy_preferred( vScroll, src_hw_6847_vscroll_graphic_asm );
         outline1("LDA #$%2.2x", ( _direction & 0xff ) );
         outline0("STA <DIRECTION" );
+        outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+        outline0("STA <PORT" );
         outline0("JSR VSCROLLG");
     }
 
@@ -952,7 +956,7 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, in
     if ( _raw ) {
         if ( _environment->currentMode < 7 ) {
             deploy( clsText, src_hw_6847_cls_text_asm );
-            deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
             deploy( textEncodedAtTextRaw, src_hw_6847_text_at_text_raw_asm );
             outline0("JSR TEXTATTILEMODERAW");
         } else {
@@ -964,7 +968,7 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, in
     } else {
         if ( _environment->currentMode < 7 ) {
             deploy( clsText, src_hw_6847_cls_text_asm );
-            deploy( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
             deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
             outline0("JSR TEXTATTILEMODE");
         } else {
@@ -1080,13 +1084,15 @@ void c6847_finalization( Environment * _environment ) {
     
 }
 
-void c6847_hscroll_line( Environment * _environment, int _direction ) {
+void c6847_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA <PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
 
@@ -1094,12 +1100,14 @@ void c6847_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void c6847_hscroll_screen( Environment * _environment, int _direction ) {
+void c6847_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_6847_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA <PORT" );
 
     outline0("JSR HSCROLLST");    
 

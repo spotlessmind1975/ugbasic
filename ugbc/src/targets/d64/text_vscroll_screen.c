@@ -38,8 +38,12 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_vscroll_screen( Environment * _environment, int _direction ) {
+void text_vscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    c6847_scroll_text( _environment, _direction );
+    if ( _overlap ) {
+        _environment->verticalOverlapRequired = 1;
+    }
+
+    c6847_scroll_text( _environment, _direction, _overlap );
 
 }

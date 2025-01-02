@@ -132,9 +132,10 @@ void zx_color_border( Environment * _environment, char * _color ) {
 
 }
 
-void zx_vscroll( Environment * _environment, int _displacement ) {
+void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
 
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
+    outline1("LD IXL, $%2.2x", ( _overlap & 0xff ) );
 
     deploy( vars,src_hw_zx_vars_asm);
     deploy( vScroll,src_hw_zx_vscroll_asm );
@@ -1422,7 +1423,7 @@ int zx_palette_extract( Environment * _environment, char * _data, int _width, in
 
 }
 
-void zx_hscroll_line( Environment * _environment, int _direction ) {
+void zx_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( textHScrollLine, src_hw_zx_hscroll_line_asm );
@@ -1431,16 +1432,18 @@ void zx_hscroll_line( Environment * _environment, int _direction ) {
     outline1("LD A, (%s)", y->realName );
     outline0("LD B, A");
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
+    outline1("LD IYL, 0x%2.2x", (unsigned char)(_overlap));
     outline0("CALL HSCROLLLINE");
 
 }
 
-void zx_hscroll_screen( Environment * _environment, int _direction ) {
+void zx_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vars, src_hw_zx_vars_asm);
     deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
 
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
+    outline1("LD IYL, 0x%2.2x", (unsigned char)(_overlap));
     outline0("CALL HSCROLLSCREEN");
 
 }

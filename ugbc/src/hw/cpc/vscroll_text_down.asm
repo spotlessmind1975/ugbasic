@@ -45,6 +45,80 @@ VSCROLLTDOWN:
     ADD HL, BC
     ADD HL, BC
 
+@IF verticalOverlapRequired
+
+    LD A, IYL
+    CP 0
+    JR Z, VSCROLLTDOWNNOW
+
+VSCROLLTDOWNW:
+
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    LD HL, PLOTVBASE
+    LD A, (CONSOLEY2)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
+
+    LD DE, VSCROLLBUFFERLINE
+
+    LD C, 8
+
+VSCROLLTDOWNWL1:
+    
+    PUSH BC
+    PUSH HL
+
+    PUSH DE
+
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
+    LD HL, DE
+    POP DE
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
+    LDIR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+
+    DEC C
+    JR NZ, VSCROLLTDOWNWL1
+
+    POP BC
+    POP DE
+    POP HL
+
+VSCROLLTDOWNNOW:
+
+@ENDIF
+
     LD A, (CONSOLEY1)
     LD E, A
     LD D, 0
@@ -137,6 +211,85 @@ VSCROLLTDOWNL1:
 
 VSCROLLTDOWNL2:
 
+@IF verticalOverlapRequired
+
+    LD A, IYL
+    CP 0
+    JR Z, VSCROLLDOWNREFILLNOW
+
+VSCROLLDOWNREFILLW:
+
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    LD HL, PLOTVBASE
+
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
+
+    LD IY, VSCROLLBUFFERLINE
+
+    LD C, 8
+
+VSCROLLDOWNREFILLWL1:
+    
+    PUSH BC
+    PUSH HL
+
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
+        
+    PUSH IY
+    POP HL
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
+    LDIR
+
+    PUSH HL
+    POP IY
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+
+    DEC C
+    JR NZ, VSCROLLDOWNREFILLWL1
+
+    POP BC
+    POP DE
+    POP HL
+
+    JP VSCROLLDOWNREFILLDONE
+
+@ENDIF
+
+VSCROLLDOWNREFILLNOW:
+
     PUSH BC
     PUSH HL
 
@@ -173,6 +326,8 @@ VSCROLLTDOWNL2L:
     INC HL
     INC HL
     DEC C
-    JP NZ, VSCROLLTDOWNL2
+    JP NZ, VSCROLLDOWNREFILLNOW
+
+VSCROLLDOWNREFILLDONE:
 
     RET

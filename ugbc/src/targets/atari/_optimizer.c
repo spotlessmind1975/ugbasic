@@ -696,6 +696,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "BLIT^"))   return 0;
     if(po_buf_match(name, "FADE^"))   return 0;
     if(po_buf_match(name, "TIMER^"))   return 0;
+    if(po_buf_match(name, "ANTIC^"))   return 0;
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;
@@ -887,6 +888,20 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         };
 
     if( po_buf_match( buf[0], " STA *, X",  arg ) ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_wr++;
+            v->nb_rd++;
+        };
+
+    if( po_buf_match( buf[0], " STA *,Y",  arg ) ) 
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_wr++;
+            v->nb_rd++;
+        };
+
+    if( po_buf_match( buf[0], " STA *, Y",  arg ) ) 
         if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
             v->nb_wr++;

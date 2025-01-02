@@ -42,7 +42,7 @@
 @keyword HSCROLL
 @target coleco
 </usermanual> */
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LD A, (%s)", y->realName );

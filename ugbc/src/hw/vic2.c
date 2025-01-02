@@ -2066,14 +2066,18 @@ void vic2_cls( Environment * _environment ) {
 
 }
 
-void vic2_scroll_text( Environment * _environment, int _direction ) {
+void vic2_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _environment->currentMode == 0 || _environment->currentMode == 1 ) {
         if ( _direction > 0 ) {
-            deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+            deploy_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+            outline1("LDA $%2.2x", (unsigned char)(_overlap&0xff) )
+            outline0("STA PORT");
             outline0("JSR VSCROLLTDOWN");
         } else {
-            deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+            deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+            outline1("LDA $%2.2x", (unsigned char)(_overlap&0xff) )
+            outline0("STA PORT");
             outline0("JSR VSCROLLTUP");
         }
     }
@@ -2083,7 +2087,7 @@ void vic2_scroll_text( Environment * _environment, int _direction ) {
 void vic2_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy( textEncodedAt, src_hw_vic2_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -2245,28 +2249,31 @@ void vic2_finalization( Environment * _environment ) {
 
 }
 
-void vic2_hscroll_line( Environment * _environment, int _direction ) {
+void vic2_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
-
     outline0("JSR HSCROLLLT");
 
 }
 
-void vic2_hscroll_screen( Environment * _environment, int _direction ) {
+void vic2_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
-
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
     outline0("JSR HSCROLLST");
+
 }
 
 void vic2_back( Environment * _environment ) {
@@ -4043,8 +4050,8 @@ void vic2_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( scroll, src_hw_vic2_scroll_asm);
     deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
-    deploy( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
-    deploy( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
+    deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );

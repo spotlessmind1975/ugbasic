@@ -101,7 +101,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS 
-%token POKEY DAC1 AY8910 TED VIC NAME
+%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -8241,25 +8241,25 @@ cmove_definition :
 
 hscroll_definition : 
     LEFT {
-        text_hscroll_line( _environment, -1 );
+        text_hscroll_line( _environment, -1, 0 );
     }
     | SCREEN LEFT {
-        text_hscroll_screen( _environment, -1 );
+        text_hscroll_screen( _environment, -1, 0 );
     }
     | RIGHT {
-        text_hscroll_line( _environment, 1 );
+        text_hscroll_line( _environment, 1, 0 );
     }
     | SCREEN RIGHT {
-        text_hscroll_screen( _environment, 1 );
+        text_hscroll_screen( _environment, 1, 0 );
     }
     ;
 
 vscroll_definition : 
       SCREEN UP {
-        text_vscroll_screen( _environment, -1 );
+        text_vscroll_screen( _environment, -1, 0 );
     }
     | SCREEN DOWN {
-        text_vscroll_screen( _environment, 1 );
+        text_vscroll_screen( _environment, 1, 0 );
     }
     ;
     
@@ -10316,6 +10316,26 @@ mmob_definition :
 
     };
 
+upw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        upw( _environment, $1, $3, $5, $7 );
+    };
+
+upb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        upb( _environment, $1, $3, $5, $7 );
+    };
+
+downw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        downw( _environment, $1, $3, $5, $7 );
+    };
+
+downb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        downb( _environment, $1, $3, $5, $7 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -10460,6 +10480,10 @@ statement2nc:
   }
   | HSCROLL hscroll_definition
   | VSCROLL vscroll_definition
+  | UPB upb_definition
+  | UPW upw_definition
+  | DOWNB downb_definition
+  | DOWNW downw_definition
   | SCROLL scroll_definition
   | CMOVE cmove_definition
   | CUP {

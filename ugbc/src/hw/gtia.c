@@ -1943,12 +1943,14 @@ void gtia_clear( Environment * _environment, char * _pattern ) {
 
 }
 
-void gtia_scroll_text( Environment * _environment, int _direction ) {
+void gtia_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR VSCROLLT");
 
@@ -1958,7 +1960,7 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, int
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
     deploy( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
 
@@ -2100,13 +2102,15 @@ void gtia_finalization( Environment * _environment ) {
 
 }
 
-void gtia_hscroll_line( Environment * _environment, int _direction ) {
+void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
 
@@ -2114,12 +2118,14 @@ void gtia_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void gtia_hscroll_screen( Environment * _environment, int _direction ) {
+void gtia_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR HSCROLLST");
 }
@@ -3654,7 +3660,7 @@ void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( scroll, src_hw_gtia_scroll_asm);
     deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );

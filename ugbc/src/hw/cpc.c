@@ -426,7 +426,7 @@ void cpc_border_color( Environment * _environment, char * _border_color ) {
  */
 void cpc_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     outline1("LD A, 0x%2.2x", ( _index & 0x0f ));
@@ -451,7 +451,7 @@ void cpc_background_color( Environment * _environment, int _index, int _backgrou
  */
 void cpc_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     outline1("LD A, (%s)", _index);
@@ -476,7 +476,7 @@ void cpc_background_color_vars( Environment * _environment, char * _index, char 
  */
 void cpc_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     MAKE_LABEL
@@ -504,7 +504,7 @@ void cpc_background_color_semivars( Environment * _environment, int _index, char
  */
 void cpc_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     outline1("LD A, (%s)", _index);
@@ -775,7 +775,7 @@ void cpc_textmap_at( Environment * _environment, char * _address ) {
 
 void cpc_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( plot, src_hw_cpc_plot_asm );
     
@@ -809,7 +809,7 @@ void cpc_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( plot, src_hw_cpc_plot_asm );
     
@@ -836,7 +836,7 @@ void cpc_pget_color_vars( Environment * _environment, char *_x, char *_y, char *
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( plot, src_hw_cpc_plot_asm );
     
@@ -980,13 +980,15 @@ void cpc_cls( Environment * _environment ) {
 
 }
 
-void cpc_scroll_text( Environment * _environment, int _direction ) {
+void cpc_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
-        deploy( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
+        deploy_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
+        outline1("LD IYL, $%2.2x", (unsigned char)(_overlap&0xff) );
         outline0("CALL VSCROLLTDOWN");
     } else {
-        deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+        deploy_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+        outline1("LD IYL, $%2.2x", (unsigned char)(_overlap&0xff) );
         outline0("CALL VSCROLLTUP");
     }
     
@@ -994,8 +996,8 @@ void cpc_scroll_text( Environment * _environment, int _direction ) {
 
 void cpc_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
-    deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
 
     outline1("LD DE, (%s)", _text);
     outline1("LD A, (%s)", _text_size);
@@ -1226,9 +1228,9 @@ void cpc_finalization( Environment * _environment ) {
     
 }
 
-void cpc_hscroll_line( Environment * _environment, int _direction ) {
+void cpc_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( textHScrollLine, src_hw_cpc_hscroll_line_asm );
 
@@ -1236,17 +1238,19 @@ void cpc_hscroll_line( Environment * _environment, int _direction ) {
     outline1("LD A, (%s)", y->realName );
     outline0("LD B, A");
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
+    outline1("LD IYL, 0x%2.2x", (unsigned char)(_overlap));
     outline0("CALL HSCROLLLINE");
 
 }
 
-void cpc_hscroll_screen( Environment * _environment, int _direction ) {
+void cpc_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
 
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
+    outline1("LD IYL, 0x%2.2x", (unsigned char)(_overlap));
     outline0("CALL HSCROLLSCREEN");
 
 }
@@ -1257,7 +1261,7 @@ void cpc_back( Environment * _environment ) {
 
 void cpc_cline( Environment * _environment, char * _characters ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( textCline, src_hw_cpc_cline_asm );
 
@@ -2092,7 +2096,7 @@ static void cpc_load_image_address_to_register( Environment * _environment, char
 
 void cpc_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( putimage, src_hw_cpc_put_image_asm );
 
@@ -2122,7 +2126,7 @@ void cpc_put_image( Environment * _environment, Resource * _image, char * _x, ch
 
 void cpc_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( blitimage, src_hw_cpc_blit_image_asm );
 
@@ -2307,7 +2311,7 @@ Variable * cpc_new_sequence( Environment * _environment, int _sequences, int _fr
 
 void cpc_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( getimage, src_hw_cpc_get_image_asm );
 
@@ -2334,8 +2338,8 @@ void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( scroll, src_hw_cpc_scroll_asm);
     deploy( textHScrollLine, src_hw_cpc_hscroll_line_asm );
     deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );
-    deploy( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
-    deploy( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
+    deploy_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
 
     outline1("LD A, 0x%2.2x", (unsigned char)(_dx&0xff) );
     outline0("LD B, A" );
@@ -2347,7 +2351,7 @@ void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void cpc_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( tiles, src_hw_cpc_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -2372,7 +2376,7 @@ void cpc_move_tiles( Environment * _environment, char * _tile, char * _x, char *
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( tiles, src_hw_cpc_tiles_asm );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -2410,7 +2414,7 @@ void cpc_move_tiles( Environment * _environment, char * _tile, char * _x, char *
 
 void cpc_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( tiles, src_hw_cpc_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -2438,7 +2442,7 @@ void cpc_put_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void cpc_tile_at( Environment * _environment, char * _x, char * _y, char *_result ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( tiles, src_hw_cpc_tiles_asm );
 
     outline1("LD A, (%s)", _x );
@@ -2455,7 +2459,7 @@ void cpc_tile_at( Environment * _environment, char * _x, char * _y, char *_resul
 
 void cpc_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( tiles, src_hw_cpc_tiles_asm );
 
     outline1("LD A, (%s)", _tileset );
@@ -2488,7 +2492,7 @@ void cpc_colors_vars( Environment * _environment, char * _foreground_color, char
 
 void cpc_slice_image_copy( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( duff, src_hw_z80_duff_asm );
     deploy( sliceimagecopy, src_hw_cpc_slice_image_copy_asm );
@@ -2508,7 +2512,7 @@ void cpc_slice_image_copy( Environment * _environment, char * _image,  char * _f
 
 void cpc_slice_image_extract( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( duff, src_hw_z80_duff_asm );
     deploy( sliceimageextract, src_hw_cpc_slice_image_extract_asm );
@@ -2816,7 +2820,7 @@ void cpc_calculate_sequence_frame_offset( Environment * _environment, char * _of
 
 void cpc_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    // deploy( cpcvars, src_hw_cpc_vars_asm);
+    // deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     // deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
 
     // MAKE_LABEL
@@ -2899,7 +2903,7 @@ void cpc_dojo_ping( Environment * _environment, char * _result ) {
 
 void cpc_fade( Environment * _environment, char * _ticks ) {
 
-    deploy( cpcvars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     deploy( fade, src_hw_cpc_fade_asm );
 

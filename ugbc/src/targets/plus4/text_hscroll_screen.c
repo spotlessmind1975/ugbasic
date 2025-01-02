@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_hscroll_screen( Environment * _environment, int _direction ) {
+void text_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    ted_hscroll_screen( _environment, _direction );
+    ted_hscroll_screen( _environment, _direction, _overlap );
     
 }

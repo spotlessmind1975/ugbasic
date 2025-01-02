@@ -90,6 +90,8 @@ BLITR1 = $E7
 BLITR2 = $E6
 BLITR3 = $E5
 
+PORT = $E5
+
 ; bit   index      address
 ; 0     1          $02c4
 ; 1     2          $02c5

@@ -44,7 +44,6 @@ VSCROLLTUP:
     ; of bytes effectively to copy. The number is given by CONSOLESL.
 
     LD A, (CONSOLEWB)
-    ADD 8
     LD IXL, A
 
     ; LD BC, 192
@@ -96,6 +95,65 @@ VSCROLLTUP:
     ADD HL, DE
     ADD HL, DE
     ADD HL, DE
+
+@IF verticalOverlapRequired
+
+    LD A, IYL
+    CP 0
+    JR Z, VSCROLLTUPNOW
+
+VSCROLLTUPW:
+
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    LD DE, VSCROLLBUFFERLINE
+
+    LD C, 8
+
+VSCROLLTUPWL1:
+    
+    PUSH BC
+    PUSH HL
+
+    PUSH DE
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
+    LD HL, DE
+    POP DE
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
+    LDIR
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+
+    DEC C
+    JR NZ, VSCROLLTUPWL1
+
+    POP BC
+    POP DE
+    POP HL
+
+VSCROLLTUPNOW:
+
+@ENDIF
 
     ; If just one line, we do not scroll!
     LD A, C
@@ -183,6 +241,70 @@ VSCROLLREFILL:
 
 VSCROLLTUPL2:
 
+@IF verticalOverlapRequired
+
+    LD A, IYL
+    CP 0
+    JR Z, VSCROLLREFILLNOW
+
+VSCROLLREFILLW:
+
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    LD IY, VSCROLLBUFFERLINE
+
+    LD C, 8
+
+VSCROLLREFILLWL1:
+    
+    PUSH BC
+    PUSH HL
+
+    LD E, (HL)
+    INC HL
+    LD D, (HL)
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A
+        
+    PUSH IY
+    POP HL
+
+    LD A, IXL
+    LD C, A
+    LD B, 0
+    LDIR
+
+    PUSH HL
+    POP IY
+
+    POP HL
+    POP BC
+
+    INC HL
+    INC HL
+
+    DEC C
+    JR NZ, VSCROLLREFILLWL1
+
+    POP BC
+    POP DE
+    POP HL
+
+    JP VSCROLLREFILLDONE
+
+@ENDIF
+
+VSCROLLREFILLNOW:
+
     PUSH BC
     PUSH HL
 
@@ -193,7 +315,21 @@ VSCROLLTUPL2:
     INC HL
     LD A, (HL)
     LD B, A
-    LD HL, BC
+    LD DE, BC
+
+    ; Retrieve the effective position using CONSOLEX1
+
+    LD A, (XCURSYS)
+    PUSH AF
+    LD A, (CONSOLEX1)
+    LD (XCURSYS), A
+    LD (COPYOFTEXTADDRESS), DE
+    CALL TEXTATPIXPOSH
+    LD DE, (COPYOFTEXTADDRESS)
+    POP AF
+    LD (XCURSYS), A 
+
+    LD HL, DE
 
     ; Fill with zero.
 
@@ -228,7 +364,9 @@ VSCROLLTUPL2:
 
     ; Repeat until finished.
 
-    JP NZ, VSCROLLTUPL2
+    JP NZ, VSCROLLREFILLNOW
+
+VSCROLLREFILLDONE:
 
     POP IX
 

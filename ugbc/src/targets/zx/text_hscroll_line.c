@@ -42,9 +42,9 @@
 @keyword HSCROLL
 @target zx
 </usermanual> */
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    zx_hscroll_line( _environment, _direction );
+    zx_hscroll_line( _environment, _direction, _overlap );
    
 }
 

@@ -239,7 +239,7 @@ void zx_finalization( Environment * _environment );
 void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
-void zx_vscroll( Environment * _environment, int _displacement );
+void zx_vscroll( Environment * _environment, int _displacement, int _overlap );
 void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 
@@ -302,8 +302,8 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 void zx_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void zx_sys_call( Environment * _environment, int _destination );
 int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
-void zx_hscroll_line( Environment * _environment, int _direction );
-void zx_hscroll_screen( Environment * _environment, int _direction );
+void zx_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void zx_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 
 void zx_timer_set_status_on( Environment * _environment, char * _timer );
 void zx_timer_set_status_off( Environment * _environment, char * _timer );

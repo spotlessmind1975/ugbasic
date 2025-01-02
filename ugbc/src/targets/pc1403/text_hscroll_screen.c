@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_hscroll_screen( Environment * _environment, int _direction ) {
+void text_hscroll_screen( Environment * _environment, int _directionm, int _overlap ) {
 
     outline1("LD A, $%2.2x", ( _direction & 0xff ) );
 
