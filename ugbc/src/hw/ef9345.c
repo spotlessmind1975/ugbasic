@@ -688,7 +688,7 @@ void ef9345_cls( Environment * _environment ) {
 
 }
 
-void ef9345_scroll_text( Environment * _environment, int _direction ) {
+void ef9345_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
 }
 
@@ -872,11 +872,11 @@ void ef9345_finalization( Environment * _environment ) {
     
 }
 
-void ef9345_hscroll_line( Environment * _environment, int _direction ) {
+void ef9345_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
 }
 
-void ef9345_hscroll_screen( Environment * _environment, int _direction ) {
+void ef9345_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
 }
 

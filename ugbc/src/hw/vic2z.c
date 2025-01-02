@@ -1411,7 +1411,7 @@ void vic2z_tiles_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic2z_vertical_scroll( Environment * _environment, char * _displacement ) {
+void vic2z_vertical_scroll( Environment * _environment, char * _displacement, int _overlap ) {
 
     outline0("LDA $D011" );
     outline0("AND #%11111000");
@@ -1420,7 +1420,7 @@ void vic2z_vertical_scroll( Environment * _environment, char * _displacement ) {
 
 }
 
-void vic2z_horizontal_scroll( Environment * _environment, char * _displacement ) {
+void vic2z_horizontal_scroll( Environment * _environment, char * _displacement, int _overlap ) {
 
     outline0("LDA $D016" );
     outline0("AND #%11111000");
@@ -1644,7 +1644,7 @@ void vic2z_finalization( Environment * _environment ) {
 
 }
 
-void vic2z_hscroll_line( Environment * _environment, int _direction ) {
+void vic2z_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2z_hscroll_text_asm );
 
@@ -1658,7 +1658,7 @@ void vic2z_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void vic2z_hscroll_screen( Environment * _environment, int _direction ) {
+void vic2z_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2z_hscroll_text_asm );
 

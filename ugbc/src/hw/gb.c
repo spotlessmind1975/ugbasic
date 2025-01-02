@@ -1032,7 +1032,7 @@ void gb_cls( Environment * _environment ) {
 
 }
 
-void gb_scroll_text( Environment * _environment, int _direction ) {
+void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
         deploy( vScrollTextDown, src_hw_gb_vscroll_text_down_asm );
@@ -1297,7 +1297,7 @@ void gb_finalization( Environment * _environment ) {
     
 }
 
-void gb_hscroll_line( Environment * _environment, int _direction ) {
+void gb_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     // // deploy( textHScroll, src_hw_gb_hscroll_text_asm );
 
@@ -1312,7 +1312,7 @@ void gb_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void gb_hscroll_screen( Environment * _environment, int _direction ) {
+void gb_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     // // deploy( textHScroll, src_hw_gb_hscroll_text_asm );
 

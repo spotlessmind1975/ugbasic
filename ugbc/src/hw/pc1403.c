@@ -1324,7 +1324,7 @@ int pc1403_palette_extract( Environment * _environment, char * _data, int _width
 
 }
 
-void pc1403_hscroll_line( Environment * _environment, int _direction ) {
+void pc1403_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     // deploy( textHScrollLine, src_hw_pc1403_hscroll_asm);
 

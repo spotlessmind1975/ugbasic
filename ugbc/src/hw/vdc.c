@@ -926,13 +926,13 @@ void vdc_finalization( Environment * _environment ) {
 
 }
 
-void vdc_hscroll_line( Environment * _environment, int _direction ) {
+void vdc_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdc_hscroll_text_asm );
 
 }
 
-void vdc_hscroll_screen( Environment * _environment, int _direction ) {
+void vdc_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdc_hscroll_text_asm );
 

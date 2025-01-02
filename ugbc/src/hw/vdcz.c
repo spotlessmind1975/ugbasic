@@ -2345,7 +2345,7 @@ void vdcz_cls( Environment * _environment ) {
 
 }
 
-void vdcz_scroll_text( Environment * _environment, int _direction ) {
+void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
         deploy( vScrollTextDown, src_hw_vdcz_vscroll_text_down_asm );
@@ -2565,13 +2565,13 @@ void vdcz_finalization( Environment * _environment ) {
     
 }
 
-void vdcz_hscroll_line( Environment * _environment, int _direction ) {
+void vdcz_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdcz_hscroll_text_asm );
 
 }
 
-void vdcz_hscroll_screen( Environment * _environment, int _direction ) {
+void vdcz_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdcz_hscroll_text_asm );
 

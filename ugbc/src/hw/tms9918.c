@@ -1667,7 +1667,7 @@ void tms9918_finalization( Environment * _environment ) {
     
 }
 
-void tms9918_hscroll_line( Environment * _environment, int _direction ) {
+void tms9918_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
 
