@@ -41,7 +41,7 @@
 void text_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _overlap ) {
-        _environment->verticalOverlapRequired = 1;
+        _environment->horizontalOverlapRequired = 1;
     }
 
     gtia_hscroll_screen( _environment, _direction, _overlap );

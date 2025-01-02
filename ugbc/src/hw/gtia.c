@@ -2104,7 +2104,7 @@ void gtia_finalization( Environment * _environment ) {
 
 void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -2120,7 +2120,7 @@ void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap
 
 void gtia_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -3659,7 +3659,7 @@ void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( scroll, src_hw_gtia_scroll_asm);
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
     deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
