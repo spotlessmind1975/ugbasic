@@ -40,6 +40,10 @@
 
 void text_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
     
+    if ( _overlap ) {
+        _environment->horizontalOverlapRequired = 1;
+    }
+
     c6847_hscroll_screen( _environment, _direction, _overlap );
 
 }

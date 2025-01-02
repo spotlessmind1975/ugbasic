@@ -2965,6 +2965,7 @@ typedef struct _Environment {
     int lmarginAtariBasicEnabled;
 
     int verticalOverlapRequired;
+    int horizontalOverlapRequired;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -4886,6 +4887,8 @@ void                    label_referred_define_numeric( Environment * _environmen
 void                    label_referred_define_named( Environment * _environment, char * _label );
 int                     label_referred_exists_named( Environment * _environment, char * _label );
 int                     label_referred_exists_numeric( Environment * _environment, int _label );
+void                    leftw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    leftb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
@@ -5045,6 +5048,8 @@ int                     rgbi_equals_rgba( RGBi * _first, RGBi * _second );
 int                     rgbi_extract_palette( Environment * _environment, unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
+void                    rightw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    rightb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 Variable *              rnd( Environment * _environment, char * _value );
 Variable *              rnd0( Environment * _environment );
 Variable *              rnd1( Environment * _environment );

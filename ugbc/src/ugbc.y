@@ -101,7 +101,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS 
-%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB
+%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10336,6 +10336,26 @@ downb_definition :
         downb( _environment, $1, $3, $5, $7 );
     };
 
+leftw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        leftw( _environment, $1, $3, $5, $7 );
+    };
+
+leftb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        leftb( _environment, $1, $3, $5, $7 );
+    };
+
+rightw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        rightw( _environment, $1, $3, $5, $7 );
+    };
+
+rightb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        rightb( _environment, $1, $3, $5, $7 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -10484,6 +10504,10 @@ statement2nc:
   | UPW upw_definition
   | DOWNB downb_definition
   | DOWNW downw_definition
+  | LEFTB leftb_definition
+  | LEFTW leftw_definition
+  | RIGHTB rightb_definition
+  | RIGHTW rightw_definition
   | SCROLL scroll_definition
   | CMOVE cmove_definition
   | CUP {
