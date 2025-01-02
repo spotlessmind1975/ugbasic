@@ -34,14 +34,35 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+@IF horizontalOverlapRequired
+
+HSCROLLBUFFERCHARACTER FCB  0, 0
+
+@ENDIF
 
 HSCROLLSINGLELINELEFT
 
     PSHS X
     PSHS Y
     PSHS U
+
+@IF horizontalOverlapRequired
+
+    LDA PORT
+    BEQ HSCROLLSINGLELINELEFTNOW
+
+HSCROLLSINGLELINELEFTW
+    LDD ,X
+    STD HSCROLLBUFFERCHARACTER
+
+HSCROLLSINGLELINELEFTNOW
+
+@ENDIF
+
     LDA #0
     LDB CONSOLEW
+    DECB
+    DECB
     TFR D, U
 HSCROLLSINGLELINELEFTL2
     LDD , Y
@@ -52,9 +73,24 @@ HSCROLLSINGLELINELEFTL2
     CMPU #0
     BNE HSCROLLSINGLELINELEFTL2
 
+@IF horizontalOverlapRequired
+
+    LDA PORT
+    BEQ HSCROLLSINGLELINELEFTREFILLNOW
+
+HSCROLLSINGLELINELEFTREFILLW
+    LDD HSCROLLBUFFERCHARACTER
+    BRA HSCROLLSINGLELINELEFTREFILLNOW2
+
+HSCROLLSINGLELINELEFTREFILLNOW
+
+@ENDIF
+
     LDA EMPTYTILE
     LDB <PLOTC
     
+HSCROLLSINGLELINELEFTREFILLNOW2
+
     STD , Y
     PULS U
     PULS Y

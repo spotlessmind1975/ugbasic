@@ -1670,7 +1670,7 @@ void gime_finalization( Environment * _environment ) {
 
 void gime_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gime_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -1687,7 +1687,7 @@ void gime_hscroll_line( Environment * _environment, int _direction, int _overlap
 
 void gime_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gime_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );

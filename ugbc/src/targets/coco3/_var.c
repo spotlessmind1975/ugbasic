@@ -676,6 +676,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dcommon, src_hw_coco3_dcommon_asm);
     deploy_inplace_preferred( dload, src_hw_coco3_dload_asm);
     deploy_inplace_preferred( dsave, src_hw_coco3_dsave_asm);
+    deploy_inplace_preferred( textHScroll, src_hw_gime_hscroll_text_asm );
     
     // Moved here for banking reasons.
 
