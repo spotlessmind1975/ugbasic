@@ -66,6 +66,10 @@ oppure a sinistra.
 
 void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
+    if ( _overlap ) {
+        _environment->horizontalOverlapRequired = 1;
+    }
+
     vic2_hscroll_line( _environment, _direction, _overlap );
     
 }

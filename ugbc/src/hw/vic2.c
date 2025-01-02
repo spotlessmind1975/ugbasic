@@ -2251,7 +2251,7 @@ void vic2_finalization( Environment * _environment ) {
 
 void vic2_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
@@ -2266,7 +2266,7 @@ void vic2_hscroll_line( Environment * _environment, int _direction, int _overlap
 
 void vic2_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
@@ -4049,7 +4049,7 @@ void vic2_scroll( Environment * _environment, int _dx, int _dy ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
     deploy( scroll, src_hw_vic2_scroll_asm);
-    deploy( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
     deploy_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm );
     deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
 
