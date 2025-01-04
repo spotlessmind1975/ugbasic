@@ -62,7 +62,7 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
         cpu_inc( _environment, spriteCount->realName );
     }
 
-   // tms9918_sprite_data_from( _environment, index->name, realImage->name );
+    gb_sprite_data_from( _environment, index->name, realImage->name );
 
     return index;
 

@@ -47,17 +47,19 @@ SPRITEDATASET:
     POP AF
     INC HL
     INC HL
+    CALL WAITSTATEM0
     LD (HL), A
     RET
 
-SPRITEDATFROMFAILED:
+SPRITEDATAFROMFAILED:
     POP AF
     LD (TILESETSLOTLAST), A
     POP AF
     RET
 
-SPRITEDATFROM:
+SPRITEDATAFROM:
 
+    PUSH HL
     PUSH AF
     LD A, B
     SLA A
@@ -67,19 +69,26 @@ SPRITEDATFROM:
     LD HL, $FE00
     ADD HL, DE
     POP AF
+
     INC HL
     INC HL
-    LD (HL), A
 
     LD A, (TILESETSLOTLAST)
     PUSH AF
+    LD A, 0
+    LD (TILESETSLOTLAST), A
     CALL TILESETSLOTFINDFREE
-    JR NC, SPRITEDATFROMFAILED
+    JR NC, SPRITEDATAFROMFAILED
     LD B, A
     POP AF
     LD (TILESETSLOTLAST), A
+    CALL TILESETSLOTRESETFREESLOT
 
     LD A, B
+    CALL WAITSTATEM0
+    LD (HL), A
+
+    POP HL
 
     ; Now we do the same with the hardware TILESET.
     
@@ -109,12 +118,6 @@ SPRITEDATFROM:
 
     POP HL
 
-    INC HL
-    INC HL
-    INC HL
-    INC HL
-    INC HL
-
     ; Let's repeat the copy for 16 bytes.
 
     LD B, 16
@@ -141,6 +144,7 @@ SPRITEDISABLE:
     LD HL, $FE00
     ADD HL, DE
     LD A, 255
+    CALL WAITSTATEM0
     LD (HL), A
     RET
 
@@ -155,6 +159,7 @@ SPRITEAT:
     ADD HL, DE
     POP DE
     LD A, E
+    CALL WAITSTATEM0
     LD (HL), A
     INC HL
     LD A, D

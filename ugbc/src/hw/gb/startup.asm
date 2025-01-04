@@ -945,9 +945,25 @@ OAMA_FLAGS:          DB  1   ; flags (see below)
 sizeof_OAM_ATTRS:    DB  0
 
 WAITSTATE:
+    PUSH AF
+WAITSTATEL1:
     LDH  A, (rSTAT)
     AND STATF_BUSY
-    JR NZ, WAITSTATE
+    JR NZ, WAITSTATEL1
+    POP AF
+    RET
+
+WAITSTATEM0:
+    PUSH HL
+    LD HL, rSTAT
+WAITSTATEM0L1:
+    BIT 1, (HL)
+    JR Z, WAITSTATEM0L1
+WAITSTATEM0L2:
+.waitBlank
+    BIT 1, (HL)
+    JR NZ, WAITSTATEM0L2
+    POP HL
     RET
 
 IRQSVC:
@@ -980,11 +996,12 @@ COPYUDCCHAR:
     LD DE, $8000
     LD BC, descriptorsCount * 8
 COPYUDCCHARL1:
-    CALL WAITSTATE
     LD A, (HL)
     INC HL
+    CALL WAITSTATE
     LD (DE), A
     INC DE
+    CALL WAITSTATE
     LD (DE), A
     INC DE
     DEC BC
@@ -1002,6 +1019,8 @@ GBSTARTUP:
     CALL WAITSTATE
     LD A, $e4
     LD ($FF47), A
+    LD ($FF48), A
+    LD ($FF49), A
 
 @IF deployed.dstring
     CALL DSINIT
@@ -1231,6 +1250,225 @@ TILESETSLOTFOUNDFREEDONE:
     POP HL
 
     SCF
+
+    RET
+
+; ------------------------------------------------------------------------------
+; Allocate a new slot of used tiles.
+;  In : -
+;  Out: -
+; ------------------------------------------------------------------------------
+
+TILESETSLOTALLOC:
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    ; First of all, retrieve the offset inside the
+    ; TILESETSLOTUSED for the current last slot.
+
+    LD A, (TILESETSLOTLAST)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, TILESETSLOTUSED
+    ADD HL, DE
+
+    ; Move to the next last slot: if LAST is reached,
+    ; move to the first.
+
+    LD A, (TILESETSLOTLAST)
+    INC A
+    LD (TILESETSLOTLAST), A
+    CP 8
+    JR NZ, TILESETSLOTALLOCDONE
+    LD A, 1
+    LD (TILESETSLOTLAST), A
+TILESETSLOTALLOCDONE:
+
+    ; Next, retrieve the offset inside the
+    ; TILESETSLOTUSED for the actual last slot.
+
+    PUSH HL
+
+    LD A, (TILESETSLOTLAST)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, TILESETSLOTUSED
+    ADD HL, DE
+
+    LD D, H
+    LD E, L
+
+    POP HL
+
+    ; Copy the 32 bytes (256 used tiles) from
+    ; the last to the actual slot.
+
+    LD B, 32
+TILESETSLOTALLOCL1:
+    LD A, (HL)
+    LD (DE), A
+    INC HL
+    INC DE
+    DEC B
+    JR NZ, TILESETSLOTALLOCL1
+
+    POP BC
+    POP DE
+    POP HL
+
+    RET
+
+; ------------------------------------------------------------------------------
+; REALLOC THE FREE TILES
+;  In : TMPPTR address of TILEDIMAGE
+;  Out: -
+; ------------------------------------------------------------------------------
+
+TILESETSLOTRECALCFREESLOT:
+
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    ; We are going to restore the actual slot with the previous one.
+    ; We must do it twice, since we already went forward by 1 slot.
+
+    LD A, (TILESETSLOTLAST)
+    DEC A
+    CP $0
+    JR NZ, TILESETSLOTRECALCFREESLOTA1
+    LD A, 7
+TILESETSLOTRECALCFREESLOTA1:
+    LD (TILESETSLOTLAST), A
+
+    LD A, (TILESETSLOTLAST)
+    DEC A
+    CP $0
+    JR NZ, TILESETSLOTRECALCFREESLOTA2
+    LD A, 7
+TILESETSLOTRECALCFREESLOTA2:
+    LD (TILESETSLOTLAST), A
+
+    CALL TILESETSLOTALLOC
+
+    ; Now wwe retrieve the offset inside the
+    ; TILESETSLOTUSED for the current first slot.
+
+    LD A, (TILESETSLOTFIRST)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, TILESETSLOTUSED
+    ADD HL, DE
+; @IF descriptors
+;     LD DE, ( descriptorsCount / 8 ) + 1
+;     ADD HL, DE
+; @ENDIF
+
+    ; Move to the next first slot: if LAST is reached,
+    ; move to the first.
+
+    LD A, (TILESETSLOTFIRST)
+    INC A
+    CP 8
+    JR NZ, TILESETSLOTRECALCFREEDONE
+    LD A, 1
+TILESETSLOTRECALCFREEDONE:
+    LD (TILESETSLOTFIRST), A
+
+    ; Next, retrieve the offset inside the
+    ; TILESETSLOTUSED for the actual last slot.
+
+    PUSH HL
+    LD A, (TILESETSLOTLAST)
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, TILESETSLOTUSED
+    ADD HL, DE
+; @IF descriptors
+;     LD DE, ( descriptorsCount / 8 ) + 1
+;     ADD HL, DE
+; @ENDIF
+    LD D, H
+    LD E, L
+    POP HL
+
+    ; Mask the 32 bytes (256 used tiles) from
+    ; the first to the actual slot.
+
+    ; LD B, 32 - ( ( descriptorsCount / 8 ) + 1 )
+    LD B, 32
+TILESETSLOTRECALCL2:
+    PUSH HL
+    PUSH BC
+    LD HL, TILESETSLOTUSED
+    LD A, 32
+    SBC B
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD A, (HL)
+    POP BC
+    POP HL
+    LD C, A
+    LD A, (HL)
+    XOR $FF
+    OR C
+    LD C, A
+    LD A, (DE)
+    AND C
+    LD (DE), A
+    INC HL
+    INC DE
+    DEC B
+    JR NZ, TILESETSLOTRECALCL2
+
+    POP BC
+    POP DE
+    POP HL
+
+    RET
+
+TILESETSLOTRESETFREESLOT:
+    PUSH HL
+    PUSH DE
+    PUSH BC
+
+    LD HL, TILESETSLOTUSED
+    LD DE, TILESETSLOTUSED+32
+    ; LD B, 32 - ( ( descriptorsCount / 8 ) + 1 )
+    LD B, 32
+TILESETSLOTRESETFREESLOTL1:
+    LD A, (HL)
+    LD (DE), A
+    INC HL
+    INC DE
+    DEC B
+    JR NZ, TILESETSLOTRESETFREESLOTL1
+
+    POP BC
+    POP DE
+    POP HL
 
     RET
 

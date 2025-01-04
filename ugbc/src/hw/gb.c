@@ -929,9 +929,11 @@ void gb_sprite_data_from( Environment * _environment, char * _sprite, char * _im
 
     deploy( sprite, src_hw_gb_sprites_asm );
     
+    char dataLabel[MAX_TEMPORARY_STORAGE]; sprintf( dataLabel, "%sdata", image->realName );
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
-    outline1("LD HL, %s", image->realName );
+    sprintf(dataLabel, "%sdata", image->realName);
+    outline1("LD HL, %s", dataLabel );
     outline0("CALL SPRITEDATAFROM");
 
 }
