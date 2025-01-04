@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] MULTICOLOR</b>
@@ -50,8 +50,6 @@
  * @param _sprite Index of the sprite for which enable multicolor (0...7)
  */
 void sprite_multicolor( Environment * _environment, int _sprite ) {
-
-    outline1("; SPRITE %d MULTICOLOR (ignored)", _sprite);
 
 }
 
@@ -65,8 +63,6 @@ void sprite_multicolor( Environment * _environment, int _sprite ) {
  * @param _sprite Expression with index of the sprite for which enable multicolor (0...7)
  */
 void sprite_multicolor_var( Environment * _environment, char * _sprite ) {
-
-    outline1("; SPRITE %s MULTICOLOR (ignored)", _sprite);
 
 }
 

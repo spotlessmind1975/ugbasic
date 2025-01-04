@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>TEXTMAP AT [int]xx</b>

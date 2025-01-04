@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for instruction <b>SPRITE [int] COLOR [int]</b>
@@ -65,8 +65,6 @@ void sprite_priority( Environment * _environment, int _sprite, int _priority ) {
  * @param _color Expression with the index of the color
  */
 void sprite_priority_vars( Environment * _environment, char * _sprite, char * _priority ) {
-
-   // tms9918_sprite_color( _environment, _sprite, _priority );
 
 }
 

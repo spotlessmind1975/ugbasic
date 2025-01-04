@@ -38,301 +38,301 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 Variable * image_ref( Environment * _environment, char * _image ) {
 
-    Variable * image = variable_retrieve( _environment, _image );
+    // Variable * image = variable_retrieve( _environment, _image );
 
     Variable * imageRef = variable_temporary( _environment, VT_IMAGEREF, "(imageref)" );
 
-    image->usedImage = 1;
+    // image->usedImage = 1;
 
-    outline1( "LD IX, %s", imageRef->realName );
+    // outline1( "LD IX, %s", imageRef->realName );
 
-    switch( image->type ) {
-        case VT_IMAGE:
-            if ( image->bankAssigned != -1 ) {
+    // switch( image->type ) {
+    //     case VT_IMAGE:
+    //         if ( image->bankAssigned != -1 ) {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, $%4.4x", image->absoluteAddress );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, $%4.4x", image->absoluteAddress );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, $%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, $%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                outline1( "LDA $%2.2x", image->bankAssigned );
-                outline0( "LD (IX+4), A" );
+    //             outline1( "LDA $%2.2x", image->bankAssigned );
+    //             outline0( "LD (IX+4), A" );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, $0f" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, $0f" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                #if !defined(__coleco__)
-                    char bankWindowName[MAX_TEMPORARY_STORAGE];
-                    sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-                    outline1( "LD HL, %s", bankWindowName );
-                    outline0( "LD (IX+6), L" );
-                    outline0( "LD (IX+7), H" );
-                #endif
+    //             #if !defined(__coleco__)
+    //                 char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //                 outline1( "LD HL, %s", bankWindowName );
+    //                 outline0( "LD (IX+6), L" );
+    //                 outline0( "LD (IX+7), H" );
+    //             #endif
                 
-                // TABLE1
+    //             // TABLE1
 
-                // outline1( "LDX #%soffsetframe", image->realName );
-                // outline1( "STX %s+8", imageRef->realName );
+    //             // outline1( "LDX #%soffsetframe", image->realName );
+    //             // outline1( "STX %s+8", imageRef->realName );
 
-                // TABLE2
+    //             // TABLE2
 
-                // outline1( "LDX #%soffsetsequence", image->realName );
-                // outline1( "STX %s+10", imageRef->realName );
+    //             // outline1( "LDX #%soffsetsequence", image->realName );
+    //             // outline1( "STX %s+10", imageRef->realName );
 
-            } else {
+    //         } else {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, %s", image->realName  );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, %s", image->realName  );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, $%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, $%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
-                // outline1( "STA %s+4", imageRef->realName );
+    //             // outline1( "LDA #$%4.4x", image->bankAssigned );
+    //             // outline1( "STA %s+4", imageRef->realName );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, $03" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, $03" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                // char bankWindowName[MAX_TEMPORARY_STORAGE];
-                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //             // char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //             // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                // outline1( "LDX #%s", bankWindowName );
-                // outline1( "STX %s+6", imageRef->realName );
+    //             // outline1( "LDX #%s", bankWindowName );
+    //             // outline1( "STX %s+6", imageRef->realName );
 
-                // TABLE1
+    //             // TABLE1
 
-                // outline1( "LDX #%soffsetframe", image->realName );
-                // outline1( "STX %s+8", imageRef->realName );
+    //             // outline1( "LDX #%soffsetframe", image->realName );
+    //             // outline1( "STX %s+8", imageRef->realName );
 
-                // TABLE2
+    //             // TABLE2
 
-                // outline1( "LDX #%soffsetsequence", image->realName );
-                // outline1( "STX %s+10", imageRef->realName );
+    //             // outline1( "LDX #%soffsetsequence", image->realName );
+    //             // outline1( "STX %s+10", imageRef->realName );
 
-            }
+    //         }
 
-            break;
+    //         break;
 
-        case VT_IMAGES:
-            if ( image->bankAssigned != -1 ) {
+    //     case VT_IMAGES:
+    //         if ( image->bankAssigned != -1 ) {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, #$%4.4x", image->absoluteAddress );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, #$%4.4x", image->absoluteAddress );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, $%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, $%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                outline1( "LD A, $%2.2x", image->bankAssigned );
-                outline0( "LD (IX+4), A" );
+    //             outline1( "LD A, $%2.2x", image->bankAssigned );
+    //             outline0( "LD (IX+4), A" );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, $0f" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, $0f" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                #if !defined(__coleco__)
-                    char bankWindowName[MAX_TEMPORARY_STORAGE];
-                    sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-                    outline1( "LD HL, %s", bankWindowName );
-                    outline0( "LD (IX+6), L" );
-                    outline0( "LD (IX+7), H" );
-                #endif
+    //             #if !defined(__coleco__)
+    //                 char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //                 outline1( "LD HL, %s", bankWindowName );
+    //                 outline0( "LD (IX+6), L" );
+    //                 outline0( "LD (IX+7), H" );
+    //             #endif
 
-                // TABLE1
+    //             // TABLE1
 
-                outline1( "LD HL, %soffsetframe", image->realName );
-                outline0( "LD (IX+8), L" );
-                outline0( "LD (IX+9), H" );
+    //             outline1( "LD HL, %soffsetframe", image->realName );
+    //             outline0( "LD (IX+8), L" );
+    //             outline0( "LD (IX+9), H" );
 
-                // TABLE2
+    //             // TABLE2
 
-                // outline1( "LDX #%soffsetsequence", image->realName );
-                // outline1( "STX %s+10", imageRef->realName );
+    //             // outline1( "LDX #%soffsetsequence", image->realName );
+    //             // outline1( "STX %s+10", imageRef->realName );
 
-            } else {
+    //         } else {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, %s", image->realName  );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, %s", image->realName  );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, $%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, $%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
-                // outline1( "STA %s+4", imageRef->realName );
+    //             // outline1( "LDA #$%4.4x", image->bankAssigned );
+    //             // outline1( "STA %s+4", imageRef->realName );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, $03" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, $03" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                // char bankWindowName[MAX_TEMPORARY_STORAGE];
-                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //             // char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //             // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                // outline1( "LDX #%s", bankWindowName );
-                // outline1( "STX %s+6", imageRef->realName );
+    //             // outline1( "LDX #%s", bankWindowName );
+    //             // outline1( "STX %s+6", imageRef->realName );
 
-                // TABLE1
+    //             // TABLE1
 
-                outline1( "LD HL, %soffsetframe", image->realName );
-                outline0( "LD (IX+8), L" );
-                outline0( "LD (IX+9), H" );
+    //             outline1( "LD HL, %soffsetframe", image->realName );
+    //             outline0( "LD (IX+8), L" );
+    //             outline0( "LD (IX+9), H" );
 
-                // TABLE2
+    //             // TABLE2
 
-                // outline1( "LDX #%soffsetsequence", image->realName );
-                // outline1( "STX %s+10", imageRef->realName );
+    //             // outline1( "LDX #%soffsetsequence", image->realName );
+    //             // outline1( "STX %s+10", imageRef->realName );
 
-            }
+    //         }
 
-            break;
+    //         break;
 
-        case VT_SEQUENCE:
-            if ( image->bankAssigned != -1 ) {
+    //     case VT_SEQUENCE:
+    //         if ( image->bankAssigned != -1 ) {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, $%4.4x", image->absoluteAddress );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, $%4.4x", image->absoluteAddress );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, $%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, $%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                outline1( "LD A, $%2.2x", image->bankAssigned );
-                outline0( "LD (IX+4), HL" );
+    //             outline1( "LD A, $%2.2x", image->bankAssigned );
+    //             outline0( "LD (IX+4), HL" );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, $0f" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, $0f" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                #if !defined(__coleco__)
-                    char bankWindowName[MAX_TEMPORARY_STORAGE];
-                    sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-                    outline1( "LD HL, %s", bankWindowName );
-                    outline0( "LD (IX+6), L" );
-                    outline0( "LD (IX+7), H" );
-                #endif
+    //             #if !defined(__coleco__)
+    //                 char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //                 outline1( "LD HL, %s", bankWindowName );
+    //                 outline0( "LD (IX+6), L" );
+    //                 outline0( "LD (IX+7), H" );
+    //             #endif
 
-                // TABLE1
+    //             // TABLE1
 
-                outline1( "LD HL, %soffsetframe", image->realName );
-                outline0( "LD (IX+8), L" );
-                outline0( "LD (IX+8), H" );
+    //             outline1( "LD HL, %soffsetframe", image->realName );
+    //             outline0( "LD (IX+8), L" );
+    //             outline0( "LD (IX+8), H" );
 
-                // TABLE2
+    //             // TABLE2
 
-                outline1( "LD HL, %soffsetsequence", image->realName );
-                outline0( "LD (IX+8), L" );                
-                outline0( "LD (IX+8), H" );                
+    //             outline1( "LD HL, %soffsetsequence", image->realName );
+    //             outline0( "LD (IX+8), L" );                
+    //             outline0( "LD (IX+8), H" );                
 
-            } else {
+    //         } else {
 
-                // BASE
+    //             // BASE
 
-                outline1( "LD HL, %s", image->realName  );
-                outline0( "LD (IX), L" );
-                outline0( "LD (IX+1), H" );
+    //             outline1( "LD HL, %s", image->realName  );
+    //             outline0( "LD (IX), L" );
+    //             outline0( "LD (IX+1), H" );
 
-                // SIZE
+    //             // SIZE
 
-                outline1( "LD HL, #$%4.4x", image->frameSize );
-                outline0( "LD (IX+2), L" );
-                outline0( "LD (IX+3), H" );
+    //             outline1( "LD HL, #$%4.4x", image->frameSize );
+    //             outline0( "LD (IX+2), L" );
+    //             outline0( "LD (IX+3), H" );
 
-                // BANK
+    //             // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
-                // outline1( "STA %s+4", imageRef->realName );
+    //             // outline1( "LDA #$%4.4x", image->bankAssigned );
+    //             // outline1( "STA %s+4", imageRef->realName );
 
-                // INFO
+    //             // INFO
 
-                outline0( "LD A, #$03" );
-                outline0( "LD (IX+5), A" );
+    //             outline0( "LD A, #$03" );
+    //             outline0( "LD (IX+5), A" );
 
-                // RESIDENT
+    //             // RESIDENT
 
-                // char bankWindowName[MAX_TEMPORARY_STORAGE];
-                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+    //             // char bankWindowName[MAX_TEMPORARY_STORAGE];
+    //             // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                // outline1( "LDX #%s", bankWindowName );
-                // outline1( "STX %s+6", imageRef->realName );
+    //             // outline1( "LDX #%s", bankWindowName );
+    //             // outline1( "STX %s+6", imageRef->realName );
 
-                // TABLE1
+    //             // TABLE1
 
-                outline1( "LD HL, #%soffsetframe", image->realName );
-                outline0( "LD (IX+8), L" );
-                outline0( "LD (IX+9), H" );
+    //             outline1( "LD HL, #%soffsetframe", image->realName );
+    //             outline0( "LD (IX+8), L" );
+    //             outline0( "LD (IX+9), H" );
 
-                // TABLE2
+    //             // TABLE2
 
-                outline1( "LD HL, #%soffsetsequence", image->realName );
-                outline0( "LD (IX+8), L" );
-                outline0( "LD (IX+9), H" );
+    //             outline1( "LD HL, #%soffsetsequence", image->realName );
+    //             outline0( "LD (IX+8), L" );
+    //             outline0( "LD (IX+9), H" );
 
-            }
+    //         }
 
-            break;
+    //         break;
 
-        default:
-            CRITICAL_IMAGEREF_ON_NON_IMAGE( _image );
-    }
+    //     default:
+    //         CRITICAL_IMAGEREF_ON_NON_IMAGE( _image );
+    // }
 
 
     return imageRef;

@@ -129,3 +129,34 @@ SPRITEDATAFROML1:
 
     RET
 
+SPRITEENABLE:
+    RET
+
+SPRITEDISABLE:
+    LD A, B
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, $FE00
+    ADD HL, DE
+    LD A, 255
+    LD (HL), A
+    RET
+
+SPRITEAT:
+    PUSH DE
+    LD A, B
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, $FE00
+    ADD HL, DE
+    POP DE
+    LD A, E
+    LD (HL), A
+    INC HL
+    LD A, D
+    LD (HL), A
+    RET

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] CPMPRESS VERTICAL</b>
@@ -50,8 +50,6 @@
  * @param _sprite Index of the sprite to compress vertically (0...7)
  */
 void sprite_compress_vertical( Environment * _environment, int _sprite ) {
-
-    outline1("; SPRITE %d COMPRESS VERTICAL (ignored)", _sprite);
 
 }
 
@@ -66,9 +64,7 @@ void sprite_compress_vertical( Environment * _environment, int _sprite ) {
  */
 void sprite_compress_vertical_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s COMPRESS VERTICAL (ignored)", _sprite);
-
-   // tms9918_sprite_compress_vertical( _environment, _sprite );
+   gb_sprite_compress_vertical( _environment, _sprite );
 
 }
 

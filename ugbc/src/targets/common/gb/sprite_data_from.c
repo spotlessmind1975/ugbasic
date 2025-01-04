@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] DATA FROM [int]</b>
@@ -68,7 +68,7 @@ void sprite_data_from( Environment * _environment, int _sprite, int _address ) {
  */
 void sprite_data_from_vars( Environment * _environment, char * _sprite, char * _image ) {
 
-   // tms9918_sprite_data_from( _environment, _sprite, _image );
+   gb_sprite_data_from( _environment, _sprite, _image );
 
 }
 

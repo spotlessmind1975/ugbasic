@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] DISABLE</b>
@@ -64,7 +64,7 @@ void sprite_disable( Environment * _environment, int _sprite ) {
  */
 void sprite_disable_var( Environment * _environment, char * _sprite ) {
 
-   // tms9918_sprite_disable( _environment, _sprite );
+   gb_sprite_disable( _environment, _sprite );
 
 }
 

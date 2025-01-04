@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>
@@ -50,8 +50,6 @@
  * @param _sprite Index of the sprite to expand horizontally (0...7)
  */
 void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
-
-    outline1("; SPRITE %d EXPAND HORIZONTAL (ignored)", _sprite);
 
 }
 
@@ -66,9 +64,7 @@ void sprite_expand_horizontal( Environment * _environment, int _sprite ) {
  */
 void sprite_expand_horizontal_var( Environment * _environment, char * _sprite ) {
 
-    outline1("; SPRITE %s EXPAND HORIZONTAL (ignored)", _sprite);
-
-   // tms9918_sprite_expand_horizontal( _environment, _sprite );
+   gb_sprite_expand_horizontal( _environment, _sprite );
 
 }
 

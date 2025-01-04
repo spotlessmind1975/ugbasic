@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM implementation for <b>BITMAP AT [int]</b> instruction
@@ -57,10 +57,6 @@
  * @param _address Address to use
  */
 void bitmap_at( Environment * _environment, int _address ) {
-
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
 }
 
@@ -81,10 +77,6 @@ void bitmap_at( Environment * _environment, int _address ) {
  * @param _address Address to use
  */
 void bitmap_at_var( Environment * _environment, char * _address ) {
-
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
 }
 

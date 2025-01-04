@@ -938,111 +938,59 @@ void gb_sprite_data_from( Environment * _environment, char * _sprite, char * _im
 
 void gb_sprite_enable( Environment * _environment, char * _sprite ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
+    deploy( sprite, src_hw_gb_sprites_asm );
     
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEENABLE");
-    // } else {
-    //     outline0("CALL SPRITEENABLENMI2");
-    // }
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline0("CALL SPRITEENABLE");
 
 }
 
 void gb_sprite_disable( Environment * _environment, char * _sprite ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
+    deploy( sprite, src_hw_gb_sprites_asm );
     
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEDISABLE");
-    // } else {
-    //     outline0("CALL SPRITEDISABLENMI2");
-    // }
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline0("CALL SPRITEDISABLE");
 
 }
 
 void gb_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    // Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    // Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
+    deploy( sprite, src_hw_gb_sprites_asm );
     
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // outline1("LD A, (%s)", x->realName );
-    // outline0("LD H, A");
-    // outline1("LD A, (%s)", y->realName );
-    // outline0("LD L, A");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEAT");
-    // } else {
-    //     outline0("CALL SPRITEATNMI2");
-    // }
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD D, A");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD E, A");
+    outline0("CALL SPRITEAT");
 
 }
 
 void gb_sprite_expand_vertical( Environment * _environment, char * _sprite ) {
 
-    // _sprite = NULL;
-
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEEXPAND");
-    // } else {
-    //     outline0("CALL SPRITEEXPANDNMI2");
-    // }
-
 }
 
 void gb_sprite_expand_horizontal( Environment * _environment, char * _sprite ) {
-
-    // _sprite = NULL;
-
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEEXPAND");
-    // } else {
-    //     outline0("CALL SPRITEEXPANDNMI2");
-    // }
 
 }
 
 void gb_sprite_compress_vertical( Environment * _environment, char * _sprite ) {
 
-    // _sprite = NULL;
-
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITECOMPRESS");
-    // } else {
-    //     outline0("CALL SPRITECOMPRESSNMI2");
-    // }
-
 }
 
 void gb_sprite_compress_horizontal( Environment * _environment, char * _sprite ) {
-
-    // _sprite = NULL;
-
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITECOMPRESS");
-    // } else {
-    //     outline0("CALL SPRITECOMPRESSNMI2");
-    // }
 
 }
 
@@ -1055,21 +1003,6 @@ void gb_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void gb_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
-
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    // Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_WHITE );
-
-    // // deploy( sprite, src_hw_gb_sprites_asm );
-    
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // outline1("LD A, (%s)", color->realName );
-    // outline0("LD C, A");
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITECOLOR");
-    // } else {
-    //     outline0("CALL SPRITECOLORNMI2");
-    // }
 
 }
 
@@ -1283,8 +1216,8 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
     variable_global( _environment, "CURRENTTILEMODE" );
 
-    // variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
-    // variable_global( _environment, "SPRITECOUNT" );
+    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    variable_global( _environment, "SPRITECOUNT" );
 
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );
@@ -1708,200 +1641,49 @@ static Variable * gb_image_converter_tilemap_mode_standard( Environment * _envir
 
 Variable * gb_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y ) {
 
-    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
+    _environment->bitmaskNeeded = 1;
 
-    // RGBi palette[MAX_PALETTE];
+    if ( _width != 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( _width );
+    }
 
-    // int colorUsed = gb_palette_extract( _environment, _source, _width, _height, _depth, 0 /* flags */, &palette[0] );
+    if ( _height != 8 ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( _height );
+    }
 
-    // if ( ! _color ) {
+    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
 
-    //     if (colorUsed > 2) {
-    //         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( colorUsed );
-    //     }
+    result->locked = 1;
 
-    // }
+    int size = 1;
 
-    // // int colorUsed = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, 1 /* sorted */);
+    int bufferSize = 3 + size + size * 16;
 
-    // Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    // result->originalColors = colorUsed;
+    char * buffer = malloc ( bufferSize );
 
-    // // int i, j, k;
+    memset( buffer, 0, bufferSize );
 
-    // // for( i=0; i<colorUsed; ++i ) {
-    // //     int minDistance = 0xffff;
-    // //     int colorIndex = 0;
-    // //     for (j = 0; j < sizeof(SYSTEM_PALETTE)/sizeof(RGBi); ++j) {
-    // //         int distance = rgbi_distance(&SYSTEM_PALETTE[j], &palette[i]);
-    // //         if (distance < minDistance) {
-    // //             for( k=0; k<i; ++k ) {
-    // //                 if ( palette[k].index == SYSTEM_PALETTE[j].index ) {
-    // //                     break;
-    // //                 }
-    // //             }
-    // //             if ( k>=i ) {
-    // //                 minDistance = distance;
-    // //                 colorIndex = j;
-    // //             }
-    // //         }
-    // //     }
-    // //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-    // //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
-    // // }
+    buffer[0] = 0xff;
+    buffer[1] = 1;
+    buffer[2] = size;
 
-    // memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );
+    int cx, cy;
 
-    // int bufferSize = ( ( _width >> 3 ) * _height ) + 1;
+    int tileDataOffset = 3 + size;
+
+    char * source = _source;
+
+    char convertedTile[16];
+
+    gb_image_converter_tile( _environment, source, convertedTile, _width, _depth, _width );
     
-    // char * buffer = malloc ( bufferSize );
-    // memset( buffer, 0, bufferSize );
+    memcpy( &buffer[tileDataOffset], convertedTile, 16 );
 
-    // // Position of the pixel in the original image
-    // int image_x, image_y;
-    
-    // // Position of the pixel, in terms of tiles
-    // int tile_x, tile_y;
-    
-    // // Position of the pixel, in terms of offset and bitmask
-    // int offset, bitmask;
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
-    // int i = 0;
+    result->readonly = 1;
 
-    // // Color of the pixel to convert
-    // RGBi rgb;
-
-    // int spriteWidth = 16;
-    // int spriteHeight = 16;
-
-    // char * source = _source + ( ( _slot_y * spriteHeight * spriteWidth ) + _slot_x * spriteWidth ) * _depth;
-
-    // // Loop for all the source surface.
-    // for (image_y = 0; image_y < spriteHeight; ++image_y) {
-    //     if ( ( image_y + ( _slot_y * spriteHeight ) )  == _height ) {
-    //         // printf( "Y" );
-    //         break;
-    //     }
-    //     for (image_x = _slot_x * spriteWidth; image_x < ( _slot_x * spriteWidth ) + spriteWidth; ++image_x) {
-    //         if ( ( image_x + ( _slot_x * spriteWidth ) )  == _width ) {
-    //             // printf( "X" );
-    //             break;
-    //         }
-
-    //         // Take the color of the pixel
-    //         rgb.red = *source;
-    //         rgb.green = *(source + 1);
-    //         rgb.blue = *(source + 2);
-    //         if ( _depth > 3 ) {
-    //             rgb.alpha = *(source + 3);
-    //         } else {
-    //             rgb.alpha = 255;
-    //         }
-
-    //         // Calculate the relative tile
-
-    //         // Calculate the offset starting from the tile surface area
-    //         // and the bit to set.
-    //         offset = image_y * ( _width >> 4 ) + ( ( image_x & 0x07 ) >> 3 );
-    //         if ( image_x > 7 ) {
-    //             offset += 16;
-    //         }
-            
-    //         if ( rgb.alpha < 255 ) {
-    //             i = 0;
-    //         } else {
-
-    //             if ( ! _color ) {
-    //                 int minDistance = 0xffff;
-    //                 RGBi * color = NULL;
-    //                 int i = 0;
-    //                 for( int k=0; k<colorUsed; ++k ) {
-    //                     int distance = rgbi_distance( &palette[k], &rgb );
-    //                     if ( distance < minDistance ) {
-    //                         minDistance = distance;
-    //                         color = &palette[k];
-    //                         i = k;
-    //                     }
-    //                 }
-    //                 // for( i=0; i<colorUsed; ++i ) {
-    //                 //     // printf( "%d) %2.2x%2.2x%2.2x == %2.2x%2.2x%2.2x\n", i, palette[i].red, palette[i].green, palette[i].blue, rgb.red, rgb.green, rgb.blue );
-    //                 //     if ( rgbi_equals_rgba( &palette[i], color ) ) {
-    //                 //         break;
-    //                 //     }
-    //                 // }
-    //             } else {
-    //                 int minDistance = 0xffff;
-    //                 RGBi * color = NULL;
-    //                 for( int k=0; k<colorUsed; ++k ) {
-    //                     if ( palette[k].alpha < 255 ) continue;
-    //                     int distance = rgbi_distance( &palette[k], &rgb );
-    //                     if ( distance < minDistance ) {
-    //                         minDistance = distance;
-    //                         color = &palette[k];
-    //                     }
-    //                 }
-    //                 if ( rgbi_equals_rgba( _color, color ) ) {
-    //                     i = 1;
-    //                 } else {
-    //                     i = 0;
-    //                 }
-    //             }
-
-    //         }
-
-    //         int colorIndex = i;
-
-    //         if ( _environment->debugImageLoad ) {
-    //             printf( "%1.1x", colorIndex == 0 ? 0 : _color->index );
-    //         }
-
-    //         bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
-    //         *(buffer + offset) |= bitmask;
-
-    //         source += _depth;
-
-    //     }
-
-    //     source += _depth * ( _width - image_x );
-
-    //     if ( _environment->debugImageLoad ) {
-    //         printf("\n" );
-    //     }
-    // }
-
-    // // printf("\n" );
-    // // printf("\n" );
-
-    // if ( _color ) {
-    //     *(buffer + ( ( _width >> 3 ) * _height )) = _color->index;
-    // } else {
-    //     *(buffer + ( ( _width >> 3 ) * _height )) = palette[1].index;
-    // }
-
-    // if ( _environment->debugImageLoad ) {
-    //     printf("\n" );
-    
-    //     printf("PALETTE:\n" );
-    //     for( i=0; i<colorUsed; ++i ) {
-    //         printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
-    //     }
-    //     // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-    //     //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-    //     // } else {
-    //     //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-    //     // }
-    //     // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-    //     // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-    //     // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-    //     // printf("\n" );
-    //     // printf("\n" );
-    // }
-    
-    // variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
- 
-    // result->readonly = 1;
-
-    // return result;
+    return result;
 
 }
 

@@ -3389,6 +3389,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E353 - cannot load MUSIC, unknown format", f );
 #define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E354 - cannot load midi file", f );
 #define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E355 - MMOB can be called only with SPRITE/MSPRITE", v );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E356 - invalid width for image, must be of 8 pixels", w );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E357 - invalid height for image, must be of 8 pixels", h );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

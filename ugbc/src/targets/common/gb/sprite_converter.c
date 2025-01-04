@@ -38,11 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
 
-    return NULL; // tms9918_sprite_converter( _environment, _data, _width, _height, _depth, _color, _slot_x, _slot_y );
+    return gb_sprite_converter( _environment, _data, _width, _height, _depth, _color, _slot_x, _slot_y );
 
 }
 

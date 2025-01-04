@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__gb__)
+#if defined(__gb__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] ENABLE</b>
@@ -64,7 +64,7 @@ void sprite_enable( Environment * _environment, int _sprite ) {
  */
 void sprite_enable_var( Environment * _environment, char * _sprite ) {
 
-   // tms9918_sprite_enable( _environment, _sprite );
+   gb_sprite_enable( _environment, _sprite );
 
 }
 
