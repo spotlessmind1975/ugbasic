@@ -52,3 +52,8 @@ examples/*.ram
 examples/*.rel
 examples/.*
 8bit-lucky/
+birdy/
+cobrakai/
+dk/
+examples2/
+ugbc/compressed/
