@@ -910,37 +910,29 @@ void gb_screen_columns( Environment * _environment, char * _columns ) {
 
 void gb_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    // Variable * address = variable_retrieve_or_define( _environment, _address, VT_BYTE, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_BYTE, 0 );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
+    deploy( sprite, src_hw_gb_sprites_asm );
     
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // outline1("LD A, (%s)", address->realName );
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEDATASET");
-    // } else {
-    //     outline0("CALL SPRITEDATASETNMI2");
-    // }
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", address->realName );
+    outline0("CALL SPRITEDATASET");
 
 }
 
 void gb_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
-    // Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    // Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
-    // // deploy( sprite, src_hw_gb_sprites_asm );
+    deploy( sprite, src_hw_gb_sprites_asm );
     
-    // outline1("LD A, (%s)", sprite->realName );
-    // outline0("LD B, A");
-    // outline1("LD HL, %s", image->realName );
-    // if ( ! _environment->hasGameLoop ) {
-    //     outline0("CALL SPRITEDATAFROM");
-    // } else {
-    //     outline0("CALL SPRITEDATAFROMNMI2");
-    // }
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD HL, %s", image->realName );
+    outline0("CALL SPRITEDATAFROM");
 
 }
 
