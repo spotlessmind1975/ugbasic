@@ -606,6 +606,44 @@ void gb_background_color_semivars( Environment * _environment, int _index, char 
  */
 void gb_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    MAKE_LABEL
+
+    outline0("LD A, 3");
+    outline0("PUSH AF");
+    outline1("LD A, (%s)", _index);
+    outline0("AND $03");
+    outline0("CP 0");
+    outline0("POP AF");
+    outline1("JR Z, %snorotm", label);
+    outline1("LD A, (%s)", _index);
+    outline0("AND $03");
+    outline0("LD C, A");
+    outline0("LD A, 3");
+    outhead1("%srotm:", label);
+    outline0("SLA A");
+    outline0("SLA A");
+    outline0("DEC C");
+    outline1("JR NZ, %srotm", label);
+    outhead1("%snorotm:", label);
+    outline0("LD B, A");
+    outline0("LD A, ($FF47)");
+    outline0("AND B");
+    outline0("LD D, A");
+    outline1("LD A, (%s)", _index);
+    outline0("CP 0");
+    outline1("JR Z, %snorot", label);
+    outline0("LD C, A");
+    outline0("LD A, D");
+    outhead1("%srot:", label);
+    outline0("SRA A");
+    outline0("SRA A");
+    outline0("DEC C");
+    outline1("JR NZ, %srot", label);
+    outline0("LD D, A");
+    outhead1("%snorot:", label);
+    outline0("LD A, D");
+    outline1("LD (%S), A", _background_color);
+
 }
 
 /**
