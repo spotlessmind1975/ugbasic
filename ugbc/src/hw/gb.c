@@ -495,6 +495,18 @@ void gb_border_color( Environment * _environment, char * _border_color ) {
  */
 void gb_background_color( Environment * _environment, int _index, int _background_color ) {
 
+    int colorIndex = _index & 0x03;
+    int colorValue = _background_color & 0x03;
+
+    int raw = ( colorValue ) << ( colorIndex * 2 );
+    int notRaw = ~ ( 3 << ( colorIndex * 2 ) );
+
+    outline1("LD B, $%2.2x", raw);
+    outline0("LD A, ($FF47)");
+    outline1("AND $%2.2x", notRaw);
+    outline1("OR $%2.2x", raw);
+    outline0("LD ($FF47), A");
+
 }
 
 /**
@@ -509,6 +521,48 @@ void gb_background_color( Environment * _environment, int _index, int _backgroun
  */
 void gb_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    MAKE_LABEL
+
+    outline0("LD A, 3");
+    outline0("PUSH AF");
+    outline1("LD A, (%s)", _index);
+    outline0("AND $03");
+    outline0("CP 0");
+    outline0("POP AF");
+    outline1("JR Z, %snorotm", label);
+    outline1("LD A, (%s)", _index);
+    outline0("AND $03");
+    outline0("LD C, A");
+    outline0("LD A, 3");
+    outhead1("%srotm:", label);
+    outline0("SLA A");
+    outline0("SLA A");
+    outline0("DEC C");
+    outline1("JR NZ, %srotm", label);
+    outhead1("%snorotm:", label);
+    outline0("XOR $FF");
+    outline0("LD B, A");
+    outline1("LD A, (%s)", _background_color);
+    outline0("AND $03");
+    outline0("LD D, A");
+    outline1("LD A, (%s)", _index);
+    outline0("CP 0");
+    outline1("JR Z, %snorot", label);
+    outline0("LD C, A");
+    outline1("LD A, (%s)", _background_color);
+    outline0("AND $03");
+    outhead1("%srot:", label);
+    outline0("SLA A");
+    outline0("SLA A");
+    outline0("DEC C");
+    outline1("JR NZ, %srot", label);
+    outline0("LD D, A");
+    outhead1("%snorot:", label);
+    outline0("LD A, ($FF47)");
+    outline0("AND B");
+    outline0("OR D");
+    outline0("LD ($FF47), A");
+
 }
 
 /**
@@ -522,6 +576,21 @@ void gb_background_color_vars( Environment * _environment, char * _index, char *
  * @param _background_color Background color to use
  */
 void gb_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
+
+    int colorIndex = _index & 0x03;
+
+    int notRaw = ~ ( 3 << ( colorIndex * 2 ) );
+
+    outline1("LD A, (%s)", _background_color);
+    outline0("AND $03");
+    for( int i=0; i<colorIndex; ++i ) {
+        outline0("SLA A");
+    }
+    outline0("LD B, A");
+    outline0("LD A, ($FF47)");
+    outline1("AND $%2.2x", notRaw);
+    outline0("OR B");
+    outline0("LD ($FF47), A");
 
 }
 

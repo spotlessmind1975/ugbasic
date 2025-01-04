@@ -47,6 +47,8 @@
  */
 void color_background( Environment * _environment, int _index, int _background_color ) {
     
+    gb_background_color( _environment, _index, _background_color );
+
 }
 
 /**
@@ -60,5 +62,10 @@ void color_background( Environment * _environment, int _index, int _background_c
  * @param _background_color Expression with the index of the color to use
  */
 void color_background_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * background_color = variable_retrieve_or_define( _environment, _background_color, VT_COLOR, _environment->defaultPaperColor );
+    
+    gb_background_color_vars( _environment, index->realName, background_color->realName );
 
 }
