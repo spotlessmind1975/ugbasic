@@ -1022,6 +1022,28 @@ GBSTARTUP:
     LD ($FF48), A
     LD ($FF49), A
 
+    LD HL, $FE00
+    LD C, 40
+GBSTARTUPL1:
+    CALL WAITSTATEM0
+    LD A, 255
+    LD (HL), A
+    INC HL
+    LD (HL), A
+    INC HL
+    LD A, 32
+    LD (HL), A
+    INC HL
+    LD A, 0
+    LD (HL), A
+    INC HL
+    DEC C
+    JR NZ, GBSTARTUPL1
+
+    LD A, (rLCDC)
+    OR $02
+    LD (rLCDC), A
+
 @IF deployed.dstring
     CALL DSINIT
 @ENDIF

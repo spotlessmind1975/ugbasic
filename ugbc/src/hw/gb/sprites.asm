@@ -133,6 +133,19 @@ SPRITEDATAFROML1:
     RET
 
 SPRITEENABLE:
+    LD A, B
+    SLA A
+    SLA A
+    LD E, A
+    LD D, 0
+    LD HL, $FE00
+    ADD HL, DE
+    INC HL
+    INC HL
+    INC HL
+    LD A, 0
+    CALL WAITSTATEM0
+    LD (HL), A
     RET
 
 SPRITEDISABLE:
@@ -163,5 +176,9 @@ SPRITEAT:
     LD (HL), A
     INC HL
     LD A, D
+    LD (HL), A
+    INC HL
+    INC HL
+    LD A, 0
     LD (HL), A
     RET
