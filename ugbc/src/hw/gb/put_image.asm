@@ -273,10 +273,10 @@ TILESETSLOTRECALCFREESLOTA2:
     LD D, 0
     LD HL, TILESETSLOTUSED
     ADD HL, DE
-@IF descriptors
-    LD DE, ( descriptorsCount / 8 ) + 1
-    ADD HL, DE
-@ENDIF
+; @IF descriptors
+;     LD DE, ( descriptorsCount / 8 ) + 1
+;     ADD HL, DE
+; @ENDIF
 
     ; Move to the next first slot: if LAST is reached,
     ; move to the first.
@@ -303,10 +303,10 @@ TILESETSLOTRECALCFREEDONE:
     LD D, 0
     LD HL, TILESETSLOTUSED
     ADD HL, DE
-@IF descriptors
-    LD DE, ( descriptorsCount / 8 ) + 1
-    ADD HL, DE
-@ENDIF
+; @IF descriptors
+;     LD DE, ( descriptorsCount / 8 ) + 1
+;     ADD HL, DE
+; @ENDIF
     LD D, H
     LD E, L
     POP HL
@@ -314,10 +314,24 @@ TILESETSLOTRECALCFREEDONE:
     ; Mask the 32 bytes (256 used tiles) from
     ; the first to the actual slot.
 
-    LD B, 32 - ( ( descriptorsCount / 8 ) + 1 )
+    ; LD B, 32 - ( ( descriptorsCount / 8 ) + 1 )
+    LD B, 32
 TILESETSLOTRECALCL2:
+    PUSH HL
+    PUSH BC
+    LD HL, TILESETSLOTUSED
+    LD A, 32
+    SBC B
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD A, (HL)
+    POP BC
+    POP HL
+    LD C, A
     LD A, (HL)
     XOR $FF
+    OR C
     LD C, A
     LD A, (DE)
     AND C
