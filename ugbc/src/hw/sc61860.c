@@ -102,6 +102,13 @@ static void op_andab( Environment * _environment ) {
 
 }
 
+static void op_andam( Environment * _environment ) {
+
+    outline0("LP 0x0b" );
+    outline0("ANMA");
+
+}
+
 static void op_addya( Environment * _environment ) {
 
     outline0("LP 0x06" );
@@ -889,6 +896,13 @@ static void op_subabc( Environment * _environment ) {
 static void op_swab( Environment * _environment ) {
 
     outline0("EXAB");
+
+}
+
+static void op_swan( Environment * _environment ) {
+
+    outline0("LIP 0x0b");
+    outline0("EXAM");
 
 }
 
@@ -3433,7 +3447,32 @@ void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, i
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_anda_direct( _environment, 0x80 );
+        op_swan( _environment );
+
+        while( _steps ) {
+            op_ldab( _environment, _source );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
+        }
+
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_oram( _environment );
+        op_swab( _environment );
+        op_stab( _environment, address_displacement( _environment, _source, "2" ) );
 
     } else {
 
