@@ -66,14 +66,14 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
-    // ay8910_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
-    // ay8910_start( _environment, ( _channels & 0x07 ) );
-    // ay8910_set_frequency( _environment, _channels, 1000 );
+    gb_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
+    gb_start( _environment, ( _channels & 0x07 ) );
+    gb_set_frequency( _environment, _channels, 1000 );
 
-    // ay8910_set_duration( _environment, _channels, 4 );
+    gb_set_duration( _environment, _channels, 4 );
 
     if ( ! _environment->audioConfig.async ) {
-        // ay8910_wait_duration( _environment, _channels );
+        gb_wait_duration( _environment, _channels );
     }
     
 }

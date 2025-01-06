@@ -1224,8 +1224,10 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "GBTMPPTR_BACKUP", VT_ADDRESS, 0 );
     variable_global( _environment, "GBTMPPTR_BACKUP" );
 
-    variable_import( _environment, "GBTIMER", VT_BUFFER, 8 );
+    variable_import( _environment, "GBTIMER", VT_WORD, 0 );
     variable_global( _environment, "GBTIMER" );
+    variable_import( _environment, "GBTIMERS", VT_BUFFER, 8 );
+    variable_global( _environment, "GBTIMERS" );
 
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );
@@ -3105,7 +3107,8 @@ void gb_wait_duration( Environment * _environment, int _channel ) {
 void gb_set_duration_vars( Environment * _environment, char * _channel, char * _duration ) {
 
     if ( _duration ) {
-        outline1("LD DE, (%s)", _duration );
+        outline1("LD HL, (%s)", _duration );
+        outline0("LD DE, HL" );
     } else {
         outline0("LD DE, 50" );
     }

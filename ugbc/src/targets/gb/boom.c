@@ -52,16 +52,16 @@
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
-    // ay8910_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
-    // ay8910_start( _environment, ( _channels & 0x07 ) );
-    // ay8910_set_frequency( _environment, _channels, 1000 );
+    gb_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+    gb_start( _environment, ( _channels & 0x07 ) );
+    gb_set_frequency( _environment, _channels, 1000 );
 
     long durationInTicks = ( _duration / 20 ) & 0xff;
 
-    // ay8910_set_duration( _environment, _channels, durationInTicks );
+    gb_set_duration( _environment, _channels, durationInTicks );
 
     if ( ! _environment->audioConfig.async ) {
-        // ay8910_wait_duration( _environment, _channels );
+        gb_wait_duration( _environment, _channels );
     }
 
 }
@@ -82,29 +82,29 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        // ay8910_start_var( _environment, channels->realName );
-        // ay8910_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
+        gb_start_var( _environment, channels->realName );
+        gb_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
             Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            // ay8910_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
+            gb_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
         } else {
-            // ay8910_set_duration_vars( _environment, channels->realName, NULL );
+            gb_set_duration_vars( _environment, channels->realName, NULL );
         } 
     } else {
-        // ay8910_start_var( _environment, NULL );
-        // ay8910_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+        gb_start_var( _environment, NULL );
+        gb_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
             Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            // ay8910_set_duration_vars( _environment, NULL, durationInTicks->realName );
+            gb_set_duration_vars( _environment, NULL, durationInTicks->realName );
         } else {
-            // ay8910_set_duration_vars( _environment, NULL, NULL );
+            gb_set_duration_vars( _environment, NULL, NULL );
         } 
     }
 
     if ( ! _environment->audioConfig.async ) {
-        // ay8910_wait_duration_vars( _environment, _channels );
+        gb_wait_duration_vars( _environment, _channels );
     }
     
 }

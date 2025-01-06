@@ -64,8 +64,8 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         }
 
         if ( ! music->sidFile ) {
-            // ay8910_start( _environment, 0x07 );
-            // ay8910_music( _environment, music->realName, music->size, _loop );
+            gb_start( _environment, 0x07 );
+            gb_music( _environment, music->realName, music->size, _loop );
         }
 
     }

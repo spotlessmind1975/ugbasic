@@ -50,8 +50,8 @@
  */
 void instrument( Environment * _environment, int _instrument, int _channels ) {
 
-    // ay8910_start( _environment, ( _channels & 0x07 ) );
-    // ay8910_set_program( _environment, _channels, _instrument );
+    gb_start( _environment, ( _channels & 0x07 ) );
+    gb_set_program( _environment, _channels, _instrument );
 
 }
 
@@ -69,11 +69,11 @@ void instrument_semi_var( Environment * _environment, int _instrument, char * _c
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        // ay8910_start_var( _environment, channels->realName );
-        // ay8910_set_program_semi_var( _environment, channels->realName, _instrument );
+        gb_start_var( _environment, channels->realName );
+        gb_set_program_semi_var( _environment, channels->realName, _instrument );
     } else {
-        // ay8910_start_var( _environment, NULL );
-        // ay8910_set_program_semi_var( _environment, NULL, _instrument );
+        gb_start_var( _environment, NULL );
+        gb_set_program_semi_var( _environment, NULL, _instrument );
     }
 
 }

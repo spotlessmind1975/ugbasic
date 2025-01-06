@@ -52,7 +52,7 @@
 </usermanual> */
 void play_off( Environment * _environment, int _channels ) {
 
-    // ay8910_stop( _environment, _channels );
+    gb_stop( _environment, _channels );
 
 }
 
@@ -68,9 +68,9 @@ void play_off_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        // ay8910_stop_vars( _environment, channels->realName );
+        gb_stop_vars( _environment, channels->realName );
     } else {
-        // ay8910_stop_vars( _environment, NULL );
+        gb_stop_vars( _environment, NULL );
     }
 
 }
