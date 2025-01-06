@@ -1196,6 +1196,34 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
 
+    variable_import( _environment, "GBMUSICREADY", VT_BYTE, 0 );
+    variable_global( _environment, "GBMUSICREADY" );
+    variable_import( _environment, "GBMUSICPAUSE", VT_BYTE, 0 );
+    variable_global( _environment, "GBMUSICPAUSE" );
+    variable_import( _environment, "GBMUSICLOOP", VT_BYTE, 0 );
+    variable_global( _environment, "GBMUSICLOOP" );
+    variable_import( _environment, "GBBLOCKS", VT_BYTE, 0 );
+    variable_global( _environment, "GBBLOCKS" );
+    variable_import( _environment, "GBLASTBLOCK", VT_BYTE, 0 );
+    variable_global( _environment, "GBLASTBLOCK" );
+    variable_import( _environment, "GBTMPPTR2", VT_ADDRESS, 0 );
+    variable_global( _environment, "GBTMPPTR2" );
+    variable_import( _environment, "GBTMPPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "GBTMPPTR" );
+    variable_import( _environment, "GBTMPOFS", VT_BYTE, 0 );
+    variable_global( _environment, "GBTMPOFS" );
+    variable_import( _environment, "GBTMPLEN", VT_BYTE, 0 );
+    variable_global( _environment, "GBTMPLEN" );
+    variable_import( _environment, "GBJIFFIES", VT_BYTE, 0 );
+    variable_global( _environment, "GBJIFFIES" );
+
+    variable_import( _environment, "GBBLOCKS_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "GBBLOCKS_BACKUP" );
+    variable_import( _environment, "GBLASTBLOCK_BACKUP", VT_BYTE, 0 );
+    variable_global( _environment, "GBLASTBLOCK_BACKUP" );
+    variable_import( _environment, "GBTMPPTR_BACKUP", VT_ADDRESS, 0 );
+    variable_global( _environment, "GBTMPPTR_BACKUP" );
+
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );
 
@@ -2380,6 +2408,998 @@ void gb_flip_image( Environment * _environment, Resource * _image, char * _frame
     //     // deploy( flipimagey, src_hw_gb_flip_image_y_asm );
     //     outline0("CALL FLIPIMAGEY");
     // }
+
+}
+
+static unsigned int SOUND_FREQUENCIES[] = {
+    -5969,  -5518,  -5094,  -4693,  -4315,  -3958,  -3621,  -3303,
+    -3002,  -2719,  -2451,  -2199,  -1960,  -1735,  -1523,  -1323,
+    -1134,   -955,   -787,   -627,   -477,   -336,   -202,    -76,
+       44,    156,    262,    362,    457,    546,    630,    710,
+      785,    856,    923,    986,   1046,   1102,   1155,   1205,
+     1252,    1297,  1339,   1379,   1416,   1452,   1485,   1517,
+     1547,    1575,  1601,   1626,   1650,   1672,   1693,   1713,
+     1732,    1750,  1766,   1782,   1797,   1811,   1824,   1837,
+     1849,    1860,  1870,   1880,   1890,   1899,   1907,   1915,
+     1922,    1929,  1936,   1942,   1948,   1954,   1959,   1964,
+     1969,    1973,  1977,   1981,   1985,   1988,   1992,   1995,
+     1998,    2001,  2003,   2006,   2008,   2010,   2012,   2014,
+     2016,    2018,  2020,   2021,   2023,   2024,   2025,   2027,
+     2028,    2029,  2030,   2031,   2032,   2033,   2034,   2034,
+     2035,    2036,  2036,   2037,   2038,   2038,   2039,   2039
+};
+
+void gb_start( Environment * _environment, int _channels ) {
+
+    deploy( gbvars, src_hw_gb_vars_asm );
+    deploy( startup, src_hw_gb_startup_asm );
+
+    if ( _channels & 0x01 ) {
+        outline0("CALL GBSTART0");
+    }
+    if ( _channels & 0x02 ) {
+        outline0("CALL GBSTART1");
+    }
+    if ( _channels & 0x04 ) {
+        outline0("CALL GBSTART2");
+    }
+    if ( _channels & 0x08 ) {
+        outline0("CALL GBSTARTN0");
+    }
+
+}
+
+void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
+
+    outline1("LD A, $%2.2x", ( _volume & 0x0f ) );
+    outline0("LD E, A" );
+    outline1("LD A, $%2.2x", ( _channels & 0x07 ) );
+    outline0("CALL GBSTARTVOL");
+
+}
+
+#define     PROGRAM_FREQUENCY( c, f ) \
+    outline1("LD A, $%2.2x", ( f & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGFREQ1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGFREQ2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBPROGFREQN0" );
+
+#define     PROGRAM_FREQUENCY_V( c, f ) \
+    outline1("LD A, (%s)", f ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBFREQ" );
+
+#define     PROGRAM_FREQUENCY_SV( c, f ) \
+    outline1("LD A, $%2.2x", ( f & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBFREQ2" );
+
+#define     PROGRAM_DURATION( c, d ) \
+    outline1("LD A, $%2.2x", ( d & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( d >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGDUR2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBPROGDURN0" );
+
+#define     WAIT_DURATION( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBWAITDUR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBWAITDUR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBWAITDUR2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBWAITDURN0" );
+
+#define     PROGRAM_PITCH( c, f ) \
+    outline1("LD A, $%2.2x", ( f & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGFREQ0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGFREQ1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGFREQ2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBPROGFREQN0" );
+
+#define     PROGRAM_PITCH_V( c, f ) \
+    outline1("LD A, (%s)", f ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGFREQ" );
+
+#define     PROGRAM_PITCH_SV( c, f ) \
+    outline1("LD A, $%2.2x", ( f & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGFREQ" );
+
+#define     PROGRAM_PULSE( c, p ) \
+    outline1("LD A, $%2.2x", ( p & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( p >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGPULSE0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGPULSE1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGPULSE2" );
+
+#define     PROGRAM_PULSE_V( c, p ) \
+    outline1("LD A, (%s)", p ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, (%s)", address_displacement(_environment, p, "1") ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGPULSE" );
+
+#define     PROGRAM_PULSE_SV( c, p ) \
+    outline1("LD A, $%2.2x", ( p & 0xff ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( ( p >> 8 ) & 0xff ) ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGPULSE" );
+
+#define     PROGRAM_NOISE( c ) \
+    outline0("LD A, $82" ); \
+    outline0("LD B, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGCTR2" );
+
+#define     PROGRAM_NOISE_V( c, p ) \
+    outline0("LD A, $82" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_NOISE_SV( c ) \
+    outline0("LD A, $82" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_SAW( c ) \
+    outline0("LD A, $22" ); \
+    outline0("LD B, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGCTR2" );
+
+#define     PROGRAM_SAW_V( c) \
+    outline0("LD A, $22" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_SAW_SV( c ) \
+    outline0("LD A, $22" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_TRIANGLE( c ) \
+    outline0("LD A, $12" ); \
+    outline0("LD B, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGCTR2" );
+
+#define     PROGRAM_TRIANGLE_V( c ) \
+    outline0("LD A, $12" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_TRIANGLE_SV( c ) \
+    outline0("LD A, $12" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_SAW_TRIANGLE( c ) \
+    outline0("LD A, $32" ); \
+    outline0("LD B, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGCTR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGCTR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGCTR2" );
+
+#define     PROGRAM_SAW_TRIANGLE_V( c ) \
+    outline0("LD A, $32" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_SAW_TRIANGLE_SV( c ) \
+    outline0("LD A, $32" ); \
+    outline0("LD B, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGCTR" );
+
+#define     PROGRAM_ATTACK_DECAY( c, a, d ) \
+    outline1("LD A, $%2.2x", ( a & 0x0f ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( d & 0x0f ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGAD0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGAD1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGAD2" );
+
+#define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
+    outline1("LD A, %s", a ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, %s", d ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGAD" );
+
+#define     PROGRAM_ATTACK_DECAY_SV( c, a, d ) \
+    outline1("LD A, $%2.2x", ( a & 0x0f ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( d & 0x0f ) ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGAD" );
+
+#define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
+    outline1("LD A, $%2.2x", ( s & 0x0f ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( r & 0x0f ) ); \
+    outline0("LD D, A" ); \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBPROGSR0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBPROGSR1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBPROGSR2" );
+
+#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
+    outline1("LD A, %s", s ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, %s", r ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGSR" );
+
+#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r ) \
+    outline1("LD A, $%2.2x", ( s & 0x0f ) ); \
+    outline0("LD E, A" ); \
+    outline1("LD A, $%2.2x", ( r & 0x0f ) ); \
+    outline0("LD D, A" ); \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBPROGSR" );
+
+#define     STOP_FREQUENCY( c ) \
+    if ( ( c & 0x01 ) ) \
+        outline0("CALL GBSTOP0" ); \
+    if ( ( c & 0x02 ) ) \
+        outline0("CALL GBSTOP1" ); \
+    if ( ( c & 0x04 ) ) \
+        outline0("CALL GBSTOP2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBSTOPN0" );
+
+#define     STOP_FREQUENCY_V( c ) \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBSTOP" );
+
+#define     STOP_FREQUENCY_SV( c ) \
+    if ( c == NULL ) { \
+        outline0("LD A, $7"); \
+    } else { \
+        outline1("LD A, (%s)", c ); \
+    } \
+    outline0("CALL GBSTOP" );
+
+void gb_set_program( Environment * _environment, int _channels, int _program ) {
+
+    switch (_program) {
+        case IMF_INSTRUMENT_EXPLOSION:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_GUNSHOT:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 4);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_PAD_5_BOWED:
+        case IMF_INSTRUMENT_PAD_6_METALLIC:
+        case IMF_INSTRUMENT_PAD_7_HALO:
+        case IMF_INSTRUMENT_PAD_8_SWEEP:
+        case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_HONKY_TONK_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO1:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO2:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_HARPSICHORD:
+        case IMF_INSTRUMENT_CLAVI:
+        case IMF_INSTRUMENT_CELESTA:
+            PROGRAM_PULSE(_channels, 1024);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
+        case IMF_INSTRUMENT_GLOCKENSPIEL:
+        case IMF_INSTRUMENT_MUSIC_BOX:
+        case IMF_INSTRUMENT_VIBRAPHONE:
+        case IMF_INSTRUMENT_MARIMBA:
+        case IMF_INSTRUMENT_XYLOPHONE:
+        case IMF_INSTRUMENT_TUBULAR_BELLS:
+        case IMF_INSTRUMENT_DULCIMER:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
+            break;
+
+        default:
+        case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
+        case IMF_INSTRUMENT_DRAWBAR_ORGAN:
+        case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
+        case IMF_INSTRUMENT_ROCK_ORGAN:
+        case IMF_INSTRUMENT_CHURCH_ORGAN:
+        case IMF_INSTRUMENT_REED_ORGAN:
+        case IMF_INSTRUMENT_ACCORDION:
+        case IMF_INSTRUMENT_HARMONICA:
+        case IMF_INSTRUMENT_TANGO_ACCORDION:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN:
+        case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
+        case IMF_INSTRUMENT_DISTORTION_GUITAR:
+        case IMF_INSTRUMENT_GUITAR_HARMONICS:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
+        case IMF_INSTRUMENT_ACOUSTIC_BASS:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_PICK:
+        case IMF_INSTRUMENT_FRETLESS_BASS:
+        case IMF_INSTRUMENT_SLAP_BASS_1:
+        case IMF_INSTRUMENT_SLAP_BASS_2:
+        case IMF_INSTRUMENT_SYNTH_BASS_1:
+        case IMF_INSTRUMENT_SYNTH_BASS_2:
+            PROGRAM_TRIANGLE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_1_SQUARE:
+        case IMF_INSTRUMENT_VIOLIN:
+        case IMF_INSTRUMENT_VIOLA:
+        case IMF_INSTRUMENT_CELLO:
+        case IMF_INSTRUMENT_CONTRABASS:
+        case IMF_INSTRUMENT_TREMOLO_STRINGS:
+        case IMF_INSTRUMENT_PIZZICATO_STRINGS:
+        case IMF_INSTRUMENT_ORCHESTRAL_HARP:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_1:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_1:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_2:
+            PROGRAM_PULSE(_channels, 128);
+            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_PAD_4_CHOIR:
+        case IMF_INSTRUMENT_CHOIR_AAHS:
+        case IMF_INSTRUMENT_VOICE_OOHS:
+        case IMF_INSTRUMENT_SYNTH_VOICE:
+        case IMF_INSTRUMENT_LEAD_4_CHIFF:
+        case IMF_INSTRUMENT_LEAD_5_CHARANG:
+        case IMF_INSTRUMENT_LEAD_6_VOICE:
+        case IMF_INSTRUMENT_LEAD_7_FIFTHS:
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+        case IMF_INSTRUMENT_APPLAUSE:
+            PROGRAM_NOISE(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 1, 14);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
+        case IMF_INSTRUMENT_PAD_1_NEW_AGE:
+        case IMF_INSTRUMENT_PAD_2_WARM:
+        case IMF_INSTRUMENT_TRUMPET:
+        case IMF_INSTRUMENT_TROMBONE:
+        case IMF_INSTRUMENT_TUBA:
+        case IMF_INSTRUMENT_MUTED_TRUMPET:
+        case IMF_INSTRUMENT_FRENCH_HORN:
+        case IMF_INSTRUMENT_BRASS_SECTION:
+        case IMF_INSTRUMENT_SYNTHBRASS_1:
+        case IMF_INSTRUMENT_SYNTHBRASS_2:
+        case IMF_INSTRUMENT_SOPRANO_SAX:
+        case IMF_INSTRUMENT_ALTO_SAX:
+        case IMF_INSTRUMENT_TENOR_SAX:
+        case IMF_INSTRUMENT_BARITONE_SAX:
+        case IMF_INSTRUMENT_OBOE:
+        case IMF_INSTRUMENT_ENGLISH_HORN:
+        case IMF_INSTRUMENT_BASSOON:
+        case IMF_INSTRUMENT_CLARINET:
+        case IMF_INSTRUMENT_PICCOLO:
+        case IMF_INSTRUMENT_FLUTE:
+        case IMF_INSTRUMENT_RECORDER:
+        case IMF_INSTRUMENT_PAN_FLUTE:
+        case IMF_INSTRUMENT_BLOWN_BOTTLE:
+        case IMF_INSTRUMENT_SHAKUHACHI:
+        case IMF_INSTRUMENT_WHISTLE:
+        case IMF_INSTRUMENT_OCARINA:
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_SITAR:
+        case IMF_INSTRUMENT_BANJO:
+        case IMF_INSTRUMENT_SHAMISEN:
+        case IMF_INSTRUMENT_KOTO:
+        case IMF_INSTRUMENT_KALIMBA:
+        case IMF_INSTRUMENT_BAG_PIPE:
+        case IMF_INSTRUMENT_FIDDLE:
+        case IMF_INSTRUMENT_SHANAI:
+        case IMF_INSTRUMENT_TINKLE_BELL:
+        case IMF_INSTRUMENT_AGOGO:
+        case IMF_INSTRUMENT_STEEL_DRUMS:
+        case IMF_INSTRUMENT_WOODBLOCK:
+        case IMF_INSTRUMENT_TAIKO_DRUM:
+        case IMF_INSTRUMENT_MELODIC_TOM:
+        case IMF_INSTRUMENT_SYNTH_DRUM:
+        case IMF_INSTRUMENT_REVERSE_CYMBAL:
+        case IMF_INSTRUMENT_GUITAR_FRET_NOISE:
+        case IMF_INSTRUMENT_BREATH_NOISE:
+        case IMF_INSTRUMENT_SEASHORE:
+        case IMF_INSTRUMENT_BIRD_TWEET:
+        case IMF_INSTRUMENT_TELEPHONE_RING:
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_SAW(_channels);
+            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
+            break;
+    }
+
+}
+
+void gb_set_parameter( Environment * _environment, int _channels, int _parameter, int _value ) {
+
+}
+
+void gb_set_frequency( Environment * _environment, int _channels, int _frequency ) {
+
+    PROGRAM_FREQUENCY( _channels, _frequency );
+
+}
+
+void gb_set_pitch( Environment * _environment, int _channels, int _pitch ) {
+
+    PROGRAM_PITCH( _channels, _pitch );
+
+}
+
+void gb_set_note( Environment * _environment, int _channels, int _note ) {
+
+    gb_set_pitch( _environment, _channels, SOUND_FREQUENCIES[_note] );
+
+}
+
+void gb_stop( Environment * _environment, int _channels ) {
+
+    STOP_FREQUENCY( _channels );
+
+}
+
+void gb_start_var( Environment * _environment, char * _channels ) {
+
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
+    outline0("CALL GBSTART");
+
+}
+
+void gb_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
+
+    outline1("LD A, (%s)", _volume );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("LD E, A" );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
+    outline0("CALL GBSTARTVOL");
+
+}
+
+void gb_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
+
+    outline1("LD A, $%2.2x", _volume );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("SRL A" );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", _channel );
+    outline0("CALL GBSTARTVOL");
+
+}
+
+void gb_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
+
+    switch (_program) {
+        case IMF_INSTRUMENT_EXPLOSION:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 11);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_GUNSHOT:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 4);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
+            break;
+        case IMF_INSTRUMENT_PAD_5_BOWED:
+        case IMF_INSTRUMENT_PAD_6_METALLIC:
+        case IMF_INSTRUMENT_PAD_7_HALO:
+        case IMF_INSTRUMENT_PAD_8_SWEEP:
+        case IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO:
+        case IMF_INSTRUMENT_HONKY_TONK_PIANO:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO1:
+        case IMF_INSTRUMENT_ELECTRIC_PIANO2:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 4, 2);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_HARPSICHORD:
+        case IMF_INSTRUMENT_CLAVI:
+        case IMF_INSTRUMENT_CELESTA:
+            PROGRAM_PULSE_SV(_channels, 1024);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
+        case IMF_INSTRUMENT_GLOCKENSPIEL:
+        case IMF_INSTRUMENT_MUSIC_BOX:
+        case IMF_INSTRUMENT_VIBRAPHONE:
+        case IMF_INSTRUMENT_MARIMBA:
+        case IMF_INSTRUMENT_XYLOPHONE:
+        case IMF_INSTRUMENT_TUBULAR_BELLS:
+        case IMF_INSTRUMENT_DULCIMER:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
+            break;
+
+        default:
+        case IMF_INSTRUMENT_PAD_3_POLYSYNTH:
+        case IMF_INSTRUMENT_DRAWBAR_ORGAN:
+        case IMF_INSTRUMENT_PERCUSSIVE_ORGAN:
+        case IMF_INSTRUMENT_ROCK_ORGAN:
+        case IMF_INSTRUMENT_CHURCH_ORGAN:
+        case IMF_INSTRUMENT_REED_ORGAN:
+        case IMF_INSTRUMENT_ACCORDION:
+        case IMF_INSTRUMENT_HARMONICA:
+        case IMF_INSTRUMENT_TANGO_ACCORDION:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
+        case IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ:
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN:
+        case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
+        case IMF_INSTRUMENT_DISTORTION_GUITAR:
+        case IMF_INSTRUMENT_GUITAR_HARMONICS:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 2);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 4, 3);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
+        case IMF_INSTRUMENT_ACOUSTIC_BASS:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_FINGER:
+        case IMF_INSTRUMENT_ELECTRIC_BASS_PICK:
+        case IMF_INSTRUMENT_FRETLESS_BASS:
+        case IMF_INSTRUMENT_SLAP_BASS_1:
+        case IMF_INSTRUMENT_SLAP_BASS_2:
+        case IMF_INSTRUMENT_SYNTH_BASS_1:
+        case IMF_INSTRUMENT_SYNTH_BASS_2:
+            PROGRAM_TRIANGLE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_1_SQUARE:
+        case IMF_INSTRUMENT_VIOLIN:
+        case IMF_INSTRUMENT_VIOLA:
+        case IMF_INSTRUMENT_CELLO:
+        case IMF_INSTRUMENT_CONTRABASS:
+        case IMF_INSTRUMENT_TREMOLO_STRINGS:
+        case IMF_INSTRUMENT_PIZZICATO_STRINGS:
+        case IMF_INSTRUMENT_ORCHESTRAL_HARP:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_1:
+        case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_1:
+        case IMF_INSTRUMENT_SYNTHSTRINGS_2:
+            PROGRAM_PULSE_SV(_channels, 128);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
+            break;
+
+        case IMF_INSTRUMENT_PAD_4_CHOIR:
+        case IMF_INSTRUMENT_CHOIR_AAHS:
+        case IMF_INSTRUMENT_VOICE_OOHS:
+        case IMF_INSTRUMENT_SYNTH_VOICE:
+        case IMF_INSTRUMENT_LEAD_4_CHIFF:
+        case IMF_INSTRUMENT_LEAD_5_CHARANG:
+        case IMF_INSTRUMENT_LEAD_6_VOICE:
+        case IMF_INSTRUMENT_LEAD_7_FIFTHS:
+        case IMF_INSTRUMENT_FX_1_RAIN:
+        case IMF_INSTRUMENT_FX_2_SOUNDTRACK:
+        case IMF_INSTRUMENT_FX_3_CRYSTAL:
+        case IMF_INSTRUMENT_FX_4_ATMOSPHERE:
+        case IMF_INSTRUMENT_FX_5_BRIGHTNESS:
+        case IMF_INSTRUMENT_FX_6_GOBLINS:
+        case IMF_INSTRUMENT_FX_7_ECHOES:
+        case IMF_INSTRUMENT_FX_8_SCI_FI:
+        case IMF_INSTRUMENT_TIMPANI:
+        case IMF_INSTRUMENT_ORCHESTRA_HIT:
+        case IMF_INSTRUMENT_APPLAUSE:
+            PROGRAM_NOISE_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 14);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
+        case IMF_INSTRUMENT_PAD_1_NEW_AGE:
+        case IMF_INSTRUMENT_PAD_2_WARM:
+        case IMF_INSTRUMENT_TRUMPET:
+        case IMF_INSTRUMENT_TROMBONE:
+        case IMF_INSTRUMENT_TUBA:
+        case IMF_INSTRUMENT_MUTED_TRUMPET:
+        case IMF_INSTRUMENT_FRENCH_HORN:
+        case IMF_INSTRUMENT_BRASS_SECTION:
+        case IMF_INSTRUMENT_SYNTHBRASS_1:
+        case IMF_INSTRUMENT_SYNTHBRASS_2:
+        case IMF_INSTRUMENT_SOPRANO_SAX:
+        case IMF_INSTRUMENT_ALTO_SAX:
+        case IMF_INSTRUMENT_TENOR_SAX:
+        case IMF_INSTRUMENT_BARITONE_SAX:
+        case IMF_INSTRUMENT_OBOE:
+        case IMF_INSTRUMENT_ENGLISH_HORN:
+        case IMF_INSTRUMENT_BASSOON:
+        case IMF_INSTRUMENT_CLARINET:
+        case IMF_INSTRUMENT_PICCOLO:
+        case IMF_INSTRUMENT_FLUTE:
+        case IMF_INSTRUMENT_RECORDER:
+        case IMF_INSTRUMENT_PAN_FLUTE:
+        case IMF_INSTRUMENT_BLOWN_BOTTLE:
+        case IMF_INSTRUMENT_SHAKUHACHI:
+        case IMF_INSTRUMENT_WHISTLE:
+        case IMF_INSTRUMENT_OCARINA:
+            PROGRAM_SAW_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+
+        case IMF_INSTRUMENT_SITAR:
+        case IMF_INSTRUMENT_BANJO:
+        case IMF_INSTRUMENT_SHAMISEN:
+        case IMF_INSTRUMENT_KOTO:
+        case IMF_INSTRUMENT_KALIMBA:
+        case IMF_INSTRUMENT_BAG_PIPE:
+        case IMF_INSTRUMENT_FIDDLE:
+        case IMF_INSTRUMENT_SHANAI:
+        case IMF_INSTRUMENT_TINKLE_BELL:
+        case IMF_INSTRUMENT_AGOGO:
+        case IMF_INSTRUMENT_STEEL_DRUMS:
+        case IMF_INSTRUMENT_WOODBLOCK:
+        case IMF_INSTRUMENT_TAIKO_DRUM:
+        case IMF_INSTRUMENT_MELODIC_TOM:
+        case IMF_INSTRUMENT_SYNTH_DRUM:
+        case IMF_INSTRUMENT_REVERSE_CYMBAL:
+        case IMF_INSTRUMENT_GUITAR_FRET_NOISE:
+        case IMF_INSTRUMENT_BREATH_NOISE:
+        case IMF_INSTRUMENT_SEASHORE:
+        case IMF_INSTRUMENT_BIRD_TWEET:
+        case IMF_INSTRUMENT_TELEPHONE_RING:
+        case IMF_INSTRUMENT_HELICOPTER:
+            PROGRAM_SAW_SV(_channels);
+            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
+            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
+            break;
+    }
+
+}
+
+void gb_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
+
+    outline1("LD A, (%s)", _frequency );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", address_displacement(_environment, _frequency, "1") );
+    outline0("LD D, A" );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
+
+    outline0("CALL GBFREQ");
+
+}
+
+void gb_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
+
+    outline1("LD A, (%s)", _pitch );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", address_displacement(_environment, _pitch, "1") );
+    outline0("LD D, A" );
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
+
+    outline0("CALL GBPROGFREQ");
+
+}
+
+void gb_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
+
+    outline0("LD HL, gbFREQTABLE");
+    outline1("LD A, (%s)", _note);
+    outline0("LD E, A");
+    outline0("LD A, 0");
+    outline0("LD D, A");
+    outline0("SLA E");
+    outline0("RL D");
+    outline0("ADD HL, DE");
+    outline0("LD A, (HL)");
+    outline0("LD E, A");
+    outline0("INC HL");
+    outline0("LD A, (HL)");
+    outline0("LD D, A");
+
+    if ( _channels ) {
+        outline1("LD A, (%s)", _channels );
+    } else {
+        outline0("LD A, $7" );
+    }
+
+    outline0("CALL GBPROGFREQ");
+
+}
+
+void gb_stop_vars( Environment * _environment, char * _channels ) {
+
+    outline1("LD A, (%s)", _channels );
+    outline0("CALL GBSTOP");
+
+}
+
+void gb_music( Environment * _environment, char * _music, int _size, int _loop ) {
+
+    // deploy( music, src_hw_gb_music_asm );
+
+    // HL: music address, B: blocks, C: last block
+    outline0("DI");
+    outline1("LD HL, %s", _music);
+    outline1("LD A, $%2.2x", ( _size>>8 ) & 0xff);
+    outline0("LD B, A");
+    outline1("LD A, $%2.2x", _size & 0xff );
+    outline0("LD C, A");
+    outline1("LD A, $%2.2x", _loop );
+    outline0("LD (gbMUSICLOOP), A");
+    outline0("CALL MUSICPLAYERRESET");
+    outline0("EI");
+
+}
+
+void gb_set_duration( Environment * _environment, int _channel, int _duration ) {
+
+    PROGRAM_DURATION( _channel, _duration );
+
+}
+
+void gb_wait_duration( Environment * _environment, int _channel ) {
+
+    WAIT_DURATION( _channel );
+
+}
+
+void gb_set_duration_vars( Environment * _environment, char * _channel, char * _duration ) {
+
+    if ( _duration ) {
+        outline1("LD DE, (%s)", _duration );
+    } else {
+        outline0("LD DE, 50" );
+    }
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
+    } else {
+        outline0("LD A, $7" );
+    }
+
+    outline0("CALL GBPROGDUR" );
+
+}
+
+void gb_wait_duration_vars( Environment * _environment, char *  _channel ) {
+
+    if ( _channel ) {
+        outline1("LD A, (%s)", _channel );
+    } else {
+        outline0("LD A, $7" );
+    }
+    
+    outline0("CALL GBWAITDUR" );
 
 }
 

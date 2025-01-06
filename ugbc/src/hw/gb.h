@@ -398,5 +398,28 @@ void gb_calculate_sequence_frame_offset( Environment * _environment, char * _off
 
 void gb_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 
+void gb_start( Environment * _environment, int _channel );
+void gb_set_volume( Environment * _environment, int _channel, int _volume );
+void gb_set_program( Environment * _environment, int _channel, int _program );
+void gb_set_parameter( Environment * _environment, int _channel, int _parameter, int _value );
+void gb_set_frequency( Environment * _environment, int _channel, int _frequency );
+void gb_set_pitch( Environment * _environment, int _channel, int _pitch );
+void gb_set_note( Environment * _environment, int _channel, int _note );
+void gb_stop( Environment * _environment, int _channel );
+void gb_set_duration( Environment * _environment, int _channel, int _duration );
+void gb_wait_duration( Environment * _environment, int _channel );
+
+void gb_start_var( Environment * _environment, char * _channel );
+void gb_set_volume_semi_var( Environment * _environment, char * _channel, int _volume );
+void gb_set_volume_vars( Environment * _environment, char * _channel, char * _volume );
+void gb_set_program_semi_var( Environment * _environment, char * _channel, int _program );
+void gb_set_frequency_vars( Environment * _environment, char * _channel, char * _frequency );
+void gb_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch );
+void gb_set_note_vars( Environment * _environment, char * _channel, char * _note );
+void gb_stop_vars( Environment * _environment, char * _channel );
+void gb_set_duration_vars( Environment * _environment, char * _channel, char * _duration );
+void gb_wait_duration_vars( Environment * _environment, char * _channel );
+
+void gb_music( Environment * _environment, char * _music, int _size, int _loop );
 
 #endif
