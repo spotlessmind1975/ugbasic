@@ -5239,7 +5239,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         
         outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline1("JR C, %sdiv32ov", label);
         outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sdiv32setbit", label);
@@ -5315,7 +5315,7 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
 
         outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline1("JR C, %sloop2", label);
         outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sloop3", label);
@@ -5379,7 +5379,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
 
         outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline1("JR C, %sdiv32ov", label);
         outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sdiv32setbit", label);
@@ -5446,7 +5446,7 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
 
         outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline1("JR C, %sloop2", label);
         outline0("CALL SBC_HL_DE");
         outline1("JR NC, %sloop3", label);
@@ -5457,7 +5457,11 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("OR A");
         outline0("CALL SBC_HL_DE");
         outhead1("%sloop3:", label);
-        outline0("INC (IXLR)");
+        outline0("PUSH AF");
+        outline0("LD A, (IXR)");
+        outline0("INC A");
+        outline0("LD (IXR), A");
+        outline0("POP AF");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5509,9 +5513,11 @@ void sm83_math_div_16bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("LD HL, 0");
         outline0("LD B, 16");
         outhead1("%sloop:", label );
-        outline0("SLL C");
+        // outline0("SLL C");
+        outline0("SCF");
+        outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
@@ -5563,9 +5569,11 @@ void sm83_math_div_16bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("LD HL, 0");
         outline0("LD B, 16");
         outhead1("%sloop:", label );
-        outline0("SLL C");
+        // outline0("SLL C");
+        outline0("SCF");
+        outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
@@ -5617,9 +5625,11 @@ void sm83_math_div_16bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("LD HL, 0");
         outline0("LD B, 16");
         outhead1("%sloop:", label );
-        outline0("SLL C");
+        // outline0("SLL C");
+        outline0("SCF");
+        outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");
@@ -5666,9 +5676,11 @@ void sm83_math_div_16bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("LD HL, 0");
         outline0("LD B, 16");
         outhead1("%sloop:", label );
-        outline0("SLL C");
+        // outline0("SLL C");
+        outline0("SCF");
+        outline0("RL C");
         outline0("RLA");
-        outline0("ADC HL, HL");
+        outline0("CALL ADC_HL_HL");
         outline0("CALL SBC_HL_DE");
         outline0("JR NC, $+4");
         outline0("ADD HL, DE");

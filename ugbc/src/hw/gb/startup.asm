@@ -970,6 +970,7 @@ IRQSVC:
 @IF deployed.timer
 	CALL TIMERMANAGER
 @ENDIF
+    CALL GBMANAGER
     RETI
 
 IRQTMR:
@@ -1174,6 +1175,15 @@ REPLACEMENT_RLD_DORLD:
     ADC     A, 0
 
     OR      A
+    RET
+
+ADC_HL_HL:
+    PUSH DE
+    LD DE, 0
+    RL E
+    ADD HL, HL
+    ADD HL, DE
+    POP DE
     RET
 
 ; ------------------------------------------------------------------------------

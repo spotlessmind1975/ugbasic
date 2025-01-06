@@ -1087,8 +1087,6 @@ void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) 
 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    _environment->bitmaskNeeded = 1;
-
     deploy( gbvars, src_hw_gb_vars_asm );
 
     // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
@@ -1118,6 +1116,8 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
 }
 
 void gb_initialization( Environment * _environment ) {
+
+    _environment->bitmaskNeeded = 1;
 
     // // deploy( GBvars, src_hw_gb_vars_asm );
     // deploy_preferred( GBstartup, src_hw_gb_startup_asm );
@@ -1555,8 +1555,6 @@ static Variable * gb_image_converter_bitmap_mode_standard( Environment * _enviro
 
 static Variable * gb_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    _environment->bitmaskNeeded = 1;
-
     image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( _environment->freeImageWidth ) {
@@ -1627,8 +1625,6 @@ static Variable * gb_image_converter_tilemap_mode_standard( Environment * _envir
 }
 
 Variable * gb_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _slot_x, int _slot_y ) {
-
-    _environment->bitmaskNeeded = 1;
 
     if ( _width != 8 ) {
         CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( _width );

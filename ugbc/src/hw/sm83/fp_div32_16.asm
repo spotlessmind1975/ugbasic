@@ -46,84 +46,84 @@ FPDIV32_16:
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	LD D, A
 	LD A,E
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
     ADD HL, BC
     JR C, $+4
     CALL SBC_HL_BC
 	RLA
-    ADC HL, HL
+    CALL ADC_HL_HL
 	LD E, A
 	POP BC
 	BIT 0, C
