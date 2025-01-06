@@ -1017,9 +1017,17 @@ void gb_tiles_at( Environment * _environment, char * _address ) {
 
 void gb_vertical_scroll( Environment * _environment, char * _displacement ) {
 
+    outline1("LD A, (%s)", _displacement);
+    outline0("CALL WAITSTATE");
+    outline0("LD (rSCY), A");
+
 }
 
 void gb_horizontal_scroll( Environment * _environment, char * _displacement ) {
+
+    outline1("LD A, (%s)", _displacement);
+    outline0("CALL WAITSTATE");
+    outline0("LD (rSCX), A");
 
 }
 
@@ -1080,7 +1088,7 @@ void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     _environment->bitmaskNeeded = 1;
-    
+
     deploy( gbvars, src_hw_gb_vars_asm );
 
     // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
@@ -1152,47 +1160,16 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "IMAGEY", VT_POSITION, 0 );
     variable_global( _environment, "IMAGEY" );    
 
-    // variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
-    // variable_global( _environment, "SPRITEADDRESS" );    
-    // variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
-    // variable_global( _environment, "SPRITEAADDRESS" );    
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x9800 );
     variable_global( _environment, "TEXTADDRESS" );    
-    // variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
-    // variable_global( _environment, "COLORMAPADDRESS" );    
-    // variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
-    // variable_global( _environment, "PATTERNADDRESS" );    
-    // variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
-    // variable_global( _environment, "PALETTE" ); 
-
-    // char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    // variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_BGB, 0, 20, 18, 2, 8, 8, "Tilemap mode (BGB)" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_CGB, 0, 20, 18, 4, 8, 8, "Tilemap mode (CGB)" );
-
-    // outline0("CALL GBSTARTUP");
 
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
     variable_import( _environment, "YGR", VT_POSITION, 0 );
     variable_global( _environment, "YGR" );
-    // variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
-    // variable_global( _environment, "LINE" );
-
-    // variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
-    // variable_global( _environment, "CLIPX1" );
-    // variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
-    // variable_global( _environment, "CLIPX2" );
-    // variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
-    // variable_global( _environment, "CLIPY1" );
-    // variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
-    // variable_global( _environment, "CLIPY2" );
-
-    // variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
-    // variable_global( _environment, "ORIGINX" );
-    // variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
-    // variable_global( _environment, "ORIGINY" );
 
     variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
     variable_global( _environment, "RESOLUTIONX" );
@@ -1208,9 +1185,6 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "CLINEY", VT_BYTE, 0 );
     variable_global( _environment, "CLINEY" );
 
-    // variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
-    // variable_global( _environment, "PLOTCPE" );
-
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );
 
@@ -1224,27 +1198,6 @@ void gb_initialization( Environment * _environment ) {
 
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );
-
-    // variable_import( _environment, "TILEX", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEX" );
-    // variable_import( _environment, "TILEY", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEY" );
-    // variable_import( _environment, "TILEX2", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEX2" );
-    // variable_import( _environment, "TILET", VT_BYTE, 0 );
-    // variable_global( _environment, "TILET" );
-    // variable_import( _environment, "TILEW", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEW" );
-    // variable_import( _environment, "TILEH", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEH" );
-    // variable_import( _environment, "TILEW2", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEW2" );
-    // variable_import( _environment, "TILEH2", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEH2" );
-    // variable_import( _environment, "TILEA", VT_BYTE, 0 );
-    // variable_global( _environment, "TILEA" );
-    // variable_import( _environment, "TILEO", VT_WORD, 0 );
-    // variable_global( _environment, "TILEO" );
 
     // variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
     // variable_global( _environment, "XSCROLLPOS" );

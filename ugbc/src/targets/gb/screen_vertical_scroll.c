@@ -52,7 +52,9 @@
  */
 void screen_vertical_scroll( Environment * _environment, int _displacement ) {
 
-    outline1("; SCREEN VERTICAL SCROLL %d (ignored)", _displacement);
+    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "$%2.2x", _displacement );
+
+    gb_vertical_scroll( _environment, displacementString );
 
 }
 
@@ -70,7 +72,9 @@ void screen_vertical_scroll( Environment * _environment, int _displacement ) {
  */
 void screen_vertical_scroll_var( Environment * _environment, char * _displacement ) {
 
-    outline1("; SCREEN VERTICAL SCROLL %s (ignored)", _displacement );
+    Variable * displacement = variable_retrieve( _environment, _displacement );
+
+    gb_vertical_scroll( _environment, displacement->realName );
 
 }
 
