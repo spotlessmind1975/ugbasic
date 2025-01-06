@@ -1226,8 +1226,8 @@ void gb_initialization( Environment * _environment ) {
 
     variable_import( _environment, "GBTIMER", VT_WORD, 0 );
     variable_global( _environment, "GBTIMER" );
-    variable_import( _environment, "GBTIMERS", VT_BUFFER, 8 );
-    variable_global( _environment, "GBTIMERS" );
+    variable_import( _environment, "GBAUDIOTIMERS", VT_BUFFER, 8 );
+    variable_global( _environment, "GBAUDIOTIMERS" );
 
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );

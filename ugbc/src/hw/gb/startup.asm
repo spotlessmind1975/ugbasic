@@ -1760,6 +1760,7 @@ GBSTARTVOL0:
     SLA A
     SLA A
     SLA A
+    OR $08
     LD (rAUD1ENV), A
     POP AF
     RET
@@ -1772,6 +1773,7 @@ GBSTARTVOL1:
     SLA A
     SLA A
     SLA A
+    OR $08
     LD (rAUD2ENV), A
     POP AF
     RET
@@ -1799,6 +1801,7 @@ GBSTARTVOL3:
     SLA A
     SLA A
     SLA A
+    OR $08
     LD (rAUD4ENV), A
     POP AF
     RET
@@ -1872,7 +1875,8 @@ GBPROGFREQ0:
     LD A, E
     LD (rAUD1LOW), A
     LD A, (rAUD1HIGH)
-    AND $F7
+    AND $07
+    OR $80
     OR D
     LD (rAUD1HIGH), A
     POP AF
@@ -1883,7 +1887,8 @@ GBPROGFREQ1:
     LD A, E
     LD (rAUD2LOW), A
     LD A, (rAUD2HIGH)
-    AND $F7
+    AND $07
+    OR $80
     OR D
     LD (rAUD2HIGH), A
     POP AF
@@ -1914,19 +1919,19 @@ GBPROGDUR3X:
     RET
 
 GBPROGDUR0:
-    LD (GBTIMER),DE
+    LD (GBAUDIOTIMERS),DE
     RET
 
 GBPROGDUR1:
-    LD (GBTIMER+2),DE
+    LD (GBAUDIOTIMERS+2),DE
     RET
 
 GBPROGDUR2:
-    LD (GBTIMER+4),DE
+    LD (GBAUDIOTIMERS+4),DE
     RET
 
 GBPROGDUR3:
-    LD (GBTIMER+6),DE
+    LD (GBAUDIOTIMERS+6),DE
     RET
 
 GBWAITDUR:
@@ -1951,7 +1956,7 @@ GBWAITDUR3X:
 READGBTIMER:    
     PUSH HL
     PUSH AF
-    LD HL, GBTIMER
+    LD HL, GBAUDIOTIMERS
     ADD HL, DE
     LD A, (HL)
     LD E, A
@@ -1965,7 +1970,7 @@ READGBTIMER:
 WRITEGBTIMER:    
     PUSH HL
     PUSH AF
-    LD HL, GBTIMER
+    LD HL, GBAUDIOTIMERS
     ADD HL, DE
     LD A, E
     LD (HL), A
@@ -1979,7 +1984,8 @@ WRITEGBTIMER:
 DECGBTIMER:    
     PUSH HL
     PUSH AF
-    LD HL, GBTIMER
+    PUSH DE
+    LD HL, GBAUDIOTIMERS
     ADD HL, DE
     LD A, (HL)
     LD E, A
@@ -1990,6 +1996,7 @@ DECGBTIMER:
     LD (HL), D
     DEC HL
     LD (HL), E
+    POP DE
     POP AF
     POP HL
     RET
@@ -2194,6 +2201,6 @@ GBMANAGER2D3:
     JR NZ, GBMANAGER2D4
     CALL GBSTOP3
 GBMANAGER2D4:
-    POP DE
     POP AF
+    POP DE
     RET

@@ -65,9 +65,9 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
     //accurate enough, since the registers can only store whole numbers. Therefore, 62 or 63 would be written
     //to register 0 and 0 would be written to register 1.
 
-    int chipsetFrequency = ( 3576000 / _freq ) / 16;
+    int chipsetFrequency = 2048 - ( 131072 / _freq );
 
-    gb_start( _environment, ( _channels & 0x07 ) );
+    gb_start( _environment, ( _channels & 0x0f ) );
     gb_set_frequency( _environment, _channels, chipsetFrequency );
     if ( _delay ) {
         gb_set_duration( _environment, _channels, _delay / 50 /* approx! */ );
@@ -89,21 +89,20 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
  */
 void sound_vars( Environment * _environment, char * _freq, char * _delay, char * _channels ) {
 
- Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
+    Variable * freq = variable_retrieve_or_define( _environment, _freq, VT_WORD, 440 );
 
     Variable * cpuFrequency = variable_temporary( _environment, VT_DWORD, "(chipsetFrequency)" );
-    variable_store( _environment, cpuFrequency->name, 3576000 );
-    Variable * sixteen = variable_temporary( _environment, VT_WORD, "(16)" );
-    variable_store( _environment, sixteen->name, 16 );
+    variable_store( _environment, cpuFrequency->name, 131072 );
+    Variable * n2048 = variable_temporary( _environment, VT_WORD, "(2048)" );
+    variable_store( _environment, n2048->name, 2048 );
     
-    Variable * chipsetFrequency = variable_div( _environment, 
+    Variable * chipsetFrequency = variable_sub( _environment, 
+                            n2048->name,
                             variable_div( _environment,
                                 cpuFrequency->name,
                                 freq->name,
                                 NULL
-                            )->name,
-                            sixteen->name,
-                            NULL
+                            )->name
                             );
 
     if ( _channels ) {

@@ -5250,7 +5250,11 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("OR A");
         outline0("CALL SBC_HL_DE");
         outhead1("%sdiv32setbit:", label);
-        outline0("INC (IXR)");
+        outline0("PUSH HL");
+        outline0("LD HL, (IXR)");
+        outline0("INC HL");
+        outline0("LD (IXR), HL");
+        outline0("POP HL");
         outline1("DJNZ %sdiv32a", label);
         outhead1("%sdiv32end:", label);
 
@@ -5326,7 +5330,11 @@ void sm83_math_div_32bit_to_16bit( Environment * _environment, char *_source, ch
         outline0("OR A");
         outline0("CALL SBC_HL_DE");
         outhead1("%sloop3:", label);
-        outline0("INC (IXR)");
+        outline0("PUSH HL");
+        outline0("LD HL, (IXR)");
+        outline0("INC HL");
+        outline0("LD (IXR), HL");
+        outline0("POP HL");
         outline1("DJNZ %sloop1", label);
         outhead1("%sdone:", label);
 
@@ -5390,7 +5398,11 @@ void sm83_math_div_32bit_to_16bit_const( Environment * _environment, char *_sour
         outline0("OR A");
         outline0("CALL SBC_HL_DE");
         outhead1("%sdiv32setbit:", label);
-        outline0("INC (IXR)");
+        outline0("PUSH HL");
+        outline0("LD HL, (IXR)");
+        outline0("INC HL");
+        outline0("LD (IXR), HL");
+        outline0("POP HL");
         outline1("DJNZ %sdiv32a", label);
         outhead1("%sdiv32end:", label);
 
