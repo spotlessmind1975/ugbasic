@@ -3510,8 +3510,34 @@ void sc61860_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_anda_direct( _environment, 0x80 );
+        op_swan( _environment );
 
+        op_swan( _environment );
+            while( _steps ) {
+            op_ldab( _environment, _source );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
+        }
+
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_oram( _environment );
+        op_swab( _environment );
+        op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+        
     } else {
 
         while( _steps ) {
