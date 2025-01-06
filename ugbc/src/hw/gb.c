@@ -854,7 +854,6 @@ void gb_tilemap_enable( Environment * _environment, int _width, int _height, int
         }
 
     } else {
-        // printf("gb_tilemap_enable() -> -1\n" );
         WARNING_SCREEN_MODE( -1 );
     }
 
@@ -1080,6 +1079,8 @@ void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) 
 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
+    _environment->bitmaskNeeded = 1;
+    
     deploy( gbvars, src_hw_gb_vars_asm );
 
     // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );

@@ -5995,6 +5995,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
             }
             outline0("POP HL");
             outline0("LD (IXR), HL");
+            outline1("LD A, (%s)", _number);
             outline0("CALL N2D8");
             break;
         case 16:
@@ -6025,6 +6026,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
             }
             outline0("POP HL");
             outline0("LD (IXR), HL");
+            outline1("LD HL, (%s)", _number);
             outline0("CALL N2D16");
             break;
         case 32:
@@ -6075,6 +6077,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
             }
             outline0("POP HL");
             outline0("LD (IXR), HL");
+            outline1("LD HL, (%s)", _number);
             outline0("CALL N2D32");
             break;
         default:
