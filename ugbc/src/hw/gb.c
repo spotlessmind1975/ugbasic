@@ -1224,6 +1224,9 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "GBTMPPTR_BACKUP", VT_ADDRESS, 0 );
     variable_global( _environment, "GBTMPPTR_BACKUP" );
 
+    variable_import( _environment, "GBTIMER", VT_BUFFER, 8 );
+    variable_global( _environment, "GBTIMER" );
+
     // variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
     // variable_global( _environment, "SPRITEXY" );
 
@@ -2431,9 +2434,6 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void gb_start( Environment * _environment, int _channels ) {
 
-    deploy( gbvars, src_hw_gb_vars_asm );
-    deploy( startup, src_hw_gb_startup_asm );
-
     if ( _channels & 0x01 ) {
         outline0("CALL GBSTART0");
     }
@@ -2444,7 +2444,7 @@ void gb_start( Environment * _environment, int _channels ) {
         outline0("CALL GBSTART2");
     }
     if ( _channels & 0x08 ) {
-        outline0("CALL GBSTARTN0");
+        outline0("CALL GBSTART3");
     }
 
 }
@@ -2470,7 +2470,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("CALL GBPROGFREQ2" ); \
     if ( ( c & 0x08 ) ) \
-        outline0("CALL GBPROGFREQN0" );
+        outline0("CALL GBPROGFREQ3" );
 
 #define     PROGRAM_FREQUENCY_V( c, f ) \
     outline1("LD A, (%s)", f ); \
@@ -2478,7 +2478,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2490,7 +2490,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2508,7 +2508,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("CALL GBPROGDUR2" ); \
     if ( ( c & 0x08 ) ) \
-        outline0("CALL GBPROGDURN0" );
+        outline0("CALL GBPROGDUR3" );
 
 #define     WAIT_DURATION( c ) \
     if ( ( c & 0x01 ) ) \
@@ -2518,7 +2518,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("CALL GBWAITDUR2" ); \
     if ( ( c & 0x08 ) ) \
-        outline0("CALL GBWAITDURN0" );
+        outline0("CALL GBWAITDUR3" );
 
 #define     PROGRAM_PITCH( c, f ) \
     outline1("LD A, $%2.2x", ( f & 0xff ) ); \
@@ -2532,7 +2532,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("CALL GBPROGFREQ2" ); \
     if ( ( c & 0x08 ) ) \
-        outline0("CALL GBPROGFREQN0" );
+        outline0("CALL GBPROGFREQ3" );
 
 #define     PROGRAM_PITCH_V( c, f ) \
     outline1("LD A, (%s)", f ); \
@@ -2540,7 +2540,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2552,7 +2552,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2568,7 +2568,9 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x02 ) ) \
         outline0("CALL GBPROGPULSE1" ); \
     if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGPULSE2" );
+        outline0("CALL GBPROGPULSE2" ); \
+    if ( ( c & 0x08 ) ) \
+        outline0("CALL GBPROGPULSE3" );
 
 #define     PROGRAM_PULSE_V( c, p ) \
     outline1("LD A, (%s)", p ); \
@@ -2588,203 +2590,11 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( p >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
     outline0("CALL GBPROGPULSE" );
-
-#define     PROGRAM_NOISE( c ) \
-    outline0("LD A, $82" ); \
-    outline0("LD B, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGCTR2" );
-
-#define     PROGRAM_NOISE_V( c, p ) \
-    outline0("LD A, $82" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_NOISE_SV( c ) \
-    outline0("LD A, $82" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_SAW( c ) \
-    outline0("LD A, $22" ); \
-    outline0("LD B, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGCTR2" );
-
-#define     PROGRAM_SAW_V( c) \
-    outline0("LD A, $22" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_SAW_SV( c ) \
-    outline0("LD A, $22" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_TRIANGLE( c ) \
-    outline0("LD A, $12" ); \
-    outline0("LD B, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGCTR2" );
-
-#define     PROGRAM_TRIANGLE_V( c ) \
-    outline0("LD A, $12" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_TRIANGLE_SV( c ) \
-    outline0("LD A, $12" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_SAW_TRIANGLE( c ) \
-    outline0("LD A, $32" ); \
-    outline0("LD B, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGCTR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGCTR2" );
-
-#define     PROGRAM_SAW_TRIANGLE_V( c ) \
-    outline0("LD A, $32" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_SAW_TRIANGLE_SV( c ) \
-    outline0("LD A, $32" ); \
-    outline0("LD B, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGCTR" );
-
-#define     PROGRAM_ATTACK_DECAY( c, a, d ) \
-    outline1("LD A, $%2.2x", ( a & 0x0f ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( d & 0x0f ) ); \
-    outline0("LD D, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGAD0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGAD1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGAD2" );
-
-#define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
-    outline1("LD A, %s", a ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, %s", d ); \
-    outline0("LD D, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGAD" );
-
-#define     PROGRAM_ATTACK_DECAY_SV( c, a, d ) \
-    outline1("LD A, $%2.2x", ( a & 0x0f ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( d & 0x0f ) ); \
-    outline0("LD D, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGAD" );
-
-#define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
-    outline1("LD A, $%2.2x", ( s & 0x0f ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( r & 0x0f ) ); \
-    outline0("LD D, A" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("CALL GBPROGSR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("CALL GBPROGSR1" ); \
-    if ( ( c & 0x04 ) ) \
-        outline0("CALL GBPROGSR2" );
-
-#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
-    outline1("LD A, %s", s ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, %s", r ); \
-    outline0("LD D, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGSR" );
-
-#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r ) \
-    outline1("LD A, $%2.2x", ( s & 0x0f ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( r & 0x0f ) ); \
-    outline0("LD D, A" ); \
-    if ( c == NULL ) { \
-        outline0("LD A, $7"); \
-    } else { \
-        outline1("LD A, (%s)", c ); \
-    } \
-    outline0("CALL GBPROGSR" );
 
 #define     STOP_FREQUENCY( c ) \
     if ( ( c & 0x01 ) ) \
@@ -2794,11 +2604,11 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     if ( ( c & 0x04 ) ) \
         outline0("CALL GBSTOP2" ); \
     if ( ( c & 0x08 ) ) \
-        outline0("CALL GBSTOPN0" );
+        outline0("CALL GBSTOP3" );
 
 #define     STOP_FREQUENCY_V( c ) \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2806,7 +2616,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     STOP_FREQUENCY_SV( c ) \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $f"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2816,14 +2626,8 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 11);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
             break;
         case IMF_INSTRUMENT_GUNSHOT:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 4);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 0, 1);
             break;
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
@@ -2835,17 +2639,11 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE(_channels, 1024);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
@@ -2856,9 +2654,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
             break;
 
         default:
@@ -2871,9 +2666,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
@@ -2883,15 +2675,9 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 4, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
@@ -2903,9 +2689,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
         case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_TRIANGLE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 12, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
@@ -2920,9 +2703,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
         case IMF_INSTRUMENT_SYNTHSTRINGS_1:
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
-            PROGRAM_PULSE(_channels, 128);
-            PROGRAM_ATTACK_DECAY(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_PAD_4_CHOIR:
@@ -2944,9 +2724,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_TIMPANI:
         case IMF_INSTRUMENT_ORCHESTRA_HIT:
         case IMF_INSTRUMENT_APPLAUSE:
-            PROGRAM_NOISE(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 1, 14);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
@@ -2976,9 +2753,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_SAW(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_SITAR:
@@ -3003,9 +2777,6 @@ void gb_set_program( Environment * _environment, int _channels, int _program ) {
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
         case IMF_INSTRUMENT_HELICOPTER:
-            PROGRAM_SAW(_channels);
-            PROGRAM_ATTACK_DECAY(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE(_channels, 14, 14);
             break;
     }
 
@@ -3044,7 +2815,7 @@ void gb_start_var( Environment * _environment, char * _channels ) {
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
     outline0("CALL GBSTART");
 
@@ -3061,7 +2832,7 @@ void gb_set_volume_vars( Environment * _environment, char * _channels, char * _v
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
     outline0("CALL GBSTARTVOL");
 
@@ -3084,14 +2855,8 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 11);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
             break;
         case IMF_INSTRUMENT_GUNSHOT:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 4);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 0, 1);
             break;
         case IMF_INSTRUMENT_PAD_5_BOWED:
         case IMF_INSTRUMENT_PAD_6_METALLIC:
@@ -3103,17 +2868,11 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_HONKY_TONK_PIANO:
         case IMF_INSTRUMENT_ELECTRIC_PIANO1:
         case IMF_INSTRUMENT_ELECTRIC_PIANO2:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 4, 2);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_HARPSICHORD:
         case IMF_INSTRUMENT_CLAVI:
         case IMF_INSTRUMENT_CELESTA:
-            PROGRAM_PULSE_SV(_channels, 1024);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_3_CALLIOPE:
@@ -3124,9 +2883,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_XYLOPHONE:
         case IMF_INSTRUMENT_TUBULAR_BELLS:
         case IMF_INSTRUMENT_DULCIMER:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
             break;
 
         default:
@@ -3139,9 +2895,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_ACCORDION:
         case IMF_INSTRUMENT_HARMONICA:
         case IMF_INSTRUMENT_TANGO_ACCORDION:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON:
@@ -3151,15 +2904,9 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_OVERDRIVEN_GUITAR:
         case IMF_INSTRUMENT_DISTORTION_GUITAR:
         case IMF_INSTRUMENT_GUITAR_HARMONICS:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 2);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 4, 3);
             break;
 
         case IMF_INSTRUMENT_LEAD_8_BASS_LEAD:
@@ -3171,9 +2918,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_SLAP_BASS_2:
         case IMF_INSTRUMENT_SYNTH_BASS_1:
         case IMF_INSTRUMENT_SYNTH_BASS_2:
-            PROGRAM_TRIANGLE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 2, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 12, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_1_SQUARE:
@@ -3188,9 +2932,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_STRING_ENSEMBLE_2:
         case IMF_INSTRUMENT_SYNTHSTRINGS_1:
         case IMF_INSTRUMENT_SYNTHSTRINGS_2:
-            PROGRAM_PULSE_SV(_channels, 128);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 10, 10);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 10);
             break;
 
         case IMF_INSTRUMENT_PAD_4_CHOIR:
@@ -3212,9 +2953,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_TIMPANI:
         case IMF_INSTRUMENT_ORCHESTRA_HIT:
         case IMF_INSTRUMENT_APPLAUSE:
-            PROGRAM_NOISE_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 1, 14);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_LEAD_2_SAWTOOTH:
@@ -3244,9 +2982,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_SHAKUHACHI:
         case IMF_INSTRUMENT_WHISTLE:
         case IMF_INSTRUMENT_OCARINA:
-            PROGRAM_SAW_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
             break;
 
         case IMF_INSTRUMENT_SITAR:
@@ -3271,9 +3006,6 @@ void gb_set_program_semi_var( Environment * _environment, char * _channels, int 
         case IMF_INSTRUMENT_BIRD_TWEET:
         case IMF_INSTRUMENT_TELEPHONE_RING:
         case IMF_INSTRUMENT_HELICOPTER:
-            PROGRAM_SAW_SV(_channels);
-            PROGRAM_ATTACK_DECAY_SV(_channels, 3, 3);
-            PROGRAM_SUSTAIN_RELEASE_SV(_channels, 14, 14);
             break;
     }
 
@@ -3288,7 +3020,7 @@ void gb_set_frequency_vars( Environment * _environment, char * _channels, char *
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
 
     outline0("CALL GBFREQ");
@@ -3304,7 +3036,7 @@ void gb_set_pitch_vars( Environment * _environment, char * _channels, char * _pi
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
 
     outline0("CALL GBPROGFREQ");
@@ -3313,7 +3045,7 @@ void gb_set_pitch_vars( Environment * _environment, char * _channels, char * _pi
 
 void gb_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
-    outline0("LD HL, gbFREQTABLE");
+    outline0("LD HL, GBFREQTABLE");
     outline1("LD A, (%s)", _note);
     outline0("LD E, A");
     outline0("LD A, 0");
@@ -3330,7 +3062,7 @@ void gb_set_note_vars( Environment * _environment, char * _channels, char * _not
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
 
     outline0("CALL GBPROGFREQ");
@@ -3384,7 +3116,7 @@ void gb_set_duration_vars( Environment * _environment, char * _channel, char * _
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
 
     outline0("CALL GBPROGDUR" );
@@ -3396,7 +3128,7 @@ void gb_wait_duration_vars( Environment * _environment, char *  _channel ) {
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, $7" );
+        outline0("LD A, $f" );
     }
     
     outline0("CALL GBWAITDUR" );
