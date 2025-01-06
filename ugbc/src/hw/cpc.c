@@ -1522,11 +1522,11 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( _environment->freeImageWidth ) {
-        if ( _width % 8 ) {
-            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        if ( _width % 4 ) {
+            _width = ( ( ( _width - 1 ) / 4 ) - 1 ) * 4;
         }
-        if ( _frame_width % 8 ) {
-            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        if ( _frame_width % 4 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 4 ) - 1 ) * 4;
         }
     }
 
@@ -1729,11 +1729,11 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
     image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
 
     if ( _environment->freeImageWidth ) {
-        if ( _width % 8 ) {
-            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        if ( _width % 2 ) {
+            _width = ( ( ( _width - 1 ) / 2) - 1 ) * 2;
         }
-        if ( _frame_width % 8 ) {
-            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        if ( _frame_width % 2 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 2 ) - 1 ) * 2;
         }
     }
 
