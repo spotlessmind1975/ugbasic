@@ -4906,6 +4906,7 @@ Variable *              maximum( Environment * _environment, char * _source, cha
 void                    memload( Environment * _environment );
 void                    memorize( Environment * _environment );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
+void                    mempos( Environment * _environment, char * _address, char * _bank );
 void                    memsave( Environment * _environment );
 float                   min_of_two(float _x, float _y);
 float                   min_of_three(float _m, float _n, float _p);
