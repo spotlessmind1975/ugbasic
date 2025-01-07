@@ -43,22 +43,22 @@
 
 @english
 
-The ''MEMOR'' instruction tells to an expansion management which ''address''
-in the target computer should be affected by the data transfer (start or 
-destination address of the transfer). Optionally, it is possible to give the
-address in the expansion memorey with ''eaddress'' (offset) and bank (''bank''). 
+The ''MEMDEF'' is a collective command for all expansion memory settings 
+required for a transfer. First you specify the number of ''bytes'' to be transferred 
+(see ''MEMLEN''), then the ''address'' in the target computer (see ''MEMOR''). This is
+followed by the expansion memory address (''eaddress'), including the ''bank'' (''MEMPOS''). 
 
 @italian
 
-L'istruzione ''MEMOR'' indica a una gestione di espansione quale ''indirizzo'' 
-nel computer di destinazione dovrebbe essere interessato dal trasferimento dati 
-(indirizzo di inizio o di destinazione del trasferimento). Facoltativamente, 
-è possibile fornire l'indirizzo nella memoria di espansione con ''eaddress'' (offset) e 
-banco (''bank'').
+Il comando ''MEMDEF'' è un comando collettivo per tutte le impostazioni di memoria di 
+espansione richieste per un trasferimento. Per prima cosa si specifica il numero di ''byte'' 
+da trasferire (vedere ''MEMLEN''), quindi l''address'' nel computer di destinazione (vedere 
+''MEMOR''). Questo è seguito dall'indirizzo di memoria di espansione (''eaddress'), incluso il
+''bank'' (''MEMPOS'').
 
-@syntax MEMOR address [, eaddress, bank]
+@syntax MEMDEF bytes[, address[, eaddress, bank]]
 
-@example MEMOR &hc000
+@example MEMDEF 128, &HC000
 
 @usedInExample tsb_memload.bas
 

@@ -65,6 +65,7 @@ dal trasferimento dati (indirizzo di inizio o di destinazione del trasferimento)
 @seeAlso MEMRESTORE
 @seeAlso MEMLOAD
 @seeAlso MEMSAVE
+@seeAlso MEMDEF
 
 </usermanual> */
 

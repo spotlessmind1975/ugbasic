@@ -71,6 +71,8 @@ caricamento automatico dei registri di indirizzo e conteggio (vedere ''MEMRESTOR
 @seeAlso MEMCONT
 @seeAlso MEMRESTORE
 @seeAlso MEMSAVE
+@seeAlso MEMSAVE
+@seeAlso BANK READ
 
 </usermanual> */
 

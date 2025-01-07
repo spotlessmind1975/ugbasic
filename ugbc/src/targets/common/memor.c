@@ -68,6 +68,7 @@ banco (''bank'').
 @seeAlso MEMRESTORE
 @seeAlso MEMLOAD
 @seeAlso MEMSAVE
+@seeAlso MEMDEF
 
 </usermanual> */
 

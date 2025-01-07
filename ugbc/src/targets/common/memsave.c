@@ -70,6 +70,8 @@ Il comando tiene conto delle impostazioni per il tipo di trasferimento (vedere
 @seeAlso MEMCONT
 @seeAlso MEMRESTORE
 @seeAlso MEMLOAD
+@seeAlso MEMDEF
+@seeAlso BANK WRITE
 
 </usermanual> */
 
