@@ -3076,7 +3076,7 @@ void gb_stop_vars( Environment * _environment, char * _channels ) {
 
 void gb_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
-    // deploy( music, src_hw_gb_music_asm );
+    deploy( music, src_hw_gb_music_asm );
 
     // HL: music address, B: blocks, C: last block
     outline0("DI");
@@ -3086,7 +3086,7 @@ void gb_music( Environment * _environment, char * _music, int _size, int _loop )
     outline1("LD A, $%2.2x", _size & 0xff );
     outline0("LD C, A");
     outline1("LD A, $%2.2x", _loop );
-    outline0("LD (gbMUSICLOOP), A");
+    outline0("LD (GBMUSICLOOP), A");
     outline0("CALL MUSICPLAYERRESET");
     outline0("EI");
 
