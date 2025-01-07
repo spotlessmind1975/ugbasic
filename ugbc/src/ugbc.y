@@ -101,7 +101,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS 
-%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD
+%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10364,6 +10364,11 @@ memload_definition :
         memload( _environment );
     };
 
+memsave_definition :
+    {
+        memsave( _environment );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11001,6 +11006,7 @@ statement2nc:
   | PLAY play_definition
   | MUSIC music_definition
   | MEMLOAD memload_definition
+  | MEMSAVE memsave_definition
   | INSTRUMENT instrument_definition
   | VOLUME volume_definition
   | HALT {
