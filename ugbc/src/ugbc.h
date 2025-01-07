@@ -4905,6 +4905,7 @@ float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
 void                    memload( Environment * _environment );
 void                    memorize( Environment * _environment );
+void                    memor( Environment * _environment, char * _address, char * _eaddress, char * _bank );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
 void                    mempos( Environment * _environment, char * _address, char * _bank );
 void                    memsave( Environment * _environment );

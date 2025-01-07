@@ -102,7 +102,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS 
 %token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
-%token MEMPOS
+%token MEMPOS MEMOR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10375,6 +10375,14 @@ mempos_definition :
         mempos( _environment, $1, $3 );
     };
 
+memor_definition :
+    expr  {
+        memor( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        memor( _environment, $1, $3, $5 );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11014,6 +11022,7 @@ statement2nc:
   | MEMLOAD memload_definition
   | MEMSAVE memsave_definition
   | MEMPOS mempos_definition
+  | MEMOR memor_definition
   | INSTRUMENT instrument_definition
   | VOLUME volume_definition
   | HALT {
