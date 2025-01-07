@@ -1874,10 +1874,8 @@ GBPROGFREQ0:
     PUSH AF
     LD A, E
     LD (rAUD1LOW), A
-    LD A, (rAUD1HIGH)
-    AND $07
+    LD A, D
     OR $80
-    OR D
     LD (rAUD1HIGH), A
     POP AF
     RET
@@ -1886,10 +1884,8 @@ GBPROGFREQ1:
     PUSH AF
     LD A, E
     LD (rAUD2LOW), A
-    LD A, (rAUD2HIGH)
-    AND $07
+    LD A, D
     OR $80
-    OR D
     LD (rAUD2HIGH), A
     POP AF
     RET
