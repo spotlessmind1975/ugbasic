@@ -246,7 +246,7 @@ void generate_gb( Environment * _environment ) {
     fclose( binaryFile );
 
     strcpy( binaryNameDefinitive, _environment->exeFileName );
-    p = strrstr( binaryName, ".gb" );
+    p = strrstr( binaryNameDefinitive, ".gb" );
     if ( p ) {
         *p = 0;
         --p;
@@ -289,6 +289,17 @@ void generate_gb( Environment * _environment ) {
     binaryFile = fopen( _environment->exeFileName, "wb" );
     fwrite( cartridge, size, 1, binaryFile );
     fclose( binaryFile );
+
+    if ( strstr( _environment->exeFileName, ".gb.gb" ) ) {
+        strcpy( binaryNameDefinitive, _environment->exeFileName );
+        p = strstr( binaryNameDefinitive, ".gb" );
+        if ( p ) {
+            *p = 0;
+            --p;
+            strcat( p, ".gb");
+        }
+        BUILD_SAFE_MOVE( _environment, binaryNameDefinitive, _environment->exeFileName );
+    }
 
 //     strcpy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
