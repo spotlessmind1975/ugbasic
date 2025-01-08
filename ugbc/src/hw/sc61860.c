@@ -795,6 +795,13 @@ static void op_orab( Environment * _environment ) {
 
 }
 
+static void op_oram( Environment * _environment ) {
+
+    outline0("LP 0x0b" );
+    outline0("ORMA");
+
+}
+
 static void op_push( Environment * _environment ) {
 
     outline0("PUSH");

@@ -153,7 +153,24 @@ void pc1403_vscroll( Environment * _environment, int _displacement ) {
 
 void pc1403_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    CRITICAL_UNIMPLEMENTED("pc1403_text");
+    deploy( textEncodedAtText, src_hw_pc1403_text_asm );
+
+    outline0( "LIP 0x0c" );
+    outline1( "LIDP %s", _text );
+    outline0( "LDD");
+    outline0( "EXAM");
+
+    outline0( "LIP 0x0d" );
+    outline1( "LIDP %s", address_displacement( _environment, _text, "1" ) );
+    outline0( "LDD");
+    outline0( "EXAM");
+
+    outline0( "LIP 0x01" );
+    outline1( "LIDP %s", _text_size );
+    outline0( "LDD");
+    outline0( "EXAM");
+
+    outline0("CALL TEXTBM");
 
 }
 
