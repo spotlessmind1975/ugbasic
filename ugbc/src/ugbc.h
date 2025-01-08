@@ -3418,6 +3418,7 @@ typedef struct _Environment {
 
 int assemblyLineIsAComment( char * _buffer );
 const char* strstrcase( const char* _x, const char* _y );
+const char *strrstr(const char *haystack, const char *needle);
 
 typedef unsigned char MemoryBlock;
 
