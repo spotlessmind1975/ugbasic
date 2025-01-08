@@ -246,7 +246,7 @@ void generate_gb( Environment * _environment ) {
     fclose( binaryFile );
 
     strcpy( binaryNameDefinitive, _environment->exeFileName );
-    p = strstr( binaryName, ".gb" );
+    p = strrstr( binaryName, ".gb" );
     if ( p ) {
         *p = 0;
         --p;
