@@ -264,9 +264,10 @@ void generate_gb( Environment * _environment ) {
         strcpy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
-    sprintf( commandLine, "\"%s\" +gb -b \"%s\"",
+    sprintf( commandLine, "\"%s\" +gb -b \"%s\" %s",
         executableName,
-        binaryNameDefinitive );
+        binaryNameDefinitive,
+        pipes );
 
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
