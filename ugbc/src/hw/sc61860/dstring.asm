@@ -303,6 +303,12 @@ DSALLOC:
 
     CALL DSFINDFREE
 
+    ; Save slot
+
+    EXAB
+    PUSH
+    EXAB
+    
     ; Retrieve the descriptor for this slot.
 
     CALL DSDESCRIPTOR
@@ -326,28 +332,14 @@ DSALLOC:
     
     CALL DSUSING
 
+    POP
+    EXAB
+
     ; Allocate enough space to store the string.
     
     CALL DSMALLOC
 
     RTN
-
-; $00	I	 	Indexes
-; $01	J
-; $02	A	 	Accumulators
-; $03	B
-; $04	Xl
-; $05	Xh
-; $06	Yl
-; $07	Yh
-; $08	K
-; $09	L
-; $0a	M
-; $0b	N
-; $0c	[ IX ]
-; $0d   [ IX+1 ]
-; $0e
-; $0f
 
 ; ------------------------------------------------------------------------------
 ; DSFREE
@@ -756,12 +748,38 @@ DSMALLOC:
     
     EXAB
     PUSH
+    EXAB
 
     ; Retrieve the descriptor for the given slot.
 
     CALL DSDESCRIPTOR
 
-    ; Calculate the starting address.
+    ; Decrease the available space.
+
+    LIP 0x00
+    LIDP FREE_STRING
+    LDD
+    EXAM
+    LIP 0x01
+    LIDP FREE_STRING+1
+    LDD
+    EXAM
+    LIA 0
+    EXAB
+    LIP 0x08
+    LDM
+    LIP 0x00
+    SBB
+    LIP 0x00
+    LIDP FREE_STRING
+    LDM
+    STD
+    LIP 0x01
+    LIDP FREE_STRING+1
+    LDM
+    STD
+
+    ; Calculate offset.
 
     LIDP FREE_STRING+1
     LDD
@@ -770,15 +788,11 @@ DSMALLOC:
     LDD
     LIP 0x06
     ADB
-    LIA 0
-    EXAB
-    LIP 0x08
-    LDM
-    LIP 0x06
-    SBB
 
     ; Update the descriptor.
-
+    
+    LIP 0x08
+    LDM
     LIP 0x0c
     EXAM
     LIP 0x06
@@ -793,7 +807,10 @@ DSMALLOC:
     ; Save the updated descriptor
 
     POP
+    PUSH
+    EXAB
     CALL DSDESCRIPTORSAVE
+    POP
 
     RTN
 
