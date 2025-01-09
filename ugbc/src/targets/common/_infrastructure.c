@@ -2840,6 +2840,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
                                     Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
                                     Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    outline0("; dstring <- dstring");
                                     cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
                                     cpu_dsfree( _environment, target->realName );
                                     cpu_dsalloc( _environment, sourceSize->realName, target->realName );

@@ -116,6 +116,7 @@ TEXTBM:
     LIP 0x08
     LIA 0
     EXAM
+    EXAB
 TEXTBML1:
     ADM 
     DECI

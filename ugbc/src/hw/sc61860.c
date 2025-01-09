@@ -4548,18 +4548,16 @@ void sc61860_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    op_ldi( _environment, _size );
     op_ldx( _environment, _source );
     op_ldy( _environment, _destination );
+    op_ldi( _environment, _size );
 
     outline0("DX");
     outline0("DY");
 
     sc61860_label( _environment, label );
     outline0("IXL")
-    outline0("LDD")
     outline0("IYS")
-    outline0("STD")
     op_decinz( _environment, label );
 
 }
@@ -4568,18 +4566,16 @@ void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    op_ldij( _environment, _size );
     op_ldx( _environment, _source );
     op_ldy( _environment, _destination );
+    op_ldij( _environment, _size );
 
     outline0("DX");
     outline0("DY");
 
     sc61860_label( _environment, label );
     outline0("IXL")
-    outline0("LDD")
     outline0("IYS")
-    outline0("STD")
     op_decijnz( _environment, label );
 
 }
@@ -4908,18 +4904,36 @@ void sc61860_greater_than_memory_size( Environment * _environment, char *_source
 
 void sc61860_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_math_add_16bit_with_8bit" );
-
-    // outline1("LD HL, (%s)", _source );
-    // outline0("LD DE, 0" );
-    // outline1("LD A, (%s)", _destination );
-    // outline0("LD E, A" );
-    // outline0("ADD HL, DE" );
+    outline0("LIA 0");
+    outline0("EXAB");
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+    outline0("LDD");
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _destination );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("ADB");
     if ( _other ) {
-        // outline1("LD (%s), HL", _other );
+        outline1("LIDP %s", _other );
     } else {
-        // outline1("LD (%s), HL", _destination );
+        outline1("LIDP %s", _destination );
     }
+    outline0("LIP 0");
+    outline0("LDM");
+    outline0("STD");
+    if ( _other ) {
+        outline1("LIDP %s", address_displacement( _environment, _other, "1" ) );
+    } else {
+        outline1("LIDP %s", address_displacement( _environment, _destination, "1" ) );
+    }
+    outline0("LIP 1");
+    outline0("LDM");
+    outline0("STD");
 
 }
 
@@ -6250,13 +6264,16 @@ void sc61860_dsdefine( Environment * _environment, char * _string, char * _index
 
     deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    outline1( "LIDP %s", _string );
-    outline0( "DX" );
-    outline0( "IX" );
-    outline1( "LIDP %s", _index );
-    outline0( "LDM" );
-    outline0( "EXAB" );
+    outline1( "LIA %s", _string );
+    outline0( "LIP 0x04" );
+    outline0( "EXAM" );
+    outline1( "LIA >%s", _string );
+    outline0( "LIP 0x05" );
+    outline0( "EXAM" );
     outline0( "CALL DSDEFINE" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
     
 }
 
@@ -6510,6 +6527,7 @@ void sc61860_dstring_vars( Environment * _environment ) {
         outline0( ".db  0, 0, 0, 0 " );
     }
     outhead0("FREE_STRING:                  .db (stringsspace-1),>(stringsspace-1)" );
+    outhead0("STACKX:                       .db 0x30" );
 
 }
 

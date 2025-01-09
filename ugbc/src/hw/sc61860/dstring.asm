@@ -36,21 +36,29 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PUSHX:
+    LIDP STACKX
+    LDD
+    STQ 
+    LII 1
     LIP 0x04
-    EXAM
-    PUSH
-    LIP 0x05
-    EXAM
-    PUSH
+    EXW 
+    LDQ
+    STD
     RTN
 
 POPX:
-    POP
-    LIP 0x05
-    EXAM
-    POP
+    LIDP STACKX
+    LDD
+    DECA
+    DECA
+    STQ 
+    LII 1
     LIP 0x04
-    EXAM
+    EXW 
+    LDQ
+    DECA
+    DECA
+    STD
     RTN
 
 ; ------------------------------------------------------------------------------
@@ -85,11 +93,11 @@ DSEQUAL:
 
     LIP 0x0d
     LDM
-    LIDP DSEQUALL1ADDRESS
+    LIDP DSEQUALL1ADDRESS+1
     STD
     LIP 0x0e
     LDM
-    LIDP DSEQUALL1ADDRESS+1
+    LIDP DSEQUALL1ADDRESS+2
     STD
 
     ; Now we start a loop to check if the
@@ -115,13 +123,13 @@ DSEQUALL1ADDRESS:
     ; Increment the descriptor's string address.
     ; Self modifying code, oh dear!
 
-    LIDP DSEQUALL1ADDRESS
+    LIDP DSEQUALL1ADDRESS+1
     LDD
     INCA
     STD
     CPIA 0
     JRNZP DSEQUALL1ADDRESSIDONE
-    LIDP DSEQUALL1ADDRESS+1
+    LIDP DSEQUALL1ADDRESS+2
     LDD
     INCA
     STD
@@ -181,7 +189,7 @@ DSFINDEQUALL:
 
 DSFINDEQUALF2:
 
-    ; The current (B) dynamix string is empty or it is
+    ; The current string slot (B) is empty or it is
     ; a dynamic string. So we can move forward to the next
     ; string.
 
@@ -254,17 +262,21 @@ DSDEFINE:
 
     CALL DSFINDFREE
 
+    CALL POPX
+
     ; Prepare descriptor for this string.
 
+    DX
     IXL 
+    IX
     LIP 0x0c
     EXAM
     LIP 0x04
-    EXAM
+    LDM
     LIP 0x0d
     EXAM
     LIP 0x05
-    EXAM
+    LDM
     LIP 0x0e
     EXAM
     LIA 0xc0
@@ -276,10 +288,6 @@ DSDEFINE:
     CALL DSDESCRIPTORSAVE
 
 DSDEFINEE:
-
-    ; Restore X
-    
-    CALL POPX
 
     RTN
 
@@ -541,14 +549,20 @@ DSGC:
     JRZP DSGT
     JRNZP DSGW
 DSGT:
-    LIDP TEMPORARY
-    DY
-    IY
+    LIA TEMPORARY
+    LIP 0x06
+    EXAM
+    LIA >TEMPORARY
+    LIP 0x07
+    EXAM
     JP BSGCLOOP0
 DSGW:
-    LIDP WORKING
-    DY
-    IY
+    LIA WORKING
+    LIP 0x06
+    EXAM
+    LIA >WORKING
+    LIP 0x07
+    EXAM
 BSGCLOOP0:
 
     ; Starts from the first slot.
@@ -715,7 +729,7 @@ DSFINDFREEL:
     LDD
     LIP 0x03
     CPMA
-    JPNZ DSFINDEQUALL
+    JPNZ DSFINDFREEL
 
     ; Out of memory!
 
@@ -749,7 +763,6 @@ DSMALLOC:
 
     ; Calculate the starting address.
 
-    PUSH
     LIDP FREE_STRING+1
     LDD
     EXAB
@@ -759,7 +772,6 @@ DSMALLOC:
     ADB
     LIA 0
     EXAB
-    POP
     LIP 0x08
     LDM
     LIP 0x06
@@ -806,10 +818,10 @@ DSCHECKFREE2:
     LIP 0x00
     EXAM
 
-    LIDP FREE_STRING+1
+    LIDP FREE_STRING
     LDD
     EXAB
-    LIDP FREE_STRING
+    LIDP FREE_STRING+1
     LDD
     EXAB
     
@@ -862,14 +874,20 @@ DSUSING:
     JRZP DSUSINGW
     JRNZP DSUSINGT
 DSUSINGT:
-    LIDP TEMPORARY
-    DY
-    IY
+    LIA TEMPORARY
+    LIP 0x06
+    EXAM
+    LIA >TEMPORARY
+    LIP 0x07
+    EXAM
     RTN
 DSUSINGW:
-    LIDP WORKING
-    DY
-    IY
+    LIA WORKING
+    LIP 0x06
+    EXAM
+    LIA >WORKING
+    LIP 0x07
+    EXAM
     RTN
 
 ; ------------------------------------------------------------------------------
@@ -880,9 +898,6 @@ DSUSINGW:
 
 DSDESCRIPTOR:
 
-    ; Save A ANIA X registers
-
-    PUSH
     CALL PUSHX
 
     ; X = DESCRIPTORS
@@ -918,7 +933,7 @@ DSDESCRIPTOR:
     IX
 
     LIP 0x0c
-    LII 4
+    LII 3
     MVWD
 
     ; we must restore previous B value!
@@ -928,7 +943,6 @@ DSDESCRIPTOR:
     ; Restore X ANIA A registers
 
     CALL POPX
-    POP
 
     RTN
 
@@ -939,10 +953,6 @@ DSDESCRIPTOR:
 ; ------------------------------------------------------------------------------
 
 DSDESCRIPTORSAVE:
-
-    ; Save A register
-
-    PUSH
 
     ; Y = DESCRIPTORS
 
@@ -993,10 +1003,6 @@ DSDESCRIPTORSAVE:
 
     POP 
     EXAB
-
-    ; Restore A register
-
-    POP
 
     RTN
 
