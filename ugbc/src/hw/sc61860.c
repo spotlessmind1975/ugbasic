@@ -173,7 +173,7 @@ static void op_deca( Environment * _environment ) {
 static void op_decjnz( Environment * _environment, char * _label ) {
 
     outline0("DECJ");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
@@ -187,16 +187,16 @@ static void op_decjz( Environment * _environment, char * _label ) {
 static void op_decinz( Environment * _environment, char * _label ) {
 
     outline0("DECI");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
 static void op_decijnz( Environment * _environment, char * _label ) {
 
     outline0("DECI");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
     outline0("DECJ");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
@@ -4558,7 +4558,7 @@ void sc61860_mem_move( Environment * _environment, char *_source, char *_destina
     sc61860_label( _environment, label );
     outline0("IXL")
     outline0("LDD")
-    outline0("IYL")
+    outline0("IYS")
     outline0("STD")
     op_decinz( _environment, label );
 
@@ -4578,7 +4578,7 @@ void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_d
     sc61860_label( _environment, label );
     outline0("IXL")
     outline0("LDD")
-    outline0("IYL")
+    outline0("IYS")
     outline0("STD")
     op_decijnz( _environment, label );
 
@@ -4641,7 +4641,7 @@ void sc61860_mem_move_size( Environment * _environment, char *_source, char *_de
         sc61860_label( _environment, label );
         outline0("IXL")
         outline0("LDD")
-        outline0("IYL")
+        outline0("IYS")
         outline0("STD")
         op_decijnz( _environment, label );
 
@@ -6248,132 +6248,131 @@ void sc61860_hex_to_string( Environment * _environment, char * _number, char * _
 
 void sc61860_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsdefine" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD HL, %s", _string );
-    // outline0( "CALL DSDEFINE" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIDP %s", _string );
+    outline0( "DX" );
+    outline0( "IX" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDM" );
+    outline0( "EXAB" );
+    outline0( "CALL DSDEFINE" );
     
 }
 
 void sc61860_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _size );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIDP %s", _size );
+    outline0( "LDD" );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSALLOC" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
 
 }
 
 void sc61860_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc_size" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIA 0x%2.2x", _size );
+    outline0( "CALL DSALLOC" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
 
 }
 
 void sc61860_dsfree( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsfree" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSFREE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSFREE" );
 
 }
 
 void sc61860_dswrite( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dswrite" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSWRITE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSWRITE" );
 
 }
 
 void sc61860_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline1( "LD A, (%s)", _resize );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _resize );
+    outline0( "LDD" );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void sc61860_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize_size" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline1( "LD A, 0x%2.2x", ( _resize & 0xff ) );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "LIDP %s", _index );
+    outline0( "EXAB" );
+    outline1( "LIA 0x%2.2x", ( _resize & 0xff ) );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void sc61860_dsinit( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsinit" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline0( "CALL DSGC" );
+    outline0( "CALL DSINIT" );
 
 }
 
 void sc61860_dsgc( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsgc" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline0( "CALL DSGC" );
+    outline0( "CALL DSGC" );
 
 }
 
 void sc61860_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsdescriptor" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSDESCRIPTOR" );
-    // outline0( "LD A, (IX)" );
-    // outline1( "LD (%s), A", _size );
-    // outline0( "LD A, (IX+1)" );
-    // outline1( "LD (%s), A", _address );
-    // outline0( "LD A, (IX+2)" );
-    // outline1( "LD (%s), A", address_displacement(_environment, _address, "1") );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSDESCRIPTOR" );
+    outline0( "LIP 0x0c" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", _size );
+    outline0( "STD" );    
+    outline0( "LIP 0x0d" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", _address );
+    outline0( "STD" );    
+    outline0( "LIP 0x0e" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STD" );    
 
 }
 
@@ -6490,22 +6489,27 @@ void sc61860_sqroot( Environment * _environment, char * _number, char * _result 
 
 void sc61860_dstring_vars( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dstring_vars" );
-
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
-
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    // outhead0("section data_user" );
-#endif
-    // outhead1("MAXSTRINGS:                   DB %d", count );
-    // outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
-    // outhead1("WORKING:                      DEFS %d", space );
-    // outhead1("TEMPORARY:                    DEFS %d", space );
-    // outhead2("FREE_STRING:                  DB 0x%2.2X, 0x%2.2x", ((space-1)& 0xff), ((space-1)>>8)& 0xff );
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    // outhead0("section code_user" );
-#endif
+    int i;
+    
+    outhead1("stringscount .equ                  %d", count );
+    outhead1("stringsspace .equ                  %d", space );
+    outhead0("USING:                        .db 0" );
+    outhead0("MAXSTRINGS:                   .db stringscount" );
+    outhead0("DESCRIPTORS:" );
+    for( i=0; i<count; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("WORKING:" );
+    for( i=0; i<space / 4; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("TEMPORARY:" );
+    for( i=0; i<space / 4; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("FREE_STRING:                  .db (stringsspace-1),>(stringsspace-1)" );
 
 }
 
