@@ -122,6 +122,10 @@ verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 
 void movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix ) {
 
+#if defined(__gb__)
+    return;
+#endif
+
     if ( _environment->procedureName ) {
         CRITICAL_CANNOT_DEFINE_MOVEMENT_INSIDE_A_PROCEDURE( _identifier );
     }

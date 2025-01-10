@@ -65,6 +65,11 @@ su un elemento spostabile.
 </usermanual> */
 Variable * moving( Environment * _environment, char * _prefix, char * _movement ) {
 
+#if defined(__gb__)
+    Variable * false = variable_temporary( _environment, VT_SBYTE, 0 );
+    return false;
+#endif
+
     char prefixMovement[MAX_TEMPORARY_STORAGE]; sprintf( prefixMovement, "%sMovement", _prefix );
 
     if ( ! variable_exists( _environment, prefixMovement ) ) {

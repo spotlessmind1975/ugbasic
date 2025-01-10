@@ -1685,8 +1685,10 @@ void sm83_compare_16bit( Environment * _environment, char *_source, char *_desti
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
-        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
+        outline1("LD A, $%2.2x", ( 0xff*(1-_positive)) );
+        outline0("LD (IXLR), A" );
+        outline1("LD A, $%2.2x", ( (0xff*_positive) ) );
+        outline0("LD (IXHR), A" );
         outline0("CALL CPUCOMPARE16");
         if ( _other ) {
             outline1("LD (%s), A", _other);
@@ -1734,8 +1736,10 @@ void sm83_compare_16bit_const( Environment * _environment, char *_source, int _d
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, $%4.4x", _destination);
-        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
-        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
+        outline1("LD A, $%2.2x", ( 0xff*(1-_positive)) );
+        outline0("LD (IXLR), A" );
+        outline1("LD A, $%2.2x", ( (0xff*_positive) ) );
+        outline0("LD (IXHR), A" );
         outline0("CALL CPUCOMPARE16CONST");
         outline1("LD (%s), A", _other);
 
@@ -2496,8 +2500,10 @@ void sm83_compare_32bit( Environment * _environment, char *_source, char *_desti
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
-        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
+        outline1("LD A, $%2.2x", ( 0xff*(1-_positive)) );
+        outline0("LD (IXLR), A" );
+        outline1("LD A, $%2.2x", ( (0xff*_positive) ) );
+        outline0("LD (IXHR), A" );
         outline0("CALL CPUCOMPARE32");
         if ( _other ) {
             outline1("LD (%s), A", _other);
@@ -2530,8 +2536,10 @@ void sm83_compare_32bit_const( Environment * _environment, char *_source, int _d
         outline0("LD E, L");
         outline0("LD D, H");
         outline1("LD HL, %s", _source);
-        outline1("LD IXL, $%2.2x", ( 0xff*(1-_positive)) );
-        outline1("LD IXH, $%2.2x", ( (0xff*_positive) ) );
+        outline1("LD A, $%2.2x", ( 0xff*(1-_positive)) );
+        outline0("LD (IXLR), A" );
+        outline1("LD A, $%2.2x", ( (0xff*_positive) ) );
+        outline0("LD (IXHR), A" );
         outline0("CALL CPUCOMPARE32CONST");
         outline1("LD (%s), A", _other);
 
