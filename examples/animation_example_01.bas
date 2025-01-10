@@ -1,6 +1,6 @@
 ﻿REM @english
 REM ANIMATION SUPPORT A RUNNING BOY
-REM
+REM 
 REM This small example shows how to use the ANIMATION / ANIMATE
 REM primitive, to implement an unmanaged animation.
 REM
@@ -13,7 +13,7 @@ REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx,pc128op,to8
 
 	BITMAP ENABLE(16)
-	
+
 	runningBoyAtlas := LOAD ATLAS("boy.png") FRAME SIZE (32,32)
 
 	ANIMATION LOOP running _
@@ -25,8 +25,4 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx,pc128op,to8
 	CLS
 
 	ANIMATE boy WITH running AT 0, 0
-
-	DO
-		RUN PARALLEL
-	LOOP	
 	
