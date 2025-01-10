@@ -183,6 +183,10 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
         CRITICAL_cANNOT_DEFINE_ANIMATION_INSIDE_A_PROCEDURE( _identifier );
     }
 
+#if defined(__gb__)
+    return;
+#endif
+
     Variable * atlas = variable_retrieve( _environment, _atlas );
 
     if ( atlas->type != VT_IMAGES ) {
