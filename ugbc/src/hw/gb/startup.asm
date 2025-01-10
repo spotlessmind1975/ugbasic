@@ -1384,7 +1384,7 @@ TILESETSLOTALLOCL1:
 
 ; ------------------------------------------------------------------------------
 ; REALLOC THE FREE TILES
-;  In : TMPPTR address of TILEDIMAGE
+;  In : TMPPTR address of IMAGE
 ;  Out: -
 ; ------------------------------------------------------------------------------
 

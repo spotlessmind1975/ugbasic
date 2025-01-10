@@ -99,8 +99,7 @@ char DATATYPE_AS_STRING[][16] = {
     "MSPRITE",
     "DOJOKA",
     "IMAGEREF",
-    "PATH",
-    "TILEDIMAGE"
+    "PATH"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -1770,7 +1769,6 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_MUSIC:
-        case VT_TILEDIMAGE:
         case VT_BUFFER:
             if ( ! destination->valueBuffer ) {
                 destination->valueBuffer = malloc( _size );
@@ -3378,21 +3376,6 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
                     break;
                 }
-                case VT_TILEDIMAGE:
-                    target->originalBitmap = source->originalBitmap;
-                    target->originalWidth = source->originalWidth;
-                    target->originalHeight = source->originalHeight;
-                    target->originalDepth = source->originalDepth;
-                    target->originalColors = source->originalColors;
-                    memcpy( target->originalPalette, source->originalPalette, MAX_PALETTE * sizeof( RGBi ) );
-                    // if ( target->size == 0 ) {
-                    //     target->size = source->size;
-                    // }
-                    // if ( source->size > target->size ) {
-                    //     CRITICAL_BUFFER_SIZE_MISMATCH(_source, _destination);
-                    // }
-                    // cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
-                    break;
                 case VT_DOJOKA: {
                     if ( target->size == 0 ) {
                         target->size = 8;

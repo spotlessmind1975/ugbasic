@@ -106,7 +106,7 @@ SPRITEDATAFROM:
     SLA C
     RL B
 
-    ; Add the offset to the current TILEDIMAGE starting 
+    ; Add the offset to the current IMAGE starting 
     ; address, and then we add the current SIZE and,
     ; finally, the size of the header.
 

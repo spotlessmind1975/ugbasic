@@ -170,7 +170,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_BLIT:
                     break;
-                case VT_TILEDIMAGE: 
+                case VT_IMAGE: 
                     {
                         if ( variable->bankAssigned != -1 ) {
                             outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
@@ -242,7 +242,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                     }
                     break;                
-                case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
                 case VT_MUSIC:

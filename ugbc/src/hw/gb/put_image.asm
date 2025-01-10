@@ -37,7 +37,7 @@
 
 ; ------------------------------------------------------------------------------
 ; PUT IMAGE
-;  In : HL address of TILEDIMAGE
+;  In : HL address of IMAGE
 ;  Out: -
 ; ------------------------------------------------------------------------------
 
@@ -45,17 +45,17 @@ PUTIMAGE:
 
     PUSH HL
 
-    ; Retrieve the width of the TILEDIMAGE
+    ; Retrieve the width of the IMAGE
 
     INC HL
     LD A, (HL)
     LD (PUTIMAGEWIDTH), A
     DEC HL
 
-    ; Retrieve if the TILEDIMAGE has been already rendered at least once.
+    ; Retrieve if the IMAGE has been already rendered at least once.
     LD A, (HL)
 
-    ; If FLAGS / TIMESLOT == $ff, the TILEDIMAGE has never been rendered,
+    ; If FLAGS / TIMESLOT == $ff, the IMAGE has never been rendered,
     ; so we need to allocate tiles to draw this image.
 
     ; CMP $FF
@@ -108,7 +108,7 @@ PUTIMAGEALLOCFL1:
 
 PUTIMAGEALLOCOK:
 
-    ; Set the tile index inside the TILEDIMAGE
+    ; Set the tile index inside the IMAGE
 
     LD (HL), A
 
@@ -138,7 +138,7 @@ PUTIMAGEALLOCOK:
     SLA C
     RL B
 
-    ; Add the offset to the current TILEDIMAGE starting 
+    ; Add the offset to the current IMAGE starting 
     ; address, and then we add the current SIZE and,
     ; finally, the size of the header.
 
@@ -161,7 +161,7 @@ PUTIMAGEALLOCOK:
     SLA C
     RL B
 
-    ; Add the offset to the current TILEDIMAGE starting 
+    ; Add the offset to the current IMAGE starting 
     ; address, and then we add the current SIZE and,
     ; finally, the size of the header.
 
@@ -209,7 +209,7 @@ PUTIMAGEALLOCDONE:
     POP HL
     PUSH HL
 
-    ; Set that the TILEDIMAGE has been already rendered at least once.
+    ; Set that the IMAGE has been already rendered at least once.
     LD A, 0
     LD (HL), A
 
@@ -273,14 +273,14 @@ PUTIMAGEDRAWL1B:
     LD DE, HL
     POP HL
 
-    ; Now we are already at the starting address inside the TILEDIMAGE
+    ; Now we are already at the starting address inside the IMAGE
     ; for the various tiles indexes.
 
 PUTIMAGEDRAWL2:
 
     CALL WAITSTATE
 
-    ; Load the index from the TILEDIMAGE.
+    ; Load the index from the IMAGE.
 
     LD A, (HL)
 
@@ -304,7 +304,7 @@ PUTIMAGEDRAWL2NEXT:
     INC HL
     INC DE
 
-    ; We reached the width of the TILEDIMAGE?
+    ; We reached the width of the IMAGE?
     ; No, so we have to repeat.
 
     LD A, (PUTIMAGEX)

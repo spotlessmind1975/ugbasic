@@ -1472,7 +1472,7 @@ static Variable * gb_image_converter_tilemap_mode_standard( Environment * _envir
         }
     }
 
-    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(image)");
 
     result->locked = 1;
 
@@ -1531,7 +1531,7 @@ Variable * gb_sprite_converter( Environment * _environment, char * _source, int 
         CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( _height );
     }
 
-    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(tiledimage)");
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(image)");
 
     result->locked = 1;
 
@@ -1839,7 +1839,7 @@ Variable * gb_new_image( Environment * _environment, int _width, int _height, in
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     }
 
-    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(new image)" );
+    Variable * result = variable_temporary( _environment, VT_IMAGE, "(image)" );
 
     char * buffer = malloc ( size );
     memset( buffer, 0, size );

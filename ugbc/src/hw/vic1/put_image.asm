@@ -227,7 +227,7 @@ TILESETSLOTFOUNDFREEDONE:
 
 ; ------------------------------------------------------------------------------
 ; REALLOC THE FREE TILES
-;  In : TMPPTR address of TILEDIMAGE
+;  In : TMPPTR address of IMAGE
 ;  Out: -
 ; ------------------------------------------------------------------------------
 
@@ -349,7 +349,7 @@ TILESETSLOTRECALCL2:
 
 ; ------------------------------------------------------------------------------
 ; PUT IMAGE
-;  In : TMPPTR address of TILEDIMAGE
+;  In : TMPPTR address of IMAGE
 ;  Out: -
 ; ------------------------------------------------------------------------------
 
@@ -367,17 +367,17 @@ PUTIMAGE:
     RTS
     
 PUTIMAGEGO:
-    ; Retrieve the width of the TILEDIMAGE
+    ; Retrieve the width of the IMAGE
 
     LDY #1
     LDA (TMPPTR), Y
     STA PUTIMAGEWIDTH
 
-    ; Retrieve if the TILEDIMAGE has been already rendered at least once.
+    ; Retrieve if the IMAGE has been already rendered at least once.
     LDY #0
     LDA (TMPPTR),Y
 
-    ; If FLAGS / TIMESLOT == $ff, the TILEDIMAGE has never been rendered,
+    ; If FLAGS / TIMESLOT == $ff, the IMAGE has never been rendered,
     ; so we need to allocate tiles to draw this image.
 
     ; CMP #$FF
@@ -428,7 +428,7 @@ PUTIMAGEALLOCFL1:
 
 PUTIMAGEALLOCOK:
 
-    ; Set the tile index inside the TILEDIMAGE
+    ; Set the tile index inside the IMAGE
 
     TXA
     PHA
@@ -454,7 +454,7 @@ PUTIMAGEALLOCOK:
     ASL MATHPTR2
     ROL MATHPTR3
 
-    ; Add the offset to the current TILEDIMAGE starting 
+    ; Add the offset to the current IMAGE starting 
     ; address, and then we add the current SIZE and,
     ; finally, the size of the header.
 
@@ -529,7 +529,7 @@ PUTIMAGEALLOCOKL1ADDR:
     LDA #$18
     STA PUTIMAGEALLOCOKL1ADDR+2
 
-    ; Add the offset to the current TILEDIMAGE starting 
+    ; Add the offset to the current IMAGE starting 
     ; address, and then we add the current SIZE * 8 and,
     ; finally, the size of the header.
 
@@ -617,7 +617,7 @@ PUTIMAGEALLOCOKL2ADDR:
 
 PUTIMAGEALLOCDONE:
 
-    ; Set that the TILEDIMAGE has been already rendered at least once.
+    ; Set that the IMAGE has been already rendered at least once.
     LDY #0
     LDA #0
     STA (TMPPTR),Y
@@ -695,7 +695,7 @@ PUTIMAGEDRAWL1B:
     ADC #0
     STA COPYOFCOLORMAPADDRESS+1
 
-    ; Now we calculate the starting address inside the TILEDIMAGE
+    ; Now we calculate the starting address inside the IMAGE
     ; for the various tiles indexes.
 
     CLC
@@ -713,7 +713,7 @@ PUTIMAGEDRAWL2:
 
     LDY #0
 
-    ; Load the index from the TILEDIMAGE.
+    ; Load the index from the IMAGE.
 
     LDA (TMPPTR2), Y
     TAX
@@ -758,7 +758,7 @@ PUTIMAGEDRAWL2B:
     INC COPYOFCOLORMAPADDRESS+1
 PUTIMAGEDRAWL2C:
 
-    ; We reached the width of the TILEDIMAGE?
+    ; We reached the width of the IMAGE?
     ; No, so we have to repeat.
 
     INC PUTIMAGEX
