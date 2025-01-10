@@ -4904,6 +4904,7 @@ RGBi                *   malloc_palette( int _size );
 float                   max_of_two(float _x, float _y);
 float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
+void                    memcont( Environment * _environment, char * _param );
 void                    memdef( Environment * _environment, char * _size, char * _address, char * _eaddress, char * _bank );
 void                    memlen( Environment * _environment, char * _size );
 void                    memload( Environment * _environment );
