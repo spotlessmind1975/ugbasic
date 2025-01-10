@@ -191,7 +191,9 @@ MUSICNOTEON:
     LD D, (HL)
     POP BC
     POP AF
-    CALL GBPROGFREQ
+
+    PUSH DE
+
     PUSH BC
     PUSH AF
     CALL MUSICREADNEXTBYTE
@@ -205,7 +207,11 @@ MUSICNOTEON:
     CALL GBSTARTVOL
     POP AF
     POP BC
-    CALL GBSTART
+
+    POP DE
+    CALL GBPROGFREQ
+
+    ; CALL GBSTART
     RET
 
 ; This routine has been added in order to read the
