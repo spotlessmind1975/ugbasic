@@ -3378,7 +3378,7 @@ typedef struct _Environment {
 #define CRITICAL_PMODE_NEEDS_CONSTANTS() CRITICAL("E346 - PMODE needs constant values" );
 #define CRITICAL_FILE_SIZE_ON_MISSING_FILE(f) CRITICAL2("E347 - FILE SIZE on missing file", f );
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
-#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
+#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enough frames for animation", n );
 #define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E350 - music variables referring to sid files cannot be copied", f );
 #define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be compared", f );
 #define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E352 - not enough space to load sid file, consider relocation" );
