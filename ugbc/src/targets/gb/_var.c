@@ -455,67 +455,66 @@ void variable_cleanup( Environment * _environment ) {
     //     }
     // }     
 
-    // if ( _environment->offsetting ) {
-    //     Offsetting * actual = _environment->offsetting;
-    //     while( actual ) {
-    //         out1("OFFSETS%4.4x: dw ", actual->size );
-    //         for( i=0; i<actual->count; ++i ) {
-    //             out1("$%4.4x", i * actual->size );
-    //             if ( i < ( actual->count - 1 ) ) {
-    //                 out0(",");
-    //             } else {
-    //                 outline0("");
-    //             }
-    //         }
-    //         if ( actual->variables ) {
-    //             OffsettingVariable * actualVariable = actual->variables;
-    //             while( actualVariable ) {
-    //                 if ( actualVariable->sequence ) {
-    //                     outhead1("%soffsetsequence:", actualVariable->variable->realName );
-    //                 } else {
-    //                     outhead1("%soffsetframe:", actualVariable->variable->realName );
-    //                 }
-    //                 actualVariable = actualVariable->next;
-    //             }
-    //             outhead1("fs%4.4xoffsetsequence:", actual->size );
-    //             outhead1("fs%4.4xoffsetframe:", actual->size );                
-    //             outline0("LD L, A" );
-    //             outline0("LD H, 0" );
-    //             outline0("ADD HL, HL" );
-    //             outline0("LD DE, HL" );
-    //             outline1("LD HL, OFFSETS%4.4x", actual->size );
-    //             outline0("ADD HL, DE" );
-    //             outline0("LD A, (HL)" );
-    //             outline0("LD E, A" );
-    //             outline0("INC HL" );
-    //             outline0("LD A, (HL)" );
-    //             outline0("LD D, A" );
-    //             outline0("PUSH IX" );
-    //             outline0("POP HL" );
-    //             outline0("ADD HL, DE" );
-    //             outline0("RET" );
-    //         }
-    //         actual = actual->next;
-    //     }
+    if ( _environment->offsetting ) {
+        Offsetting * actual = _environment->offsetting;
+        while( actual ) {
+            out1("OFFSETS%4.4x: dw ", actual->size );
+            for( i=0; i<actual->count; ++i ) {
+                out1("$%4.4x", i * actual->size );
+                if ( i < ( actual->count - 1 ) ) {
+                    out0(",");
+                } else {
+                    outline0("");
+                }
+            }
+            if ( actual->variables ) {
+                OffsettingVariable * actualVariable = actual->variables;
+                while( actualVariable ) {
+                    if ( actualVariable->sequence ) {
+                        outhead1("%soffsetsequence:", actualVariable->variable->realName );
+                    } else {
+                        outhead1("%soffsetframe:", actualVariable->variable->realName );
+                    }
+                    actualVariable = actualVariable->next;
+                }
+                outhead1("fs%4.4xoffsetsequence:", actual->size );
+                outhead1("fs%4.4xoffsetframe:", actual->size );                
+                outline0("LD L, A" );
+                outline0("LD H, 0" );
+                outline0("ADD HL, HL" );
+                outline0("LD DE, HL" );
+                outline1("LD HL, OFFSETS%4.4x", actual->size );
+                outline0("ADD HL, DE" );
+                outline0("LD A, (HL)" );
+                outline0("LD E, A" );
+                outline0("INC HL" );
+                outline0("LD A, (HL)" );
+                outline0("LD D, A" );
+                outline0("LD HL, (IXR)" );
+                outline0("ADD HL, DE" );
+                outline0("RET" );
+            }
+            actual = actual->next;
+        }
 
-    //     int values[MAX_TEMPORARY_STORAGE];
-    //     char * address[MAX_TEMPORARY_STORAGE];
+        int values[MAX_TEMPORARY_STORAGE];
+        char * address[MAX_TEMPORARY_STORAGE];
 
-    //     actual = _environment->offsetting;
-    //     int count = 0;
-    //     while( actual ) {
-    //         values[count] = actual->size;
-    //         address[count] = malloc( MAX_TEMPORARY_STORAGE );
-    //         sprintf( address[count], "fs%4.4xoffsetframe", actual->size );
-    //         actual = actual->next;
-    //         ++count;
-    //     }
+        actual = _environment->offsetting;
+        int count = 0;
+        while( actual ) {
+            values[count] = actual->size;
+            address[count] = malloc( MAX_TEMPORARY_STORAGE );
+            sprintf( address[count], "fs%4.4xoffsetframe", actual->size );
+            actual = actual->next;
+            ++count;
+        }
 
-    //     cpu_address_table_build( _environment, "EXECOFFSETS", values, address, count );
+        cpu_address_table_build( _environment, "EXECOFFSETS", values, address, count );
 
-    //     cpu_address_table_lookup( _environment, "EXECOFFSETS", count );        
+        cpu_address_table_lookup( _environment, "EXECOFFSETS", count );        
         
-    // }
+    }
 
     Constant * c = _environment->constants;
     while( c ) {

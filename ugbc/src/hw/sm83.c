@@ -4006,10 +4006,10 @@ void sm83_xor_8bit( Environment * _environment, char * _left, char * _right, cha
 
     MAKE_LABEL
 
-    outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
-    outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline1("LD A, (%s)", _left );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _right );
+    outline0("XOR B" );
     outline1("LD (%s), A", _result );
 
 }
@@ -4019,10 +4019,9 @@ void sm83_xor_8bit_const( Environment * _environment, char * _left, int _right, 
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _result );
     outline0("LD A, (HL)" );
     outline1("XOR $%2.2x", (unsigned char)(_right&0xff) );
-    outline0("LD (DE), A" );
+    outline1("LD (%s), A", _result );
 
 }
 
@@ -4031,17 +4030,18 @@ void sm83_xor_16bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _right );
+    outline0("XOR B" );
     outline1("LD (%s), A", _result );
     outline0("INC HL" );
-    outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", address_displacement( _environment, _right, "1" ) );
+    outline0("XOR B" );
     outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
-    outline0("INC DE" );
 
 }
 
@@ -4070,24 +4070,28 @@ void sm83_xor_32bit( Environment * _environment, char * _left, char * _right, ch
     MAKE_LABEL
 
     outline1("LD HL, %s", _left );
-    outline1("LD DE, %s", _right );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _right );
+    outline0("XOR B" );
     outline1("LD (%s), A", _result );
     outline0("INC HL" );
-    outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", address_displacement( _environment, _right, "1" ) );
+    outline0("XOR B" );
     outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
     outline0("INC HL" );
-    outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", address_displacement( _environment, _right, "2" ) );
+    outline0("XOR B" );
     outline1("LD (%s), A", address_displacement( _environment, _result, "2" ) );
     outline0("INC HL" );
-    outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline0("XOR (DE)" );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", address_displacement( _environment, _right, "3" ) );
+    outline0("XOR B" );
     outline1("LD (%s), A", address_displacement( _environment, _result, "3" ) );
 
 }

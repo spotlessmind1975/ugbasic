@@ -1398,160 +1398,55 @@ void gb_cline( Environment * _environment, char * _characters ) {
 
 int gb_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
-    // switch( _mode ) {
+    switch( _mode ) {
 
-    //     case BITMAP_MODE_GRAPHIC2:
+        case TILEMAP_MODE_BGB:
+        case TILEMAP_MODE_CGB:
 
-    //         return 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) );
+            int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
-    //     case BITMAP_MODE_MULTICOLOR:
-    //     case TILEMAP_MODE_STANDARD:
-    //     case TILEMAP_MODE_GRAPHIC1:
-    //         break;
-    // }
+            return 3 + size + size * 16;
 
-    // return 0;
-
-}
-
-static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
-
-    // switch( _mode ) {
-
-    //     case BITMAP_MODE_GRAPHIC2:
-
-    //         return 3 + ( 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) ) ) * _frames;
-
-    //     case BITMAP_MODE_MULTICOLOR:
-    //     case TILEMAP_MODE_STANDARD:
-    //     case TILEMAP_MODE_GRAPHIC1:
-    //         break;
-    // }
-
-    // return 0;
-
-}
-
-static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
-
-    // switch( _mode ) {
-
-    //     case BITMAP_MODE_GRAPHIC2:
-
-    //         return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) + ( ( _width >> 3 ) * ( _height ) ) ) * _frames ) * _sequences;
-
-    //     case BITMAP_MODE_MULTICOLOR:
-    //     case TILEMAP_MODE_STANDARD:
-    //     case TILEMAP_MODE_GRAPHIC1:
-    //         break;
-    // }
+            break;
+    }
 
     return 0;
 
 }
 
-static Variable * gb_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
+    switch( _mode ) {
 
-    // // ignored on bitmap mode
-    // (void)!_transparent_color;
+        case TILEMAP_MODE_BGB:
+        case TILEMAP_MODE_CGB:
 
-    // image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+            int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
-    // if ( _environment->freeImageWidth ) {
-    //     if ( _width % 8 ) {
-    //         _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
-    //     }
-    //     if ( _frame_width % 8 ) {
-    //         _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
-    //     }
-    // }
-    
-    // if ( _environment->freeImageHeight ) {
-    //     if ( _height % 8 ) {
-    //         _height = ( ( ( _height - 1 ) / 8 ) - 1 ) * 8;
-    //     }
-    //     if ( _frame_height % 8 ) {
-    //         _frame_height = ( ( ( _frame_height - 1 ) / 8 ) - 1 ) * 8;
-    //     }
-    // }
+            return 3 + ( 3 + size + size * 16 ) * _frames;
 
-    // RGBi * palette = malloc_palette( MAX_PALETTE );
-    
-    // int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+            break;
+    }
 
-    // if (paletteColorCount > 16) {
-    //     CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
-    // }
+    return 0;
 
-    // // printf("X PALETTE (%dx%d):\n", _frame_width, _frame_height );
-    // // for( int i=0; i<paletteColorCount; ++i ) {
-    // //     printf("  (%2.2d) = %2.2x%2.2x%2.2x%2.2x (%s)\n", i, palette[i].alpha, palette[i].red, palette[i].green, palette[i].blue, palette[i].description );
-    // // }
+}
 
-    // int i, j, k;
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    // commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE) / sizeof(RGBi) );
-    // commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
-    // lastUsedSlotInCommonPalette = paletteColorCount;
-    // adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+    switch( _mode ) {
 
-    // adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE) / sizeof(RGBi)), SYSTEM_PALETTE );
+        case TILEMAP_MODE_BGB:
+        case TILEMAP_MODE_CGB:
 
-    // Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
-    // result->originalColors = lastUsedSlotInCommonPalette;
-    // memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+            int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
-    // int bufferSize = gb_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
-    
-    // adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_GRAPHIC2 );
+            return 3 + ( ( 3 + size + size * 16 ) * _frames ) * _sequences;
 
-    // char * buffer = malloc ( bufferSize );
-    // memset( buffer, 0, bufferSize );
+            break;
+    }
 
-    // // Position of the pixel in the original image
-    // int image_x, image_y;
-    
-    // // Position of the pixel, in terms of tiles
-    // int tile_x, tile_y;
-    
-    // // Position of the pixel, in terms of offset and bitmask
-    // int offset, offsetc, bitmask;
-
-    // // Color of the pixel to convert
-    // RGBi rgb;
-
-    // *(buffer) = (_frame_width & 0xff);
-    // *(buffer+1) = (_frame_width >> 8 ) & 0xff;
-    // *(buffer+2) = _frame_height;
-
-    // _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
-
-    // gb_image_converter_tiles( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width );
-
-    // if ( _environment->debugImageLoad ) {
-    //     printf("\n" );
-    
-    //     printf("PALETTE:\n" );
-    //     for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-    //         printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
-    //     }
-    //     // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-    //     //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-    //     // } else {
-    //     //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-    //     // }
-    //     // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-    //     // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-    //     // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-    //     // printf("\n" );
-    //     // printf("\n" );
-    // }
-    
-    // variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
- 
-    // return result;
+    return 0;
 
 }
 
@@ -1795,8 +1690,7 @@ static void gb_load_image_address_to_register( Environment * _environment, char 
 
                 } else {
                     outline1("LD A, (%s)", _sequence );
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
+                    outline0("LD (IXR), HL" );
                     outline1("CALL %soffsetsequence", _source->realName );
                 }
                 if ( _frame ) {
@@ -1804,8 +1698,7 @@ static void gb_load_image_address_to_register( Environment * _environment, char 
 
                     } else {
                         outline1("LD A, (%s)", _frame );
-                        outline0("PUSH HL" );
-                        outline0("POP IX" );
+                        outline0("LD (IXR), HL" );
                         outline1("CALL %soffsetframe", _source->realName );
                     }
                 }
@@ -1818,8 +1711,7 @@ static void gb_load_image_address_to_register( Environment * _environment, char 
                     if ( strlen(_frame) == 0 ) {
 
                     } else {
-                        outline0("PUSH HL" );
-                        outline0("POP IX" );
+                        outline0("LD (IXR), HL" );
                         outline1("LD A, (%s)", _frame );
                         outline1("CALL %soffsetframe", _source->realName );
                     }
@@ -1941,27 +1833,25 @@ void gb_screen_on_off( Environment * _environment, int _on_off ) {
 
 Variable * gb_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    // // deploy( GBvarsGraphic, src_hw_gb_vars_graphic_asm );
+    int size = gb_image_size( _environment, _width, _height, _mode );
 
-    // int size = gb_image_size( _environment, _width, _height, _mode );
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
 
-    // if ( ! size ) {
-    //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
-    // }
+    Variable * result = variable_temporary( _environment, VT_TILEDIMAGE, "(new image)" );
 
-    // Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
 
-    // char * buffer = malloc ( size );
-    // memset( buffer, 0, size );
+    buffer[0] = 0xff; // force update at first PUT IMAGE
+    buffer[1] = ( _width >> 3 );
+    buffer[2] = size;
 
-    // *(buffer) = (_width & 0xff);
-    // *(buffer+1) = (_width>>8) & 0xff;
-    // *(buffer+2) = _height;
-
-    // result->valueBuffer = buffer;
-    // result->size = size;
+    result->valueBuffer = buffer;
+    result->size = size;
     
-    // return result;
+    return result;
 
 }
 

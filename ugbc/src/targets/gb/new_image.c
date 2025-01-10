@@ -48,7 +48,7 @@
  */
 Variable * new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    Variable * result = NULL; // tms9918_new_image( _environment, _width, _height, _mode );
+    Variable * result = gb_new_image( _environment, _width, _height, _mode );
 
     return result;
 
