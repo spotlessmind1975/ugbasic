@@ -251,6 +251,10 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         return final;
     }
 
+#if defined(__gb__)
+    return final;
+#endif
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD IMAGES");
     }
