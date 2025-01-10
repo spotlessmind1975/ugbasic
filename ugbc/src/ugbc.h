@@ -4911,6 +4911,7 @@ void                    memorize( Environment * _environment );
 void                    memor( Environment * _environment, char * _address, char * _eaddress, char * _bank );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
 void                    mempos( Environment * _environment, char * _address, char * _bank );
+void                    memrestore( Environment * _environment, char * _param );
 void                    memsave( Environment * _environment );
 float                   min_of_two(float _x, float _y);
 float                   min_of_three(float _m, float _n, float _p);

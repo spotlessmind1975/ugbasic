@@ -39,50 +39,48 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword MEMLOAD
+@keyword MEMRESTORE
 
 @english
 
-The ''MEMLOAD'' instruction fetches a memory area with a specified length 
-(see ''MEMLEN'') from a previously specified address in an expansion memory
-(see ''MEMPOS'') and stores it at an equally specified address on the target
-computer (see ''MEMOR''). The command takes into account the settings for the 
-transfer type (see ''MEMCONT'') and for the autoload of the address and 
-counting registers (see ''MEMRESTORE'').
+The ''MEMRESTORE'' instruction uses ''param'' to control the automatic reloading 
+of the transfer registers, after a transfer. The value 0 means "do not reload" and 
+leaves all registers at the last value reached during the transfer. A valure of
+1 resets all transfer registers to the values ​​set before the transfer. In addition, 
+by setting the bit 7 in the ''param'' it ensures, under ''c64reu'' taqget, that the 
+accesses in the IO area are made to the color RAM and not to the RAM below.
 
 @italian
 
-L'istruzione ''MEMLOAD'' recupera un'area di memoria con una lunghezza 
-specificata (vedere ''MEMLEN'') da un indirizzo precedentemente specificato in una 
-memoria di espansione (vedere ''MEMPOS'') e la memorizza in un indirizzo ugualmente 
-specificato sul computer di destinazione (vedere ''MEMOR''). Il comando tiene 
-conto delle impostazioni per il tipo di trasferimento (vedere ''MEMCONT'') e per il 
-caricamento automatico dei registri di indirizzo e conteggio (vedere ''MEMRESTORE'').
+L'istruzione ''MEMRESTORE'' utilizza ''param'' per controllare il ripristino automatico
+dei registri di trasferimento. Un valore di 0 significa "non ripristinare" e
+lascia tutti i registri all'ultimo valore raggiunto durante il trasferimento. Un valore di
+1 reinizializza tutti i record di trasferimento dei valori fissati prima del trasferimento. Inoltre,
+posse a 1 il bit 7 in ''param'' garantisce, sul target ''c64reu'', che
+L'accesso alla zona di IO sia svolto sulla RAM colore e non sulla RAM sottostqnte.
 
-@syntax MEMLOAD
+@syntax MEMRESTORE param
 
-@example MEMLOAD
+@example MEMRESTORE 129
 
 @usedInExample tsb_memload.bas
 
 @seeAlso MEMLEN
 @seeAlso MEMPOS
-@seeAlso MEMOR
 @seeAlso MEMCONT
 @seeAlso MEMRESTORE
+@seeAlso MEMLOAD
 @seeAlso MEMSAVE
-@seeAlso MEMSAVE
-@seeAlso BANK READ
+@seeAlso MEMDEF
 
 </usermanual> */
 
-void memload( Environment * _environment ) {
+void memrestore( Environment * _environment, char * _param ) {
 
-    Variable * bank = variable_retrieve_or_define( _environment, "MEMBANK", VT_BYTE, 0 );
-    Variable * address1 = variable_retrieve_or_define( _environment, "MEMPOS", VT_ADDRESS, 0 );
-    Variable * address2 = variable_retrieve_or_define( _environment, "MEMOR", VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, "MEMLEN", VT_WORD, 0 );
+    Variable * memrestore = variable_retrieve_or_define( _environment, "MEMRESTORE", VT_BYTE, 0 );
 
-    bank_read_vars( _environment, bank->name, address1->name, address2->name, size->name );
+    Variable * param = variable_retrieve_or_define( _environment, _param, VT_BYTE, 0 );
+
+    variable_move( _environment, param->name, memrestore->name );
     
 }
