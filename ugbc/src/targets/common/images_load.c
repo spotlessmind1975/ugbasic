@@ -220,6 +220,9 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @alias LOAD IMAGES
 @alias IMAGES LOAD
 @alias ATLAS LOAD
+
+@target all
+@ntarget gb
 </usermanual> */
 
 /* <usermanual>
@@ -227,6 +230,8 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @alias LOAD ATLAS
 @alias LOAD IMAGES
 @alias IMAGES LOAD
+@target all
+@ntarget gb
 </usermanual> */
 
 /* <usermanual>
@@ -234,6 +239,8 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @alias LOAD ATLAS
 @alias ATLAS LOAD
 @alias IMAGES LOAD
+@target all
+@ntarget gb
 </usermanual> */
 
 /* <usermanual>
@@ -241,6 +248,8 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @alias LOAD ATLAS
 @alias ATLAS LOAD
 @alias LOAD IMAGES
+@target all
+@ntarget gb
 </usermanual> */
 
 Variable * images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
@@ -252,6 +261,7 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
     }
 
 #if defined(__gb__)
+    final->valueBuffer = malloc( 3 );
     return final;
 #endif
 

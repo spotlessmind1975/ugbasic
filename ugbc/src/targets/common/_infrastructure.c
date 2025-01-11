@@ -10450,6 +10450,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "c64reu" );
 #elif __pc1403__
     strcat( lookedFilename, "pc1403" );
+#elif __gb__
+    strcat( lookedFilename, "gb" );
 #endif
 
     if ( strlen( lookedExtension ) ) {
