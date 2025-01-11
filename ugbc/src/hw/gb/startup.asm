@@ -2282,3 +2282,11 @@ CP_DE:
     POP BC
     POP AF
     RET
+
+ADC_HL_BC:
+    JR      NC, ADC_HL_BC_CARRY0
+    INC     HL
+ADC_HL_BC_CARRY0:
+    ADD     HL, BC
+    RET
+

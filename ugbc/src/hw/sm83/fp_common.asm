@@ -29,13 +29,6 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-ADC_HL_BC:
-    JR      NC, ADC_HL_BC_CARRY0
-    INC     HL
-ADC_HL_BC_CARRY0:
-    ADD     HL, BC
-    RET
-
 REPLACEMENT_CPI:
     JR      C, REPLACEMENT_CPI_CPIWCARRY
 

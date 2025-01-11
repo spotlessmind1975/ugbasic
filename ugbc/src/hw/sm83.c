@@ -3895,8 +3895,10 @@ void sm83_and_16bit( Environment * _environment, char * _left, char * _right, ch
     outline0("INC HL" );
     outline0("INC DE" );
     outline0("LD A, (HL)" );
-    outline1("AND (%s)", address_displacement( _environment, _result, "1" ) );
-    outline0("LD (DE), A" );
+    outline0("LD B, A" );
+    outline0("LD A, (DE)" );
+    outline0("AND B" );
+    outline1("LD (%s), A", address_displacement( _environment, _result, "1" ) );
 
 }
 
@@ -4790,9 +4792,9 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
 
     outline0("LD A, (HL)" );
     outline0("CP $40" );
-    outline1("JR NC, %send", label);
+    outline1("JP NC, %send", label);
     outline0("CP $30" );
-    outline1("JR C, %send", label);
+    outline1("JP C, %send", label);
     outline0("SBC A, $30" );
 
     outline0("PUSH AF" );
@@ -4806,7 +4808,7 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
     outline0("PUSH HL" );
     outline0("LD HL, 0" );
     outline0("CALL ADC_HL_DE" );
-    outline0("ADC HL, BC" );
+    outline0("CALL ADC_HL_BC" );
     outline1("LD (%s), HL", _value );
     outline0("POP HL" );
 
@@ -4814,9 +4816,16 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
     // MULT x 10
 
     outline0("INC HL" );
-    outline0("DEC (IXR)" );
+    outline0("PUSH HL" );
+    outline0("LD HL, (IXR)" );
+    outline0("DEC HL" );
+    outline0("LD (IXR), HL" );
+    outline0("POP HL" );
     outline0("LD A, 0" );
-    outline0("CP (IXR)" );
+    outline0("PUSH HL" );
+    outline0("LD HL, (IXR)" );
+    outline0("CP L" );
+    outline0("POP HL" );
     outline1("JR Z,%send", label );
 
     outline0("PUSH HL" );
