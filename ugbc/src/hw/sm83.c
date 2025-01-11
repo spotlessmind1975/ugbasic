@@ -2961,7 +2961,11 @@ void sm83_math_div2_const_32bit( Environment * _environment, char *_source, int 
             outline1("LD HL, (%s)", _source);
             outline0("LD D, H");
             outline0("LD E, L");
-            outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
+            outline0("PUSH HL");
+            outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
+            outline0("LD B, H");
+            outline0("LD C, L");
+            outline0("POP HL");
             while( _steps ) {
                 outline0("SRA B" );
                 outline0("RR C" );
@@ -2970,7 +2974,11 @@ void sm83_math_div2_const_32bit( Environment * _environment, char *_source, int 
                 --_steps;
             }
             outline1("LD (%s),DE", _source );
-            outline1("LD (%s),BC", address_displacement( _environment, _source, "2" ) );
+            outline0("PUSH HL");
+            outline0("LD H, B");
+            outline0("LD L, C");
+            outline1("LD (%s), HL", address_displacement(_environment, _source, "2") );
+            outline0("POP HL");
             outline0("POP AF" );
             outline0("AND $80" );
             outline0("CP 0" );
@@ -2978,8 +2986,9 @@ void sm83_math_div2_const_32bit( Environment * _environment, char *_source, int 
             sm83_complement2_32bit( _environment, _source, _source );
             outhead1("%sdone:", label );
         } else {
+            outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
+            outline0("LD BC, HL" );
             outline1("LD HL, (%s)", _source);
-            outline1("LD BC, (%s)", address_displacement(_environment, _source, "2") );
             while( _steps ) {
                 outline0("SRA B" );
                 outline0("RR C" );
@@ -2988,7 +2997,8 @@ void sm83_math_div2_const_32bit( Environment * _environment, char *_source, int 
                 --_steps;
             }
             outline1("LD (%s), HL", _source );
-            outline1("LD (%s), BC", address_displacement( _environment, _source, "2" ) );    
+            outline0("LD HL, BC");
+            outline1("LD (%s), HL", address_displacement( _environment, _source, "2" ) );    
         }
 
     no_embedded( cpu_math_div2_const_32bit )
@@ -4342,8 +4352,9 @@ void sm83_mem_move_16bit( Environment * _environment, char *_source, char *_dest
     outline1("LD HL, (%s)", _destination);
     outline0("LD D, H");
     outline0("LD E, L");
+    outline1("LD HL, (%s)", _size);
+    outline0("LD BC, HL");
     outline1("LD HL, (%s)", _source);
-    outline1("LD BC, (%s)", _size);
     outline0("CALL DUFFDEVICE");
 
 }
@@ -4365,9 +4376,10 @@ void sm83_mem_move_direct2( Environment * _environment, char *_source, char *_de
 
     deploy( duff, src_hw_sm83_duff_asm );
 
+    outline1("LD HL, (%s)", _size);
+    outline0("LD BC, HL");
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, %s", _destination);
-    outline1("LD BC, (%s)", _size);
     outline0("CALL DUFFDEVICE");
 
 }
@@ -6183,7 +6195,11 @@ void sm83_bits_to_string( Environment * _environment, char * _number, char * _st
 
     switch( _bits ) {
         case 32:
-            outline1("LD BC, (%s)", address_displacement(_environment, _number, "2") );
+            outline0("PUSH HL");
+            outline1("LD HL, (%s)", address_displacement(_environment, _number, "2"));
+            outline0("LD B, H");
+            outline0("LD B, L");
+            outline0("POP HL");
             outline0("PUSH HL");
             outline1("LD HL, (%s)", _number);
             outline0("LD D, H");
@@ -6749,15 +6765,17 @@ void sm83_msc1_uncompress_indirect_indirect( Environment * _environment, char * 
 
 void sm83_out( Environment * _environment, char * _port, char * _value ) {
 
+    outline1("LD HL, (%s)", _port );
+    outline0("LD BC, HL" );
     outline1("LD A, (%s)", _value );
-    outline1("LD BC, (%s)", _port );
     outline0("OUT (C), A" );
 
 }
 
 void sm83_in( Environment * _environment, char * _port, char * _value ) {
 
-    outline1("LD BC, (%s)", _port );
+    outline1("LD HL, (%s)", _port );
+    outline0("LD BC, HL" );
     outline0("IN A, (C)" );
     outline1("LD (%s), A", _value );
         
@@ -7689,9 +7707,10 @@ void sm83_float_single_to_string( Environment * _environment, char * _x, char * 
     // ;   HL points to the input float
     // ;   BC points to where the string gets written.
 
-    outline1( "LD HL, %s", _x );
+    outline1("LD HL, (%s)", _string );
+    outline0("LD BC, HL" );
 
-    outline1( "LD BC, (%s)", _string );
+    outline1( "LD HL, %s", _x );
 
     outline0( "CALL FPSINGLETOA" );
 

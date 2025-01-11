@@ -34,16 +34,3 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-SCREENONOFF:
-    CP 0
-    JR Z, SCREENOFF
-
-    LD A, LCDCF_ON | LCDCF_BGON
-    LD [rLCDC], A
-    RET
-    
-SCREENOFF:
-    LD A, 0
-    LD (rLCDC), A
-    RET

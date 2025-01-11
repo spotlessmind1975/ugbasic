@@ -953,6 +953,26 @@ WAITSTATEL1:
     POP AF
     RET
 
+WAITVBL:
+    CALL WAITSTATE
+    LD A, (rLY)
+    CP 144
+    JP C, WAITVBL
+    RET
+
+SCREENONOFF:
+    CP 0
+    JR Z, SCREENOFF
+
+    LD A, LCDCF_ON | LCDCF_BGON
+    LD [rLCDC], A
+    RET
+    
+SCREENOFF:
+    LD A, 0
+    LD (rLCDC), A
+    RET
+
 WAITSTATEM0:
     PUSH HL
     LD HL, rSTAT

@@ -1033,8 +1033,6 @@ void gb_horizontal_scroll( Environment * _environment, char * _displacement ) {
 
 void gb_busy_wait( Environment * _environment, char * _timing ) {
 
-    deploy( vbl, src_hw_gb_vbl_asm );
-
     MAKE_LABEL
 
     outline1("LD C, (%s)", _timing);
@@ -1833,18 +1831,14 @@ void gb_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
 void gb_wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    deploy( vbl, src_hw_gb_vbl_asm);
-
     outline0("CALL WAITVBL");
 
 }
 
 void gb_screen_on_off( Environment * _environment, int _on_off ) {
 
-    deploy( vbl, src_hw_gb_screen_on_off_asm);
-
     outline1("LD A, $%2.2x", _on_off );
-    outline0("CALL WAITVBL");
+    outline0("CALL SCREENONOFF");
 
 }
 
