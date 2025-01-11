@@ -30,9 +30,9 @@
 ;  ****************************************************************************/
 
 FPMOV4:
-	LDI
-	LDI
-	LDI
-	LDI
+	CALL REPLACEMENT_LDI
+	CALL REPLACEMENT_LDI
+	CALL REPLACEMENT_LDI
+	CALL REPLACEMENT_LDI
 	RET
     

@@ -1704,6 +1704,7 @@ typedef struct _Deployed {
 
     int fp_vars;
 
+    int fp_common;
     int fp_mul4;
     int fp_mul24;
     int fp_mul16;

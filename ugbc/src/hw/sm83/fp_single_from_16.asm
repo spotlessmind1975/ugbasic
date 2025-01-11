@@ -44,7 +44,11 @@ FPSINGLEFROM16S:
 
 	LD A, H
 	OR A
-	JP P, $+10
+	PUSH AF
+	AND $80
+	CP $00
+	POP AF
+	JP Z, $+10
 	XOR A
 	SUB L
 	LD L, A

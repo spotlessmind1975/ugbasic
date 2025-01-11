@@ -35,7 +35,11 @@ FPSINGLEFROM8S:
 	PUSH AF
 
 	OR A
-	JP P, $+6
+	PUSH AF
+	AND $80
+	CP $00
+	POP AF
+	JP Z, $+6
 	NEG
 	SCF
 

@@ -30,13 +30,13 @@
 ;  ****************************************************************************/
 
 FPPUSHPOP:
-	EX (SP), HL
+	CALL EX_SP_HL
 	PUSH DE
 	PUSH BC
 	PUSH AF
 	PUSH HL
 	LD HL, FPPUSHPOPRET
-	EX (SP), HL
+	CALL EX_SP_HL
 	PUSH HL
 	PUSH AF
 	LD HL, 12
