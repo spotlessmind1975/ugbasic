@@ -3328,7 +3328,7 @@ void sm83_set_asmio( Environment * _environment, int _asmio, int _value ) {
             case REGISTER_IYH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IYH, A" );
+                outline0( "LD (IYHR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_CARRY:
@@ -3477,7 +3477,7 @@ void sm83_set_asmio_indirect( Environment * _environment, int _asmio, char * _va
             case REGISTER_IYH:
                 outline0( "PUSH AF" );
                 outline1( "LD A, (%s)", _value );
-                outline0( "LD IYH, A" );
+                outline0( "LD (IYHR), A" );
                 outline0( "POP AF" );
                 break;
             case REGISTER_CARRY:
@@ -6816,7 +6816,7 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
         outline0("LD (IYLR), A");
 
         outline1("LD A, (%s)", _pattern_size);
-        outline0("LD IYH, A");
+        outline0("LD (IYHR), A");
 
         outline1("LD A, (%s)", _destination);
         outline0("LD E, A");

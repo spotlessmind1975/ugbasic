@@ -42,14 +42,14 @@ CPUSTRINGSUB:
     ; Check if source len is zero: if so, we can exit.
     LD A, (IYLR)
     CP 0
-    JR Z, CPUSTRINGSUBDONE
+    JP Z, CPUSTRINGSUBDONE
     ; Save the source len
     LD B, A
 
     ; Check if pattern len is zero: if so, we can exit.
     LD A, (IYHR)
     CP 0
-    JR Z, CPUSTRINGSUBDONE
+    JP Z, CPUSTRINGSUBDONE
     ; Save the pattern len
     LD C, A
 
@@ -84,16 +84,24 @@ CPUSTRINGSUBL1:
     INC HL
 
     ; Decrement the lenght of original string
-    DEC (IYLR)
+    PUSH AF
+    LD A, (IYLR)
+    DEC A
+    LD (IYLR), A
+    POP AF
 
     ; Decrement the lenght of the pattern.
-    DEC (IYHR)
+    PUSH AF
+    LD A, (IYHR)
+    DEC A
+    LD (IYHR), A
+    POP AF
 
     ; If there are other characters in pattern,
     ; repeat the comparison loop.
     LD A, (IYHR)
     CP 0
-    JR NZ, CPUSTRINGSUBL1
+    JP NZ, CPUSTRINGSUBL1
 
     ; Reset the original pointer and length of the pattern
     PUSH HL
@@ -128,7 +136,7 @@ CPUSTRINGSUBL2:
     DEC B
     LD A, B
     CP 0
-    JR NZ, CPUSTRINGSUBL1
+    JP NZ, CPUSTRINGSUBL1
 
 CPUSTRINGSUBDONE:    
     ; POP IX

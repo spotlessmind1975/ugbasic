@@ -532,7 +532,7 @@ void variable_cleanup( Environment * _environment ) {
         c = c->next;
     }
     
-    // generate_cgoto_address_table( _environment );
+    generate_cgoto_address_table( _environment );
     
     banks_generate( _environment );
 
