@@ -2270,3 +2270,15 @@ CONSOLECALCULATE:
     LD (CONSOLEWB), A
 
     RET
+
+CP_DE:
+    PUSH AF
+    PUSH BC
+    LD B, A
+    LD A, (DE)
+    LD C, A
+    LD A, B
+    CP C
+    POP BC
+    POP AF
+    RET

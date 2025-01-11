@@ -45,25 +45,26 @@ CPULT32S:
     AND $80
     CP 0
     JR NZ, CPULT32SNEGM1
-    BIT 7, (DE)
+    LD A, (DE)
+    BIT 7, A
     JR NZ, CPULT32SDONE
     LD A, B
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JP CPULT32SDONE
 CPULT32SNEGM1:
     PUSH BC
@@ -74,22 +75,22 @@ CPULT32SNEGM1:
     RLA
     JR C, CPULT32SDONE
     LD A, B
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULT32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JMP CPULT32SDONE
 CPULT32SDONE:
     JR C, CPULT32SMI
@@ -154,25 +155,26 @@ CPULTE32S:
     AND $80
     CP 0
     JR NZ, CPULTE32SNEGM1
-    BIT 7, (DE)
+    LD A, (DE)
+    BIT 7, A
     JR NZ, CPULTE32SDONE
     LD A, B
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JP CPULTE32SDONE
 CPULTE32SNEGM1:            
     PUSH BC
@@ -183,22 +185,22 @@ CPULTE32SNEGM1:
     RLA
     JR C, CPULTE32SDONE
     LD A, B
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JR NZ, CPULTE32SDONE
     DEC HL
     DEC DE
     LD A, (HL)
-    CP (DE)
+    CALL CP_DE
     JP CPULTE32SDONE
 CPULTE32SDONE:
     JR Z, CPULTE32SMI
