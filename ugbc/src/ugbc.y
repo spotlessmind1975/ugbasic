@@ -27,6 +27,7 @@ extern char DATATYPE_AS_STRING[][16];
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 #include <math.h>
+#include <errno.h>
 
 %}
 
@@ -12402,7 +12403,7 @@ int main( int _argc, char *_argv[] ) {
     
     yyin = fopen( _environment->sourceFileName, "r" );
     if ( ! yyin ) {
-        fprintf(stderr, "Unable to open source file: %s\n", _environment->sourceFileName );
+        fprintf(stderr, "Unable to open source file: %s (%d - %s)\n", _environment->sourceFileName, errno, strerror(errno) );
         exit(EXIT_FAILURE);
     }
 
