@@ -7607,6 +7607,7 @@ void sm83_float_fast_to_string( Environment * _environment, char * _x, char * _s
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
     deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
     deploy( fp_fast_pow10_lut, src_hw_sm83_fp_fast_pow10_lut_asm );
@@ -7659,6 +7660,7 @@ void sm83_float_single_to_string( Environment * _environment, char * _x, char * 
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
     deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
@@ -7704,6 +7706,7 @@ void sm83_float_double_to_string( Environment * _environment, char * _x, char * 
 
 void sm83_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_from_16, src_hw_sm83_fp_fast_from_16_asm );
 
     outline1( "LD HL, (%s)", _value );
@@ -7722,6 +7725,7 @@ void sm83_float_fast_from_16( Environment * _environment, char * _value, char * 
 
 void sm83_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_from_8, src_hw_sm83_fp_fast_from_8_asm );
 
     outline1( "LD A, (%s)", _value );
@@ -7740,6 +7744,7 @@ void sm83_float_fast_from_8( Environment * _environment, char * _value, char * _
 
 void sm83_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_to_16, src_hw_sm83_fp_fast_to_16_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -7758,6 +7763,7 @@ void sm83_float_fast_to_16( Environment * _environment, char * _value, char * _r
 
 void sm83_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_to_8, src_hw_sm83_fp_fast_to_8_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -7776,6 +7782,7 @@ void sm83_float_fast_to_8( Environment * _environment, char * _value, char * _re
 
 void sm83_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
@@ -7801,6 +7808,7 @@ void sm83_float_fast_add( Environment * _environment, char * _x, char * _y, char
 
 void sm83_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
 
@@ -7827,6 +7835,7 @@ void sm83_float_fast_sub( Environment * _environment, char * _x, char * _y, char
 
 void sm83_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
     deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
 
@@ -7852,6 +7861,7 @@ void sm83_float_fast_mul( Environment * _environment, char * _x, char * _y, char
 
 void sm83_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
@@ -7878,6 +7888,7 @@ void sm83_float_fast_cmp( Environment * _environment, char * _x, char * _y, char
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
     deploy( fp_fast_cmp, src_hw_sm83_fp_fast_cmp_asm );
@@ -7916,6 +7927,7 @@ void sm83_float_fast_sin( Environment * _environment, char * _angle, char * _res
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
     deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
@@ -7946,6 +7958,7 @@ void sm83_float_fast_cos( Environment * _environment, char * _angle, char * _res
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
     deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
     deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
@@ -7975,6 +7988,7 @@ void sm83_float_fast_tan( Environment * _environment, char * _angle, char * _res
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_tan, src_hw_sm83_fp_fast_tan_asm );
     deploy( fp_fast_sin, src_hw_sm83_fp_fast_sin_asm );
     deploy( fp_fast_cos, src_hw_sm83_fp_fast_cos_asm );     
@@ -8000,6 +8014,7 @@ void sm83_float_fast_sqr( Environment * _environment, char * _value, char * _res
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
     deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
     deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
@@ -8024,6 +8039,7 @@ void sm83_float_fast_mod1( Environment * _environment, char * _value, char * _re
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -8046,6 +8062,7 @@ void sm83_float_fast_neg( Environment * _environment, char * _value, char * _res
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_fast_neg, src_hw_sm83_fp_fast_neg_asm );
 
     outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
@@ -8066,6 +8083,7 @@ void sm83_float_fast_neg( Environment * _environment, char * _value, char * _res
 
 void sm83_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_single_from_16, src_hw_sm83_fp_single_from_16_asm );
 
@@ -8081,6 +8099,7 @@ void sm83_float_single_from_16( Environment * _environment, char * _value, char 
 
 void sm83_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_single_from_8, src_hw_sm83_fp_single_from_8_asm );
 
     outline1( "LD A, (%s)", _value );
@@ -8096,6 +8115,7 @@ void sm83_float_single_from_8( Environment * _environment, char * _value, char *
 
 void sm83_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_single_to_16, src_hw_sm83_fp_single_to_16_asm );
 
     outline1( "LD HL, %s", _value );
@@ -8110,6 +8130,7 @@ void sm83_float_single_to_16( Environment * _environment, char * _value, char * 
 
 void sm83_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_single_to_8, src_hw_sm83_fp_single_to_8_asm );
 
     outline1( "LD HL, %s", _value );
@@ -8124,6 +8145,7 @@ void sm83_float_single_to_8( Environment * _environment, char * _value, char * _
 
 void sm83_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
 
@@ -8136,6 +8158,7 @@ void sm83_float_single_add( Environment * _environment, char * _x, char * _y, ch
 
 void sm83_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
     deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
@@ -8149,6 +8172,7 @@ void sm83_float_single_sub( Environment * _environment, char * _x, char * _y, ch
 
 void sm83_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
     deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
@@ -8162,6 +8186,7 @@ void sm83_float_single_mul( Environment * _environment, char * _x, char * _y, ch
 
 void sm83_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_div24_24, src_hw_sm83_fp_div24_24_asm );
     deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
@@ -8177,6 +8202,7 @@ void sm83_float_single_cmp( Environment * _environment, char * _x, char * _y, ch
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
     deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
     deploy( fp_single_cmp, src_hw_sm83_fp_single_cmp_asm );
@@ -8234,6 +8260,7 @@ void sm83_float_single_sin( Environment * _environment, char * _angle, char * _r
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
     deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
     deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
@@ -8268,6 +8295,7 @@ void sm83_float_single_cos( Environment * _environment, char * _angle, char * _r
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
     deploy( fp_mov4, src_hw_sm83_fp_mov4_asm );
     deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
@@ -8304,6 +8332,7 @@ void sm83_float_single_tan( Environment * _environment, char * _angle, char * _r
 
     MAKE_LABEL
 
+    deploy( fp_common, src_hw_sm83_fp_common_asm );
     deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
     deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
     deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );

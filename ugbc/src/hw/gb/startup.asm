@@ -2257,3 +2257,16 @@ WAITTIMERL1:
     CP $FF
     JR NZ, WAITTIMER
     RET
+
+CONSOLECALCULATE:
+
+    LD A, (CONSOLEH)
+    SLA A
+    SLA A
+    SLA A
+    LD (CONSOLEHB), A
+    
+    LD A, (CONSOLEW)
+    LD (CONSOLEWB), A
+
+    RET
