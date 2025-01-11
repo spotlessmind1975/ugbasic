@@ -1126,6 +1126,12 @@ SBC_HL_BC:
     POP     DE
     RET
 
+ADC_HL_DE:
+    JR      NC, ADC_HL_DE_CARRY0
+    INC     HL
+ADC_HL_DE_CARRY0:
+    ADD     HL, DE
+    RET
 
 REPLACEMENT_LDIR:
     PUSH    AF
@@ -1188,6 +1194,37 @@ ADC_HL_HL:
     ADD HL, HL
     ADD HL, DE
     POP DE
+    RET
+
+; EXX exchanges BC, DE, and HL with shadow registers with BC', DE', and HL'.
+REPLACEMENT_EXX:
+    PUSH HL
+
+    LD HL, BC
+    PUSH HL
+    LD HL, (BCP)
+    LD BC, HL
+    POP HL
+    LD (BCP), HL
+
+    LD HL, DE
+    PUSH HL
+    LD HL, (DEP)
+    LD DE, HL
+    POP HL
+    LD (DEP), HL
+
+    POP HL
+
+    PUSH DE
+    LD DE, HL
+    LD HL, (HLP)
+    PUSH HL
+    LD HL, DE
+    LD (HLP), HL
+    POP HL
+    POP DE
+
     RET
 
 ; ------------------------------------------------------------------------------
@@ -1824,9 +1861,9 @@ GBFREQ1X:
     CALL GBFREQ2T
 GBFREQ2X:
     SRL A
-    JP NC, GBFREQN0X
-    CALL GBFREQN0T
-GBFREQN0X:
+    JP NC, GBFREQ3X
+    CALL GBFREQ3T
+GBFREQ3X:
     RET
 
 GBCALCFREQ:
@@ -1847,10 +1884,10 @@ GBFREQ2:
 GBFREQ2T:
     JMP GBPROGFREQ2
 
-GBFREQN0:
+GBFREQ3:
     CALL GBCALCFREQ
-GBFREQN0T:
-    JMP GBPROGFREQN0
+GBFREQ3T:
+    JMP GBPROGFREQ3
 
 GBPROGFREQ:
     PUSH AF
@@ -1867,9 +1904,9 @@ GBPROGFREQ1X:
     CALL GBPROGFREQ2
 GBPROGFREQ2X:
     SRL A
-    JP NC, GBPROGFREQN0X
-    CALL GBPROGFREQN0
-GBPROGFREQN0X:
+    JP NC, GBPROGFREQ3X
+    CALL GBPROGFREQ3
+GBPROGFREQ3X:
     POP AF
     RET
 
@@ -1895,7 +1932,7 @@ GBPROGFREQ1:
 
 GBPROGFREQ2:
     RET
-GBPROGFREQN0:
+GBPROGFREQ3:
     RET
 
 GBPROGDUR:
@@ -2202,4 +2239,21 @@ GBMANAGER2D3:
 GBMANAGER2D4:
     POP AF
     POP DE
+    RET
+
+WAITTIMER:
+    LD A, (GBTIMER)
+    LD B, A
+WAITTIMERL1:
+    LD A, (GBTIMER)
+    CP B
+    JR Z, WAITTIMERL1
+    DEC L
+    LD A, L
+    CP $FF
+    JR NZ, WAITTIMER
+    DEC H
+    LD A, H
+    CP $FF
+    JR NZ, WAITTIMER
     RET

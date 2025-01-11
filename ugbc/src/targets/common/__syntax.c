@@ -6106,3 +6106,93 @@ pixel o elementi grafici, in modo casuale, sullo schermo.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BLIT (instruction)
+
+@english
+
+The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
+are combined into one using a boolean (or mathematical) function. The operation involves
+at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
+and other fields, called “masks” or something like that. The result may be written to a 
+final bitmap, though often it replaces the “destination” field.
+
+The pixels of each are combined bitwise according to the specified BLIT OPERATION (BOP) 
+and the result is then written to the destination. The BOP is essentially a boolean 
+formula, that can be written using ''BLIT'' instructrion. The most obvious BOP overwrites 
+the destination with the source. Other BOPs may involve ''AND'', ''OR'', ''XOR'', and 
+other more complex operations.
+
+@italian
+Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
+bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
+L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
+“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
+Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
+campo “destinazione”.
+
+I pixel di ciascuno vengono combinati bit per bit in base all'OPERAZIONE BLIT (BOP) 
+specificata e il risultato viene quindi scritto nella destinazione. Il BOP è 
+essenzialmente una formula booleana, che può essere scritta utilizzando l'istruzione 
+''BLIT''. Il BOP più ovvio sovrascrive la destinazione con la sorgente. Altri BOP 
+possono comportare ''AND'', ''OR'', ''XOR'' e altre operazioni più complesse.
+
+@syntax BLIT identifier AS expression
+
+@example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
+
+@usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT IMAGE
+
+@target all
+@ntarget gb
+</usermanual> */
+
+/* <usermanual>
+@keyword BLIT IMAGE
+
+@english
+
+The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
+are combined into one using a boolean (or mathematical) function. The operation involves
+at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
+and other fields, called “masks” or something like that. The result may be written to a 
+final bitmap, though often it replaces the “destination” field.
+
+To draw, the BLIT IMAGE(S) command will be used. The syntax of this command will be 
+identical to that of ''PUT IMAGE'' (therefore with management of images and sequences), 
+with two main differences. The first is the ability to indicate multiple images 
+(separated from each other by a comma) and the second is to be able to indicate 
+which blitting operation you want to use.
+
+@italian
+Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
+bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
+L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
+“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
+Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
+campo “destinazione”.
+
+Per disegnare, verrà utilizzato il comando BLIT IMAGE(S). La sintassi di questo comando 
+sarà identica a quella di ''PUT IMAGE'' (quindi con gestione di immagini e sequenze), 
+con due differenze principali. La prima è la possibilità di indicare più immagini 
+(separate tra loro da una virgola) e la seconda è quella di poter indicare quale operazione
+di blitting si vuole utilizzare.
+
+@syntax BLIT IMAGE i1, i2, ... AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... FRAME frame AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... STRIP s FRAME f AT [x], [y] WITH b
+
+@example BLIT IMAGE test AT 0, 0 WITH bop
+
+@usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT (instruction)
+
+@target all
+@ntarget gb
+</usermanual> */

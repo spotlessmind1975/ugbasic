@@ -138,9 +138,6 @@ static void blit_define_bltb( Environment * _environment, int _op, char * _a, ch
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-/* <usermanual>
-@keyword BLIT IMAGE
-</usermanual> */
 void blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top ) {
 
     char blitLabel[MAX_TEMPORARY_STORAGE]; sprintf( blitLabel, "_%sblit", _name );
@@ -148,38 +145,6 @@ void blit_define( Environment * _environment, char * _name, int _sop, int _mop, 
 
     cpu_jump( _environment, skipLabel );
     cpu_label( _environment, blitLabel );
-
-    // B = s(x,y)
-    // IYL = d(x, y)
-    // IYH = m(x, y)
-
-    outline0("PUSH HL");
-    outline0("PUSH DE");
-
-    // BLITSU
-    blit_define_bltu( _environment, _sop, "B", "H" );
-
-    // BLITMU
-    blit_define_bltu( _environment, _mop, "IYH", "L" );
-
-    // BLITSM
-    blit_define_bltb( _environment, _smop, "H", "L", "D" );
-
-    // BLITSMU
-    blit_define_bltu( _environment, _iop, "D", "H" );
-
-    // BLITDU
-    blit_define_bltu( _environment, _dop, "IYL", "L" );
-
-    // BLITT
-    blit_define_bltb( _environment, _idop, "H", "L", "D" );
-
-    // BLITTU
-    blit_define_bltu( _environment, _top, "D", "E" );
-
-    outline0("LD A, E");
-    outline0("POP DE");
-    outline0("POP HL");
 
     cpu_return( _environment );
     cpu_label( _environment, skipLabel );
@@ -218,9 +183,6 @@ void blit_define_compound_operand_to_register( Environment * _environment, int _
 
     char * reg = cpu_blit_register_name( _environment, _register ) ;
 
-    outline1( "LD A, %s", &BLIT_SOURCES_REGISTER[_source][0] );
-    outline1( "LD %s, A", reg );
-
 }
 
 void blit_define_compound_unary( Environment * _environment, int _operation, int _operand, int _result ) {
@@ -244,8 +206,6 @@ void blit_define_end_compound( Environment * _environment, int _result ) {
     variable_resize_buffer( _environment, blitStageArea->name, _environment->blit.usedMemory );
 
     char * reg = cpu_blit_register_name( _environment, _result ) ;
-
-    outline1( "LD A, %s", reg );
 
     cpu_blit_finalize( _environment );
 

@@ -102,6 +102,13 @@ void sm83_init( Environment * _environment ) {
     variable_store_buffer( _environment, "CALLINDIRECT", callIndirect, sizeof( callIndirect ), 0 );
     variable_retrieve( _environment, "CALLINDIRECT" )->readonly = 0;
 
+    variable_import( _environment, "BCP", VT_WORD, 0 );
+    variable_global( _environment, "BCP" );
+    variable_import( _environment, "DEP", VT_WORD, 0 );
+    variable_global( _environment, "DEP" );
+    variable_import( _environment, "HLP", VT_WORD, 0 );
+    variable_global( _environment, "HLP" );
+
 }
 
 void sm83_nop( Environment * _environment ) {
@@ -2168,16 +2175,22 @@ void sm83_math_mul_16bit_to_32bit( Environment * _environment, char *_source, ch
             outline0("LD (IYR), HL" );
             outline0("CALL CPUMUL16B16T32S")
             outline1("LD (%s), HL", _other );
-            outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
+            outline0("LD H, B");
+            outline0("LD L, C");
+            outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
 
         } else {
 
+            outline1("LD HL, (%s)", _source );
+            outline0("LD B, H");
+            outline0("LD C, L");
             outline1("LD HL, (%s)", _destination);
             outline0("LD D, H");
             outline0("LD E, L");
-            outline1("LD BC, (%s)", _source );
             outline0("CALL CPUMUL16B16T32U")
             outline1("LD (%s), HL", _other );
+            outline0("LD H, B");
+            outline0("LD L, C");
             outline1("LD (%s), BC", address_displacement( _environment, _other, "2" ) );
 
         }
@@ -2736,23 +2749,23 @@ void sm83_math_add_32bit( Environment * _environment, char *_source, char *_dest
         outline0("LD D, H");
         outline0("LD E, L");
         outline1("LD HL, (%s)", _source );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD HL, (%s)", address_displacement(_environment, _destination, "2"));
         outline0("LD D, H");
         outline0("LD E, L");
         outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline0("ADD HL, DE" );
-        outline0("EXX" );
-        outline0("ADC HL, DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
+        outline0("CALL ADC_HL_DE" );
+        outline0("CALL REPLACEMENT_EXX" );
         if ( _other ) {
             outline1("LD (%s), HL", _other );
-            outline0("EXX" );
+            outline0("CALL REPLACEMENT_EXX" );
             outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
         } else {
             outline1("LD (%s), HL", _destination );
-            outline0("EXX" );
+            outline0("CALL REPLACEMENT_EXX" );
             outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
         }
 
@@ -2766,16 +2779,16 @@ void sm83_math_add_32bit_const( Environment * _environment, char *_source, int _
 
         outline1("LD HL, (%s)", _source );
         outline1("LD DE, $%4.4x", ( _destination & 0xffff ) );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD HL, (%s)", address_displacement(_environment, _source, "2") );
         outline1("LD DE, $%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline0("ADD HL, DE" );
-        outline0("EXX" );
-        outline0("ADC HL, DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
+        outline0("CALL ADC_HL_DE" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD (%s), HL", _other );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
 
     no_embedded( cpu_math_add_32bit_const )
@@ -2832,7 +2845,7 @@ void sm83_math_sub_32bit( Environment * _environment, char *_source, char *_dest
         outline0("LD A, D" );
         outline0("OR E" );
         outline0("PUSH AF" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD HL, (%s)", address_displacement(_environment, _destination, "2"));
         outline0("LD D, H");
         outline0("LD E, L");
@@ -2848,18 +2861,18 @@ void sm83_math_sub_32bit( Environment * _environment, char *_source, char *_dest
         outline1("JR NZ, %snoincde", label );
         outline0("INC DE" );
         outline1("%snoincde:", label );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline0("ADD HL, DE" );
-        outline0("EXX" );
-        outline0("ADC HL, DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
+        outline0("CALL ADC_HL_DE" );
+        outline0("CALL REPLACEMENT_EXX" );
         if ( _other ) {
             outline1("LD (%s), HL", _other );
-            outline0("EXX" );
+            outline0("CALL REPLACEMENT_EXX" );
             outline1("LD (%s), HL", address_displacement( _environment, _other, "2" ) );
         } else {
             outline1("LD (%s), HL", _destination );
-            outline0("EXX" );
+            outline0("CALL REPLACEMENT_EXX" );
             outline1("LD (%s), HL", address_displacement( _environment, _destination, "2" ) );
         }
 
@@ -2889,7 +2902,7 @@ void sm83_math_complement_const_32bit( Environment * _environment, char *_source
         outline0("XOR $FF" );
         outline0("LD D, A" );
         outline0("INC DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD HL, (%s)", address_displacement(_environment, _source, "2"));
         outline0("LD D, H");
         outline0("LD E, L");
@@ -2901,13 +2914,13 @@ void sm83_math_complement_const_32bit( Environment * _environment, char *_source
         outline0("XOR $FF" );
         outline0("LD D, A" );
         outline0("INC DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline0("ADD HL, DE" );
-        outline0("EXX" );
-        outline0("ADC HL, DE" );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
+        outline0("CALL ADC_HL_DE" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD (%s), HL", _source );
-        outline0("EXX" );
+        outline0("CALL REPLACEMENT_EXX" );
         outline1("LD (%s), HL", address_displacement( _environment, _source, "2" ) );
 
     no_embedded( cpu_math_complement_const_32bit )
@@ -4792,7 +4805,7 @@ void sm83_convert_string_into_16bit( Environment * _environment, char * _string,
     outline0("LD D, 0" );
     outline0("PUSH HL" );
     outline0("LD HL, 0" );
-    outline0("ADC HL, DE" );
+    outline0("CALL ADC_HL_DE" );
     outline0("ADC HL, BC" );
     outline1("LD (%s), HL", _value );
     outline0("POP HL" );
@@ -6788,14 +6801,14 @@ void sm83_string_sub( Environment * _environment, char * _source, char * _source
     done()
 }
 
-static char Z80_BLIT_REGISTER[][2] = {
+static char SM83_BLIT_REGISTER[][2] = {
     "L",
     "H",
     "E",
     "D"
 };
 
-#define Z80_BLII_REGISTER_COUNT ( sizeof( Z80_BLIT_REGISTER ) / 2 )
+#define SM83_BLII_REGISTER_COUNT ( sizeof( SM83_BLIT_REGISTER ) / 2 )
 
 void sm83_blit_initialize( Environment * _environment ) {
 
@@ -6823,10 +6836,10 @@ void sm83_blit_finalize( Environment * _environment ) {
 
 char * sm83_blit_register_name(  Environment * _environment, int _register ) {
     
-    if ( _register < Z80_BLII_REGISTER_COUNT ) {
-        return &Z80_BLIT_REGISTER[_register][0];
+    if ( _register < SM83_BLII_REGISTER_COUNT ) {
+        return &SM83_BLIT_REGISTER[_register][0];
     } else {
-        return &Z80_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
+        return &SM83_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
     }
 }
 
@@ -6834,7 +6847,7 @@ int sm83_blit_alloc_register(  Environment * _environment ) {
 
     int reg = 0;
 
-    for( reg = 0; reg < Z80_BLII_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < SM83_BLII_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x01 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
@@ -6851,11 +6864,11 @@ int sm83_blit_alloc_register(  Environment * _environment ) {
         CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
     }
 
-    for( reg = 0; reg < Z80_BLII_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < SM83_BLII_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x10 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
-            outline1( "LD A, %s", &Z80_BLIT_REGISTER[reg][0] );
+            outline1( "LD A, %s", &SM83_BLIT_REGISTER[reg][0] );
             outline2( "LD (%sbs+$%2.2x), A",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
             // printf( "sm83_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
@@ -6877,7 +6890,7 @@ void sm83_blit_free_register(  Environment * _environment, int _register ) {
     int location = _register & 0xff;
     int reg;
 
-    if ( _register < Z80_BLII_REGISTER_COUNT ) {
+    if ( _register < SM83_BLII_REGISTER_COUNT ) {
         int registerMask = ( 0x01 << _register );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
@@ -6891,7 +6904,7 @@ void sm83_blit_free_register(  Environment * _environment, int _register ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
             outline2( "LD A, (%sbs+$%2.2x)",  _environment->blit.realName, location );
-            outline1( "LD %s, A", &Z80_BLIT_REGISTER[reg][0] );
+            outline1( "LD %s, A", &SM83_BLIT_REGISTER[reg][0] );
             _environment->blit.freeRegisters &= ~registerMask;
             return;
         }

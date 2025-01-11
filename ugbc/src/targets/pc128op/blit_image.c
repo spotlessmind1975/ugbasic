@@ -50,9 +50,6 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-/* <usermanual>
-@keyword BLIT IMAGE
-</usermanual> */
 void blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags ) {
 
     char * sources[MAX_TEMPORARY_STORAGE];
