@@ -266,7 +266,7 @@ TIMERSETSTATUS0:
 TIMERSETCOUNTER:
     PUSH AF
     PUSH BC
-    ; PUSH IX
+    ; CALL PUSH_IX
     PUSH DE
 
     LD A, B
@@ -284,7 +284,7 @@ TIMERSETCOUNTER:
     LD (HL), A
 
     POP DE
-    ; POP IX
+    ; CALL POP_IX
     POP BC
     POP AF
 
@@ -294,7 +294,7 @@ TIMERSETCOUNTER:
 TIMERSETINIT:
     PUSH AF
     PUSH BC
-    ; PUSH IX
+    ; CALL PUSH_IX
     PUSH DE
 
     LD A, B
@@ -312,7 +312,7 @@ TIMERSETINIT:
     LD (HL), A
 
     POP DE
-    ; POP IX
+    ; CALL POP_IX
     POP BC
     POP AF
 
@@ -323,7 +323,7 @@ TIMERSETINIT:
 TIMERSETADDRESS:
     PUSH AF
     PUSH BC
-    ; PUSH IX
+    ; CALL PUSH_IX
     PUSH DE
 
     LD A, B
@@ -341,7 +341,7 @@ TIMERSETADDRESS:
     LD (HL), A
 
     POP DE
-    ; POP IX
+    ; CALL POP_IX
     POP BC
     POP AF
 

@@ -169,3 +169,16 @@ EX_SP_HL:
     POP     AF                      ;12
     RET                             ;16
 
+POP_IX:
+    LD (HLS), HL
+    POP HL
+    LD (IXR), HL
+    LD HL, (HLS)
+    RET
+
+PUSH_IX:
+    LD (HLS), HL
+    LD HL, (IXR)
+    PUSH HL
+    LD HL, (HLS)
+    RET

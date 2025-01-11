@@ -88,6 +88,9 @@ void sm83_init( Environment * _environment ) {
     variable_import( _environment, "IYHR", VT_BYTE, 0 );
     variable_global( _environment, "IYHR" );
 
+    variable_import( _environment, "HLS", VT_WORD, 0 );
+    variable_global( _environment, "HLS" );
+
     variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
     variable_global( _environment, "CALLINDIRECTSAVEHL" );
 
