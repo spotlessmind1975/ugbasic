@@ -56,9 +56,8 @@
 </usermanual> */
 Variable * collision_to( Environment * _environment, int _sprite ) {
 
-    Variable * sprite = variable_temporary( _environment, VT_BYTE, "(result)" );
-    variable_store( _environment, sprite->name, _sprite );
-    // return tms9918_collision( _environment, sprite->name );
+    Variable * false = variable_temporary( _environment, VT_SBYTE, 0 );
+    return false;
 
 }
 
@@ -77,7 +76,8 @@ Variable * collision_to( Environment * _environment, int _sprite ) {
  */
 Variable * collision_to_vars( Environment * _environment, char * _sprite ) {
 
-    // return tms9918_collision( _environment, _sprite );
+    Variable * false = variable_temporary( _environment, VT_SBYTE, 0 );
+    return false;
 
 }
 

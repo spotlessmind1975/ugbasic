@@ -117,8 +117,8 @@ void target_initialization( Environment * _environment ) {
     // variable_import( _environment, "KBDCHAR", VT_BYTE, 0 );
     // variable_global( _environment, "KBDCHAR" );
 
-    // variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
-    // variable_global( _environment, "DATAPTR" );
+    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "DATAPTR" );
 
     // variable_import( _environment, "SCANCODEREAD", VT_BUFFER, 16 );
     // variable_global( _environment, "SCANCODEREAD" );

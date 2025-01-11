@@ -76,6 +76,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     switch( resource->type ) {
         case VT_SEQUENCE:
+            return;
             if ( image->bankAssigned != -1 ) {
                 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
@@ -144,6 +145,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             }
             break;
         case VT_IMAGES:
+            return;
             if ( image->bankAssigned != -1 ) {
                 
                 char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];

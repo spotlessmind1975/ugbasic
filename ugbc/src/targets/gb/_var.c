@@ -176,19 +176,22 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                             outhead1("%s: db $0", variable->realName );
                         } else {
-                            int writableSize = 3 + variable->valueBuffer[2];
-                            outhead0("section data");
-                            out1("%s: db ", variable->realName);
-                            int i=0;
-                            for (i=0; i<(writableSize-1); ++i ) {
-                                if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                    outline1("%d", variable->valueBuffer[i]);
-                                    out0("  db  " );
-                                } else {
-                                    out1("%d,", variable->valueBuffer[i]);
+                            int writableSize = 0;
+                            if ( variable->size > 3 ) {
+                                int writableSize = 3 + variable->valueBuffer[2];
+                                outhead0("section data");
+                                out1("%s: db ", variable->realName);
+                                int i=0;
+                                for (i=0; i<(writableSize-1); ++i ) {
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("%d", variable->valueBuffer[i]);
+                                        out0("  db  " );
+                                    } else {
+                                        out1("%d,", variable->valueBuffer[i]);
+                                    }
                                 }
+                                outline1("%d", variable->valueBuffer[i]);
                             }
-                            outline1("%d", variable->valueBuffer[i]);
                             outhead0("section code");
                             if ( ! variable->absoluteAddress ) {
                                 if ( variable->valueBuffer ) {
@@ -439,20 +442,20 @@ void variable_cleanup( Environment * _environment ) {
 
     vars_emit_constants( _environment );
 
-    // if ( _environment->dataSegment ) {
-    //     outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
-    //     if ( _environment->readDataUsed && _environment->restoreDynamic ) {
-    //         outhead0("DATASEGMENTNUMERIC:" );
-    //         DataSegment * actual = _environment->dataSegment;
-    //         while( actual ) {
-    //             if ( actual->isNumeric ) {
-    //                 outline2( "dw $%4.4x, %s", actual->lineNumber, actual->realName );
-    //             }
-    //             actual = actual->next;
-    //         }
-    //         outline0( "dw $ffff, DATAPTRE" );
-    //     }
-    // }     
+    if ( _environment->dataSegment ) {
+        outhead1("DATAFIRSTSEGMENT EQU %s", _environment->dataSegment->realName );
+        if ( _environment->readDataUsed && _environment->restoreDynamic ) {
+            outhead0("DATASEGMENTNUMERIC:" );
+            DataSegment * actual = _environment->dataSegment;
+            while( actual ) {
+                if ( actual->isNumeric ) {
+                    outline2( "dw $%4.4x, %s", actual->lineNumber, actual->realName );
+                }
+                actual = actual->next;
+            }
+            outline0( "dw $ffff, DATAPTRE" );
+        }
+    }     
 
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
@@ -601,47 +604,47 @@ void variable_cleanup( Environment * _environment ) {
 
     // variable_on_memory_init( _environment, 1 );
 
-    // DataSegment * dataSegment = _environment->dataSegment;
-    // while( dataSegment ) {
-    //     int i=0;
-    //     out1("%s: db ", dataSegment->realName );
-    //     DataDataSegment * dataDataSegment = dataSegment->data;
-    //     while( dataDataSegment ) {
-    //         if ( dataSegment->type ) {
-    //             if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-    //                 out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-    //                 out1("\"%s\"", dataDataSegment->data );
-    //             } else {
-    //                 for( i=0; i<(dataDataSegment->size-1); ++i ) {
-    //                     out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
-    //                 }
-    //                 out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
-    //             }
-    //         } else {
-    //             if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-    //                 out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-    //                 out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-    //                 out1("\"%s\"", dataDataSegment->data );
-    //             } else {
-    //                 out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-    //                 for( i=0; i<(dataDataSegment->size-1); ++i ) {
-    //                     out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
-    //                 }
-    //                 out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
-    //             }
-    //         }
-    //         dataDataSegment = dataDataSegment->next;
-    //         if ( dataDataSegment ) {
-    //             out0(",");
-    //         }
-    //     }
-    //     outline0("");
-    //     dataSegment = dataSegment->next;
-    // }
+    DataSegment * dataSegment = _environment->dataSegment;
+    while( dataSegment ) {
+        int i=0;
+        out1("%s: db ", dataSegment->realName );
+        DataDataSegment * dataDataSegment = dataSegment->data;
+        while( dataDataSegment ) {
+            if ( dataSegment->type ) {
+                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("\"%s\"", dataDataSegment->data );
+                } else {
+                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    }
+                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                }
+            } else {
+                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("\"%s\"", dataDataSegment->data );
+                } else {
+                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
+                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    }
+                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                }
+            }
+            dataDataSegment = dataDataSegment->next;
+            if ( dataDataSegment ) {
+                out0(",");
+            }
+        }
+        outline0("");
+        dataSegment = dataSegment->next;
+    }
 
-    // if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
-    //     outhead0("DATAPTRE:");
-    // }
+    if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
+        outhead0("DATAPTRE:");
+    }
     
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {

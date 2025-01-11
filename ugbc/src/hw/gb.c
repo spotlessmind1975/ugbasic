@@ -755,13 +755,13 @@ int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
     _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
-    // cpu_store_16bit( _environment, "CLIPX1", 0 );
-    // cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
-    // cpu_store_16bit( _environment, "CLIPY1", 0 );
-    // cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
 
-    // cpu_store_16bit( _environment, "ORIGINX", 0 );
-    // cpu_store_16bit( _environment, "ORIGINY", 0 );
+    cpu_store_16bit( _environment, "ORIGINX", 0 );
+    cpu_store_16bit( _environment, "ORIGINY", 0 );
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
@@ -1166,6 +1166,9 @@ void gb_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_BGB, 0, 20, 18, 2, 8, 8, "Tilemap mode (BGB)" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_CGB, 0, 20, 18, 4, 8, 8, "Tilemap mode (CGB)" );
 
+    variable_import( _environment, "LINE", VT_WORD, 0 );
+    variable_global( _environment, "LINE" );
+
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
     variable_import( _environment, "YGR", VT_POSITION, 0 );
@@ -1184,6 +1187,20 @@ void gb_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CLINEY", VT_BYTE, 0 );
     variable_global( _environment, "CLINEY" );
+
+    variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
+    variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
 
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );

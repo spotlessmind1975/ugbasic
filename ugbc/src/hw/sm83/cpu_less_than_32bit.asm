@@ -66,7 +66,11 @@ CPULT32S:
     CP (DE)
     JP CPULT32SDONE
 CPULT32SNEGM1:
-    XOR (DE)
+    PUSH BC
+    LD B, A
+    LD A, (DE)
+    XOR B
+    POP BC
     RLA
     JR C, CPULT32SDONE
     LD A, B
@@ -171,7 +175,11 @@ CPULTE32S:
     CP (DE)
     JP CPULTE32SDONE
 CPULTE32SNEGM1:            
-    XOR (DE)
+    PUSH BC
+    LD B, A
+    LD A, (DE)
+    XOR B
+    POP BC
     RLA
     JR C, CPULTE32SDONE
     LD A, B

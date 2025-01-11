@@ -48,14 +48,8 @@
  */
 Variable * new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    Variable * result = NULL; // tms9918_new_sequence( _environment, _sequences, _frames, _width, _height, _mode );
-
-    result->offsettingFrames = offsetting_size_count( _environment, result->frameSize, _frames );
-    offsetting_add_variable_reference( _environment, result->offsettingFrames, result, 0 );
-
-    result->offsettingSequences = offsetting_size_count( _environment, _frames*result->frameSize, _sequences );
-    offsetting_add_variable_reference( _environment, result->offsettingSequences, result, 1 );
-
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(sequence)");
+    result->valueBuffer = malloc(3);
     return result;
 
 }

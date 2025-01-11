@@ -48,10 +48,8 @@
  */
 Variable * new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    Variable * result = NULL; // tms9918_new_images( _environment, _frames, _width, _height, _mode );
-
-    result->offsettingFrames = offsetting_size_count( _environment, result->frameSize, _frames );
-    offsetting_add_variable_reference( _environment, result->offsettingFrames, result, 0 );
+    Variable * result = variable_temporary( _environment, VT_IMAGES, "(images)");
+    result->valueBuffer = malloc(3);
 
     return result;
 
