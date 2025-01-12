@@ -123,7 +123,7 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
         cpu_label( _environment, labelOrdered );
 
         begin_for( _environment, y->name, y0->name, y1->name );
-            draw( _environment, x0->name, y->name, x1->name, y->name, _c, _preserve_color );
+            draw( _environment, x0->name, y->name, x1->name, y->name, c->name, _preserve_color );
         end_for( _environment );
 
     cpu_return( _environment );
