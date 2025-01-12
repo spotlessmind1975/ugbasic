@@ -196,7 +196,7 @@ void draw_string( Environment * _environment, char * _string ) {
 
         // string -> (address, size)
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-        Variable * size = variable_temporary( _environment, VT_BYTE, "(address)" );
+        Variable * size = variable_define( _environment, "drawstring__size", VT_BYTE, 0 );
 
         // xxx, -> (paddress, psize)
         Variable * paddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
@@ -297,6 +297,8 @@ void draw_string( Environment * _environment, char * _string ) {
 
             // Are drawing commands ended? Exit fetch and decode loop.
             cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, label, 1 );
+
+outline0("pippero:");
 
             // Retrieve command letter.
             cpu_move_8bit_indirect2( _environment, address->realName, command->realName );
@@ -648,8 +650,8 @@ void draw_string( Environment * _environment, char * _string ) {
             // Move to the next character of the drawing commands string.
             cpu_label( _environment, done2CommandLabel );
             cpu_store_8bit( _environment, noUpdate->realName, 0 );
-            cpu_inc( _environment, size->realName );
-            cpu_dec_16bit( _environment, address->realName );
+            // cpu_inc( _environment, size->realName );
+            // cpu_dec_16bit( _environment, address->realName );
             cpu_store_16bit( _environment, dx->realName, 0 );
             cpu_store_16bit( _environment, dy->realName, 0 );
             cpu_store_16bit( _environment, ds->realName, 0 );
