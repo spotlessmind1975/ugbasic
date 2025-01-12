@@ -1644,16 +1644,11 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         // printf( "found!\n\n" );
                         // printf(" APPLIED #1\n");
                         // optim( buf[0], RULE "unused temporary", NULL );
-                        optim( buf[2], RULE "unused temporary", NULL );
+                        // optim( buf[2], RULE "unused temporary", NULL );
                         optim( buf[3], RULE "unused temporary", NULL );
                         ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
                     }
-
-                    // 003127r 1  A9 06        	LDA #$06
-                    // 003129r 1  8D rr rr     	STA _drawHangman_Ttmp187
-                    // 00312Cr 1  AD rr rr     	LDA _tries
-                    // 00312Fr 1  CD rr rr     	CMP _drawHangman_Ttmp187
 
                 } 
 
