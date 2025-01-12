@@ -417,6 +417,15 @@ Variable * variable_retrieve_internal( Environment * _environment, char * _name,
 
     } else {
 
+        // Look for parameters (allso if global, since it can be overloaded)
+
+        if ( _environment->procedureName ) {
+
+            char parameterName[MAX_TEMPORARY_STORAGE]; sprintf( parameterName, "%s__%s", _environment->procedureName, _name );
+            var = variable_find( _environment->variables, parameterName );
+
+        }
+
         // If not found, look for variable inside the set of temporary variables
         // for this specific procedure.
 
