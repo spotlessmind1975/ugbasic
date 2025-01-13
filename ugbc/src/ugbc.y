@@ -102,6 +102,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN
+%token INCREMENTAL
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -7450,6 +7451,18 @@ fill_definition_array :
     }
     | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
         variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
+    }
+    | Identifier WITH INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $4, $5 );
+    }
+    | Identifier INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $3, $4 );
+    }
+    | Identifier WITH INC fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $4, $5 );
+    }
+    | Identifier INC fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     ;
 
