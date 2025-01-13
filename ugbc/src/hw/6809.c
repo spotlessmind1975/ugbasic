@@ -5141,12 +5141,12 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         MAKE_LABEL
 
         // Y = 0
+        outline0("LDX #0");
         outline1("LDB %s", _len);
         outline1("beq %sdone", label );
         outline0("STB ,-S");
         outline1("LDU %s", _string);
 
-        outline0("LDX #0");
         outhead1("%sloop", label );
         
         // X=X*10
@@ -5176,8 +5176,8 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("DEC ,S" );
         outline1("BNE %sloop", label );
 
-        outhead1("%sdone", label );
         outline0("LEAS 1,S");
+        outhead1("%sdone", label );
         outline1("STX %s", _value );
 
     no_embedded( cpu_convert_string_into_16bit )
