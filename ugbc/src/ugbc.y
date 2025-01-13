@@ -102,7 +102,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN
-%token INCREMENTAL SHUFFLE ROUNDS
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4214,6 +4214,12 @@ exponential_less:
     }
     | JOY Y OP expr CP {
         $$ = joyy_vars( _environment, $4 )->name;
+    }
+    | JOYDIR OP expr CP {
+        $$ = joydir_semivars( _environment, $3 )->name;
+    }
+    | JOYDIR OP OP_HASH const_expr CP {
+        $$ = joydir( _environment, $4 )->name;
     }
     | JUP OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;

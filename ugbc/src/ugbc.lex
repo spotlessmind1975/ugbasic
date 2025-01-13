@@ -898,6 +898,8 @@ JOYSTICK { RETURN(JOYSTICK,1); }
 Jyt { RETURN(JOYSTICK,1); }
 JOYCOUNT { RETURN(JOYCOUNT,1); }
 Jyc { RETURN(JOYCOUNT,1); }
+JOYDIR { RETURN(JOYDIR,1); }
+Jdy { RETURN(JOYDIR,1); }
 
 %{ /* --------------------------------- K --------------------------------- */ %}
 

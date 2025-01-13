@@ -6106,3 +6106,23 @@ pixel o elementi grafici, in modo casuale, sullo schermo.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword JOYDIR
+
+@english
+Read a single direction from the joystick port. Note that only one direction 
+is read at a time. This means, for example, that if the joystick is moved in the 
+up and right direction, only the up value will be returned. 
+
+@italian
+Leggi il valore di un singolo valore dalla porta joystick. Da notare che viene letta 
+una sola direzione alla volta. Questo significa, ad esempio, che se viene mosso il 
+joystick nella direzione su e destra, verrà restituito solo il valore su.
+
+@syntax = JOYDIR( port )
+
+@example x = JOYDIR(0)
+
+@target all
+</usermanual> */
