@@ -10428,6 +10428,91 @@ void variable_array_fill_incremental( Environment * _environment, char * _name, 
 
 }
 
+void variable_array_shuffle( Environment * _environment, char * _name, int _rounds ) {
+
+    Variable * array = variable_retrieve( _environment, _name );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index, * maxValue;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+            maxValue = variable_temporary( _environment, VT_BYTE, "(maxValue)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+            maxValue = variable_temporary( _environment, VT_WORD, "(maxValue)");
+        }
+        variable_store( _environment, index->name, 0 );
+        variable_store( _environment, maxValue->name, sizeInElements );
+        Variable * rounds = NULL;
+        if ( _rounds < 256 ) {
+            rounds = variable_temporary( _environment, VT_BYTE, "count");
+        } else {
+            rounds = variable_temporary( _environment, VT_WORD, "count");
+        }
+        variable_store( _environment, rounds->name, _rounds );
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        Variable * first = variable_temporary( _environment, VT_ADDRESS, "(first)");
+        Variable * second = variable_temporary( _environment, VT_ADDRESS, "(second)");
+        Variable * firstValue = variable_temporary( _environment, array->arrayType, "(firstValue)");
+        Variable * secondValue = variable_temporary( _environment, array->arrayType, "(secondValue)");
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        cpu_label( _environment, loopLabel );
+            variable_compare_and_branch_const( _environment, rounds->name, 0, label, 1 );
+            variable_decrement( _environment, rounds->name );
+
+            variable_move( _environment, 
+                variable_add( _environment, 
+                    rnd( _environment, maxValue->name )->name, 
+                    startAddress->name )->name, 
+                first->name ) ;
+
+            variable_move( _environment, 
+                variable_add( _environment, 
+                    rnd( _environment, maxValue->name )->name, 
+                    startAddress->name )->name, 
+                second->name ) ;
+
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_peekd( _environment, first->realName, firstValue->realName );
+                    cpu_peekd( _environment, second->realName, secondValue->realName );
+                    cpu_poked( _environment, first->realName, secondValue->realName );
+                    cpu_poked( _environment, second->realName, firstValue->realName );
+                    break;
+                case 16:
+                    cpu_peekw( _environment, first->realName, firstValue->realName );
+                    cpu_peekw( _environment, second->realName, secondValue->realName );
+                    cpu_pokew( _environment, first->realName, secondValue->realName );
+                    cpu_pokew( _environment, second->realName, firstValue->realName );
+                    break;
+                case 8:
+                    cpu_peek( _environment, first->realName, firstValue->realName );
+                    cpu_peek( _environment, second->realName, secondValue->realName );
+                    cpu_poke( _environment, first->realName, secondValue->realName );
+                    cpu_poke( _environment, second->realName, firstValue->realName );
+                    break;
+                default:
+                    CRITICAL_CANNOT_FILL_RANDOM( _name );
+            }
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+}
+
 void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
 
     if ( *_frame_width == 0 ) {

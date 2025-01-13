@@ -5160,6 +5160,7 @@ Variable *              variable_and_const( Environment * _environment, char * _
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
 void                    variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean );
 void                    variable_array_fill_incremental( Environment * _environment, char * _name, int _min, int _count );
+void                    variable_array_shuffle( Environment * _environment, char * _name, int _rounds );
 Variable *              variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable *              variable_bin( Environment * _environment, char * _value, char * _digits );
 Variable *              variable_bit( Environment * _environment, char * _value, char * _position );

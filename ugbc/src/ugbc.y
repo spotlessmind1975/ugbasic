@@ -102,7 +102,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN
-%token INCREMENTAL
+%token INCREMENTAL SHUFFLE ROUNDS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -186,6 +186,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> clamp_optional
 %type <string> optional_next_animation
 %type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
+%type <integer> shuffle_definition_optional_rounds
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7513,6 +7514,24 @@ fill_definitions :
     | fill_definition
     ;
 
+shuffle_definition_optional_rounds : 
+    {
+        $$ = 128;
+    }
+    | ROUNDS const_expr {
+        $$ = $2;
+    };
+
+shuffle_definition_array :
+    Identifier shuffle_definition_optional_rounds {
+        variable_array_shuffle( _environment, $1, $2 );
+    };
+
+
+shuffle_definition :
+      shuffle_definition_array
+    | shuffle_definition_array OP_COMMA shuffle_definition;
+
 indexes :
       expr {
         Variable * expr = variable_retrieve( _environment, $1 );
@@ -11112,6 +11131,7 @@ statement2nc:
   | RESOLUTION resolution_definitions
   | DIM dim_definitions
   | FILL fill_definitions
+  | SHUFFLE shuffle_definition
   | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
