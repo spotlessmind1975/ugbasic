@@ -101,7 +101,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -184,6 +184,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> dojo_functions
 %type <integer> clamp_optional
 %type <string> optional_next_animation
+%type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -7408,9 +7409,47 @@ dim_definitions :
     | dim_definition OP_COMMA dim_definitions
     ;
 
+fill_definition_optional_base :
+    {
+        $$ = 0;
+    }
+    | const_expr {
+        $$ = $1;
+    };
+
+fill_definition_optional_min :
+    {
+        $$ = 0;
+    }
+    | MIN const_expr {
+        $$ = $2;
+    };
+
+fill_definition_optional_max :
+    {
+        $$ = 0;
+    }
+    | MAX const_expr {
+        $$ = $2;
+    };
+
+fill_definition_optional_count :
+    {
+        $$ = 0;
+    }
+    | COUNT const_expr {
+        $$ = $2;
+    };
+
 fill_definition_array :
     Identifier WITH const_expr {
         variable_array_fill( _environment, $1, $3 );
+    }
+    | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
+    }
+    | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+        variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
     }
     ;
 

@@ -3351,6 +3351,7 @@ typedef struct _Environment {
 #define CRITICAL_FILE_SIZE_ON_MISSING_FILE(f) CRITICAL2("E347 - FILE SIZE on missing file", f );
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
 #define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
+#define CRITICAL_CANNOT_FILL_RANDOM(v) CRITICAL2("E350 - cannot use FILL RANDOM on this datatype", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5157,6 +5158,7 @@ void                    variable_add_inplace_mt( Environment * _environment, cha
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
+void                    variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean );
 Variable *              variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable *              variable_bin( Environment * _environment, char * _value, char * _digits );
 Variable *              variable_bit( Environment * _environment, char * _value, char * _position );

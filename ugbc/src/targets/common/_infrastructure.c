@@ -10195,16 +10195,26 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
 
 @english
 
-The ''FILL'' command allows you to fill an array with a specific value.
+The ''FILL'' command allows you to fill an array with a specific ''value''
+(if omitted, it will be 0). You can use the instruction ''RANDOM'' to fill 
+the array with random values. You can specify the maximum value (minus one) 
+to use to generate a random number using the ''MAX'' keyword. You can
+limit the number of random values using the ''COUNT'' keyword.
 
 @italian
 
-Il comando FILL permette di riempire un array con un valore specifico.
+Il comando FILL permette di riempire un array con un valore (''value'') specifico
+(se omesso, sarà 0). È possibile utilizzare l'istruzione ''RANDOM'' per riempire 
+l'array con valori casuali. E' possibile indicare il valore massimo (minus one) da 
+utilizzare per generare un numero casuale usando la parola chiave ''MAX''. E'
+possibile limitare il numero di valori casuali usando la parola chiave ''COUNT''.
 
-@syntax FILL v1 WITH value[,v2 WITH value[,...]]
+@syntax FILL v1 WITH value[,v2 WITH  value[,...]]
+@syntax FILL v1 WITH [value] [RANDOM] [MAX value] [COUNT count][, v2 WITH [value] [RANDOM] [MAX value]  [COUNT count] [,...]]
 
 @example DIM a(42) AS BYTE
 @example FILL a WITH 1
+@example FILL a WITH RANDOM
 
 @target all
 </usermanual> */
@@ -10218,6 +10228,119 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
 
     if ( array->size > 0 ) {
         cpu_fill_direct_size_value( _environment, array->realName, array->size, _value );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+}
+
+void variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        variable_array_fill( _environment, _name, _base );
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        char booleanLabel[MAX_TEMPORARY_STORAGE]; sprintf( booleanLabel, "%sboolean", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+        }
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        Variable * maxValue = variable_temporary( _environment, array->arrayType, "maxValue");
+        Variable * value = variable_temporary( _environment, array->arrayType, "value");
+        Variable * count = NULL;
+        if ( _max_value > 0 ) {
+            variable_store( _environment, maxValue->name, _max_value - _min_value );
+        } else {
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    variable_store( _environment, maxValue->name, 0xffffffff );
+                    break;
+                case 16:
+                    variable_store( _environment, maxValue->name, 0xffff );
+                    break;
+                case 8:
+                    variable_store( _environment, maxValue->name, 0xff );
+                    break;
+                default:
+                    CRITICAL_CANNOT_FILL_RANDOM( _name );
+            }
+        }
+        if ( _count > 0 ) {
+            if ( _count < 256 ) {
+                count = variable_temporary( _environment, VT_BYTE, "count");
+            } else {
+                count = variable_temporary( _environment, VT_WORD, "count");
+            }
+            variable_store( _environment, count->name, _count );
+        }
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        outline0("; fill random");
+        cpu_label( _environment, loopLabel );
+            if ( count > 0 ) {
+                variable_compare_and_branch_const( _environment, count->name, 0, label, 1 );
+                variable_decrement( _environment, count->name );
+            }
+            variable_move( _environment, rnd( _environment, maxValue->name )->name, value->name );
+            if ( _boolean ) {
+                variable_compare_and_branch_const( _environment, value->name, 0, booleanLabel, 1 );
+                switch( VT_BITWIDTH( array->arrayType ) ) {
+                    case 32:
+                        variable_store( _environment, value->name, 0xffffffff );
+                        break;
+                    case 16:
+                        variable_store( _environment, value->name, 0xffff );
+                        break;
+                    case 8:
+                        variable_store( _environment, value->name, 0xff );
+                        break;
+                    default:
+                        CRITICAL_CANNOT_FILL_RANDOM( _name );
+                }
+                cpu_label( _environment, booleanLabel );
+            }
+            if ( _min_value > 0 ) {
+                variable_add_inplace( _environment, value->name, _min_value );
+            }
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_poked( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 16:
+                    cpu_pokew( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 8:
+                    cpu_poke( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                default:
+                    CRITICAL_CANNOT_FILL_RANDOM( _name );
+            }
+            outline0("; increment index");
+            variable_increment( _environment, index->name );
+            variable_compare_and_branch_const( _environment, index->name, sizeInElements, label, 1 );
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
     } else {
         CRITICAL_NOT_SUPPORTED( array->name );
     }
