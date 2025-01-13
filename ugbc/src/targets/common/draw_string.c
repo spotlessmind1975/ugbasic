@@ -467,7 +467,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_move_16bit( _environment, parameter->realName, dy->realName );
             cpu_jump( _environment, updown2CommandLabel );
             cpu_label( _environment, updownCommandLabel );
-            cpu_store_8bit( _environment, dy->realName, 1 );
+            cpu_store_16bit( _environment, dy->realName, 1 );
             cpu_jump( _environment, updown2CommandLabel );
             cpu_label( _environment, updown2CommandLabel );
 
@@ -508,7 +508,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_move_16bit( _environment, parameter->realName, dx->realName );
             cpu_jump( _environment, leftright2CommandLabel );
             cpu_label( _environment, leftrightCommandLabel );
-            cpu_store_8bit( _environment, dx->realName, 1 );
+            cpu_store_16bit( _environment, dx->realName, 1 );
             cpu_jump( _environment, leftright2CommandLabel );
             cpu_label( _environment, leftright2CommandLabel );
 
