@@ -5199,6 +5199,9 @@ as_datatype_suffix :
       OP_AT {
         $$ = VT_SBYTE;
     }
+    | OP_HASH {
+        $$ = VT_BYTE;
+    }
     | OP_PERC {
         $$ = VT_SWORD;
     }
