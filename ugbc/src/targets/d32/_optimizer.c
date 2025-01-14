@@ -1648,8 +1648,8 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
             currentlySymbolsQ = s;            
         } else if ( po_buf_match( bufLine, " ; VSP" ) ) {
             
-            // printf( "SYMBOLS COMPLETE: " );
-            // UnusedSymbol * s = currentlyUnusedSymbols;
+            // printf( "SYMBOLS COMPLETE (Q): " );
+            // UnusedSymbol * s = currentlyUnusedSymbolsQ;
             // while( s ) {
             //     printf( "%s, ", s->realName );
             //     s = s->next;
@@ -1684,6 +1684,8 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match( bufLine, " AND* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " CMP* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " EOR* *", v2, v1);
+                if ( ! result ) result = po_buf_match( bufLine, " LD* #*", v2, v1);
+                if ( ! result ) result = po_buf_match( bufLine, " LD* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " LD* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " OR* *", v2, v1);
                 if ( ! result ) result = po_buf_match( bufLine, " SBC* *", v2, v1);
@@ -1746,8 +1748,8 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 
             }
 
-            // printf( "REALLY UNUSED SYMBOLS: " );
-            // s = currentlyUnusedSymbols;
+            // printf( "REALLY UNUSED SYMBOLS (Q): " );
+            // s = currentlyUnusedSymbolsQ;
             // while( s ) {
             //     printf( "%s, ", s->realName );
             //     s = s->next;

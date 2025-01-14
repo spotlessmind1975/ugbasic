@@ -80,7 +80,7 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
 @keyword BELL
 @target c64
 </usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels ) {
+void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync ) {
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
@@ -95,7 +95,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         } else {
             vic1_set_duration_vars( _environment, channels->realName, NULL );
         }
-        if ( ! _environment->audioConfig.async ) {
+        if ( ! _environment->audioConfig.async || _sync ) {
             vic1_wait_duration_vars( _environment, channels->realName );
         }              
     } else {
@@ -109,7 +109,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         } else {
             vic1_set_duration_vars( _environment, NULL, NULL );
         }
-        if ( ! _environment->audioConfig.async ) {
+        if ( ! _environment->audioConfig.async || _sync ) {
             vic1_wait_duration_vars( _environment, NULL );
         }          
     }

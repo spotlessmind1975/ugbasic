@@ -3379,15 +3379,17 @@ typedef struct _Environment {
 #define CRITICAL_PMODE_NEEDS_CONSTANTS() CRITICAL("E346 - PMODE needs constant values" );
 #define CRITICAL_FILE_SIZE_ON_MISSING_FILE(f) CRITICAL2("E347 - FILE SIZE on missing file", f );
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
-#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enough frames for animation", n );
-#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E350 - music variables referring to sid files cannot be copied", f );
-#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be compared", f );
-#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E352 - not enough space to load sid file, consider relocation" );
-#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E353 - cannot load MUSIC, unknown format", f );
-#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E354 - cannot load midi file", f );
-#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E355 - MMOB can be called only with SPRITE/MSPRITE", v );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E356 - invalid width for image, must be of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E357 - invalid height for image, must be of 8 pixels", h );
+#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
+#define CRITICAL_CANNOT_FILL_RANDOM(v) CRITICAL2("E350 - cannot use FILL RANDOM on this datatype", v );
+#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E351 - not enough frames for animation", n );
+#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E352 - music variables referring to sid files cannot be copied", f );
+#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E353 - music variables referring to sid files cannot be compared", f );
+#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E354 - not enough space to load sid file, consider relocation" );
+#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E355 - cannot load MUSIC, unknown format", f );
+#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E356 - cannot load midi file", f );
+#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E357 - MMOB can be called only with SPRITE/MSPRITE", v );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E358 - invalid width for image, must be of 8 pixels", w );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E359 - invalid height for image, must be of 8 pixels", h );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4589,7 +4591,7 @@ void                    begin_storage( Environment * _environment, char * _name,
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
 void                    bell( Environment * _environment, int _note, int _duration, int _channels );
-void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
+void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
 void                    bitmap_clear( Environment * _environment );
@@ -4855,6 +4857,8 @@ int                     is_do_loop( Environment * _environment );
 //----------------------------------------------------------------------------
 
 Variable *              joy( Environment * _environment, int _port );
+Variable *              joydir( Environment * _environment, int _port );
+Variable *              joydir_semivars( Environment * _environment, char * _port );
 Variable *              joy_vars( Environment * _environment, char * _port );
 Variable *              joy_direction( Environment * _environment, int _port, int _direction );
 Variable *              joy_direction_semivars( Environment * _environment, char * _port, int _direction );
@@ -5217,6 +5221,9 @@ void                    variable_add_inplace_mt( Environment * _environment, cha
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
+void                    variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean );
+void                    variable_array_fill_incremental( Environment * _environment, char * _name, int _min, int _count );
+void                    variable_array_shuffle( Environment * _environment, char * _name, int _rounds );
 Variable *              variable_array_type( Environment * _environment, char *_name, VariableType _type );
 Variable *              variable_bin( Environment * _environment, char * _value, char * _digits );
 Variable *              variable_bit( Environment * _environment, char * _value, char * _position );

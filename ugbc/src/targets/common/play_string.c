@@ -522,7 +522,7 @@ void play_string( Environment * _environment, char * _string ) {
 
             // For example, A represents A natural; A# is A sharp; and A- is A flat.
 
-            bell_vars( _environment, note16->name, duration16->name, NULL );
+            bell_vars( _environment, note16->name, duration16->name, NULL, 1 );
 
             cpu_label( _environment, playCommandLabel );
 

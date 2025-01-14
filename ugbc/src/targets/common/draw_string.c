@@ -195,15 +195,15 @@ void draw_string( Environment * _environment, char * _string ) {
         // ----------------------------[ SUBROUTINE: READ PARAMETER ]
 
         // string -> (address, size)
-        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-        Variable * size = variable_temporary( _environment, VT_BYTE, "(address)" );
+        Variable * address = variable_define( _environment, "drawstring__address",  VT_ADDRESS, 0 );
+        Variable * size = variable_define( _environment, "drawstring__size", VT_BYTE, 0 );
 
         // xxx, -> (paddress, psize)
-        Variable * paddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-        Variable * psize = variable_temporary( _environment, VT_BYTE, "(size)" );
-        Variable * digit = variable_temporary( _environment, VT_BYTE, "(digit)" );
-        Variable * parameter = variable_temporary( _environment, VT_POSITION, "(parameter)" );
-        Variable * eos = variable_temporary( _environment, VT_BYTE, "(eos)" );
+        Variable * paddress = variable_define( _environment, "drawstring__paddress", VT_ADDRESS, 0 );
+        Variable * psize = variable_define( _environment, "drawstring__psize", VT_BYTE, 0 );
+        Variable * digit = variable_define( _environment, "drawstring__digit", VT_BYTE, 0 );
+        Variable * parameter = variable_define( _environment, "drawstring__parameter", VT_POSITION, 0 );
+        Variable * eos = variable_define( _environment, "drawstring__eos", VT_BYTE, 0 );
 
         cpu_label( _environment, readParameterLabel );
 
@@ -224,12 +224,12 @@ void draw_string( Environment * _environment, char * _string ) {
 
             // Exit from this loop if the letter is not a digit.
             cpu_move_8bit_indirect2( _environment, address->realName, digit->realName );
-            cpu_dec( _environment, size->realName );
-            cpu_inc_16bit( _environment, address->realName );
             cpu_greater_than_8bit_const( _environment, digit->realName, '9', eos->realName, 0, 0 );
             cpu_compare_and_branch_8bit_const( _environment, eos->realName, 0xff, readParameter3Label, 1 );
             cpu_less_than_8bit_const( _environment, digit->realName, '0', eos->realName, 0, 0 );
             cpu_compare_and_branch_8bit_const( _environment, eos->realName, 0xff, readParameter3Label, 1 );
+            cpu_dec( _environment, size->realName );
+            cpu_inc_16bit( _environment, address->realName );
 
             // Increment the length of the parameter, and move along the
             // drawing commands string
@@ -254,18 +254,18 @@ void draw_string( Environment * _environment, char * _string ) {
         Variable * string = variable_define( _environment, "drawstring__string", VT_DSTRING, 0 );
 
         // Letter with command
-        Variable * command = variable_temporary( _environment, VT_BYTE, "(command)" );
+        Variable * command = variable_define( _environment, "drawstring__command", VT_BYTE, 0 );
 
         // Next coordinates to move to.
-        Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
-        Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
+        Variable * x = variable_define( _environment, "drawstring__x", VT_POSITION, 0 );
+        Variable * y = variable_define( _environment, "drawstring__y", VT_POSITION, 0 );
 
         // Next delta coordinates.
-        Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx)" );
-        Variable * dy = variable_temporary( _environment, VT_POSITION, "(dy)" );
+        Variable * dx = variable_define( _environment, "drawstring__dx", VT_POSITION, 0 );
+        Variable * dy = variable_define( _environment, "drawstring__dy", VT_POSITION, 0 );
 
         // Next delta coordinates scaled
-        Variable * ds = variable_temporary( _environment, VT_POSITION, "(ds)" );
+        Variable * ds = variable_define( _environment, "drawstring__ds", VT_POSITION, 0 );
 
         // Scale.
         Variable * scale = variable_retrieve( _environment, "DRAWSCALE" );
@@ -274,13 +274,13 @@ void draw_string( Environment * _environment, char * _string ) {
         Variable * angle = variable_retrieve( _environment, "DRAWANGLE" );
 
         // Is blank required?
-        Variable * blank = variable_temporary( _environment, VT_BYTE, "(blank)" );
+        Variable * blank = variable_define( _environment, "drawstring__blank", VT_BYTE, 0 );
 
         // Position has not to be updated?
-        Variable * noUpdate = variable_temporary( _environment, VT_BYTE, "(noUpdate)" );
+        Variable * noUpdate = variable_define( _environment, "drawstring__noupdate", VT_BYTE, 0 );
 
         // Color to be used
-        Variable * c = variable_temporary( _environment, VT_COLOR, "(color)" );
+        Variable * c = variable_define( _environment, "drawstring__c", VT_COLOR, 0 );
 
         // Retrieve the effective address of the string with the drawing commands.
 
@@ -467,7 +467,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_move_16bit( _environment, parameter->realName, dy->realName );
             cpu_jump( _environment, updown2CommandLabel );
             cpu_label( _environment, updownCommandLabel );
-            cpu_store_8bit( _environment, dy->realName, 1 );
+            cpu_store_16bit( _environment, dy->realName, 1 );
             cpu_jump( _environment, updown2CommandLabel );
             cpu_label( _environment, updown2CommandLabel );
 
@@ -508,7 +508,7 @@ void draw_string( Environment * _environment, char * _string ) {
             cpu_move_16bit( _environment, parameter->realName, dx->realName );
             cpu_jump( _environment, leftright2CommandLabel );
             cpu_label( _environment, leftrightCommandLabel );
-            cpu_store_8bit( _environment, dx->realName, 1 );
+            cpu_store_16bit( _environment, dx->realName, 1 );
             cpu_jump( _environment, leftright2CommandLabel );
             cpu_label( _environment, leftright2CommandLabel );
 
@@ -648,8 +648,8 @@ void draw_string( Environment * _environment, char * _string ) {
             // Move to the next character of the drawing commands string.
             cpu_label( _environment, done2CommandLabel );
             cpu_store_8bit( _environment, noUpdate->realName, 0 );
-            cpu_inc( _environment, size->realName );
-            cpu_dec_16bit( _environment, address->realName );
+            // cpu_inc( _environment, size->realName );
+            // cpu_dec_16bit( _environment, address->realName );
             cpu_store_16bit( _environment, dx->realName, 0 );
             cpu_store_16bit( _environment, dy->realName, 0 );
             cpu_store_16bit( _environment, ds->realName, 0 );

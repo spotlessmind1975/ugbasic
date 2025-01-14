@@ -101,9 +101,11 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS SID RELOC FADE MMOB GB BASIC GRAPHICS PRESS 
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN 
+%token RELOC FADE MMOB GB BASIC GRAPHICS 
 %token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -186,6 +188,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> dojo_functions
 %type <integer> clamp_optional
 %type <string> optional_next_animation
+%type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
+%type <integer> shuffle_definition_optional_rounds
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -1368,6 +1372,9 @@ casting :
       }
     | OP SIGNED BYTE OP exponential_less { 
         $$ = variable_cast( _environment, $5, VT_SBYTE )->name;
+      }
+    | OP SBYTE OP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_SBYTE )->name;
       }
     | OP WORD CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_WORD )->name;
@@ -2968,8 +2975,14 @@ exponential_less:
     | OP SIGNED BYTE CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
       }
+    | OP SBYTE CP direct_integer {
+        $$ = parser_casted_numeric( _environment, VT_SBYTE, $4 )->name;
+      }
     | OP SIGNED BYTE CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SBYTE )->name;
+      }
+    | OP SBYTE CP OP expr CP {
+        $$ = variable_cast( _environment, $5, VT_SBYTE )->name;
       }
     | OP WORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
@@ -4003,6 +4016,9 @@ exponential_less:
     | TICKS PER SECOND {
         $$ = get_ticks_per_second( _environment )->name;
     }
+    | TPS {
+        $$ = get_ticks_per_second( _environment )->name;
+    }
     | SPRITE X MIN {
         $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
         variable_store( _environment, $$, SPRITE_X_MIN );
@@ -4204,6 +4220,12 @@ exponential_less:
     }
     | JOY Y OP expr CP {
         $$ = joyy_vars( _environment, $4 )->name;
+    }
+    | JOYDIR OP expr CP {
+        $$ = joydir_semivars( _environment, $3 )->name;
+    }
+    | JOYDIR OP OP_HASH const_expr CP {
+        $$ = joydir( _environment, $4 )->name;
     }
     | JUP OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;
@@ -5209,6 +5231,9 @@ as_datatype :
 as_datatype_suffix :
       OP_AT {
         $$ = VT_SBYTE;
+    }
+    | OP_HASH {
+        $$ = VT_BYTE;
     }
     | OP_PERC {
         $$ = VT_SWORD;
@@ -6629,6 +6654,9 @@ datatype :
     | SIGNED BYTE {
         $$ = VT_SBYTE;
     }
+    | SBYTE {
+        $$ = VT_SBYTE;
+    }
     | WORD {
         $$ = VT_WORD;
     }
@@ -7418,9 +7446,59 @@ dim_definitions :
     | dim_definition OP_COMMA dim_definitions
     ;
 
+fill_definition_optional_base :
+    {
+        $$ = 0;
+    }
+    | const_expr {
+        $$ = $1;
+    };
+
+fill_definition_optional_min :
+    {
+        $$ = 0;
+    }
+    | MIN const_expr {
+        $$ = $2;
+    };
+
+fill_definition_optional_max :
+    {
+        $$ = 0;
+    }
+    | MAX const_expr {
+        $$ = $2;
+    };
+
+fill_definition_optional_count :
+    {
+        $$ = 0;
+    }
+    | COUNT const_expr {
+        $$ = $2;
+    };
+
 fill_definition_array :
     Identifier WITH const_expr {
         variable_array_fill( _environment, $1, $3 );
+    }
+    | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
+    }
+    | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+        variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
+    }
+    | Identifier WITH INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $4, $5 );
+    }
+    | Identifier INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $3, $4 );
+    }
+    | Identifier WITH INC fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $4, $5 );
+    }
+    | Identifier INC fill_definition_optional_min fill_definition_optional_count {
+        variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     ;
 
@@ -7467,6 +7545,24 @@ fill_definitions :
     }
     | fill_definition
     ;
+
+shuffle_definition_optional_rounds : 
+    {
+        $$ = 128;
+    }
+    | ROUNDS const_expr {
+        $$ = $2;
+    };
+
+shuffle_definition_array :
+    Identifier shuffle_definition_optional_rounds {
+        variable_array_shuffle( _environment, $1, $2 );
+    };
+
+
+shuffle_definition :
+      shuffle_definition_array
+    | shuffle_definition_array OP_COMMA shuffle_definition;
 
 indexes :
       expr {
@@ -8139,16 +8235,16 @@ bell_definition_simple :
 
 bell_definition_expression : 
     expr {
-        bell_vars( _environment, $1, NULL, NULL );
+        bell_vars( _environment, $1, NULL, NULL, 0 );
     }
     | expr ON expr {
-        bell_vars( _environment, $1, NULL, $3 );
+        bell_vars( _environment, $1, NULL, $3, 0 );
     }
     | expr OP_COMMA expr {
-        bell_vars( _environment, $1, $3, NULL );
+        bell_vars( _environment, $1, $3, NULL, 0 );
     }
     | expr OP_COMMA expr ON expr {
-        bell_vars( _environment, $1, $3, $5 );
+        bell_vars( _environment, $1, $3, $5, 0 );
     }
     ;
 
@@ -11252,6 +11348,7 @@ statement2nc:
   | RESOLUTION resolution_definitions
   | DIM dim_definitions
   | FILL fill_definitions
+  | SHUFFLE shuffle_definition
   | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
