@@ -4550,7 +4550,7 @@ void                    begin_storage( Environment * _environment, char * _name,
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
 void                    bell( Environment * _environment, int _note, int _duration, int _channels );
-void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
+void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
 void                    bitmap_clear( Environment * _environment );

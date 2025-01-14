@@ -8209,16 +8209,16 @@ bell_definition_simple :
 
 bell_definition_expression : 
     expr {
-        bell_vars( _environment, $1, NULL, NULL );
+        bell_vars( _environment, $1, NULL, NULL, 0 );
     }
     | expr ON expr {
-        bell_vars( _environment, $1, NULL, $3 );
+        bell_vars( _environment, $1, NULL, $3, 0 );
     }
     | expr OP_COMMA expr {
-        bell_vars( _environment, $1, $3, NULL );
+        bell_vars( _environment, $1, $3, NULL, 0 );
     }
     | expr OP_COMMA expr ON expr {
-        bell_vars( _environment, $1, $3, $5 );
+        bell_vars( _environment, $1, $3, $5, 0 );
     }
     ;
 
