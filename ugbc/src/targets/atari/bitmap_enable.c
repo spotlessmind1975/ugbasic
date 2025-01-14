@@ -53,11 +53,6 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword BITMAP ENABLE
-@target atari
-@target atarixl
-</usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
     gtia_bitmap_enable( _environment, _width, _height, _colors );

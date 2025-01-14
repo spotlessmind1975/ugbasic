@@ -9886,12 +9886,18 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 
     while ( screenMode ) {
         if ( screenMode->bitmap == _bitmap ) {
-           screenMode->score = 1000;
-            screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
-            screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
-            screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
-            screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
-            screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
+            screenMode->score = 1000;
+            if ( _width < 0 ) {
+                screenMode->score -= abs( screenMode->width + _width );
+            } else if ( _height < 0 ) {
+                screenMode->score -= abs( screenMode->width + _height );
+            } else {
+                screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
+                screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
+                screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
+                screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
+                screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
+            }
         } else {
             screenMode->score = -1000;
         }

@@ -5005,8 +5005,14 @@ optional_integer :
     };
 
 bitmap_enable_resolution : 
-      {
+    {
         bitmap_enable( _environment, 0, 0, 0 );
+    }
+    | WIDTH const_expr {
+        bitmap_enable( _environment, -$2, 0, $2 );
+    }
+    | HEIGHT const_expr {
+        bitmap_enable( _environment, 0, -$2, $2 );
     }
     | OP optional_integer  CP {
         bitmap_enable( _environment, 0, 0, $2 );

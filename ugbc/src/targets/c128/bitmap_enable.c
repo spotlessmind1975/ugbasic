@@ -119,10 +119,13 @@ che non è importante impostarlo.
 @syntax BITMAP ENABLE (colors)
 @syntax BITMAP ENABLE (width, height)
 @syntax BITMAP ENABLE (width, height, colors)
+@syntax BITMAP ENABLE WIDTH width
+@syntax BITMAP ENABLE HEIGHT width
 
 @example BITMAP ENABLE
 @example BITMAP ENABLE (320,200,16)
 @example BITMAP ENABLE (160,200,2)
+@example BITMAP ENABLE WIDTH 320
 
 @usedInExample screens_resolution_01.bas
 
