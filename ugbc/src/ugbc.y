@@ -103,9 +103,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
 %token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN 
 %token RELOC FADE MMOB GB BASIC GRAPHICS 
-%token POKEY DAC1 AY8910 TED VIC NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
+%token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
-%token INCREMENTAL SHUFFLE ROUNDS JOYDIR
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10526,6 +10526,12 @@ memclr_definition :
         memclr( _environment, $1, $3, $5 );
     };
 
+scale_definitions :
+    const_expr OP_COMMA const_expr {
+        ((struct _Environment *)_environment)->scaleX = $1;
+        ((struct _Environment *)_environment)->scaleY = $3;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11346,6 +11352,7 @@ statement2nc:
   | CONFIGURE configure_definitions
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
+  | SCALE scale_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | SHUFFLE shuffle_definition

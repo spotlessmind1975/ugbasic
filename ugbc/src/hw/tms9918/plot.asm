@@ -72,6 +72,38 @@ PLOTNMI2:
     CP 1
     JP Z, PLOTDONE
 
+@IF scaleX > 0
+    PUSH AF
+    LD A, E
+    SLA A
+    LD E, A
+    POP AF
+@ENDIF
+
+@IF scaleX > 1
+    PUSH AF
+    LD A, E
+    SLA A
+    LD E, A
+    POP AF
+@ENDIF
+
+@IF scaleY > 0
+    PUSH AF
+    LD A, D
+    SLA A
+    LD D, A
+    POP AF
+@ENDIF
+
+@IF scaleY > 1
+    PUSH AF
+    LD A, D
+    SLA A
+    LD D, A
+    POP AF
+@ENDIF
+
 @IF optionClip
 
     LD A, (CLIPY2)

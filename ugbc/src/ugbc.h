@@ -2964,6 +2964,9 @@ typedef struct _Environment {
     int verticalOverlapRequired;
     int horizontalOverlapRequired;
 
+    int scaleX;
+    int scaleY;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3381,15 +3384,14 @@ typedef struct _Environment {
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
 #define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
 #define CRITICAL_CANNOT_FILL_RANDOM(v) CRITICAL2("E350 - cannot use FILL RANDOM on this datatype", v );
-#define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E351 - not enough frames for animation", n );
-#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E352 - music variables referring to sid files cannot be copied", f );
-#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E353 - music variables referring to sid files cannot be compared", f );
-#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E354 - not enough space to load sid file, consider relocation" );
-#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E355 - cannot load MUSIC, unknown format", f );
-#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E356 - cannot load midi file", f );
-#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E357 - MMOB can be called only with SPRITE/MSPRITE", v );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E358 - invalid width for image, must be of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E359 - invalid height for image, must be of 8 pixels", h );
+#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be copied", f );
+#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E352 - music variables referring to sid files cannot be compared", f );
+#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E353 - not enough space to load sid file, consider relocation" );
+#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E354 - cannot load MUSIC, unknown format", f );
+#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E355 - cannot load midi file", f );
+#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E356 - MMOB can be called only with SPRITE/MSPRITE", v );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E357 - invalid width for image, must be of 8 pixels", w );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E358 - invalid height for image, must be of 8 pixels", h );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

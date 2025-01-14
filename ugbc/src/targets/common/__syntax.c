@@ -6216,3 +6216,32 @@ joystick nella direzione su e destra, verrà restituito solo il valore su.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SCALE
+
+@english
+The ''SCALE'' keyword allows you to scale the horizontal and vertical coordinates 
+before they are used for drawing. For speed reasons, scaling is done by applying 
+a multiplication factor as a power of two, so x2, x4, and so on. Furthermore, scaling 
+is done when drawing the point on the screen, and not when calculating the actual 
+coordinates. This means that the images will be subject to a "scanline" effect, 
+since the number of points drawn will remain the same. To apply a scale that respects 
+the number of points to be drawn, it is advisable to use the ''RESOLUTION'' command.
+
+@italian
+La parola chiave ''SCALE'' permette di apportare una scalatura alle coordinate 
+orizzontali e verticali prima che le stesse vengano usate per disegnare. Per ragioni 
+di velocità, la scalatura avviene applicando un fattore moltiplicativo come potenza 
+di due, quindi x2, x4 e così via. Inoltre, la scalatura avviene al momento di disegnare 
+il punto sullo schermo e non, quindi, al momento di calcolare le coordinate effettive. 
+Questo comporta che le immagini saranno oggetto di un effetto di "scanline", dato che 
+il numero di punti disegnati rimarrà lo stesso. Per applicare una scalatura rispettosa 
+del numero di punti da disegnare, è opportuno usare il comando ''RESOLUTION''.
+
+@syntax = JOYDIR( port )
+
+@example x = JOYDIR(0)
+
+@target all
+</usermanual> */

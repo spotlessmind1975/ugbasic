@@ -593,6 +593,10 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "scaleX" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->scaleX;
+        } else if ( strcmp( $1, "scaleY" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->scaleY;
         } else {
             $$ = 0;
         }
