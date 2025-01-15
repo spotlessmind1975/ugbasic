@@ -7599,22 +7599,22 @@ indexes :
     ;
 
 parameters : 
-    Identifier OP_DOLLAR {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype {
+    Identifier as_datatype_mandatory {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier OP_DOLLAR OP_COMMA parameters {
+    | Identifier as_datatype_suffix_optional {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier as_datatype OP_COMMA parameters {
+    | Identifier as_datatype_mandatory OP_COMMA parameters {
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier as_datatype_suffix_optional OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
