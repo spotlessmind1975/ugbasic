@@ -86,6 +86,10 @@ To change resolution and colors, you can use the ''([width],[height],[colors])''
 ''([width],[height])'' or the ''([colors])'' syntax after ''BITMAP ENABLE'' command. 
 So, if you omit a parameters, it means thatit is not important to set.
 
+Finally, you can use the ''WIDTH'' or ''HEIGHT'' to select just one dimension only.
+
+The command can be shortened as ''BITMAP'' alone.
+
 @italian
 
 Il comando ''BITMAP ENABLE'' è uno strumento fondamentale, poiché consente 
@@ -115,17 +119,21 @@ la sintassi ''(width, height, colors)'', ''(width, height)'' o ''(colors) ''
 dopo il comando ''BITMAP ENABLE''. Quindi, se ometti un parametro, significa 
 che non è importante impostarlo.
 
-@syntax BITMAP ENABLE
-@syntax BITMAP ENABLE (colors)
-@syntax BITMAP ENABLE (width, height)
-@syntax BITMAP ENABLE (width, height, colors)
-@syntax BITMAP ENABLE WIDTH width
-@syntax BITMAP ENABLE HEIGHT width
+Infine, puoi usare ''WIDTH'' o ''HEIGHT'' per selezionare una sola dimensione.
 
-@example BITMAP ENABLE
-@example BITMAP ENABLE (320,200,16)
-@example BITMAP ENABLE (160,200,2)
-@example BITMAP ENABLE WIDTH 320
+Il comando può essere abbreviato come ''BITMAP'' da solo.
+
+@syntax BITMAP [ENABLE]
+@syntax BITMAP [ENABLE] (colors)
+@syntax BITMAP [ENABLE] (width, height)
+@syntax BITMAP [ENABLE] (width, height, colors)
+@syntax BITMAP [ENABLE] WIDTH width
+@syntax BITMAP [ENABLE] HEIGHT width
+
+@example BITMAP [ENABLE]
+@example BITMAP [ENABLE] (320,200,16)
+@example BITMAP [ENABLE] (160,200,2)
+@example BITMAP [ENABLE] WIDTH 320
 
 @usedInExample screens_resolution_01.bas
 

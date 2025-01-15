@@ -5028,6 +5028,9 @@ bitmap_definition_simple:
     AT direct_integer {
       bitmap_at( _environment, $2 );
   } 
+  | bitmap_enable_resolution {
+
+  }
   | ENABLE bitmap_enable_resolution {
 
   }
