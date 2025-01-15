@@ -50,23 +50,35 @@ PLOTCPE  EQU $51
 PLOT
 
 @IF scaleX > 0
-    ASL <PLOTX
-    ROL <PLOTX+1
+    ASL <PLOTX+1
+    ROL <PLOTX
 @ENDIF
 
 @IF scaleX > 1
-    ASL <PLOTX
-    ROL <PLOTX+1
+    ASL <PLOTX+1
+    ROL <PLOTX
+@ENDIF
+
+@IF offsetX > 0
+@EMIT offsetX AS offsetX
+    LDD <PLOTX
+    ADD #offsetX
+    STD <PLOTX
 @ENDIF
 
 @IF scaleY > 0
     ASL <PLOTY
-    ROL <PLOTY+1
 @ENDIF
 
 @IF scaleY > 1
     ASL <PLOTY
-    ROL <PLOTY+1
+@ENDIF
+
+@IF offsetY > 0
+@EMIT offsetY AS offsetY
+    LDA <PLOTY
+    ADC #offsetY
+    STA <PLOTY
 @ENDIF
 
 @IF optionClip

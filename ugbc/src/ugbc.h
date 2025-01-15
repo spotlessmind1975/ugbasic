@@ -2967,6 +2967,9 @@ typedef struct _Environment {
     int scaleX;
     int scaleY;
 
+    int offsetX;
+    int offsetY;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

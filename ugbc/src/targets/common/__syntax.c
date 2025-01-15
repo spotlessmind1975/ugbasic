@@ -6239,9 +6239,33 @@ Questo comporta che le immagini saranno oggetto di un effetto di "scanline", dat
 il numero di punti disegnati rimarrà lo stesso. Per applicare una scalatura rispettosa 
 del numero di punti da disegnare, è opportuno usare il comando ''RESOLUTION''.
 
-@syntax = JOYDIR( port )
+@syntax SCALE w, h
 
-@example x = JOYDIR(0)
+@example SCALE 1, 0
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword OFFSET
+
+@english
+The ''OFFSET'' keyword allows you to apply an offset on the horizontal and vertical
+ coordinates, before they are used for drawing. For speed reasons, the offset is 
+ performed when the point is drawn on the screen and not when the actual coordinates 
+ are calculated. To apply an offset that respects the coordinate system, it is 
+ recommended to use the ''ORIGIN'' command.
+
+@italian
+La parola chiave ''OFFSET'' consente di applicare uno scostamento sulle coordinate orizzontali 
+e verticali, prima che vengano utilizzate per il disegno. Per motivi di velocità, 
+l'offset viene eseguito quando si disegna il punto sullo schermo e non quando si calcolano le 
+coordinate effettive. Per applicare uno scostamento che rispetti il sistema di cordinate, 
+è consigliabile utilizzare il comando ''ORIGIN''.
+
+@syntax OFFSET dx, dy
+
+@example OFFSET 10, 10
 
 @target all
 </usermanual> */

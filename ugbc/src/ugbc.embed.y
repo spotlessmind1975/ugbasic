@@ -597,6 +597,10 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->scaleX;
         } else if ( strcmp( $1, "scaleY" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->scaleY;
+        } else if ( strcmp( $1, "offsetX" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->offsetX;
+        } else if ( strcmp( $1, "offsetY" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->offsetY;
         } else {
             $$ = 0;
         }
@@ -725,16 +729,22 @@ embed2:
   | OP_AT EMIT Identifier AS Identifier {
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
-        }
-        if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
+        } else if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart2 );
-        }
-        if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
+        } else if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->multiplexingSpriteConfig.async ) {
                 vars_emit_constant_integer( _environment, $5, 0 );
             } else {
                 vars_emit_constant_integer( _environment, $5, 0xff );
             }
+        } else if ( strcmp( $3, "scaleX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleX );
+        } else if ( strcmp( $3, "scaleY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleY );
+        } else if ( strcmp( $3, "offsetX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetX );
+        } else if ( strcmp( $3, "offsetY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetY );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

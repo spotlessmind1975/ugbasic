@@ -10538,6 +10538,12 @@ scale_definitions :
         ((struct _Environment *)_environment)->scaleY = $3;
     };
 
+offset_definitions :
+    const_expr OP_COMMA const_expr {
+        ((struct _Environment *)_environment)->offsetX = $1;
+        ((struct _Environment *)_environment)->offsetY = $3;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11359,6 +11365,7 @@ statement2nc:
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
   | SCALE scale_definitions
+  | OFFSET offset_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | SHUFFLE shuffle_definition
