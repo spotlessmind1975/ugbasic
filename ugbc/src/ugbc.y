@@ -10573,6 +10573,121 @@ offset_definitions :
         ((struct _Environment *)_environment)->offsetY = $3;
     };
 
+const_definition :
+  | STRING Identifier OP_ASSIGN const_expr_string_const {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            Constant * c1 = constant_find( ((Environment *)_environment)->constants, $4 );
+
+            Constant * c3 = malloc( sizeof( Constant ) );
+            memset( c3, 0, sizeof( Constant ) );
+            c3->name = strdup( $2 );
+            c3->realName = strdup( $2 );
+
+            c3->valueString = malloc( sizeof( StaticString ) );
+            memset( c3->valueString, 0, sizeof( StaticString ) );
+
+            c3->valueString->id = UNIQUE_ID;
+            c3->valueString->value = malloc( c1->valueString->size );
+            memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+            c3->valueString->size = c1->valueString->size;
+            c3->valueString->next = ((Environment *)_environment)->strings;
+            ((Environment *)_environment)->strings = c3->valueString;
+
+            c3->type = CT_STRING;
+            Constant * constLast = ((Environment *)_environment)->constants;
+            if ( constLast ) {
+                while( constLast->next ) {
+                    constLast = constLast->next;
+                }
+                constLast->next = c3;
+            } else {
+                ((Environment *)_environment)->constants = c3;
+            }
+
+            // const_emit( _environment, c1->name );
+        }
+  }
+  | Identifier OP_ASSIGN const_expr_string {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            const_define_string( _environment, $1, $3 );
+        }
+  }
+  | Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            const_define_numeric( _environment, $1, $3 );
+        }
+  }
+  | POSITIVE Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $4 < 0 ) {
+                CRITICAL_NEGATIVE_CONSTANT( $2, $4 );
+            }
+            const_define_numeric( _environment, $2, $4 );
+        }
+  }
+  | Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 < $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 > $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 <= $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 > $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 < $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 >= $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 <= $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 >= $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  };
+
+const_definitions :
+    const_definition
+    | const_definition OP_COMMA const_definitions;
+
+positive_const_definition :
+  Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $3 < 0 ) {
+                CRITICAL_NEGATIVE_CONSTANT( $1, $3 );
+            }
+            const_define_numeric( _environment, $1, $3 );
+        }
+  };
+
+positive_const_definitions :
+    positive_const_definition
+    | positive_const_definition OP_COMMA positive_const_definitions;
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -11398,109 +11513,8 @@ statement2nc:
   | DIM dim_definitions
   | FILL fill_definitions
   | SHUFFLE shuffle_definition
-  | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
-
-            Constant * c3 = malloc( sizeof( Constant ) );
-            memset( c3, 0, sizeof( Constant ) );
-            c3->name = strdup( $3 );
-            c3->realName = strdup( $3 );
-
-            c3->valueString = malloc( sizeof( StaticString ) );
-            memset( c3->valueString, 0, sizeof( StaticString ) );
-
-            c3->valueString->id = UNIQUE_ID;
-            c3->valueString->value = malloc( c1->valueString->size );
-            memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
-            c3->valueString->size = c1->valueString->size;
-            c3->valueString->next = ((Environment *)_environment)->strings;
-            ((Environment *)_environment)->strings = c3->valueString;
-
-            c3->type = CT_STRING;
-            Constant * constLast = ((Environment *)_environment)->constants;
-            if ( constLast ) {
-                while( constLast->next ) {
-                    constLast = constLast->next;
-                }
-                constLast->next = c3;
-            } else {
-                ((Environment *)_environment)->constants = c3;
-            }
-
-            // const_emit( _environment, c1->name );
-        }
-  }
-  | const_instruction Identifier OP_ASSIGN const_expr_string {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_string( _environment, $2, $4 );
-        }
-  }
-  | const_instruction Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_numeric( _environment, $2, $4 );
-        }
-  }
-  | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $5 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
-            }
-            const_define_numeric( _environment, $3, $5 );
-        }
-  }
-  | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $5 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
-            }
-            const_define_numeric( _environment, $3, $5 );
-        }
-  }
-  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 < $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 > $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 <= $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 > $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 < $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 >= $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 <= $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 >= $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
+  | const_instruction const_definitions
+  | POSITIVE const_instruction positive_const_definitions
   | TI OP_ASSIGN expr {
         set_timer( _environment, $3 );
   }
