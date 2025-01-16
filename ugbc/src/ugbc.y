@@ -11331,7 +11331,14 @@ statement2nc:
 
         variable->frameSize = expr->frameSize;
         variable->frameCount = expr->frameCount;
-
+        variable->offsettingFrames = expr->offsettingFrames;
+        if ( variable->offsettingFrames ) {
+            offsetting_add_variable_reference( _environment, variable->offsettingFrames, variable, 0 );
+        }
+        variable->offsettingSequences = expr->offsettingSequences;
+        if ( variable->offsettingSequences ) {
+            offsetting_add_variable_reference( _environment, variable->offsettingSequences, variable, 1 );
+        }
   }
   | Identifier as_datatype_suffix OP_ASSIGN expr {
         VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
