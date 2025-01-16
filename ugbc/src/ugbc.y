@@ -7489,24 +7489,31 @@ fill_definition_optional_count :
 
 fill_definition_array :
     Identifier WITH const_expr {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, $3 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
     }
     | Identifier WITH INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
     | Identifier INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     | Identifier WITH INC fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
     | Identifier INC fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     ;
@@ -7524,32 +7531,47 @@ fill_definitions :
     fill_definitions_array
     | expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
     }
     | expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
+        define_implicit_array_if_needed( _environment, $7 );
         variable_array_fill( _environment, $7, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
+        define_implicit_array_if_needed( _environment, $7 );
         variable_array_fill( _environment, $7, 0 );
+        define_implicit_array_if_needed( _environment, $9 );
         variable_array_fill( _environment, $9, 0 );
     }
     | fill_definition
@@ -8424,6 +8446,7 @@ read_definition_single :
     | read_safeness Identifier {
         parser_array_init( _environment );
     } OP indexes CP {
+        define_implicit_array_if_needed( _environment, $2 );
         Variable * a = variable_retrieve( _environment, $2 );
         if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -9449,7 +9472,7 @@ option_definitions :
     | MID INSERT {
         ((struct _Environment *)_environment)->midReplace = 0;
     }
-    FINAL HALT {
+    | FINAL HALT {
         ((struct _Environment *)_environment)->finalReturn = 0;
     }
     | FINAL RETURN {
@@ -9490,6 +9513,9 @@ option_definitions :
     }
     | DEFAULT TYPE datatype {
         ((struct _Environment *)_environment)->defaultVariableType = $3;
+    }
+    | ARRAY SIZE const_expr {
+        ((struct _Environment *)_environment)->defaultArraySize = $3;
     }
     | TYPE UNSIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 1;
@@ -11627,6 +11653,7 @@ statement2nc:
         parser_array_init( _environment );
     }    
       OP indexes CP OP_ASSIGN expr {
+        define_implicit_array_if_needed( _environment, $1 );
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
@@ -11637,6 +11664,7 @@ statement2nc:
   | Identifier OP_DOLLAR {
         parser_array_init( _environment );
     } OP indexes CP OP_ASSIGN expr {
+        define_implicit_array_if_needed( _environment, $1 );
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
@@ -12043,6 +12071,8 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->defaultPenColor = DEFAULT_PEN_COLOR;
     _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+
+    _environment->defaultArraySize = 10;
 
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;

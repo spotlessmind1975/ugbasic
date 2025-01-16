@@ -6269,3 +6269,4 @@ coordinate effettive. Per applicare uno scostamento che rispetti il sistema di c
 
 @target all
 </usermanual> */
+

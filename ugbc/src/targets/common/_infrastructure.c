@@ -13689,3 +13689,13 @@ const char *strrstr(const char *haystack, const char *needle)
 
     return result;
 }
+
+void define_implicit_array_if_needed( Environment * _environment, char * _name ) {
+    if ( !variable_exists( _environment, _name ) ) {
+        memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayDimensions = 1;
+        ((struct _Environment *)_environment)->arrayDimensionsEach[0] = ((struct _Environment *)_environment)->defaultArraySize;
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, _name, VT_TARRAY, 0 );
+        variable_array_type( _environment, _name, ((struct _Environment *)_environment)->defaultVariableType );
+    }
+}

@@ -2970,6 +2970,8 @@ typedef struct _Environment {
     int offsetX;
     int offsetY;
 
+    int defaultArraySize;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -4433,6 +4435,8 @@ void finalize_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+void define_implicit_array_if_needed( Environment * _Environment, char * _name );
 
 int define_audio_target_check( Environment * _environment, int _value );
 
