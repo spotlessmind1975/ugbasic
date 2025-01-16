@@ -51,38 +51,46 @@ PLOTP
 ; input X=X coord, U=Y coord, A=(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
 ; output B result if A=2 or 3
 PLOT
+    STX <PLOTX
+    STU <PLOTY
+    STA <PLOTM
 
 @IF scaleX > 0
-    ASL <PLOTX
-    ROL <PLOTX+1
+    ASL <PLOTX+1
+    ROL <PLOTX
 @ENDIF
 
 @IF scaleX > 1
-    ASL <PLOTX
-    ROL <PLOTX+1
+    ASL <PLOTX+1
+    ROL <PLOTX
 @ENDIF
 
 @IF offsetX > 0
 @EMIT offsetX AS offsetX
     LDD <PLOTX
-    ADD #offsetX
+    ADDD #offsetX
     STD <PLOTX
 @ENDIF
 
 @IF scaleY > 0
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF scaleY > 1
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF offsetY > 0
 @EMIT offsetY AS offsetY
-    LDA <PLOTY
-    ADC #offsetY
-    STA <PLOTY
+    LDD <PLOTY
+    ADDD #offsetY
+    STD <PLOTY
 @ENDIF
+
+    LDX <PLOTX
+    LDU <PLOTY
 
 @IF optionClip
 
@@ -100,11 +108,10 @@ PLOT
     CMPU CLIPY1
     BLT PLOTP
 
-@ENDIF
-
     STX <PLOTX
     STU <PLOTY
-    STA <PLOTM
+
+@ENDIF
 
 @IF vestigialConfig.doubleBufferSelected
 
