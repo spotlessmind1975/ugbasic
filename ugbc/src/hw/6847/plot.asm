@@ -67,18 +67,20 @@ PLOT
 @ENDIF
 
 @IF scaleY > 0
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF scaleY > 1
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF offsetY > 0
 @EMIT offsetY AS offsetY
-    LDA <PLOTY
-    ADC #offsetY
-    STA <PLOTY
+    LDD <PLOTY
+    ADD #offsetY
+    STD <PLOTY
 @ENDIF
 
 @IF optionClip
