@@ -1828,6 +1828,7 @@ typedef struct _JoystickConfig {
     int retries;
     int values;
     int sync;
+    int notEmulated;
 
 } JoystickConfig;
 

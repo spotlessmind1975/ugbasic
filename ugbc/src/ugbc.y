@@ -105,7 +105,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RELOC FADE MMOB GB BASIC GRAPHICS 
 %token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
-%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -8735,6 +8735,12 @@ define_definition :
     }
     | JOYSTICK VALUES TSB {
         ((struct _Environment *)_environment)->joystickConfig.values = 1;
+    }
+    | JOYSTICK EMULATION ON {
+        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 0;
+    }
+    | JOYSTICK EMULATION OFF {
+        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 1;
     }
     | JOYSTICK RETRIES const_expr {
         if ( $3 < 0 ) {

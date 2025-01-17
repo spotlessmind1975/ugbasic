@@ -83,7 +83,7 @@ void mo5_inkey( Environment * _environment, char * _key ) {
 
    _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm);
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm);
 
     outline0("JSR INKEY");
     outline1("STA %s", _key);
@@ -94,7 +94,7 @@ void mo5_wait_key( Environment * _environment, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
 
     if ( _release ) {
         outline0("JSR WAITKEYRELEASE");
@@ -130,7 +130,7 @@ void mo5_key_state( Environment * _environment, char *_scancode, char * _result 
 
     MAKE_LABEL
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
 
     outline1("LDA %s", _scancode);
     outline0("JSR KEYSTATE");
@@ -143,7 +143,7 @@ void mo5_scancode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm);
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm);
 
     outline0("JSR SCANCODE");
     outline1("STA %s", _result );
@@ -154,7 +154,7 @@ void mo5_asciicode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm);
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm);
 
     outline0("JSR ASCIICODE");
     outline1("STA %s", _result );
@@ -167,7 +167,7 @@ void mo5_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
     MAKE_LABEL
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
 
     outline1("LDA %s", _scancode);
     outline0("JSR KEYPRESSED");
@@ -187,7 +187,7 @@ void mo5_keyshift( Environment * _environment, char * _shifts ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
 
     outline0("JSR KEYSHIFT" );
     outline1("STA %s", _shifts );
@@ -232,13 +232,39 @@ void mo5_busy_wait( Environment * _environment, char * _timing ) {
 
 void mo5_joystick_semivars( Environment * _environment, int _joystick, char * _result ) {
 
-    cpu_store_8bit( _environment, _result, 0 );
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
+        deploy( joystick, src_hw_mo5_joystick_asm );
+
+        outline1("LDA #$%2.2x", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
+
+    }
 
 }
 
 void mo5_joystick_vars( Environment * _environment, char * _joystick, char * _result ) {
 
-    cpu_store_8bit( _environment, _result, 0 );
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
+        deploy( joystick, src_hw_mo5_joystick_asm );
+
+        outline1("LDA %s", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
+
+    }
 
 }
 
@@ -337,7 +363,7 @@ void mo5_put_key(  Environment * _environment, char *_string, char * _size ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_mo5_keyboard_asm);
+    deploy_preferred( keyboard, src_hw_mo5_keyboard_asm);
 
     outline1("LDX %s", _string );
     outline1("LDB %s", _size );
