@@ -561,6 +561,7 @@ WAITKEYRELEASE0
 ; - C : key pressed (1) or not (0)
 
 KEYSTATE
+    PSHS D
     TFR A, B
     LSRA
     LSRA
@@ -576,10 +577,12 @@ KEYSTATE
     ANDA <MATHPTR0
     BEQ KEYSTATEL0
     
+    PULS D
     ORCC #$1
     RTS
 
 KEYSTATEL0
+    PULS D
     ANDCC #$FE
     RTS
 
