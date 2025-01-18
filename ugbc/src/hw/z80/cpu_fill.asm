@@ -60,13 +60,13 @@ CPUFILL16:
     CP 0
     JR Z, CPUFILL16Z0 
 CPUFILL16L1:
+    POP AF
     LD DE, HL
     INC DE
-    PUSH AF
     LD (HL), A
-    POP AF
     DEC BC
     LDIR
+    RET
 CPUFILL16Z0:
     POP AF
     RET    
