@@ -42,7 +42,7 @@ sc_ppi_b         	= $DD
 sc_ppi_c         	= $DE
 sc_ppi_control   	= $DF
 
-INITIAL_STACK    	= $C400
+INITIAL_STACK    	= $C700
 
 PPI_Setting         = 0x92
 PPI_PortC           = 0xDE
