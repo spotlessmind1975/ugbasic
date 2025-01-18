@@ -537,7 +537,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         strstr("A B C D E AD BC DE HL IX IY", strtoupper(arg->str))!=NULL        
         ) { 
         if(vars_ok(tmp)) {
-            struct var *v = vars_get(arg);
+            struct var *v = vars_get(tmp);
             v->nb_rd++;
         }
     }
