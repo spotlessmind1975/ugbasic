@@ -119,9 +119,29 @@ void pc128op_wait_key_or_fire_semivar( Environment * _environment, char * _port,
 
 void pc128op_wait_fire( Environment * _environment, int _port, int _release ) {
 
+    deploy( joystick, src_hw_pc128op_joystick_asm );
+
+    if ( _port == -1 ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDA #$%2.2x", (unsigned char)(_port&0xff) );
+        outline0("JSR WAITFIREX");
+    }
+
 }
 
 void pc128op_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( joystick, src_hw_pc128op_joystick_asm );
+
+    if ( !_port ) {
+        outline0("JSR WAITFIRE");
+    } else {
+        outline1("LDA %s", _port );
+        outline0("JSR WAITFIREX");
+    }
 
 }
 
