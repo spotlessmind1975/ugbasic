@@ -128,8 +128,8 @@ void to8_wait_fire_semivar( Environment * _environment, char * _port, int _relea
         
         _environment->bitmaskNeeded = 1;
 
-        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
-        deploy( joystick, src_hw_pc128op_joystick_asm );
+        deploy_preferred( keyboard, src_hw_to8_keyboard_asm );
+        deploy( joystick, src_hw_to8_joystick_asm );
 
         if ( !_port ) {
             outline0("JSR WAITFIRE");

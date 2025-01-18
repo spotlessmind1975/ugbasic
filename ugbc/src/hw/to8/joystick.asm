@@ -42,7 +42,6 @@ JOYSTICK
 
 JOYSTICK0
     LDB #0
-    STB JOYVALUE
 
 ; #define KEY_UP                       0x0b
 JOYSTICK0UP
