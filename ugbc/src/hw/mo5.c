@@ -118,30 +118,42 @@ void mo5_wait_key_or_fire_semivar( Environment * _environment, char * _port, int
 
 void mo5_wait_fire( Environment * _environment, int _port, int _release ) {
 
-    _environment->bitmaskNeeded = 1;
+    if ( _environment->joystickConfig.notEmulated ) {
 
-    deploy( joystick, src_hw_mo5_joystick_asm );
-
-    if ( _port == -1 ) {
-        outline0("JSR WAITFIRE");
     } else {
-        outline1("LDA #$%2.2x", (unsigned char)(_port&0xff) );
-        outline0("JSR WAITFIREX");
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_mo5_keyboard_asm );
+        deploy( joystick, src_hw_mo5_joystick_asm );
+
+        if ( _port == -1 ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)(_port&0xff) );
+            outline0("JSR WAITFIREX");
+        }
     }
 
 }
 
 void mo5_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
-    _environment->bitmaskNeeded = 1;
+    if ( _environment->joystickConfig.notEmulated ) {
 
-    deploy( joystick, src_hw_mo5_joystick_asm );
-
-    if ( !_port ) {
-        outline0("JSR WAITFIRE");
     } else {
-        outline1("LDA %s", _port );
-        outline0("JSR WAITFIREX");
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_mo5p_keyboard_asm );
+        deploy( joystick, src_hw_mo5_joystick_asm );
+
+        if ( !_port ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA %s", _port );
+            outline0("JSR WAITFIREX");
+        }
     }
 
 }

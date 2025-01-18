@@ -100,10 +100,44 @@ void to8_wait_key_or_fire_semivar( Environment * _environment, char * _port, int
 }
 
 void to8_wait_fire( Environment * _environment, int _port, int _release ) {
+    
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_to8_keyboard_asm );
+        deploy( joystick, src_hw_to8_joystick_asm );
+
+        if ( _port == -1 ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)(_port&0xff) );
+            outline0("JSR WAITFIREX");
+        }
+    }
 
 }
 
 void to8_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+        deploy( joystick, src_hw_pc128op_joystick_asm );
+
+        if ( !_port ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA %s", _port );
+            outline0("JSR WAITFIREX");
+        }
+    }
 
 }
 
@@ -196,25 +230,39 @@ void to8_key_pressed( Environment * _environment, char *_scancode, char * _resul
 
 void to8_joystick_semivars( Environment * _environment, char * _joystick, char * _result ) {
 
-    MAKE_LABEL
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_to8_joystick_asm );
+        deploy_preferred( scancode, src_hw_to8_scancode_asm );
+        deploy( joystick, src_hw_to8_joystick_asm );
 
-    outline1("LDA %s", _joystick );
-    outline0("JSR JOYSTICK");
-    outline1("STA %s", _result );
+        outline1("LDA %s", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
+
+    }
 
 }
 
 void to8_joystick( Environment * _environment, int _joystick, char * _result ) {
 
-    MAKE_LABEL
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_to8_joystick_asm );
+        deploy_preferred( scancode, src_hw_to8_scancode_asm );
+        deploy( joystick, src_hw_to8_joystick_asm );
 
-    outline1("LDA #$%2.2x", _joystick );
-    outline0("JSR JOYSTICK");
-    outline1("STA %s", _result );
+        outline1("LDA #$%2.2x", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
+
+    }
 
 }
 
