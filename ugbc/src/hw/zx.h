@@ -200,10 +200,10 @@
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
 
 #define JOY_UP              0
-#define JOY_DOWN            0
-#define JOY_LEFT            0
-#define JOY_RIGHT           0
-#define JOY_FIRE            0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 #define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
@@ -325,5 +325,8 @@ void zx_dojo_put_message( Environment * _environment, char * _port_id, char * _m
 void zx_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
 void zx_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void zx_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
+
+void zx_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
+void zx_joystick( Environment * _environment, int _joystick, char * _result );
 
 #endif

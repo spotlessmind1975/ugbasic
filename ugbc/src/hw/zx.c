@@ -263,6 +263,44 @@ void zx_wait_fire_semivar( Environment * _environment, char * _port, int _releas
 
 }
 
+void zx_joystick_semivars( Environment * _environment, char * _joystick, char * _result ) {
+
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy( keyboard, src_hw_zx_keyboard_asm );
+        deploy( joystick, src_hw_zx_joystick_asm );
+
+        outline1("LD A, (%s)", _joystick);
+        outline0("CALL JOYSTICK");
+        outline1("LD (%s), A", _result);
+
+    }
+
+}
+
+void zx_joystick( Environment * _environment, int _joystick, char * _result ) {
+
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy( keyboard, src_hw_zx_keyboard_asm );
+        deploy( joystick, src_hw_zx_joystick_asm );
+
+        outline1("LD A, #$%2.2x", _joystick);
+        outline0("CALL JOYSTICK");
+        outline1("LD (%s), A", _result);
+
+    }
+
+}
+
 void zx_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
