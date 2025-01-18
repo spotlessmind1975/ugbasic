@@ -177,7 +177,7 @@ PLOTSET:
     OR $58
     LD H, A
 
-    LD A, (_PEN)
+    LD A, (PLOTCPE)
     AND $07
     LD B, A
     LD A, (HL)
@@ -209,7 +209,10 @@ PLOTRESET:
     SLA A
     SLA A
     SLA A
-    OR A, B
+    LD B, A
+    LD A, (HL)
+    AND $C7
+    OR B
     LD (HL), A
     RET
 
