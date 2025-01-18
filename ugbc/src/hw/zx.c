@@ -223,9 +223,43 @@ void zx_wait_key_or_fire_semivar( Environment * _environment, char * _port, int 
 
 void zx_wait_fire( Environment * _environment, int _port, int _release ) {
 
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy( keyboard, src_hw_zx_keyboard_asm );
+        deploy( joystick, src_hw_zx_joystick_asm );
+
+        if ( _port == -1 ) {
+            outline0("CALL WAITFIRE");
+        } else {
+            outline1("LD A, $%2.2x", (unsigned char)(_port&0xff) );
+            outline0("CALL WAITFIREX");
+        }
+    }
+
 }
 
 void zx_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy( keyboard, src_hw_zx_keyboard_asm );
+        deploy( joystick, src_hw_zx_joystick_asm );
+
+        if ( !_port ) {
+            outline0("CALL WAITFIRE");
+        } else {
+            outline1("LD A, (%s)", _port );
+            outline0("CALL WAITFIREX");
+        }
+    }
 
 }
 
