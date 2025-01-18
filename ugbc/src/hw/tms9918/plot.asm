@@ -216,10 +216,20 @@ PLOT3:
     CP 2
     JR Z, PLOTG                  ;if = 2 then branch to get the point (0/1)
     CP 3
-    JR Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
+    JP Z, PLOTC                  ;if = 3 then branch to get the color index (0...15)
     JP PLOTP2
 
 PLOTD:
+
+    PUSH BC
+    LD A, (PLOTCPE)
+    LD B, A
+    LD A, (_PAPER)
+    CP B
+    POP BC
+    JR Z, PLOTDN0
+
+PLOTDN1:
     ;---------
     ;set point
     ;---------
@@ -234,9 +244,35 @@ PLOTD:
     CALL VDPOUTCHAR
     POP DE
 
+    JR PLOTDC
+
+PLOTDN0:
+    ;---------
+    ;set point
+    ;---------
+    PUSH DE
+    LD DE, HL
+    CALL VDPINCHAR
+    POP DE
+    AND C
+    PUSH DE
+    LD DE, HL
+    CALL VDPOUTCHAR
+    POP DE
+
+PLOTDC:
+
     DI
 
     EXX
+
+    PUSH BC
+    LD A, (PLOTCPE)
+    LD B, A
+    LD A, (_PAPER)
+    CP B
+    POP BC
+    JR Z, PLOTDNC
 
     LD A, (PLOTCPE)
     SLA A
@@ -250,6 +286,8 @@ PLOTD:
     LD DE, HL
     CALL VDPOUTCHAR
     POP DE
+
+PLOTDNC:
 
     EXX
 
