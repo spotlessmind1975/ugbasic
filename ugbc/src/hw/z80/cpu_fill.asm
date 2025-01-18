@@ -62,7 +62,10 @@ CPUFILL16:
 CPUFILL16L1:
     LD DE, HL
     INC DE
+    PUSH AF
     LD (HL), A
+    POP AF
+    DEC BC
     LDIR
 CPUFILL16Z0:
     POP AF
