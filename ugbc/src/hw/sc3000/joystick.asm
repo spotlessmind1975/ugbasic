@@ -73,7 +73,6 @@ PpiRowRead:
 JoyRead:
 ;===============================================================
 	in		a, (JOY_PortA)
-	cpl
 	dec		b
 	ret
 
