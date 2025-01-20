@@ -44,8 +44,13 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     MAKE_LABEL
     
-    Variable * result = variable_retrieve_or_define( _environment, _variable, _default_type, 0 );
-
+    Variable * result;
+    if ( variable_exists( _environment, _variable ) ) {
+        result = variable_retrieve( _environment, _variable );
+    } else {
+        result = variable_define( _environment, _variable, _default_type, 0 );
+    }
+    
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
     char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf(doneLabel, "%sdone", label );
