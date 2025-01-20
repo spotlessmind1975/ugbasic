@@ -57,9 +57,18 @@ le successive operazioni di disegno con il comando DRAW.
 L'angolo (''angle'') corrisponde al quadrante di interesse, partendo verso nord (0) con angolo di 0 gradi, e 
 poi procedendo in senso orario: 1 = 45 gradi, 2 = 90 gradi e così via.
 
-@syntax ROT angle, step
+@syntax ROT angle[, step]
 
-@example DRAW "BM0,0;R10;U10;L10;D10"
+@example INK WHITE
+@example PLOT 100, 100
+@example i = 0
+@example DO
+@example     ROT i
+@example     DRAW "U10BD10"
+@example     INC i
+@example     EXIT IF i > 8
+@example     WAIT KEY
+@example LOOP
 
 @usedInExample graphics_draw_01.bas
 

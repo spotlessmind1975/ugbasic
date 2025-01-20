@@ -10067,7 +10067,10 @@ cset_definition :
     };
 
 rot_definition :
-    expr OP_COMMA expr {
+    expr {
+        rot( _environment, $1, NULL );
+    }    
+    | expr OP_COMMA expr {
         rot( _environment, $1, $3 );
     };
 
