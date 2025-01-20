@@ -48,6 +48,7 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->centerWithoutNewLine = 0;
             _environment->vestigialConfig.clsImplicit = 0;
             _environment->joystickConfig.values = 0;
+            _environment->drawUsingTsbSyntax = 0;
             break;
         case DI_TSB:
             _environment->optionExecAsGosub = 1;
@@ -56,6 +57,7 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->centerWithoutNewLine = 1;
             _environment->vestigialConfig.clsImplicit = 1;
             _environment->joystickConfig.values = 1;
+            _environment->drawUsingTsbSyntax = 1;
             break;
     }
 
