@@ -43,15 +43,32 @@
 
 @english
 
-The ''ROT'' command is used to set the starting angle and step for subsequent 
+The ''ROT'' command is used to set the starting ''angle'' and ''step'' for subsequent 
 drawing operations with the DRAW command.
+
+The ''angle'' corresponds to the quadrant of interest, starting towards north (0) with an angle 
+of 0 degree, and then proceeding clockwise: 1 = 45 degrees, 2 = 90 degrees and so on.
 
 @italian
 
-Il comando ROT ha lo scopo di impostare l'angolo di partenza e lo step per 
+Il comando ''ROT'' ha lo scopo di impostare l'angolo di partenza (''angle'') e lo ''step'' per 
 le successive operazioni di disegno con il comando DRAW.
 
-@example DRAW "BM0,0;R10;U10;L10;D10"
+L'angolo (''angle'') corrisponde al quadrante di interesse, partendo verso nord (0) con angolo di 0 gradi, e 
+poi procedendo in senso orario: 1 = 45 gradi, 2 = 90 gradi e così via.
+
+@syntax ROT angle[, step]
+
+@example INK WHITE
+@example PLOT 100, 100
+@example i = 0
+@example DO
+@example     ROT i
+@example     DRAW "U10BD10"
+@example     INC i
+@example     EXIT IF i > 8
+@example     WAIT KEY
+@example LOOP
 
 @usedInExample graphics_draw_01.bas
 
@@ -104,155 +121,308 @@ void rot( Environment * _environment, char * _angle, char * _step ) {
         cpu_compare_and_branch_8bit_const( _environment, angle->realName, 7, rotate315CommandLabel, 1 );
 
         cpu_label( _environment, rotate0CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );            
+        }
+
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate45CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawECommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, '5' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawECommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, '5' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );   
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate90CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );             
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate135CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawECommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, '6' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawECommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, '6' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );            
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate180CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );            
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate225CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawECommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, '8' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawECommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, '8' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );                
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate270CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, '7' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, '7' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );                
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, rotate315CommandLabel );
-        cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFCommandLetter->realName, '0' );
-        cpu_store_char( _environment, drawGCommandLetter->realName, '3' );
-        cpu_store_char( _environment, drawECommandLetter->realName, '1' );
-        cpu_store_char( _environment, drawHCommandLetter->realName, '2' );
-        cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
-        cpu_store_char( _environment, drawFDCommandLetter->realName, '5' );
-        cpu_store_char( _environment, drawGDCommandLetter->realName, '8' );
-        cpu_store_char( _environment, drawEDCommandLetter->realName, '6' );
-        cpu_store_char( _environment, drawHDCommandLetter->realName, '7' );
+        if ( _environment->drawUsingTsbSyntax ) {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, '0' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, '3' );
+            cpu_store_char( _environment, drawECommandLetter->realName, '1' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, '2' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, '5' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, '8' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, '6' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, '7' );
+        } else {
+            cpu_store_char( _environment, drawUCommandLetter->realName, 'E' );
+            cpu_store_char( _environment, drawDCommandLetter->realName, 'G' );
+            cpu_store_char( _environment, drawLCommandLetter->realName, 'H' );
+            cpu_store_char( _environment, drawRCommandLetter->realName, 'F' );
+            cpu_store_char( _environment, drawECommandLetter->realName, 'R' );
+            cpu_store_char( _environment, drawFCommandLetter->realName, 'D' );
+            cpu_store_char( _environment, drawGCommandLetter->realName, 'L' );
+            cpu_store_char( _environment, drawHCommandLetter->realName, 'U' );
+            cpu_store_char( _environment, drawUDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawDDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawLDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawRDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawFDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawGDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawEDCommandLetter->realName, 'x' );
+            cpu_store_char( _environment, drawHDCommandLetter->realName, 'x' );                
+        }
         cpu_jump( _environment, done2CommandLabel );
 
         cpu_label( _environment, done2CommandLabel );

@@ -10255,6 +10255,65 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
 
 }
 
+static void variable_array_fill_value( Environment * _environment, char * _name, int _value ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+        }
+        variable_store( _environment, index->name, 0 );
+        Variable * value = variable_temporary( _environment, array->arrayType, "value");
+        variable_store( _environment, value->name, _value );
+        Variable * count = NULL;
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        cpu_label( _environment, loopLabel );
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_poked( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 16:
+                    cpu_pokew( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 8:
+                    cpu_poke( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                default:
+                    CRITICAL_NOT_SUPPORTED( _name );
+            }
+            variable_increment( _environment, index->name );
+            variable_compare_and_branch_const( _environment, index->name, sizeInElements, label, 1 );
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+}
+
 /* <usermanual>
 @keyword FILL (array)
 
@@ -10298,7 +10357,17 @@ void variable_array_fill( Environment * _environment, char * _name, int _value )
     }
 
     if ( array->size > 0 ) {
-        cpu_fill_direct_size_value( _environment, array->realName, array->size, _value );
+        switch( VT_BITWIDTH( array->arrayType ) ) {
+            case 8:
+                cpu_fill_direct_size_value( _environment, array->realName, array->size, _value );
+                break;
+            case 16:
+            case 32:
+                variable_array_fill_value( _environment, _name, _value );
+                break;
+            default:
+                CRITICAL_NOT_SUPPORTED( array->name );
+        }
     } else {
         CRITICAL_NOT_SUPPORTED( array->name );
     }

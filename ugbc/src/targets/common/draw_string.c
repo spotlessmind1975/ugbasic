@@ -82,6 +82,9 @@ displacement given by An, where n is a number between 0 and 3, as follows,
 Finally, the ''N'' command has the meaning of no update of drawing position. This is to
 draw a line as specified but do not use the end of the line as the new position.
 
+Note that if the Simons' BASIC compatibility option is active (via the ''OPTION DIALECT TSB''
+pragma), the string commands will use a different, i.e. language-compatible, command set.
+
 @italian
 
 Il comando ''DRAW'' consente di disegnare sullo schermo. Il parametro è una costante 
@@ -123,6 +126,10 @@ da ''An'', dove n è un numero compreso tra ''0'' e ''3'', come segue: 0 = 0 gra
 Infine il comando ''N'' ha il significato di nessun aggiornamento della posizione del disegno. 
 Questo serve per tracciare una linea come specificato ma non utilizzare la fine della linea 
 come nuova posizione.
+
+Da notare che, se l'opzione di compatibilità con il Simons' BASIC è attiva (per mezzo del 
+pragma ''OPTION DIALECT TSB''), i comandi della stringa utilizzerà un set di comandi diverso, 
+ovvero compatibile con quel linguaggio.
 
 @syntax DRAW instructions
 

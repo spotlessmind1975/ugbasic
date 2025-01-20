@@ -538,6 +538,15 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         }
     }
 
+    if (po_buf_match( buf[0], " LD *,*", arg, tmp) &&
+        strstr("A B C D E AD BC DE HL IX IY", strtoupper(arg->str))!=NULL        
+        ) {  
+        if(vars_ok(tmp)) {
+            struct var *v = vars_get(tmp);
+            v->nb_rd++;
+        }
+    }
+
     if( po_buf_match( buf[0], " *: defs *", tmp, arg) && vars_ok(tmp)) {
         struct var *v = vars_get(tmp);
         v->size = atoi(arg->str);

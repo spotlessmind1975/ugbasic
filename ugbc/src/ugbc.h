@@ -2948,6 +2948,7 @@ typedef struct _Environment {
     int movementDeltaX;
     int movementDeltaY;
 
+<<<<<<< HEAD
     int midReplace;
 
     int leftReplace;
@@ -2972,6 +2973,8 @@ typedef struct _Environment {
     int offsetY;
 
     int defaultArraySize;
+
+    int drawUsingTsbSyntax;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
