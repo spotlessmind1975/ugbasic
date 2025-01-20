@@ -2948,7 +2948,6 @@ typedef struct _Environment {
     int movementDeltaX;
     int movementDeltaY;
 
-<<<<<<< HEAD
     int midReplace;
 
     int leftReplace;
