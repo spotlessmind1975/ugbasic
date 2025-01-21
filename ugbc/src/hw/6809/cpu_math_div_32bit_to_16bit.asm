@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 
 CPUMATHDIV32BITTO16BIT
-CPUMATHDIV16BITTO16BIT_SIGNED
+CPUMATHDIV32BITTO16BIT_SIGNED
                     ; * EXIT INDICATING NO ERROR IF LENGTH OF OPERANDS IS ZERO 
     LDB 2, S        ; TEST LENGTH OF OPERANDS
                     ; BRANCH (GOOD EXIT) IF LENGTH IS ZERO
