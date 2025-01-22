@@ -6533,146 +6533,181 @@ void sc61860_dstring_vars( Environment * _environment ) {
 
 void sc61860_protothread_vars( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_vars" );
-
     int count = _environment->protothreadConfig.count;
 
-    variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADLC:      DEFS        %d", count );
-    variable_import( _environment, "PROTOTHREADST", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADST:      DEFS        %d", count );
-    variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
-    // // outhead0("PROTOTHREADCT:      DEFB        0" );
-    variable_import( _environment, "PROTOTHREADLOOP", VT_BUFFER, 1 + count * 8 );
-    variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, count );
+    out0("PROTOTHREADLC:       .db ");
+    for( int i=0; i<count-1; ++i ) {
+        out0("0,");
+    }
+    outline0("0");
+
+    out0("PROTOTHREADST:       .db ");
+    for( int i=0; i<count-1; ++i ) {
+        out0("0,");
+    }
+    outline0("0");
+
+    outhead1("PROTOTHREADCOUNT:       .db 0x%2.2x", count );
+
+    // outhead0("PROTOTHREADCT:       .db        0" );
+    outhead0("PROTOTHREADLOOP:");
+
+    for( int i=0; i<count; ++i ) {
+        outline1("LIA 0x%2.2x", i );
+        outline0("LIDP PROTOTHREADCT" );
+        outline0("STD" );
+        outline0("CALL PROTOTHREADVOID" );
+    }
+
+    outline0("RTN" );
 
 }
 
 
 void sc61860_protothread_loop( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_loop" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline0("CALL PROTOTHREADLOOP" );
+    outline0("CALL PROTOTHREADLOOP" );
 
 }
 
 void sc61860_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register_at" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD HL, %s", _label );
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A");
-
-    // outline0("CALL PROTOTHREADREGAT" );
+    outline1("LIA %s", _label );
+    outline0("LIP 0x0c" );
+    outline0("EXAM" );
+    outline1("LIA >%s", _label );
+    outline0("LIP 0x0d" );
+    outline0("EXAM" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADREGAT" );
 
 }
 
 void sc61860_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD HL, %s", _label );
-
-    // outline0("CALL PROTOTHREADREG" );
-
-    // outline0("LD A, B" );
-    // outline1("LD (%s), A", _index );
+    outline1("LIA %s", _label );
+    outline0("LIP 0x0c" );
+    outline0("EXAM" );
+    outline1("LIA >%s", _label );
+    outline0("LIP 0x0d" );
+    outline0("EXAM" );
+    outline0("CALL PROTOTHREADREG" );
+    outline0("LIP 0" );
+    outline0("EXAM" );
+    outline1("LIDP %s", _index );
+    outline0("STD" );
 
 }
 
 void sc61860_protothread_unregister( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_unregister" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADUNREG" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADUNREG" );
 
 }
 
 void sc61860_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_save" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-    // outline1("LD A, 0x%2.2x", ( _step & 0xff ) );
-
-    // outline0("CALL PROTOTHREADSAVE" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIA 0x%2.2x", _step );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADSAVE" );
 
 }
 
 void sc61860_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_restore" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADRESTORE" );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _step);
+    outline0("STD");
 
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADRESTORE" );
-
-    // outline1("LD (%s), A", _step );
-    
 }
 
 void sc61860_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_set_state" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-    // outline1("LD A, 0x%2.2x", ( _state & 0xff ) );
-
-    // outline0("CALL PROTOTHREADSETSTATE" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIA 0x%2.2x", _state );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADSETSTATE" );
 
 }
 
 void sc61860_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_state" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADGETSTATE" );
-
-    // outline1("LD (%s), A", _state );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADRESTORE" );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _state);
+    outline0("STD");
 
 }
 
 void sc61860_protothread_current( Environment * _environment, char * _current ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_current" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline0("LD A, (PROTOTHREADCT)" );
-    // outline1("LD (%s), A", _current );
+    outline0("LIDP PROTOTHREADCT" );
+    outline0("LDD" );
+    outline1("LIDP %s", _current );
+    outline0("STD" );
 
 }
 
 void sc61860_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_address" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADGETADDRESS" );
+    outline0("LIP 0x0c");
+    outline0("EXAM");
+    outline1("LIDP %s", _address);
+    outline0("STD");
+    outline0("LIP 0x0d");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement( _environment, _address, "1" ) );
+    outline0("STD");
 
 }
 
