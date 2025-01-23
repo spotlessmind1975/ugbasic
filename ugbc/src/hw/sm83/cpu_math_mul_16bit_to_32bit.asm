@@ -37,67 +37,67 @@
 
 ; IX x IY -> BC:HL
 CPUMUL16B16T32S:
-    LD A, (IXHR)
+    LD A, (IXR+1)
     AND $80
     LD B, A
-    LD A, (IYHR)
+    LD A, (IYR+1)
     AND $80
     XOR A, B
     PUSH AF
 
-    LD A, (IXHR)
+    LD A, (IXR+1)
     AND $80
     CP 0
     JR Z, CPUMUL16B16T32SPOS 
 
-    LD A, (IXLR)
+    LD A, (IXR)
     XOR $FF
-    LD (IXLR), A
+    LD (IXR), A
     
-    LD A, (IXHR)
+    LD A, (IXR+1)
     XOR $FF
-    LD (IXHR), A
+    LD (IXR+1), A
 
-    LD (IXLR), A
+    LD (IXR), A
     INC A
-    LD A, (IXLR)
+    LD A, (IXR)
     CP 0
     JR NZ,CPUMUL16B16T32SPOS
-    LD (IXHR), A
+    LD (IXR+1), A
     INC A
-    LD A, (IXHR)
+    LD A, (IXR+1)
 
 CPUMUL16B16T32SPOS:
-    LD A, (IYHR)
+    LD A, (IYR+1)
     AND $80
     CP 0
     JR Z, CPUMUL16B16T32SPOS2
 
-    LD A, (IYLR)
+    LD A, (IYR)
     XOR $FF
-    LD (IYLR), A
+    LD (IYR), A
     
-    LD A, (IYHR)
+    LD A, (IYR+1)
     XOR $FF
-    LD (IYHR), A
+    LD (IYR+1), A
 
-    LD A, (IYLR)
+    LD A, (IYR)
     INC A
-    LD (IYLR), A
+    LD (IYR), A
     
     JR NZ, CPUMUL16B16T32SPOS2
-    LD A, (IYHR)
+    LD A, (IYR+1)
     INC A
-    LD (IYHR), A
+    LD (IYR+1), A
 
 CPUMUL16B16T32SPOS2:
-    LD A, (IXHR)
+    LD A, (IXR+1)
     LD B, A
-    LD A, (IXLR)
+    LD A, (IXR)
     LD C, A
-    LD A, (IYHR)
+    LD A, (IYR+1)
     LD D, A
-    LD A, (IYLR)
+    LD A, (IYR)
     LD D, A
     LD A, C
     LD C, B
