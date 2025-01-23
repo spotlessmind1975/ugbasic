@@ -8510,7 +8510,7 @@ void sm83_address_table_call( Environment * _environment, char * _table, char * 
 
 void sm83_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
 
-    outline1("LD HL, (%s)", _destination );
+    outline1("LD HL, %s", _destination );
     outline1("LD A, (%s)", _source );
     outline0("LD (HL), A" );
     outline0("INC HL" );
