@@ -98,7 +98,7 @@ CPUMUL16B16T32SPOS2:
     LD A, (IYR+1)
     LD D, A
     LD A, (IYR)
-    LD D, A
+    LD E, A
     LD A, C
     LD C, B
     LD HL, 0
