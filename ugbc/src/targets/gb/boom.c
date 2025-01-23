@@ -52,16 +52,16 @@
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
-    gb_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
-    gb_start( _environment, ( _channels & 0x07 ) );
-    gb_set_frequency( _environment, _channels, 1000 );
+    // gb_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
+    gb_start( _environment, 0x08 );
+    gb_set_frequency( _environment, 0x08, 1000 );
 
     long durationInTicks = ( _duration / 20 ) & 0xff;
 
-    gb_set_duration( _environment, _channels, durationInTicks );
+    gb_set_duration( _environment, 0x08, durationInTicks );
 
     if ( ! _environment->audioConfig.async ) {
-        gb_wait_duration( _environment, _channels );
+        gb_wait_duration( _environment, 0x08 );
     }
 
 }
@@ -80,31 +80,22 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        gb_start_var( _environment, channels->realName );
-        gb_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            gb_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
-        } else {
-            gb_set_duration_vars( _environment, channels->realName, NULL );
-        } 
+    Variable * noiseChannel = variable_temporary( _environment, VT_BYTE, "(channel)" );
+    variable_store( _environment, noiseChannel->name, 0x08 ); // noise channel!
+    gb_set_frequency( _environment, 0x08, 1000 );
+
+    gb_start_var( _environment, noiseChannel->realName );
+    // gb_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+        Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+        gb_set_duration_vars( _environment, noiseChannel->realName, durationInTicks->realName );
     } else {
-        gb_start_var( _environment, NULL );
-        gb_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            gb_set_duration_vars( _environment, NULL, durationInTicks->realName );
-        } else {
-            gb_set_duration_vars( _environment, NULL, NULL );
-        } 
-    }
+        gb_set_duration_vars( _environment, noiseChannel->realName, NULL );
+    } 
 
     if ( ! _environment->audioConfig.async ) {
-        gb_wait_duration_vars( _environment, _channels );
+        gb_wait_duration_vars( _environment, noiseChannel->realName );
     }
     
 }

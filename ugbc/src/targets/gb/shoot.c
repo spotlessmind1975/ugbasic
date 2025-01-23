@@ -67,13 +67,13 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 void shoot( Environment * _environment, int _channels ) {
 
     gb_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
-    gb_start( _environment, ( _channels & 0x07 ) );
+    gb_start( _environment, 0x08 );
     gb_set_frequency( _environment, _channels, 1000 );
 
-    gb_set_duration( _environment, _channels, 4 );
+    gb_set_duration( _environment, 0x08, 4 );
 
     if ( ! _environment->audioConfig.async ) {
-        gb_wait_duration( _environment, _channels );
+        gb_wait_duration( _environment, 0x08 );
     }
     
 }

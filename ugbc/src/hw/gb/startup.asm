@@ -1789,6 +1789,8 @@ GBSTART3:
     PUSH DE
     LD E, $F
     CALL GBSTARTVOL3 
+    LD A, $80
+    LD (rAUD4GO), A
     POP DE
     POP AF
     RET
@@ -1953,6 +1955,11 @@ GBPROGFREQ1:
 GBPROGFREQ2:
     RET
 GBPROGFREQ3:
+    PUSH AF
+    LD A, D
+    AND $f7
+    LD (rAUD4POLY), A
+    POP AF
     RET
 
 GBPROGDUR:
