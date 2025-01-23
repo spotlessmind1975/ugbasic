@@ -5508,14 +5508,14 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     if ( _signed ) {
 
         // outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive", label);
         sc61860_complement2_32bit( _environment, _source, NULL );
         // outhead1("%spositive:", label);
         // outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive2", label);
@@ -5621,7 +5621,7 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         // outhead1("%srepositive2:", label);
         // outline0("LD A, B");
         // outline0("XOR C");
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0x80");
         // outline1("JR NZ, %srepositive3", label );
         sc61860_complement2_32bit( _environment, _other, NULL );
@@ -5733,14 +5733,14 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
     if ( _signed ) {
 
         // outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive", label);
         sc61860_complement2_16bit( _environment, _source, NULL );
         // outhead1("%spositive:", label);
         // outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive2", label);
@@ -5788,7 +5788,7 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         // outhead1("%srepositive2:", label);
         // outline0("LD A, B");
         // outline0("XOR C");
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0x80");
         // outline1("JR NZ, %srepositive3", label );
         sc61860_complement2_16bit( _environment, _other, NULL );
@@ -5845,10 +5845,10 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline0("LD B, A" );
         // outline1("LD A, (%s)", _destination );
         // outline0("XOR A, B" );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("PUSH AF" );
         // outline1("LD A, (%s)", _source );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%spos", label );
         // outline1("LD A, (%s)", _source );
@@ -5861,7 +5861,7 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline0("LD D, A");
         
         // outline1("LD A, (%s)", _destination );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%sposx", label );
         // outline1("LD A, (%s)", _destination );
@@ -5890,7 +5890,7 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline1("LD (%s), A", _other);
 
         // outline0("POP AF" );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%spos3", label );
         // outline1("LD A, (%s)", _other );
@@ -6033,128 +6033,128 @@ void sc61860_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
 
 void sc61860_number_to_string_vars( Environment * _environment ) {
 
-    variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
-    variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
-    variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
-
 }
 
 void sc61860_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_number_to_string" );
-
     MAKE_LABEL
-        
-    // deploy_with_vars( numberToString, src_hw_sc61860_number_to_string_asm, sc61860_number_to_string_vars );
+
+    deploy( numberToString, src_hw_sc61860_number_to_string_asm );
+
+    outline1("LIDP %s", _string );
+    outline0("LIP 0x4");
+    outline0("LDD");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement(_environment, _string, "1") );
+    outline0("LIP 0x5");
+    outline0("LDD");
+    outline0("EXAM");
+
+    outline0("LIA 0x0");
+    outline0("LIP 0x0c");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0d");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0e");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0f");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x10");
+    outline0("EXAM");
 
     switch( _bits ) {
-        case 8:
-            // outline1("LD A, (%s)", _number);
-            if ( _signed ) {
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp81", label);
-                // outline1("LD A, (%s)", _number);
-                // outline0("XOR 0xFF");
-                // outline0("ADC 0x1");
-                // outline1("JP %sp82", label);
-                // outhead1("%sp81:", label);
-                // outline1("LD A, (%s)", _number);
-                // outhead1("%sp82:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
-            }
-            // outline0("POP IX");
-            // outline0("CALL N2D8");
-            break;
-        case 16:
-            // outline1("LD HL, (%s)", _number);
-            if ( _signed ) {
-                // outline0("LD A, H");
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp161", label);
-                // outline0("LD A, H");
-                // outline0("XOR 0xFF");
-                // outline0("LD H, A");
-                // outline0("LD A, L");
-                // outline0("XOR 0xFF");
-                // outline0("LD L, A");
-                // outline0("LD DE, 1" );
-                // outline0("ADD HL, DE" );
-                // outline0("LD DE, 0" );
-                // outline1("JP %sp162", label);
-                // outhead1("%sp161:", label);
-                // outline1("LD HL, (%s)", _number);
-                // outhead1("%sp162:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
-            }
-            // outline0("POP IX");
-            // outline0("CALL N2D16");
-            break;
         case 32:
-            // outline1("LD HL, (%s)", _number);
-            // outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
+            outline1("LIDP %s", address_displacement(_environment, _number, "3") );
+            outline0("LDD");
             if ( _signed ) {
-                // outline0("LD A, D");
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp321", label);
-                // outline0("LD A, D");
-                // outline0("XOR 0xFF");
-                // outline0("LD D, A");
-                // outline0("LD A, E");
-                // outline0("XOR 0xFF");
-                // outline0("LD E, A");
-                // outline0("LD A, H");
-                // outline0("XOR 0xFF");
-                // outline0("LD H, A");
-                // outline0("LD A, L");
-                // outline0("XOR 0xFF");
-                // outline0("LD L, A");
-                // outline0("AND A");
-                // outline0("INC HL");
-                // outline0("LD A, L");
-                // outline0("OR H");
-                // outline1("JR NZ, %sp322", label);
-                // outline0("INC DE");
-                // outline1("JP %sp322", label);
-                // outhead1("%sp321:", label);
-                // outline1("LD HL, (%s)", _number);
-                // outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
-                // outhead1("%sp322:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
             }
-            // outline0("POP IX");
-            // outline0("CALL N2D32");
-            break;
-        default:
-            CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
+            outline0("LIP 0x0f");
+            outline0("EXAM");
+            outline1("LIDP %s", address_displacement(_environment, _number, "2") );
+            outline0("LDD");
+            outline0("LIP 0x0e");
+            outline0("EXAM");
+        case 16:
+            outline1("LIDP %s", address_displacement(_environment, _number, "1") );
+            outline0("LDD");
+            if ( _signed && _bits == 16 ) {
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
+            }
+            outline0("LIP 0x0d");
+            outline0("EXAM");
+        case 8:
+            outline1("LIDP %s", _number );
+            outline0("LDD");
+            if ( _signed && _bits == 8 ) {
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
+            }
+            outline0("LIP 0x0c");
+            outline0("EXAM");
     }
 
-    // outline1("LD DE, (%s)", _string);
-    // outline0("LD A, IXH");
-    // outline0("CP 0");
-    // outline1("JR Z, %spos", label);
-    // outline0("LD A, '-'");
-    // outline0("LD (DE), A");
-    // outline0("INC DE");
-    // outline0("INC C");
-    // outhead1("%spos:", label);
-    // outline0("LD A, C");
-    // outline1("LD (%s), A", _string_size);
-    // outline0("LDIR");
+    outline0("LIP 0x10");
+    outline0("LDM");
+    outline0("ANIA 0x80" );
+    outline1("JRZP %spositive", label );
+
+    // switch( _bits ) {
+    //     case 32:
+    //         outline0("LIP 0x0f");
+    //         outline0("LDM");
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR3" );
+    //         outline0("LDA MATHPTR2" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR2" );
+    //     case 16:
+    //         outline0("LDA MATHPTR1" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR1" );
+    //     case 8:
+    //         outline0("LDA MATHPTR0" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR0" );
+    // }
+
+    // outline0("CLC" );
+    // outline0("LDA #$01" );
+    // outline0("ADC MATHPTR0" );
+    // outline0("STA MATHPTR0" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR1" );
+    // outline0("STA MATHPTR1" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR2" );
+    // outline0("STA MATHPTR2" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR3" );
+    // outline0("STA MATHPTR3" );
+
+    outhead1("%spositive:", label );
+    outline1("LIA 0x%2.2X", _bits );
+    outline0("LIP 0x11");
+    outline0("EXAM");
+
+    outline0("CALL N2STRING");
+
+    outline0("LIP 0x11");
+    outline0("LDM");
+    outline1("LIDP %s", _string_size);
+    outline0("STD");
 
 }
 
