@@ -36,18 +36,76 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTDOWN:
+    
+    LD A, (CONSOLEW)
+    LD B, A
+    LD A, 32
+    SBC B
+
     LD HL, _SCRN0 + (18*32) - 32
     LD DE, _SCRN0 + (18*32)
-    LD B, $02
-    LD C, $20
+
+    LD (IXLR), A
+
+    LD HL, _SCRN0
+
+    LD A, (CONSOLEY2)
+    CP 0
+    JR Z, VSCROLLTDOWNY0
+
+    DEC A
+    LD C, A
+VSCROLLTDOWNYL1:
+    ADD HL, 32
+    DEC C
+    JR NZ, VSCROLLTDOWNYL1
+
+VSCROLLTDOWNY0:
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+    ADD DE, 32
+
+    LD A, (CONSOLEH)
+    DEC A
+    CP 0
+    JR Z, VSCROLLTDOWNDONE
+    LD B, A
+VSCROLLTDOWNL1A:
+    LD A, (CONSOLEW)
+    LD C, A
 VSCROLLTDOWNL1:
     CALL WAITSTATE
     LD A, (HL)
     LD (DE), A
-    DEC HL
-    DEC DE
-    DEC BC
-    LD A, B
-    OR C
+    INC HL
+    INC DE
+    DEC C
     JR NZ, VSCROLLTDOWNL1
+    PUSH BC
+    LD HL, DE
+    LD B, 0
+    LD A, (IXLR)
+    LD C, A
+    SUB HL, BC
+    POP BC
+    LD DE, HL
+    ADD DE, 32
+
+    DEC B
+    JR NZ, VSCROLLTDOWNL1A
+VSCROLLTUPDONE:
+
+    LD A, (CONSOLEW)
+    LD C, A
+VSCROLLTDOWNCL1:
+    CALL WAITSTATE
+    LD A, (EMPTYTILE)
+    LD (DE), A
+    INC DE
+    DEC C
+    JR NZ, VSCROLLTDOWNCL1
+
     RET
