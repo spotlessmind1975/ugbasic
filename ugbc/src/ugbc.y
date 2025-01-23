@@ -7627,8 +7627,12 @@ parameters :
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier as_datatype_suffix_optional {
+          VariableType vt = $2;
+          if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+          }
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier as_datatype_mandatory OP_COMMA parameters {
@@ -7637,8 +7641,12 @@ parameters :
           ++((struct _Environment *)_environment)->parameters;
     }
     | Identifier as_datatype_suffix_optional OP_COMMA parameters {
+          VariableType vt = $2;
+          if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+          }
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
