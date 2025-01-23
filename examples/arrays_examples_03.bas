@@ -39,8 +39,8 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000
 
     CALL execute[0]
 
-    FOR y = 0 TO a-1
-        FOR x = 0 TO b-1
+    FOR y = 0 TO first-1
+        FOR x = 0 TO second-1
             LOCATE x+1,y+1
             PRINT firstx(x,y)
         NEXT
