@@ -66,9 +66,9 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
-    gb_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
+    // gb_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
     gb_start( _environment, 0x08 );
-    gb_set_frequency( _environment, _channels, 1000 );
+    gb_set_frequency( _environment, 0x08, 1000 );
 
     gb_set_duration( _environment, 0x08, 4 );
 
