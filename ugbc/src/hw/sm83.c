@@ -3112,8 +3112,8 @@ void sm83_combine_nibbles( Environment * _environment, char * _low_nibble, char 
 
     embedded( cpu_combine_nibbles, src_hw_sm83_cpu_combine_nibbles_asm );
 
-        outline1("LD A, (%s)", _low_nibble );
-        outline1("LD HL, %s", _hi_nibble );
+        outline1("LD A, (%s)", _hi_nibble );
+        outline1("LD HL, %s", _low_nibble );
         outline1("LD DE, %s", _byte );
         outline0("CALL CPUCOMBINENIBBLES" );
 
