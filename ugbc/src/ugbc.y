@@ -12094,7 +12094,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->peepholeOptimizationLimit = 16;
 
-    _environment->floatType.precision = FT_FAST;
+    _environment->floatType.precision = FT_SINGLE;
 
     _environment->temporaryPath = get_default_temporary_path( );
 
