@@ -36,18 +36,72 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VSCROLLTUP:
-    LD HL, _SCRN0 + 32
-    LD DE, _SCRN0
-    LD B, $02
-    LD C, $20
+
+    LD A, (CONSOLEW)
+    LD B, A
+    LD A, 32
+    SBC B
+
+    LD (IXLR), A
+
+    LD HL, _SCRN0
+
+    LD A, (CONSOLEY1)
+    CP 0
+    JR Z, VSCROLLTUPY0
+
+    LD C, A
+VSCROLLTUPYL1:
+    ADD HL, 32
+    DEC C
+    JR NZ, VSCROLLTUPYL1
+
+VSCROLLTUPY0:
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+    ADD HL, 32
+
+    LD A, (CONSOLEH)
+    DEC A
+    CP 0
+    JR Z, VSCROLLTUPDONE
+    LD B, A
+VSCROLLTUPL1A:
+    LD A, (CONSOLEW)
+    LD C, A
 VSCROLLTUPL1:
     CALL WAITSTATE
     LD A, (HL)
     LD (DE), A
     INC HL
     INC DE
-    DEC BC
-    LD A, B
-    OR C
+    DEC C
     JR NZ, VSCROLLTUPL1
+    PUSH BC
+    LD HL, DE
+    LD B, 0
+    LD A, (IXLR)
+    LD C, A
+    ADD HL, BC
+    POP BC
+    LD DE, HL
+    ADD HL, 32
+
+    DEC B
+    JR NZ, VSCROLLTUPL1A
+VSCROLLTUPDONE:
+
+    LD A, (CONSOLEW)
+    LD C, A
+VSCROLLTUPCL1:
+    CALL WAITSTATE
+    LD A, (EMPTYTILE)
+    LD (DE), A
+    INC DE
+    DEC C
+    JR NZ, VSCROLLTUPCL1
+
     RET

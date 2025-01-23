@@ -1087,7 +1087,7 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
 
     deploy( gbvars, src_hw_gb_vars_asm );
 
-    // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+    deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
     outline1("LD HL, (%s)", _text);
     outline0("PUSH HL");
