@@ -1761,38 +1761,38 @@ GBSTART3X:
 
 GBSTARTSTOPGEN:
 GBSTART0:
-    PUSH AF
-    PUSH DE
-    LD E, $F
-    CALL GBSTARTVOL0 
-    POP DE
-    POP AF
+    ; PUSH AF
+    ; PUSH DE
+    ; LD E, $F
+    ; CALL GBSTARTVOL0 
+    ; POP DE
+    ; POP AF
     RET
 GBSTART1:
-    PUSH AF
-    PUSH DE
-    LD E, $F
-    CALL GBSTARTVOL1 
-    POP DE
-    POP AF
+    ; PUSH AF
+    ; PUSH DE
+    ; LD E, $F
+    ; CALL GBSTARTVOL1 
+    ; POP DE
+    ; POP AF
     RET
 GBSTART2:
-    PUSH AF
-    PUSH DE
-    LD E, $F
-    CALL GBSTARTVOL2 
-    POP DE
-    POP AF
+    ; PUSH AF
+    ; PUSH DE
+    ; LD E, $F
+    ; CALL GBSTARTVOL2 
+    ; POP DE
+    ; POP AF
     RET
 GBSTART3:
-    PUSH AF
-    PUSH DE
-    LD E, $F
-    CALL GBSTARTVOL3 
-    LD A, $80
-    LD (rAUD4GO), A
-    POP DE
-    POP AF
+    ; PUSH AF
+    ; PUSH DE
+    ; LD E, $F
+    ; CALL GBSTARTVOL3 
+    ; LD A, $80
+    ; LD (rAUD4GO), A
+    ; POP DE
+    ; POP AF
     RET
 
 GBSTARTVOL:

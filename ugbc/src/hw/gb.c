@@ -2377,7 +2377,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2389,7 +2389,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2439,7 +2439,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, (%s)", address_displacement(_environment, f, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2451,7 +2451,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( f >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2477,7 +2477,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, (%s)", address_displacement(_environment, p, "1") ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $7"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2489,7 +2489,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline1("LD A, $%2.2x", ( ( p >> 8 ) & 0xff ) ); \
     outline0("LD D, A" ); \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2507,7 +2507,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     STOP_FREQUENCY_V( c ) \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2515,7 +2515,7 @@ void gb_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 #define     STOP_FREQUENCY_SV( c ) \
     if ( c == NULL ) { \
-        outline0("LD A, $f"); \
+        outline0("LD A, $3"); \
     } else { \
         outline1("LD A, (%s)", c ); \
     } \
@@ -2714,7 +2714,7 @@ void gb_start_var( Environment * _environment, char * _channels ) {
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
     outline0("CALL GBSTART");
 
@@ -2731,7 +2731,7 @@ void gb_set_volume_vars( Environment * _environment, char * _channels, char * _v
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
     outline0("CALL GBSTARTVOL");
 
@@ -2919,7 +2919,7 @@ void gb_set_frequency_vars( Environment * _environment, char * _channels, char *
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
 
     outline0("CALL GBFREQ");
@@ -2935,7 +2935,7 @@ void gb_set_pitch_vars( Environment * _environment, char * _channels, char * _pi
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
 
     outline0("CALL GBPROGFREQ");
@@ -2961,7 +2961,7 @@ void gb_set_note_vars( Environment * _environment, char * _channels, char * _not
     if ( _channels ) {
         outline1("LD A, (%s)", _channels );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
 
     outline0("CALL GBPROGFREQ");
@@ -3016,7 +3016,7 @@ void gb_set_duration_vars( Environment * _environment, char * _channel, char * _
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
 
     outline0("CALL GBPROGDUR" );
@@ -3028,7 +3028,7 @@ void gb_wait_duration_vars( Environment * _environment, char *  _channel ) {
     if ( _channel ) {
         outline1("LD A, (%s)", _channel );
     } else {
-        outline0("LD A, $f" );
+        outline0("LD A, $3" );
     }
     
     outline0("CALL GBWAITDUR" );

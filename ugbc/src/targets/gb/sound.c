@@ -67,11 +67,11 @@ void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 
     int chipsetFrequency = 2048 - ( 131072 / _freq );
 
-    gb_start( _environment, ( _channels & 0x0f ) );
-    gb_set_frequency( _environment, _channels, chipsetFrequency );
+    gb_start( _environment, ( _channels & 0x03 ) );
+    gb_set_frequency( _environment, ( _channels & 0x03 ), chipsetFrequency );
     if ( _delay ) {
-        gb_set_duration( _environment, _channels, _delay / 50 /* approx! */ );
-        gb_wait_duration( _environment, _channels );
+        gb_set_duration( _environment, ( _channels & 0x03 ), _delay / 50 /* approx! */ );
+        gb_wait_duration( _environment, ( _channels & 0x03 ) );
     }
 
 }
@@ -106,7 +106,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
                             );
 
     if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x03 );
         gb_start_var( _environment, channels->realName );
         gb_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
         if ( _delay ) {

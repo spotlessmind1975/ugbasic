@@ -53,13 +53,13 @@
 </usermanual> */
 void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
-    gb_start( _environment, ( _channels & 0x07 ) );
-    gb_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    gb_set_note( _environment, _channels, _note );
+    gb_start( _environment, ( _channels & 0x03 ) );
+    gb_set_program( _environment, ( _channels & 0x03 ), IMF_INSTRUMENT_GLOCKENSPIEL );
+    gb_set_note( _environment, ( _channels & 0x03 ), _note );
 
     long durationInCycles = ( _duration / 20 ) & 0xffff;
 
-    gb_set_duration( _environment,  _channels, durationInCycles );
+    gb_set_duration( _environment,  ( _channels & 0x03 ), durationInCycles );
 
     if ( ! _environment->audioConfig.async ) {
         gb_wait_duration( _environment, _channels );
@@ -84,7 +84,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
     if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
+        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x03 );
         gb_start_var( _environment, channels->realName );
         gb_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
         gb_set_note_vars( _environment, channels->realName, note->realName );
