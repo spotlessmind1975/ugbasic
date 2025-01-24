@@ -50,7 +50,7 @@ PROTOTHREADINITL1:
     LD A, C
     LD (HL), A
     INC HL
-    LD A, $32
+    LD A, $EA
     LD (HL), A
     INC HL
     LD DE, PROTOTHREADCT

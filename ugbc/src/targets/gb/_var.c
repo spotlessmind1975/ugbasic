@@ -597,12 +597,11 @@ void variable_cleanup( Environment * _environment ) {
         outline0("CALL COPYUDCCHAR");
     }
 
-
     // deploy_inplace_preferred( tms9918startup, src_hw_// tms9918_startup_asm);
 
     buffered_prepend_output( _environment );
 
-    // variable_on_memory_init( _environment, 1 );
+    variable_on_memory_init( _environment, 1 );
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
