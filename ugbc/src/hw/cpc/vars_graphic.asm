@@ -130,8 +130,8 @@ CPCLOOKFORPALETTE:
     LD C, A
     LD A, IXL
     LD B, A
-    INC C
-    INC HL
+    ; INC C
+    ; INC HL
 CPCLOOKFORPALETTEL1:
     LD A, (HL)
     CP B
