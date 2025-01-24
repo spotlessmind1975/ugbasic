@@ -35,8 +35,33 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPULT16U:
+; Is DE < HL ? (signed)
+;   A : $ff if true, $00 if false
 CPULT16S:
+    LD A, H
+    CP D
+    JR Z, CPULT16S2
+    LD A, H
+    XOR 80h
+    LD B, A
+    LD A, D
+    XOR 80h
+    CP B
+    JR C, CPULT16UL
+    JR CPULT16UL0
+CPULT16S2:    
+    LD A, L
+    XOR 80h
+    LD B, A
+    LD A, e
+    XOR 80h
+    CP B
+    JR C, CPULT16UL
+    JR CPULT16UL0
+
+; Is DE < HL ? (unsigned)
+;   A : $ff if true, $00 if false
+CPULT16U:
     LD A, H
     LD B, A
     LD A, D
@@ -58,6 +83,30 @@ CPULT16UL:
     RET
 
 CPULTE16S:
+    LD A, H
+    CP D
+    JR Z, CPULTE16S2
+    LD A, H
+    XOR 80h
+    LD B, A
+    LD A, D
+    XOR 80h
+    CP B
+    JR C, CPULTE16UL
+    JR CPULTE16UL0
+CPULTE16S2:    
+    LD A, L
+    CP E
+    JR Z, CPULTE16UL
+    LD A, L
+    XOR 80h
+    LD B, A
+    LD A, e
+    XOR 80h
+    CP B
+    JR C, CPULTE16UL
+    JR CPULTE16UL0
+
 CPULTE16U:
     LD A, H
     LD B, A

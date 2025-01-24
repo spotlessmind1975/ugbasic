@@ -35,25 +35,47 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is A < B ? (unsigned)
+; Is D < H ? (unsigned)
 ;   A : $ff if true, $00 if false
 CPULT8S:
+    LD A, H
+    XOR 80h
+    LD B, A
+    LD A, D
+    XOR 80h
+    CP B
+    JR C, CPULT8UT
+    JR CPULT8UF
+
 CPULT8U:
     CP B
     JR C, CPULT8UT
+CPULT8UF:
     LD A, $00
     RET
 CPULT8UT:
     LD A, $ff
     RET
 
-; Is A <= B ? (unsigned)
+; Is D <= H ? (unsigned)
 ;   A : $ff if true, $00 if false
 CPULTE8S:
+    LD A, H
+    CP D
+    JR Z, CPULTE8UT
+    XOR 80h
+    LD B, A
+    LD A, D
+    XOR 80h
+    CP B
+    JR C, CPULTE8UT
+    JR CPULTE8UF
+
 CPULTE8U:
     CP B
     JR C, CPULTE8UT
     JR Z, CPULTE8UT
+CPULTE8UF:
     LD A, $00
     RET
 CPULTE8UT:
