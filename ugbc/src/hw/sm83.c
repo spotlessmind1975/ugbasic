@@ -6058,11 +6058,10 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
 
     switch( _bits ) {
         case 8:
-            outline1("LD A, (%s)", _number);
             if ( _signed ) {
+                outline1("LD A, (%s)", _number);
                 outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
+                outline0("LD (IXHR), A");
                 outline0("CP 0");
                 outline1("JR Z, %sp81", label);
                 outline1("LD A, (%s)", _number);
@@ -6073,12 +6072,10 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline1("LD A, (%s)", _number);
                 outhead1("%sp82:", label);
             } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
+                outline0("LD A, 0" );
+                outline0("LD (IXHR), A");
+                outline1("LD A, (%s)", _number);
             }
-            outline0("POP HL");
-            outline0("LD (IXR), HL");
-            outline1("LD A, (%s)", _number);
             outline0("CALL N2D8");
             break;
         case 16:
@@ -6086,8 +6083,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
             if ( _signed ) {
                 outline0("LD A, H");
                 outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
+                outline0("LD (IXHR), A");
                 outline0("CP 0");
                 outline1("JR Z, %sp161", label);
                 outline0("LD A, H");
@@ -6104,12 +6100,10 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline1("LD HL, (%s)", _number);
                 outhead1("%sp162:", label);
             } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
+                outline0("LD A, 0" );
+                outline0("LD (IXHR), A");
             }
-            outline0("POP HL");
             outline0("LD (IXR), HL");
-            outline1("LD HL, (%s)", _number);
             outline0("CALL N2D16");
             break;
         case 32:
@@ -6123,8 +6117,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
             if ( _signed ) {
                 outline0("LD A, D");
                 outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
+                outline0("LD (IXHR), A");
                 outline0("CP 0");
                 outline1("JR Z, %sp321", label);
                 outline0("LD A, D");
@@ -6158,9 +6151,6 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
                 outline0("LD B, 0" );
                 outline0("PUSH BC");
             }
-            outline0("POP HL");
-            outline0("LD (IXR), HL");
-            outline1("LD HL, (%s)", _number);
             outline0("CALL N2D32");
             break;
         default:
@@ -6173,7 +6163,7 @@ void sm83_number_to_string( Environment * _environment, char * _number, char * _
     outline0("LD E, L");
     outline0("POP HL");
 
-    outline0("LD A, (IXR+1)");
+    outline0("LD A, (IXHR)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);
     outline0("LD A, '-'");
