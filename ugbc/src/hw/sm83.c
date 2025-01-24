@@ -90,6 +90,8 @@ void sm83_init( Environment * _environment ) {
 
     variable_import( _environment, "HLS", VT_WORD, 0 );
     variable_global( _environment, "HLS" );
+    variable_import( _environment, "FLAGS", VT_BYTE, 0 );
+    variable_global( _environment, "FLAGS" );
 
     variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
     variable_global( _environment, "CALLINDIRECTSAVEHL" );
@@ -7181,213 +7183,7 @@ void sm83_compare_nbit( Environment * _environment, int _n, char *_source, char 
 
 void sm83_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
 
-    double value = 0.0;
-    double integral = 0.0;
-    double fractional = 0.0;
-    int sign = 0;
-    int left = 0;
-    int right[2];
-    int steps = 0;
-    int exp = 0;
-    int mantissa_bits = 16;
-
-    memset( &right[0], 0, sizeof( int ) * 2 );
-
-    // Step 1: Determine Sign
-    // If the number is positive, then the sign bit will be 0. If the number is negative, then the sign bit 
-    // will be 1. For the number zero, both positive and negative zero are possible, and these are considered 
-    // different values (a quirk of using sign bits).
-
-    if ( _value >= 0 ) {
-        sign = 0;
-    } else {
-        sign = 1;
-    }
-
-    value = fabs( _value );
-
-    // Step 2: Convert the Integral Portion to Unsigned Binary
-    // Convert the integral portion of the floating-point value to unsigned binary (not two's complement). 
-    // The integral portion is the part of the number before the decimal point. For example, if the 
-    // number to convert is -0.75, then 0 is the integral portion, and it's unsigned binary representation 
-    // is simply 0. As another example, if the number to convert is 127.99, then the integral portion would 
-    // be 127, and it's unsigned binary representation is 1111111.
-
-    fractional = modf(value, &integral);
-
-    left = (unsigned int) integral;
-
-    // Step 3: Convert the Fractional Portion to Binary
-    // The fractional portion of the number must also be converted to binary, though the conversion process 
-    // is much different from what you're used to. The algorithm you'll used is based on performing repeated 
-    // multiplications by 2, and then checking if the result is >= 1.0. If the result is >= 1.0, then a 1 is 
-    // recorded for the binary fractional component, and the leading 1 is chopped of the result. If the 
-    // result is < 1.0, then a 0 is recorded for the binary fractional component, and the result is kept 
-    // as-is. The recorded builds are built-up left-to-right. The result keeps getting chained along in this 
-    // way until one of the following is true:
-    //  - The result is exactly 1.0
-    //  - 23 iterations of this process have occurred; i.e. the final converted binary value holds 23 bits
-    // With the first possible terminating condition (the result is exactly 1.0), this means that the fractional 
-    // component has been represented without any loss of precision. With the second possible terminating 
-    // condition (23 iterations have passed), this means that we ran out of bits in the final result, which 
-    // can never exceed 23. In this case, precision loss occurs (an unfortunate consequence of using a finite
-    // number of bits).
-
-    while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
-
-        // printf("%f %d %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1] );
-
-        right[1] = right[1] << 1;
-        right[0] = right[0] << 1;
-        if ( ( right[1] & 0x100 )  ) {
-            right[0] = right[0] | 0x1;
-        }
-        right[1] = right[1] & 0xff;
-        right[0] = right[0] & 0xff;
-
-        fractional = fractional * 2;
-
-        if ( fractional >= 1.0 ) {
-            right[1] |= 1;
-            fractional = modf(fractional, &integral);
-        }
-
-        ++steps;
-
-    }
-
-    // Step 4: Normalize the Value via Adjusting the Exponent
-    // A trick to encode an extra bit is to make it so that the binary scientific representation is always 
-    // of the form 1.XXXX * 2YYYY. That is, a 1 always leads, so there is no need to explicitly encode it. 
-    // In order to encode this properly, we need to move the decimal point to a position where it is 
-    // immediately after the first 1, and then record exactly how we moved it. To see this in action, consider 
-    // again the example of 0.75, which is encoded in binary as such (not IEEE-754 notation):
-    // 0.11
-    // In order to make the decimal point be after the first 1, we will need to move it one position to the right, like so:
-    // 1.1
-    // Most importantly, we need to record that we moved the decimal point by one position to the right. 
-    // Moves to the right result in negative exponents, and moves to the left result in positive exponents. 
-    // In this case, because we moved the decimal point one position to the right, the recorded exponent should be -1.
-    // As another example, consider the following binary floating point representation (again, not IEEE-754):
-    // 1111111.11100
-    // In this case, we need to move the decimal point six positions to the left to make this begin with a single 1, like so:
-    // 1.11111111100
-    // Because this moves six positions to the left, the recorded exponent should be 6.
-
-    int mantissa_high_bit = 0x80000000 >> ( 32 - mantissa_bits);
-    int mantissa_mask = 0xffffffff >> ( 32 - mantissa_bits);
-
-    if ( left == 0 ) {
-
-        if ( value != 0 ) {
-
-            while( left == 0 ) {
-
-                // printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
-
-                if ( ! right[0] && ! right[1] && ! right[2] ) {
-                    left = 0x1;
-                }
-
-                if ( right[0] & 0x80 ) {
-                    left = 0x1;
-                }
-
-                right[0] = right[0] << 1;
-                right[1] = right[1] << 1;
-                if ( ( right[1] & 0x100 )) {
-                    right[0] = right[0] | 0x1;
-                }
-                right[0] = right[0] & 0xff;
-                right[1] = right[1] & 0xff;
-
-                --exp;
-            }
-
-        } else {
-
-            exp = -63;
-            
-        }
-
-        // printf("exp = %d left = %2.2x right = %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1] );
-
-    } else {
-
-        while( left ) {
-
-            // printf("left = %8.8x right = %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1] );
-
-            if ( ( right[0] & 0x01 ) ) {
-                right[1] = right[1] | 0x100;
-            }
-            right[0] = right[0] >> 1;
-            right[1] = right[1] >> 1;
-            if ( left & 0x1 ) {
-                right[0] = right[0] | 0x80;
-            }
-            left = left >> 1;
-            ++exp;
-        }
-        --exp;
-        left = 1;
-        right[1] = right[1] << 1;
-        right[0] = right[0] << 1;
-        if ( right[1] & 0x100 ) {
-            right[0] = right[0] | 0x01;
-        }
-        right[1] = right[1] & 0xff;
-        right[0] = right[0] & 0xff;
-        
-    }
-
-    // Step 5: Add Bias to the Exponent
-    // Internally, IEEE-754 values store their exponents in an unsigned representation, which may seem odd considering that 
-    // the exponent can be negative. Negative exponents are accomodated by using a biased representation, wherein a 
-    // pre-set number is always subtracted from the given unsigned number. Because the given unsigned number may be less 
-    // than this number, this allows for negative values to be effectively encoded without resorting to two's complement. 
-    // Specifically, for the binary32 representation, the number 127 will be subtracted from anything encoded in the 
-    // exponent field of the IEEE-754 number. As such, in this step, we need to add 127 to the normalized exponent value 
-    // from the previous step.
-
-    exp += 63;
-
-    // printf("exp = %2.2x\n", exp );
-
-    // Step 6: Convert the Biased Exponent to Unsigned Binary
-    // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
-    // The result must be exactly 8 bits. It should not be possible to need more than 8 bits. If fewer than 8 bits are 
-    // needed in this conversion process, then leading zeros must be added to the front of the result to produce an 
-    // 8-bit value.
-
-    exp = exp & 0xff;
-
-    // printf("exp = %2.2x\n", exp );
-
-    // Step 7: Determine the Final Bits for the Mantissa
-    // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
-    // mantissa (note that we ignore the bits to the left of the decimal point - normalization allows us to do this, 
-    // because it should always be just a 1). We need exactly 23 mantissa bits. If less than 23 mantissa bits follow the 
-    // decimal point, and the algorithm in step 3 ended with a result that wasn't 1.0, then follow the algorithm in step 3 
-    // until we can fill enough bits. If that's still not enough (eventually reaching 1.0 before we had enough bits, or 
-    // perhaps it had ended with 1.0 already), then the right side can be padded with zeros until 23 bits is reached.
-    // If there are more than 23 bits after the decimal point in step 4, then these extra bits are simply cutoff from the 
-    // right. For example, if we had 26 bits to the right of the decimal point, then the last three would need to be cutoff 
-    // to get us to 23 bits. Note that in this case we will necessarily lose some precision.
-
-    // Step 8: Put it All Together
-    // The sign bit from step 1 will be the first bit of the final result. The next 8 bits will be from the exponent from 
-    // step 6. The last 23 bits will be from the mantissa from step 7. The result will be a 32-bit number encoded in 
-    // IEEE-754 binary32 format, assuming no mistakes were made in the process.
-
-    //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
-    // FAST	    (24)	seeeeeee mmmmmmmm mmmmmmmm
-
-    _result[0] = ( sign << 7 ) | ( exp & 0x7f );
-    _result[1] = ( right[0] );
-    _result[2] = ( right[1] );
-
-    // printf( "%2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2] );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_from_double_to_int_array" );
 
 }
 
@@ -7398,229 +7194,7 @@ void sm83_float_fast_from_double_to_int_array( Environment * _environment, doubl
 
 void sm83_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
-    double value = 0.0;
-    double integral = 0.0;
-    double fractional = 0.0;
-    int sign = 0;
-    int left = 0;
-    int right[3];
-    int steps = 0;
-    int exp = 0;
-    int mantissa_bits = 23;
-
-    memset( &right[0], 0, sizeof( int ) * 3 );
-
-    // Step 1: Determine Sign
-    // If the number is positive, then the sign bit will be 0. If the number is negative, then the sign bit 
-    // will be 1. For the number zero, both positive and negative zero are possible, and these are considered 
-    // different values (a quirk of using sign bits).
-
-    if ( _value >= 0 ) {
-        sign = 0;
-    } else {
-        sign = 1;
-    }
-
-    value = fabs( _value );
-
-    // Step 2: Convert the Integral Portion to Unsigned Binary
-    // Convert the integral portion of the floating-point value to unsigned binary (not two's complement). 
-    // The integral portion is the part of the number before the decimal point. For example, if the 
-    // number to convert is -0.75, then 0 is the integral portion, and it's unsigned binary representation 
-    // is simply 0. As another example, if the number to convert is 127.99, then the integral portion would 
-    // be 127, and it's unsigned binary representation is 1111111.
-
-    fractional = modf(value, &integral);
-
-    left = (unsigned int) integral;
-
-    // Step 3: Convert the Fractional Portion to Binary
-    // The fractional portion of the number must also be converted to binary, though the conversion process 
-    // is much different from what you're used to. The algorithm you'll used is based on performing repeated 
-    // multiplications by 2, and then checking if the result is >= 1.0. If the result is >= 1.0, then a 1 is 
-    // recorded for the binary fractional component, and the leading 1 is chopped of the result. If the 
-    // result is < 1.0, then a 0 is recorded for the binary fractional component, and the result is kept 
-    // as-is. The recorded builds are built-up left-to-right. The result keeps getting chained along in this 
-    // way until one of the following is true:
-    //  - The result is exactly 1.0
-    //  - 23 iterations of this process have occurred; i.e. the final converted binary value holds 23 bits
-    // With the first possible terminating condition (the result is exactly 1.0), this means that the fractional 
-    // component has been represented without any loss of precision. With the second possible terminating 
-    // condition (23 iterations have passed), this means that we ran out of bits in the final result, which 
-    // can never exceed 23. In this case, precision loss occurs (an unfortunate consequence of using a finite
-    // number of bits).
-
-    while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
-
-        // printf("%f %d %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-
-        right[2] = right[2] << 1;
-        right[1] = right[1] << 1;
-        right[0] = right[0] << 1;
-        if ( ( right[2] & 0x100 )  ) {
-            right[1] = right[1] | 0x1;
-        }
-        if ( ( right[1] & 0x100 )  ) {
-            right[0] = right[0] | 0x1;
-        }
-        right[2] = right[2] & 0xff;
-        right[1] = right[1] & 0xff;
-        right[0] = right[0] & 0x7f;
-
-        fractional = fractional * 2;
-
-        if ( fractional >= 1.0 ) {
-            right[2] |= 1;
-            fractional = modf(fractional, &integral);
-        }
-
-        ++steps;
-
-    }
-
-    // Step 4: Normalize the Value via Adjusting the Exponent
-    // A trick to encode an extra bit is to make it so that the binary scientific representation is always 
-    // of the form 1.XXXX * 2YYYY. That is, a 1 always leads, so there is no need to explicitly encode it. 
-    // In order to encode this properly, we need to move the decimal point to a position where it is 
-    // immediately after the first 1, and then record exactly how we moved it. To see this in action, consider 
-    // again the example of 0.75, which is encoded in binary as such (not IEEE-754 notation):
-    // 0.11
-    // In order to make the decimal point be after the first 1, we will need to move it one position to the right, like so:
-    // 1.1
-    // Most importantly, we need to record that we moved the decimal point by one position to the right. 
-    // Moves to the right result in negative exponents, and moves to the left result in positive exponents. 
-    // In this case, because we moved the decimal point one position to the right, the recorded exponent should be -1.
-    // As another example, consider the following binary floating point representation (again, not IEEE-754):
-    // 1111111.11100
-    // In this case, we need to move the decimal point six positions to the left to make this begin with a single 1, like so:
-    // 1.11111111100
-    // Because this moves six positions to the left, the recorded exponent should be 6.
-
-    int mantissa_high_bit = 0x80000000 >> ( 32 - mantissa_bits);
-    int mantissa_mask = 0xffffffff >> ( 32 - mantissa_bits);
-
-    if ( left == 0 ) {
-
-        if ( value != 0 ) {
-
-            while( left == 0 ) {
-
-                // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-
-                if ( right[0] & 0x40 ) {
-                    left = 0x1;
-                }
-
-                right[0] = right[0] << 1;
-                right[1] = right[1] << 1;
-                right[2] = right[2] << 1;
-                if ( ( right[1] & 0x100 )) {
-                    right[0] = right[0] | 0x1;
-                }
-                if ( ( right[2] & 0x100 )) {
-                    right[1] = right[1] | 0x1;
-                }
-                right[0] = right[0] & 0x7f;
-                right[1] = right[1] & 0xff;
-                right[2] = right[2] & 0xff;
-
-                --exp;
-            }
-
-        } else {
-
-            exp = -127;
-
-        }
-
-        // printf("exp = %d left = %2.2x right = %2.2x %2.2x %2.2x\n", exp, (unsigned char) left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-
-    } else {
-
-        while( left ) {
-
-            // printf("left = %8.8x right = %2.2x %2.2x %2.2x\n", left, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2] );
-
-            if ( ( right[0] & 0x01 ) ) {
-                right[1] = right[1] | 0x100;
-            }
-            if ( ( right[1] & 0x01 ) ) {
-                right[2] = right[2] | 0x100;
-            }
-            right[0] = right[0] >> 1;
-            right[1] = right[1] >> 1;
-            // right[2] = right[2] >> 1;
-            if ( left & 0x1 ) {
-                right[0] = right[0] | 0x40;
-            }
-            left = left >> 1;
-            ++exp;
-        }
-        --exp;
-        left = 1;
-        right[2] = right[2] << 1;
-        right[1] = right[1] << 1;
-        right[0] = right[0] << 1;
-        if ( right[2] & 0x100 ) {
-            right[1] = right[1] | 0x01;
-        }
-        if ( right[1] & 0x100 ) {
-            right[0] = right[0] | 0x01;
-        }
-        right[2] = right[2] & 0xff;
-        right[1] = right[1] & 0xff;
-        right[0] = right[0] & 0x7f;
-        
-    }
-
-    // Step 5: Add Bias to the Exponent
-    // Internally, IEEE-754 values store their exponents in an unsigned representation, which may seem odd considering that 
-    // the exponent can be negative. Negative exponents are accomodated by using a biased representation, wherein a 
-    // pre-set number is always subtracted from the given unsigned number. Because the given unsigned number may be less 
-    // than this number, this allows for negative values to be effectively encoded without resorting to two's complement. 
-    // Specifically, for the binary32 representation, the number 127 will be subtracted from anything encoded in the 
-    // exponent field of the IEEE-754 number. As such, in this step, we need to add 127 to the normalized exponent value 
-    // from the previous step.
-
-    exp += 127;
-
-    // printf("exp = %2.2x\n", exp );
-
-    // Step 6: Convert the Biased Exponent to Unsigned Binary
-    // The biased exponent value from the previous step must be converted into unsigned binary, using the usual process.
-    // The result must be exactly 8 bits. It should not be possible to need more than 8 bits. If fewer than 8 bits are 
-    // needed in this conversion process, then leading zeros must be added to the front of the result to produce an 
-    // 8-bit value.
-
-    exp = exp & 0xff;
-
-    // printf("exp = %2.2x\n", exp );
-
-    // Step 7: Determine the Final Bits for the Mantissa
-    // After step 4, there are a bunch of bits after the normalized decimal point. These bits will become the 
-    // mantissa (note that we ignore the bits to the left of the decimal point - normalization allows us to do this, 
-    // because it should always be just a 1). We need exactly 23 mantissa bits. If less than 23 mantissa bits follow the 
-    // decimal point, and the algorithm in step 3 ended with a result that wasn't 1.0, then follow the algorithm in step 3 
-    // until we can fill enough bits. If that's still not enough (eventually reaching 1.0 before we had enough bits, or 
-    // perhaps it had ended with 1.0 already), then the right side can be padded with zeros until 23 bits is reached.
-    // If there are more than 23 bits after the decimal point in step 4, then these extra bits are simply cutoff from the 
-    // right. For example, if we had 26 bits to the right of the decimal point, then the last three would need to be cutoff 
-    // to get us to 23 bits. Note that in this case we will necessarily lose some precision.
-
-    // Step 8: Put it All Together
-    // The sign bit from step 1 will be the first bit of the final result. The next 8 bits will be from the exponent from 
-    // step 6. The last 23 bits will be from the mantissa from step 7. The result will be a 32-bit number encoded in 
-    // IEEE-754 binary32 format, assuming no mistakes were made in the process.
-
-    //                  [0]      [1]      [2]      [3]      [4]      [5]      [6]      [7]      [8]      [9]
-    // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
-
-    _result[3] = ( sign << 7 ) | ( ( exp >> 1 ) & 0x7f );
-    _result[2] = ( ( exp & 0x01 ) << 7 ) | ( right[0] );
-    _result[1] = ( right[1] );
-    _result[0] = ( right[2] );
-
-    // printf( "%2.2x %2.2x %2.2x %2.2x\n", _result[0], _result[1], _result[2], _result[3] );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_from_double_to_int_array" );
 
 }
 
@@ -7631,815 +7205,206 @@ void sm83_float_single_from_double_to_int_array( Environment * _environment, dou
 
 void sm83_float_double_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
+    CRITICAL_UNIMPLEMENTED( "sm83_float_double_from_double_to_int_array" );
+
 }
 
 void sm83_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
-    deploy( fp_fast_pow10_lut, src_hw_sm83_fp_fast_pow10_lut_asm );
-    deploy( fp_format_str, src_hw_sm83_fp_format_str_asm );
-    deploy( fp_fast_to_string, src_hw_sm83_fp_fast_to_string_asm );
-
-    // ;converts a 24-bit float to a string
-
-    // ;Inputs:
-    // ;   AHL is the float to convert
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-
-    // ;   DE points to where to write the string
-    outline0("PUSH HL");
-    outline1("LD HL, (%s)", _string );
-    outline0("LD D, H" );
-    outline0("LD E, L" );
-    outline0("POP HL");
-
-    outline0( "CALL FPFASTTOA" );
-
-    // ;Output:
-    // ;   HL pointing to the string
-    outline0( "PUSH HL" );
-    outline0( "POP DE" );
-    outhead1( "%s:", label );
-    outline0( "LD A, (DE)" );
-    outline0( "CP 0" );
-    outline1( "JR Z, %sdone", label );
-    outline0( "INC DE" );
-    outline0( "INC C" );
-    outline1( "JR %s", label );
-    outhead1( "%sdone:", label );
-    outline0( "LD A, C" );
-    outline1( "LD (%s), A", _string_size );
-
-    // ;Destroys:
-    // ;   A,DE,BC
-    // ;Notes:
-    // ;   Uses up to 12 bytes to store the string
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_to_string" );
 
 }
 
 void sm83_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
-    deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
-    deploy( fp_single_pow10_lut, src_hw_sm83_fp_single_pow10_lut_asm );
-    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    deploy( fp_mov4, src_hw_sm83_fp_mov4_asm );
-    deploy( fp_common_str, src_hw_sm83_fp_common_str_asm );
-    deploy( fp_format_str, src_hw_sm83_fp_format_str_asm );
-    deploy( fp_single_to_string, src_hw_sm83_fp_single_to_string_asm );
-
-    // ;converts a 32-bit float to a string
-
-    // ;Inputs:
-    // ;   HL points to the input float
-    // ;   BC points to where the string gets written.
-
-    outline1("LD HL, (%s)", _string );
-    outline0("LD BC, HL" );
-
-    outline1( "LD HL, %s", _x );
-
-    outline0( "CALL FPSINGLETOA" );
-
-    // ;Output:
-    // ;   HL pointing to the string
-    outline0( "PUSH HL" );
-    outline0( "POP DE" );
-    outhead1( "%s:", label );
-    outline0( "LD A, (DE)" );
-    outline0( "CP 0" );
-    outline1( "JR Z, %sdone", label );
-    outline0( "INC DE" );
-    outline0( "INC C" );
-    outline1( "JR %s", label );
-    outhead1( "%sdone:", label );
-    outline0( "LD A, C" );
-    outline1( "LD (%s), A", _string_size );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_to_string" );
 
 }
 
 void sm83_float_double_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
     
+    CRITICAL_UNIMPLEMENTED( "sm83_float_double_to_string" );
+
 }
 
 void sm83_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_from_16, src_hw_sm83_fp_fast_from_16_asm );
-
-    outline1( "LD HL, (%s)", _value );
-    if ( _signed ) {
-        outline0( "CALL FPFASTFROM16S");
-    } else {
-        outline0( "CALL FPFASTFROM16U");
-    }
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_from_16" );
 
 }
 
 void sm83_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_from_8, src_hw_sm83_fp_fast_from_8_asm );
-
-    outline1( "LD A, (%s)", _value );
-    if ( _signed ) {
-        outline0( "CALL FPFASTFROM8S");
-    } else {
-        outline0( "CALL FPFASTFROM8U");
-    }
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_from_8" );
 
 }
 
 void sm83_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_to_16, src_hw_sm83_fp_fast_to_16_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _value );
-    if ( _signed ) {
-        outline0( "CALL FPFASTTOS16");
-    } else {
-        outline0( "CALL FPFASTTOU16");
-    }
-    outline1( "LD (%s), HL", _result );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_to_16" );
 
 }
 
 void sm83_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_to_8" );
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_to_8, src_hw_sm83_fp_fast_to_8_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _value );
-    if ( _signed ) {
-        outline0( "CALL FPFASTTOS8");
-    } else {
-        outline0( "CALL FPFASTTOU8");
-    }
-    outline1( "LD (%s), A", _result );
-
 }
 
 void sm83_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
-    outline0( "LD E, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+1" ) );
-    outline0( "LD D, A" );
-    outline1( "LD A, (%s)", _y );
-    outline0( "LD C, A" );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-    outline0( "CALL FPFASTADD");
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_add" );
 
 }
 
 void sm83_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
-    outline0( "LD E, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+1" ) );
-    outline0( "LD D, A" );
-    outline1( "LD A, (%s)", _y );
-    outline0( "LD C, A" );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-    outline0( "CALL FPFASTSUB");
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_sub" );
 
 }
 
 void sm83_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
-    outline0( "LD E, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+1" ) );
-    outline0( "LD D, A" );
-    outline1( "LD A, (%s)", _y );
-    outline0( "LD C, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-    outline0( "CALL FPFASTMUL");
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_mul" );
 
 }
 
 void sm83_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
-    outline0( "LD E, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+1" ) );
-    outline0( "LD D, A" );
-    outline1( "LD A, (%s)", _y );
-    outline0( "LD C, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-    outline0( "CALL FPFASTDIV");
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_div" );
 
 }
 
 void sm83_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
-    deploy( fp_fast_cmp, src_hw_sm83_fp_fast_cmp_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+2" ) );
-    outline0( "LD E, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _y, "+1" ) );
-    outline0( "LD D, A" );
-    outline1( "LD A, (%s)", _y );
-    outline0( "LD C, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _x, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _x );
-    outline0( "CALL FPFASTCMP");
-
-    outline1( "JR Z, %sequal", label );
-    outline1( "JR C, %sless", label );
-    outline0( "LD A, 1" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sequal:", label );
-    outline0( "LD A, 0" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sless:", label );
-    outline0( "LD A, $ff" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sdone:", label );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_cmp" );
 
 }
 
 void sm83_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
-    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
-    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
-    deploy( fp_fast_sin, src_hw_sm83_fp_fast_sin_asm );
-    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
-    deploy( fp_fast_cos, src_hw_sm83_fp_fast_cos_asm );     
-    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _angle );
-
-    outline0( "CALL FPFASTSIN");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_sin" );
 
 }
 
 void sm83_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
-    deploy( fp_fast_add, src_hw_sm83_fp_fast_add_asm );
-    deploy( fp_fast_sub, src_hw_sm83_fp_fast_sub_asm );
-    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
-    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
-    deploy( fp_fast_sin, src_hw_sm83_fp_fast_cos_asm );
-    deploy( fp_fast_cos, src_hw_sm83_fp_fast_sin_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _angle );
-    
-    outline0( "CALL FPFASTCOS");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_cos" );
 
 }
 
 void sm83_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_tan, src_hw_sm83_fp_fast_tan_asm );
-    deploy( fp_fast_sin, src_hw_sm83_fp_fast_sin_asm );
-    deploy( fp_fast_cos, src_hw_sm83_fp_fast_cos_asm );     
-    deploy( fp_fast_div, src_hw_sm83_fp_fast_div_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _angle );
-
-    outline0( "CALL FPFASTTAN");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_tan" );
 
 }
 
 void sm83_float_fast_sqr( Environment * _environment, char * _value, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul16, src_hw_sm83_fp_mul16_asm );
-    deploy( fp_fast_mul, src_hw_sm83_fp_fast_mul_asm );
-    deploy( fp_fast_sqr, src_hw_sm83_fp_fast_sqr_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _value );
-    
-    outline0( "CALL FPFASTSQR");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_sqr" );
 
 }
 
 void sm83_float_fast_mod1( Environment * _environment, char * _value, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_mod1, src_hw_sm83_fp_fast_mod1_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _value );
-    
-    outline0( "CALL FPFASTMOD1");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_mod1" );
 
 }
 
 void sm83_float_fast_neg( Environment * _environment, char * _value, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_fast_neg, src_hw_sm83_fp_fast_neg_asm );
-
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    outline0( "LD L, A" );
-    outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    outline0( "LD H, A" );
-    outline1( "LD A, (%s)", _value );
-    
-    outline0( "CALL FPFASTNEG");
-
-    outline1( "LD (%s), A", _result );
-    outline0( "LD A, H" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    outline0( "LD A, L" );
-    outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_fast_neg" );
 
 }
 
 void sm83_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_single_from_16, src_hw_sm83_fp_single_from_16_asm );
-
-    outline1( "LD HL, (%s)", _value );
-    outline1( "LD BC, %s", _result );
-    if ( _signed ) {
-        outline0( "CALL FPSINGLEFROM16S");
-    } else {
-        outline0( "CALL FPSINGLEFROM16U");
-    }
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_from_16" );
 
 }
 
 void sm83_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_single_from_8, src_hw_sm83_fp_single_from_8_asm );
-
-    outline1( "LD A, (%s)", _value );
-    outline1( "LD BC, %s", _result );
-    if ( _signed ) {
-        outline0( "CALL FPSINGLEFROM8S");
-    } else {
-        outline0( "CALL FPSINGLEFROM8U");
-    }
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_from_8" );
 
 }
 
 
 void sm83_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_single_to_16, src_hw_sm83_fp_single_to_16_asm );
-
-    outline1( "LD HL, %s", _value );
-    if ( _signed ) {
-        outline0( "CALL FPSINGLETO16S");
-    } else {
-        outline0( "CALL FPSINGLETO16U");
-    }
-    outline1( "LD (%s), HL", _result );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_to_16" );
 
 }
 
 void sm83_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_single_to_8, src_hw_sm83_fp_single_to_8_asm );
-
-    outline1( "LD HL, %s", _value );
-    if ( _signed ) {
-        outline0( "CALL FPSINGLETO8S");
-    } else {
-        outline0( "CALL FPSINGLETO8U");
-    }
-    outline1( "LD (%s), A", _result );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_to_8" );
 
 }
 
 void sm83_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_add" );
 
-    outline1( "LD DE, %s", _y );
-    outline1( "LD HL, %s", _x );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLEADD");
-    
 }
 
 void sm83_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_sub" );
 
-    outline1( "LD DE, %s", _y );
-    outline1( "LD HL, %s", _x );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLESUB");
-    
 }
 
 void sm83_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
-    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_mul" );
 
-    outline1( "LD DE, %s", _y );
-    outline1( "LD HL, %s", _x );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLEMUL");
-    
 }
 
 void sm83_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_div24_24, src_hw_sm83_fp_div24_24_asm );
-    deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_div" );
 
-    outline1( "LD DE, %s", _y );
-    outline1( "LD HL, %s", _x );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLEDIV");
-    
 }
 
 void sm83_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_pushpop, src_hw_sm83_fp_pushpop_asm );
-    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    deploy( fp_single_cmp, src_hw_sm83_fp_single_cmp_asm );
-
-    outline1( "LD DE, %s", _y );
-    outline1( "LD HL, %s", _x );
-    outline0( "CALL FPSINGLECMP");
-
-    outline1( "JR Z, %sequal", label );
-    outline1( "JR C, %sless", label );
-    outline0( "LD A, 1" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sequal:", label );
-    outline0( "LD A, 0" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sless:", label );
-    outline0( "LD A, $ff" );
-    outline1( "LD (%s), A", _result );
-    outline1( "JP %sdone", label );
-    outhead1( "%sdone:", label );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_cmp" );
 
 }
 
 void sm83_float_single_neg( Environment * _environment, char * _value, char * _result ) {
 
-    // MAKE_LABEL
-
-    // deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    // deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
-    // deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
-    // deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    // deploy( fp_single_sqr, src_hw_sm83_fp_single_sqr_asm );
-    // deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );     
-    // deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
-
-    // outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+2" ) );
-    // outline0( "LD L, A" );
-    // outline1( "LD A, (%s)", address_displacement( _environment, _angle, "+1" ) );
-    // outline0( "LD H, A" );
-    // outline1( "LD A, (%s)", _angle );
-
-    // outline0( "CALL FPFSINGLESIN");
-
-    // outline1( "LD (%s), A", _result );
-    // outline0( "LD A, H" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    // outline0( "LD A, L" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_neg" );
 
 }
 
 void sm83_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
-    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
-    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
-    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
-    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
-
-    outline1( "LD HL, %s", _angle );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLESIN");
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_sin" );
 
 }
 
 void sm83_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
-    deploy( fp_mov4, src_hw_sm83_fp_mov4_asm );
-    deploy( fp_c_times_bde, src_hw_sm83_fp_c_times_bde_asm );
-    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
-    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
-    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
-    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
-
-    outline1( "LD HL, %s", _angle );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLECOS");
-    outline0( "LD A, (HL)" );
-    outline1( "LD (%s), A", _result );
-    outline0( "INC HL" );
-    outline0( "LD A, (HL)" );
-    outline1( "LD (%s), A", _result );
-    outline0( "INC HL" );
-    outline0( "LD A, (HL)" );
-    outline1( "LD (%s), A", _result );
-    outline0( "INC HL" );
-    outline0( "LD A, (HL)" );
-    outline1( "LD (%s), A", _result );
-    outline0( "INC HL" );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_cos" );
 
 }
 
 void sm83_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
 
-    MAKE_LABEL
-
-    deploy( fp_common, src_hw_sm83_fp_common_asm );
-    deploy( fp_mul24_stack_based, src_hw_sm83_fp_mul24_stack_based_asm );
-    deploy( fp_single_vars, src_hw_sm83_fp_single_vars_asm );
-    deploy( fp_single_sin, src_hw_sm83_fp_single_sin_asm );
-    deploy( fp_single_cos, src_hw_sm83_fp_single_cos_asm );
-    deploy( fp_single_div, src_hw_sm83_fp_single_div_asm );
-    deploy( fp_single_sin, src_hw_sm83_fp_single_tan_asm );
-    deploy( fp_single_tan, src_hw_sm83_fp_single_tan_asm );
-    deploy( fp_single_neg, src_hw_sm83_fp_single_neg_asm );
-    deploy( fp_single_sub, src_hw_sm83_fp_single_sub_asm );
-    deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    deploy( fp_single_add, src_hw_sm83_fp_single_add_asm );
-    deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
-    deploy( fp_single_abs, src_hw_sm83_fp_single_abs_asm );
-    deploy( fp_single_horner_step, src_hw_sm83_fp_single_horner_step_asm );
-
-
-    outline1( "LD HL, %s", _angle );
-    outline1( "LD BC, %s", _result );
-    outline0( "CALL FPSINGLETAN");
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
-    // outline0( "LD A, (HL)" );
-    // outline1( "LD (%s), A", _result );
-    // outline0( "INC HL" );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_tan" );
 
 }
 
 void sm83_float_single_sqr( Environment * _environment, char * _value, char * _result ) {
 
-    // MAKE_LABEL
-
-    // deploy( fp_single_mul, src_hw_sm83_fp_single_mul_asm );
-    // deploy( fp_single_sqr, src_hw_sm83_fp_single_sqr_asm );
-
-    // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    // outline0( "LD L, A" );
-    // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    // outline0( "LD H, A" );
-    // outline1( "LD A, (%s)", _value );
-    
-    // outline0( "CALL FPsingleSQR");
-
-    // outline1( "LD (%s), A", _result );
-    // outline0( "LD A, H" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    // outline0( "LD A, L" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_sqr" );
 
 }
 
 void sm83_float_single_mod1( Environment * _environment, char * _value, char * _result ) {
 
-    // MAKE_LABEL
-
-    // deploy( fp_single_mod1, src_hw_sm83_fp_single_mod1_asm );
-
-    // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+2" ) );
-    // outline0( "LD L, A" );
-    // outline1( "LD A, (%s)", address_displacement( _environment, _value, "+1" ) );
-    // outline0( "LD H, A" );
-    // outline1( "LD A, (%s)", _value );
-    
-    // outline0( "CALL FPsingleMOD1");
-
-    // outline1( "LD (%s), A", _result );
-    // outline0( "LD A, H" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+1" ) );
-    // outline0( "LD A, L" );
-    // outline1( "LD (%s), A", address_displacement( _environment, _result, "+2" ) );
+    CRITICAL_UNIMPLEMENTED( "sm83_float_single_mod1" );
 
 }
 
