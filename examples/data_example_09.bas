@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EMBEDDED DATA USING RESTORE INSTRUCTION
 REM
 REM This small example will show how to use the ''RESTORE'' instruction.
@@ -19,6 +19,9 @@ DIM a AS BYTE
 first:
 DATA AS BYTE 42, 21, 10
 
+second:
+DATA AS BYTE 1, 2, 3, 99
+
 DO
     DO
         READ a
@@ -30,5 +33,3 @@ DO
     RESTORE second
 LOOP
 
-second:
-DATA AS BYTE 1, 2, 3, 99
