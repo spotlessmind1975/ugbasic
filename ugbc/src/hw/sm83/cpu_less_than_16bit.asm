@@ -51,10 +51,8 @@ CPULT16S:
     JR CPULT16UL0
 CPULT16S2:    
     LD A, L
-    XOR 80h
     LD B, A
-    LD A, e
-    XOR 80h
+    LD A, E
     CP B
     JR C, CPULT16UL
     JR CPULT16UL0
@@ -99,10 +97,8 @@ CPULTE16S2:
     CP E
     JR Z, CPULTE16UL
     LD A, L
-    XOR 80h
     LD B, A
-    LD A, e
-    XOR 80h
+    LD A, E
     CP B
     JR C, CPULTE16UL
     JR CPULTE16UL0
