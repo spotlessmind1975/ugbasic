@@ -1096,6 +1096,12 @@ GBSTARTUPL1:
     LD (rAUDVOL), A
     LD A, $FF
     LD (rAUDTERM), A
+
+@IF dataSegment
+    LD HL, DATAFIRSTSEGMENT
+    LD (DATAPTR), HL
+@ENDIF
+
     RET
 
 SUB_HL_DE:
