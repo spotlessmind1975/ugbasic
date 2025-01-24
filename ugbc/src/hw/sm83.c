@@ -1070,8 +1070,9 @@ void sm83_less_than_8bit_const( Environment * _environment, char *_source, int _
         if ( _signed ) {
 
             outline1("LD A, $%2.2x", _destination);
-            outline0("LD B, A");
+            outline0("LD H, A");
             outline1("LD A, (%s)", _source);
+            outline0("LD D, A");
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
             } else {
