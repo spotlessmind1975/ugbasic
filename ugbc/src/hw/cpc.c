@@ -2577,7 +2577,7 @@ void cpc_timer_set_status_on( Environment * _environment, char * _timer ) {
 
     if ( _timer ) {
         outline1("LD A, (%s)", _timer );
-        outline0("LD A, B" );
+        outline0("LD B, A" );
     } else {
         outline0("LD B, 0" );
     }
@@ -2593,7 +2593,7 @@ void cpc_timer_set_status_off( Environment * _environment, char * _timer ) {
 
     if ( _timer ) {
         outline1("LD A, (%s)", _timer );
-        outline0("LD A, B" );
+        outline0("LD B, A" );
     } else {
         outline0("LD B, 0" );
     }
