@@ -178,7 +178,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         } else {
                             int writableSize = 0;
                             if ( variable->size > 3 ) {
-                                int writableSize = 3 + variable->valueBuffer[2];
+                                writableSize = 3 + variable->valueBuffer[2];
                                 outhead0("section data");
                                 out1("%s: db ", variable->realName);
                                 int i=0;
