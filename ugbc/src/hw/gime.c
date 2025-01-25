@@ -1549,6 +1549,10 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80X25, 0, 80, 25, 16, 8, 8, "Alphanumeric 80 columns x 25 rows");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80X28, 0, 80, 28, 16, 8, 8, "Alphanumeric 80 columns x 28 rows");
 
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Graphic 320x200x4");
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Graphic 320x200x2");
+
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x4, 1, 640, 225, 4, 8, 8, "Graphic 640x225x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x225x2, 1, 640, 225, 2, 8, 8, "Graphic 640x225x2");
 
@@ -1570,10 +1574,6 @@ void gime_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x16, 1, 320, 225, 16, 8, 8, "Graphic 320x225x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x4, 1, 320, 225, 4, 8, 8, "Graphic 320x225x4");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x225x2, 1, 320, 225, 2, 8, 8, "Graphic 320x225x2");
-
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x16, 1, 320, 200, 16, 8, 8, "Graphic 320x200x16");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Graphic 320x200x4");
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Graphic 320x200x2");
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x16, 1, 320, 192, 16, 8, 8, "Graphic 320x192x16");
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x192x4, 1, 320, 192, 4, 8, 8, "Graphic 320x192x4");
