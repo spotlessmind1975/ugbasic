@@ -661,7 +661,7 @@ void ef936x_get_height( Environment * _environment, char *_result ) {
 
 void ef936x_cls( Environment * _environment ) {
 
-    deploy( cls, src_hw_ef936x_cls_asm );
+    deploy( clsGraphic, src_hw_ef936x_cls_asm );
 
     outline0("JSR CLS");
 
@@ -682,7 +682,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, i
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
-    deploy( cls, src_hw_ef936x_cls_asm );
+    deploy( clsGraphic, src_hw_ef936x_cls_asm );
 
     if( ! _environment->descriptors ) {
         font_descriptors_init( _environment, 0 );
