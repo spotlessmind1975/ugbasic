@@ -1416,13 +1416,14 @@ int gb_image_size( Environment * _environment, int _width, int _height, int _mod
     switch( _mode ) {
 
         case TILEMAP_MODE_BGB:
-        case TILEMAP_MODE_CGB:
+        case TILEMAP_MODE_CGB: {
 
             int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
             return 3 + size + size * 16;
 
             break;
+        }
     }
 
     return 0;
