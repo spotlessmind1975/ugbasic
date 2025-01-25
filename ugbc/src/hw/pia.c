@@ -235,8 +235,6 @@ void pia_keyshift( Environment * _environment, char * _shifts ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( keyboard, src_hw_pia_keyboard_asm );
-
     if ( _environment->keyboardConfig.sync ) {
         deploy( scancode, src_hw_pia_scancode_asm);
     } else {
