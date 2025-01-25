@@ -324,14 +324,14 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 		optim( buf[2], NULL, "\tCLRB");
     }
 
-	if( po_buf_match( buf[0], " STB *", v1)
-	&&  po_buf_match( buf[1], " CLRA")
-	&&  po_buf_match( buf[2], " LDB *", v2)
-    &&  po_buf_cmp( v1, v2 ) == 0 ) {
-	    optim( buf[0], RULE "(STBx,CLRA,LDBx)->(CLRA)", NULL);
-	    optim( buf[1], NULL, NULL);
-		optim( buf[2], NULL, "\tCLRA");
-    }
+	// if( po_buf_match( buf[0], " STB *", v1)
+	// &&  po_buf_match( buf[1], " CLRA")
+	// &&  po_buf_match( buf[2], " LDB *", v2)
+    // &&  po_buf_cmp( v1, v2 ) == 0 ) {
+	//     optim( buf[0], RULE "(STBx,CLRA,LDBx)->(CLRA)", NULL);
+	//     optim( buf[1], NULL, NULL);
+	// 	optim( buf[2], NULL, "\tCLRA");
+    // }
 
 	if( po_buf_match( buf[0], " LDA #*", v1)
 	&&  po_buf_match( buf[1], " LDB #*", v2)
