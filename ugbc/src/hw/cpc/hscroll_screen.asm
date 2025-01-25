@@ -39,8 +39,23 @@ HSCROLLSCREEN:
     CP $80
     JP C, HSCROLLSCREENR
 
-    LD BC, 200
+    LD A, (CONSOLEHB)
+    LD C, A
+    LD B, 0
     LD HL, PLOTVBASE
+
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
 
 HSCROLLSCREENL1:
 
@@ -55,10 +70,17 @@ HSCROLLSCREENL1:
     INC HL
 
     LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
 
     INC HL
 
-    LD BC, $4F
+    LD A, (CONSOLEWB)
+    LD C, A
+    LD B, 0
     LDIR
 
     POP HL
@@ -73,8 +95,23 @@ HSCROLLSCREENL1:
 
 HSCROLLSCREENR:
 
-    LD BC, 200
+    LD A, (CONSOLEHB)
+    LD C, A
+    LD B, 0
     LD HL, PLOTVBASE
+
+    LD A, (CONSOLEY1)
+    LD E, A
+    LD D, 0
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    SLA E
+    RL D
+    ADD HL, DE
 
 HSCROLLSCREENRL1:
 
@@ -88,15 +125,26 @@ HSCROLLSCREENRL1:
     LD D, A
     INC HL
     
+    LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+
     PUSH DE
 
     LD HL, DE
-    LD DE, $4F
+    LD A, (CONSOLEWB)
+    LD E, A
+    LD D, 0
     ADD HL, DE
     LD DE, HL
     DEC HL
 
-    LD BC, $4F
+    LD A, (CONSOLEWB)
+    LD C, A
+    LD B, 0
     LDDR
 
     POP DE

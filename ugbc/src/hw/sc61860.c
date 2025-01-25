@@ -102,6 +102,13 @@ static void op_andab( Environment * _environment ) {
 
 }
 
+static void op_andam( Environment * _environment ) {
+
+    outline0("LP 0x0b" );
+    outline0("ANMA");
+
+}
+
 static void op_addya( Environment * _environment ) {
 
     outline0("LP 0x06" );
@@ -166,7 +173,7 @@ static void op_deca( Environment * _environment ) {
 static void op_decjnz( Environment * _environment, char * _label ) {
 
     outline0("DECJ");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
@@ -180,16 +187,16 @@ static void op_decjz( Environment * _environment, char * _label ) {
 static void op_decinz( Environment * _environment, char * _label ) {
 
     outline0("DECI");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
 static void op_decijnz( Environment * _environment, char * _label ) {
 
     outline0("DECI");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
     outline0("DECJ");
-    outline1("JRNZ %s", _label);
+    outline1("JRNZM %s", _label);
 
 }
 
@@ -788,6 +795,13 @@ static void op_orab( Environment * _environment ) {
 
 }
 
+static void op_oram( Environment * _environment ) {
+
+    outline0("LP 0x0b" );
+    outline0("ORMA");
+
+}
+
 static void op_push( Environment * _environment ) {
 
     outline0("PUSH");
@@ -889,6 +903,13 @@ static void op_subabc( Environment * _environment ) {
 static void op_swab( Environment * _environment ) {
 
     outline0("EXAB");
+
+}
+
+static void op_swan( Environment * _environment ) {
+
+    outline0("LIP 0x0b");
+    outline0("EXAM");
 
 }
 
@@ -1799,7 +1820,43 @@ void sc61860_less_than_and_branch_8bit_const( Environment * _environment, char *
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_less_than_and_branch_8bit_const(signed)" );
+        char positiveLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( positiveLabel, "%spos", label );
+
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sb2", label );
+
+        op_lda( _environment, _source );
+
+        op_anda_direct( _environment, 0x80 );
+        op_cp_direct( _environment, 0x00 );
+        op_jz( _environment, positiveLabel );
+
+        op_cp_direct( _environment, _destination );
+
+        if ( _equal ) {
+            op_jz( _environment, label );
+        }
+        op_jnc( _environment, label );
+
+        op_jp( _environment, doneLabel );
+
+        outhead1("%s:", positiveLabel);
+
+        op_cp_direct( _environment, _destination );
+
+        op_jc( _environment, label );
+        if ( _equal ) {
+            op_jnz( _environment, label );
+        }
+
+        op_jp( _environment, doneLabel );
+
+        outhead1("%s:", label);
+
+        op_jp( _environment, _label );
+
+        outhead1("%s:", doneLabel);
 
     } else {
 
@@ -1939,7 +1996,18 @@ void sc61860_math_double_8bit( Environment * _environment, char *_source, char *
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_double_8bit(signed)" );
+        op_lda( _environment, _source );
+        op_anda_direct( _environment, 0x80 );
+        op_swab( _environment );
+
+        op_lda( _environment, _source );
+        op_sla( _environment );
+        op_orab( _environment );
+        if ( _other ) {
+            op_sta( _environment, _other );
+        } else {
+            op_sta( _environment, _source );
+        }
 
     } else {
 
@@ -1973,7 +2041,17 @@ void sc61860_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
 
         if ( _signed ) {
 
-            CRITICAL_UNIMPLEMENTED( "sc61860_math_mul_8bit_to_16bit(signed)" );
+            op_ldi( _environment, _source );
+
+            op_lda( _environment, _destination );
+
+            op_call( _environment, "CPUMUL8B8T16S");
+            
+            op_sta( _environment, _other );
+
+            op_xab( _environment );
+
+            op_sta( _environment, address_displacement( _environment, _other, "1" ) );
 
         } else {
 
@@ -2558,7 +2636,18 @@ void sc61860_math_double_16bit( Environment * _environment, char *_source, char 
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_double_16bit(signed)" );
+        op_ldab( _environment, _source );
+        op_xab( _environment );
+        op_clc( _environment );
+        op_sla( _environment );
+        op_xab( _environment );
+        op_sla( _environment );
+        op_anda_direct( _environment, 0x7f );
+        if ( _other ) {
+            op_stab( _environment, _other );
+        } else {
+            op_stab( _environment, _source );
+        }
 
     } else {
 
@@ -3365,7 +3454,32 @@ void sc61860_math_div2_const_32bit( Environment * _environment, char *_source, i
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_anda_direct( _environment, 0x80 );
+        op_swan( _environment );
+
+        while( _steps ) {
+            op_ldab( _environment, _source );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_swab( _environment );
+            op_sra( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
+        }
+
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_oram( _environment );
+        op_swab( _environment );
+        op_stab( _environment, address_displacement( _environment, _source, "2" ) );
 
     } else {
 
@@ -3403,8 +3517,34 @@ void sc61860_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
     if ( _signed ) {
 
-        CRITICAL_UNIMPLEMENTED( "sc61860_math_div2_const_16bit(signed)" );
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_anda_direct( _environment, 0x80 );
+        op_swan( _environment );
 
+        op_swan( _environment );
+            while( _steps ) {
+            op_ldab( _environment, _source );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, _source );
+            op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_sla( _environment );
+            op_swab( _environment );
+            op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+            --_steps;
+        }
+
+        op_ldab( _environment, address_displacement( _environment, _source, "2" ) );
+        op_swab( _environment );
+        op_oram( _environment );
+        op_swab( _environment );
+        op_stab( _environment, address_displacement( _environment, _source, "2" ) );
+        
     } else {
 
         while( _steps ) {
@@ -4408,18 +4548,16 @@ void sc61860_mem_move( Environment * _environment, char *_source, char *_destina
 
     MAKE_LABEL
 
-    op_ldi( _environment, _size );
     op_ldx( _environment, _source );
     op_ldy( _environment, _destination );
+    op_ldi( _environment, _size );
 
     outline0("DX");
     outline0("DY");
 
     sc61860_label( _environment, label );
     outline0("IXL")
-    outline0("LDD")
-    outline0("IYL")
-    outline0("STD")
+    outline0("IYS")
     op_decinz( _environment, label );
 
 }
@@ -4428,18 +4566,16 @@ void sc61860_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
     MAKE_LABEL
 
-    op_ldij( _environment, _size );
     op_ldx( _environment, _source );
     op_ldy( _environment, _destination );
+    op_ldij( _environment, _size );
 
     outline0("DX");
     outline0("DY");
 
     sc61860_label( _environment, label );
     outline0("IXL")
-    outline0("LDD")
-    outline0("IYL")
-    outline0("STD")
+    outline0("IYS")
     op_decijnz( _environment, label );
 
 }
@@ -4501,7 +4637,7 @@ void sc61860_mem_move_size( Environment * _environment, char *_source, char *_de
         sc61860_label( _environment, label );
         outline0("IXL")
         outline0("LDD")
-        outline0("IYL")
+        outline0("IYS")
         outline0("STD")
         op_decijnz( _environment, label );
 
@@ -4768,18 +4904,36 @@ void sc61860_greater_than_memory_size( Environment * _environment, char *_source
 
 void sc61860_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_math_add_16bit_with_8bit" );
-
-    // outline1("LD HL, (%s)", _source );
-    // outline0("LD DE, 0" );
-    // outline1("LD A, (%s)", _destination );
-    // outline0("LD E, A" );
-    // outline0("ADD HL, DE" );
+    outline0("LIA 0");
+    outline0("EXAB");
+    outline1("LIDP %s", _source);
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement( _environment, _source, "1" ) );
+    outline0("LDD");
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _destination );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("ADB");
     if ( _other ) {
-        // outline1("LD (%s), HL", _other );
+        outline1("LIDP %s", _other );
     } else {
-        // outline1("LD (%s), HL", _destination );
+        outline1("LIDP %s", _destination );
     }
+    outline0("LIP 0");
+    outline0("LDM");
+    outline0("STD");
+    if ( _other ) {
+        outline1("LIDP %s", address_displacement( _environment, _other, "1" ) );
+    } else {
+        outline1("LIDP %s", address_displacement( _environment, _destination, "1" ) );
+    }
+    outline0("LIP 1");
+    outline0("LDM");
+    outline0("STD");
 
 }
 
@@ -5354,14 +5508,14 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
     if ( _signed ) {
 
         // outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive", label);
         sc61860_complement2_32bit( _environment, _source, NULL );
         // outhead1("%spositive:", label);
         // outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive2", label);
@@ -5467,7 +5621,7 @@ void sc61860_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         // outhead1("%srepositive2:", label);
         // outline0("LD A, B");
         // outline0("XOR C");
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0x80");
         // outline1("JR NZ, %srepositive3", label );
         sc61860_complement2_32bit( _environment, _other, NULL );
@@ -5579,14 +5733,14 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
     if ( _signed ) {
 
         // outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive", label);
         sc61860_complement2_16bit( _environment, _source, NULL );
         // outhead1("%spositive:", label);
         // outline1("LD A, (%s)", address_displacement(_environment, _destination, "1"));
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0" );
         // outline0("PUSH AF");
         // outline1("JR Z,%spositive2", label);
@@ -5634,7 +5788,7 @@ void sc61860_math_div_16bit_to_16bit( Environment * _environment, char *_source,
         // outhead1("%srepositive2:", label);
         // outline0("LD A, B");
         // outline0("XOR C");
-        // outline0("AND 0x80");
+        // outline0("ANIA 0x80");
         // outline0("CP 0x80");
         // outline1("JR NZ, %srepositive3", label );
         sc61860_complement2_16bit( _environment, _other, NULL );
@@ -5691,10 +5845,10 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline0("LD B, A" );
         // outline1("LD A, (%s)", _destination );
         // outline0("XOR A, B" );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("PUSH AF" );
         // outline1("LD A, (%s)", _source );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%spos", label );
         // outline1("LD A, (%s)", _source );
@@ -5707,7 +5861,7 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline0("LD D, A");
         
         // outline1("LD A, (%s)", _destination );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%sposx", label );
         // outline1("LD A, (%s)", _destination );
@@ -5736,7 +5890,7 @@ void sc61860_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
         // outline1("LD (%s), A", _other);
 
         // outline0("POP AF" );
-        // outline0("AND 0x80" );
+        // outline0("ANIA 0x80" );
         // outline0("CP 0" );
         // outline1("JR Z,%spos3", label );
         // outline1("LD A, (%s)", _other );
@@ -5879,128 +6033,128 @@ void sc61860_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
 
 void sc61860_number_to_string_vars( Environment * _environment ) {
 
-    variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
-    variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
-    variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
-
 }
 
 void sc61860_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_number_to_string" );
-
     MAKE_LABEL
-        
-    // deploy_with_vars( numberToString, src_hw_sc61860_number_to_string_asm, sc61860_number_to_string_vars );
+
+    deploy( numberToString, src_hw_sc61860_number_to_string_asm );
+
+    outline1("LIDP %s", _string );
+    outline0("LIP 0x4");
+    outline0("LDD");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement(_environment, _string, "1") );
+    outline0("LIP 0x5");
+    outline0("LDD");
+    outline0("EXAM");
+
+    outline0("LIA 0x0");
+    outline0("LIP 0x0c");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0d");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0e");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x0f");
+    outline0("EXAM");
+    outline0("LIA 0x0");
+    outline0("LIP 0x10");
+    outline0("EXAM");
 
     switch( _bits ) {
-        case 8:
-            // outline1("LD A, (%s)", _number);
-            if ( _signed ) {
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp81", label);
-                // outline1("LD A, (%s)", _number);
-                // outline0("XOR 0xFF");
-                // outline0("ADC 0x1");
-                // outline1("JP %sp82", label);
-                // outhead1("%sp81:", label);
-                // outline1("LD A, (%s)", _number);
-                // outhead1("%sp82:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
-            }
-            // outline0("POP IX");
-            // outline0("CALL N2D8");
-            break;
-        case 16:
-            // outline1("LD HL, (%s)", _number);
-            if ( _signed ) {
-                // outline0("LD A, H");
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp161", label);
-                // outline0("LD A, H");
-                // outline0("XOR 0xFF");
-                // outline0("LD H, A");
-                // outline0("LD A, L");
-                // outline0("XOR 0xFF");
-                // outline0("LD L, A");
-                // outline0("LD DE, 1" );
-                // outline0("ADD HL, DE" );
-                // outline0("LD DE, 0" );
-                // outline1("JP %sp162", label);
-                // outhead1("%sp161:", label);
-                // outline1("LD HL, (%s)", _number);
-                // outhead1("%sp162:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
-            }
-            // outline0("POP IX");
-            // outline0("CALL N2D16");
-            break;
         case 32:
-            // outline1("LD HL, (%s)", _number);
-            // outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
+            outline1("LIDP %s", address_displacement(_environment, _number, "3") );
+            outline0("LDD");
             if ( _signed ) {
-                // outline0("LD A, D");
-                // outline0("AND 0x80");
-                // outline0("LD B, A");
-                // outline0("PUSH BC");
-                // outline0("CP 0");
-                // outline1("JR Z, %sp321", label);
-                // outline0("LD A, D");
-                // outline0("XOR 0xFF");
-                // outline0("LD D, A");
-                // outline0("LD A, E");
-                // outline0("XOR 0xFF");
-                // outline0("LD E, A");
-                // outline0("LD A, H");
-                // outline0("XOR 0xFF");
-                // outline0("LD H, A");
-                // outline0("LD A, L");
-                // outline0("XOR 0xFF");
-                // outline0("LD L, A");
-                // outline0("AND A");
-                // outline0("INC HL");
-                // outline0("LD A, L");
-                // outline0("OR H");
-                // outline1("JR NZ, %sp322", label);
-                // outline0("INC DE");
-                // outline1("JP %sp322", label);
-                // outhead1("%sp321:", label);
-                // outline1("LD HL, (%s)", _number);
-                // outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
-                // outhead1("%sp322:", label);
-            } else {
-                // outline0("LD B, 0" );
-                // outline0("PUSH BC");
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
             }
-            // outline0("POP IX");
-            // outline0("CALL N2D32");
-            break;
-        default:
-            CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
+            outline0("LIP 0x0f");
+            outline0("EXAM");
+            outline1("LIDP %s", address_displacement(_environment, _number, "2") );
+            outline0("LDD");
+            outline0("LIP 0x0e");
+            outline0("EXAM");
+        case 16:
+            outline1("LIDP %s", address_displacement(_environment, _number, "1") );
+            outline0("LDD");
+            if ( _signed && _bits == 16 ) {
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
+            }
+            outline0("LIP 0x0d");
+            outline0("EXAM");
+        case 8:
+            outline1("LIDP %s", _number );
+            outline0("LDD");
+            if ( _signed && _bits == 8 ) {
+                outline0("ANIA 0x80");
+                outline0("LIP 0x10");
+                outline0("EXAM");
+                outline0("LDD");
+            }
+            outline0("LIP 0x0c");
+            outline0("EXAM");
     }
 
-    // outline1("LD DE, (%s)", _string);
-    // outline0("LD A, IXH");
-    // outline0("CP 0");
-    // outline1("JR Z, %spos", label);
-    // outline0("LD A, '-'");
-    // outline0("LD (DE), A");
-    // outline0("INC DE");
-    // outline0("INC C");
-    // outhead1("%spos:", label);
-    // outline0("LD A, C");
-    // outline1("LD (%s), A", _string_size);
-    // outline0("LDIR");
+    outline0("LIP 0x10");
+    outline0("LDM");
+    outline0("ANIA 0x80" );
+    outline1("JRZP %spositive", label );
+
+    // switch( _bits ) {
+    //     case 32:
+    //         outline0("LIP 0x0f");
+    //         outline0("LDM");
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR3" );
+    //         outline0("LDA MATHPTR2" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR2" );
+    //     case 16:
+    //         outline0("LDA MATHPTR1" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR1" );
+    //     case 8:
+    //         outline0("LDA MATHPTR0" );
+    //         outline0("EOR #$ff" );
+    //         outline0("STA MATHPTR0" );
+    // }
+
+    // outline0("CLC" );
+    // outline0("LDA #$01" );
+    // outline0("ADC MATHPTR0" );
+    // outline0("STA MATHPTR0" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR1" );
+    // outline0("STA MATHPTR1" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR2" );
+    // outline0("STA MATHPTR2" );
+    // outline0("LDA #$00" );
+    // outline0("ADC MATHPTR3" );
+    // outline0("STA MATHPTR3" );
+
+    outhead1("%spositive:", label );
+    outline1("LIA 0x%2.2X", _bits );
+    outline0("LIP 0x11");
+    outline0("EXAM");
+
+    outline0("CALL N2STRING");
+
+    outline0("LIP 0x11");
+    outline0("LDM");
+    outline1("LIDP %s", _string_size);
+    outline0("STD");
 
 }
 
@@ -6108,132 +6262,134 @@ void sc61860_hex_to_string( Environment * _environment, char * _number, char * _
 
 void sc61860_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsdefine" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD HL, %s", _string );
-    // outline0( "CALL DSDEFINE" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIA %s", _string );
+    outline0( "LIP 0x04" );
+    outline0( "EXAM" );
+    outline1( "LIA >%s", _string );
+    outline0( "LIP 0x05" );
+    outline0( "EXAM" );
+    outline0( "CALL DSDEFINE" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
     
 }
 
 void sc61860_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _size );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIDP %s", _size );
+    outline0( "LDD" );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSALLOC" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
 
 }
 
 void sc61860_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsalloc_size" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "LD A, B" );
-    // outline1( "LD (%s), A", _index );
+    outline1( "LIA 0x%2.2x", _size );
+    outline0( "CALL DSALLOC" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _index );
+    outline0( "STD" );
 
 }
 
 void sc61860_dsfree( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsfree" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSFREE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSFREE" );
 
 }
 
 void sc61860_dswrite( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dswrite" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSWRITE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSWRITE" );
 
 }
 
 void sc61860_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline1( "LD A, (%s)", _resize );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline1( "LIDP %s", _resize );
+    outline0( "LDD" );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void sc61860_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsresize_size" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline1( "LD A, 0x%2.2x", ( _resize & 0xff ) );
-    // outline0( "LD C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "LIDP %s", _index );
+    outline0( "EXAB" );
+    outline1( "LIA 0x%2.2x", ( _resize & 0xff ) );
+    outline0( "LIP 0x08" );
+    outline0( "EXAM" );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void sc61860_dsinit( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsinit" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline0( "CALL DSGC" );
+    outline0( "CALL DSINIT" );
 
 }
 
 void sc61860_dsgc( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsgc" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline0( "CALL DSGC" );
+    outline0( "CALL DSGC" );
 
 }
 
 void sc61860_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dsdescriptor" );
+    deploy( dstring,src_hw_sc61860_dstring_asm );
 
-    // deploy( dstring,src_hw_sc61860_dstring_asm );
-
-    // outline1( "LD A, (%s)", _index );
-    // outline0( "LD B, A" );
-    // outline0( "CALL DSDESCRIPTOR" );
-    // outline0( "LD A, (IX)" );
-    // outline1( "LD (%s), A", _size );
-    // outline0( "LD A, (IX+1)" );
-    // outline1( "LD (%s), A", _address );
-    // outline0( "LD A, (IX+2)" );
-    // outline1( "LD (%s), A", address_displacement(_environment, _address, "1") );
+    outline1( "LIDP %s", _index );
+    outline0( "LDD" );
+    outline0( "EXAB" );
+    outline0( "CALL DSDESCRIPTOR" );
+    outline0( "LIP 0x0c" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", _size );
+    outline0( "STD" );    
+    outline0( "LIP 0x0d" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", _address );
+    outline0( "STD" );    
+    outline0( "LIP 0x0e" );
+    outline0( "LDM" );
+    outline1( "LIDP %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STD" );    
 
 }
 
@@ -6350,167 +6506,208 @@ void sc61860_sqroot( Environment * _environment, char * _number, char * _result 
 
 void sc61860_dstring_vars( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_dstring_vars" );
-
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
-
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    // outhead0("section data_user" );
-#endif
-    // outhead1("MAXSTRINGS:                   DB %d", count );
-    // outhead1("DESCRIPTORS:                  DEFS %d", count * 4 );
-    // outhead1("WORKING:                      DEFS %d", space );
-    // outhead1("TEMPORARY:                    DEFS %d", space );
-    // outhead2("FREE_STRING:                  DB 0x%2.2X, 0x%2.2x", ((space-1)& 0xff), ((space-1)>>8)& 0xff );
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-    // outhead0("section code_user" );
-#endif
+    int i;
+    
+    outhead1("stringscount .equ                  %d", count );
+    outhead1("stringsspace .equ                  %d", space );
+    outhead0("USING:                        .db 0" );
+    outhead0("MAXSTRINGS:                   .db stringscount" );
+    outhead0("DESCRIPTORS:" );
+    for( i=0; i<count; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("WORKING:" );
+    for( i=0; i<space / 4; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("TEMPORARY:" );
+    for( i=0; i<space / 4; ++i ) {
+        outline0( ".db  0, 0, 0, 0 " );
+    }
+    outhead0("FREE_STRING:                  .db (stringsspace-1),>(stringsspace-1)" );
+    outhead0("STACKX:                       .db 0x30" );
 
 }
 
 void sc61860_protothread_vars( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_vars" );
-
     int count = _environment->protothreadConfig.count;
 
-    variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADLC:      DEFS        %d", count );
-    variable_import( _environment, "PROTOTHREADST", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADST:      DEFS        %d", count );
-    variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
-    // // outhead0("PROTOTHREADCT:      DEFB        0" );
-    variable_import( _environment, "PROTOTHREADLOOP", VT_BUFFER, 1 + count * 8 );
-    variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, count );
+    out0("PROTOTHREADLC:       .db ");
+    for( int i=0; i<count-1; ++i ) {
+        out0("0,");
+    }
+    outline0("0");
+
+    out0("PROTOTHREADST:       .db ");
+    for( int i=0; i<count-1; ++i ) {
+        out0("0,");
+    }
+    outline0("0");
+
+    outhead1("PROTOTHREADCOUNT:       .db 0x%2.2x", count );
+
+    // outhead0("PROTOTHREADCT:       .db        0" );
+    outhead0("PROTOTHREADLOOP:");
+
+    for( int i=0; i<count; ++i ) {
+        outline1("LIA 0x%2.2x", i );
+        outline0("LIDP PROTOTHREADCT" );
+        outline0("STD" );
+        outline0("CALL PROTOTHREADVOID" );
+    }
+
+    outline0("RTN" );
 
 }
 
 
 void sc61860_protothread_loop( Environment * _environment ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_loop" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline0("CALL PROTOTHREADLOOP" );
+    outline0("CALL PROTOTHREADLOOP" );
 
 }
 
 void sc61860_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register_at" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD HL, %s", _label );
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A");
-
-    // outline0("CALL PROTOTHREADREGAT" );
+    outline1("LIA %s", _label );
+    outline0("LIP 0x0c" );
+    outline0("EXAM" );
+    outline1("LIA >%s", _label );
+    outline0("LIP 0x0d" );
+    outline0("EXAM" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADREGAT" );
 
 }
 
 void sc61860_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_register" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD HL, %s", _label );
-
-    // outline0("CALL PROTOTHREADREG" );
-
-    // outline0("LD A, B" );
-    // outline1("LD (%s), A", _index );
+    outline1("LIA %s", _label );
+    outline0("LIP 0x0c" );
+    outline0("EXAM" );
+    outline1("LIA >%s", _label );
+    outline0("LIP 0x0d" );
+    outline0("EXAM" );
+    outline0("CALL PROTOTHREADREG" );
+    outline0("LIP 0" );
+    outline0("EXAM" );
+    outline1("LIDP %s", _index );
+    outline0("STD" );
 
 }
 
 void sc61860_protothread_unregister( Environment * _environment, char * _index ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_unregister" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADUNREG" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADUNREG" );
 
 }
 
 void sc61860_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_save" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-    // outline1("LD A, 0x%2.2x", ( _step & 0xff ) );
-
-    // outline0("CALL PROTOTHREADSAVE" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIA 0x%2.2x", _step );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADSAVE" );
 
 }
 
 void sc61860_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_restore" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADRESTORE" );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _step);
+    outline0("STD");
 
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADRESTORE" );
-
-    // outline1("LD (%s), A", _step );
-    
 }
 
 void sc61860_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_set_state" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-    // outline1("LD A, 0x%2.2x", ( _state & 0xff ) );
-
-    // outline0("CALL PROTOTHREADSETSTATE" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline1("LIA 0x%2.2x", _state );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADSETSTATE" );
 
 }
 
 void sc61860_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_state" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline1("LD A, (%s)", _index );
-    // outline0("LD B, A" );
-
-    // outline0("CALL PROTOTHREADGETSTATE" );
-
-    // outline1("LD (%s), A", _state );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADRESTORE" );
+    outline0("LIP 1");
+    outline0("EXAM");
+    outline1("LIDP %s", _state);
+    outline0("STD");
 
 }
 
 void sc61860_protothread_current( Environment * _environment, char * _current ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_current" );
+    deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
 
-    // deploy_with_vars( protothread, src_hw_sc61860_protothread_asm, cpu_protothread_vars );
-
-    // outline0("LD A, (PROTOTHREADCT)" );
-    // outline1("LD (%s), A", _current );
+    outline0("LIDP PROTOTHREADCT" );
+    outline0("LDD" );
+    outline1("LIDP %s", _current );
+    outline0("STD" );
 
 }
 
 void sc61860_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_protothread_get_address" );
+    outline1("LIDP %s", _index );
+    outline0("LDD");
+    outline0("LIP 0");
+    outline0("EXAM");
+    outline0("CALL PROTOTHREADGETADDRESS" );
+    outline0("LIP 0x0c");
+    outline0("EXAM");
+    outline1("LIDP %s", _address);
+    outline0("STD");
+    outline0("LIP 0x0d");
+    outline0("EXAM");
+    outline1("LIDP %s", address_displacement( _environment, _address, "1" ) );
+    outline0("STD");
 
 }
 

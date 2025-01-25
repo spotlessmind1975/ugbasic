@@ -111,29 +111,6 @@ void d64_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void d64_irq_at( Environment * _environment, char * _label ) {
-
-    Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    outline0("LDA #$7e" );
-    outline0("STA $010c" );
-    outline0("LDX $010d" );
-    outline1("STX %s", irq->realName );
-    outline1("LDX #%s", _label );
-    outline0("STX $010d" );
-    
-}
-
-void d64_follow_irq( Environment * _environment ) {
-
-    Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    outline1("LDX %s", irq->realName );
-    outline0("PSHS X" );
-    outline0("RTS" );
-    
-}
-
 void d64_sys_call( Environment * _environment, int _destination ) {
 
     _environment->sysCallUsed = 1;

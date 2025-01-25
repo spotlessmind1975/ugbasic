@@ -46,8 +46,8 @@
  */
 void paper( Environment * _environment, char * _color ) {
 
-    Variable * paper = variable_retrieve_or_define( _environment, "PAPER", VT_COLOR, DEFAULT_PAPER_COLOR );
-    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, DEFAULT_PAPER_COLOR );
+    Variable * paper = variable_retrieve_or_define( _environment, "PAPER", VT_COLOR, _environment->defaultPaperColor );
+    Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, _environment->defaultPaperColor );
 
     variable_move( _environment, color->name, paper->name );
 

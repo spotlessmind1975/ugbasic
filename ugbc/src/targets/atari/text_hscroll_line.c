@@ -42,8 +42,12 @@
 @target atari
 @target atarixl
 </usermanual> */
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    gtia_hscroll_line( _environment, _direction );
+    if ( _overlap ) {
+        _environment->verticalOverlapRequired = 1;
+    }
+
+    gtia_hscroll_line( _environment, _direction, _overlap );
     
 }

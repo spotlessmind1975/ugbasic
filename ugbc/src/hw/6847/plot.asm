@@ -49,6 +49,40 @@ PLOTCPE  EQU $51
 
 PLOT
 
+@IF scaleX > 0
+    ASL <PLOTX+1
+    ROL <PLOTX
+@ENDIF
+
+@IF scaleX > 1
+    ASL <PLOTX+1
+    ROL <PLOTX
+@ENDIF
+
+@IF offsetX > 0
+@EMIT offsetX AS offsetX
+    LDD <PLOTX
+    ADD #offsetX
+    STD <PLOTX
+@ENDIF
+
+@IF scaleY > 0
+    ASL <PLOTY+1
+    ROL <PLOTY
+@ENDIF
+
+@IF scaleY > 1
+    ASL <PLOTY+1
+    ROL <PLOTY
+@ENDIF
+
+@IF offsetY > 0
+@EMIT offsetY AS offsetY
+    LDD <PLOTY
+    ADD #offsetY
+    STD <PLOTY
+@ENDIF
+
 @IF optionClip
     LDD <PLOTY
     CMPD CLIPY2

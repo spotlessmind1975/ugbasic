@@ -38,6 +38,52 @@
  * CODE SECTION 
  ****************************************************************************/
 
+static void linker_setup_variables_memory( Environment * _environment, Variable * _variable ) {
+
+    Variable * variable = _variable;
+
+    while( variable ) {
+
+        if ( (variable->memoryArea && variable->bankAssigned != -1 && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+            switch( variable->type ) {
+                case VT_MUSIC:
+                    if ( variable->sidFile ) {
+                        if ( variable->sidFile->loadAddress ) {
+                            //cfgline3("MEM%s:     file = \"\", start = $%4.4x,     size = $%4.4x;", variable->name, variable->sidFile->loadAddress, variable->sidFile->size );
+                        }
+                    }
+            }
+        }
+
+        variable = variable->next;
+
+    }
+
+}
+
+static void linker_setup_variables_segment( Environment * _environment, Variable * _variable ) {
+
+    Variable * variable = _variable;
+
+    while( variable ) {
+
+        if ( (variable->memoryArea && variable->bankAssigned != -1 && !variable->assigned) || ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
+            switch( variable->type ) {
+                case VT_MUSIC:
+                    if ( variable->sidFile ) {
+                        if ( variable->sidFile->loadAddress ) {
+                            cfgline2("%s:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", variable->name, variable->sidFile->loadAddress );
+                        }
+                    }
+            }
+        }
+
+        variable = variable->next;
+
+    }
+
+}
+
 /**
  * @brief Emit tail of linker's configuration file lines
  * 
@@ -72,6 +118,11 @@ void linker_setup( Environment * _environment ) {
         }
         actual = actual->next;
     }
+    
+    linker_setup_variables_memory( _environment, _environment->variables );
+    for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
+        linker_setup_variables_memory( _environment, _environment->tempVariables[j] );
+    }
 
     cfghead0("}");
     cfghead0("SEGMENTS {");
@@ -96,6 +147,10 @@ void linker_setup( Environment * _environment ) {
         actual = actual->next;
     }
 
+    linker_setup_variables_segment( _environment, _environment->variables );
+    for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
+        linker_setup_variables_segment( _environment, _environment->tempVariables[j] );
+    }
 }
 
 /**

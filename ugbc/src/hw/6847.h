@@ -234,6 +234,7 @@ void c6847_screen_rows( Environment * _environment, char * _rows );
 void c6847_screen_columns( Environment * _environment, char * _columns );
 
 void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void c6847_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void c6847_sprite_enable( Environment * _environment, char *_sprite );
 void c6847_sprite_disable( Environment * _environment, char * _sprite );
 void c6847_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -244,6 +245,7 @@ void c6847_sprite_compress_horizontal( Environment * _environment, char * _sprit
 void c6847_sprite_multicolor( Environment * _environment, char * _sprite );
 void c6847_sprite_monocolor( Environment * _environment, char * _sprite );
 void c6847_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void c6847_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void c6847_vertical_scroll( Environment * _environment, char * _displacement );
 void c6847_horizontal_scroll( Environment * _environment, char * _displacement );
 
@@ -255,9 +257,9 @@ void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c );
 void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void c6847_cls( Environment * _environment );
-void c6847_scroll_text( Environment * _environment, int _direction );
-void c6847_hscroll_line( Environment * _environment, int _direction );
-void c6847_hscroll_screen( Environment * _environment, int _direction );
+void c6847_scroll_text( Environment * _environment, int _direction, int _overlap );
+void c6847_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void c6847_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void c6847_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void c6847_cline( Environment * _environment, char * _characters );
 void c6847_scroll( Environment * _environment, int _dx, int _dy );

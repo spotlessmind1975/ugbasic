@@ -62,9 +62,10 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         if ( music->type != VT_MUSIC ) {
             CRITICAL_CANNOT_MUSIC( _music );
         }
-
-        ay8910_start( _environment, 0x07 );
-        ay8910_music( _environment, music->realName, music->size, _loop );
+        if ( ! music->sidFile ) {
+            ay8910_start( _environment, 0x07 );
+            ay8910_music( _environment, music->realName, music->size, _loop );
+        }
     }
     
 }

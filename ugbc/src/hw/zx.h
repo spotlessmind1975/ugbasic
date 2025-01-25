@@ -200,10 +200,10 @@
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
 
 #define JOY_UP              0
-#define JOY_DOWN            0
-#define JOY_LEFT            0
-#define JOY_RIGHT           0
-#define JOY_FIRE            0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 #define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
@@ -239,7 +239,7 @@ void zx_finalization( Environment * _environment );
 void zx_color_border( Environment * _environment, char * _color );
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void zx_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
-void zx_vscroll( Environment * _environment, int _displacement );
+void zx_vscroll( Environment * _environment, int _displacement, int _overlap );
 void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void zx_cls( Environment * _environment, char * _pen, char * _paper );
 
@@ -263,9 +263,6 @@ void zx_scroll( Environment * _environment, int _dx, int _dy );
 void zx_screen_rows( Environment * _environment, char * _rows );
 void zx_screen_columns( Environment * _environment, char * _columns );
 
-void zx_irq_at( Environment * _environment, char * _label );
-void zx_follow_irq( Environment * _environment );
-
 Variable * zx_get_raster_line( Environment * _environment );
 
 #define         JOY_COUNT           0
@@ -280,6 +277,7 @@ Variable * zx_new_sequence( Environment * _environment, int _sequences, int _fra
 void zx_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count,  int _palette );
 
 void zx_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void zx_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void zx_sprite_enable( Environment * _environment, char *_sprite );
 void zx_sprite_disable( Environment * _environment, char * _sprite );
 void zx_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -290,6 +288,7 @@ void zx_sprite_compress_horizontal( Environment * _environment, char * _sprite )
 void zx_sprite_multicolor( Environment * _environment, char * _sprite );
 void zx_sprite_monocolor( Environment * _environment, char * _sprite );
 void zx_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void zx_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void zx_vertical_scroll( Environment * _environment, char * _displacement );
 void zx_horizontal_scroll( Environment * _environment, char * _displacement );
 void zx_busy_wait( Environment * _environment, char * _timing );
@@ -303,7 +302,8 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 void zx_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 void zx_sys_call( Environment * _environment, int _destination );
 int zx_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
-void zx_hscroll_line( Environment * _environment, int _direction );
+void zx_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void zx_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 
 void zx_timer_set_status_on( Environment * _environment, char * _timer );
 void zx_timer_set_status_off( Environment * _environment, char * _timer );
@@ -325,5 +325,8 @@ void zx_dojo_put_message( Environment * _environment, char * _port_id, char * _m
 void zx_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
 void zx_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void zx_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
+
+void zx_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
+void zx_joystick( Environment * _environment, int _joystick, char * _result );
 
 #endif

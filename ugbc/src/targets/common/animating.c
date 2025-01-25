@@ -65,6 +65,11 @@ in corso su un elemento animabile.
 </usermanual> */
 Variable * animating( Environment * _environment, char * _prefix, char * _animation ) {
 
+#if defined(__gb__)
+    Variable * false = variable_temporary( _environment, VT_SBYTE, 0 );
+    return false;
+#endif
+
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
 
     if ( ! variable_exists( _environment, prefixAnimation ) ) {

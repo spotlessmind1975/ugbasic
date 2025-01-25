@@ -46,8 +46,6 @@ void coco_xpen( Environment * _environment, char * _destination );
 void coco_ypen( Environment * _environment, char * _destination );
 
 void coco_busy_wait( Environment * _environment, char * _timing );
-void coco_irq_at( Environment * _environment, char * _label );
-void coco_follow_irq( Environment * _environment );
 
 void coco_sys_call( Environment * _environment, int _destination );
 

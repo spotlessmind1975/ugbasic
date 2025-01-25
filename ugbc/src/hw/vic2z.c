@@ -1235,6 +1235,10 @@ void vic2z_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void vic2z_sprite_data_set( Environment * _environment, char * _sprite, char * _image ) {
+
+}
+
 void vic2z_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     _environment->bitmaskNeeded = 1;
@@ -1378,6 +1382,19 @@ void vic2z_sprite_color( Environment * _environment, char * _sprite, char * _col
 
 }
 
+void vic2z_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_vic2z_sprites_asm );
+    
+    outline1("LDA %s", priority->realName );
+    outline1("LDY %s", sprite->realName );
+    outline0("JSR SPRITEPRIORITY" );
+
+}
+
 void vic2z_tiles_at( Environment * _environment, char * _address ) {
 
     outline1("LDA %s", _address);
@@ -1394,7 +1411,7 @@ void vic2z_tiles_at( Environment * _environment, char * _address ) {
 
 }
 
-void vic2z_vertical_scroll( Environment * _environment, char * _displacement ) {
+void vic2z_vertical_scroll( Environment * _environment, char * _displacement, int _overlap ) {
 
     outline0("LDA $D011" );
     outline0("AND #%11111000");
@@ -1403,7 +1420,7 @@ void vic2z_vertical_scroll( Environment * _environment, char * _displacement ) {
 
 }
 
-void vic2z_horizontal_scroll( Environment * _environment, char * _displacement ) {
+void vic2z_horizontal_scroll( Environment * _environment, char * _displacement, int _overlap ) {
 
     outline0("LDA $D016" );
     outline0("AND #%11111000");
@@ -1627,7 +1644,7 @@ void vic2z_finalization( Environment * _environment ) {
 
 }
 
-void vic2z_hscroll_line( Environment * _environment, int _direction ) {
+void vic2z_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2z_hscroll_text_asm );
 
@@ -1641,7 +1658,7 @@ void vic2z_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void vic2z_hscroll_screen( Environment * _environment, int _direction ) {
+void vic2z_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vic2z_hscroll_text_asm );
 

@@ -3082,6 +3082,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             }
                             break;
                         case VT_MUSIC:
+                            if ( source->sidFile ) {
+                                CRITICAL_CANNOT_COPY_SID_FILE(source->name);
+                            }
                             switch( target->type ) {
                                 case VT_MUSIC:
                                 case VT_BUFFER:
@@ -3131,10 +3134,13 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 }
                                 case VT_STRING:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                case VT_MUSIC:
+                                    if ( target->sidFile ) {
+                                        CRITICAL_CANNOT_COPY_SID_FILE(target->name);
+                                    }
                                 case VT_IMAGE:
                                 case VT_IMAGES:
                                 case VT_SEQUENCE:
-                                case VT_MUSIC:
                                 case VT_BUFFER:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
@@ -3400,9 +3406,12 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                     break;
                 }
-                case VT_SEQUENCE:
                 case VT_MUSIC:
+                    if ( target->sidFile ) {
+                        CRITICAL_CANNOT_COPY_SID_FILE(source->name);
+                    }                
                 case VT_TARRAY:
+                case VT_SEQUENCE:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -5184,17 +5193,23 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                             break;
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                    }
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                            }
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_compare_memory_size( _environment, source->realName, target->realName, source->size, result->realName, 1 );
                             break;
                         default:
@@ -6245,17 +6260,23 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                    }                
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
+                            }                           
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_less_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -6559,17 +6580,23 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
                     }
                     break;
+                case VT_MUSIC:
+                    if ( source->sidFile ) {
+                        CRITICAL_CANNOT_COMPARE_SID_FILE(target->name);
+                    }
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
-                case VT_MUSIC:
                 case VT_BUFFER:
                     switch( target->type ) {
+                        case VT_MUSIC:
+                            if ( target->sidFile ) {
+                                CRITICAL_CANNOT_COMPARE_SID_FILE(target->name);
+                            }
                         case VT_BUFFER:
                         case VT_IMAGE:
                         case VT_IMAGES:
                         case VT_SEQUENCE:
-                        case VT_MUSIC:
                             cpu_greater_than_memory_size( _environment, source->realName, target->realName, source->size, result->realName, _equal );
                             break;
                         default:                
@@ -6800,18 +6827,42 @@ void variable_string_left_assign( Environment * _environment, char * _string, ch
             break;
         }
         case VT_DSTRING: {            
+
             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size = variable_temporary( _environment, VT_BYTE, "(result of left)" );
             Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of left)" );
             Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of left)" );
 
-            cpu_dswrite( _environment, string->realName );
-
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
 
             cpu_dsdescriptor( _environment, expression->realName, address2->realName, size2->realName );
 
-            cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
+            MAKE_LABEL
+
+            char labelLesser[MAX_TEMPORARY_STORAGE]; sprintf( labelLesser, "%slesser", label );
+            char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
+
+            Variable * flag = variable_temporary( _environment, VT_BYTE, "(flag)" );
+            
+            if ( _environment->leftReplace ) {
+                
+                cpu_dswrite( _environment, string->realName );
+                
+                cpu_less_than_8bit( _environment, size2->realName, position->realName, flag->realName, 0, 0 );
+                cpu_compare_and_branch_8bit_const( _environment, flag->realName, 0xff, labelLesser, 1 );
+                cpu_mem_move( _environment, address2->realName, address->realName, position->realName );
+                cpu_jump( _environment, labelDone );
+                cpu_label( _environment, labelLesser );
+                cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
+                cpu_label( _environment, labelDone );
+
+            } else {
+
+                Variable * left = variable_string_left( _environment, expression->name, position->name );                
+                Variable * right = variable_string_mid( _environment, string->name, variable_add_const( _environment, position->name, 1 )->name, NULL );
+                variable_move( _environment, variable_add( _environment, left->name, right->name )->name, string->name );
+
+            }
             break;
         }
         default:
@@ -7371,10 +7422,15 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             MAKE_LABEL
 
             char emptyLabel[MAX_TEMPORARY_STORAGE]; sprintf( emptyLabel, "%sempty", label );
+            char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
             Variable * flag = variable_temporary( _environment, VT_BYTE, "(flag for resizing)");
             cpu_less_than_8bit( _environment, size2->realName, len->realName, flag->realName, 1, 0 );
-            cpu_bveq( _environment, flag->realName,  emptyLabel );
+            if ( _environment->midReplace ) {
+                cpu_bveq( _environment, flag->realName,  doneLabel );
+            } else {
+                cpu_bveq( _environment, flag->realName,  emptyLabel );
+            }
 
             Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(tmp)");
             Variable * addressTmp = variable_temporary( _environment, VT_ADDRESS, "(result of mid)" );
@@ -7393,6 +7449,9 @@ void variable_string_mid_assign( Environment * _environment, char * _string, cha
             cpu_dec_16bit( _environment, address2->realName );
 
             cpu_mem_move( _environment, address->realName, address2->realName, len->realName );
+
+            cpu_label( _environment, doneLabel );
+
             break;
         }
         default:
@@ -9827,12 +9886,18 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 
     while ( screenMode ) {
         if ( screenMode->bitmap == _bitmap ) {
-           screenMode->score = 1000;
-            screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
-            screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
-            screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
-            screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
-            screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
+            screenMode->score = 1000;
+            if ( _width < 0 ) {
+                screenMode->score -= abs( screenMode->width + _width );
+            } else if ( _height < 0 ) {
+                screenMode->score -= abs( screenMode->width + _height );
+            } else {
+                screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
+                screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
+                screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
+                screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
+                screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
+            }
         } else {
             screenMode->score = -1000;
         }
@@ -10758,6 +10823,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "c64reu" );
 #elif __pc1403__
     strcat( lookedFilename, "pc1403" );
+#elif __gb__
+    strcat( lookedFilename, "gb" );
 #endif
 
     if ( strlen( lookedExtension ) ) {
@@ -12514,6 +12581,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         var->absoluteAddress = expr->absoluteAddress;
         var->variableUniqueId = expr->variableUniqueId;
     }
+    var->sidFile = expr->sidFile;
     var->memoryArea = expr->memoryArea;
     var->arrayDimensions = expr->arrayDimensions;
     memcpy( var->arrayDimensionsEach, expr->arrayDimensionsEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
@@ -13646,4 +13714,57 @@ int procedure_exists( Environment * _environment, char * _name ) {
 
     return 0;
 
+}
+
+// Function to implement `strstr()` function
+const char* strstrcase( const char* _x, const char* _y ) {
+    int equal = 0;
+    while (*_x != '\0' && !equal) {
+        if ((*_x == *_y) ) {
+
+            int done = 0;
+            const char *cX = _x, *cY = _y;
+
+            while (*cX && *cY && !done) {
+                if (tolower(*cX) != tolower(*cY)) {
+                    done = 1;
+                } else {
+                    cX++;
+                    cY++;
+                }
+            }
+            
+            equal = (*cY == '\0');
+        }
+        _x++;
+    }
+ 
+    return (*_x == '\0') ? NULL : _x;
+}
+
+const char *strrstr(const char *haystack, const char *needle)
+{
+    if (*needle == '\0')
+        return (char *) haystack;
+
+    char *result = NULL;
+    for (;;) {
+        char *p = strstr(haystack, needle);
+        if (p == NULL)
+            break;
+        result = p;
+        haystack = p + 1;
+    }
+
+    return result;
+}
+
+void define_implicit_array_if_needed( Environment * _environment, char * _name ) {
+    if ( !variable_exists( _environment, _name ) ) {
+        memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+        ((struct _Environment *)_environment)->arrayDimensions = 1;
+        ((struct _Environment *)_environment)->arrayDimensionsEach[0] = ((struct _Environment *)_environment)->defaultArraySize;
+        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, _name, VT_TARRAY, 0 );
+        variable_array_type( _environment, _name, ((struct _Environment *)_environment)->defaultVariableType );
+    }
 }

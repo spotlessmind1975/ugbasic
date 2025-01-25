@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EMBEDDED DATA USING RESTORE INSTRUCTION
 REM
 REM This small example will show how to use the ''RESTORE'' instruction.
@@ -13,6 +13,9 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 first:
 DATA 42, 21, 10
 
+second:
+DATA 1, 2, 3, 99
+
 DO
     DO
         READ a
@@ -22,5 +25,3 @@ DO
     RESTORE second
 LOOP
 
-second:
-DATA 1, 2, 3, 99

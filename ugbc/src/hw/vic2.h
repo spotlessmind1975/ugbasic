@@ -164,6 +164,7 @@ void vic2_screen_rows( Environment * _environment, char * _rows );
 void vic2_screen_columns( Environment * _environment, char * _columns );
 
 void vic2_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void vic2_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void vic2_sprite_duplicate( Environment * _environment, char * _sprite, char * _original );
 void vic2_sprite_enable( Environment * _environment, char *_sprite );
 void vic2_sprite_disable( Environment * _environment, char * _sprite );
@@ -175,6 +176,7 @@ void vic2_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void vic2_sprite_multicolor( Environment * _environment, char * _sprite );
 void vic2_sprite_monocolor( Environment * _environment, char * _sprite );
 void vic2_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void vic2_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void vic2_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2_busy_wait( Environment * _environment, char * _timing );
@@ -187,9 +189,9 @@ void vic2_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void vic2_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void vic2_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vic2_cls( Environment * _environment );
-void vic2_scroll_text( Environment * _environment, int _direction );
-void vic2_hscroll_line( Environment * _environment, int _direction );
-void vic2_hscroll_screen( Environment * _environment, int _direction );
+void vic2_scroll_text( Environment * _environment, int _direction, int _overlap );
+void vic2_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void vic2_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void vic2_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void vic2_cline( Environment * _environment, char * _characters );
 void vic2_scroll( Environment * _environment, int _dx, int _dy );
@@ -217,5 +219,6 @@ void vic2_slice_image( Environment * _environment, char * _image, char * _frame,
 int vic2_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 void vic2_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 void vic2_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+void vic2_fade( Environment * _environment, char * _ticks );
 
 #endif

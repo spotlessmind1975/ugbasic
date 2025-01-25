@@ -578,6 +578,10 @@ void ef936x_sprite_data_from( Environment * _environment, char * _sprite, char *
 
 }
 
+void ef936x_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void ef936x_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -615,6 +619,10 @@ void ef936x_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void ef936x_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void ef936x_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 
@@ -659,7 +667,7 @@ void ef936x_cls( Environment * _environment ) {
 
 }
 
-void ef936x_scroll_text( Environment * _environment, int _direction ) {
+void ef936x_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
 
@@ -896,7 +904,7 @@ void ef936x_finalization( Environment * _environment ) {
 
 }
 
-void ef936x_hscroll_line( Environment * _environment, int _direction ) {
+void ef936x_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
 
@@ -910,7 +918,7 @@ void ef936x_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void ef936x_hscroll_screen( Environment * _environment, int _direction ) {
+void ef936x_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_ef936x_hscroll_text_asm );
 

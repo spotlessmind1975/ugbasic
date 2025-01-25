@@ -175,36 +175,6 @@ void coleco_clear_key( Environment * _environment ) {
 
 }
 
-
-void coleco_irq_at( Environment * _environment, char * _label ) {
-
-    outline0("DI" );
-    outline1("LD DE, %s", _label );
-    outline0("LD HL, IRQVECTOR" );
-    // outline0("LD A, $c3" );
-    // outline0("LD (HL), A" );
-    outline0("INC HL" );
-    outline0("LD A, E" );
-    outline0("LD (HL), A" );
-    outline0("INC HL" );
-    outline0("LD A, D" );
-    outline0("LD (HL), A" );
-    outline0("EI" );
-    
-}
-
-void coleco_follow_irq( Environment * _environment ) {
-
-    // Variable * irq = variable_retrieve_or_define( _environment, "irq", VT_ADDRESS, 0 );
-
-    // outline1("LD HL, (%s)", irq->realName );
-    // outline0("JP (HL)" );
-    
-    outline0("EI" );
-    outline0("RET" );
-
-}
-
 void coleco_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     deploy( joystick, src_hw_coleco_joystick_asm );

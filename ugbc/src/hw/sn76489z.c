@@ -1084,7 +1084,7 @@ void sn76489z_set_duration_vars( Environment * _environment, char * _channel, ch
     deploy_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
 
     if ( _duration ) {
-        outline1("LD DE, (%s)", _duration );
+        outline1("LD HL, (%s)", _duration );
     } else {
         outline0("LD DE, 50" );
     }

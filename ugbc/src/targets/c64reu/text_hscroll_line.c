@@ -43,8 +43,12 @@
 @target c64reu
 </usermanual> */
 
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    vic2_hscroll_line( _environment, _direction );
+    if ( _overlap ) {
+        _environment->horizontalOverlapRequired = 1;
+    }    
+    
+    vic2_hscroll_line( _environment, _direction, _overlap );
     
 }

@@ -49,3 +49,9 @@
 [submodule "modules/cocobin2ram"]
 	path = modules/cocobin2ram
 	url = https://github.com/spotlessmind1975/cocobin2ram.git
+[submodule "modules/nasm"]
+	path = modules/nasm
+	url = https://github.com/spotlessmind1975/nasm.git
+[submodule "modules/sidreloc"]
+	path = modules/sidreloc
+	url = https://github.com/spotlessmind1975/sidreloc.git

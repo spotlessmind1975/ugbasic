@@ -80,6 +80,10 @@ quindi averne uno). Al termine del movimento, si avrà l'ease out dell'animazion
 </usermanual> */
 void move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y, char * _animation ) {
 
+#if defined(__gb__)
+    return;
+#endif
+
     char prefixMovement[MAX_TEMPORARY_STORAGE]; sprintf( prefixMovement, "%sMovement", _prefix );
 
     if ( ! variable_exists( _environment, prefixMovement ) ) {

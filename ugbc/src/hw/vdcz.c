@@ -742,8 +742,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     int horizontalCharactersPositions = 127;
     int horizontalVerticalSyncWidth = 0x49;
@@ -2216,12 +2216,16 @@ void vdcz_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
-void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
+void vdcz_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
+void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _address ) {
 
     _environment->bitmaskNeeded = 1;
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
-    Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
+    Variable * image = variable_retrieve_or_define( _environment, _sprite, VT_IMAGE, 0 );
 
 }
 
@@ -2288,6 +2292,13 @@ void vdcz_sprite_color( Environment * _environment, char * _sprite, char * _colo
     
 }
 
+void vdcz_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * priority = variable_retrieve_or_define( _environment, _priority, VT_BYTE, 0 );
+    
+}
+
 void vdcz_tiles_at( Environment * _environment, char * _address ) {
 
 }
@@ -2334,7 +2345,7 @@ void vdcz_cls( Environment * _environment ) {
 
 }
 
-void vdcz_scroll_text( Environment * _environment, int _direction ) {
+void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
         deploy( vScrollTextDown, src_hw_vdcz_vscroll_text_down_asm );
@@ -2554,13 +2565,13 @@ void vdcz_finalization( Environment * _environment ) {
     
 }
 
-void vdcz_hscroll_line( Environment * _environment, int _direction ) {
+void vdcz_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdcz_hscroll_text_asm );
 
 }
 
-void vdcz_hscroll_screen( Environment * _environment, int _direction ) {
+void vdcz_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_vdcz_hscroll_text_asm );
 

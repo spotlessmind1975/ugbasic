@@ -173,6 +173,13 @@ ifeq ($(target),d64)
   audio=
   io=pia
 endif
+ifeq ($(target),gb)
+  cpu=sm83
+  video=gb
+  video2=
+  audio=
+  io=
+endif
 ifeq ($(target),mo5)
   cpu=6809
   video=ef936x
@@ -581,6 +588,14 @@ SOURCES_TED := $(subst src/hw/ted/,src-generated/ted_,$(MODULES_TED:.asm=.c)) $(
 src-generated/ted_%.c: $(MODULES_TED)
 	@xxd -i $(subst src-generated/ted_,src/hw/ted/,$(@:.c=.asm)) >$@
 
+# Sharp SM83 ("embedded" in LR35902)
+
+MODULES_SM83 := $(wildcard src/hw/sm83/*.asm)
+SOURCES_SM83 := $(subst src/hw/sm83/,src-generated/sm83_,$(MODULES_SM83:.asm=.c))
+
+src-generated/sm83_%.c: $(MODULES_SM83)
+	@xxd -i $(subst src-generated/sm83_,src/hw/sm83/,$(@:.c=.asm)) >$@
+
 # Texas Instruments SN76489 (Zilog Z80 implementation)
 
 MODULES_SN76489Z := $(wildcard src/hw/sn76489z/*.asm)
@@ -738,6 +753,19 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
+
+# Gameboy 
+
+MODULES_GB := $(wildcard src/hw/gb/*.asm)
+SOURCES_GB := $(subst src/hw/gb/,src-generated/gb_,$(MODULES_GB:.asm=.c)) $(FONTS)
+
+src-generated/gb_%.c: $(MODULES_GB)
+	@xxd -i $(subst src-generated/gb_,src/hw/gb/,$(@:.c=.asm)) >$@
+
+src-generated/modules_gb.c: $(SOURCES_SM83) $(SOURCES_GB)
+	@cat $(SOURCES_SM83) $(SOURCES_GB) >src-generated/modules_gb.c
+	@grep "src" src-generated/modules_gb.c | awk -f modules.awk >src-generated/modules_gb.h
+	@grep "data" src-generated/modules_gb.c | awk -f modules.awk >>src-generated/modules_gb.h
 
 # TRS-80 Color Computer 1 and 2
 

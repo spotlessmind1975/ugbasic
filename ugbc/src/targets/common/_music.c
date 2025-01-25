@@ -34,6 +34,7 @@
 
 #include "../../ugbc.h"
 #include "../../libs/midi.h"
+#include "../../libs/sid_file.h"
 #include "../../libs/msc1.h"
 
 /****************************************************************************
@@ -438,7 +439,7 @@ static int decode_midi_payload( MidiMessagePayload * _payload, int _control_only
 
 }
 
-Variable * music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+static Variable * midi_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
 
     // Reinitialize all parameters for MIDI>IMF decoding.
     imfStreamPos = 0;
@@ -453,7 +454,7 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
     tempo = 81;
     imfBuffer = NULL;
 
-    Variable * result = variable_temporary( _environment, VT_MUSIC, "(buffer)" );
+    Variable * result = NULL;
 
     int size = 0;
     
@@ -698,113 +699,69 @@ Variable * music_load_to_variable( Environment * _environment, char * _filename,
 
         size = imfStreamPos;
 
-        // printf( "size = %d\n", size );
+        result = variable_temporary( _environment, VT_MUSIC, "(buffer)" );
 
-    } else {
-
-        check_if_filename_is_valid( _environment,  _filename );
-
-        FILE * file = fopen( _filename, "rb" );
-
-        if ( !file ) {
-            CRITICAL_LOAD_MISSING_FILE( _filename );
-        }
-        
-        fseek( file, 0, SEEK_END );
-        size = ftell( file );
-        fseek( file, 0, SEEK_SET );
-
-        imfBuffer = malloc( size );
-
-        (void)!fread( imfBuffer, size, 1, file );
-
-        fclose( file );
+        variable_store_buffer( _environment, result->name, imfBuffer, size, 0 );
 
     }
 
-    variable_store_buffer( _environment, result->name, imfBuffer, size, 0 );
+    return result;
 
-    // If a bank expasion has been requested, and there is at least one bank...
-    if ( 0 /*_bank_expansion && _environment->expansionBanks*/ ) {
+}
 
-        // Try to compress the result of image conversion.
-        // This means that the buffer will be compressed using MSC1
-        // algorithm, up to 32 frequent sequences. The original size of
-        // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
-        result->uncompressedSize = result->size;
-        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+Variable * sid_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
 
-        int temporary;
-        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+    Variable * result = NULL;
 
-        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL_COMPRESSION_FAILED(_filename);
-        }
-        msc1_free( compressor );
+    SIDFILE * sidFile = sid_file_read( _filename, _environment->sidRelocAddress );
 
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        if ( result->uncompressedSize < result->size ) {
-            result->size = result->uncompressedSize;
-            result->uncompressedSize = 0;
-            free( output );
-        } 
-        // Otherwise, we can safely replace the original data
-        // buffer with the compressed one.
-        else {
-            free( result->valueBuffer );
-            result->valueBuffer = output;
-        }
+    if ( sidFile ) {
 
-        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
-            CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
-        }
+        result = variable_temporary( _environment, VT_MUSIC, "(buffer)" );
 
-    // We can compress also if COMPRESSED flag is used.
-    } else if ( 0 /*_flags & FLAG_COMPRESSED*/ ) {
+        result->sidFile = sidFile;
+        sidFile->next = _environment->sidFiles;
+        _environment->sidFiles = sidFile;
 
-        // Try to compress the result of image conversion.
-        // This means that the buffer will be compressed using MSC1
-        // algorithm, up to 32 frequent sequences. The original size of
-        // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
-        result->uncompressedSize = result->size;
-        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
-
-        int temporary;
-        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
-        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL_COMPRESSION_FAILED(_filename);
-        }
-        msc1_free( compressor );
-
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        if ( result->uncompressedSize < result->size ) {
-            result->size = result->uncompressedSize;
-            result->uncompressedSize = 0;
-            free( output );
-        } 
-        // Otherwise, we can safely replace the original data
-        // buffer with the compressed one.
-        else {
-            result->valueBuffer = output;
-            if ( ! banks_store( _environment, result, 1 ) ) {
-                CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
-            };
-            free( result->valueBuffer );
-            result->valueBuffer = NULL;
-        }
-        
     }
 
+    return result;
 
+}
+
+Variable * music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+
+    int sidFormat = 0, midiFormat = 0;
+
+    Variable * result = NULL;
+
+    if ( strstrcase( _filename, ".mid") || strstrcase( _filename, ".midi") ) {
+        midiFormat = 1;
+    }
+
+    if ( strstrcase( _filename, ".sid") ) {
+        sidFormat = 1;
+    }
+
+    if ( !sidFormat && !midiFormat ) {
+        result = midi_load_to_variable( _environment, _filename, _alias, _bank_expansion );
+        if ( ! result ) {
+            result = sid_load_to_variable( _environment, _filename, _alias, _bank_expansion );
+            if ( ! result ) {
+                CRITICAL_CANNOT_LOAD_MUSIC( _filename );
+            }
+        }
+    } else if ( sidFormat ) {
+        result = sid_load_to_variable( _environment, _filename, _alias, _bank_expansion );
+        if ( !result ) {
+            CRITICAL( sid_file_get_lasterror_string( ) );
+        }
+    } else if ( midiFormat ) {
+        result = midi_load_to_variable( _environment, _filename, _alias, _bank_expansion );
+        if ( !result ) {
+            CRITICAL_CANNOT_LOAD_MIDI_FILE( _filename );
+        }
+    }
     return result;
 
 }

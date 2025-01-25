@@ -6108,6 +6108,96 @@ pixel o elementi grafici, in modo casuale, sullo schermo.
 </usermanual> */
 
 /* <usermanual>
+@keyword BLIT (instruction)
+
+@english
+
+The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
+are combined into one using a boolean (or mathematical) function. The operation involves
+at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
+and other fields, called “masks” or something like that. The result may be written to a 
+final bitmap, though often it replaces the “destination” field.
+
+The pixels of each are combined bitwise according to the specified BLIT OPERATION (BOP) 
+and the result is then written to the destination. The BOP is essentially a boolean 
+formula, that can be written using ''BLIT'' instructrion. The most obvious BOP overwrites 
+the destination with the source. Other BOPs may involve ''AND'', ''OR'', ''XOR'', and 
+other more complex operations.
+
+@italian
+Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
+bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
+L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
+“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
+Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
+campo “destinazione”.
+
+I pixel di ciascuno vengono combinati bit per bit in base all'OPERAZIONE BLIT (BOP) 
+specificata e il risultato viene quindi scritto nella destinazione. Il BOP è 
+essenzialmente una formula booleana, che può essere scritta utilizzando l'istruzione 
+''BLIT''. Il BOP più ovvio sovrascrive la destinazione con la sorgente. Altri BOP 
+possono comportare ''AND'', ''OR'', ''XOR'' e altre operazioni più complesse.
+
+@syntax BLIT identifier AS expression
+
+@example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
+
+@usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT IMAGE
+
+@target all
+@ntarget gb
+</usermanual> */
+
+/* <usermanual>
+@keyword BLIT IMAGE
+
+@english
+
+The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
+are combined into one using a boolean (or mathematical) function. The operation involves
+at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
+and other fields, called “masks” or something like that. The result may be written to a 
+final bitmap, though often it replaces the “destination” field.
+
+To draw, the BLIT IMAGE(S) command will be used. The syntax of this command will be 
+identical to that of ''PUT IMAGE'' (therefore with management of images and sequences), 
+with two main differences. The first is the ability to indicate multiple images 
+(separated from each other by a comma) and the second is to be able to indicate 
+which blitting operation you want to use.
+
+@italian
+Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
+bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
+L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
+“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
+Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
+campo “destinazione”.
+
+Per disegnare, verrà utilizzato il comando BLIT IMAGE(S). La sintassi di questo comando 
+sarà identica a quella di ''PUT IMAGE'' (quindi con gestione di immagini e sequenze), 
+con due differenze principali. La prima è la possibilità di indicare più immagini 
+(separate tra loro da una virgola) e la seconda è quella di poter indicare quale operazione
+di blitting si vuole utilizzare.
+
+@syntax BLIT IMAGE i1, i2, ... AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... FRAME frame AT [x], [y] WITH b
+@syntax BLIT IMAGE i1, i2, ... STRIP s FRAME f AT [x], [y] WITH b
+
+@example BLIT IMAGE test AT 0, 0 WITH bop
+
+@usedInExample blit_basic_mask.bas
+
+@seeAlso BLIT (data type)
+@seeAlso BLIT (instruction)
+
+@target all
+@ntarget gb
+</usermanual> */
+
+/* <usermanual>
 @keyword JOYDIR
 
 @english
@@ -6126,3 +6216,57 @@ joystick nella direzione su e destra, verrà restituito solo il valore su.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword SCALE
+
+@english
+The ''SCALE'' keyword allows you to scale the horizontal and vertical coordinates 
+before they are used for drawing. For speed reasons, scaling is done by applying 
+a multiplication factor as a power of two, so x2, x4, and so on. Furthermore, scaling 
+is done when drawing the point on the screen, and not when calculating the actual 
+coordinates. This means that the images will be subject to a "scanline" effect, 
+since the number of points drawn will remain the same. To apply a scale that respects 
+the number of points to be drawn, it is advisable to use the ''RESOLUTION'' command.
+
+@italian
+La parola chiave ''SCALE'' permette di apportare una scalatura alle coordinate 
+orizzontali e verticali prima che le stesse vengano usate per disegnare. Per ragioni 
+di velocità, la scalatura avviene applicando un fattore moltiplicativo come potenza 
+di due, quindi x2, x4 e così via. Inoltre, la scalatura avviene al momento di disegnare 
+il punto sullo schermo e non, quindi, al momento di calcolare le coordinate effettive. 
+Questo comporta che le immagini saranno oggetto di un effetto di "scanline", dato che 
+il numero di punti disegnati rimarrà lo stesso. Per applicare una scalatura rispettosa 
+del numero di punti da disegnare, è opportuno usare il comando ''RESOLUTION''.
+
+@syntax SCALE w, h
+
+@example SCALE 1, 0
+
+@target all
+</usermanual> */
+
+/* <usermanual>
+@keyword OFFSET
+
+@english
+The ''OFFSET'' keyword allows you to apply an offset on the horizontal and vertical
+ coordinates, before they are used for drawing. For speed reasons, the offset is 
+ performed when the point is drawn on the screen and not when the actual coordinates 
+ are calculated. To apply an offset that respects the coordinate system, it is 
+ recommended to use the ''ORIGIN'' command.
+
+@italian
+La parola chiave ''OFFSET'' consente di applicare uno scostamento sulle coordinate orizzontali 
+e verticali, prima che vengano utilizzate per il disegno. Per motivi di velocità, 
+l'offset viene eseguito quando si disegna il punto sullo schermo e non quando si calcolano le 
+coordinate effettive. Per applicare uno scostamento che rispetti il sistema di cordinate, 
+è consigliabile utilizzare il comando ''ORIGIN''.
+
+@syntax OFFSET dx, dy
+
+@example OFFSET 10, 10
+
+@target all
+</usermanual> */
+

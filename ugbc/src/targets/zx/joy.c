@@ -42,21 +42,22 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    variable_store( _environment, result->name, 0 );
+	zx_joystick_semivars( _environment, port->realName, result->realName );
 
     return result;
 
 }
 
 Variable * joy( Environment * _environment, int _port ) {
-
+    
     MAKE_LABEL
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    variable_store( _environment, result->name, 0 );
+	zx_joystick( _environment, _port, result->realName );
 
     return result;
 

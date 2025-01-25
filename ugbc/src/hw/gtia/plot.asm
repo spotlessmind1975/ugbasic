@@ -46,6 +46,43 @@ PLOTCPE    = $96
 
 PLOT:
 
+@IF scaleX > 0
+    ASL PLOTX
+    ROL PLOTX+1
+@ENDIF
+
+@IF scaleX > 1
+    ASL PLOTX
+    ROL PLOTX+1
+@ENDIF
+
+@IF offsetX > 0
+@EMIT offsetX AS offsetX
+    CLC
+    LDA PLOTX
+    ADC #offsetX
+    STA PLOTX
+    LDA PLOTX+1
+    ADC #0
+    STA PLOTX+1
+@ENDIF
+
+@IF scaleY > 0
+    ASL PLOTY
+@ENDIF
+
+@IF scaleY > 1
+    ASL PLOTY
+@ENDIF
+
+@IF offsetY > 0
+@EMIT offsetY AS offsetY
+    CLC
+    LDA PLOTY
+    ADC offsetY
+    STA PLOTY
+@ENDIF
+
     CLC
 
 @IF optionClip

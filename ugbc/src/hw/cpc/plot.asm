@@ -43,6 +43,56 @@ PLOT:
     CP 1
     JP Z, PLOTP
 
+@IF scaleX > 0
+    PUSH AF
+    LD A, E
+    SLA A
+    LD E, A
+    POP AF
+@ENDIF
+
+@IF scaleX > 1
+    PUSH AF
+    LD A, E
+    SLA A
+    LD E, A
+    POP AF
+@ENDIF
+
+@IF offsetX > 0
+@EMIT offsetX AS offsetX
+    PUSH AF
+    LD A, E
+    ADD offsetX
+    LD E, A
+    POP AF
+@ENDIF
+
+@IF scaleY > 0
+    PUSH AF
+    LD A, D
+    SLA A
+    LD D, A
+    POP AF
+@ENDIF
+
+@IF scaleY > 1
+    PUSH AF
+    LD A, D
+    SLA A
+    LD D, A
+    POP AF
+@ENDIF
+
+@IF offsetY > 0
+@EMIT offsetY AS offsetY
+    PUSH AF
+    LD A, D
+    ADD offsetY
+    LD D, A
+    POP AF
+@ENDIF
+
 @IF optionClip
 
     LD A, (CLIPY2)

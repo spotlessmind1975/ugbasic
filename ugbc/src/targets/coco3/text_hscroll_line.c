@@ -42,8 +42,8 @@
 @keyword HSCROLL
 @target coco3
 </usermanual> */
-void text_hscroll_line( Environment * _environment, int _direction ) {
+void text_hscroll_line( Environment * _environment, int _direction, int _overlap) {
 
-    gime_hscroll_line( _environment, _direction );
+    gime_hscroll_line( _environment, _direction, _overlap );
 
 }

@@ -73,6 +73,8 @@ sorgente, che sarà la memoria RAM.
 
 @example BANK WRITE 1 FROM $0100 TO $2000 SIZE 128
 
+@seeAlso MEMSAVE
+
 @target all
 </usermanual> */
 

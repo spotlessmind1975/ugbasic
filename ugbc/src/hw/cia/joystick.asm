@@ -107,7 +107,7 @@ JOYSTICKREAD1:
 
     WAITFIRE0:
         JSR JOYSTICKREAD0
-        AND $10
+        AND #$10
         BEQ WAITFIRE0
         RTS
 
@@ -119,17 +119,17 @@ JOYSTICKREAD1:
 
     WAITFIRE1:
         JSR JOYSTICKREAD1
-        AND $10
+        AND #$10
         BEQ WAITFIRE1
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
     WAITFIRE:
         JSR JOYSTICKREAD0
-        AND $10
+        AND #$10
         STA MATHPTR0
         JSR JOYSTICKREAD1
-        AND $10
+        AND #$10
         ORA MATHPTR0
         BEQ WAITFIRE
         RTS
@@ -194,7 +194,7 @@ JOYSTICK1:      .BYTE   $0
 
     WAITFIRE0:
         LDA JOYSTICK0
-        AND $10
+        AND #$10
         BEQ WAITFIRE0
         RTS
 
@@ -206,7 +206,7 @@ JOYSTICK1:      .BYTE   $0
 
     WAITFIRE1:
         LDA JOYSTICK1
-        AND $10
+        AND #$10
         BEQ WAITFIRE1
         RTS
 

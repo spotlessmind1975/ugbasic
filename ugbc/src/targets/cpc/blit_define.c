@@ -264,9 +264,6 @@ static void blit_define_bltb( Environment * _environment, int _op, char * _a, ch
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-/* <usermanual>
-@keyword BLIT IMAGE
-</usermanual> */
 void blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top ) {
 
     // outline0("; blit_define( ....)" );

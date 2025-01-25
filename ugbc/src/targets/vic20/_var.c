@@ -476,7 +476,11 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART")
 
-    deploy_inplace( vars, src_hw_vic20_vars_asm);
+    deploy_inplace( vars, src_hw_vic20_vars_asm );
+    deploy_inplace_preferred( vic1vars, src_hw_vic1_vars_asm );
+    deploy_inplace_preferred( vScrollTextUp, src_hw_vic1_vscroll_text_up_asm );
+    deploy_inplace_preferred( vScrollTextDown, src_hw_vic1_vscroll_text_down_asm );
+    deploy_inplace_preferred( textHScroll, src_hw_vic1_hscroll_text_asm );
 
     variable_on_memory_init( _environment, 0 );
 
@@ -531,16 +535,44 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->descriptors ) {
         outhead0(".segment \"UDCCHAR\"" );
         int i=0,j=0;
-        for(i=0;i<256;++i) {
+        for(i=0;i<_environment->descriptors->firstFree;++i) {
             outline1("; $%2.2x ", i);
             out0(".byte " );
             for(j=0;j<7;++j) {
                 out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+
         }
         outhead0(".segment \"CODE\"" );
-    }    
+        outhead0("TILESETSLOTUSED: ");
+        for(j=0;j<8;++j) {
+            int k;
+            out0("   .byte " );
+            for(k=0;k<31;++k) {
+                if ( (k*8) < _environment->descriptors->firstFree ) {
+                    out0("$FF,");
+                } else {
+                    out0("$00,");
+                }
+            }
+            outline0("$00");
+        }
+        outhead0("TILESETSLOTATTRIBUTE: ");
+        out0("   .byte " );
+        for(j=0;j<255;++j) {
+            int k;
+            if ( j < _environment->descriptors->firstFree ) {
+                out0("$07,");
+            } else {
+                out0("$00,");
+            }
+        }
+        outline0("$00");
+    } else {
+        outhead0("TILESETSLOTUSED: .res 256, $00 ");
+        outhead0("TILESETSLOTATTRIBUTE: .res 256, $00 ");
+    }
 
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {

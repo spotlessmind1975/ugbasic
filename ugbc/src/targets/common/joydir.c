@@ -52,28 +52,30 @@ Variable * joydir_semivars( Environment * _environment, char * _port ) {
     char detectedLeftLabel[MAX_TEMPORARY_STORAGE]; sprintf(detectedLeftLabel, "%sdetectedleft", label );
     char detectedRightLabel[MAX_TEMPORARY_STORAGE]; sprintf(detectedRightLabel, "%sdetectedright", label );
 
-    variable_move( _environment, joy_direction_semivars( _environment, _port, JOY_UP )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0, detectedDownLabel, 1 );
+    variable_move( _environment, joy_vars( _environment, _port )->name, joymove->name );
+
+    cpu_bit_check( _environment, joymove->realName, JOY_UP, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0, detectedDownLabel, 1 );
     variable_store( _environment, result->name, 1 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedDownLabel );
-    variable_move( _environment, joy_direction_semivars( _environment, _port, JOY_DOWN )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedLeftLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_DOWN, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0, detectedLeftLabel, 1 );
     variable_store( _environment, result->name, 2 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedLeftLabel );
-    variable_move( _environment, joy_direction_semivars( _environment, _port, JOY_LEFT )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedRightLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_LEFT, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0,  detectedRightLabel, 1 );
     variable_store( _environment, result->name, 4 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedRightLabel );
-    variable_move( _environment, joy_direction_semivars( _environment, _port, JOY_RIGHT )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_RIGHT, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0,  detectedLabel, 1 );
     variable_store( _environment, result->name, 8 );
-    cpu_jump( _environment, detectedLabel );
+
 
     cpu_label( _environment, detectedLabel );
 
@@ -95,28 +97,29 @@ Variable * joydir( Environment * _environment, int _port ) {
     char detectedLeftLabel[MAX_TEMPORARY_STORAGE]; sprintf(detectedLeftLabel, "%sdetectedleft", label );
     char detectedRightLabel[MAX_TEMPORARY_STORAGE]; sprintf(detectedRightLabel, "%sdetectedright", label );
 
-    variable_move( _environment, joy_direction( _environment, _port, JOY_UP )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0, detectedDownLabel, 1 );
+    variable_move( _environment, joy( _environment, _port )->name, joymove->name );
+
+    cpu_bit_check( _environment, joymove->realName, JOY_UP, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0, detectedDownLabel, 1 );
     variable_store( _environment, result->name, 1 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedDownLabel );
-    variable_move( _environment, joy_direction( _environment, _port, JOY_DOWN )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedLeftLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_DOWN, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0,  detectedLeftLabel, 1 );
     variable_store( _environment, result->name, 2 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedLeftLabel );
-    variable_move( _environment, joy_direction( _environment, _port, JOY_LEFT )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedRightLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_LEFT, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0,  detectedRightLabel, 1 );
     variable_store( _environment, result->name, 4 );
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedRightLabel );
-    variable_move( _environment, joy_direction( _environment, _port, JOY_RIGHT )->name, joymove->name );
-    variable_compare_and_branch_const( _environment, joymove->name, 0,  detectedLabel, 1 );
+    cpu_bit_check( _environment, joymove->realName, JOY_RIGHT, result->realName, VT_BITWIDTH( joymove->type ) );
+    variable_compare_and_branch_const( _environment, result->name, 0,  detectedLabel, 1 );
     variable_store( _environment, result->name, 8 );
-    cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedLabel );
 

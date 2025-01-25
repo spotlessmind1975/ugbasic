@@ -124,8 +124,15 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
             CRITICAL_CANNOT_MUSIC( _music );
         }
 
-        sid_start( _environment, 0xff );
-        sid_music( _environment, music->realName, music->size, _loop );
+        if ( ! music->sidFile ) {
+            sid_start( _environment, 0xff );
+            sid_music( _environment, music->realName, music->size, _loop );
+        } else {
+            if ( music->sidFile->initAddress && music->sidFile->playAddress ) {
+                sid_player_init( _environment, music->sidFile->initAddress );
+                sid_player_play( _environment, music->sidFile->playAddress );
+            }
+        }
 
     }
     

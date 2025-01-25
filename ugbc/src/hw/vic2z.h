@@ -161,6 +161,7 @@ void vic2z_screen_rows( Environment * _environment, char * _rows );
 void vic2z_screen_columns( Environment * _environment, char * _columns );
 
 void vic2z_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void vic2z_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void vic2z_sprite_enable( Environment * _environment, char *_sprite );
 void vic2z_sprite_disable( Environment * _environment, char * _sprite );
 void vic2z_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -171,6 +172,7 @@ void vic2z_sprite_compress_horizontal( Environment * _environment, char * _sprit
 void vic2z_sprite_multicolor( Environment * _environment, char * _sprite );
 void vic2z_sprite_monocolor( Environment * _environment, char * _sprite );
 void vic2z_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void vic2z_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void vic2z_vertical_scroll( Environment * _environment, char * _displacement );
 void vic2z_horizontal_scroll( Environment * _environment, char * _displacement );
 void vic2z_busy_wait( Environment * _environment, char * _timing );
@@ -183,9 +185,9 @@ void vic2z_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void vic2z_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void vic2z_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vic2z_cls( Environment * _environment );
-void vic2z_scroll_text( Environment * _environment, int _direction );
-void vic2z_hscroll_line( Environment * _environment, int _direction );
-void vic2z_hscroll_screen( Environment * _environment, int _direction );
+void vic2z_scroll_text( Environment * _environment, int _direction, int _overlap );
+void vic2z_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void vic2z_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void vic2z_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void vic2z_cline( Environment * _environment, char * _characters );
 void vic2z_scroll( Environment * _environment, int _dx, int _dy );

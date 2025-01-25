@@ -53,6 +53,7 @@
 
 #include "libs/tsx.h"
 #include "libs/tmx.h"
+#include "libs/sid_file.h"
 
 /****************************************************************************
  * DECLARATIONS AND DEFINITIONS SECTION 
@@ -94,6 +95,8 @@ typedef enum _Dialect {
     DI_UGBASIC = 0,
 
     DI_TSB = 1,
+
+    DI_ATARI_BASIC = 2,
 
 } Dialect;
 
@@ -253,7 +256,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_DSK = 9,
     OUTPUT_FILE_TYPE_ATR = 10,
     OUTPUT_FILE_TYPE_REU = 11,
-    OUTPUT_FILE_TYPE_RAM = 12
+    OUTPUT_FILE_TYPE_RAM = 12,
+    OUTPUT_FILE_TYPE_GB = 13
 
 } OutputFileType;
 
@@ -1112,6 +1116,8 @@ typedef struct _Variable {
      */
     Offsetting * offsettingSequences;
 
+    SIDFILE * sidFile;
+
     /**
      *
      */
@@ -1618,6 +1624,7 @@ typedef struct _Deployed {
     int gimestartup;
     int zxvars;
     int msx1vars;
+    int gbvars;
     int sc3000vars;
     int sg1000vars;
     int vg5000vars;
@@ -1691,11 +1698,13 @@ typedef struct _Deployed {
     int ellipse;
     int create_path;
     int travel_path;
+    int fade;
 
     Embedded embedded;
 
     int fp_vars;
 
+    int fp_common;
     int fp_mul4;
     int fp_mul24;
     int fp_mul16;
@@ -1783,6 +1792,7 @@ typedef struct _Deployed {
     int dojo;
     int console;
     int music;
+    int sidplayer;
     int wait_key_or_fire;
 
 } Deployed;
@@ -1818,6 +1828,7 @@ typedef struct _JoystickConfig {
     int retries;
     int values;
     int sync;
+    int notEmulated;
 
 } JoystickConfig;
 
@@ -1993,6 +2004,7 @@ typedef struct _Console {
 
 typedef struct _Program {
 
+    char * name;
     int startingAddress;
 
 } Program;
@@ -2630,6 +2642,7 @@ typedef struct _Environment {
 
     /*
      * Set of consoles.
+     * Additional for internal usage of ugBASIC
      */
     Console consoles[MAX_CONSOLES];
 
@@ -2934,6 +2947,31 @@ typedef struct _Environment {
     int movementDelay;
     int movementDeltaX;
     int movementDeltaY;
+
+    int midReplace;
+
+    int leftReplace;
+
+    SIDFILE * sidFiles;
+
+    int sidRelocAddress;
+
+    int defaultPenColor;
+    int defaultPaperColor;
+
+    int graphicsAtariBasicEnabled;
+    int lmarginAtariBasicEnabled;
+
+    int verticalOverlapRequired;
+    int horizontalOverlapRequired;
+
+    int scaleX;
+    int scaleY;
+
+    int offsetX;
+    int offsetY;
+
+    int defaultArraySize;
 
     int drawUsingTsbSyntax;
     
@@ -3354,6 +3392,14 @@ typedef struct _Environment {
 #define CRITICAL_MISSING_END_PROC(p) CRITICAL2("E348 - missing END PROC for PROC/PROCEDURE definition", p );
 #define CRITICAL_NOT_ENOUGH_FRAMES_FOR_ANIMATION(n) CRITICAL2("E349 - not enought frames for animation", n );
 #define CRITICAL_CANNOT_FILL_RANDOM(v) CRITICAL2("E350 - cannot use FILL RANDOM on this datatype", v );
+#define CRITICAL_CANNOT_COPY_SID_FILE(f) CRITICAL2("E351 - music variables referring to sid files cannot be copied", f );
+#define CRITICAL_CANNOT_COMPARE_SID_FILE(f) CRITICAL2("E352 - music variables referring to sid files cannot be compared", f );
+#define CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE() CRITICAL("E353 - not enough space to load sid file, consider relocation" );
+#define CRITICAL_CANNOT_LOAD_MUSIC(f) CRITICAL2("E354 - cannot load MUSIC, unknown format", f );
+#define CRITICAL_CANNOT_LOAD_MIDI_FILE(f) CRITICAL2("E355 - cannot load midi file", f );
+#define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E356 - MMOB can be called only with SPRITE/MSPRITE", v );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E357 - invalid width for image, must be of 8 pixels", w );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E358 - invalid height for image, must be of 8 pixels", h );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3380,6 +3426,8 @@ typedef struct _Environment {
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 
 int assemblyLineIsAComment( char * _buffer );
+const char* strstrcase( const char* _x, const char* _y );
+const char *strrstr(const char *haystack, const char *needle);
 
 typedef unsigned char MemoryBlock;
 
@@ -4149,9 +4197,10 @@ char * basename( char * _path );
         strcpy( listingFileName, "-m -s -g" ); \
     }
 
-#define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName ) \
-    sprintf( commandLine, "\"%s\" %s -D__%s__ -b \"%s\"", \
+#define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName, cpu ) \
+    sprintf( commandLine, "\"%s\" -m=%s %s -D__%s__ -b \"%s\"", \
         executableName, \
+        cpu, \
         listingFileName, \
         target, \
         _environment->asmFileName ); \
@@ -4389,6 +4438,8 @@ void finalize_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+void define_implicit_array_if_needed( Environment * _Environment, char * _name );
 
 int define_audio_target_check( Environment * _environment, int _value );
 
@@ -4671,6 +4722,8 @@ Variable *              dojo_ping( Environment * _environment );
 Variable *              dojo_ready( Environment * _environment );
 Variable *              dojo_receive( Environment * _environment );
 void                    dojo_send( Environment * _environment, char * _value );
+void                    downw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
 void                    draw_tile_column( Environment * _environment, char * _tile, char * _x, char * _y1, char * _y2, char * _color );
 void                    draw_tile_row( Environment * _environment, char * _tile, char * _y, char * _x1, char * _x2, char * _color );
@@ -4715,6 +4768,8 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
+void                    fade_ticks_var( Environment * _environment, char * _ticks );
+void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
@@ -4848,6 +4903,8 @@ void                    label_referred_define_numeric( Environment * _environmen
 void                    label_referred_define_named( Environment * _environment, char * _label );
 int                     label_referred_exists_named( Environment * _environment, char * _label );
 int                     label_referred_exists_numeric( Environment * _environment, int _label );
+void                    leftw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    leftb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
 void                    locate( Environment * _environment, char * _x, char * _y );
 void                    loop( Environment * _environment, char *_label );
@@ -4860,11 +4917,21 @@ RGBi                *   malloc_palette( int _size );
 float                   max_of_two(float _x, float _y);
 float                   max_of_three(float _m, float _n, float _p);
 Variable *              maximum( Environment * _environment, char * _source, char * _dest );
+void                    memclr( Environment * _environment, char * _address, char * _size, char * _value );
+void                    memcont( Environment * _environment, char * _param );
+void                    memdef( Environment * _environment, char * _size, char * _address, char * _eaddress, char * _bank );
+void                    memlen( Environment * _environment, char * _size );
+void                    memload( Environment * _environment );
 void                    memorize( Environment * _environment );
+void                    memor( Environment * _environment, char * _address, char * _eaddress, char * _bank );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
+void                    mempos( Environment * _environment, char * _address, char * _bank );
+void                    memrestore( Environment * _environment, char * _param );
+void                    memsave( Environment * _environment );
 float                   min_of_two(float _x, float _y);
 float                   min_of_three(float _m, float _n, float _p);
 Variable *              minimum( Environment * _environment, char * _source, char * _dest );
+void                    mmob( Environment * _environment, char * _sprite, char * _sx, char * _sy, char * _zx, char * _zy, char * _gr, char * _sp );
 void                    mmove_memory_memory( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_memory_video( Environment * _environment, char * _from, char * _to, char * _size );
 void                    mmove_video_memory( Environment * _environment, char * _from, char * _to, char * _size );
@@ -5006,6 +5073,8 @@ int                     rgbi_equals_rgba( RGBi * _first, RGBi * _second );
 int                     rgbi_extract_palette( Environment * _environment, unsigned char* _source, int _width, int _height, int _depth, RGBi _palette[], int _palette_size, int _sorted);
 void                    rgbi_move( RGBi * _source, RGBi * _destination );
 int                     rgbi_distance( RGBi * _source, RGBi * _destination );
+void                    rightw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    rightb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 Variable *              rnd( Environment * _environment, char * _value );
 Variable *              rnd0( Environment * _environment );
 Variable *              rnd1( Environment * _environment );
@@ -5101,15 +5170,15 @@ void                    text_at( Environment * _environment, char * _x, char * _
 void                    text_encoded( Environment * _environment, char * _text, char * _pen, char * _paper, int _raw );
 Variable *              text_get_xcurs( Environment * _environment );
 Variable *              text_get_ycurs( Environment * _environment );
-void                    text_hscroll_line( Environment * _environment, int _direction );
-void                    text_hscroll_screen( Environment * _environment, int _direction );
+void                    text_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void                    text_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void                    text_newline( Environment * _environment );
 void                    text_question_mark( Environment * _environment );
 void                    text_set_tab( Environment * _environment, char * _net_tab );
 void                    text_tab( Environment * _environment );
 void                    text_text( Environment * _environment, char * _text, int _raw );
 void                    text_vscroll( Environment * _environment );
-void                    text_vscroll_screen( Environment * _environment, int _direction );
+void                    text_vscroll_screen( Environment * _environment, int _direction, int _overlap );
 void                    textmap_at( Environment * _environment, int _address );
 void                    textmap_at_var( Environment * _environment, char * _address );
 Variable *              tilemap_at( Environment * _environment, char * _tilemap, char * _x, char * _y, char * _layer );
@@ -5148,6 +5217,8 @@ void                    use_tileset( Environment * _environment, char * _tileset
 char *                  unescape_string( Environment * _environment, char * _value, int _printing, int * _final_size );
 Variable *              uncompress( Environment * _environment, char * _value );
 void                    unfreeze_vars( Environment * _environment, char * _prefix );
+void                    upw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
+void                    upb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 
 //----------------------------------------------------------------------------
 // *V*
@@ -5447,6 +5518,10 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_pc1403.h"
     #include "hw/sc61860.h"
     #include "hw/pc1403.h"
+#elif __gb__
+    #include "../src-generated/modules_gb.h"
+    #include "hw/sm83.h"
+    #include "hw/gb.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

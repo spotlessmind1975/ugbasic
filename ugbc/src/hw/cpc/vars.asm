@@ -35,3 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF verticalOverlapRequired
+
+VSCROLLBUFFERLINE: DEFS 80*8,  0
+
+@ENDIF
+

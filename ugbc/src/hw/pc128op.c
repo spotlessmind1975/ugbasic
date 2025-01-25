@@ -119,9 +119,43 @@ void pc128op_wait_key_or_fire_semivar( Environment * _environment, char * _port,
 
 void pc128op_wait_fire( Environment * _environment, int _port, int _release ) {
 
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+        deploy( joystick, src_hw_pc128op_joystick_asm );
+
+        if ( _port == -1 ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA #$%2.2x", (unsigned char)(_port&0xff) );
+            outline0("JSR WAITFIREX");
+        }
+    }
+
 }
 
 void pc128op_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+
+    if ( _environment->joystickConfig.notEmulated ) {
+
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
+
+        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+        deploy( joystick, src_hw_pc128op_joystick_asm );
+
+        if ( !_port ) {
+            outline0("JSR WAITFIRE");
+        } else {
+            outline1("LDA %s", _port );
+            outline0("JSR WAITFIREX");
+        }
+    }
 
 }
 
@@ -234,40 +268,41 @@ void pc128op_busy_wait( Environment * _environment, char * _timing ) {
     outline1("BGT %sfirst", label);
 }
 
-void pc128op_irq_at( Environment * _environment, char * _label ) {
+void pc128op_joystick( Environment * _environment, int _joystick, char * _result ) {
 
-    outline1("LDX #%s", _label );
-    outline0("STX PC128IRQN" );
-    
-}
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
 
-void pc128op_follow_irq( Environment * _environment ) {
+        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+        deploy( joystick, src_hw_pc128op_joystick_asm );
 
-    outline0("JMP [PC128IRQO]" );
-    
+        outline1("LDA #$%2.2x", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
+
+    }
+
 }
 
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result ) {
 
-    MAKE_LABEL
+    if ( _environment->joystickConfig.notEmulated ) {
+        cpu_store_8bit( _environment, _result, 0 );
+    } else {
+        
+        _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_pc128op_joystick_asm );
+        deploy_preferred( keyboard, src_hw_pc128op_keyboard_asm );
+        deploy( joystick, src_hw_pc128op_joystick_asm );
 
-    outline1("LDA %s", _joystick );
-    outline0("JSR JOYSTICK");
-    outline1("STA %s", _result );
+        outline1("LDA %s", _joystick);
+        outline0("JSR JOYSTICK");
+        outline1("STA %s", _result);
 
-}
-
-void pc128op_joystick( Environment * _environment, int _joystick, char * _result ) {
-
-    MAKE_LABEL
-
-    deploy( joystick, src_hw_pc128op_joystick_asm );
-
-    outline1("LDA #$%2.2x", _joystick );
-    outline0("JSR JOYSTICK");
-    outline1("STA %s", _result );
+    }
 
 }
 
@@ -280,7 +315,7 @@ void pc128op_sys_call( Environment * _environment, int _destination ) {
     outline0("STD SYSCALL0+1");
     outline0("PULS D");
     outline0("JSR SYSCALL");
-
+    
 }
 
 void pc128op_timer_set_status_on( Environment * _environment, char * _timer ) {

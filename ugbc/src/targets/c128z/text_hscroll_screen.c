@@ -38,8 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void text_hscroll_screen( Environment * _environment, int _direction ) {
+void text_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    vdcz_hscroll_screen( _environment, _direction );
+    vdcz_hscroll_screen( _environment, _direction, _overlap );
     
 }

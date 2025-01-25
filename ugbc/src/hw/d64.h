@@ -47,8 +47,6 @@ void d64_ypen( Environment * _environment, char * _destination );
 
 void d64_clear_key( Environment * _environment );
 void d64_busy_wait( Environment * _environment, char * _timing );
-void d64_irq_at( Environment * _environment, char * _label );
-void d64_follow_irq( Environment * _environment );
 
 void d64_sys_call( Environment * _environment, int _destination );
 

@@ -50,6 +50,40 @@ PLOT
 
 PLOTGO
 
+@IF scaleX > 0
+    ASL <PLOTX+1
+    ROL <PLOTX
+@ENDIF
+
+@IF scaleX > 1
+    ASL <PLOTX+1
+    ROL <PLOTX
+@ENDIF
+
+@IF offsetX > 0
+@EMIT offsetX AS offsetX
+    LDD <PLOTX
+    ADDD #offsetX
+    STD <PLOTX
+@ENDIF
+
+@IF scaleY > 0
+    ASL <PLOTY+1
+    ROL <PLOTY
+@ENDIF
+
+@IF scaleY > 1
+    ASL <PLOTY+1
+    ROL <PLOTY
+@ENDIF
+
+@IF offsetY > 0
+@EMIT offsetY AS offsetY
+    LDd <PLOTY
+    ADDD #offsetY
+    STD <PLOTY
+@ENDIF
+
 @IF optionClip
 
     LDD <PLOTY

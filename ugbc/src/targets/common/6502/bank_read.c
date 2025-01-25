@@ -79,6 +79,8 @@ l'array deve essere dichiarato con il flag ''FOR BANK READ''.
 
 @example BANK READ 1 FROM $0100 TO $2000 SIZE 128
 
+@seeAlso MEMLOAD
+
 @target all
 </usermanual> */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {

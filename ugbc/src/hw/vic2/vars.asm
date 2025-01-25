@@ -88,6 +88,8 @@ BLITR1 = $B0 ; $B1
 BLITR2 = $B2 ; $B3
 BLITR3 = $B4 ; $B5
 
+PORT = $B4
+
 ;       (x1,y1)  w (chars) / wb (bytes)
 ;       +----------------+
 ;  sa ->|*               | h (chars) / hb (bytes)
@@ -115,3 +117,9 @@ CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
 CONSOLES:     .res  32        ; <-- storage for virtual consoles
 CONSOLES2:    .res   8        ; <-- storage for memorize / remember
 
+@IF verticalOverlapRequired
+
+VSCROLLBUFFERLINE: .RES 80,  0
+VSCROLLBUFFERLINECOLOR = VSCROLLBUFFERLINE+40
+
+@ENDIF

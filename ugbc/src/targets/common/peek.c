@@ -108,7 +108,25 @@ questo comando.
 @seeAlso PEEKD
 @seeAlso D!PEEKW
 
+@alias MEMPEEK
+
 </usermanual> */
+
+/* <usermanual>
+@keyword PEEK
+
+@english
+
+@italian
+
+@syntax = MEMPEEK( address )
+
+@example x = MEMPEEK(1024)
+
+@alias PEEK
+
+</usermanual> */
+
 Variable * peek_var( Environment * _environment, char * _location ) {
 
     Variable * location = variable_retrieve_or_define( _environment, _location, VT_ADDRESS, 0 );

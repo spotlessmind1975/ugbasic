@@ -209,6 +209,29 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_MUSIC:
+                    if ( variable->sidFile ) {
+                        if ( variable->sidFile->loadAddress ) {
+                            outhead1(".segment \"%s\"", variable->name);
+                            outhead1("%s:", variable->realName );
+                            out0( ".BYTE ");
+                            for( int i=0; i<variable->sidFile->size; ++i ) {
+                                out1("$%2.2x", (unsigned char)(variable->sidFile->data[i]) );
+                                if ( ( ( i + 1 ) % 8 ) == 0 ) {
+                                    outline0("");
+                                    if ( i < (variable->sidFile->size-1) ) {
+                                        out0( ".BYTE ");
+                                    }
+                                } else {
+                                    if ( i < (variable->sidFile->size-1) ) {
+                                        out0( ",");
+                                    }
+                                }
+                            }
+                            outline0("");
+                            outhead0(".segment \"CODE\"");
+                            break;
+                        }
+                    }
                 case VT_BUFFER:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
@@ -793,10 +816,28 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("NOP");
     outline0("JMP CODESTART")
+    if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
+        int lastAddress = 0;
+        SIDFILE * actual = _environment->sidFiles;
+        while( actual ) {
+            if ( lastAddress < actual->loadAddress + actual->size ) {
+                lastAddress = actual->loadAddress + actual->size;
+            }
+            actual = actual->next;
+        }
+        if ( lastAddress < ( _environment->program.startingAddress - 5 ) ) {
+            CRITICAL_CANNOT_LOAD_SID_FILE_NO_SPACE( );
+        }
+        outline1("   .RES $%4.4x", lastAddress - _environment->program.startingAddress - 5 );;
+    }
+
     deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
     deploy_inplace_preferred( startup, src_hw_c64_startup_asm);
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
+    deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
+    deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
+    deploy_inplace_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
 
     // Moved here for banking reasons.
 

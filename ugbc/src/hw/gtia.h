@@ -265,6 +265,7 @@ void gtia_colormap_at( Environment * _environment, char * _address );
 void gtia_textmap_at( Environment * _environment, char * _address );
 void gtia_tiles_at( Environment * _environment, char * _address );
 void gtia_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
+void gtia_fade( Environment * _environment, char * _ticks );
 
 void gtia_bank_select( Environment * _environment, int _bank );
 void gtia_screen_on( Environment * _environment );
@@ -273,6 +274,7 @@ void gtia_screen_rows( Environment * _environment, char * _rows );
 void gtia_screen_columns( Environment * _environment, char * _columns );
 
 void gtia_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void gtia_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void gtia_sprite_enable( Environment * _environment, char *_sprite );
 void gtia_sprite_disable( Environment * _environment, char * _sprite );
 void gtia_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -283,6 +285,7 @@ void gtia_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void gtia_sprite_multicolor( Environment * _environment, char * _sprite );
 void gtia_sprite_monocolor( Environment * _environment, char * _sprite );
 void gtia_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void gtia_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void gtia_vertical_scroll( Environment * _environment, char * _displacement );
 void gtia_horizontal_scroll( Environment * _environment, char * _displacement );
 void gtia_busy_wait( Environment * _environment, char * _timing );
@@ -295,9 +298,9 @@ void gtia_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void gtia_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void gtia_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void gtia_cls( Environment * _environment );
-void gtia_scroll_text( Environment * _environment, int _direction );
-void gtia_hscroll_line( Environment * _environment, int _direction );
-void gtia_hscroll_screen( Environment * _environment, int _direction );
+void gtia_scroll_text( Environment * _environment, int _direction, int _overlap );
+void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void gtia_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void gtia_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void gtia_cline( Environment * _environment, char * _characters );
 void gtia_scroll( Environment * _environment, int _dx, int _dy );

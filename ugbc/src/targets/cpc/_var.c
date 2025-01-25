@@ -437,6 +437,9 @@ void variable_cleanup( Environment * _environment ) {
     // outhead0("SECTION code_user");
     outhead1("ORG $%4.4x", _environment->program.startingAddress);
     outline0("JP CODESTART");
+    deploy_inplace_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
+    deploy_inplace_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
+    deploy_inplace_preferred( cpcvars, src_hw_cpc_vars_asm);
     // outhead0("SECTION data_user");
     // outhead0("ORG $7030");
     // outhead0("SECTION code_user");

@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF verticalOverlapRequired
+
+VSCROLLBUFFERLINE RZB 80*2,  0
+
+@ENDIF
+
 VSCROLLT
     LDA CURRENTTILEMODE
     BNE VSCROLLTX
@@ -56,7 +62,7 @@ VSCROLLTX
 
     LDA <DIRECTION
     CMPA #0
-    BGT VSCROLLTDOWN
+    LBGT VSCROLLTDOWN
 
 VSCROLLTUP
     LDB CURRENTTILESWIDTH
@@ -98,6 +104,31 @@ VSCROLLTUP
     ASLB
     STB MATHPTR3
 
+@IF verticalOverlapRequired
+
+    LDB <PORT
+    BEQ VSCROLLTUPNOW
+
+    PSHS X
+    PSHS Y
+
+    LDY #VSCROLLBUFFERLINE
+    LDB CONSOLEX1
+    ASLB
+VSCROLLTUPWCOPYL1
+    LDA B,X
+    STA ,Y+
+    INCB
+    CMPB MATHPTR3
+    BLE VSCROLLTUPWCOPYL1
+    
+    PULS Y
+    PULS X
+
+VSCROLLTUPNOW
+
+@ENDIF
+
     CLRA
     LDB CONSOLEH
     DECB
@@ -131,9 +162,14 @@ VSCROLLTUPYSCR1
 
 VSCROLLTUPYSCR1NO
 
+@IF verticalOverlapRequired
+    LDA <PORT
+    BNE VSCROLLTUPREFILLW
+@ENDIF
+
+VSCROLLTUPREFILLNOW
     LDA #0
     LDB CONSOLEW
-    ASLB
     TFR D, U
 
     LDA #0
@@ -159,19 +195,39 @@ VSCROLLTUPYSCR2
 
     JMP VSCROLLTE
 
+@IF verticalOverlapRequired
+
+VSCROLLTUPREFILLW
+    LDB CONSOLEX1
+    ASLB
+    LDY #VSCROLLBUFFERLINE
+VSCROLLTUPREFILLWL1
+    LDA ,Y+
+    STA B,X
+    INCB
+    CMPB MATHPTR3
+    BLE VSCROLLTUPREFILLWL1
+    JMP VSCROLLTE
+
+@ENDIF
+
 VSCROLLTDOWN
+    LDX TEXTADDRESS
     LDA CURRENTTILESWIDTH
-    LDB CURRENTTILESHEIGHT
+    LDB CONSOLEY2
     MUL
     LSLB
     ROLA
-    TFR D, U
-
-    LDX TEXTADDRESS
-    LDY TEXTADDRESS
-    LEAY D, Y
     LEAX D, X
+    LDB CONSOLEX1
+    LSLB
+    LEAX B, X
 
+    LDB CONSOLEX2
+    ASLB
+    STB MATHPTR3
+    
+    TFR X, Y
     LDA #0
     LDB CURRENTTILESWIDTH
     LSLB
@@ -180,8 +236,6 @@ VSCROLLTDOWN
     NEGB
     SBCA #0
     LEAY D, Y
-    ADDD #2
-    LEAU D, U
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
@@ -189,22 +243,79 @@ VSCROLLTDOWN
 
     JSR GIMEBANKVIDEO
 
+@IF verticalOverlapRequired
+
+    LDB <PORT
+    BEQ VSCROLLTDOWNNOW
+
+    PSHS X
+    PSHS Y
+
+    LDX TEXTADDRESS
+    LDA CURRENTTILESWIDTH
+    LDB CONSOLEY2
+    MUL
+    LSLB
+    ROLA
+    LEAX D, X
+
+    LDY #VSCROLLBUFFERLINE
+    LDB CONSOLEX1
+    ASLB
+VSCROLLTDOWNWCOPYL1
+    LDA B,X
+    STA ,Y+
+    INCB
+    CMPB MATHPTR3
+    BLE VSCROLLTDOWNWCOPYL1
+    
+    PULS Y
+    PULS X
+
+VSCROLLTDOWNNOW
+
+@ENDIF
+
+    LDB CONSOLEH
+    DECB
+VSCROLLTDOWNSCR1L2
+    PSHS D
+    LDB CONSOLEW
+    LSLB
+    DECB
 VSCROLLTDOWNSCR1
-    LDD ,Y
-    STD ,X
-    LEAX -2, X
-    LEAY -2, Y
-    LEAU -2, U
-    CMPU #0
+    LDA B, Y
+    STA B, X
+    DECB
+    CMPB #$FF
     BNE VSCROLLTDOWNSCR1
 
     LDA #0
     LDB CURRENTTILESWIDTH
-    TFR D, U
+
+    LSLB
+    ROLA
+    NEGA
+    NEGB
+    SBCA #0
+    LEAX D, X
+    LEAY D, Y
+
+    PULS D
+
+    DECB
+    BNE VSCROLLTDOWNSCR1L2
 
     ; The VSCROLL command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 
     ; memory at the beginning of execution and bank out at the end.
+
+@IF verticalOverlapRequired
+    LDA <PORT
+    BNE VSCROLLTDOWNREFILLW
+@ENDIF
+
+VSCROLLTDOWNREFILLB
 
     JSR GIMEBANKROM
     
@@ -217,14 +328,46 @@ VSCROLLTDOWNSCR1
 
     JSR GIMEBANKVIDEO
     
+    TFR D, U
+
+    LDB CONSOLEW
+    LSLB
+    DECB
+    DECB
+
 VSCROLLTDOWNSCR2
-    STD , Y
-    LEAY 2, Y
-    LEAU -1, U
-    CMPU #0
+    STU B, X
+    DECB
+    DECB
+    CMPB #$FE
     BNE VSCROLLTDOWNSCR2
 
     JMP VSCROLLTE
+
+@IF verticalOverlapRequired
+
+VSCROLLTDOWNREFILLW
+
+    LDX TEXTADDRESS
+    LDA CURRENTTILESWIDTH
+    LDB CONSOLEY1
+    MUL
+    LSLB
+    ROLA
+    LEAX D, X
+    TFR X, Y
+    LDB CONSOLEX1
+    ASLB
+    LDX #VSCROLLBUFFERLINE
+VSCROLLTDOWNREFILLWL1
+    LDA ,X+
+    STA B,Y
+    INCB
+    CMPB MATHPTR3
+    BLE VSCROLLTDOWNREFILLWL1
+    JMP VSCROLLTE
+
+@ENDIF
 
 VSCROLLTE
 

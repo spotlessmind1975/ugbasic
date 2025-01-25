@@ -137,11 +137,11 @@
 #define JOYSTICK_1					1
 #define JOYSTICK_COUNT				2
 
-#define JOY_UP              1
-#define JOY_DOWN            2
-#define JOY_LEFT            3
-#define JOY_RIGHT           4
-#define JOY_FIRE            2
+#define JOY_UP              0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 #define JOYSTICK_CONFIG_DEFAULT_SYNC 1
 
@@ -176,8 +176,6 @@ void to8_keyshift( Environment * _environment, char * _shifts );
 void to8_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void to8_clear_key( Environment * _environment );
 void to8_busy_wait( Environment * _environment, char * _timing );
-void to8_irq_at( Environment * _environment, char * _label );
-void to8_follow_irq( Environment * _environment );
 int convertbintok7(Environment * _environment);
 int to8_convertbintok7_original(Environment * _environment);
 void to8_joystick_semivars( Environment * _environment, char * _joystick, char * _result );

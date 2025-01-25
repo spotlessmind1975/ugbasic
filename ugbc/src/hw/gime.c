@@ -1357,6 +1357,10 @@ void gime_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
 }
 
+void gime_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void gime_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1394,6 +1398,10 @@ void gime_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void gime_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void gime_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 
@@ -1444,12 +1452,14 @@ void gime_cls( Environment * _environment ) {
 
 }
 
-void gime_scroll_text( Environment * _environment, int _direction ) {
+void gime_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA <PORT" );
 
     outline0("JSR VSCROLLT");
 
@@ -1680,13 +1690,15 @@ void gime_finalization( Environment * _environment ) {
     
 }
 
-void gime_hscroll_line( Environment * _environment, int _direction ) {
+void gime_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gime_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA <PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA <CLINEY");
 
@@ -1695,12 +1707,14 @@ void gime_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void gime_hscroll_screen( Environment * _environment, int _direction ) {
+void gime_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gime_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gime_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA <DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA <PORT" );
 
     outline0("JSR HSCROLLST");    
 

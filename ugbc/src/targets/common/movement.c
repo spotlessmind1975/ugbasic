@@ -49,14 +49,18 @@
 
 @english
 
-The ''MOVEMENT'' command allows you to define a movement of an object,
+The ''MOVEMENT'' command allows you to define a movement of an object or a sprite,
 starting from a given ''ATLAS'' and giving a destination, that can be
 relative to the current position or absolute. Once defined, the 
-movement, IT can then be used at any time.
+movement, it can then be used at any time.
 
 In order for this to work, you need to indicate a variable prefix that will be 
 associated with the trajectorty of the object that will have this movement. 
 This can be indicated with the ''USING'' keyword. 
+
+If the ''prefix'' is a variable of type ''SPRITE'', ''CSPRITE'' or ''MSPRITE'',
+this movement will be bounded to that object. Otherwise, the following logic
+will be applied.
 
 The relative movement lasts as the number of the frames contained in the
 ''ATLAS'' given with the ''WITH'' keyword. The absolute movement, instead,
@@ -81,6 +85,10 @@ Affinché ciò funzioni, è necessario indicare un prefisso di variabile che sar
 associato alla traiettoria dell'oggetto che avrà questo spostamento. Questo può 
 essere indicato con la parola chiave ''USING''.
 
+Se il ''prefix'' è una variabile di tipo ''SPRITE'', ''CSPRITE'' o ''MSPRITE'',
+questo movimento sarà vincolato a quell'oggetto. In caso contrario, verrà 
+applicata la seguente logica.
+
 Lo spostamento relativo dura come il numero di frame contenuti nell''ATLAS'' dato 
 con la parola chiave ''WITH''. Lo spostamento assoluto, invece, dipende dalla 
 posizione di origine e di destinazione.
@@ -92,15 +100,31 @@ l'oggetto. Se è richiesto uno spostamento verso una posizione, le variabili
 ''prefixTX'' e ''prefixTY'' conterranno la posizione di destinazione, mentre 
 verrà definito ''prefixPath'' per tenere traccia dello spostamento stesso.
 
-@syntax MOVEMENT id [rel] WITH atlas [DELAY delay] USING player
+@syntax [DEFINE] MOVEMENT id [rel] WITH atlas [DELAY delay] USING prefix
 @syntax  rel: LEFT|RIGHT|UP|DOWN
-@syntax MOVEMENT id TO POSITION [DELAY delay] USING player
-@syntax MOVEMENT id STEADY USING player
+@syntax MOVEMENT id TO POSITION [DELAY delay] USING prefix
+@syntax MOVEMENT id STEADY USING prefix
 
 @example MOVEMENT left TLEFT WITH playerForward USING player
 
 </usermanual> */
+
+/* <usermanual>
+@keyword DEFINE MOVEMENT
+
+@english
+
+@italian
+
+@alias MOVEMENT
+
+</usermanual> */
+
 void movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix ) {
+
+#if defined(__gb__)
+    return;
+#endif
 
     if ( _environment->procedureName ) {
         CRITICAL_CANNOT_DEFINE_MOVEMENT_INSIDE_A_PROCEDURE( _identifier );
@@ -108,14 +132,16 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
 
     Variable * atlas;
     
-    if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
+    atlas = variable_retrieve( _environment, _atlas );
 
-    } else if ( (_environment->movementDeltaX == 2) && (_environment->movementDeltaY == 2) ) {
+    Variable * prefix;
 
-    } else {
-        atlas = variable_retrieve( _environment, _atlas );
-        if ( atlas->type != VT_IMAGES ) {
-            CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_ATLAS( _identifier );
+    int spriteLogic = 0;
+
+    if ( variable_exists( _environment, _prefix ) ) {
+        prefix = variable_retrieve( _environment, _prefix );
+        if ( prefix->type == VT_SPRITE || prefix->type == VT_MSPRITE ) {
+            spriteLogic = 1;
         }
     }
 
@@ -210,6 +236,23 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
     ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_BYTE;
     ++((struct _Environment *)_environment)->parameters;
 
+	// 	SHARED  [prefix]Next
+    ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefixNext );
+    ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_BYTE;
+    ++((struct _Environment *)_environment)->parameters;
+
+	// 	SHARED  atlas
+    ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( atlas->name );
+    ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = atlas->type;
+    ++((struct _Environment *)_environment)->parameters;
+
+    if ( prefix ) {
+        // 	SHARED  prefix
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( prefix->name );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = prefix->type;
+        ++((struct _Environment *)_environment)->parameters;
+    }
+
     shared( _environment );
 
     MAKE_LABEL
@@ -223,7 +266,17 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
             variable_move( _environment, create_path( _environment, prefixXVar->name, prefixYVar->name, prefixTXVar->name, prefixTYVar->name )->name, prefixPathVar->name );
         } else {
             // 	[prefix]Steps = FRAMES( [atlas] )
-            variable_store( _environment, prefixStepsVar->name, atlas->frameCount );		
+            if ( atlas->type == VT_IMAGES ) {
+                variable_store( _environment, prefixStepsVar->name, atlas->frameCount );		
+            } else if ( VT_BITWIDTH( atlas->type ) > 1 ) {
+                if ( atlas->initializedByConstant ) {
+                    variable_store( _environment, prefixStepsVar->name, atlas->value );		
+                } else {
+                    variable_move( _environment, atlas->name, prefixStepsVar->name );		
+                }
+            } else {
+                CRITICAL_CANNOT_DEFINE_MOVEMENT_WITHOUT_STEPS( _prefix );
+            }
         }
 
         char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%sloop", label );
@@ -261,6 +314,10 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
                     // 		DEC playerX
                     variable_decrement( _environment, prefixYVar->name );
                 }
+            }
+
+            if ( prefix && spriteLogic ) {
+                sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
             }
         // 		WAIT 50 MS
             wait_milliseconds( _environment, _environment->movementDelay );

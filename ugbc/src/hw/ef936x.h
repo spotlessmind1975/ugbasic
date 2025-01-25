@@ -179,6 +179,7 @@ void ef936x_screen_rows( Environment * _environment, char * _rows );
 void ef936x_screen_columns( Environment * _environment, char * _columns );
 
 void ef936x_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void ef936x_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void ef936x_sprite_enable( Environment * _environment, char *_sprite );
 void ef936x_sprite_disable( Environment * _environment, char * _sprite );
 void ef936x_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -189,6 +190,7 @@ void ef936x_sprite_compress_horizontal( Environment * _environment, char * _spri
 void ef936x_sprite_multicolor( Environment * _environment, char * _sprite );
 void ef936x_sprite_monocolor( Environment * _environment, char * _sprite );
 void ef936x_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void ef936x_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void ef936x_vertical_scroll( Environment * _environment, char * _displacement );
 void ef936x_horizontal_scroll( Environment * _environment, char * _displacement );
 
@@ -200,9 +202,9 @@ void ef936x_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void ef936x_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void ef936x_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void ef936x_cls( Environment * _environment );
-void ef936x_scroll_text( Environment * _environment, int _direction );
-void ef936x_hscroll_line( Environment * _environment, int _direction );
-void ef936x_hscroll_screen( Environment * _environment, int _direction );
+void ef936x_scroll_text( Environment * _environment, int _direction, int _overlap );
+void ef936x_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void ef936x_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void ef936x_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void ef936x_cline( Environment * _environment, char * _characters );
 void ef936x_scroll( Environment * _environment, int _dx, int _dy );

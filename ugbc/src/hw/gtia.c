@@ -747,8 +747,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int dliListStartOffset;
     int screenMemoryAddress2 = 0;
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
@@ -1526,7 +1526,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    int consoleX1 = 0;
+    if ( _environment->lmarginAtariBasicEnabled && _environment->currentMode == TILEMAP_MODE_ANTIC2 ) {
+        consoleX1 = 2;
+    }
+    cpu_store_8bit( _environment, "CONSOLEX1", consoleX1 );
     cpu_store_8bit( _environment, "CONSOLEY1", 0 );
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
     cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
@@ -1664,8 +1668,8 @@ void gtia_tilemap_enable( Environment * _environment, int _width, int _height, i
     if ( mode ) {
         gtia_screen_mode_enable( _environment, mode );
 
-        cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-        cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+        cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+        cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
@@ -1793,6 +1797,10 @@ void gtia_sprite_data_from( Environment * _environment, char * _sprite, char * _
 
 }
 
+void gtia_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void gtia_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1830,6 +1838,10 @@ void gtia_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void gtia_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void gtia_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 
@@ -1931,12 +1943,14 @@ void gtia_clear( Environment * _environment, char * _pattern ) {
 
 }
 
-void gtia_scroll_text( Environment * _environment, int _direction ) {
+void gtia_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR VSCROLLT");
 
@@ -1946,7 +1960,7 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, int
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
     deploy( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
 
@@ -2088,13 +2102,15 @@ void gtia_finalization( Environment * _environment ) {
 
 }
 
-void gtia_hscroll_line( Environment * _environment, int _direction ) {
+void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
     outline1("LDA %s", y->realName );
     outline0("STA CLINEY");
 
@@ -2102,12 +2118,14 @@ void gtia_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void gtia_hscroll_screen( Environment * _environment, int _direction ) {
+void gtia_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR HSCROLLST");
 }
@@ -3641,8 +3659,8 @@ void gtia_scroll( Environment * _environment, int _dx, int _dy ) {
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy( scroll, src_hw_gtia_scroll_asm);
-    deploy( textHScroll, src_hw_gtia_hscroll_text_asm );
-    deploy( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", (unsigned char)(_dx&0xff) );
     outline0("STA MATHPTR0" );
@@ -3721,6 +3739,26 @@ void gtia_flip_image( Environment * _environment, Resource * _image, char * _fra
         outhead1("%s:", label );
 
     }
+
+}
+
+void gtia_fade( Environment * _environment, char * _ticks ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
+    deploy( fade, src_hw_gtia_fade_asm );
+
+    outline0( "SEI" );
+    outline0( "LDA #0" );
+    outline0( "STA FADESTEP" );
+    outline1( "LDA %s", _ticks );
+    outline0( "STA FADEDURATION" );
+    outline0( "STA FADERESETDURATION" );
+    outline1( "LDA %s", address_displacement( _environment, _ticks, "1" ) );
+    outline0( "STA FADEDURATION+1" );
+    outline0( "STA FADERESETDURATION+1" );
+    outline0( "CLI" );
 
 }
 

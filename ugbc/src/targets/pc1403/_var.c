@@ -54,30 +54,30 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_COLOR:
                 case VT_THREAD:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_byte( _environment, variable->realName, variable->initialValue);
                     }
                     break;
                 case VT_DOJOKA:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
+                        outhead1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
                 case VT_IMAGEREF:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
+                        outhead1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
                 case VT_PATH:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
+                        outhead1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
                     }
                     break;
                 case VT_WORD:
@@ -85,7 +85,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_POSITION:
                 case VT_ADDRESS:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_word( _environment, variable->realName, variable->initialValue);
                     }
@@ -93,55 +93,55 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_dword( _environment, variable->realName, variable->initialValue);
                     }
                     break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline2("%s: .ds %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outhead2("%s: .ds %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
                     }
                     break;
                 case VT_STRING:
-                    outline2("%s .equ cstring%d", variable->realName, variable->valueString->id );
+                    outhead2("%s .equ cstring%d", variable->realName, variable->valueString->id );
                     break;
                 case VT_DSTRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: db 0", variable->realName);
+                        outhead1("%s: .db 0", variable->realName);
                     }
                     break;
                 case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0", variable->realName);
+                        outhead1("%s: .db 0", variable->realName);
                     }
                     break;
                 case VT_TILE:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0", variable->realName);
+                        outhead1("%s: .db 0", variable->realName);
                     }
                     break;
                 case VT_TILESET:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0", variable->realName);
+                        outhead1("%s: .db 0", variable->realName);
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: .db 0,0,0,0", variable->realName);
+                        outhead1("%s: .db 0,0,0,0", variable->realName);
                     }
                     break;
                 case VT_BLIT:
@@ -208,7 +208,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         out1("%d,", variable->valueBuffer[i]);
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outhead1("%d", variable->valueBuffer[(variable->size-1)]);
                                 }
                             // }
                         }
@@ -320,13 +320,13 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
             switch( variable->type ) {
                 case VT_BIT:
                     if ( variable->memoryArea ) {
-                        outline2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s:", variable->realName);
+                        outhead1("%s:", variable->realName);
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
-                        outline0("   .dB 0");
+                        outline0("   .db 0");
                     }        
                     break;
             }

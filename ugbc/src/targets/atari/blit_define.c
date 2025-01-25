@@ -201,48 +201,6 @@ static void blit_define_bltb( Environment * _environment, int _op, char * _a, ch
  * @param _y Ordinate of the point
  */
 
-/* <usermanual>
-@keyword BLIT (instruction)
-
-@english
-
-The “BLITTING” is a data operation used in computer graphics in which several bitmaps 
-are combined into one using a boolean (or mathematical) function. The operation involves
-at least two bitmaps: a “source” (or “foreground”) and a “destination” (or “background”), 
-and other fields, called “masks” or something like that. The result may be written to a 
-final bitmap, though often it replaces the “destination” field.
-
-The pixels of each are combined bitwise according to the specified BLIT OPERATION (BOP) 
-and the result is then written to the destination. The BOP is essentially a boolean 
-formula, that can be written using ''BLIT'' instructrion. The most obvious BOP overwrites 
-the destination with the source. Other BOPs may involve ''AND'', ''OR'', ''XOR'', and 
-other more complex operations.
-
-@italian
-Il “BLITTING” è un'operazione di dati utilizzata nella computer grafica in cui diverse 
-bitmap vengono combinate in una utilizzando una funzione booleana (o matematica). 
-L'operazione coinvolge almeno due bitmap: una “sorgente” (o “primo piano”) e una 
-“destinazione” (o “sfondo”), e altri campi, chiamati “maschere” o qualcosa del genere. 
-Il risultato può essere scritto su una bitmap finale, anche se spesso sostituisce il 
-campo “destinazione”.
-
-I pixel di ciascuno vengono combinati bit per bit in base all'OPERAZIONE BLIT (BOP) 
-specificata e il risultato viene quindi scritto nella destinazione. Il BOP è 
-essenzialmente una formula booleana, che può essere scritta utilizzando l'istruzione 
-''BLIT''. Il BOP più ovvio sovrascrive la destinazione con la sorgente. Altri BOP 
-possono comportare ''AND'', ''OR'', ''XOR'' e altre operazioni più complesse.
-
-@syntax BLIT identifier AS expression
-
-@example BLIT bop1 AS ( ( SOURCE ) AND ( DESTINATION ) )
-
-@usedInExample blit_basic_mask.bas
-
-@seeAlso BLIT (data type)
-@seeAlso BLIT IMAGE
-
-@target all
-</usermanual> */
 void blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top ) {
 
     char blitLabel[MAX_TEMPORARY_STORAGE]; sprintf( blitLabel, "_%sblit", _name );

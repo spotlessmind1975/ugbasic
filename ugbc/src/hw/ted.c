@@ -1142,6 +1142,10 @@ void ted_sprite_data_from( Environment * _environment, char * _sprite, char * _a
 
 }
 
+void ted_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+}
+
 void ted_sprite_enable( Environment * _environment, char * _sprite ) {
 
 }
@@ -1179,6 +1183,10 @@ void ted_sprite_monocolor( Environment * _environment, char * _sprite ) {
 }
 
 void ted_sprite_color( Environment * _environment, char * _sprite, char * _color ) {
+
+}
+
+void ted_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
 
 }
 
@@ -1262,12 +1270,14 @@ void ted_cls( Environment * _environment ) {
 
 }
 
-void ted_scroll_text( Environment * _environment, int _direction ) {
+void ted_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR VSCROLLT");
 
@@ -1317,7 +1327,7 @@ void ted_text( Environment * _environment, char * _text, char * _text_size, int 
 void ted_initialization( Environment * _environment ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
     variable_global( _environment, "CURRENTMODE" );
@@ -1395,7 +1405,7 @@ void ted_finalization( Environment * _environment ) {
 
 }
 
-void ted_hscroll_line( Environment * _environment, int _direction ) {
+void ted_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_ted_hscroll_text_asm );
 
@@ -1409,12 +1419,14 @@ void ted_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void ted_hscroll_screen( Environment * _environment, int _direction ) {
+void ted_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_ted_hscroll_text_asm );
 
     outline1("LDA #$%2.2x", ( _direction & 0xff ) );
     outline0("STA DIRECTION" );
+    outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
+    outline0("STA PORT" );
 
     outline0("JSR HSCROLLST");
 }
@@ -2306,7 +2318,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
 void ted_start( Environment * _environment, int _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels & 0x01 ) {
         outline0("JSR TEDSTART0");
@@ -2320,7 +2332,7 @@ void ted_start( Environment * _environment, int _channels ) {
 void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDX #%2.2x", ( _volume & 0x0f ) );
     outline0("JSR TEDSTARTVOL");
@@ -2528,7 +2540,7 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
 void ted_set_program( Environment * _environment, int _channels, int _program ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
@@ -2734,7 +2746,7 @@ void ted_set_parameter( Environment * _environment, int _channels, int _paramete
 void ted_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_FREQUENCY( _channels, _frequency );
 
@@ -2743,7 +2755,7 @@ void ted_set_frequency( Environment * _environment, int _channels, int _frequenc
 void ted_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_PITCH( _channels, _pitch );
 
@@ -2758,7 +2770,7 @@ void ted_set_note( Environment * _environment, int _channels, int _note ) {
 void ted_stop( Environment * _environment, int _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     STOP_FREQUENCY( _channels );
 
@@ -2767,7 +2779,7 @@ void ted_stop( Environment * _environment, int _channels ) {
 void ted_start_var( Environment * _environment, char * _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -2781,7 +2793,7 @@ void ted_start_var( Environment * _environment, char * _channels ) {
 void ted_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDA %s", _volume );
     outline0("LSR" );
@@ -2796,7 +2808,7 @@ void ted_set_volume_vars( Environment * _environment, char * _channels, char * _
 void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDX #$%2.2x", _volume );
     outline0("JSR TEDSTARTVOL");
@@ -2806,7 +2818,7 @@ void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _
 void ted_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     switch (_program) {
         case IMF_INSTRUMENT_EXPLOSION:
@@ -3008,7 +3020,7 @@ void ted_set_program_semi_var( Environment * _environment, char * _channels, int
 void ted_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -3025,7 +3037,7 @@ void ted_set_frequency_vars( Environment * _environment, char * _channels, char 
 void ted_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -3042,7 +3054,7 @@ void ted_set_pitch_vars( Environment * _environment, char * _channels, char * _p
 void ted_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline0("LDA #<TEDFREQTABLE");
     outline0("STA TMPPTR");
@@ -3071,7 +3083,7 @@ void ted_set_note_vars( Environment * _environment, char * _channels, char * _no
 void ted_stop_vars( Environment * _environment, char * _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDA %s", _channels );
     outline0("JSR TEDSTOP");
@@ -3081,7 +3093,7 @@ void ted_stop_vars( Environment * _environment, char * _channels ) {
 void ted_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline0("SEI");
     outline1("LDA #<%s", _music);
@@ -3164,7 +3176,7 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
 void ted_set_duration( Environment * _environment, int _channels, int _duration ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_DURATION( _channels, _duration );
 
@@ -3173,7 +3185,7 @@ void ted_set_duration( Environment * _environment, int _channels, int _duration 
 void ted_wait_duration( Environment * _environment, int _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     WAIT_DURATION( _channels );
 
@@ -3182,7 +3194,7 @@ void ted_wait_duration( Environment * _environment, int _channels ) {
 void ted_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
         outline1("LDA %s", _channels );
@@ -3202,7 +3214,7 @@ void ted_set_duration_vars( Environment * _environment, char * _channels, char *
 void ted_wait_duration_vars( Environment * _environment, char * _channels ) {
 
     deploy( tedvars, src_hw_ted_vars_asm );
-    deploy( tedstartup, src_hw_ted_startup_asm );
+    deploy_preferred( tedstartup, src_hw_ted_startup_asm );
     
     if ( _channels ) {
         outline1("LDA %s", _channels );

@@ -266,8 +266,6 @@ void pc1403_put_key(  Environment * _environment, char *_string, char * _size );
 void pc1403_scanshift( Environment * _environment, char * _shifts );
 void pc1403_keyshift( Environment * _environment, char * _shifts );
 void pc1403_clear_key( Environment * _environment );
-void pc1403_irq_at( Environment * _environment, char * _label );
-void pc1403_follow_irq( Environment * _environment );
 void pc1403_joy( Environment * _environment, int _port, char * _result );
 void pc1403_joy_vars( Environment * _environment, char * _port, char * _result );
 
@@ -299,5 +297,7 @@ void pc1403_dojo_put_message( Environment * _environment, char * _port_id, char 
 void pc1403_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
 void pc1403_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void pc1403_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
+
+void pc1403_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 
 #endif

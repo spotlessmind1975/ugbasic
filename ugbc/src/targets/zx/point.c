@@ -57,7 +57,7 @@ Variable * point( Environment * _environment, char * _x, char * _y ) {
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( plot, src_hw_zx_plot_asm );
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );

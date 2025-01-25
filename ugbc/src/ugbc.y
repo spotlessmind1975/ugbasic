@@ -101,8 +101,11 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MOB CMOB PLACE DOJO READY LOGIN DOJOKA CREATE PORT DESTROY FIND MESSAGE PING STRIP
 %token SUCCESS RECEIVE SEND COMPRESSION RLE UNBANKED INC DEC RESIDENT DETECTION IMAGEREF CPUSC61860 PC1403
 %token CLR SUBSTRING CLAMP PATH TRAVEL RUNNING SUSPEND SIMPLE BOUNCE ANIMATION EASEIN EASEOUT USING ANIMATE FREEZE UNFREEZE
-%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN
-%token INCREMENTAL SHUFFLE ROUNDS JOYDIR
+%token ANIMATING MOVEMENT STEADY MOVING FINAL FILESIZE FSIZE CURS PRESS POKEY SID DAC1 AY8910 TED VIC SBYTE TPS BOOLEAN 
+%token RELOC FADE MMOB GB BASIC GRAPHICS 
+%token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
+%token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1173,7 +1176,7 @@ const_factor:
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__) || defined(__pc1403__) 
+            defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__)
             $$ = 1;
         #else
             $$ = 0;
@@ -3079,7 +3082,7 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3090,7 +3093,7 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3305,6 +3308,9 @@ exponential_less:
     | DOJO dojo_functions {
         $$ = $2;
     }
+    | MEMPEEK OP expr CP {
+        $$ = peek_var( _environment, $3 )->name;
+      }
     | PEEK OP expr CP {
         $$ = peek_var( _environment, $3 )->name;
       }
@@ -3889,7 +3895,7 @@ exponential_less:
         defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
         defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
         defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__)
+        defined( __c64reu__) || defined(__gb__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -4739,6 +4745,15 @@ wait_definition:
     wait_definition_simple
   | wait_definition_expression;
 
+fade_definition:
+    expr ticks {
+      fade_ticks_var( _environment, $1 );
+    }
+    | expr milliseconds {
+      fade_milliseconds_var( _environment, $1 );
+    }
+    ;
+
 sprite_definition_action_simple:
     MULTICOLOR {
       sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
@@ -4990,8 +5005,14 @@ optional_integer :
     };
 
 bitmap_enable_resolution : 
-      {
+    {
         bitmap_enable( _environment, 0, 0, 0 );
+    }
+    | WIDTH const_expr {
+        bitmap_enable( _environment, -$2, 0, $2 );
+    }
+    | HEIGHT const_expr {
+        bitmap_enable( _environment, 0, -$2, $2 );
     }
     | OP optional_integer  CP {
         bitmap_enable( _environment, 0, 0, $2 );
@@ -5007,6 +5028,9 @@ bitmap_definition_simple:
     AT direct_integer {
       bitmap_at( _environment, $2 );
   } 
+  | bitmap_enable_resolution {
+
+  }
   | ENABLE bitmap_enable_resolution {
 
   }
@@ -5190,6 +5214,17 @@ screen_definition_expression:
 screen_definition:
     screen_definition_simple
   | screen_definition_expression;
+
+graphics_definition_simple:
+    const_expr {   
+      screen_mode( _environment, $1 );
+   } 
+   | OP_HASH Integer {   
+      screen_mode( _environment, $2 );
+  };
+
+graphics_definition:
+    graphics_definition_simple;
 
 as_datatype_mandatory : 
     AS datatype {
@@ -7454,24 +7489,31 @@ fill_definition_optional_count :
 
 fill_definition_array :
     Identifier WITH const_expr {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, $3 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
     }
     | Identifier WITH INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
     | Identifier INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     | Identifier WITH INC fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
     | Identifier INC fill_definition_optional_min fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     ;
@@ -7489,32 +7531,47 @@ fill_definitions :
     fill_definitions_array
     | expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
     }
     | expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
+        define_implicit_array_if_needed( _environment, $7 );
         variable_array_fill( _environment, $7, 0 );
     }
     | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         /* retrocompatible hacks */
+        define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
+        define_implicit_array_if_needed( _environment, $3 );
         variable_array_fill( _environment, $3, 0 );
+        define_implicit_array_if_needed( _environment, $5 );
         variable_array_fill( _environment, $5, 0 );
+        define_implicit_array_if_needed( _environment, $7 );
         variable_array_fill( _environment, $7, 0 );
+        define_implicit_array_if_needed( _environment, $9 );
         variable_array_fill( _environment, $9, 0 );
     }
     | fill_definition
@@ -7564,24 +7621,32 @@ indexes :
     ;
 
 parameters : 
-    Identifier OP_DOLLAR {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype {
+    Identifier as_datatype_mandatory {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier OP_DOLLAR OP_COMMA parameters {
+    | Identifier as_datatype_suffix_optional {
+          VariableType vt = $2;
+          if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+          }
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
           ++((struct _Environment *)_environment)->parameters;
     }
-    | Identifier as_datatype OP_COMMA parameters {
+    | Identifier as_datatype_mandatory OP_COMMA parameters {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+          ++((struct _Environment *)_environment)->parameters;
+    }
+    | Identifier as_datatype_suffix_optional OP_COMMA parameters {
+          VariableType vt = $2;
+          if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+          }
+          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
           ++((struct _Environment *)_environment)->parameters;
     }
     ;
@@ -8316,25 +8381,25 @@ cmove_definition :
 
 hscroll_definition : 
     LEFT {
-        text_hscroll_line( _environment, -1 );
+        text_hscroll_line( _environment, -1, 0 );
     }
     | SCREEN LEFT {
-        text_hscroll_screen( _environment, -1 );
+        text_hscroll_screen( _environment, -1, 0 );
     }
     | RIGHT {
-        text_hscroll_line( _environment, 1 );
+        text_hscroll_line( _environment, 1, 0 );
     }
     | SCREEN RIGHT {
-        text_hscroll_screen( _environment, 1 );
+        text_hscroll_screen( _environment, 1, 0 );
     }
     ;
 
 vscroll_definition : 
       SCREEN UP {
-        text_vscroll_screen( _environment, -1 );
+        text_vscroll_screen( _environment, -1, 0 );
     }
     | SCREEN DOWN {
-        text_vscroll_screen( _environment, 1 );
+        text_vscroll_screen( _environment, 1, 0 );
     }
     ;
     
@@ -8389,6 +8454,7 @@ read_definition_single :
     | read_safeness Identifier {
         parser_array_init( _environment );
     } OP indexes CP {
+        define_implicit_array_if_needed( _environment, $2 );
         Variable * a = variable_retrieve( _environment, $2 );
         if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -8582,7 +8648,10 @@ audio_source :
     };
 
 define_definition :
-    IMAGE FREE HEIGHT {
+    SID RELOC const_expr {
+        ((struct _Environment *)_environment)->sidRelocAddress = $3;
+    }
+    | IMAGE FREE HEIGHT {
         ((struct _Environment *)_environment)->freeImageHeight = 1;
     }
     | IMAGE FREE WIDTH {
@@ -8675,6 +8744,12 @@ define_definition :
     | JOYSTICK VALUES TSB {
         ((struct _Environment *)_environment)->joystickConfig.values = 1;
     }
+    | JOYSTICK EMULATION ON {
+        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 0;
+    }
+    | JOYSTICK EMULATION OFF {
+        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 1;
+    }
     | JOYSTICK RETRIES const_expr {
         if ( $3 < 0 ) {
             CRITICAL_INVALID_JOYSTICK_RETRIES( $3 );
@@ -8692,6 +8767,9 @@ define_definition :
             CRITICAL_INVALID_PROGRAM_START( $3 );
         }
         ((struct _Environment *)_environment)->program.startingAddress = $3;
+    }
+    | PROGRAM NAME const_expr_string {
+        ((struct _Environment *)_environment)->program.name = strdup( $3 );
     }
     | STRING COUNT const_expr {
         if ( $3 <= 0 ) {
@@ -8798,6 +8876,8 @@ define_definition :
     | PALETTE NOT PRESERVE {
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
     }    
+    | ANIMATION animation_definition
+    | MOVEMENT movement_definition
     | BLIT blit_definition_define_expression
     | KEYBOARD RATE const_expr {
         if ( $3 <= 0 ) {
@@ -8951,7 +9031,14 @@ target :
     CPUZ80 {
         #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
             defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__)
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) 
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPUSM83 {
+        #if defined(__gb__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9064,6 +9151,14 @@ target :
     |
     CPC {
         #ifdef __cpc__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    GB {
+        #ifdef __gb__
             $$ = 1;
         #else
             $$ = 0;
@@ -9243,7 +9338,8 @@ target :
     SPRITE NOT AVAILABLE {
         #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
             || defined(__msx1__) || defined(__coleco__) \
-            || defined(__sc3000__) || defined(__sg1000__)
+            || defined(__sc3000__) || defined(__sg1000__) \
+            || defined(__gb__)
             $$ = 0;
         #else
             $$ = 1;
@@ -9378,7 +9474,19 @@ option_read :
     };
 
 option_definitions :
-    FINAL HALT {
+    LEFT REPLACE {
+        ((struct _Environment *)_environment)->leftReplace = 1;
+    }
+    | LEFT INSERT {
+        ((struct _Environment *)_environment)->leftReplace = 0;
+    }
+    | MID REPLACE {
+        ((struct _Environment *)_environment)->midReplace = 1;
+    }
+    | MID INSERT {
+        ((struct _Environment *)_environment)->midReplace = 0;
+    }
+    | FINAL HALT {
         ((struct _Environment *)_environment)->finalReturn = 0;
     }
     | FINAL RETURN {
@@ -9389,6 +9497,12 @@ option_definitions :
     }
     | DIALECT TSB {
         option_dialect( _environment, DI_TSB );
+    }
+    | DIALECT ATARI {
+        option_dialect( _environment, DI_ATARI_BASIC );
+    }
+    | DIALECT ATARI BASIC {
+        option_dialect( _environment, DI_ATARI_BASIC );
     }
     | EXEC AS GOSUB {
         ((struct _Environment *)_environment)->optionExecAsGosub = 1;
@@ -9413,6 +9527,9 @@ option_definitions :
     }
     | DEFAULT TYPE datatype {
         ((struct _Environment *)_environment)->defaultVariableType = $3;
+    }
+    | ARRAY SIZE const_expr {
+        ((struct _Environment *)_environment)->defaultArraySize = $3;
     }
     | TYPE UNSIGNED {
         ((struct _Environment *)_environment)->defaultUnsignedType = 1;
@@ -10336,6 +10453,258 @@ movement_definition :
     }
 ;
 
+mmob_definition : 
+    expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, NULL, NULL, NULL, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, NULL, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, $11, NULL );
+
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+
+        mmob( _environment, $1, $3, $5, $7, $9, $11, $13 );
+
+    };
+
+upw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        upw( _environment, $1, $3, $5, $7 );
+    };
+
+upb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        upb( _environment, $1, $3, $5, $7 );
+    };
+
+downw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        downw( _environment, $1, $3, $5, $7 );
+    };
+
+downb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        downb( _environment, $1, $3, $5, $7 );
+    };
+
+leftw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        leftw( _environment, $1, $3, $5, $7 );
+    };
+
+leftb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        leftb( _environment, $1, $3, $5, $7 );
+    };
+
+rightw_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        rightw( _environment, $1, $3, $5, $7 );
+    };
+
+rightb_definition :
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        rightb( _environment, $1, $3, $5, $7 );
+    };
+
+memload_definition :
+    {
+        memload( _environment );
+    };
+
+memsave_definition :
+    {
+        memsave( _environment );
+    };
+
+mempos_definition :
+    expr OP_COMMA expr {
+        mempos( _environment, $1, $3 );
+    };
+
+memor_definition :
+    expr  {
+        memor( _environment, $1, NULL, NULL );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        memor( _environment, $1, $3, $5 );
+    };
+
+memdef_definition :
+    expr  {
+        memdef( _environment, $1, NULL, NULL, NULL );
+    }
+    | expr OP_COMMA expr {
+        memdef( _environment, $1, $3, NULL, NULL );
+    } 
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        memdef( _environment, $1, $3, $5, $7 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        memdef( _environment, $1, $3, $5, $7 );
+    }
+    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        memdef( _environment, $1, $3, $5, $7 );
+    };
+
+memlen_definition :
+    expr {
+        memlen( _environment, $1 );
+    };
+
+memrestore_definition :
+    expr {
+        memrestore( _environment, $1 );
+    };
+
+memcont_definition :
+    expr {
+        memcont( _environment, $1 );
+    };
+
+memclr_definition :
+    expr OP_COMMA expr {
+        memclr( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA expr OP_COMMA expr {
+        memclr( _environment, $1, $3, $5 );
+    };
+
+scale_definitions :
+    const_expr OP_COMMA const_expr {
+        ((struct _Environment *)_environment)->scaleX = $1;
+        ((struct _Environment *)_environment)->scaleY = $3;
+    };
+
+offset_definitions :
+    const_expr OP_COMMA const_expr {
+        ((struct _Environment *)_environment)->offsetX = $1;
+        ((struct _Environment *)_environment)->offsetY = $3;
+    };
+
+const_definition :
+  | STRING Identifier OP_ASSIGN const_expr_string_const {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            Constant * c1 = constant_find( ((Environment *)_environment)->constants, $4 );
+
+            Constant * c3 = malloc( sizeof( Constant ) );
+            memset( c3, 0, sizeof( Constant ) );
+            c3->name = strdup( $2 );
+            c3->realName = strdup( $2 );
+
+            c3->valueString = malloc( sizeof( StaticString ) );
+            memset( c3->valueString, 0, sizeof( StaticString ) );
+
+            c3->valueString->id = UNIQUE_ID;
+            c3->valueString->value = malloc( c1->valueString->size );
+            memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
+            c3->valueString->size = c1->valueString->size;
+            c3->valueString->next = ((Environment *)_environment)->strings;
+            ((Environment *)_environment)->strings = c3->valueString;
+
+            c3->type = CT_STRING;
+            Constant * constLast = ((Environment *)_environment)->constants;
+            if ( constLast ) {
+                while( constLast->next ) {
+                    constLast = constLast->next;
+                }
+                constLast->next = c3;
+            } else {
+                ((Environment *)_environment)->constants = c3;
+            }
+
+            // const_emit( _environment, c1->name );
+        }
+  }
+  | Identifier OP_ASSIGN const_expr_string {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            const_define_string( _environment, $1, $3 );
+        }
+  }
+  | Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            const_define_numeric( _environment, $1, $3 );
+        }
+  }
+  | POSITIVE Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $4 < 0 ) {
+                CRITICAL_NEGATIVE_CONSTANT( $2, $4 );
+            }
+            const_define_numeric( _environment, $2, $4 );
+        }
+  }
+  | Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 < $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 > $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 <= $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 > $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 < $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 >= $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  }
+  | Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 <= $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 >= $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+  };
+
+const_definitions :
+    const_definition
+    | const_definition OP_COMMA const_definitions;
+
+positive_const_definition :
+  Identifier OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $3 < 0 ) {
+                CRITICAL_NEGATIVE_CONSTANT( $1, $3 );
+            }
+            const_define_numeric( _environment, $1, $3 );
+        }
+  };
+
+positive_const_definitions :
+    positive_const_definition
+    | positive_const_definition OP_COMMA positive_const_definitions;
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -10383,6 +10752,7 @@ statement2nc:
   | COLORMAP colormap_definition
   | COLOURMAP colormap_definition
   | SCREEN screen_definition
+  | GRAPHICS graphics_definition
   | POINT point_definition
   | PLOT plot_definition
   | CIRCLE circle_definition
@@ -10479,6 +10849,14 @@ statement2nc:
   }
   | HSCROLL hscroll_definition
   | VSCROLL vscroll_definition
+  | UPB upb_definition
+  | UPW upw_definition
+  | DOWNB downb_definition
+  | DOWNW downw_definition
+  | LEFTB leftb_definition
+  | LEFTW leftw_definition
+  | RIGHTB rightb_definition
+  | RIGHTW rightw_definition
   | SCROLL scroll_definition
   | CMOVE cmove_definition
   | CUP {
@@ -10963,6 +11341,15 @@ statement2nc:
   | SOUND sound_definition
   | PLAY play_definition
   | MUSIC music_definition
+  | MEMLOAD memload_definition
+  | MEMSAVE memsave_definition
+  | MEMPOS mempos_definition
+  | MEMOR memor_definition
+  | MEMDEF memdef_definition
+  | MEMLEN memlen_definition
+  | MEMRESTORE memrestore_definition
+  | MEMCONT memcont_definition
+  | MEMCLR memclr_definition
   | INSTRUMENT instrument_definition
   | VOLUME volume_definition
   | HALT {
@@ -11138,112 +11525,13 @@ statement2nc:
   | CONFIGURE configure_definitions
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
+  | SCALE scale_definitions
+  | OFFSET offset_definitions
   | DIM dim_definitions
   | FILL fill_definitions
   | SHUFFLE shuffle_definition
-  | const_instruction STRING Identifier OP_ASSIGN const_expr_string_const {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            Constant * c1 = constant_find( ((Environment *)_environment)->constants, $5 );
-
-            Constant * c3 = malloc( sizeof( Constant ) );
-            memset( c3, 0, sizeof( Constant ) );
-            c3->name = strdup( $3 );
-            c3->realName = strdup( $3 );
-
-            c3->valueString = malloc( sizeof( StaticString ) );
-            memset( c3->valueString, 0, sizeof( StaticString ) );
-
-            c3->valueString->id = UNIQUE_ID;
-            c3->valueString->value = malloc( c1->valueString->size );
-            memcpy( c3->valueString->value, c1->valueString->value, c1->valueString->size );
-            c3->valueString->size = c1->valueString->size;
-            c3->valueString->next = ((Environment *)_environment)->strings;
-            ((Environment *)_environment)->strings = c3->valueString;
-
-            c3->type = CT_STRING;
-            Constant * constLast = ((Environment *)_environment)->constants;
-            if ( constLast ) {
-                while( constLast->next ) {
-                    constLast = constLast->next;
-                }
-                constLast->next = c3;
-            } else {
-                ((Environment *)_environment)->constants = c3;
-            }
-
-            // const_emit( _environment, c1->name );
-        }
-  }
-  | const_instruction Identifier OP_ASSIGN const_expr_string {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_string( _environment, $2, $4 );
-        }
-  }
-  | const_instruction Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_numeric( _environment, $2, $4 );
-        }
-  }
-  | const_instruction POSITIVE Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $5 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
-            }
-            const_define_numeric( _environment, $3, $5 );
-        }
-  }
-  | POSITIVE const_instruction Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $5 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $3, $5 );
-            }
-            const_define_numeric( _environment, $3, $5 );
-        }
-  }
-  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 < $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 > $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 <= $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 > $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 < $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 >= $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
-  | const_instruction Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $10 <= $5 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $2 );
-            }
-            if ( $10 >= $7 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $2 );
-            }
-            const_define_numeric( _environment, $2, $10 );
-        }
-  }
+  | const_instruction const_definitions
+  | POSITIVE const_instruction positive_const_definitions
   | TI OP_ASSIGN expr {
         set_timer( _environment, $3 );
   }
@@ -11265,6 +11553,7 @@ statement2nc:
   | SCREEN SWAP {
       screen_swap( _environment );
   }
+  | MMOB mmob_definition
   | MMOVE memory_video expr TO memory_video expr SIZE expr {
       if ( $2 == 0 ) {
         if ( $5 == 0 ) {
@@ -11402,6 +11691,7 @@ statement2nc:
         parser_array_init( _environment );
     }    
       OP indexes CP OP_ASSIGN expr {
+        define_implicit_array_if_needed( _environment, $1 );
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $1 );
@@ -11412,6 +11702,7 @@ statement2nc:
   | Identifier OP_DOLLAR {
         parser_array_init( _environment );
     } OP indexes CP OP_ASSIGN expr {
+        define_implicit_array_if_needed( _environment, $1 );
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
         if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
@@ -11492,6 +11783,7 @@ statement2nc:
         variable_move_array( _environment, $2, x->name );
         parser_array_cleanup( _environment );
   }
+  | FADE fade_definition
   | Remark
   ;
 
@@ -11591,6 +11883,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (ZILOG Z80 native)";
 #elif __c64__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
+#elif __gb__
+    char target[MAX_TEMPORARY_STORAGE] = "Gameboy";
 #elif __plus4__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore PLUS/4";
 #elif __zx__
@@ -11736,6 +12030,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
     printf("\t                dsk - DSK image\n" );
     #define defaultExtension "rom"
+#elif __gb__
+    printf("\t                gb - cartridge ROM\n" );
+    #define defaultExtension "gb"
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
@@ -11761,7 +12058,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
@@ -11797,7 +12094,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->peepholeOptimizationLimit = 16;
 
-    _environment->floatType.precision = FT_FAST;
+    _environment->floatType.precision = FT_SINGLE;
 
     _environment->temporaryPath = get_default_temporary_path( );
 
@@ -11809,6 +12106,11 @@ int main( int _argc, char *_argv[] ) {
     _environment->keyboardConfig.latency = 700 / 20;
     _environment->keyboardConfig.delay = 150 / 20;
     _environment->keyboardConfig.release = 150 / 20;
+
+    _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+    _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+
+    _environment->defaultArraySize = 10;
 
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
@@ -11842,6 +12144,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __msx1__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __gb__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
 #elif __coleco__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sc3000__
@@ -11983,14 +12287,16 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+                    } else if ( strcmp( optarg, "gb") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; 
+                    } else if ( strcmp( optarg, "ram") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
                     } else if ( strcmp( optarg, "atr") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
-                    } else if ( strcmp( optarg, "ram") == 0 ) {
-                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

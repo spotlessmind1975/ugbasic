@@ -220,11 +220,11 @@
 #define JOYSTICK_1					1
 #define JOYSTICK_COUNT				0
 
-#define JOY_UP              1
-#define JOY_DOWN            2
-#define JOY_LEFT            3
-#define JOY_RIGHT           4
-#define JOY_FIRE            2
+#define JOY_UP              0
+#define JOY_DOWN            1
+#define JOY_LEFT            2
+#define JOY_RIGHT           3
+#define JOY_FIRE            4
 
 #define JOYSTICK_CONFIG_DEFAULT_SYNC      1
 
@@ -265,8 +265,6 @@ void pc128op_scanshift( Environment * _environment, char * _shifts );
 void pc128op_keyshift( Environment * _environment, char * _shifts );
 void pc128op_clear_key( Environment * _environment );
 void pc128op_busy_wait( Environment * _environment, char * _timing );
-void pc128op_irq_at( Environment * _environment, char * _label );
-void pc128op_follow_irq( Environment * _environment );
 int convertbintok7(Environment * _environment);
 int convertbintok7_original(Environment * _environment);
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result );

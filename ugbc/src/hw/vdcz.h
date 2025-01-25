@@ -134,6 +134,7 @@ void vdcz_screen_rows( Environment * _environment, char * _rows );
 void vdcz_screen_columns( Environment * _environment, char * _columns );
 
 void vdcz_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void vdcz_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
 void vdcz_sprite_enable( Environment * _environment, char *_sprite );
 void vdcz_sprite_disable( Environment * _environment, char * _sprite );
 void vdcz_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
@@ -144,6 +145,7 @@ void vdcz_sprite_compress_horizontal( Environment * _environment, char * _sprite
 void vdcz_sprite_multicolor( Environment * _environment, char * _sprite );
 void vdcz_sprite_monocolor( Environment * _environment, char * _sprite );
 void vdcz_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void vdcz_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
 void vdcz_vertical_scroll( Environment * _environment, char * _displacement );
 void vdcz_horizontal_scroll( Environment * _environment, char * _displacement );
 void vdcz_busy_wait( Environment * _environment, char * _timing );
@@ -156,9 +158,9 @@ void vdcz_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void vdcz_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void vdcz_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vdcz_cls( Environment * _environment );
-void vdcz_scroll_text( Environment * _environment, int _direction );
-void vdcz_hscroll_line( Environment * _environment, int _direction );
-void vdcz_hscroll_screen( Environment * _environment, int _direction );
+void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap );
+void vdcz_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void vdcz_hscroll_screen( Environment * _environment, int _direction, int _overlap );
 void vdcz_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 void vdcz_cline( Environment * _environment, char * _characters );
 void vdcz_scroll( Environment * _environment, int _dx, int _dy );

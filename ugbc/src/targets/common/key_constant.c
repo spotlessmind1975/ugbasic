@@ -45,7 +45,8 @@
     defined( __mo5__ ) || defined( __msx1__ ) || \
     defined( __plus4__ ) || defined( __plus4__ ) || defined( __sc3000__ ) || \
     defined( __sg1000__ ) || defined( __to8__ ) || defined( __vg5000__ ) || \
-    defined( __vic20__) || defined ( __zx__ ) || defined( __pc1403__ )
+    defined( __vic20__) || defined ( __zx__ ) || defined( __pc1403__ ) || \
+    defined( __gb__) 
     
 int key_constant( Environment * _environment, int _key ) {
 

@@ -48,6 +48,10 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->centerWithoutNewLine = 0;
             _environment->vestigialConfig.clsImplicit = 0;
             _environment->joystickConfig.values = 0;
+            _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+            _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+            _environment->graphicsAtariBasicEnabled = 0;
+            _environment->lmarginAtariBasicEnabled = 0;
             _environment->drawUsingTsbSyntax = 0;
             break;
         case DI_TSB:
@@ -57,7 +61,18 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->centerWithoutNewLine = 1;
             _environment->vestigialConfig.clsImplicit = 1;
             _environment->joystickConfig.values = 1;
+            _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+            _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+            _environment->graphicsAtariBasicEnabled = 0;
+            _environment->lmarginAtariBasicEnabled = 0;
             _environment->drawUsingTsbSyntax = 1;
+            break;
+        case DI_ATARI_BASIC:
+            _environment->defaultPenColor = 0xca;
+            _environment->defaultPaperColor = 0x94;
+            _environment->graphicsAtariBasicEnabled = 1;
+            _environment->lmarginAtariBasicEnabled = 1;
+            _environment->drawUsingTsbSyntax = 0;
             break;
     }
 

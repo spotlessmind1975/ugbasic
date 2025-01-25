@@ -744,6 +744,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( gtiavars, src_hw_gtia_vars_asm );
     deploy_inplace_preferred( gtiastartup, src_hw_gtia_startup_asm );
     deploy_inplace_preferred( pokeystartup, src_hw_pokey_startup_asm );
+    deploy_inplace_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
+    deploy_inplace_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
     
     outhead0("CODESTART:");
 

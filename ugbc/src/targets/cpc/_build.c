@@ -69,7 +69,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName );
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName, "z80" );
 
     char * p;
 
@@ -239,7 +239,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName );
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName, "z80" );
 
     char * p;
 

@@ -66,14 +66,17 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
         if ( _environment->audioConfig.target != ADN_SN76489 ) {
             CRITICAL_CANNOT_MUSIC_ON_AUDIO_DEVICE( _music );
         }
-        if ( music->bankAssigned != -1 ) {
-            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
-            sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
-        } else {
-            char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
-            sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
+        if ( ! music->sidFile ) {
+            if ( music->bankAssigned != -1 ) {
+                char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#$%4.4x", 0x6000 + music->absoluteAddress );
+                sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
+            } else {
+                char musicAddress[MAX_TEMPORARY_STORAGE]; sprintf( musicAddress, "#%s", music->realName );
+                sn76489m_music( _environment, musicAddress, music->size, _loop, MUSIC_TYPE_IAF, music->bankAssigned );
+            }
+            sn76489m_start( _environment, 0xff );
         }
-        sn76489m_start( _environment, 0xff );
+        
     } else {
         switch( _music_type ) {
             case MUSIC_TYPE_PSG: {

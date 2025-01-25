@@ -88,8 +88,8 @@ char *str_replace( char *orig, char *rep, char *with ) {
 
 %token OP CP OP_AT OP_EQUAL OP_DISEQUAL OP_AND OP_OR OP_NOT OP_POINT OP_LT OP_LTE OP_GT OP_GTE OP_COMMA OP_TAB OP_PIPE
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
-%token ATARI ATARIXL C128 C128Z C64 C64REU VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC128OP MO5 CPC COCO
-%token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE PC1403
+%token ATARI ATARIXL C128 C128Z C64 C64REU GB VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC1403 PC128OP MO5 CPC COCO
+%token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
 %token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8
 
 %token <string> Identifier
@@ -480,6 +480,16 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "descriptors" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->descriptors ) {
+                if ( strcmp( $3, "firstFree" ) == 0 ) {
+                    $$ = ((struct _Environment *)_environment)->descriptors->firstFree;
+                } else {
+                    $$ = 0;
+                }
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "deployed" ) == 0 ) {
             if ( strcmp( $3, "dload" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.dload;
@@ -495,6 +505,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.music;
             } else if ( strcmp( $3, "sidstartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.sidstartup;
+            } else if ( strcmp( $3, "sidplayer" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.sidplayer;
             } else if ( strcmp( $3, "pokeystartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.pokeystartup;
             } else if ( strcmp( $3, "ay8910startup" ) == 0 ) {
@@ -507,6 +519,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.sn76489startup;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.keyboard;
+            } else if ( strcmp( $3, "fade" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.fade;
             } else if ( strcmp( $3, "joystick" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.joystick;
             } else {
@@ -543,6 +557,12 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "lmarginAtariBasicEnabled" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->lmarginAtariBasicEnabled ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "optionClip" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->optionClip ) {
                 $$ = 1;
@@ -561,6 +581,26 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "verticalOverlapRequired" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->verticalOverlapRequired ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
+        } else if ( strcmp( $1, "horizontalOverlapRequired" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->horizontalOverlapRequired ) {
+                $$ = 1;
+            } else {
+                $$ = 0;
+            }
+        } else if ( strcmp( $1, "scaleX" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->scaleX;
+        } else if ( strcmp( $1, "scaleY" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->scaleY;
+        } else if ( strcmp( $1, "offsetX" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->offsetX;
+        } else if ( strcmp( $1, "offsetY" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->offsetY;
         } else {
             $$ = 0;
         }
@@ -676,6 +716,12 @@ embed2:
             } else if ( strcmp( $5, "release" ) == 0 ) {
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.release );
             }
+        } else if ( strcmp( $3, "descriptors" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->descriptors ) {
+                if ( strcmp( $5, "firstFree" ) == 0 ) {
+                    vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->descriptors->firstFree );
+                }
+            }
         }
 
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
@@ -683,16 +729,22 @@ embed2:
   | OP_AT EMIT Identifier AS Identifier {
         if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart );
-        }
-        if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
+        } else if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->frameBufferStart2 );
-        }
-        if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
+        } else if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->multiplexingSpriteConfig.async ) {
                 vars_emit_constant_integer( _environment, $5, 0 );
             } else {
                 vars_emit_constant_integer( _environment, $5, 0xff );
             }
+        } else if ( strcmp( $3, "scaleX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleX );
+        } else if ( strcmp( $3, "scaleY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleY );
+        } else if ( strcmp( $3, "offsetX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetX );
+        } else if ( strcmp( $3, "offsetY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetY );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

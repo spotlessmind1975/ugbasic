@@ -90,7 +90,7 @@ void point_at_vars( Environment * _environment, char * _x, char * _y ) {
 
     MAKE_LABEL
 
-    deploy( zxvars, src_hw_zx_vars_asm);
+    deploy( vars, src_hw_zx_vars_asm);
     deploy( plot, src_hw_zx_plot_asm );
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );

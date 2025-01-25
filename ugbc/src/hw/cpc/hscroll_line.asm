@@ -39,6 +39,7 @@ HSCROLLLINE:
     PUSH AF
 
     LD HL, PLOTVBASE
+
     LD A, B
     SLA A
     SLA A
@@ -70,10 +71,19 @@ HSCROLLLINEL1:
     INC HL
 
     LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+
+    LD HL, DE
 
     INC HL
 
-    LD BC, $4F
+    LD A, (CONSOLEWB)
+    LD C, A
+    LD B, 0
     LDIR
 
     POP HL
@@ -102,15 +112,26 @@ HSCROLLLINER1:
     LD D, A
     INC HL
 
+    LD HL, DE
+    LD A, (CONSOLEX1)
+    LD E, A
+    LD D, 0
+    ADD HL, DE
+    LD DE, HL
+
     PUSH DE
 
     LD HL, DE
-    LD DE, $DF
+    LD A, (CONSOLEWB)
+    LD E, A
+    LD D, 0
     ADD HL, DE
     LD DE, HL
     DEC HL
 
-    LD BC, $4F
+    LD A, (CONSOLEWB)
+    LD B, A
+    LD C, 0
     LDDR
 
     POP DE

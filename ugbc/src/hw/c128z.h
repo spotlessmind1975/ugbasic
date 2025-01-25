@@ -153,8 +153,6 @@ void c128z_keyshift( Environment * _environment, char * _shifts );
 void c128z_clear_key( Environment * _environment );
 void c128z_put_key(  Environment * _environment, char *_string, char * _size );
 
-void c128z_irq_at( Environment * _environment, char * _label );
-void c128z_follow_irq( Environment * _environment );
 void c128z_joy( Environment * _environment, int _port, char * _value );
 void c128z_joy_vars( Environment * _environment, char * _port, char * _value );
 

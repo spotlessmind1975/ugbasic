@@ -595,8 +595,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
-    cpu_store_8bit( _environment, "_PEN", DEFAULT_PEN_COLOR );
-    cpu_store_8bit( _environment, "_PAPER", DEFAULT_PAPER_COLOR );
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
 // #ifdef __coleco__
 
@@ -1133,6 +1133,24 @@ void tms9918_screen_columns( Environment * _environment, char * _columns ) {
 
 }
 
+void tms9918_sprite_data_set( Environment * _environment, char * _sprite, char * _address ) {
+
+    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_BYTE, 0 );
+
+    deploy( sprite, src_hw_tms9918_sprites_asm );
+    
+    outline1("LD A, (%s)", sprite->realName );
+    outline0("LD B, A");
+    outline1("LD A, (%s)", address->realName );
+    if ( ! _environment->hasGameLoop ) {
+        outline0("CALL SPRITEDATASET");
+    } else {
+        outline0("CALL SPRITEDATASETNMI2");
+    }
+
+}
+
 void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char * _image ) {
 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
@@ -1288,6 +1306,10 @@ void tms9918_sprite_color( Environment * _environment, char * _sprite, char * _c
 
 }
 
+void tms9918_sprite_priority( Environment * _environment, char * _sprite, char * _priority ) {
+
+}
+
 void tms9918_tiles_at( Environment * _environment, char * _address ) {
 
 }
@@ -1356,7 +1378,7 @@ void tms9918_cls( Environment * _environment ) {
 
 }
 
-void tms9918_scroll_text( Environment * _environment, int _direction ) {
+void tms9918_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {
         deploy( vScrollTextDown, src_hw_tms9918_vscroll_text_down_asm );
@@ -1645,7 +1667,7 @@ void tms9918_finalization( Environment * _environment ) {
     
 }
 
-void tms9918_hscroll_line( Environment * _environment, int _direction ) {
+void tms9918_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
 
@@ -1660,7 +1682,7 @@ void tms9918_hscroll_line( Environment * _environment, int _direction ) {
 
 }
 
-void tms9918_hscroll_screen( Environment * _environment, int _direction ) {
+void tms9918_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
 

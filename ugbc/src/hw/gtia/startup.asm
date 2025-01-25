@@ -71,6 +71,9 @@ GTIAVBLIRQ:
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+@IF deployed.fade
+    JSR FADET
+@ENDIF
 @IF deployed.keyboard && !keyboardConfig.sync
     JSR KEYBOARDMANAGER
 @ENDIF
@@ -82,7 +85,7 @@ GTIASTARTUP:
     STA YCURSYS
     STA $D404
     STA $D405
-    CLI
+    SEI
     LDA GTIAVBLIRQPREV
     BNE GTIASTARTUPDONE
     LDA GTIAVBLIRQPREV+1
@@ -96,7 +99,17 @@ GTIASTARTUP:
     LDA #>GTIAVBLIRQ
     STA $223
 GTIASTARTUPDONE:
-    SEI
+
+@IF lmarginAtariBasicEnabled
+    LDA #2
+    STA CONSOLEX1
+    LDA CONSOLEX1
+    STA XCURSYS
+    LDA CONSOLEY1
+    STA YCURSYS
+@ENDIF
+
+    CLI
     RTS
 
 GTIAAFTERINIT:

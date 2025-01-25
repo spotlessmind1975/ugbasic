@@ -33,7 +33,36 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; 8x8 bit multiplication to 16 bit
+; 8x8 bit multiplication to 16 bit (signed)
+; Input:
+;   I -> first operand
+;   A -> second operand
+; Output:
+;   B:A -> result
+CPUMUL8B8T16S:
+    PUSH 
+    ANIA 0x80
+    LP 0x0a
+    EXAM
+    LP 0x00
+    EXAM
+    ANIA 0x80
+    LIDP CPUMUL8B8T16SV+1
+    STD
+    LP 0x0a
+    EXAM
+CPUMUL8B8T16SV:    
+    ANIA 0xff
+    LIDP CPUMUL8B8T16SV2+1
+    STD
+    POP
+    CALL CPUMUL8B8T16U
+    LP 0x03
+CPUMUL8B8T16SV2:
+    ORIM 0xff
+    RTN    
+
+; 8x8 bit multiplication to 16 bit (unsigned)
 ; Input:
 ;   I -> first operand
 ;   A -> second operand
@@ -45,7 +74,7 @@ CPUMUL8B8T16U:
     LP 3
     ANIM 0
 
-; 16x16 bit multiplication to 16 bit
+; 16x16 bit multiplication to 16 bit (unsigned)
 ; Input:
 ;   J:I -> first operand
 ;   B:A -> second operand

@@ -70,6 +70,10 @@ sarà interrotta bruscamente e sarà fatta partire quella indicata.
 </usermanual> */
 void animate_semivars( Environment * _environment, char * _prefix, char * _anim, char * _x, char * _y ) {
 
+#if defined(__gb__)
+    return;
+#endif
+
     char prefixAnimation[MAX_TEMPORARY_STORAGE]; sprintf( prefixAnimation, "%sAnimation", _prefix );
 
     if ( ! variable_exists( _environment, prefixAnimation ) ) {

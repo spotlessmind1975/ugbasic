@@ -221,11 +221,15 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @example alien2 = LOAD SEQUENCE("alien.jpg" AS "alien2",11) FRAME SIZE(8,8) TRANSPARENCY
 
 @alias STRIP LOAD
+@target all
+@ntarget gb
 </usermanual> */
 
 /* <usermanual>
 @keyword STRIP LOAD
 @alias LOAD SEQUENCE
+@target all
+@ntarget gb
 </usermanual> */
 
 Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
@@ -235,6 +239,11 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     if ( _environment->emptyProcedure ) {
         return final;
     }
+
+#if defined(__gb__)
+    final->valueBuffer = malloc( 3 );
+    return final;
+#endif
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "LOAD SEQUENCE");
