@@ -1435,13 +1435,14 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
     switch( _mode ) {
 
         case TILEMAP_MODE_BGB:
-        case TILEMAP_MODE_CGB:
+        case TILEMAP_MODE_CGB: {
 
             int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
             return 3 + ( 3 + size + size * 16 ) * _frames;
 
             break;
+        }
     }
 
     return 0;
@@ -1453,13 +1454,14 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
     switch( _mode ) {
 
         case TILEMAP_MODE_BGB:
-        case TILEMAP_MODE_CGB:
+        case TILEMAP_MODE_CGB: {
 
             int size = ( ( _width >> 3 ) * ( _height >> 3 ) );
 
             return 3 + ( ( 3 + size + size * 16 ) * _frames ) * _sequences;
 
             break;
+        }
     }
 
     return 0;
