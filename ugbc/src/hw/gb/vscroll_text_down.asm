@@ -84,19 +84,19 @@ VSCROLLTDOWNL1:
     INC DE
     DEC C
     JR NZ, VSCROLLTDOWNL1
-    PUSH BC
+    PUSH DE
     LD HL, DE
-    LD B, 0
+    LD D, 0
     LD A, (IXLR)
-    LD C, A
-    SUB HL, BC
-    POP BC
+    LD E, A
+    CALL SUB_HL_DE
+    POP DE
     LD DE, HL
     ADD DE, 32
 
     DEC B
     JR NZ, VSCROLLTDOWNL1A
-VSCROLLTUPDONE:
+VSCROLLTDOWNDONE:
 
     LD A, (CONSOLEW)
     LD C, A
