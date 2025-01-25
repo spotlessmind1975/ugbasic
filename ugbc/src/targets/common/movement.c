@@ -130,11 +130,11 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
         CRITICAL_CANNOT_DEFINE_MOVEMENT_INSIDE_A_PROCEDURE( _identifier );
     }
 
-    Variable * atlas;
+    Variable * atlas = NULL;
     
     atlas = variable_retrieve( _environment, _atlas );
 
-    Variable * prefix;
+    Variable * prefix = NULL;
 
     int spriteLogic = 0;
 
