@@ -2370,9 +2370,9 @@ void cpu6809_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         outline0("LDY CPUMATHDIV32BITTO16DIVIDEND" );
         outline0("LDA #4" );
         if ( _signed ) {
-            outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED" );
+            outline0("JSR CPUMATHDIV32BITTO16BIT_SIGNED" );
         } else {
-            outline0("JSR CPUMATHDIV16BITTO16BIT" );
+            outline0("JSR CPUMATHDIV32BITTO16BIT" );
         }
 
         if ( _other_remainder ) {
@@ -2409,9 +2409,9 @@ void cpu6809_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
         outline0("LDY CPUMATHDIV32BITTO16DIVIDEND" );
         outline0("LDA #4" );
         if ( _signed ) {
-            outline0("JSR CPUMATHDIV16BITTO16BIT_SIGNED" );
+            outline0("JSR CPUMATHDIV32BITTO16BIT_SIGNED" );
         } else {
-            outline0("JSR CPUMATHDIV16BITTO16BIT" );
+            outline0("JSR CPUMATHDIV32BITTO16BIT" );
         }
 
         if ( _other_remainder ) {
