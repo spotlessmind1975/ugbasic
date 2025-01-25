@@ -372,6 +372,7 @@ void console_calculate( Environment * _environment ) {
     int consoleCA = 0;
 
     switch( _environment->currentMode ) {
+        case BITMAP_MODE_STANDARD:
         case TILEMAP_MODE_STANDARD:
             consoleSA = 0x1000 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
             consoleCA = 0x9400 + (_environment->activeConsole.y1*22)+_environment->activeConsole.x1;
@@ -1783,6 +1784,8 @@ void vic1_put_image( Environment * _environment, Resource * _image, char * _x, c
     // currently unused
     (void)!_flags;
 
+    _environment->bitmaskNeeded = 1;
+    
     deploy_preferred( vic1vars, src_hw_vic1_vars_asm);
     deploy( putimage, src_hw_vic1_put_image_asm );
 

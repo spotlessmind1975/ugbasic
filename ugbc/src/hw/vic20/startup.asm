@@ -39,6 +39,10 @@
 
 @EMIT descriptors.firstFree AS descriptorsCount
 
+@ELSE
+
+descriptorsCount = 0
+
 @ENDIF
 
 VIC20STARTUP:
