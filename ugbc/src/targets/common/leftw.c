@@ -53,7 +53,7 @@
 @english
 
 ''LEFTW'' allows the programmer to scroll left a section of the text screen from ''x,y''
-with the ''width'' and the ''height'', including the colors, line by line. The new 
+with the ''width'' and the ''height'', including the colors, column by column. The new 
 columns inserted are filled in the right column with the correspondent character
 that exit from the top.
 
@@ -63,17 +63,19 @@ restore them after scrolling. So it cannot be used by the program.
 @italian
 
 ''LEFTW'' consente al programmatore di scorrere verso sinistra una sezione dello schermo 
-di testo da ''x,y'' con la ''width'' e l''height'', inclusi i colori, riga per riga. 
+di testo da ''x,y'' con la ''width'' e l''height'', inclusi i colori, colonna per colonna. 
 Le nuove colonne inserite vengono riempite nella colonna a destra con il carattere che
 esce dal bordo sinistro.
 
 Da notare che questo comando utilizza la console nr. 3 per stoccare i valori della 
 console attuale, al fine di ripristinarli al termine dello scorrimento. Quindi non 
-può essere utilizzato dal programma.
+può essere utilizzata dal programma.
 
 @syntax LEFTW y, x, width, height
 
 @example LEFTW 1, 1, 10, 10
+
+@seeAlso LEFTB
 
 @target all
 </usermanual> */

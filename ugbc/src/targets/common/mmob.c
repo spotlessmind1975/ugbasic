@@ -51,7 +51,7 @@ The instruction ''MMOB'' move a sprite on the screen. It is used to move the
 given ''sprite'' from a starting point with the coordinates ''sx,sy'' to a 
 target point with the coordinates ''zx,zy''. The parameter ''gr'' sets the
 display size of the sprite (and thus changes the basic setting in ''MOB SET''). 
-The movement speed is set with ''sp'', with larger values ​​making the sprite
+The movement speed is set with ''sp'', with larger values making the sprite
 move more slowly.
 
 The shortened form (without the target specification ''zx,zy'') simply 
@@ -63,7 +63,7 @@ but only one after the other (one ''MMOB'' command controls one sprite,
 the next command the next sprite, etc.).
 
 The size and speed settings should be entered in ''MOB SET''. Almost all sprite
-related parameters are then collected there. The following values ​​for are permitted: 
+related parameters are then collected there. The following values for are permitted: 
 a ''0'' means 24×21 (normal), ''1'' means 48×21 (x-expanded), ''2'' means 24×42 (y-expanded),
 and finally ''3'' means 48×42 (double size).
 
@@ -157,7 +157,7 @@ void mmob( Environment * _environment, char * _sprite, char * _sx, char * _sy, c
                 )->realName,
                 0, loopDoneLabel, 1 );
 
-                // The movement speed is set with ''sp'', with larger values ​​making the sprite
+                // The movement speed is set with ''sp'', with larger values making the sprite
                 // move more slowly.
 
                 if ( _sp ) {

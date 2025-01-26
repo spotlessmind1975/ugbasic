@@ -69,11 +69,13 @@ esce dal bordo inferiore.
 
 Da notare che questo comando utilizza la console nr. 3 per stoccare i valori della 
 console attuale, al fine di ripristinarli al termine dello scorrimento. Quindi non 
-può essere utilizzato dal programma.
+può essere utilizzata dal programma.
 
 @syntax UPW y, x, width, height
 
 @example UPW 1, 1, 10, 10
+
+@seeAlso UPB
 
 @target all
 </usermanual> */

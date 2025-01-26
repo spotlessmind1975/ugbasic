@@ -46,7 +46,7 @@
 The ''MEMRESTORE'' instruction uses ''param'' to control the automatic reloading 
 of the transfer registers, after a transfer. The value 0 means "do not reload" and 
 leaves all registers at the last value reached during the transfer. A valure of
-1 resets all transfer registers to the values ​​set before the transfer. In addition, 
+1 resets all transfer registers to the values set before the transfer. In addition, 
 by setting the bit 7 in the ''param'' it ensures, under ''c64reu'' taqget, that the 
 accesses in the IO area are made to the color RAM and not to the RAM below.
 

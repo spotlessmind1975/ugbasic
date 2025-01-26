@@ -113,7 +113,7 @@ questo comando.
 </usermanual> */
 
 /* <usermanual>
-@keyword PEEK
+@keyword MEMPEEK
 
 @english
 

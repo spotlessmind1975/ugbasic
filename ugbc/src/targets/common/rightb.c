@@ -53,7 +53,7 @@
 @english
 
 ''RIGHTB'' allows the programmer to scroll right a section of the text screen from ''x,y''
-with the ''width'' and the ''height'', including the colors, line by line. 
+with the ''width'' and the ''height'', including the colors, column by column. 
 The new columns inserted are filled in the left column with a "blank" character. 
 
 Note that this command uses console #3 to store the current console values, in order to 
@@ -62,16 +62,18 @@ restore them after scrolling. So it cannot be used by the program.
 @italian
 
 ''RIGHTB'' consente al programmatore di scorrere verso destra una sezione dello schermo 
-di testo da ''x,y'' con la ''width'' e l''height'', inclusi i colori, riga per riga. 
+di testo da ''x,y'' con la ''width'' e l''height'', inclusi i colori, colonna per colonna. 
 Le nuove colonne inserite vengono riempite nella colonna a sinistra con un carattere "vuoto".
 
 Da notare che questo comando utilizza la console nr. 3 per stoccare i valori della 
 console attuale, al fine di ripristinarli al termine dello scorrimento. Quindi non 
-può essere utilizzato dal programma.
+può essere utilizzata dal programma.
 
 @syntax RIGHTB y, x, width, height
 
 @example RIGHTB 1, 1, 10, 10
+
+@seeAlso RIGHTW
 
 @target all
 </usermanual> */

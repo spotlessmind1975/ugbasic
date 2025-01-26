@@ -44,14 +44,14 @@
 @english
 
 The ''MEMCLR'' instruction writes all ''num'' memory locations from the 
-address ''adr'' with the value 0 (zero) or optionally with any 
+address ''address'' with the value 0 (zero) or optionally with any 
 other byte value ''value''.  The number zero for ''num'' is ignored (nothing 
 is written to the memory, but no error appears either).
 
 @italian
 
 L'istruzione ''MEMCLR'' scrive in tutte le ''num'' posizioni di memoria dall'indirizzo 
-''adr'' con il valore 0 (zero) o facoltativamente con qualsiasi altro valore 
+''address'' con il valore 0 (zero) o facoltativamente con qualsiasi altro valore 
 di byte ''value''. Il numero zero per ''num'' viene ignorato (non viene scritto nulla 
 nella memoria, ma non viene visualizzato alcun errore).
 

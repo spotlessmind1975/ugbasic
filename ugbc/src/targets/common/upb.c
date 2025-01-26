@@ -67,11 +67,13 @@ Le nuove righe inserite vengono riempite nella riga inferiore con un carattere "
 
 Da notare che questo comando utilizza la console nr. 3 per stoccare i valori della 
 console attuale, al fine di ripristinarli al termine dello scorrimento. Quindi non 
-può essere utilizzato dal programma.
+può essere utilizzata dal programma.
 
 @syntax UPB y, x, width, height
 
 @example UPB 1, 1, 10, 10
+
+@seeAlso UPW
 
 @target all
 </usermanual> */
