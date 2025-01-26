@@ -38,41 +38,52 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
- * @brief Emit code for <strong>SERIAL READ(...)</strong>
+ * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
  * 
  * @param _environment Current calling environment
  */
 
 /* <usermanual>
-@keyword SERIAL READ
+@keyword SERIAL WRITE
 
 @english
 
-This instruction allows you to read one or more bytes from the standard serial 
-connection. The instruction will still wait for the number of bytes specified in the
-''size'' parameter to arrive. The result will be a string containing the data read.
-
 @italian
 
-Questa istruzione permette di leggere uno o più byte proveniente dalla connessione 
-seriale standard. L'istruzione attenderà comunque l'arrivo del numero di byte indicati 
-nel parametro ''size''. Il risultato sarà una stringa che conterrà i dati letti.
+@syntax = SERIAL WRITE( size )
 
-@syntax = SERIAL READ( size )
-
-@example result = SERIAL READ( 1 )
+@example result = SERIAL WRITE( 1 )
 
 </usermanual> */
 
-#if ! defined( __coco__ )
+Variable * serial_write( Environment * _environment, char * _data ) {
 
-Variable * serial_read( Environment * _environment, char * _size ) {
+    Variable * data = variable_retrieve( _environment, _data );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(data)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(data)" );
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(data)" );
+    switch( data->type ) {
+        case VT_STRING: {            
+            cpu_move_8bit( _environment, data->realName, size->realName );
+            cpu_addressof_16bit( _environment, data->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        }
+        case VT_DSTRING: {            
+            cpu_dsdescriptor( _environment, data->realName, address->realName, size->realName );
+            break;
+        }
+        default:
+            CRITICAL_SERIAL_WRITE_UNSUPPORTED( _data, DATATYPE_AS_STRING[data->type]);
+            break;
+    }
+
+    coco_serial_write( _environment, address->realName, size->realName, result->realName );
 
     return result;
 
 }
-
-#endif

@@ -71,4 +71,7 @@ void coco_dojo_peek_message( Environment * _environment, char * _port_id, char *
 void coco_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
 void coco_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
 
+void coco_serial_read( Environment * _environment, char * _address, char * _size );
+void coco_serial_write( Environment * _environment, char * _address, char * _size, char * _result );
+
 #endif

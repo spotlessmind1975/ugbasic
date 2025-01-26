@@ -49,13 +49,21 @@
 
 @english
 
+This instruction allows you to write one or more bytes to the standard serial 
+connection. The instruction will return ''FALSE'' if any error occurs.
+
 @italian
 
-@syntax = SERIAL WRITE( size )
+Questa istruzione consente di scrivere uno o più byte sulla connessione 
+seriale standard. L'istruzione restituirà ''FALSE'' se si verifica un errore.
 
-@example result = SERIAL WRITE( 1 )
+@syntax = SERIAL WRITE( data )
+
+@example result = SERIAL WRITE( "test" )
 
 </usermanual> */
+
+#if ! defined( __coco__ )
 
 Variable * serial_write( Environment * _environment, char * _data ) {
 
@@ -64,3 +72,5 @@ Variable * serial_write( Environment * _environment, char * _data ) {
     return result;
 
 }
+
+#endif

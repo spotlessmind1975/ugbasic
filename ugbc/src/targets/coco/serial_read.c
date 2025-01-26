@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
  * @brief Emit code for <strong>SERIAL READ(...)</strong>
  * 
@@ -45,34 +47,25 @@
  */
 
 /* <usermanual>
-@keyword SERIAL READ
+@keyword SERIAL WRITE
 
-@english
-
-This instruction allows you to read one or more bytes from the standard serial 
-connection. The instruction will still wait for the number of bytes specified in the
-''size'' parameter to arrive. The result will be a string containing the data read.
-
-@italian
-
-Questa istruzione permette di leggere uno o più byte proveniente dalla connessione 
-seriale standard. L'istruzione attenderà comunque l'arrivo del numero di byte indicati 
-nel parametro ''size''. Il risultato sarà una stringa che conterrà i dati letti.
-
-@syntax = SERIAL READ( size )
-
-@example result = SERIAL READ( 1 )
+@target coco
 
 </usermanual> */
 
-#if ! defined( __coco__ )
 
 Variable * serial_read( Environment * _environment, char * _size ) {
 
-    Variable * result = variable_temporary( _environment, VT_DSTRING, "(data)" );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 1 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(data)" );
 
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
+
+    coco_serial_read( _environment, address->realName, size->realName );
+    
     return result;
 
 }
-
-#endif

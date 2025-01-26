@@ -432,4 +432,25 @@ void coco_dojo_ping( Environment * _environment, char * _result ) {
 
 }
 
+void coco_serial_read( Environment * _environment, char * _address, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+
+    outline1( "LDX %s", _address );
+    outline1( "LDB %s", _size );
+    outline0( "JSR SERIALREAD" );
+
+}
+
+void coco_serial_write( Environment * _environment, char * _address, char * _size, char * _result ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+
+    outline1( "LDX %s", _address );
+    outline1( "LDB %s", _size );
+    outline0( "JSR SERIALWRITE" );
+    outline1( "STB %s", _result );
+
+}
+
 #endif
