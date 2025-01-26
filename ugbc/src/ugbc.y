@@ -105,7 +105,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RELOC FADE MMOB GB BASIC GRAPHICS 
 %token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
-%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SERIAL
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -190,6 +190,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_next_animation
 %type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
 %type <integer> shuffle_definition_optional_rounds
+%type <string> serial_definition
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -3680,6 +3681,9 @@ exponential_less:
     }
     | ABS OP expr CP {
         $$ = absolute( _environment, $3 )->name;
+    }
+    | SERIAL serial_definition {
+        $$ = $2;
     }
     | TRUE {
         $$ = variable_temporary( _environment, VT_SBYTE, "(true)" )->name;
@@ -10705,6 +10709,15 @@ positive_const_definitions :
     positive_const_definition
     | positive_const_definition OP_COMMA positive_const_definitions;
 
+serial_definition :
+    READ OP expr CP {
+        $$ = serial_read( _environment, $3 )->name;
+    }
+    |
+    WRITE OP expr CP {
+        $$ = serial_write( _environment, $3 )->name;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -10777,6 +10790,7 @@ statement2nc:
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | USE use_definition
+  | SERIAL serial_definition
   | SET LINE expr {
       ((Environment *)_environment)->lineNeeded = 1;
       variable_move( _environment, $3, "LINE" );
