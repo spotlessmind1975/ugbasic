@@ -10720,6 +10720,10 @@ serial_definition :
     |
     READ as_datatype_mandatory {
         $$ = serial_read_type( _environment, $2 )->name;
+    }
+    |
+    STATUS {
+        $$ = serial_status( _environment )->name;
     };
 
 statement2nc:
