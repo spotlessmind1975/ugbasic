@@ -47,7 +47,7 @@ extern char DATATYPE_AS_STRING[][16];
  */
 
 /* <usermanual>
-@keyword SERIAL WRITE
+@keyword SERIAL READ
 
 @target coco
 

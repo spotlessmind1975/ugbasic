@@ -10716,6 +10716,10 @@ serial_definition :
     |
     WRITE OP expr CP {
         $$ = serial_write( _environment, $3 )->name;
+    }
+    |
+    READ as_datatype_mandatory {
+        $$ = serial_read_type( _environment, $2 )->name;
     };
 
 statement2nc:
