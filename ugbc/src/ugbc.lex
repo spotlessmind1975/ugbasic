@@ -1459,6 +1459,8 @@ STATE { RETURN(STATE,1); }
 Stt { RETURN(STATE,1); }
 STATIC { RETURN(STATIC,1); }
 Stc { RETURN(STATIC,1); }
+STATUS { RETURN(STATUS,1); }
+STa { RETURN(STATUS,1); }
 STEADY { RETURN(STEADY,1); }
 Ste { RETURN(STEADY,1); }
 STEEL { RETURN(STEEL,1); }
@@ -1721,7 +1723,7 @@ ZX { RETURN(ZX,1); }
 
 \"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+1,strlen(yylval.string)); yylval.string[strlen(yylval.string)-1]=0; RETURN(String,1);  }
 #\"(\\.|[^"\\])*\" { yylval.string = strdup(yytext); memcpy(yylval.string,yylval.string+2,strlen(yylval.string)-2); yylval.string[strlen(yylval.string)-3]=0; RETURN(RawString,1);  }
-#'.' { yylval.integer = ord(yytext[2]); RETURN(Integer,1);  }
+#'.' { yylval.integer = (unsigned char)yytext[2]; RETURN(Integer,1);  }
 \$[a-fA-F0-9]+ { yylval.integer = strtol(yytext+1,0,16); RETURN(Integer,1); }
 &[Hh][a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
 0x[a-fA-F0-9]+ { yylval.integer = strtol(yytext+2,0,16); RETURN(Integer,1); }
