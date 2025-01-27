@@ -38,8 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
-
 /**
  * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
  * 
@@ -51,18 +49,26 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 
+It is possible to write a specific data type by indicating it after the parameter.
+
 @italian
 
-@syntax = SERIAL WRITE( size )
+E' possibile scrivere un tipo di dato specifico, indicandolo di seguito al parametro.
 
-@example result = SERIAL WRITE( 1 )
+@syntax = SERIAL WRITE( data AS datatype )
+
+@example result = SERIAL WRITE( 42 AS BYTE )
 
 </usermanual> */
 
-Variable * serial_write( Environment * _environment, char * _data ) {
+#if ! defined( __coco__ )
 
-    Variable * data = variable_retrieve( _environment, _data );
+Variable * serial_write( Environment * _environment, char * _data, VariableType _type ) {
 
-    return serial_write_type( _environment, _data, 0 );
+    Variable * result = variable_temporary( _environment, _type, "(status)" );
+
+    return result;
 
 }
+
+#endif

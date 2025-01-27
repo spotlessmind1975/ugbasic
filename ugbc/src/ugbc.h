@@ -5121,6 +5121,7 @@ Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type );
 Variable *              serial_status( Environment * _environment );
 Variable *              serial_write( Environment * _environment, char * _data );
+Variable *              serial_write_type( Environment * _environment, char * _data, VariableType _type );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );

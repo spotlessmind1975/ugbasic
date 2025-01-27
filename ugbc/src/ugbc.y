@@ -10718,6 +10718,10 @@ serial_definition :
         $$ = serial_write( _environment, $3 )->name;
     }
     |
+    WRITE OP expr as_datatype_mandatory CP {
+        $$ = serial_write_type( _environment, $3, $4 )->name;
+    }
+    |
     READ as_datatype_mandatory {
         $$ = serial_read_type( _environment, $2 )->name;
     }
