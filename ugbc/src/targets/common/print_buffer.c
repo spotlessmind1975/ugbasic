@@ -146,6 +146,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     // memcpy( string, value->valueBuffer, value->size );
     
     Variable * bufferSize = variable_temporary( _environment, VT_WORD, "(bufferSize)" );
+    Variable * restSize = variable_temporary( _environment, VT_BYTE, "(bufferSize)" );
 
     if ( value->residentAssigned ) {
 
@@ -194,10 +195,13 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     cpu_label( _environment, printBufferRestLabel );
 
+    variable_move( _environment, bufferSize->name, restSize->name );
+
     cpu_dsfree( _environment, dstring->realName );
-    cpu_dsalloc( _environment, bufferSize->realName, dstring->realName );
+    cpu_dsalloc( _environment, restSize->realName, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
-    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, bufferSize->realName );
+    outline3("; cpu_mem_move( _environment, %s, %s, %s ) ", sourceAddress->realName, targetAddress->realName, restSize->realName );
+    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, restSize->realName );
     text_text( _environment, dstring->name, 0 );
     cpu_dsfree( _environment, dstring->realName );
 
