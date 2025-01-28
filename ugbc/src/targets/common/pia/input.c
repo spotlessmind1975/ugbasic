@@ -54,6 +54,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     }
     
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char repeat2Label[MAX_TEMPORARY_STORAGE]; sprintf(repeat2Label, "%srepeat2", label );
     char skipColorChangeLabel[MAX_TEMPORARY_STORAGE]; sprintf(skipColorChangeLabel, "%sskipcc", label );
     char graphicalCursor[MAX_TEMPORARY_STORAGE]; sprintf(graphicalCursor, "%sgrph", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
@@ -72,6 +73,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size max)" );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
+    Variable * key2 = variable_temporary( _environment, VT_CHAR, "(key pressed)");
     Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
 
     cpu_store_8bit( _environment, enter->realName, 13 );
@@ -126,6 +128,12 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     pia_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_label( _environment, repeat2Label );
+
+    pia_inkey( _environment, key2->realName );
+
+    cpu_bvneq( _environment, key2->realName, repeat2Label );
 
     cpu_compare_8bit( _environment, key->realName, backspace->realName, pressed->realName, 1 );
 
