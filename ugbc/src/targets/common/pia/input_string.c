@@ -47,6 +47,7 @@ Variable * input_string( Environment * _environment, char * _size ) {
     MAKE_LABEL
     
     char repeatLabel[MAX_TEMPORARY_STORAGE]; sprintf(repeatLabel, "%srepeat", label );
+    char repeat2Label[MAX_TEMPORARY_STORAGE]; sprintf(repeat2Label, "%srepeat2", label );
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of INPUT$)");
     Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset inside INPUT$)");
@@ -54,6 +55,7 @@ Variable * input_string( Environment * _environment, char * _size ) {
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
     Variable * pressed = variable_temporary( _environment, VT_BYTE, "(key pressed?)");
     Variable * key = variable_temporary( _environment, VT_CHAR, "(key pressed)");
+    Variable * key2 = variable_temporary( _environment, VT_CHAR, "(key pressed)");
 
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, size->realName, result->realName );
@@ -66,6 +68,12 @@ Variable * input_string( Environment * _environment, char * _size ) {
     pia_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, key->realName, repeatLabel );
+
+    cpu_label( _environment, repeat2Label );
+
+    pia_inkey( _environment, key2->realName );
+
+    cpu_bvneq( _environment, key2->realName, repeat2Label );
 
     cpu_move_8bit_indirect_with_offset2( _environment, key->realName, address->realName, offset->realName );
 

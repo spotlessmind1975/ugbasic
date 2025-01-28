@@ -6223,8 +6223,16 @@ joystick nella direzione su e destra, verrà restituito solo il valore su.
 @english
 The ''SCALE'' keyword allows you to scale the horizontal and vertical coordinates 
 before they are used for drawing. For speed reasons, scaling is done by applying 
-a multiplication factor as a power of two, so x2, x4, and so on. Furthermore, scaling 
-is done when drawing the point on the screen, and not when calculating the actual 
+a multiplication factor as a power of two:
+
+ - 0 means x1;
+
+ - 1 means x2;
+
+ - 2 means x4;
+
+and so on. The scaling is done when drawing the point on the screen, and not when 
+calculating the actual 
 coordinates. This means that the images will be subject to a "scanline" effect, 
 since the number of points drawn will remain the same. To apply a scale that respects 
 the number of points to be drawn, it is advisable to use the ''RESOLUTION'' command.
@@ -6242,6 +6250,8 @@ del numero di punti da disegnare, è opportuno usare il comando ''RESOLUTION''.
 @syntax SCALE w, h
 
 @example SCALE 1, 0
+
+@seeAlso RESOLUTION
 
 @target all
 </usermanual> */
@@ -6266,6 +6276,8 @@ coordinate effettive. Per applicare uno scostamento che rispetti il sistema di c
 @syntax OFFSET dx, dy
 
 @example OFFSET 10, 10
+
+@seeAlso ORIGIN
 
 @target all
 </usermanual> */

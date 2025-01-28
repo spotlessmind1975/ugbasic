@@ -145,13 +145,13 @@ void setup_text_variables( Environment * _environment ) {
     variable_global( _environment, "CONSOLEX1" );
     variable_import( _environment, "CONSOLEY1", VT_SBYTE, 0 );
     variable_global( _environment, "CONSOLEY1" );
-    variable_import( _environment, "CONSOLEX2", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEX2", VT_SBYTE, TEXT_COLUMNS_COUNT-1 );
     variable_global( _environment, "CONSOLEX2" );
-    variable_import( _environment, "CONSOLEY2", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEY2", VT_SBYTE, TEXT_ROWS_COUNT-1 );
     variable_global( _environment, "CONSOLEY2" );
-    variable_import( _environment, "CONSOLEW", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEW", VT_SBYTE, TEXT_COLUMNS_COUNT );
     variable_global( _environment, "CONSOLEW" );
-    variable_import( _environment, "CONSOLEH", VT_SBYTE, 0 );
+    variable_import( _environment, "CONSOLEH", VT_SBYTE, TEXT_ROWS_COUNT );
     variable_global( _environment, "CONSOLEH" );
     variable_import( _environment, "CONSOLESL", VT_SWORD, 0 );
     variable_global( _environment, "CONSOLESL" );

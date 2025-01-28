@@ -51,7 +51,7 @@
 
 This instruction allow you to perform a "fade". The fade, in graphic terms, consists of gradually passing 
 from one image or color to another. Fade to black implies a gradual transition to the color black (RGB: 0, 0, 0). 
-To implement this transition, ugBASIC will progressively vary the color values ​​of the pixels on the screen. The 
+To implement this transition, ugBASIC will progressively vary the color values of the pixels on the screen. The 
 function takes the desired fade time in ticks or milliseconds (it will be rouded to the next tick). The accuracy 
 and smoothness of the fade depends on the number of colors available in the palette and the number of steps. 
 

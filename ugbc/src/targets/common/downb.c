@@ -73,6 +73,8 @@ può essere utilizzato dal programma.
 
 @example DOWNB 1, 1, 10, 10
 
+@seeAlso DOWNW
+
 @target all
 </usermanual> */
 void downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height ) {
