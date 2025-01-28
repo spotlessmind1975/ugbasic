@@ -1485,13 +1485,13 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
-    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x0000 );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x3b00 );
     variable_global( _environment, "SPRITEADDRESS" );    
-    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1000 );
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1800 );
     variable_global( _environment, "SPRITEAADDRESS" );    
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x1800 );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0e * 0x0400 );
     variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x3800 );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x2000 );
     variable_global( _environment, "COLORMAPADDRESS" );    
     variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "PATTERNADDRESS" );    
@@ -1551,7 +1551,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );
 
-    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 2 );
     variable_global( _environment, "CURRENTMODE" );
     variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
     variable_global( _environment, "CURRENTTILEMODE" );
