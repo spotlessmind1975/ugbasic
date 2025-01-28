@@ -12585,6 +12585,7 @@ int main( int _argc, char *_argv[] ) {
         Variable * source = variable_define( _environment, "SHELL_SOURCE", VT_BUFFER, 0 );
         variable_store_buffer( _environment, source->name, escapedSourceText, strlen(escapedSourceText), 0 );
         source->printable = 1;
+        source->readonly = 1;
     }
 
     if ( _environment->exeFileName && !_argv[optind+1]) {
