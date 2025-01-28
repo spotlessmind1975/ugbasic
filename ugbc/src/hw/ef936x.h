@@ -144,6 +144,9 @@
 #define IMAGE_HEIGHT_SIZE               1
 #define IMAGE_HEIGHT_OFFSET             2
 
+#define TEXT_COLUMNS_COUNT          40
+#define TEXT_ROWS_COUNT             25
+
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
