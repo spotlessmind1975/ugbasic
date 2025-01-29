@@ -4746,6 +4746,8 @@ void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
 void                    end_do_loop( Environment * _environment );
 void                    end_loop( Environment * _environment, int _do );
+void                    end_loop_until( Environment * _environment, char * _expr );
+void                    end_loop_while( Environment * _environment, char * _expr );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );

@@ -11045,6 +11045,12 @@ statement2nc:
           begin_loop( _environment, 0 );  
       }
   }
+  | LOOP WHILE expr {
+    end_loop_while( _environment, $3 );
+  }
+  | LOOP UNTIL expr {
+    end_loop_until( _environment, $3 );
+  }
   | END LOOP {
       end_loop( _environment, 0 );  
   }
