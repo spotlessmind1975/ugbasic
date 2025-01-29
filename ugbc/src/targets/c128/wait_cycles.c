@@ -92,6 +92,8 @@ La parola chiave ''PARALLEL'' può essere usata solo con attese legate ai ''CYCL
 @usedInExample control_returning_01.bas
 @usedInExample control_returning_02.bas
 
+@seeAlso SLEEP
+
 @target all
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {

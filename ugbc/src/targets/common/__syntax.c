@@ -6299,3 +6299,28 @@ coordinate effettive. Per applicare uno scostamento che rispetti il sistema di c
 @target all
 </usermanual> */
 
+/* <usermanual>
+@keyword SLEEP
+
+@english
+
+Pauses execution for a certain number of seconds. The pause is of the "busy" type,
+so the entire program is suspended, except for the timer-related mechanisms. 
+The multhtireading mechanism, instead, will continue to run. Note that the maximum 
+duration you can expect is about 65 seconds. 
+
+@italian
+
+Mette in pausa l'esecuzione per un certo numero di secondi. La pausa è di tipo "busy", 
+quindi l'intero programma viene sospeso, ad eccezione dei meccanismi correlati al timer. 
+Il multitasking, invece, continuerà a funzionare. Nota che la durata massima  è di 
+circa 65 secondi.
+
+@syntax SLEEP seconds
+
+@example SLEEP 10
+
+@seeAlso WAIT
+
+@target all
+</usermanual> */
