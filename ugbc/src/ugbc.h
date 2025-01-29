@@ -3401,7 +3401,8 @@ typedef struct _Environment {
 #define CRITICAL_MMOB_NEEDS_SPRITE(v) CRITICAL2("E356 - MMOB can be called only with SPRITE/MSPRITE", v );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E357 - invalid width for image, must be of 8 pixels", w );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E358 - invalid height for image, must be of 8 pixels", h );
-#define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E359 - SERIAL WRITE unsupported for variable of given datatype", v, t );
+#define CRITICAL_ARRAY_OUT_OF_BOUND( a ) CRITICAL2("E359 - array out of bound", a );
+#define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E360 - SERIAL WRITE unsupported for variable of given datatype", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4748,6 +4749,8 @@ void                    end_gameloop( Environment * _environment );
 void                    end_if_then( Environment * _environment  );
 void                    end_do_loop( Environment * _environment );
 void                    end_loop( Environment * _environment, int _do );
+void                    end_loop_until( Environment * _environment, char * _expr );
+void                    end_loop_while( Environment * _environment, char * _expr );
 void                    end_procedure( Environment * _environment, char * _value );
 void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );

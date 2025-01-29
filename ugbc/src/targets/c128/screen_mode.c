@@ -76,10 +76,11 @@ con immagini accattivanti e avrai accesso a canvas per creare arte digitale.
 Il parametro ''mode'' rappresenta una modalità grafica specifica, diversa 
 da target a target.
 
-@syntax SCREEN #mode
+@syntax SCREEN [#]mode
 @syntax SCREEN #type, #colorset
 
 @example SCREEN #1
+@example SCREEN 12
 @example SCREEN #1, #0
 
 @seeAlso BITMAP ENABLE

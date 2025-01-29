@@ -105,7 +105,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RELOC FADE MMOB GB BASIC GRAPHICS 
 %token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
-%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SERIAL STATUS
+%token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1364,6 +1364,10 @@ const_factor:
       }
       ;
 
+float_or_single :
+    FLOAT | SINGLE
+    ;
+
 casting :
     OP BIT CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_BIT )->name;
@@ -1383,7 +1387,7 @@ casting :
     | OP SIGNED WORD CP exponential_less { 
         $$ = variable_cast( _environment, $5, VT_SWORD )->name;
       }
-    | OP FLOAT CP exponential_less { 
+    | OP float_or_single CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_FLOAT )->name;
       }
     | OP DWORD CP exponential_less { 
@@ -2006,7 +2010,7 @@ random_definition_simple:
     | INTEGER {
         $$ = random_value( _environment, VT_SWORD )->name;
     }
-    | FLOAT {
+    | float_or_single {
         $$ = random_value( _environment, VT_FLOAT )->name;
     }
     | DWORD {
@@ -2997,7 +3001,7 @@ exponential_less:
     | OP SIGNED WORD CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SWORD )->name;
       }
-    | OP FLOAT CP OP expr CP {
+    | OP float_or_single CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
       }
     | OP DWORD CP direct_integer {
@@ -4749,6 +4753,22 @@ wait_definition:
     wait_definition_simple
   | wait_definition_expression;
 
+sleep_definition_simple:
+      OP_HASH const_expr {
+      wait_milliseconds( _environment, $2 * 1000 );
+    };
+
+sleep_definition_expression:
+    expr {
+        Variable * seconds = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
+        wait_milliseconds_var( _environment, variable_mul2_const( _environment, seconds->name, 1024 )->name );
+    }
+    ;
+
+sleep_definition:
+    sleep_definition_simple
+  | sleep_definition_expression;
+
 fade_definition:
     expr ticks {
       fade_ticks_var( _environment, $1 );
@@ -5179,7 +5199,11 @@ colormap_definition:
 screen_definition_simple:
     OP_HASH const_expr OP_COMMA OP_HASH const_expr {
       screen_type_color_set( _environment, $2, $5 );
-  } |  direct_integer {   
+  } 
+  | Integer {   
+      screen_mode( _environment, $1 );
+  }
+  |  direct_integer {   
       screen_mode( _environment, $1 );
   }
   | ON {   
@@ -6691,7 +6715,7 @@ datatype :
     | LONG {
         $$ = VT_SDWORD;
     }
-    | FLOAT {
+    | float_or_single {
         $$ = VT_FLOAT;
     }
     | ADDRESS {
@@ -10753,6 +10777,7 @@ statement2nc:
   | RESUME resume_definition
   | UNFREEZE unfreeze_definition
   | WAIT wait_definition
+  | SLEEP sleep_definition
   | CMOB cmob_definition
   | MOB mob_definition
   | SPRITE sprite_definition
@@ -11045,6 +11070,12 @@ statement2nc:
       } else {
           begin_loop( _environment, 0 );  
       }
+  }
+  | LOOP WHILE expr {
+    end_loop_while( _environment, $3 );
+  }
+  | LOOP UNTIL expr {
+    end_loop_until( _environment, $3 );
   }
   | END LOOP {
       end_loop( _environment, 0 );  
