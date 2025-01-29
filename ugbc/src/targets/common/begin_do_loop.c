@@ -61,16 +61,12 @@ If you want to repeat the statements a set number of times,
 the ''FOR...NEXT'' statement is usually a better choice, 
 while if you want to repeat for specific conditions, 
 you should use the ''WHILE...WEND'' and ''REPEAT...UNTIL'' 
-statements. 
+statements.
 
-It can be used, i.e., to ask the user to enter a choice and repeat 
-the menu until the exit option is selected. If you want to exit a loop, 
-make sure the exit condition of the loop 
-is changed within the loop itself, otherwise you may create an 
-infinite loop. If possible, avoid performing complex calculations 
-within the exit condition, as they will be repeated with each iteration
-of the loop.
-
+If you want, you can use a variant of the ''DO...LOOP''
+command by adding the keywords ''WHILE'' or ''UNTIL'' to the end of 
+the ''LOOP'' statement. In this case, the loop will be repeated 
+until the condition is true or false, respectively.
 
 @italian
 
@@ -84,20 +80,16 @@ più complesse.
 Se vuoi ripetere le istruzioni un numero di volte stabilito, l'istruzione 
 ''FOR...NEXT'' è solitamente una scelta migliore, mentre se vuoi 
 ripetere per condizioni specifiche, dovresti usare le istruzioni 
-''WHILE... WEND'' e ''REPEAT...UNTIL''.
+''WHILE... WEND'' e ''REPEAT...UNTIL''. 
 
-Può essere utilizzato, ad esempio, per chiedere all'utente di 
-immettere una scelta e ripetere il menu finché non viene selezionata 
-l'opzione di uscita. Se vuoi uscire da un ciclo, assicurati che 
-la condizione di uscita del ciclo venga modificata all'interno 
-del ciclo stesso, altrimenti potresti creare un ciclo infinito. 
-Se possibile, evita di eseguire calcoli complessi all'interno 
-della condizione di uscita, poiché verranno ripetuti a ogni 
-iterazione del ciclo.
+Volendo, è possibile utilizzare 
+una variante del comando ''DO...LOOP'', aggiungendo in coda all'istruzione 
+''LOOP'' le parole chiavi ''WHILE'' oppure ''UNTIL''. In tal caso, il 
+loop sarà ripetuto fino a che la condizione sarà, rispettivamente, vera oppure falsa.
 
 @syntax DO
 @syntax   ... instructions ...
-@syntax LOOP
+@syntax LOOP [WHILE expr | UNTIL expr]
 
 @example DO
 @example   x = x + 1
