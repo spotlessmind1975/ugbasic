@@ -5175,7 +5175,11 @@ colormap_definition:
 screen_definition_simple:
     OP_HASH const_expr OP_COMMA OP_HASH const_expr {
       screen_type_color_set( _environment, $2, $5 );
-  } |  direct_integer {   
+  } 
+  | Integer {   
+      screen_mode( _environment, $1 );
+  }
+  |  direct_integer {   
       screen_mode( _environment, $1 );
   }
   | ON {   
