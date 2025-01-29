@@ -1363,6 +1363,10 @@ const_factor:
       }
       ;
 
+float_or_single :
+    FLOAT | SINGLE
+    ;
+
 casting :
     OP BIT CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_BIT )->name;
@@ -1382,7 +1386,7 @@ casting :
     | OP SIGNED WORD CP exponential_less { 
         $$ = variable_cast( _environment, $5, VT_SWORD )->name;
       }
-    | OP FLOAT CP exponential_less { 
+    | OP float_or_single CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_FLOAT )->name;
       }
     | OP DWORD CP exponential_less { 
@@ -2005,7 +2009,7 @@ random_definition_simple:
     | INTEGER {
         $$ = random_value( _environment, VT_SWORD )->name;
     }
-    | FLOAT {
+    | float_or_single {
         $$ = random_value( _environment, VT_FLOAT )->name;
     }
     | DWORD {
@@ -2996,7 +3000,7 @@ exponential_less:
     | OP SIGNED WORD CP OP expr CP {
         $$ = variable_cast( _environment, $6, VT_SWORD )->name;
       }
-    | OP FLOAT CP OP expr CP {
+    | OP float_or_single CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
       }
     | OP DWORD CP direct_integer {
@@ -6691,7 +6695,7 @@ datatype :
     | LONG {
         $$ = VT_SDWORD;
     }
-    | FLOAT {
+    | float_or_single {
         $$ = VT_FLOAT;
     }
     | ADDRESS {

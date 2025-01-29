@@ -4617,6 +4617,23 @@ numero in virgola mobile.
 
 @example DIM numero AS FLOAT
 
+@alias SINGLE
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SINGLE (data type)
+
+@english
+
+@italian
+
+@syntax ... AS SINGLE
+
+@example DIM numero AS SINGLE
+
+@alias FLOAT
+
 </usermanual> */
 
 /* <usermanual>
