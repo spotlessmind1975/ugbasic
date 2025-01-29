@@ -643,7 +643,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             _environment->currentModeBW = 4;
-            CPC_GA_MASK( 0xc2, 0x80 );
+            CPC_GA_MASK( 0xc3, 0x80 );
             break;
         // "Mode 1" 320×200 pixels with 4 colors
         case BITMAP_MODE_GRAPHIC1:
@@ -654,7 +654,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            CPC_GA_MASK( 0xc2, 0x81 );
+            CPC_GA_MASK( 0xc3, 0x81 );
             break;
         // "Mode 2" 640×200 pixels with 2 colors
         case BITMAP_MODE_GRAPHIC2:
@@ -665,7 +665,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            CPC_GA_MASK( 0xc2, 0x82 );
+            CPC_GA_MASK( 0xc3, 0x82 );
             break;
         // "Mode 3" 160×200 pixels with 4 colors (2bpp) (this is not an official mode, but rather a side-effect of the hardware)
         case BITMAP_MODE_GRAPHIC3:
@@ -676,7 +676,7 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            CPC_GA_MASK( 0xc2, 0x83 );
+            CPC_GA_MASK( 0xc3, 0x83 );
             break;
     }
 
