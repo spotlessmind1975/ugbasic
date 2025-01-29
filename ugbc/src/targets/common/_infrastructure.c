@@ -8622,6 +8622,9 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
 
     if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
         if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+            if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] >= array->arrayDimensionsEach[0] ) {
+                CRITICAL_ARRAY_OUT_OF_BOUND( _array );
+            }
             variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
         } else {
             Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
@@ -8634,6 +8637,9 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
                 baseValue *= array->arrayDimensionsEach[j];
             }
             if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
+                if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] >= array->arrayDimensionsEach[array->arrayDimensions-i-1] ) {
+                    CRITICAL_ARRAY_OUT_OF_BOUND( _array );
+                }
                 variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
             } else {
                 Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
