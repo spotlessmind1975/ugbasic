@@ -527,6 +527,7 @@ TEXTATSP0C
 
 TEXTATSKIPTAB
     DEC <TABSTODRAW
+    LEAX 1, X
     JMP TEXTATINCX
 
     ; Go ahead by one character.
@@ -539,6 +540,10 @@ TEXTATINCX
 
     ; Exit if the string is ended
     
+    LDA <TABSTODRAW
+    CMPA 0
+    BNE TEXTATNEXT
+
     CMPB #0
     LBEQ TEXTATEND2
 

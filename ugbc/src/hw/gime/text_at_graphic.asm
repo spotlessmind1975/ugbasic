@@ -622,6 +622,10 @@ TEXTATBMINCX
 
     INC <XCURSYS
 
+    LDA <TABSTODRAW
+    CMPA 0
+    BNE TEXTATBMNEXT
+
     ; Exit if the string is ended.
     
     CMPB #0
@@ -681,6 +685,7 @@ TEXTATBMNEXT
     ; tabs marker, move ahead and loop.
 
     LDA TABSTODRAW
+    LBNE TEXTATBMLOOP2
 
     ; Exit if the string is ended.
     
