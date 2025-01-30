@@ -38,6 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
  * @brief Emit code for <strong>SERIAL READ datatype</strong>
  * 
@@ -53,8 +55,39 @@
 
 Variable * serial_read_type( Environment * _environment, VariableType _datatype ) {
 
-    Variable * result = variable_temporary( _environment, _datatype, "(data)" );
+    Variable * data = variable_temporary( _environment, _datatype, "(data)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-    return result;
+    switch( VT_BITWIDTH( data->type ) ) {
+        case 32: 
+        case 16: 
+        case 8: {            
+            cpu_store_8bit( _environment, size->realName, VT_BITWIDTH( data->type ) >> 3 );
+            cpu_addressof_16bit( _environment, data->realName, address->realName );
+            break;
+        }
+        default:
+        case 0: {
+            CRITICAL_SERIAL_READ_UNSUPPORTED( DATATYPE_AS_STRING[_datatype]);
+            break;
+        }
+    }
+
+    coco_serial_read( _environment, address->realName, size->realName );
+    
+    switch( VT_BITWIDTH( data->type ) ) {
+        case 32: 
+            cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "3" ) );
+            cpu_swap_8bit( _environment, address_displacement( _environment, data->realName, "1" ), address_displacement( _environment, data->realName, "2" ) );
+            break;
+        case 16: 
+            cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "1" ) );
+            break;
+        case 8:
+            break;
+    }
+    
+    return data;
 
 }
