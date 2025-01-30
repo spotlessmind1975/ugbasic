@@ -46,7 +46,7 @@ void pia_inkey( Environment * _environment, char * _key ) {
 
     if ( _environment->keyboardConfig.sync ) {
         deploy( scancode, src_hw_pia_scancode_asm);
-        outline0("JSR SCANCODE");
+        outline0("JSR INKEY");
         outline0("LDA KEYPRESS");
         outline1("STA %s", _key);
     } else {
