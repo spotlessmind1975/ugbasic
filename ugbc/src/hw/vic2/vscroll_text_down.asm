@@ -35,9 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+VSCROLLTDOWN:
+
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
 
-VSCROLLTDOWN:
     LDA TEXTADDRESS
     STA COPYOFTEXTADDRESS
     LDA TEXTADDRESS+1
