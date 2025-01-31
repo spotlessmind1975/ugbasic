@@ -124,7 +124,7 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
 
     MAKE_LABEL
 
-    const int bufferSizeSegment = 40;
+    const int bufferSizeSegment = 32;
 
     Variable * value = variable_retrieve( _environment, _value );
     Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(temporary buffer)" );
@@ -188,7 +188,6 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_mem_move_size( _environment, sourceAddress->realName, targetAddress->realName, bufferSizeSegment );
     cpu_math_add_16bit_const( _environment, sourceAddress->realName, bufferSizeSegment, sourceAddress->realName );
     cpu_math_add_16bit_const( _environment, bufferSize->realName, -bufferSizeSegment, bufferSize->realName );
-
     text_text( _environment, dstring->name, 0 );
 
     cpu_jump( _environment, printBufferLabel );
@@ -200,7 +199,6 @@ void print_buffer( Environment * _environment, char * _value, int _new_line, int
     cpu_dsfree( _environment, dstring->realName );
     cpu_dsalloc( _environment, restSize->realName, dstring->realName );
     cpu_dsdescriptor( _environment, dstring->realName, targetAddress->realName, size->realName );
-    outline3("; cpu_mem_move( _environment, %s, %s, %s ) ", sourceAddress->realName, targetAddress->realName, restSize->realName );
     cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, restSize->realName );
     text_text( _environment, dstring->name, 0 );
     cpu_dsfree( _environment, dstring->realName );
