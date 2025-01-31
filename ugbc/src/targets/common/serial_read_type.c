@@ -63,7 +63,7 @@ E' possibile leggere un tipo di dato specifico, indicandolo di seguito al comand
 
 #if ! defined( __coco__ )
 
-Variable * serial_read( Environment * _environment, VariableType _datatype ) {
+Variable * serial_read_type( Environment * _environment, VariableType _datatype ) {
 
     Variable * result = variable_temporary( _environment, _datatype, "(data)" );
 

@@ -63,7 +63,7 @@ E' possibile scrivere un tipo di dato specifico, indicandolo di seguito al param
 
 #if ! defined( __coco__ )
 
-Variable * serial_write( Environment * _environment, char * _data, VariableType _type ) {
+Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
 
     Variable * result = variable_temporary( _environment, _type, "(status)" );
 
