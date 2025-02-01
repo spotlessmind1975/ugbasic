@@ -33,7 +33,7 @@
 
 #include "../ugbc.h"
 
-#define COLOR_BLACK					0
+#define COLOR_BLACK					4
 #define COLOR_YELLOW				2
 #define COLOR_DARK_WHITE			COLOR_YELLOW // WHITE
 #define COLOR_WHITE					COLOR_YELLOW
