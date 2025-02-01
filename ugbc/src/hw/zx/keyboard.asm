@@ -269,18 +269,23 @@ SCANCODE0L1:
 
 SCANCODE0L1Y:
 
-    LD A, (SCANCODEREAD)
-    AND $1
-    CP $0
-    JR Z, SCANCODE0L1YNOSHIFT
+    ; LD A, (SCANCODEREAD)
+    ; AND $1
+    ; CP $0
+    ; JR Z, SCANCODE0L1YNOSHIFT
 
-    ; Key is shifted: we save the key actual pressed.
-    LD A, IYL
-    LD (KEYBOARDACTUAL), A
-    JR SCANCODE0L1YDONE
+    ; ; Key is shifted: we save the key actual pressed.
+    ; LD A, IYL
+    ; LD (KEYBOARDACTUAL), A
+    ; JR SCANCODE0L1YDONE
 
 SCANCODE0L1YNOSHIFT:
 SCANCODE0L1YNOZERO:
+
+    LD A, (KEYBOARDPRESSED)
+    CP 0
+    JR NZ, SCANCODE0L1YDONE
+    
     ; Key is not shifted: we save the key actual pressed.
     LD A, IYL
     LD (KEYBOARDACTUAL), A
