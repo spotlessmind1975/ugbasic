@@ -291,6 +291,8 @@ PLOT7
     SUBA PLOTND
     STA PLOTND
 
+    JSR PLOTPREPARE
+
     JMP PLOTCOMMON
 
 @ENDIF
@@ -340,6 +342,8 @@ PLOT8
     LDA #7
     SUBA PLOTND
     STA PLOTND
+
+    JSR PLOTPREPARE
 
     JMP PLOTCOMMON
 
@@ -395,6 +399,8 @@ PLOT9
     SUBA PLOTND
     STA PLOTND
 
+    JSR PLOTPREPARE
+
     JMP PLOTCOMMON
 
 @ENDIF
@@ -444,6 +450,8 @@ PLOT10
     LDA #7
     SUBA PLOTND
     STA PLOTND
+
+    JSR PLOTPREPARE
 
     JMP PLOTCOMMON
 
@@ -499,6 +507,8 @@ PLOT11
     SUBA PLOTND
     STA PLOTND
 
+    JSR PLOTPREPARE
+
     JMP PLOTCOMMON
 
 @ENDIF
@@ -548,6 +558,8 @@ PLOT12
     LDA #7
     SUBA PLOTND
     STA PLOTND
+
+    JSR PLOTPREPARE
 
     JMP PLOTCOMMON
 
@@ -603,6 +615,8 @@ PLOT13
     SUBA PLOTND
     STA PLOTND
 
+    JSR PLOTPREPARE
+
     JMP PLOTCOMMON
 
 @ENDIF
@@ -655,11 +669,28 @@ PLOT14
     SUBA PLOTND
     STA PLOTND
 
+    JSR PLOTPREPARE
+
+    LDA PLOTCPE
+    CMPA #4
+    BEQ PLOT14B
+
     JMP PLOTCOMMON
 
-    RTS
+PLOT14B
+    LDA #0
+    STA PLOTOMA
+
+    JMP PLOTCOMMON
 
 @ENDIF
+
+PLOTPREPARE
+    LDA , U
+    STA PLOTAMA
+    LDA , Y
+    STA PLOTOMA
+    RTS
 
 PLOTCOMMON
 
@@ -677,15 +708,14 @@ PLOTCOMMON
     CMPA #3
     BEQ PLOTC                  ;if = 3 then branch to get the color index (0...15)
     JMP PLOTP
-
 PLOTD
     ;---------
     ;set point
     ;---------
 
     LDA , X           ;get row with point in it
-    ANDA , U
-    ORA , Y               ;isolate AND set the point
+    ANDA PLOTAMA
+    ORA PLOTOMA               ;isolate AND set the point
     STA , X           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
 
@@ -694,12 +724,12 @@ PLOTD
     ;-----------
 PLOTE                          ;handled same way as setting a point
     LDA , X           ;get row with point in it
-    ANDA , U
+    ANDA PLOTAMA
     STA , X           ;write back to $A000
     JMP PLOTP                  ;skip the erase-point section
 
 PLOTC
-    LDA , U
+    LDA PLOTAMA
     ANDCC #$FE
     COMA
     STA PLOTNC
