@@ -52,27 +52,35 @@ void text_newline( Environment * _environment ) {
 
     MAKE_LABEL
 
-    variable_move( _environment, "CONSOLEX1", "XCURSYS" );    
+    deploy_begin( text_newline );
 
-    variable_increment( _environment, "YCURSYS" );
+        variable_move( _environment, "CONSOLEX1", "XCURSYS" );    
 
-    Variable * result = variable_greater_than( _environment, "YCURSYS", "CONSOLEY2", 0 );
+        variable_increment( _environment, "YCURSYS" );
 
-    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
-    char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);
+        Variable * result = variable_greater_than( _environment, "YCURSYS", "CONSOLEY2", 0 );
 
-    cpu_bvneq( _environment, result->realName, scrollLabel );
+        char endLabel[MAX_TEMPORARY_STORAGE]; sprintf(endLabel, "%send", label);
+        char scrollLabel[MAX_TEMPORARY_STORAGE]; sprintf(scrollLabel, "%sscroll", label);
 
-    cpu_jump( _environment, endLabel );
+        cpu_bvneq( _environment, result->realName, scrollLabel );
 
-    cpu_label( _environment, scrollLabel );
+        cpu_jump( _environment, endLabel );
 
-    text_vscroll_screen( _environment, -1, 0 );
+        cpu_label( _environment, scrollLabel );
 
-    variable_move( _environment, "CONSOLEY2", "YCURSYS" );
+        text_vscroll_screen( _environment, -1, 0 );
 
-    cpu_label( _environment, endLabel );
+        variable_move( _environment, "CONSOLEY2", "YCURSYS" );
 
+        cpu_label( _environment, endLabel );
+
+        cpu_return( _environment );
+
+    deploy_end( text_newline );
+
+    cpu_call( _environment, "lib_text_newline");
+    
 }
 
 void text_tab( Environment * _environment ) {
