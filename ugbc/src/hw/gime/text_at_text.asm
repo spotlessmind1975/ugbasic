@@ -541,7 +541,7 @@ TEXTATINCX
     ; Exit if the string is ended
     
     LDA <TABSTODRAW
-    CMPA 0
+    CMPA #0
     BNE TEXTATNEXT
 
     CMPB #0

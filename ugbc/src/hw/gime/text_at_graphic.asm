@@ -623,7 +623,7 @@ TEXTATBMINCX
     INC <XCURSYS
 
     LDA <TABSTODRAW
-    CMPA 0
+    CMPA #0
     BNE TEXTATBMNEXT
 
     ; Exit if the string is ended.
