@@ -847,8 +847,12 @@ void variable_cleanup( Environment * _environment ) {
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
-        int i=0;
-        out1("%s: .BYTE ", dataSegment->realName );
+        int i=0;        
+        if ( dataSegment->data ) {
+            out1("%s: .BYTE ", dataSegment->realName );
+        } else {
+            outhead1("%s: ", dataSegment->realName );
+        }
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
             if ( dataSegment->type ) {
