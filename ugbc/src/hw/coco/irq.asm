@@ -80,6 +80,9 @@ KEYBOARDCOUNTER
 @ENDIF
 
 ISVCIRQ
+    NOP
+    NOP
+    NOP
     JSR IRQSVC
     ; PSHS CC
     PSHS D
@@ -116,8 +119,19 @@ ISVCIRQJ
     STD OLDISVC2
     LDD #ISVCIRQ2
     STD ,X
+    
+    LDX #ISVCIRQ
+    LDA #$7e
+    STA , X
+    LDD #ISVCIRQFAILSAFE
+    LEAX 1, X
+    STA , X
+    LEAX 1, X
+    STB , X
+
     PULS X
     PULS D
+ISVCIRQFAILSAFE
     JMP [OLDISVC]
 ISVCIRQ2
     PSHS D
@@ -127,9 +141,21 @@ ISVCIRQ2
 ISVCIRQ2NORAM
     ; PULS CC
     ; PULS A
+    ORCC #$50
+
+    PSHS X
+    LDX #ISVCIRQ
+    LDA #$12
+    STA , X
+    STA 1, X
+    STA 2, X
+    PULS X
+
     LDA OLDCC
+    ORA #$50
     TFR A, CC
     PULS D
+    ANDCC #$AF
     JMP [OLDISVC2]
 
 NMIISVCIRQ

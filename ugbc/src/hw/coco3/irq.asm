@@ -70,7 +70,9 @@ OLDCC
     fcb $0
 
 ISVCIRQ
-
+    NOP
+    NOP
+    NOP
     PSHS D
     TFR CC, A
     ANDA #$EF
@@ -122,12 +124,33 @@ SKIPGIMEROM
     STD OLDISVC2
     LDD #ISVCIRQ2
     STD ,X
+
+    LDX #ISVCIRQ
+    LDA #$7e
+    STA , X
+    LDD #ISVCIRQFAILSAFE
+    LEAX 1, X
+    STA , X
+    LEAX 1, X
+    STB , X
+
     PULS X
     PULS D
+ISVCIRQFAILSAFE
     JMP [OLDISVC]
 ISVCIRQ2
     ; PULS CC
     ; PULS A
+    ORCC #$50
+
+    PSHS X
+    LDX #ISVCIRQ
+    LDA #$12
+    STA , X
+    STA 1, X
+    STA 2, X
+    PULS X
+
     PSHS D
     LDA RAMENABLED
     BEQ ISVCIRQ2NORAM
@@ -144,10 +167,10 @@ ISVCIRQMMUOK2
     STA GIMEMMU6
 
     LDA OLDCC
-
+    ORA #$50
     TFR A, CC
-
     PULS D
+    ANDCC #$AF
     JMP [OLDISVC2]
 
 NMIISVCIRQ
