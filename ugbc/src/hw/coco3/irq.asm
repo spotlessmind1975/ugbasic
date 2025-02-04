@@ -69,6 +69,9 @@ OLDNMIISVC2
 OLDCC
     fcb $0
 
+OLDD
+    fdb $0
+
 ISVCIRQ
 
     ; Save CC!
