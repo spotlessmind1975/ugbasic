@@ -39,19 +39,19 @@
  ****************************************************************************/
 
 /* <usermanual>
-@keyword FILL (instruction)
+@keyword FILL SCREEN (instruction)
 
 @english
 
-The ''FILL'' command allows you to fill the screen with a particular character.
+The ''FILL SCREEN'' command allows you to fill the screen with a particular character.
 
 @italian
 
-Il comando ''FILL'' permette di riempire lo schermo con un carattere specifico.
+Il comando ''FILL SCREEN'' permette di riempire lo schermo con un carattere specifico.
 
-@syntax FILL x,y,w,h,char,color
+@syntax FILL SCREEN x,y,w,h,char,color
 
-@example FILL 0, 0, COLUMNS / 2, ROWS / 2, ASC('A'), RED
+@example FILL SCREEN 0, 0, COLUMNS / 2, ROWS / 2, ASC('A'), RED
 
 @target all
 </usermanual> */
