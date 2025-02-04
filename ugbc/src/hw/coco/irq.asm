@@ -69,6 +69,9 @@ OLDNMIISVC2
 OLDCC
     fcb $0
 
+OLDD
+    fdb $0
+
 @IF deployed.joystick && !joystickConfig.sync
 JOYSTICKCOUNTER
     fcb $A
@@ -79,16 +82,26 @@ KEYBOARDCOUNTER
     fcb $A
 @ENDIF
 
+    ; Arriving here, we have 12 registers on the stack, as follow:
+    ; S     -> CC
+    ; S+1   -> A
+    ; S+2   -> B
+    ; S+3   -> DP
+    ; S+4   -> X
+    ; S+6   -> Y
+    ; S+8   -> U or S
+    ; S+10  -> PC
+    ;
 ISVCIRQ
-    NOP
-    NOP
-    NOP
-    JSR IRQSVC
-    ; PSHS CC
+
+    ; Save CC!
+
     PSHS D
     TFR CC, A
-    ANDA #$EF
     STA OLDCC
+    PULS D
+
+    JSR IRQSVC
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
@@ -106,57 +119,66 @@ ISVCIRQJ
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
+    PSHS D
     LDD COCOTIMER
     ADDD #$1
     STD COCOTIMER
-    PSHS X
+
     LDD #0
     STD $00e3
     STA $FFDE
-    TFR S, X
-    LEAX +14,X
-    LDD ,X
-    STD OLDISVC2
-    LDD #ISVCIRQ2
-    STD ,X
-    
-    LDX #ISVCIRQ
-    LDA #$7e
-    STA , X
-    LDD #ISVCIRQFAILSAFE
-    LEAX 1, X
-    STA , X
-    LEAX 1, X
-    STB , X
 
-    PULS X
+    LDD 12,S
+    STD OLDISVC2
+
     PULS D
 ISVCIRQFAILSAFE
+
+    PSHS D
+    LDD #ISVCIRQ2
+    STD 12,S
+    PULS D
+
+    ; By calling the old IRQ service routine,
+    ; we give him the original values BUT PC.
+    ; S     -> CC
+    ; S+1   -> A
+    ; S+2   -> B
+    ; S+3   -> DP
+    ; S+4   -> X
+    ; S+6   -> Y
+    ; S+8   -> U or S
+    ; S+10  -> PC <--- now it points to ISVCIRQ2
     JMP [OLDISVC]
 ISVCIRQ2
-    PSHS D
+    ; Arriving here, we have all registers restored.
+    ; So we need to have additional values, ready
+    ; to be used by a PULS CC, PC
+    ; S     -> CC
+    ; S+1   -> PC
+
+    ; Save the actual D register
+    STD OLDD
+
     LDA RAMENABLED
     BEQ ISVCIRQ2NORAM
     STA $FFDF
 ISVCIRQ2NORAM
-    ; PULS CC
-    ; PULS A
-    ORCC #$50
 
-    PSHS X
-    LDX #ISVCIRQ
-    LDA #$12
-    STA , X
-    STA 1, X
-    STA 2, X
-    PULS X
+    ; Push PC
+    LDD OLDISVC2
+    PSHS D
 
+    ; Push CC (restore CC!)
     LDA OLDCC
-    ORA #$50
-    TFR A, CC
-    PULS D
-    ANDCC #$AF
-    JMP [OLDISVC2]
+    ANDA #$AF
+    PSHS A
+
+    ; Restore D register
+    LDD OLDD
+
+    ; We finished!
+    PULS CC, PC    
 
 NMIISVCIRQ
     PSHS D
