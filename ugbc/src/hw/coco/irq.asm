@@ -137,6 +137,12 @@ ISVCIRQFAILSAFE
     PSHS D
     LDD #ISVCIRQ2
     STD 12,S
+
+    ; Disable interrupts when exiting (*sigh*)
+    LDA 2,S
+    ORA #$50
+    STA 2,S
+
     PULS D
 
     ; By calling the old IRQ service routine,
@@ -149,13 +155,17 @@ ISVCIRQFAILSAFE
     ; S+6   -> Y
     ; S+8   -> U or S
     ; S+10  -> PC <--- now it points to ISVCIRQ2
+
     JMP [OLDISVC]
 ISVCIRQ2
+
     ; Arriving here, we have all registers restored.
     ; So we need to have additional values, ready
     ; to be used by a PULS CC, PC
     ; S     -> CC
     ; S+1   -> PC
+
+    ORCC #$50
 
     ; Save the actual D register
     STD OLDD
