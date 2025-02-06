@@ -447,14 +447,19 @@ void variable_cleanup( Environment * _environment ) {
 
     Constant * c = _environment->constants;
     while( c ) {
-        if ( c->valueString ) {
+        if ( c->valueString && c->valueString->value ) {
             int len = strlen( c->valueString->value );
-            out2("%s: db %d,", c->realName, len);
-            int i=0;
-            for (i=0; i<(len-1); ++i ) {
-                out1("$%2.2x,", (unsigned char)c->valueString->value[i]);
+            out2("%s: db %d", c->realName, len);
+            if ( len ) {
+                out0(",");
+                int i=0;
+                for (i=0; i<(len-2); ++i ) {
+                    out1("$%2.2x,", (unsigned char)c->valueString->value[i]);
+                }
+                outline1("$%2.2x", (unsigned char)c->valueString->value[(len-1)]);
+            } else {
+                outline0(" ");
             }
-            outline1("$%2.2x", (unsigned char)c->valueString->value[(len-1)]);
         }
         c = c->next;
     }
@@ -567,7 +572,11 @@ void variable_cleanup( Environment * _environment ) {
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
         int i=0;
-        out1("%s: db ", dataSegment->realName );
+        if ( dataSegment->data ) {
+            out1("%s: db ", dataSegment->realName );
+        } else {
+            outhead1("%s: ", dataSegment->realName );
+        }
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
             if ( dataSegment->type ) {

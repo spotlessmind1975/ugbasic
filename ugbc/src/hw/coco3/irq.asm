@@ -69,11 +69,15 @@ OLDNMIISVC2
 OLDCC
     fcb $0
 
+OLDD
+    fdb $0
+
 ISVCIRQ
+
+    ; Save CC!
 
     PSHS D
     TFR CC, A
-    ANDA #$EF
     STA OLDCC
     PULS D
 
@@ -112,23 +116,44 @@ SKIPGIMEROM
     LDD COCO3TIMER
     ADDD #$1
     STD COCO3TIMER
-    PSHS X
+
     LDD #0
     STD $00e3
     STA $FFDE
-    TFR S, X
-    LEAX +14,X
-    LDD ,X
+
+    LDD 12,S
     STD OLDISVC2
-    LDD #ISVCIRQ2
-    STD ,X
-    PULS X
+
     PULS D
+ISVCIRQFAILSAFE
+
+    PSHS D
+    LDD #ISVCIRQ2
+    STD 12,S
+    PULS D
+
+    ; By calling the old IRQ service routine,
+    ; we give him the original values BUT PC.
+    ; S     -> CC
+    ; S+1   -> A
+    ; S+2   -> B
+    ; S+3   -> DP
+    ; S+4   -> X
+    ; S+6   -> Y
+    ; S+8   -> U or S
+    ; S+10  -> PC <--- now it points to ISVCIRQ2
     JMP [OLDISVC]
 ISVCIRQ2
-    ; PULS CC
-    ; PULS A
-    PSHS D
+
+    ; Arriving here, we have all registers restored.
+    ; So we need to have additional values, ready
+    ; to be used by a PULS CC, PC
+    ; S     -> CC
+    ; S+1   -> PC
+
+    ; Save the actual D register
+    STD OLDD
+
     LDA RAMENABLED
     BEQ ISVCIRQ2NORAM
     STA $FFDF
@@ -143,12 +168,20 @@ ISVCIRQMMUOK2
     LDA BANKSHADOWSHADOW
     STA GIMEMMU6
 
+    ; Push PC
+    LDD OLDISVC2
+    PSHS D
+
+    ; Push CC (restore CC!)
     LDA OLDCC
+    ANDA #$AF
+    PSHS A
 
-    TFR A, CC
+    ; Restore D register
+    LDD OLDD
 
-    PULS D
-    JMP [OLDISVC2]
+    ; We finished!
+    PULS CC, PC    
 
 NMIISVCIRQ
     PSHS D

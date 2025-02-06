@@ -108,6 +108,16 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     // to the next one ... and the characters drawn are 128, then 144, then 160, then 176, 
     // and wrapping around to 128 after drawing character 240:
 
+#if defined( __coco3__ )
+
+    cpu_label( _environment, graphicalCursor );
+    cpu_dec( _environment, underscoreTimer->realName );
+    cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
+    add_complex( _environment, underscore->name, 10, 32, 42, 0 );
+    cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+
+#else
+
     cpu_dec( _environment, underscoreTimer->realName );
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
     add_complex( _environment, underscore->name, 16, 143, 224, 0 );
@@ -119,6 +129,8 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     cpu_compare_and_branch_8bit_const( _environment, underscoreTimer->realName, 0, skipColorChangeLabel, 0 );
     add_complex( _environment, underscore->name, 10, 32, 42, 0 );
     cpu_store_8bit( _environment, underscoreTimer->realName, 128 );
+
+#endif
 
     cpu_label( _environment, skipColorChangeLabel );
 

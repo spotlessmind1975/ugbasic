@@ -1794,6 +1794,8 @@ typedef struct _Deployed {
     int music;
     int sidplayer;
     int wait_key_or_fire;
+    int text_newline;
+    int pen;
     int serial;
 
 } Deployed;

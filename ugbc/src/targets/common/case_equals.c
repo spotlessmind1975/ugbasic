@@ -123,7 +123,12 @@ void case_equals_var( Environment * _environment, char * _value ) {
     ++conditional->index;
     sprintf(elseLabel, "%se%d", conditional->label, conditional->index );
 
-    Variable * result = variable_compare( _environment, conditional->expression->name, value->name );
+    Variable * result;
+    if ( value->initializedByConstant ) {
+        result = variable_compare_const( _environment, conditional->expression->name, value->value );
+    } else {
+        result = variable_compare( _environment, conditional->expression->name, value->name );
+    }
 
     cpu_bveq( _environment, result->realName, elseLabel );
 

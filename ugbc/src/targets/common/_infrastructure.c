@@ -11087,7 +11087,8 @@ char * parse_buffer( Environment * _environment, char * _buffer, int * _size, in
         }
     } else {
         char * unescapedString = unescape_string( _environment, _buffer, 0, _size );
-        buffer = malloc( *_size );
+        buffer = malloc( *_size + 1 );
+        memset( buffer, 0, *_size + 1 );
         memcpy( buffer, unescapedString, *_size );
     }
     

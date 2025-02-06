@@ -2832,6 +2832,7 @@ dojo_functions :
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $1 );
     }
       OP indexes CP {
         VariableType vt = $2;
@@ -2860,6 +2861,7 @@ exponential_less:
             CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
         }
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array;
         if ( ! variable_exists( _environment, $2 ) ) {
@@ -6606,8 +6608,9 @@ add_definition :
         add_complex_mt( _environment, $2, $5, $7, $9, $10 );
     }
     | Identifier OP {
-        parser_array_init( _environment );
+        parser_array_init( _environment );        
     } indexes CP OP_COMMA expr limits {
+        define_implicit_array_if_needed( _environment, $1 );
         add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
         parser_array_cleanup( _environment );
     }
@@ -7516,7 +7519,11 @@ fill_definition_optional_count :
     };
 
 fill_definition_array :
-    Identifier WITH const_expr {
+    Identifier {
+        define_implicit_array_if_needed( _environment, $1 );
+        variable_array_fill( _environment, $1, 0 );
+    }
+    | Identifier WITH const_expr {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, $3 );
     }
@@ -7547,63 +7554,17 @@ fill_definition_array :
     ;
 
 fill_definitions_array :
-      fill_definition_array
-    | fill_definition_array OP_COMMA fill_definitions_array
+    fill_definition_array
+    | fill_definition_array OP_COMMA fill_definitions_array;
+    
+fill_definitions :
+    fill_definitions_array
+    ;
 
-fill_definition :
+fill_screen_definition : 
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         fill( _environment, $1, $3, $5, $7, $9, $11 );
     };
-
-fill_definitions :
-    fill_definitions_array
-    | expr {
-        /* retrocompatible hacks */
-        define_implicit_array_if_needed( _environment, $1 );
-        variable_array_fill( _environment, $1, 0 );
-    }
-    | expr OP_COMMA expr {
-        /* retrocompatible hacks */
-        define_implicit_array_if_needed( _environment, $1 );
-        variable_array_fill( _environment, $1, 0 );
-        define_implicit_array_if_needed( _environment, $3 );
-        variable_array_fill( _environment, $3, 0 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr {
-        /* retrocompatible hacks */
-        define_implicit_array_if_needed( _environment, $1 );
-        variable_array_fill( _environment, $1, 0 );
-        define_implicit_array_if_needed( _environment, $3 );
-        variable_array_fill( _environment, $3, 0 );
-        define_implicit_array_if_needed( _environment, $5 );
-        variable_array_fill( _environment, $5, 0 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        /* retrocompatible hacks */
-        define_implicit_array_if_needed( _environment, $1 );
-        variable_array_fill( _environment, $1, 0 );
-        define_implicit_array_if_needed( _environment, $3 );
-        variable_array_fill( _environment, $3, 0 );
-        define_implicit_array_if_needed( _environment, $5 );
-        variable_array_fill( _environment, $5, 0 );
-        define_implicit_array_if_needed( _environment, $7 );
-        variable_array_fill( _environment, $7, 0 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        /* retrocompatible hacks */
-        define_implicit_array_if_needed( _environment, $1 );
-        variable_array_fill( _environment, $1, 0 );
-        define_implicit_array_if_needed( _environment, $3 );
-        variable_array_fill( _environment, $3, 0 );
-        define_implicit_array_if_needed( _environment, $5 );
-        variable_array_fill( _environment, $5, 0 );
-        define_implicit_array_if_needed( _environment, $7 );
-        variable_array_fill( _environment, $7, 0 );
-        define_implicit_array_if_needed( _environment, $9 );
-        variable_array_fill( _environment, $9, 0 );
-    }
-    | fill_definition
-    ;
 
 shuffle_definition_optional_rounds : 
     {
@@ -8499,6 +8460,7 @@ read_definition_single :
     | read_safeness Identifier OP_DOLLAR {
         parser_array_init( _environment );
     } OP indexes CP {
+        define_implicit_array_if_needed( _environment, $2 );
         Variable * a = variable_retrieve( _environment, $2 );
         if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
@@ -10313,6 +10275,7 @@ travel_definition :
     }
     | Identifier OP {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $1 );
     } indexes CP TO expr OP_COMMA expr {
         Variable * path = variable_move_from_array( _environment, $1 );
         travel_path( _environment, path->name, $7, $9 );
@@ -10974,12 +10937,14 @@ statement2nc:
   | INC Identifier OP {
         parser_array_init( _environment );
     } indexes CP {
+        define_implicit_array_if_needed( _environment, $2 );
         variable_increment_array( _environment, $2 );
         parser_array_cleanup( _environment );
   }
   | DEC Identifier OP {
         parser_array_init( _environment );
     } indexes CP {
+        define_implicit_array_if_needed( _environment, $2 );
         variable_decrement_array( _environment, $2 );
         parser_array_cleanup( _environment );
   }
@@ -11586,6 +11551,7 @@ statement2nc:
   | OFFSET offset_definitions
   | DIM dim_definitions
   | FILL fill_definitions
+  | FILL SCREEN fill_screen_definition
   | SHUFFLE shuffle_definition
   | const_instruction const_definitions
   | POSITIVE const_instruction positive_const_definitions
@@ -11776,6 +11742,7 @@ statement2nc:
   }
   | Identifier {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $1 );
     } datatype OP indexes CP OP_ASSIGN expr {
         Variable * x = variable_retrieve( _environment, $8 );
         Variable * a = variable_retrieve( _environment, $1 );
@@ -11793,6 +11760,7 @@ statement2nc:
   }
   | OSP Identifier CSP {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
     }
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
@@ -11806,6 +11774,7 @@ statement2nc:
   }
   | OSP Identifier OP_DOLLAR CSP {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
     } OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * x = variable_retrieve( _environment, $7 );
@@ -11824,6 +11793,7 @@ statement2nc:
   }
   | OSP Identifier CSP {
         parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
     } datatype OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * x = variable_retrieve( _environment, $7 );

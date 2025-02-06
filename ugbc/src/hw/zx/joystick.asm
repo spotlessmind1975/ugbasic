@@ -41,6 +41,53 @@ JOYSTICK:
 JOYSTICK0:
     LD C, 0
 
+@IF tenLinerRulesEnforced
+
+; #define KEY_E                      12
+JOYSTICK0UP:
+    LD A, 12
+    CALL KEYSTATE
+    JR NC, JOYSTICK0DOWN
+    LD C, 1
+
+; #define KEY_D                       7
+JOYSTICK0DOWN:
+    LD A, 7
+    CALL KEYSTATE
+    JR NC, JOYSTICK0LEFT
+    LD A, C
+    OR 2
+    LD C, A
+
+; #define KEY_O                       26
+JOYSTICK0LEFT:
+    LD A, 26
+    CALL KEYSTATE
+    JR NC, JOYSTICK0RIGHT
+    LD A, C
+    OR 4
+    LD C, A
+
+; #define KEY_P                       7
+JOYSTICK0RIGHT:
+    LD A, 25
+    CALL KEYSTATE
+    JR NC, JOYSTICK0FIRE
+    LD A, C
+    OR 8
+    LD C, A
+
+; #define KEY_SPACE					35
+JOYSTICK0FIRE:
+    LD A, 35
+    CALL KEYSTATE
+    JR NC, JOYSTICK0DONE
+    LD A, C
+    OR 16
+    LD C, A
+
+@ELSE
+
 ; #define KEY_W                      11
 JOYSTICK0UP:
     LD A, 11
@@ -83,6 +130,9 @@ JOYSTICK0FIRE:
     LD A, C
     OR 16
     LD C, A
+
+@ENDIF
+
 
 JOYSTICK0DONE:
     LD A, C

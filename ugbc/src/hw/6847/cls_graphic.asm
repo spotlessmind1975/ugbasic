@@ -84,12 +84,15 @@ CLS13
 CLS8
 CLS10
 CLS12
+    LDA #$0
+    JMP CLSG2
+
 CLS14
-    ; LDA _PAPER
-    ; CMPA #0
-    ; BEQ CLSG0
-    ; LDA #$FF
-    ; JMP CLSG2
+    LDA _PAPER
+    CMPA #4
+    BEQ CLSG0
+    LDA #$FF
+    JMP CLSG2
 CLSG0    
     LDA #$0
     JMP CLSG2

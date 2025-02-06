@@ -755,7 +755,7 @@ generated/msx1/exe/%.rom:
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
 	@rm $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin)
-	@$(Z80APPMAKE) +msxrom -b $(@:.rom=.bin) 2>/dev/null
+	@$(Z80APPMAKE) +msxrom -b $(@:.rom=.bin)
 	@rm -f $(@:.rom=.bin) $(@:.rom=_*.bin)
 
 generated/msx1/exe/%.dsk:

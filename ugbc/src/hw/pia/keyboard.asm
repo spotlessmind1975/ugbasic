@@ -86,6 +86,18 @@ KEYBOARDMANAGER
 
     LDA #$FF
     STA $FF02
+
+    ; The way to reject phantom keypresses when a button is pressed is to set 
+    ; FF02 to FF and then read FF00. If you get a 0 in that case, the button 
+    ; is down and you know scanning for keys isn't going to tell you anything 
+    ; useful for that column. That's what POLCAT does (at least later versions - 
+    ; there are, in fact, substantially different versions between Color Basic 
+    ; ROM versions) - they check for joystick buttons and if there are any 
+    ; pressed, just return "no key down".
+    
+    LDA $FF00
+    BEQ SCANCODEE
+        
     LDX #SCANCODEREAD
     LDA #$FE
 SCANCODE0

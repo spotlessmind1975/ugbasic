@@ -276,6 +276,8 @@ SWITCHTILEMAP1:
 @ENDIF
 
 
+@IF enableRle
+
     ; Decompress RLE encoded images.
     ;
     ; Input: 
@@ -371,5 +373,6 @@ RLEDECOMPRESSVALUE:
     CLC
     RTS
 
+@ENDIF
 
 

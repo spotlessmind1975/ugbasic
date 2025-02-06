@@ -536,6 +536,8 @@ const_factor:
 
         if ( strcmp( $1, "expansionBanks" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->expansionBanks ? 1 : 0;
+        } else if ( strcmp( $1, "tenLinerRulesEnforced" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->tenLinerRulesEnforced;
         } else if ( strcmp( $1, "currentMode" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->currentMode;
         } else if ( strcmp( $1, "outputFileType" ) == 0 ) {
