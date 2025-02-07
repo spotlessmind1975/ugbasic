@@ -516,7 +516,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if( po_buf_match( buf[0], " LD *, (*+*)",  tmp, arg, ofs ) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
+    } } else if( po_buf_match( buf[0], " LD *, (*+*)",  tmp, arg, ofs ) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_rd++;
     } } else if( po_buf_match( buf[0], " LD *, (*)",  tmp, arg ) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_rd++;
+    } } else if( po_buf_match( buf[0], " LD *,(*)",  tmp, arg ) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
     } }
@@ -524,7 +530,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     if (po_buf_match( buf[0], " LD (*+*), *", arg, ofs, tmp) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
+    } } else if (po_buf_match( buf[0], " LD (*+*),*", arg, ofs, tmp) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_wr++;
     } } else if (po_buf_match( buf[0], " LD (*), *", arg, tmp) ) { if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->nb_wr++;
+    } } else if (po_buf_match( buf[0], " LD (*),*", arg, tmp) ) { if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
     } }
