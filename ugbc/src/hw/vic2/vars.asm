@@ -104,15 +104,15 @@ CONSOLEX1:    .byte 0         ; <-- input from program (chars)
 CONSOLEY1:    .byte 0         ; <-- input from program (chars)
 CONSOLEX2:    .byte 31        ; <-- recalculated (chars)
 CONSOLEY2:    .byte 15        ; <-- recalculated (chars)
-CONSOLEW:     .byte 32        ; <-- calculated (chars)
-CONSOLEH:     .byte 16        ; <-- calculated (chars)
+CONSOLEW:     .byte 40        ; <-- calculated (chars)
+CONSOLEH:     .byte 25        ; <-- calculated (chars)
 ;
 ; Graphic mode
 ;
 CONSOLESA:    .word 0         ; <-- calculated (address)
 CONSOLECA:    .word 0         ; <-- calculated (address)
-CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
-CONSOLEHB:    .byte 16        ; <-- calculated (bytes)
+CONSOLEWB:    .byte 40        ; <-- calculated (bytes)
+CONSOLEHB:    .byte 25        ; <-- calculated (bytes)
 ;
 CONSOLES:     .res  32        ; <-- storage for virtual consoles
 CONSOLES2:    .res   8        ; <-- storage for memorize / remember
