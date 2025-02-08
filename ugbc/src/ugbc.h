@@ -3413,6 +3413,7 @@ typedef struct _Environment {
 
 #define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK(d,f) CRITICALB3("B001 - cannot read executable for disk image", d, f );
 #define CRITICAL_BUILD_INVALID_FILENAME_K7(f) CRITICALB2("B002 - invalid filename for K7 format", f );
+#define CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM(s) CRITICALB2i("B003 - binary file too big for ROM image", s );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
