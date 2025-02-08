@@ -161,7 +161,11 @@ void begin_for_from_assign( Environment * _environment, char * _from ) {
     Variable * from = variable_retrieve( _environment, _from );
     Variable * fromResident = variable_resident( _environment, loop->index->type, "(from)" );
 
-    variable_move( _environment, from->name, fromResident->name );
+    if ( from->initializedByConstant ) {
+        variable_store( _environment, fromResident->name, from->value );
+    } else {
+        variable_move( _environment, from->name, fromResident->name );
+    }
 
     cpu_return( _environment );
 
@@ -190,7 +194,11 @@ void begin_for_to_assign( Environment * _environment, char * _to ) {
     Variable * to = variable_retrieve( _environment, _to );
     Variable * toResident = variable_resident( _environment, loop->index->type, "(to)" );
 
-    variable_move( _environment, to->name, toResident->name );
+    if ( to->initializedByConstant ) {
+        variable_store( _environment, toResident->name, to->value );
+    } else {
+        variable_move( _environment, to->name, toResident->name );
+    }
 
     cpu_return( _environment );
 
@@ -229,7 +237,12 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
         }
         // In this version, the step is given
         stepResident = variable_resident( _environment, maxType, "(step)" );
-        variable_move( _environment, step->name, stepResident->name );
+
+        if ( step->initializedByConstant  ) {
+            variable_store( _environment, step->name, step->value );
+        } else {
+            variable_move( _environment, step->name, stepResident->name );            
+        }
         loop->step = step;
         loop->step->locked = 1;
     } else {
