@@ -68,29 +68,37 @@ void memorize( Environment * _environment ) {
 
     MAKE_LABEL
 
-    char doNothingLabel2[MAX_TEMPORARY_STORAGE];
-    sprintf( doNothingLabel2, "%sdonothing", label );
-    
-    cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 0 );
-    // console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
-    // console_save( _environment, 0 );
-    cpu_store_8bit( _environment, "CONSOLEID", 0 );
-    cpu_label( _environment, doNothingLabel2 );
+    deploy_begin( memorize );
 
-    Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
-    Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
+        char doNothingLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( doNothingLabel2, "%sdonothing", label );
+        
+        cpu_compare_and_branch_8bit_const( _environment, "CONSOLEID", 0xff, doNothingLabel2, 0 );
+        // console( _environment, 0, 0, _environment->screenTilesWidth - 1, _environment->screenTilesHeight - 1 );
+        // console_save( _environment, 0 );
+        cpu_store_8bit( _environment, "CONSOLEID", 0 );
+        cpu_label( _environment, doNothingLabel2 );
 
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
-    cpu_addressof_16bit( _environment, "CONSOLES2", address->realName  );
+        Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
+        Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 
-    Variable * displacement = variable_temporary( _environment, VT_BYTE, "(displacement)" );
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(consoles)" );
+        cpu_addressof_16bit( _environment, "CONSOLES2", address->realName  );
 
-    cpu_move_8bit( _environment, "CONSOLEID", displacement->realName );
-    cpu_math_mul2_const_8bit( _environment, displacement->realName, 1, 0 );
-    cpu_math_add_16bit_with_8bit( _environment, address->realName, displacement->realName, address->realName );
+        Variable * displacement = variable_temporary( _environment, VT_BYTE, "(displacement)" );
 
-    cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
-    cpu_inc_16bit( _environment, address->realName );
-    cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
+        cpu_move_8bit( _environment, "CONSOLEID", displacement->realName );
+        cpu_math_mul2_const_8bit( _environment, displacement->realName, 1, 0 );
+        cpu_math_add_16bit_with_8bit( _environment, address->realName, displacement->realName, address->realName );
+
+        cpu_move_8bit_indirect( _environment, xcursys->realName, address->realName );
+        cpu_inc_16bit( _environment, address->realName );
+        cpu_move_8bit_indirect( _environment, ycursys->realName, address->realName );
+
+        cpu_return( _environment ); 
+
+    deploy_end( memorize );
+
+    cpu_call( _environment, "lib_memorize");
 
 }

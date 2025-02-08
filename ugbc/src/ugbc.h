@@ -1796,6 +1796,8 @@ typedef struct _Deployed {
     int wait_key_or_fire;
     int text_newline;
     int pen;
+    int remember;
+    int memorize;
 
 } Deployed;
 
