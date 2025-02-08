@@ -186,9 +186,9 @@ void generate_rom( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcpy( pipes, "");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcpy( pipes, "");
     #endif
 
     sprintf( commandLine, "\"%s\" +msxrom -b \"%s\" %s",
