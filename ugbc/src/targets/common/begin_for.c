@@ -161,7 +161,11 @@ void begin_for_from_assign( Environment * _environment, char * _from ) {
     Variable * from = variable_retrieve( _environment, _from );
     Variable * fromResident = variable_resident( _environment, loop->index->type, "(from)" );
 
-    variable_move( _environment, from->name, fromResident->name );
+    if ( from->initializedByConstant ) {
+        variable_store( _environment, fromResident->name, from->value );
+    } else {
+        variable_move( _environment, from->name, fromResident->name );
+    }
 
     cpu_return( _environment );
 
@@ -190,7 +194,11 @@ void begin_for_to_assign( Environment * _environment, char * _to ) {
     Variable * to = variable_retrieve( _environment, _to );
     Variable * toResident = variable_resident( _environment, loop->index->type, "(to)" );
 
-    variable_move( _environment, to->name, toResident->name );
+    if ( to->initializedByConstant ) {
+        variable_store( _environment, toResident->name, to->value );
+    } else {
+        variable_move( _environment, to->name, toResident->name );
+    }
 
     cpu_return( _environment );
 
@@ -229,7 +237,12 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
         }
         // In this version, the step is given
         stepResident = variable_resident( _environment, maxType, "(step)" );
-        variable_move( _environment, step->name, stepResident->name );
+
+        if ( step->initializedByConstant  ) {
+            variable_store( _environment, step->name, step->value );
+        } else {
+            variable_move( _environment, step->name, stepResident->name );            
+        }
         loop->step = step;
         loop->step->locked = 1;
     } else {
@@ -286,31 +299,85 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
 
     cpu_label( _environment, beginFor );
 
-    cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->stepResident->name, 0, 0)->realName, forwardFor );
+    if ( !loop->step || loop->step->initializedByConstant ) {
 
-    cpu_jump( _environment, backwardFor );
+        if ( !loop->step || loop->step->value > 0 ) {
 
-    cpu_label( _environment, forwardFor );
+            if ( loop->from->initializedByConstant ) {
+                // Finish the loop if the index is less than lower bound.
+                isLastStep = variable_less_than_const( _environment, index->name, loop->from->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                // Finish the loop if the index is less than lower bound.
+                isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
+        
+            if ( loop->from->initializedByConstant ) {
+                // Finish the loop if the index is less than upper bound.
+                isLastStep = variable_greater_than_const( _environment, index->name, loop->to->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                // Finish the loop if the index is less than upper bound.
+                isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
 
-    // Finish the loop if the index is less than lower bound.
-    isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
-    cpu_bvneq( _environment, isLastStep->realName, endFor );
+        } else if ( loop->step->value < 0 ) {
 
-    // Finish the loop if the index is less than upper bound.
-    isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
-    cpu_bvneq( _environment, isLastStep->realName, endFor );
+            // Finish the loop if the index is less than lower bound.
+            if ( loop->from->initializedByConstant ) {
+                isLastStep = variable_greater_than_const( _environment, index->name, loop->from->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
+        
+            // Finish the loop if the index is less than upper bound.
+            if ( loop->to->initializedByConstant ) {
+                isLastStep = variable_less_than_const( _environment, index->name, loop->to->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
 
-    cpu_jump( _environment, continueFor );
+        } else {
 
-    cpu_label( _environment, backwardFor );
+            cpu_jump( _environment, endFor );
 
-    // Finish the loop if the index is less than lower bound.
-    isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
-    cpu_bvneq( _environment, isLastStep->realName, endFor );
+        }
+    
+    } else {
 
-    // Finish the loop if the index is less than upper bound.
-    isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
-    cpu_bvneq( _environment, isLastStep->realName, endFor );
+        cpu_bvneq( _environment, variable_greater_than_const( _environment, loop->stepResident->name, 0, 0)->realName, forwardFor );
+
+        cpu_jump( _environment, backwardFor );
+    
+        cpu_label( _environment, forwardFor );
+    
+        // Finish the loop if the index is less than lower bound.
+        isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
+    
+        // Finish the loop if the index is less than upper bound.
+        isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
+    
+        cpu_jump( _environment, continueFor );
+    
+        cpu_label( _environment, backwardFor );
+    
+        // Finish the loop if the index is less than lower bound.
+        isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
+    
+        // Finish the loop if the index is less than upper bound.
+        isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
+        cpu_bvneq( _environment, isLastStep->realName, endFor );
+    
+    }
 
     cpu_label( _environment, continueFor );
 

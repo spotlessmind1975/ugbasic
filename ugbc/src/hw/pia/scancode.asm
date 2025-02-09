@@ -44,8 +44,6 @@ SCANCODE
     ; CLR $FF01
     ; CLR $FF00
     ; CLR $FF03
-    LDA #$FF
-    STA $FF02
 
     ; The way to reject phantom keypresses when a button is pressed is to set 
     ; FF02 to FF and then read FF00. If you get a 0 in that case, the button 
@@ -54,10 +52,14 @@ SCANCODE
     ; there are, in fact, substantially different versions between Color Basic 
     ; ROM versions) - they check for joystick buttons and if there are any 
     ; pressed, just return "no key down".
-    
+
+    LDA #$FF
+    STA $FF02
     LDA $FF00
-    BEQ SCANCODEE
-        
+    COMA
+    ANDA #$7F
+    BNE SCANCODEE
+            
     LDX #SCANCODEMATRIX
     LDA #$FE
 SCANCODE0

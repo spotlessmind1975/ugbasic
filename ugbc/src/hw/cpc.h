@@ -227,7 +227,7 @@ void cpc_joy_vars( Environment * _environment, char * _port, char * _value );
 #define DEFAULT_PAPER_COLOR         COLOR_BLACK
 
 #define TEXT_COLUMNS_COUNT          20
-#define TEXT_ROWS_COUNT             25
+#define TEXT_ROWS_COUNT             24
 
 #define BITMAP_MODE_GRAPHIC0        0           // "Mode 0" 160×200 pixels with 16 colors
 #define BITMAP_MODE_GRAPHIC1        1           // "Mode 1" 320×200 pixels with 4 colors

@@ -1172,6 +1172,11 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
+    variable_import( _environment, "PENT", VT_BYTE, 0x0 );
+    variable_global( _environment, "PENT" );
+    variable_import( _environment, "PAPERT", VT_BYTE, 0x0 );
+    variable_global( _environment, "PAPERT" );
+
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
 
     console_init( _environment );

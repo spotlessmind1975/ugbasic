@@ -8437,7 +8437,12 @@ read_safeness :
     };
 
 read_definition_single :
-     read_safeness Identifier {
+     read_safeness Identifier as_datatype_suffix_optional {
+        if ( $3 ) {
+            if ( !variable_exists( _environment, $2 ) ) {
+                variable_define( _environment, $2, $3, 0 );
+            }
+        }
         read_data( _environment, $2, $1 );
     }
     | read_safeness Identifier {

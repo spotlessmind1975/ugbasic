@@ -55,7 +55,7 @@ CLINE:
 
     LD A, (XCURSYS)
     LD B, A
-    LD A, (CONSOLEWB)
+    LD A, (CONSOLEW)
     SUB B
 CLINEC:
     LD C, A

@@ -5169,8 +5169,7 @@ void z80_move_8bit_indirect2_8bit( Environment * _environment, char * _value, ch
     outline1("LD HL, %s", _value);
     outline1("LD A, (%s)", _offset);
     outline0("LD E, A");
-    outline0("LD A, 0");
-    outline0("LD D, A");
+    outline0("LD D, 0");
     outline0("ADD HL, DE");
     outline0("LD A, (HL)");
     outline1("LD (%s), A", _source );
