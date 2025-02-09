@@ -106,8 +106,13 @@ void end_for( Environment * _environment ) {
             variable_compare_and_branch_const( _environment, loop->index->name, 0, endFor, 1 );
         }
 
-        Variable * isLastStep = variable_compare( _environment, loop->index->name, loop->fromResident->name );
-        cpu_bvneq( _environment, isLastStep->realName, endFor );
+        if ( loop->from->initializedByConstant ) {
+            Variable * isLastStep = variable_compare_const( _environment, loop->index->name, loop->from->value );
+            cpu_bvneq( _environment, isLastStep->realName, endFor );    
+        } else {
+            Variable * isLastStep = variable_compare( _environment, loop->index->name, loop->fromResident->name );
+            cpu_bvneq( _environment, isLastStep->realName, endFor );
+        }
 
     } else {
         parser_array_init( _environment );

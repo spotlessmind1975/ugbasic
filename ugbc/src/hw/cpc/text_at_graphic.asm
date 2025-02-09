@@ -35,6 +35,30 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+TEXTATPENDECODE:
+    PUSH AF
+    LD A, (_PEN)
+    LD IXL, A
+    LD A, 1
+    LD IYL, A
+    CALL CPCSELECTPALETTE
+    LD A, IXH
+    LD (PENT), A
+    POP AF
+    RET
+
+TEXTATPAPERDECODE:
+    PUSH AF
+    LD A, (_PAPER)
+    LD IXL, A
+    LD A, 1
+    LD IYL, A
+    CALL CPCSELECTPALETTE
+    LD A, IXH
+    LD (PAPERT), A
+    POP AF
+    RET
+
 TEXTATDECODE:
     CP 123
     JR NC, TEXTATDECODEX1F
@@ -67,6 +91,15 @@ TEXTATBMGO:
 
     LD A, 0
     LD (TABSTODRAW), A
+
+    LD A, (CURRENTMODE)
+    CP 2
+    JR Z, TEXTATBMGO2
+
+    CALL TEXTATPENDECODE
+    CALL TEXTATPAPERDECODE
+    
+TEXTATBMGO2:
 
 TEXTATBMSKIP:
 
@@ -169,11 +202,13 @@ TEXTATBMPARSEPEN:
     LD A, 0
 TEXTATBMPARSEPEN2:
     LD (_PEN), A
+    CALL TEXTATPENDECODE
     JP TEXTATBMNEXT
 
 TEXTATBMPARSEPAPER:
     CALL TEXTATREADCHAR
     LD (_PAPER), A
+    CALL TEXTATPAPERDECODE
     ; STA $d021
     ; STA $d020
     JP TEXTATBMNEXT
@@ -301,15 +336,10 @@ TEXTATBMPRINT:
 TEXTATFONT0L1X:
 TEXTATFONT0L1:
 
-    LD A, (_PEN)
-    LD IXL, A
-    LD A, 1
-    LD IYL, A
-    CALL CPCSELECTPALETTE
-    LD A, IXH
-    LD B, A
-
     PUSH DE
+
+    LD A, (PENT)
+    LD B, A
 
     LD A, (HL)
     SRL A
@@ -352,12 +382,7 @@ TEXTATFONT0L1:
 
     ;;;;;;;;;; PAPER
 
-    LD A, (_PAPER)
-    LD IXL, A
-    LD A, 1
-    LD IYL, A
-    CALL CPCSELECTPALETTE
-    LD A, IXH
+    LD A, (PAPERT)
     LD B, A
 
     PUSH DE
@@ -444,12 +469,7 @@ TEXTATFONT0L1:
 TEXTATFONT1L1X:
 TEXTATFONT1L1:
 
-    LD A, (_PEN)
-    LD IXL, A
-    LD A, 1
-    LD IYL, A
-    CALL CPCSELECTPALETTE
-    LD A, IXH
+    LD A, (PENT)
     LD B, A
 
     LD A, (HL)
@@ -471,12 +491,7 @@ TEXTATFONT1L1:
     
     ; PAPER
 
-    LD A, (_PAPER)
-    LD IXL, A
-    LD A, 1
-    LD IYL, A
-    CALL CPCSELECTPALETTE
-    LD A, IXH
+    LD A, (PAPERT)
     LD B, A
 
     LD A, (HL)

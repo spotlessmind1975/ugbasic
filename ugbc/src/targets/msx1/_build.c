@@ -181,6 +181,11 @@ void generate_rom( Environment * _environment ) {
         strcat( p, ".bin");
     }
 
+    int binaryFileSize = file_get_size( _environment, binaryName );
+    if ( binaryFileSize > 32768 ) {
+        CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM( binaryFileSize - 32768 );
+    }
+
     BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
     char pipes[256];
