@@ -239,7 +239,7 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
         stepResident = variable_resident( _environment, maxType, "(step)" );
 
         if ( step->initializedByConstant  ) {
-            variable_store( _environment, step->name, step->value );
+            variable_store( _environment, stepResident->name, step->value );
         } else {
             variable_move( _environment, step->name, stepResident->name );            
         }
@@ -313,7 +313,7 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
             }
         
-            if ( loop->from->initializedByConstant ) {
+            if ( loop->to->initializedByConstant ) {
                 // Finish the loop if the index is less than upper bound.
                 isLastStep = variable_greater_than_const( _environment, index->name, loop->to->value, 0 );
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
