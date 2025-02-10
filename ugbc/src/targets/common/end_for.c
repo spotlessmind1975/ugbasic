@@ -100,7 +100,11 @@ void end_for( Environment * _environment ) {
 
     if ( loop->type == LT_FOR ) {
 
-        variable_add_inplace_vars( _environment, loop->index->name, step->name );
+        if ( step->initializedByConstant ) {
+            variable_add_inplace( _environment, loop->index->name, step->value );
+        } else {
+            variable_add_inplace_vars( _environment, loop->index->name, step->name );
+        }
 
         if ( !VT_SIGNED( loop->index->type ) ) {
             variable_compare_and_branch_const( _environment, loop->index->name, 0, endFor, 1 );

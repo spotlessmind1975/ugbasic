@@ -78,7 +78,11 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_store_8bit( _environment, enter->realName, 13 );
     cpu_store_8bit( _environment, offset->realName, 0 );
+#if defined(__coco__) || defined(__coco3__)
     cpu_store_8bit( _environment, backspace->realName, 8 );
+#else
+    cpu_store_8bit( _environment, backspace->realName, 0xfc );
+#endif
     cpu_store_8bit( _environment, space->realName, 32 );
     cpu_store_8bit( _environment, zero->realName, 0 );
 
