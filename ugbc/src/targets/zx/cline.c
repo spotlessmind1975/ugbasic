@@ -43,6 +43,7 @@ void cline( Environment * _environment, char * _characters ) {
     Variable * space = variable_temporary( _environment, VT_CHAR, "(space)");
     variable_store( _environment, space->name, 32 );
     
+    memorize(_environment);
     Variable * characters = NULL;
     if ( _characters ) {
         characters = variable_retrieve( _environment, _characters );
@@ -57,5 +58,6 @@ void cline( Environment * _environment, char * _characters ) {
     print( _environment, space->name, 0, 0 );
     cpu_dec( _environment, characters->realName );
     cpu_compare_and_branch_8bit_const( _environment, characters->realName, 0, label, 0 );
+    remember(_environment);
 
 }
