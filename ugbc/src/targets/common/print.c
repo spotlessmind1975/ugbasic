@@ -342,6 +342,7 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
             }
             text_text( _environment, value->name, _raw );
             cpu_dsfree( _environment, value->realName );
+            cpu_store_8bit( _environment, value->realName, 0 );
         } else {
             text_text( _environment, value->name, _raw );
         }
