@@ -995,6 +995,7 @@ ifneq ($(io),)
 	CSOURCES += $(wildcard src/hw/$(io).c)
 	CSOURCES += $(wildcard src/targets/common/$(io)/*.c)
 endif
+CSOURCES += $(wildcard src/targets/common/fujinet/*.c)
 CSOURCES += src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 SOURCES = $(sort $(CSOURCES))
 
