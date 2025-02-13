@@ -44,8 +44,6 @@ Variable * fujinet_get_bytes_waiting( Environment * _environment ) {
 
     Variable * bytes = variable_temporary( _environment, VT_BYTE, "(bytes)");
 
-    coco_fujinet_get_bytes_waiting( _environment, bytes->realName );
-
     return bytes;
 
 }

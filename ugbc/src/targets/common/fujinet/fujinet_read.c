@@ -44,12 +44,10 @@ Variable * fujinet_read( Environment * _environment, char * _size ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(buffer)");
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_retrieve( _environment, _size );
 
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, size->realName, result->realName );
-    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
-
-    coco_fujinet_read( _environment, address->realName, size->realName );
 
     return result;
 

@@ -43,3 +43,5 @@
 void fujinet_write( Environment * _environment, char * _value ) {
 
 }
+
+#endif

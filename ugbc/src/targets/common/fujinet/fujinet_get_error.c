@@ -44,9 +44,7 @@ Variable * fujinet_get_error( Environment * _environment ) {
 
     Variable * error = variable_temporary( _environment, VT_BYTE, "(error)");
 
-    coco_fujinet_get_error( _environment, error->realName );
-
-    return bytes;
+    return error;
 
 }
 

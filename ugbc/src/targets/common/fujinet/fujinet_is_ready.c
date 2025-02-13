@@ -44,9 +44,7 @@ Variable * fujinet_is_ready( Environment * _environment ) {
 
     Variable * ready = variable_temporary( _environment, VT_SBYTE, "(ready)");
 
-    coco_fujinet_is_ready( _environment, ready->realName );
-
-    return bytes;
+    return ready;
 
 }
 

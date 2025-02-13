@@ -44,8 +44,6 @@ Variable * fujinet_is_connected( Environment * _environment ) {
 
     Variable * isConnected = variable_temporary( _environment, VT_SBYTE, "(bytes)");
 
-    coco_fujinet_is_connected( _environment, isConnected->realName );
-
     return isConnected;
 
 }

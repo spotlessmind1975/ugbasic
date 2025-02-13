@@ -40,7 +40,7 @@
  
 #if !defined(__coco__)
 
-void coco_fujinet_login( Environment * _environment, char * _login, char * _size ) {
+void fujinet_login( Environment * _environment, char * _login ) {
 
 }
 

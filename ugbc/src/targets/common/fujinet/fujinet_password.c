@@ -38,9 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coco__)
+#if !defined(__coco__)
 
-void coco_fujinet_password( Environment * _environment, char * _password ) {
+void fujinet_password( Environment * _environment, char * _password ) {
 
 }
 

@@ -40,9 +40,7 @@
 
 #if !defined(__coco__)
 
-void fujinet_status( Environment * _environment ) {
-
-    coco_fujinet_status( _environment, ready->realName );
+void fujinet_get_status( Environment * _environment ) {
 
 }
 
