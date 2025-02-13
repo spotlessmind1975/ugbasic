@@ -5130,7 +5130,7 @@ void cpu6809_convert_string_into_8bit( Environment * _environment, char * _strin
         // Y = 0
         outline1("LDB %s", _len);
         outline1("beq %sdone", label );
-        outline0("STB ,-S");
+        outline0("STB MATHPTR0");
         outline1("LDU %s", _string);
 
         outline0("LDX #0");
@@ -5160,11 +5160,11 @@ void cpu6809_convert_string_into_8bit( Environment * _environment, char * _strin
         outline0("ABX");
         
         // ripeti
-        outline0("DEC ,S" );
+        outline0("DEC MATHPTR0" );
         outline1("BNE %sloop", label );
 
         outhead1("%sdone", label );
-        outline0("LEAS 1,S");
+        // outline0("LEAS 1,S");
         outline0("TFR X, D" );
         outline1("STB %s", _value );
 
@@ -5182,7 +5182,7 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("LDX #0");
         outline1("LDB %s", _len);
         outline1("beq %sdone", label );
-        outline0("STB ,-S");
+        outline0("STB MATHPTR0");
         outline1("LDU %s", _string);
 
         outhead1("%sloop", label );
@@ -5211,10 +5211,10 @@ void cpu6809_convert_string_into_16bit( Environment * _environment, char * _stri
         outline0("ABX");
         
         // ripeti
-        outline0("DEC ,S" );
+        outline0("DEC MATHPTR0" );
         outline1("BNE %sloop", label );
 
-        outline0("LEAS 1,S");
+        // outline0("LEAS 1,S");
         outhead1("%sdone", label );
         outline1("STX %s", _value );
 
