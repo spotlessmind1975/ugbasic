@@ -40,22 +40,22 @@ PROCEDURE fetch
 	
 	FUJINET DEVICE 0
 	err = FUJINET OPEN(apiEndpoint, httpGet, noTranslation)
-    IF err <> success THEN
+	IF err <> success THEN
 		LOCATE , ROWS/2
 		CENTER "--- OPEN ERROR ---"
 		RETURN
 	ENDIF
-
+	
 	FUJINET SET CHANNEL MODE json
-
+	
 	err = FUJINET PARSE JSON
 	
-    IF err <> success THEN
+	IF err <> success THEN
 		LOCATE , ROWS/2
 		CENTER "--- JSON PARSE ERROR ---"
 		RETURN
 	ENDIF
-
+	
 	FUJINET SET JSON QUERY queryLongitude
 	FUJINET STATUS
 	longitudeAsString = FUJINET READ(FUJINET BYTES)
@@ -67,13 +67,13 @@ PROCEDURE fetch
 	latitudeAsString = FUJINET READ(FUJINET BYTES)
 	
 	latitude = ( SCREEN HEIGHT / 2 ) + ( VAL(latitudeAsString) * ( SCREEN HEIGHT / 2 ) ) / 180
-    
+	
 	FUJINET SET JSON QUERY queryTimeStamp
 	FUJINET STATUS
 	timestampString = FUJINET READ(FUJINET BYTES)
-
+	
 	FUJINET CLOSE
-
+	
 END PROC
 
 firstTime = TRUE
