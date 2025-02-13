@@ -66,6 +66,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_swap_8bit = 1; // useless, cpu_swap_8bit shares code
     _environment->embedded.cpu_swap_16bit = 1; // useless, cpu_swap_8bit shares code
     _environment->embedded.cpu_swap_32bit = 1; // useless, cpu_swap_8bit shares code
+    _environment->embedded.cpu_convert_string_into_16bit = 1;
 
 }
 
