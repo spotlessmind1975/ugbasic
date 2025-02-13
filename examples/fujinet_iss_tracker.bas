@@ -40,7 +40,7 @@ PROCEDURE fetch
 	
 	FUJINET DEVICE 0
 	err = FUJINET OPEN(apiEndpoint, httpGet, noTranslation)
-	IF err <> success THEN
+    IF err <> success THEN
 		LOCATE , ROWS/2
 		CENTER "--- OPEN ERROR ---"
 		RETURN
