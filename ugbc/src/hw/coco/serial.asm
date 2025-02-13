@@ -97,6 +97,23 @@ SERIALWRITE
     RTS
 
 ; ----------------------------------------------------------------------------
+; SERIAL WRITE CONST
+; ----------------------------------------------------------------------------
+;
+; Input:
+;           A = value to write
+;           B = size of the data to send
+; Output:
+;           B = 0 is success, 0xff is failed
+;
+
+SERIALWRITECONST
+    JSR SERIALWRITEBYTE
+    DECB
+    BNE SERIALWRITECONST
+    RTS
+
+; ----------------------------------------------------------------------------
 ; SERIAL READ
 ; ----------------------------------------------------------------------------
 ;

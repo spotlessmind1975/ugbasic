@@ -106,6 +106,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
+%token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -186,6 +187,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> audio_source
 %type <integer> PALETTE1
 %type <string> dojo_functions
+%type <string> fujinet_functions
 %type <integer> clamp_optional
 %type <string> optional_next_animation
 %type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
@@ -2829,6 +2831,30 @@ dojo_functions :
         $$ = dojo_get_message( _environment, $4 )->name;
     };
 
+fujinet_functions : 
+    BYTES {
+        $$ = fujinet_get_bytes_waiting( _environment )->name;
+    }
+    | ERROR {
+        $$ = fujinet_get_error( _environment )->name;
+    }
+    | CONNECTED {
+        $$ = fujinet_is_connected( _environment )->name;
+    }
+    | READY {
+        $$ = fujinet_is_ready( _environment )->name;
+    }
+    | READ OP expr CP {
+        $$ = fujinet_read( _environment, $3 )->name;
+    }
+    | OPEN OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = fujinet_open( _environment, $3, $5, $7 )->name;
+    }
+    | PARSE JSON {
+        $$ = fujinet_parse_json( _environment )->name;
+    }
+    ;
+
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
@@ -3313,6 +3339,9 @@ exponential_less:
         $$ = read_end( _environment )->name;
       }
     | DOJO dojo_functions {
+        $$ = $2;
+    }
+    | FUJINET fujinet_functions {
         $$ = $2;
     }
     | MEMPEEK OP expr CP {
@@ -10266,6 +10295,48 @@ dojo_definition :
         dojo_put_message( _environment, $3, $5 );
     };
 
+fujinet_definition :
+    DEVICE expr {
+        Variable * expr = variable_retrieve( _environment, $2 );
+        if ( expr->initializedByConstant ) {
+            fujinet_set_device( _environment, expr->value );        
+        } else {
+            fujinet_set_device_var( _environment, $2 );        
+        }
+    }
+    | SET CHANNEL MODE expr {
+        fujinet_set_channel_mode( _environment, $4 );
+    }
+    | CLOSE {
+        fujinet_close( _environment );
+    }
+    | OPEN expr OP_COMMA expr OP_COMMA expr {
+        fujinet_open( _environment, $2, $4, $6 );
+    }
+    | PARSE JSON {
+        fujinet_parse_json( _environment );
+    }
+    | SET JSON QUERY expr {
+        fujinet_json_query( _environment, $4 );
+    }
+    | STATUS {
+        fujinet_get_status( _environment );
+    }
+    | LOGIN expr {
+        fujinet_login( _environment, $2 );
+    }
+    | PASSWORD expr {
+        fujinet_password( _environment, $2 );
+    }
+    | WRITE expr {
+        fujinet_write( _environment, $2 );
+    }
+    |
+    WRITE expr as_datatype_mandatory {
+        fujinet_write_type( _environment, $2, $3 );
+    }
+    ;
+
 raw_optional : 
     {
         $$ = 0;
@@ -10842,6 +10913,7 @@ statement2nc:
   | INSERT insert_definition
   | CHECK check_definition
   | DOJO dojo_definition
+  | FUJINET fujinet_definition
   | dojo_definition
   | PRINT print_definition
   | TRAVEL travel_definition

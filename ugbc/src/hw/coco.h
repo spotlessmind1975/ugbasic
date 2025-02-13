@@ -74,4 +74,21 @@ void coco_dojo_destroy_port( Environment * _environment, char * _port_id, char *
 void coco_serial_read( Environment * _environment, char * _address, char * _size );
 void coco_serial_write( Environment * _environment, char * _address, char * _size, char * _result );
 
+void coco_fujinet_set_device( Environment * _environment, int _device_id );
+void coco_fujinet_set_device_var( Environment * _environment, char * _device_id );
+void coco_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting );
+void coco_fujinet_is_connected( Environment * _environment, char * _is_connected );
+void coco_fujinet_get_error( Environment * _environment, char * _error );
+void coco_fujinet_is_ready( Environment * _environment, char * _ready );
+void coco_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result );
+void coco_fujinet_close( Environment * _environment );
+void coco_fujinet_get_status( Environment * _environment );
+void coco_fujinet_read( Environment * _environment, char * _buffer, char * _size );
+void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size );
+void coco_fujinet_set_channel_mode( Environment * _environment, char * _mode );
+void coco_fujinet_parse_json( Environment * _environment, char * _result );
+void coco_fujinet_json_query( Environment * _environment, char * _query, char * _size );
+void coco_fujinet_login( Environment * _environment, char * _login, char * _size );
+void coco_fujinet_password( Environment * _environment, char * _password, char * _size );
+
 #endif

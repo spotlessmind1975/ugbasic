@@ -453,4 +453,176 @@ void coco_serial_write( Environment * _environment, char * _address, char * _siz
 
 }
 
+void coco_fujinet_set_device( Environment * _environment, int _device_id ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_store_8bit( _environment, "FUJINETDEVICEID", _device_id );
+
+}
+
+void coco_fujinet_set_device_var( Environment * _environment, char * _device_id ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_move_8bit( _environment, _device_id, "FUJINETDEVICEID" );
+
+}
+
+void coco_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_move_16bit( _environment, "FUJINETBYTESWAITING", _bytes_waiting );
+
+}
+
+void coco_fujinet_is_connected( Environment * _environment, char * _is_connected ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_move_8bit( _environment, "FUJINETCONNECTED", _is_connected );
+
+}
+
+void coco_fujinet_get_error( Environment * _environment, char * _error ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_move_8bit( _environment, "FUJINETERRORCODE", _error );
+
+}
+
+void coco_fujinet_is_ready( Environment * _environment, char * _ready ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETREADY" );
+    outline1( "STA %s", _ready );
+    
+}
+
+void coco_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDA %s", _mode );
+    outline1( "LDB %s", _trans );
+    outline0( "TFR D, U" );
+    outline1( "LDY %s", _url );
+    outline1( "LDB %s", _size );
+
+    cpu_call( _environment, "FUJINETOPEN" );
+
+    outline1( "STA %s", _result );
+
+}
+
+void coco_fujinet_close( Environment * _environment ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETCLOSE" );
+
+}
+
+void coco_fujinet_get_status( Environment * _environment ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETGETSTATUS" );
+    
+}
+
+void coco_fujinet_read( Environment * _environment, char * _buffer, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDY %s", _buffer );
+    outline1( "LDB %s", _size );
+
+    cpu_call( _environment, "FUJINETREAD" );
+
+}
+
+void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDY %s", _buffer );
+    outline1( "LDB %s", _size );
+
+    cpu_call( _environment, "FUJINETWRITE" );
+
+}
+
+void coco_fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDB %s", _mode );
+
+    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+}
+
+void coco_fujinet_parse_json( Environment * _environment, char * _result ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETPARSEJSON" );
+
+    outline1( "STA %s", _result );
+    
+}
+
+void coco_fujinet_json_query( Environment * _environment, char * _query, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDY %s", _query );
+    outline1( "LDB %s", _size );
+
+    cpu_call( _environment, "FUJINETSETJSONQUERY" );
+
+}
+
+void coco_fujinet_login( Environment * _environment, char * _login, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDY %s", _login );
+    outline1( "LDB %s", _size );
+    
+    cpu_call( _environment, "FUJINETLOGIN" );
+
+}
+
+void coco_fujinet_password( Environment * _environment, char * _password, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDY %s", _password );
+    outline1( "LDB %s", _size );
+    
+    cpu_call( _environment, "FUJINETPASSWORD" );
+
+}
+
 #endif

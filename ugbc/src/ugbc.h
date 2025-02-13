@@ -1799,6 +1799,7 @@ typedef struct _Deployed {
     int serial;
     int remember;
     int memorize;
+    int fujinet;
 
 } Deployed;
 
@@ -3408,6 +3409,7 @@ typedef struct _Environment {
 #define CRITICAL_ARRAY_OUT_OF_BOUND( a ) CRITICAL2("E359 - array out of bound", a );
 #define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E360 - SERIAL WRITE unsupported for variable of given datatype", v, t );
 #define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E361 - SERIAL read unsupported for variable of given datatype", t );
+#define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E362 - FUJINET READ read unsupported for variable of given datatype", t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4797,6 +4799,25 @@ Variable *              fp_log( Environment * _environment, char * _value );
 Variable *              fp_exp( Environment * _environment, char * _value );
 int                     frames( Environment * _environment, char * _image );
 void                    freeze_vars( Environment * _environment, char * _prefix );
+
+void                    fujinet_set_device( Environment * _environment, int _device_id );
+void                    fujinet_set_device_var( Environment * _environment, char * _device_id );
+Variable *              fujinet_get_bytes_waiting( Environment * _environment );
+Variable *              fujinet_is_connected( Environment * _environment );
+Variable *              fujinet_get_error( Environment * _environment );
+Variable *              fujinet_is_ready( Environment * _environment );
+Variable *              fujinet_open( Environment * _environment, char * _url, char * _mode, char * _trans );
+void                    fujinet_close( Environment * _environment );
+void                    fujinet_get_status( Environment * _environment );
+Variable *              fujinet_read( Environment * _environment, char * _size );
+Variable *              fujinet_read_type( Environment * _environment, VariableType _type );
+void                    fujinet_write( Environment * _environment, char * _value );
+void                    fujinet_write_type( Environment * _environment, char * _value, VariableType _type );
+void                    fujinet_set_channel_mode( Environment * _environment, char * _mode );
+Variable *              fujinet_parse_json( Environment * _environment );
+void                    fujinet_json_query( Environment * _environment, char * _query );
+void                    fujinet_login( Environment * _environment, char * _login );
+void                    fujinet_password( Environment * _environment, char * _password );
 
 //----------------------------------------------------------------------------
 // *G*
