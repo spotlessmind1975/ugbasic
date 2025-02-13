@@ -7918,7 +7918,7 @@ Variable * variable_string_val( Environment * _environment, char * _value ) {
     MAKE_LABEL
 
     Variable * value = variable_retrieve( _environment, _value );
-    Variable * result = variable_temporary( _environment, VT_WORD, "(result of val)" );
+    Variable * result = variable_temporary( _environment, VT_SWORD, "(result of val)" );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of val)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of val)" );
 
