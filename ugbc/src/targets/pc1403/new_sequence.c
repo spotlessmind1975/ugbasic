@@ -46,11 +46,7 @@
  * @param _height Heigth of the image, in pixel
  * @param _mode Mode to use
  */
-/* <usermanual>
-@keyword NEW SEQUENCE
 
-@target all
-</usermanual> */
 Variable * new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(temporary)" );
