@@ -32,20 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET READ
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET READ'' function allows you to read data from the connection.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+La funzione ''FUJINET OPEN'' consente di leggere dati da una connessione.
+
+@syntax = FUJINET READ (size)
+
+@example response = FUJINET READ
+
+@target coco
+</usermanual> */
+Variable * fujinet_read( Environment * _environment, char * _size ) {
+
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(buffer)");
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 0 );
+
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
+
+    atari_fujinet_read( _environment, address->realName, size->realName );
+
+    return result;
 
 }
-
-#endif

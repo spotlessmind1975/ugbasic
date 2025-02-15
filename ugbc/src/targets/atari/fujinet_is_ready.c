@@ -32,20 +32,37 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET READY
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The function ''FUJINET READY'' returns if the channel is ready to read / write
+data for the selected device.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+La funzione ''FUJINET READY'' restituisce se il canale relativo 
+alla periferica selezionata è prondo per leggere / scrivere dati.
+
+@syntax = FUJINET READY
+
+@example IF FUJINET READY THEN: PRINT "Channel is ready!": ENDIF
+
+@target coco
+</usermanual> */
+Variable * fujinet_is_ready( Environment * _environment ) {
+
+    Variable * ready = variable_temporary( _environment, VT_SBYTE, "(ready)");
+
+    atari_fujinet_is_ready( _environment, ready->realName );
+
+    return ready;
 
 }
-
-#endif

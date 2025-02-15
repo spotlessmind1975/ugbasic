@@ -32,20 +32,55 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET SET JSON QUERY 
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET SET JSON QUERY'' instruction can be used to ask to parse a
+specific JSON path.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+L'istruzione ''FUJINET SET JSON QUERY'' può essere utilizzato per richiedere
+il parsing di uno specifico percorso JSON.
+
+@syntax FUJINET SET JSON QUERY path
+
+@example FUJINET SET JSON QUERY "/iss_position/longitude"
+@example FUJINET STATUS
+@example longitude = FUJINET READ(FUJINET BYTES)
+@example PRINT longitude
+
+@target coco
+</usermanual> */
+void fujinet_json_query( Environment * _environment, char * _json ) {
+
+    Variable * value = variable_retrieve( _environment, _json );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+
+    switch( value->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, value->realName, size->realName );
+            cpu_addressof_16bit( _environment, value->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, value->realName, address->realName, size->realName );
+            break;
+        case VT_CHAR:
+            cpu_addressof_16bit( _environment, value->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, 1 );
+            break;
+    }
+
+    atari_fujinet_json_query( _environment, address->realName, size->realName );
 
 }
-
-#endif

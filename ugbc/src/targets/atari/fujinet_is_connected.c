@@ -32,20 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET CONNECTED
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The function ''FUJINET CONNECTED'' returns if the channel is connected for the 
+selected device. The value refers to the last execution of the ''FUJINET STATUS'' 
+command, so you need to execute this command before reading the information.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+La funzione ''FUJINET CONNECTED'' restituisce se il canale relativo 
+alla periferica selezionata è ancora connesso. Il valore è riferito all'ultima esecuzione 
+del comando ''FUJINET STATUS'', quindi è necessario eseguire questo comando prima di 
+leggere l'informazione.
+
+@syntax = FUJINET CONNECTED
+
+@example IF FUJINET CONNECTED THEN: "I AM CONNECTED!": ENDIF
+
+@seeAlso FUJINET STATUS
+
+@target coco
+</usermanual> */
+Variable * fujinet_is_connected( Environment * _environment ) {
+
+    Variable * isConnected = variable_temporary( _environment, VT_SBYTE, "(bytes)");
+
+    atari_fujinet_is_connected( _environment, isConnected->realName );
+
+    return isConnected;
 
 }
-
-#endif

@@ -38,7 +38,7 @@
 * CODE SECTION 
 ****************************************************************************/
 
-#if !defined(__coco__)
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
 

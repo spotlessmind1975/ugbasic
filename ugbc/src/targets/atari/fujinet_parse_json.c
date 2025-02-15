@@ -32,20 +32,37 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
- /****************************************************************************
-  * CODE SECTION 
-  ****************************************************************************/
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET JSON ENABLE
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET JSON ENABLE'' instruction can be used to ask FujiNet hardware to
+put the channel into JSON mode.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+L'istruzione ''FUJINET JSON ENABLE'' può essere utilizzata per impostare il canale
+in modalità JSON.
+
+@syntax FUJINET JSON ENABLE
+
+@example FUJINET JSON ENABLE
+
+@target coco
+</usermanual> */
+Variable * fujinet_parse_json( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)");
+
+    atari_fujinet_parse_json( _environment, result->realName );
+
+    return result;
 
 }
-
-#endif

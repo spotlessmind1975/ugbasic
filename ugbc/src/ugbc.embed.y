@@ -519,6 +519,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.sn76489startup;
             } else if ( strcmp( $3, "keyboard" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.keyboard;
+            } else if ( strcmp( $3, "serial" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.serial;
             } else if ( strcmp( $3, "fade" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.fade;
             } else if ( strcmp( $3, "joystick" ) == 0 ) {

@@ -32,20 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET DEVICE
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET DEVICE'' command allows you to specify the number of FujiNet device
+that the system should consider. 
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+Il comando ''FUJINET DEVICE'' permette di specificare il numero di device FujiNet che il 
+sistema deve considerare.
+
+@syntax FUJINET DEVICE number
+
+@example FUJINET DEVICE 1
+
+@target coco
+</usermanual> */
+void fujinet_set_device( Environment * _environment, int _device_id ) {
+
+    atari_fujinet_set_device( _environment, _device_id );
 
 }
 
-#endif
+void fujinet_set_device_var( Environment * _environment, char * _device_id ) {
+
+    atari_fujinet_set_device_var( _environment, _device_id );
+
+}

@@ -38,7 +38,7 @@
   * CODE SECTION 
   ****************************************************************************/
 
-#if !defined(__coco__)
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_get_bytes_waiting( Environment * _environment ) {
 

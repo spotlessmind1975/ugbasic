@@ -692,6 +692,9 @@ struct var *vars_get(POBuffer _name) {
 static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "REU^"))   return 0;
     if(po_buf_match(name, "MSPRITE^"))   return 0;
+    if(po_buf_match(name, "IC^"))   return 0;
+    if(po_buf_match(name, "FUJINET^"))   return 0;
+    if(po_buf_match(name, "SERIAL^"))   return 0;
     if(po_buf_match(name, "SID^"))   return 0;
     if(po_buf_match(name, "BLIT^"))   return 0;
     if(po_buf_match(name, "FADE^"))   return 0;

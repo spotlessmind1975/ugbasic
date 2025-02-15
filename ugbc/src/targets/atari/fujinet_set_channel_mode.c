@@ -32,20 +32,33 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET MODE
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET MODE'' command allows you to specify the channel mode of the connection.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+Il comando ''FUJINET MODE'' permette di specificare modo da utilizzare per la connessione.
+
+@syntax FUJINET MODE mode
+
+@example FUJINET MODE 0
+
+@target coco
+</usermanual> */
+void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+
+    Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, 0 );
+
+    atari_fujinet_set_channel_mode( _environment, mode->realName );
 
 }
-
-#endif

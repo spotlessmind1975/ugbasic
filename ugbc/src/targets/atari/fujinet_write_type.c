@@ -32,20 +32,60 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+extern char DATATYPE_AS_STRING[][16];
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+/* <usermanual>
+@keyword FUJINET WRITE
+</usermanual> */
+void fujinet_write_type( Environment * _environment, char * _data, VariableType _type ) {
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+    Variable * data;
+    if ( _type == 0 ) {
+        data = variable_retrieve( _environment, _data );
+    } else {
+        data = variable_retrieve_or_define( _environment, _data, _type, 0 );
+    }
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+    switch( VT_BITWIDTH( data->type ) ) {
+        case 32: 
+        case 16: 
+        case 8: {            
+            cpu_store_8bit( _environment, size->realName, VT_BITWIDTH( data->type ) >> 3 );
+            cpu_addressof_16bit( _environment, data->realName, address->realName );
+            break;
+        }
+        case 0: {
+            switch( data->type ) {
+                case VT_STRING: {            
+                    cpu_move_8bit( _environment, data->realName, size->realName );
+                    cpu_addressof_16bit( _environment, data->realName, address->realName );
+                    cpu_inc_16bit( _environment, address->realName );
+                    break;
+                }
+                case VT_DSTRING: {            
+                    cpu_dsdescriptor( _environment, data->realName, address->realName, size->realName );
+                    break;
+                }
+                default:
+                    CRITICAL_SERIAL_WRITE_UNSUPPORTED( _data, DATATYPE_AS_STRING[data->type]);
+                    break;
+            }            
+            break;
+        }
+        default:
+            CRITICAL_SERIAL_WRITE_UNSUPPORTED( _data, DATATYPE_AS_STRING[data->type]);
+            break;
+    }
 
-    return data;
+    atari_fujinet_write( _environment, address->realName, size->realName );
 
 }
-
-#endif

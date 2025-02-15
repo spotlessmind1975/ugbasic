@@ -32,20 +32,47 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET BYTES
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The function ''FUJINET BYTES'' returns the number of bytes that are waiting to 
+be read from the channel for the selected device. In other words, if a read 
+operation were performed, the system would read without blocking up to this 
+number of bytes. The value refers to the last execution of the FUJINET STATUS 
+command, so you need to execute this command before reading the information.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+La funzione ''FUJINET BYTES'' restituisce il numero di byte che sono in attesa 
+di essere letti dal canale relativo alla periferica selezionata. In altri termini, 
+se venisse effettuata una operazione di lettura, il sistema leggerebbe senza 
+bloccarsi fino a questo numero di bytes. Il valore è riferito all'ultima esecuzione 
+del comando FUJINET STATUS, quindi è necessario eseguire questo comando prima di 
+leggere l'informazione.
+
+@syntax = FUJINET BYTES
+
+@example PRINT FUJINET BYTES;" bytes to read"
+
+@seeAlso FUJINET STATUS
+@seeAlso FUJINET READ
+
+@target coco
+</usermanual> */
+Variable * fujinet_get_bytes_waiting( Environment * _environment ) {
+
+    Variable * bytes = variable_temporary( _environment, VT_BYTE, "(bytes)");
+
+    atari_fujinet_get_bytes_waiting( _environment, bytes->realName );
+
+    return bytes;
 
 }
-
-#endif

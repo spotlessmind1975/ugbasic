@@ -35,50 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-IOCB_OPEN           = $03       ; open
-IOCB_GETREC         = $05       ; get record
-IOCB_GETCHR         = $07       ; get character(s)
-IOCB_PUTREC         = $09       ; put record
-IOCB_PUTCHR         = $0B       ; put character(s)
-IOCB_CLOSE          = $0C       ; close
-IOCB_STATIS         = $0D       ; status
-IOCB_SPECIL         = $0E       ; special
-IOCB_DRAWLN         = $11       ; draw line
-IOCB_FILLIN         = $12       ; draw line with right fill
-IOCB_RENAME         = $20       ; rename disk file
-IOCB_DELETE         = $21       ; delete disk file
-IOCB_LOCKFL         = $23       ; lock file (set to read-only)
-IOCB_UNLOCK         = $24       ; unlock file
-IOCB_POINT          = $25       ; point sector
-IOCB_NOTE           = $26       ; note sector
-IOCB_GETFL          = $27       ; get file length
-IOCB_CHDIR_MYDOS    = $29       ; change directory (MyDOS)
-IOCB_MKDIR          = $2A       ; make directory (MyDOS/SpartaDOS)
-IOCB_RMDIR          = $2B       ; remove directory (SpartaDOS)
-IOCB_CHDIR_SPDOS    = $2C       ; change directory (SpartaDOS)
-IOCB_GETCWD         = $30       ; get current directory (MyDOS/SpartaDOS)
-IOCB_FORMAT         = $FE       ; format
-
-
-IOCB                = $0340
-
-ICHID               = $0340     ; DEVICE HANDLER IS (SET BY OS)
-ICDNO               = $0341     ; DEVICE NUMBER (SET BY OS)
-ICCOM               = $0342     ; I/O COMMAND
-ICSTA               = $0343     ; I/O STATUS
-ICBADRL             = $0344     ; BUFFER ADDRESS (LOW)
-ICBADRH             = $0345     ; BUFFER ADDRESS (HIGH)
-ICPUT               = $0346     ; DH PUT ROUTINE (ADR-1)
-ICBLENL             = $0348     ; BUFFER LENGTH (LOW)
-ICBLENH             = $0349     ; BUFFER LENGTH (HIGH)
-ICAUX1              = $034A     ; AUX 1
-ICAUX2              = $034B     ; AUX 2
-ICAUX3              = $034C     ; AUX 3
-ICAUX4              = $034D     ; AUX 4
-ICAUX5              = $034E     ; AUX 5
-ICAUX6              = $034F     ; AUX 6
-
-CIOV                = $E456     ; JSR vector for CIO. All CIO operations go through this address
 
 ATARIFILENAME:      .BYTE 'D', ':'
 ATARIFILENAME0:     .RES 13,0

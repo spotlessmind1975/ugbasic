@@ -32,20 +32,50 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET PASSWORD
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The ''FUJINET PASSWORD'' function allows you to send a password to FujiNet.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+L'istruzione ''FUJINET PASSWORD'' consente di inviare una password a FujiNet.
+
+@syntax FUJINET PASSWORD pwd
+
+@example FUJINET PASSWORD "safe"
+
+@target coco
+</usermanual> */
+void fujinet_password( Environment * _environment, char * _password ) {
+
+    Variable * value = variable_retrieve( _environment, _password );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+
+    switch( value->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, value->realName, size->realName );
+            cpu_addressof_16bit( _environment, value->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, value->realName, address->realName, size->realName );
+            break;
+        case VT_CHAR:
+            cpu_addressof_16bit( _environment, value->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, 1 );
+            break;
+    }
+
+    atari_fujinet_password( _environment, address->realName, size->realName );
 
 }
-
-#endif

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if !defined(__coco__)
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_password( Environment * _environment, char * _password ) {
 

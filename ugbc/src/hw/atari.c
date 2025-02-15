@@ -560,4 +560,230 @@ void atari_dojo_destroy_port( Environment * _environment, char * _port_id, char 
     
 }
 
+void atari_serial_read( Environment * _environment, char * _address, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+
+    outline1( "LDA %s", _address );
+    outline0( "STA TMPPTR" );
+    outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STA TMPPTR+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR1" );
+    outline0( "JSR SERIALREAD" );
+
+}
+
+void atari_serial_write( Environment * _environment, char * _address, char * _size, char * _result ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+
+    outline1( "LDA %s", _address );
+    outline0( "STA TMPPTR" );
+    outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STA TMPPTR+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR1" );
+    outline0( "JSR SERIALWRITE" );
+
+}
+
+void atari_fujinet_set_device( Environment * _environment, int _device_id ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_store_8bit( _environment, "FUJINETDEVICEID", _device_id );
+
+}
+
+void atari_fujinet_set_device_var( Environment * _environment, char * _device_id ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_move_8bit( _environment, _device_id, "FUJINETDEVICEID" );
+
+}
+
+void atari_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_move_16bit( _environment, "FUJINETBYTESWAITING", _bytes_waiting );
+
+}
+
+void atari_fujinet_is_connected( Environment * _environment, char * _is_connected ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_move_8bit( _environment, "FUJINETCONNECTED", _is_connected );
+
+}
+
+void atari_fujinet_get_error( Environment * _environment, char * _error ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_move_8bit( _environment, "FUJINETERRORCODE", _error );
+
+}
+
+void atari_fujinet_is_ready( Environment * _environment, char * _ready ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETREADY" );
+    outline1( "STA %s", _ready );
+    
+}
+
+void atari_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _mode );
+    outline0( "STA MATHPTR3" );
+    outline1( "LDA %s", _trans );
+    outline0( "STA MATHPTR4" );
+    outline1( "LDA %s", _url );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _url, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETOPEN" );
+
+    outline1( "STA %s", _result );
+
+}
+
+void atari_fujinet_close( Environment * _environment ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETCLOSE" );
+
+}
+
+void atari_fujinet_get_status( Environment * _environment ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETGETSTATUS" );
+    
+}
+
+void atari_fujinet_read( Environment * _environment, char * _buffer, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _buffer );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _buffer, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETREAD" );
+
+}
+
+void atari_fujinet_write( Environment * _environment, char * _buffer, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _buffer );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _buffer, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETWRITE" );
+
+}
+
+void atari_fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _mode );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+}
+
+void atari_fujinet_parse_json( Environment * _environment, char * _result ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    cpu_call( _environment, "FUJINETPARSEJSON" );
+
+    outline1( "STA %s", _result );
+    
+}
+
+void atari_fujinet_json_query( Environment * _environment, char * _query, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _query );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _query, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETSETJSONQUERY" );
+
+}
+
+void atari_fujinet_login( Environment * _environment, char * _login, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _login );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _login, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR2" );
+    
+    cpu_call( _environment, "FUJINETLOGIN" );
+
+}
+
+void atari_fujinet_password( Environment * _environment, char * _password, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA %s", _password );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _password, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+    outline1( "LDA %s", _size );
+    outline0( "STA MATHPTR0" );
+    
+    cpu_call( _environment, "FUJINETPASSWORD" );
+
+}
+
 #endif

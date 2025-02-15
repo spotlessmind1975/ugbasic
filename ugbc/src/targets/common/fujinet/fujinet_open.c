@@ -38,7 +38,7 @@
   * CODE SECTION 
   ****************************************************************************/
 
-#if !defined(__coco__)
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_open( Environment * _environment, char * _url, char * _mode, char * _trans ) {
 

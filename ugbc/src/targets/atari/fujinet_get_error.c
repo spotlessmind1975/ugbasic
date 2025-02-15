@@ -32,20 +32,42 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
+ 
+/* <usermanual>
+@keyword FUJINET ERROR
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+@english
 
-Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
+The function ''FUJINET ERROR'' returns the last error on the channel for the 
+selected device. The value refers to the last execution of the ''FUJINET STATUS''
+command, so you need to execute this command before reading the information.
 
-    Variable * data = variable_temporary( _environment, _type, "(data)" );
+@italian
 
-    return data;
+La funzione ''FUJINET ERROR'' restituisce l'ultimo errore dal canale relativo 
+alla periferica selezionata. Il valore è riferito all'ultima esecuzione 
+del comando ''FUJINET STATUS'', quindi è necessario eseguire questo comando prima di 
+leggere l'informazione.
+
+@syntax = FUJINET ERROR
+
+@example PRINT "Last error is ";FUJINET ERROR
+
+@seeAlso FUJINET STATUS
+
+@target coco
+</usermanual> */
+Variable * fujinet_get_error( Environment * _environment ) {
+
+    Variable * error = variable_temporary( _environment, VT_BYTE, "(error)");
+
+    atari_fujinet_get_error( _environment, error->realName );
+
+    return error;
 
 }
-
-#endif
