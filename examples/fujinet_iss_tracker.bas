@@ -31,25 +31,19 @@ PROCEDURE selectSerial ON COCO
 
 	CENTER "ISS TRACKER"
 	PRINT
-	PRINT "CHOOSE SERIAL LINK:"
+	PRINT "CHOOSE YOUR FUJINET:"
 	PRINT 
-	PRINT "1) VIA BECKER PORT"
-	PRINT "2) VIA HDB-DOS"
+	PRINT "1) emulated (becker port)"
+	PRINT "2) virtualized (becker port)"
+	PRINT "3) real hardware"
 	PRINT
-	PRINT "IF YOU ARE USING AN EMULATOR"
-	PRINT "CONFIGURED TO USE ONLINE FUJINET"
-	PRINT "CHOOSE 1. OTHERWISE, CONNECT "
-	PRINT "A FUJINET DEVICE AND CHOOSE 2."
-	PRINT 
-	PRINT "do not choose 2 under emulator!"
-	
 	
 	DO
 		port = VAL(INKEY$)
-		IF port = 1 THEN
+		IF port = 1 OR port = 2 THEN
 			DEFINE FUJINET BECKER PORT
 			EXIT
-		ELSE IF port = 2 THEN
+		ELSE IF port = 3 THEN
 			DEFINE FUJINET HDBDOS
 			EXIT
 		ENDIF
@@ -61,25 +55,20 @@ PROCEDURE selectSerial ON ATARI
 
 	CENTER "ISS TRACKER"
 	PRINT
-	PRINT "CHOOSE SERIAL LINK:"
+	PRINT "CHOOSE YOUR FUJINET:"
 	PRINT 
-	PRINT "1) VIA DEVICE R: "
-	PRINT "2) (other)"
+	PRINT "1) emulated (via device R1:)"
+	PRINT "2) virtualized (via netSIO)"
+	PRINT "3) real hardware"
 	PRINT
-	PRINT "IF YOU ARE USING AN EMULATOR"
-	PRINT "CONFIGURED TO USE ONLINE FUJINET"
-	PRINT "CHOOSE 1. OTHERWISE, CONNECT "
-	PRINT "A FUJINET DEVICE AND CHOOSE 2."
-	PRINT 
-	PRINT "do not choose 2 under emulator!"
 	
 	DO
 		port = VAL(INKEY$)
 		IF port = 1 THEN
-			'DEFINE FUJINET SERIAL
+			DEFINE FUJINET SERIAL
 			EXIT
-		ELSE IF port = 2 THEN
-			'DEFINE FUJINET SIO
+		ELSE IF port = 2 OR port = 3 THEN
+			DEFINE FUJINET SIO
 			EXIT
 		ENDIF
 	LOOP
@@ -104,6 +93,7 @@ PROCEDURE fetch
 	
 	FUJINET DEVICE 0
 	err = FUJINET OPEN(apiEndpoint, httpGet, noTranslation)
+	
 	IF err <> success THEN
 		LOCATE , ROWS/2
 		CENTER "--- OPEN ERROR ---"
@@ -122,6 +112,7 @@ PROCEDURE fetch
 	
 	FUJINET SET JSON QUERY queryLongitude
 	FUJINET STATUS
+	
 	longitudeAsString = FUJINET READ(FUJINET BYTES AS STRING)
 	
 	longitude = ( SCREEN WIDTH / 2 ) + ( ( VAL(longitudeAsString) * ( SCREEN WIDTH / 2 ) ) / 360 )
