@@ -120,19 +120,19 @@ PROCEDURE fetch
 	
 	FUJINET SET JSON QUERY queryLongitude
 	FUJINET STATUS
-	longitudeAsString = FUJINET READ(FUJINET BYTES)
+	longitudeAsString = FUJINET READ(FUJINET BYTES AS STRING)
 	
 	longitude = ( SCREEN WIDTH / 2 ) + ( ( VAL(longitudeAsString) * ( SCREEN WIDTH / 2 ) ) / 360 )
 	
 	FUJINET SET JSON QUERY queryLatitude
 	FUJINET STATUS
-	latitudeAsString = FUJINET READ(FUJINET BYTES)
+	latitudeAsString = FUJINET READ(FUJINET BYTES AS STRING)
 	
 	latitude = ( SCREEN HEIGHT / 2 ) + ( VAL(latitudeAsString) * ( SCREEN HEIGHT / 2 ) ) / 180
 	
 	FUJINET SET JSON QUERY queryTimeStamp
 	FUJINET STATUS
-	timestampString = FUJINET READ(FUJINET BYTES)
+	timestampString = FUJINET READ(FUJINET BYTES AS STRING)
 	
 	FUJINET CLOSE
 	
