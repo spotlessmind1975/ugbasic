@@ -346,6 +346,15 @@ typedef enum _AudioDeviceName {
 
 } AudioDeviceName;
 
+typedef enum _FujiNetDefine {
+
+    FN_HDBDOS = 1,
+    FN_BECKER = 2,
+    FN_SERIAL = 3,
+    FN_SIO = 4
+
+} FujiNetDefine;
+
 /**
  * @brief Structure of a single (option) setting
  */
@@ -4799,7 +4808,6 @@ Variable *              fp_log( Environment * _environment, char * _value );
 Variable *              fp_exp( Environment * _environment, char * _value );
 int                     frames( Environment * _environment, char * _image );
 void                    freeze_vars( Environment * _environment, char * _prefix );
-
 void                    fujinet_set_device( Environment * _environment, int _device_id );
 void                    fujinet_set_device_var( Environment * _environment, char * _device_id );
 Variable *              fujinet_get_bytes_waiting( Environment * _environment );
@@ -4818,6 +4826,7 @@ Variable *              fujinet_parse_json( Environment * _environment );
 void                    fujinet_json_query( Environment * _environment, char * _query );
 void                    fujinet_login( Environment * _environment, char * _login );
 void                    fujinet_password( Environment * _environment, char * _password );
+void                    fujinet_define( Environment * _environment, FujiNetDefine _mode );
 
 //----------------------------------------------------------------------------
 // *G*
