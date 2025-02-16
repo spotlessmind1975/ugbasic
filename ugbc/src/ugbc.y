@@ -2847,6 +2847,23 @@ fujinet_functions :
     | READ OP expr CP {
         $$ = fujinet_read( _environment, $3 )->name;
     }
+    | READ OP expr as_datatype_mandatory CP  {
+        Variable * value = fujinet_read( _environment, $3 );
+        if ( $4 == VT_DSTRING || $4 == VT_STRING ) {
+            Variable * s = variable_temporary( _environment, VT_BYTE, "(size)" );
+            cpu_dsdescriptor( _environment, value->realName, NULL, s->realName );
+            cpu_dec( _environment, s->realName );
+            cpu_dsresize( _environment, value->realName, s->realName );
+            $$ = value->name;
+        } else {
+            Variable * revalue = variable_temporary( _environment, $4, "(revalue)" );
+            variable_string_val( _environment, revalue->name );
+            $$ = revalue->name;
+        }
+    }
+    | READ OP CP as_datatype_mandatory {
+        $$ = fujinet_read_type( _environment, $4 )->name;
+    }
     | OPEN OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = fujinet_open( _environment, $3, $5, $7 )->name;
     }
