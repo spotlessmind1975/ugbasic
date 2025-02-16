@@ -73,8 +73,8 @@ usato anche come una funzione, per ottenere l'eventuale codice di errore, se di 
 Variable * fujinet_open( Environment * _environment, char * _url, char * _mode, char * _trans ) {
 
     Variable * url = variable_retrieve(  _environment, _url );
-    Variable * mode = variable_retrieve( _environment, _mode );
-    Variable * trans = variable_retrieve( _environment, _trans );
+    Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, 0 );
+    Variable * trans = variable_retrieve_or_define( _environment, _trans, VT_BYTE, 0 );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(url address)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(url size)" );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );

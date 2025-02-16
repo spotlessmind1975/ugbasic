@@ -69,7 +69,7 @@ leggere l'informazione.
 </usermanual> */
 Variable * fujinet_get_bytes_waiting( Environment * _environment ) {
 
-    Variable * bytes = variable_temporary( _environment, VT_BYTE, "(bytes)");
+    Variable * bytes = variable_temporary( _environment, VT_WORD, "(bytes)");
 
     coco_fujinet_get_bytes_waiting( _environment, bytes->realName );
 
