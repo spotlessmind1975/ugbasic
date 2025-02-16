@@ -37,10 +37,6 @@
 
 ATARISTARTUP:
 
-@IF deployed.serial
-    JSR SERIALINIT
-@ENDIF
-
     LDA $D014
     AND #$0E
     CMP #$0E
