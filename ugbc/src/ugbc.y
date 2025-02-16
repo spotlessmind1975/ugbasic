@@ -8672,7 +8672,22 @@ audio_source :
     };
 
 define_definition :
-    SERIAL HDBDOS  {
+    FUJINET HDBDOS  {
+#if defined(__coco__)
+    cpu_call( _environment, "SERIALDEFINEHDBDOS" );
+#endif
+    }
+    | FUJINET BECKER {
+#if defined(__coco__)
+    cpu_call( _environment, "SERIALDEFINEBECKERPORT" );
+#endif
+    }
+    | FUJINET BECKER PORT {
+#if defined(__coco__)
+    cpu_call( _environment, "SERIALDEFINEBECKERPORT" );
+#endif
+    }
+    | SERIAL HDBDOS  {
 #if defined(__coco__)
     cpu_call( _environment, "SERIALDEFINEHDBDOS" );
 #endif
