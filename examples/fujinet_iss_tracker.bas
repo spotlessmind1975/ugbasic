@@ -27,23 +27,22 @@ timestampString = ""
 
 CLS
 
-PROCEDURE selectSerial ON COCO
+PROCEDURE selectFujiNet ON COCO
 
 	CENTER "ISS TRACKER"
 	PRINT
 	PRINT "CHOOSE YOUR FUJINET:"
 	PRINT 
-	PRINT "1) emulated (becker port)"
-	PRINT "2) virtualized (becker port)"
-	PRINT "3) real hardware"
+	PRINT "1) emulated/virtualized (becker port)"
+	PRINT "2) real hardware"
 	PRINT
 	
 	DO
 		port = VAL(INKEY$)
-		IF port = 1 OR port = 2 THEN
+		IF port = 1 THEN
 			DEFINE FUJINET BECKER PORT
 			EXIT
-		ELSE IF port = 3 THEN
+		ELSE IF port = 2 THEN
 			DEFINE FUJINET HDBDOS
 			EXIT
 		ENDIF
@@ -51,15 +50,14 @@ PROCEDURE selectSerial ON COCO
 
 END PROC
 
-PROCEDURE selectSerial ON ATARI
+PROCEDURE selectFujiNet ON ATARI
 
 	CENTER "ISS TRACKER"
 	PRINT
 	PRINT "CHOOSE YOUR FUJINET:"
 	PRINT 
 	PRINT "1) emulated (via device R1:)"
-	PRINT "2) virtualized (via netSIO)"
-	PRINT "3) real hardware"
+	PRINT "2) virtualized/real hardware"
 	PRINT
 	
 	DO
@@ -67,7 +65,7 @@ PROCEDURE selectSerial ON ATARI
 		IF port = 1 THEN
 			DEFINE FUJINET SERIAL
 			EXIT
-		ELSE IF port = 2 OR port = 3 THEN
+		ELSE IF port = 2 THEN
 			DEFINE FUJINET SIO
 			EXIT
 		ENDIF
@@ -75,8 +73,8 @@ PROCEDURE selectSerial ON ATARI
 
 END PROC
 
-selectSerial[] ON COCO
-selectSerial[] ON ATARI
+selectFujiNet[] ON COCO
+selectFujiNet[] ON ATARI
 
 BITMAP ENABLE(16)
 
@@ -95,7 +93,7 @@ PROCEDURE fetch
 	err = FUJINET OPEN(apiEndpoint, httpGet, noTranslation)
 	
 	IF err <> success THEN
-		LOCATE , ROWS/2
+		HOME
 		CENTER "--- OPEN ERROR ---"
 		RETURN
 	ENDIF
@@ -105,7 +103,7 @@ PROCEDURE fetch
 	err = FUJINET PARSE JSON
 	
 	IF err <> success THEN
-		LOCATE , ROWS/2
+		HOME
 		CENTER "--- JSON PARSE ERROR ---"
 		RETURN
 	ENDIF
@@ -129,6 +127,9 @@ PROCEDURE fetch
 	
 	FUJINET CLOSE
 	
+	HOME
+	PRINT longitudeAsString;",";latitudeAsString
+	
 END PROC
 
 firstTime = TRUE
@@ -141,19 +142,18 @@ DO
 
 	previousLongitude = longitude
 	previousLatitude = latitude
-	
-	fetch[]	
 
-	IF NOT firstTime THEN
-		PUT IMAGE background AT previousLongitude, previousLatitude
-		firstTime = FALSE
+	fetch[]
+
+	IF longitude <> 0 AND latitude <> 0 THEN
+		IF NOT firstTime THEN
+			PUT IMAGE background AT previousLongitude, previousLatitude
+			firstTime = FALSE
+		ENDIF
+		GET IMAGE background FROM longitude, latitude
+		PUT IMAGE iss AT longitude, latitude WITH TRANSPARENCY
 	ENDIF
-	GET IMAGE background FROM longitude, latitude
-	PUT IMAGE iss AT longitude, latitude WITH TRANSPARENCY
 	
-	HOME
-	PRINT longitudeAsString;",";latitudeAsString
-	
-	SLEEP 2
+	SLEEP 10
 	
 LOOP
