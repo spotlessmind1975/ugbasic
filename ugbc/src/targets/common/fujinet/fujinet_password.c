@@ -38,6 +38,24 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET PASSWORD
+
+@english
+
+The ''FUJINET PASSWORD'' function allows you to send a password to FujiNet.
+
+@italian
+
+L'istruzione ''FUJINET PASSWORD'' consente di inviare una password a FujiNet.
+
+@syntax FUJINET PASSWORD pwd
+
+@example FUJINET PASSWORD "safe"
+
+@target coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_password( Environment * _environment, char * _password ) {

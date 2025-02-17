@@ -38,6 +38,39 @@
   * CODE SECTION 
   ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET OPEN
+
+@english
+
+The ''OPEN'' instruction allows you to open a connection to the selected device. 
+The ''url'' parameter must contain the device specification, in the format 
+''N:PROTO://[HOSTNAME]:PORT/PATH/.../''. The mode parameter, if indicated, 
+specifies the mode according to the FujiNet standard (''4''=read, ''8''=write, 
+''12''=read/write, ''13''=POST, and so on). The trans parameter indicates the 
+translation mode of the so-called "end of line" to be applied to incoming data 
+(''0'=none, ''1''=CR, ''2''=LF, ''3''=CRLF, ''4''=Pet). This command can also 
+be used as a function, to obtain the error code, if of interest.
+
+@italian
+
+Questa istruzione permette di aprire una connessione sulla periferica selezionata. 
+Il paralmetro ''url'' dovrà contenere la specifica del dispositivo, nel formato 
+''N:PROTO://[HOSTNAME]:PORT/PATH/.../''. Il parametro mode, se indicato, specifica 
+la modalità secondo lo standard FujiNet (''4''=lettura, ''8''=scrittura, 
+''12''=lettura/scrittura, ''13''=POST, e così via). Il parametro ''trans'' indica 
+la modalità di traduzione dei cosiddetti "fine linea" da applicare ai dati in arrivo 
+(''0''=nessuna, ''1''=CR, ''2''=LF, ''3''=CRLF, ''4''=Pet). Questo comando può essere 
+usato anche come una funzione, per ottenere l'eventuale codice di errore, se di interesse.
+
+@syntax FUJINET OPEN url, mode , trans
+@syntax = FUJINET OPEN ( url, mode , trans )
+
+@example IF FUJINET OPEN ( "telnet://localhost", 4, 0 ) THEN: PRINT "Opened!": ENDIF
+
+@target coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_open( Environment * _environment, char * _url, char * _mode, char * _trans ) {

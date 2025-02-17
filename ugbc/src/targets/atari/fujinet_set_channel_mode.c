@@ -38,23 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET MODE
-
-@english
-
-The ''FUJINET MODE'' command allows you to specify the channel mode of the connection.
-
-@italian
-
-Il comando ''FUJINET MODE'' permette di specificare modo da utilizzare per la connessione.
-
-@syntax FUJINET MODE mode
-
-@example FUJINET MODE 0
-
-@target coco
-</usermanual> */
 void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
 
     Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, 0 );

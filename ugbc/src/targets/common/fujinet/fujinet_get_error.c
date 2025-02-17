@@ -37,7 +37,32 @@
  /****************************************************************************
   * CODE SECTION 
   ****************************************************************************/
- 
+
+/* <usermanual>
+@keyword FUJINET ERROR
+
+@english
+
+The function ''FUJINET ERROR'' returns the last error on the channel for the 
+selected device. The value refers to the last execution of the ''FUJINET STATUS''
+command, so you need to execute this command before reading the information.
+
+@italian
+
+La funzione ''FUJINET ERROR'' restituisce l'ultimo errore dal canale relativo 
+alla periferica selezionata. Il valore è riferito all'ultima esecuzione 
+del comando ''FUJINET STATUS'', quindi è necessario eseguire questo comando prima di 
+leggere l'informazione.
+
+@syntax = FUJINET ERROR
+
+@example PRINT "Last error is ";FUJINET ERROR
+
+@seeAlso FUJINET STATUS
+
+@target atari coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_get_error( Environment * _environment ) {

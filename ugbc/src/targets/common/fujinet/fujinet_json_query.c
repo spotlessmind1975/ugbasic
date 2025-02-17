@@ -38,6 +38,29 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET SET JSON QUERY 
+
+@english
+
+The ''FUJINET SET JSON QUERY'' instruction can be used to ask to parse a
+specific JSON path.
+
+@italian
+
+L'istruzione ''FUJINET SET JSON QUERY'' può essere utilizzato per richiedere
+il parsing di uno specifico percorso JSON.
+
+@syntax FUJINET SET JSON QUERY path
+
+@example FUJINET SET JSON QUERY "/iss_position/longitude"
+@example FUJINET STATUS
+@example longitude = FUJINET READ(FUJINET BYTES)
+@example PRINT longitude
+
+@target coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_json_query( Environment * _environment, char * _json ) {

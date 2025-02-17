@@ -38,23 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET READ
-
-@english
-
-The ''FUJINET READ'' function allows you to read data from the connection.
-
-@italian
-
-La funzione ''FUJINET OPEN'' consente di leggere dati da una connessione.
-
-@syntax = FUJINET READ (size)
-
-@example response = FUJINET READ
-
-@target coco
-</usermanual> */
 Variable * fujinet_read( Environment * _environment, char * _size ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(buffer)");

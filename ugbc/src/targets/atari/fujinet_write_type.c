@@ -40,9 +40,6 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-/* <usermanual>
-@keyword FUJINET WRITE
-</usermanual> */
 void fujinet_write_type( Environment * _environment, char * _data, VariableType _type ) {
 
     Variable * data;

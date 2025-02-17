@@ -38,25 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET DEVICE
-
-@english
-
-The ''FUJINET DEVICE'' command allows you to specify the number of FujiNet device
-that the system should consider. 
-
-@italian
-
-Il comando ''FUJINET DEVICE'' permette di specificare il numero di device FujiNet che il 
-sistema deve considerare.
-
-@syntax FUJINET DEVICE number
-
-@example FUJINET DEVICE 1
-
-@target coco
-</usermanual> */
 void fujinet_set_device( Environment * _environment, int _device_id ) {
 
     atari_fujinet_set_device( _environment, _device_id );

@@ -38,23 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET LOGIN
-
-@english
-
-The ''FUJINET LOGIN'' function allows you to send a login identifier to FujiNet.
-
-@italian
-
-L'istruzione ''FUJINET LOGIN'' consente di inviare un identificativo di login a FujiNet.
-
-@syntax FUJINET LOGIN name
-
-@example FUJINET LOGIN "user"
-
-@target coco
-</usermanual> */
 void fujinet_login( Environment * _environment, char * _login ) {
 
     Variable * value = variable_retrieve( _environment, _login );

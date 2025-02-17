@@ -38,25 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET READY
-
-@english
-
-The function ''FUJINET READY'' returns if the channel is ready to read / write
-data for the selected device.
-
-@italian
-
-La funzione ''FUJINET READY'' restituisce se il canale relativo 
-alla periferica selezionata è prondo per leggere / scrivere dati.
-
-@syntax = FUJINET READY
-
-@example IF FUJINET READY THEN: PRINT "Channel is ready!": ENDIF
-
-@target coco
-</usermanual> */
 Variable * fujinet_is_ready( Environment * _environment ) {
 
     Variable * ready = variable_temporary( _environment, VT_SBYTE, "(ready)");

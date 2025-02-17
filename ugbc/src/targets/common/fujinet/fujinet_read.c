@@ -38,6 +38,24 @@
   * CODE SECTION 
   ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET READ
+
+@english
+
+The ''FUJINET READ'' function allows you to read data from the connection.
+
+@italian
+
+La funzione ''FUJINET OPEN'' consente di leggere dati da una connessione.
+
+@syntax = FUJINET READ (size)
+
+@example response = FUJINET READ
+
+@target atari coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_read( Environment * _environment, char * _size ) {

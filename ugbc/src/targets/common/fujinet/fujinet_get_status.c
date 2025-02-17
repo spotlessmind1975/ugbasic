@@ -38,6 +38,30 @@
   * CODE SECTION 
   ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET STATUS
+
+@english
+
+The ''FUJINET STATUS'' instruction queries the connection status on FujiNet, 
+updating a series of information that can then be queried separately, including
+the number of bytes waiting to be read, the last error or whether the channel 
+is actually connected.
+
+@italian
+
+L'istruzione ''FUJINET STATUS'' interroga lo stato della connessione su FujiNet, 
+aggiornando una serie di informazioni che poi potranno essere interrogate 
+separatamente, tra cui il numero di bytes in attesa di essere letti, l'ultimo errore 
+o se il canale è effettivamente connesso.
+
+@syntax FUJINET STATUS
+
+@example FUJINET STATUS
+
+@target coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_get_status( Environment * _environment ) {

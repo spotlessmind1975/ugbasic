@@ -38,30 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET CONNECTED
-
-@english
-
-The function ''FUJINET CONNECTED'' returns if the channel is connected for the 
-selected device. The value refers to the last execution of the ''FUJINET STATUS'' 
-command, so you need to execute this command before reading the information.
-
-@italian
-
-La funzione ''FUJINET CONNECTED'' restituisce se il canale relativo 
-alla periferica selezionata è ancora connesso. Il valore è riferito all'ultima esecuzione 
-del comando ''FUJINET STATUS'', quindi è necessario eseguire questo comando prima di 
-leggere l'informazione.
-
-@syntax = FUJINET CONNECTED
-
-@example IF FUJINET CONNECTED THEN: "I AM CONNECTED!": ENDIF
-
-@seeAlso FUJINET STATUS
-
-@target coco
-</usermanual> */
 Variable * fujinet_is_connected( Environment * _environment ) {
 
     Variable * isConnected = variable_temporary( _environment, VT_SBYTE, "(bytes)");

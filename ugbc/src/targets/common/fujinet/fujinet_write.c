@@ -38,6 +38,24 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET WRITE
+
+@english
+
+The ''FUJINET WRITE'' function allows you to write data to the connection.
+
+@italian
+
+La funzione ''FUJINET WRITE'' consente di scrivere dati su una connessione.
+
+@syntax FUJINET WRITE value
+
+@example FUJINET WRITE "hello!"
+
+@target atari coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_write( Environment * _environment, char * _value ) {

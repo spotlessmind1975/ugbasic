@@ -37,7 +37,27 @@
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
- 
+
+/* <usermanual>
+@keyword FUJINET PARSE JSON
+
+@english
+
+The ''FUJINET PARSE JSON'' instruction can be used to ask FujiNet to parse
+the json returned by the last GET operation.
+
+@italian
+
+L'istruzione ''FUJINET PARSE JSON'' può essere utilizzata per chiede a FujiNet
+di interpretare il json restituito dall'ultima operazione di GET.
+
+@syntax FUJINET PARSE JSON
+
+@example FUJINET PARSE JSON
+
+@target atari coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 Variable * fujinet_parse_json( Environment * _environment ) {

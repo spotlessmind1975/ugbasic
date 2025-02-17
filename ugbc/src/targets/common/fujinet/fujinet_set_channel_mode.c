@@ -38,6 +38,24 @@
 * CODE SECTION 
 ****************************************************************************/
 
+/* <usermanual>
+@keyword FUJINET SET CHANNEL MODE
+
+@english
+
+The ''FUJINET SET CHANNEL MODE'' command allows you to specify the channel mode of the connection.
+
+@italian
+
+Il comando ''FUJINET SET CHANNEL MODE'' permette di specificare modo da utilizzare per la connessione.
+
+@syntax FUJINET SET CHANNEL MODE
+
+@example FUJINET SET CHANNEL MODE 1
+
+@target atari coco
+</usermanual> */
+
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
 void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {

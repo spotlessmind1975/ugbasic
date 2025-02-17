@@ -40,10 +40,6 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-/* <usermanual>
-@keyword FUJINET READ
-@target coco
-</usermanual> */
 Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
 
     Variable * data = variable_temporary( _environment, _type, "(data)" );

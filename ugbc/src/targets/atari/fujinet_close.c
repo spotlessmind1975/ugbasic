@@ -38,40 +38,6 @@
   * CODE SECTION 
   ****************************************************************************/
  
-/* <usermanual>
-@keyword FUJINET CLOSE
-
-@english
-
-The ''FUJINET CLOSE'' instruction can be used to close a previously opened 
-connection on the currently selected FujiNet device. The information on the 
-channel actually open, and on the general situation, is contained within the 
-device. It follows that it is necessary to check whether the connection is still 
-active, before sending this command, by querying the connection status with the 
-commands ''FUJINET STATUS'' and ''FUJINET CONNECTED''.
-
-@italian
-
-L'istruzione ''FUJINET CLOSE'' può essere utilizzata per chiudere una connessione 
-aperta in precedenza sul dispositivo FujiNet correntemente selezionato. 
-L'informazione sul canale effettivamente aperto, e sulla situazione in generale, 
-è contenuta all'interno dell'apparecchio. Ne consegue che è necessario verificare 
-se la connessione è ancora attiva, prima di inviare questo comando, interrogando 
-lo stato di connessione con i comandi ''FUJINET STATUS'' and ''FUJINET CONNECTED''.
-
-@syntax FUJINET CLOSE
-
-@example FUJINET STATUS
-@example IF FUJINET CONNECTED THEN
-@example    FUJINET CLOSE
-@example ENDIF
-
-@seeAlso FUJINET OPEN
-@seeAlso FUJINET STATUS
-@seeAlso FUJINET CONNECTED
-
-@target coco
-</usermanual> */
 void fujinet_close( Environment * _environment ) {
 
     atari_fujinet_close( _environment );
