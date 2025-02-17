@@ -139,6 +139,8 @@ TEXTATLOOP2:
 
 TEXTATNSKIPTAB:
     LD A, (DE)
+    INC DE
+    DEC C
 
     CP 31
     JR C,TEXTATCC
@@ -183,7 +185,6 @@ TEXTATCC:
     JMP TEXTATNEXT
 
 TEXTATCLS:
-    INC DE
     PUSH AF
     PUSH DE
     PUSH HL
@@ -196,17 +197,15 @@ TEXTATCLS:
     JMP TEXTATNEXT
 
 TEXTATLF:
-    INC DE
-    DEC C
     JMP TEXTATNEXT2
 
 TEXTATXAT:
     JMP TEXTATAT
 
 TEXTATPEN:
+    LD A, (DE)
     INC DE
     DEC C
-    LD A, (DE)
     CP $FF
     JR NZ, TEXTATPEN2
     LD A, 0
@@ -217,23 +216,21 @@ TEXTATPEN2:
     JMP TEXTATNEXT
 
 TEXTATPAPER:
+    LD A, (DE)
     INC DE
     DEC C
-    LD A, (DE)
     ; STA $d021
     ; STA $d020
-    INC DE
-    DEC C
     JMP TEXTATNEXT
 
 TEXTATCMOVEPREPARE:
+    LD A, (DE)
     INC DE
     DEC C
-    LD A, (DE)
     LD (CLINEX), A
+    LD A, (DE)
     INC DE
     DEC C
-    LD A, (DE)
     LD (CLINEY), A
 
 TEXTATCMOVE:
@@ -336,32 +333,31 @@ TEXTATCMOVELOOPY2:
     LD D, 0
     SBC HL, DE
     POP DE
-    DEC C
+    LD A, C
     JR NZ, TEXTATCMOVELOOPY2
     LD (COPYOFTEXTADDRESS), HL
     POP BC
     JMP TEXTATCMOVESKIPY
 
 TEXTATCMOVESKIPY:
-    INC DE
     JMP TEXTATNEXT
 
 TEXTATAT:
-    INC DE
-    DEC C
     LD A, (XCURSYS)
     LD B, A
     LD A, (DE)
+    INC DE
+    DEC C
     SUB A, B
     LD B, A
     LD A, (CONSOLEX1)
     ADD A, B
     LD (CLINEX), A
-    INC DE
-    DEC C
     LD A, (YCURSYS)
     LD B, A
     LD A, (DE)
+    INC DE
+    DEC C
     SUB A, B
     LD B, A
     LD A, (CONSOLEY1)
@@ -524,8 +520,7 @@ TEXTATINCX:
     LD A, (XCURSYS)
     INC A
     LD (XCURSYS), A
-    INC DE
-    DEC C
+    LD A, C
     JP Z, TEXTATEND2
 
 TEXTATCHECKCONSOLE:
