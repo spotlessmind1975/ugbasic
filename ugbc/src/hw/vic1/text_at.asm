@@ -35,6 +35,21 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+TEXTATTMREADCHAR:
+    TYA
+    PHA
+    LDY #0
+    LDA (TEXTPTR), Y
+    STA SCREENCODE
+    INC TEXTPTR
+    BNE TEXTATTMREADCHAR1
+    INC TEXTPTR+1
+TEXTATTMREADCHAR1:
+    DEc TEXTSIZE
+    PLA
+    TAY
+    RTS
+
 TEXTATDECODE:
     CMP #32
     BCS TEXTATXSP128
@@ -105,336 +120,19 @@ TEXTATGO0X:
     BNE TEXTATGO1X
     JMP TEXTATTILEMODE
 TEXTATGO1X:
-    CMP #2
-    BNE TEXTATGO2X
-    JMP TEXTATBITMAPMODE
-TEXTATGO2X:
-    CMP #3
-    BNE TEXTATGO3X
-    JMP TEXTATBITMAPMODE
+;     CMP #2
+;     BNE TEXTATGO2X
+;     JMP TEXTATBITMAPMODE
+; TEXTATGO2X:
+;     CMP #3
+;     BNE TEXTATGO3X
+;     JMP TEXTATBITMAPMODE
 TEXTATGO3X:
     CMP #4
     BNE TEXTATGO4X
     JMP TEXTATTILEMODE
 TEXTATGO4X:
     CLI
-    RTS
-    
-;-----------------------------------------------------------------------------
-; BITMAP MODE
-;-----------------------------------------------------------------------------
-
-TEXTATBITMAPMODE:
-
-;     RTS
-    
-;     LDX XCURSYS
-;     LDY YCURSYS
-
-;     CLC
-
-;     LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
-;     ADC PLOT8LO,X              ;+ (8 * Xcell)
-;     STA PLOTDEST               ;= cell address
-
-;     LDA PLOTVBASEHI,Y          ;do the high byte
-;     ADC PLOT8HI,X
-;     STA PLOTDEST+1
-
-;     CLC
-
-;     TXA
-;     ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
-;     STA PLOTCDEST               ;= cell address
-
-;     LDA #0
-;     ADC PLOTCVBASEHI,Y          ;do the high byte
-;     STA PLOTCDEST+1
-
-;     LDX TEXTSIZE
-;     LDY #$0
-; TEXTATBMLOOP2:
-
-;     LDA TABSTODRAW
-;     BEQ TEXTATBMNSKIPTAB
-;     JMP TEXTATBMSKIPTAB
-
-; TEXTATBMNSKIPTAB:
-;     LDA (TEXTPTR),Y
-
-;     CMP #31
-;     BCS TEXTATBMXCC
-;     JMP TEXTATBMCC
-
-; TEXTATBMXCC:
-;     JSR TEXTATDECODE
-;     JMP TEXTATBMSP0
-
-; TEXTATBMTAB:
-;     LDA XCURSYS
-; TEXTATBMTAB2:
-;     CMP TABCOUNT
-;     BCC TEXTATBMTAB3
-;     SEC
-;     SBC TABCOUNT
-;     JMP TEXTATBMTAB2
-; TEXTATBMTAB3:
-;     STA TMPPTR
-;     LDA TABCOUNT
-;     SEC
-;     SBC TMPPTR
-;     STA TABSTODRAW
-;     JMP TEXTATBMNEXT
-
-; TEXTATBMCC:
-;     CMP #09
-;     BEQ TEXTATBMTAB
-;     CMP #01
-;     BEQ TEXTATBMPEN
-;     CMP #02
-;     BEQ TEXTATBMPAPER
-;     CMP #03
-;     BEQ TEXTATBMCMOVEPREPARE
-;     CMP #04
-;     BEQ TEXTATBMXAT
-;     JMP TEXTATBMNEXT
-
-; TEXTATBMXAT:
-;     JMP TEXTATBMAT
-
-; TEXTATBMPEN:
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     ASL A
-;     ASL A
-;     ASL A
-;     ASL A
-;     STA TEXTPEN
-;     INC TEXTPTR
-;     DEY
-;     JMP TEXTATBMNEXT
-
-; TEXTATBMPAPER:
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     STA TEXTPAPER
-;     INC TEXTPTR
-;     DEY
-;     JMP TEXTATBMNEXT
-
-; TEXTATBMCMOVEPREPARE:
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     STA CLINEX
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     STA CLINEY
-
-; TEXTATBMCMOVE:
-;     CLC
-;     LDA CLINEX
-;     ADC XCURSYS
-;     STA XCURSYS
-;     LDA CLINEY
-;     ADC YCURSYS
-;     STA YCURSYS
-
-;     JMP TEXTATBMNEXT
-
-; TEXTATBMAT:
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     SEC
-;     SBC XCURSYS
-;     STA CLINEX
-;     INC TEXTPTR
-;     DEX
-;     LDA (TEXTPTR), Y
-;     SEC
-;     SBC YCURSYS
-;     STA CLINEY
-;     JMP TEXTATBMCMOVE
-
-; TEXTATBMSP0:
-
-;     TYA
-;     PHA
-
-;     TXA
-;     PHA
-
-;     LDX XCURSYS
-;     LDY YCURSYS
-
-;     CLC
-
-;     LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
-;     ADC PLOT8LO,X              ;+ (8 * Xcell)
-;     STA PLOTDEST               ;= cell address
-
-;     LDA PLOTVBASEHI,Y          ;do the high byte
-;     ADC PLOT8HI,X
-;     STA PLOTDEST+1
-
-;     CLC
-
-;     TXA
-;     ADC PLOTCVBASELO,Y          ;table of $8400 row base addresses
-;     STA PLOTCDEST               ;= cell address
-
-;     LDA #0
-;     ADC PLOTCVBASEHI,Y          ;do the high byte
-;     STA PLOTCDEST+1
-
-;     CLC
-
-;     TXA
-;     ADC PLOTC2VBASELO,Y          ;table of $8400 row base addresses
-;     STA PLOTC2DEST               ;= cell address
-
-;     LDA #0
-;     ADC PLOTC2VBASEHI,Y          ;do the high byte
-;     STA PLOTC2DEST+1
-
-;     PLA
-;     TAX
-    
-;     PLA
-;     TAY
-
-;     TYA
-;     PHA
-;     LDY #0
-
-;     LDA SCREENCODE
-;     STA TMPPTR
-;     LDA #0
-;     STA TMPPTR+1
-
-;     CLC
-;     ASL TMPPTR
-;     ROL TMPPTR+1
-;     CLC
-;     ASL TMPPTR
-;     ROL TMPPTR+1
-;     CLC
-;     ASL TMPPTR
-;     ROL TMPPTR+1
-
-;     CLC
-;     LDA #$0
-;     ADC TMPPTR
-;     STA TMPPTR
-;     LDA #$98
-;     ADC TMPPTR+1
-;     STA TMPPTR+1
-; TEXTATBMSP0L1:
-;     LDA CURRENTMODE
-;     CMP #3
-;     BEQ TEXTATBMSP0L1B3
-
-; TEXTATBMSP0L1B2:
-;     LDA (TMPPTR),Y
-;     STA (PLOTDEST),Y
-;     JMP TEXTATBMSP0L1X
-
-; TEXTATBMSP0L1B3:
-;     LDA (TMPPTR),Y
-;     CLC
-;     ASL
-;     ORA (TMPPTR),Y
-;     STA (PLOTDEST),Y
-;     JMP TEXTATBMSP0L1X
-
-; TEXTATBMSP0L1X:
-;     INY
-;     CPY #8
-;     BNE TEXTATBMSP0L1
-
-;     LDA CURRENTMODE
-;     CMP #3
-;     BEQ TEXTATBMC3
-
-;     LDY #0
-;     LDA (PLOTCDEST),Y
-;     ORA TEXTPEN
-;     STA (PLOTCDEST),Y
-;     LDA (PLOTCDEST),Y
-;     AND #$f0
-;     ORA TEXTPAPER
-;     STA (PLOTCDEST),Y
-;     JMP TEXTATBMF
-
-; TEXTATBMC3:
-;     LDY #0
-;     LDA TEXTPEN
-;     STA (PLOTC2DEST),Y
-;     LDA #0
-;     STA (PLOTCDEST),Y
-;     LDA TEXTPEN
-;     ASL
-;     ASL
-;     ASL
-;     ASL
-;     ORA (PLOTCDEST),Y
-;     STA (PLOTCDEST),Y
-;     JMP TEXTATBMF
-
-; TEXTATBMF:
-;     PLA
-;     TAY
-;     JMP TEXTATBMINCX
-
-; TEXTATBMSKIPTAB:
-;     DEC TABSTODRAW
-;     JMP TEXTATBMINCX
-
-; TEXTATBMINCX:
-;     INC XCURSYS
-;     LDA XCURSYS
-;     CMP CURRENTTILESWIDTH
-;     BEQ TEXTATBMNEXT2
-;     JMP TEXTATBMNEXT
-; TEXTATBMNEXT2:
-;     LDA #0
-;     STA XCURSYS
-;     INC YCURSYS
-;     LDA YCURSYS
-;     CMP CURRENTTILESHEIGHT
-
-;     BEQ TEXTATBMNEXT3
-;     JMP TEXTATBMNEXT
-; TEXTATBMNEXT3:
-
-;     ; scrolling ?
-
-; TEXTATBMNEXT:
-;     LDA TABSTODRAW
-;     BEQ TEXTATBMXLOOP2
-;     JMP TEXTATBMLOOP2
-; TEXTATBMXLOOP2:
-;     INY
-;     DEX
-;     BEQ TEXTATBMEND
-;     JMP TEXTATBMLOOP2
-; TEXTATBMEND:
-;     CLI
-    RTS
-
-;-----------------------------------------------------------------------------
-; TILE MODE
-;-----------------------------------------------------------------------------
-
-TEXTATINCTEXTPTR:
-    INC TEXTPTR
-    BNE TEXTATINCTEXTPTR2
-    INC TEXTPTR+1
-TEXTATINCTEXTPTR2:
     RTS
 
 TEXTATINCVIDEO:
@@ -491,7 +189,6 @@ TEXTATSKIP:
     ADC COPYOFCOLORMAPADDRESS+1
     STA COPYOFCOLORMAPADDRESS+1
 
-    LDX TEXTSIZE
     LDY #$0
 TEXTATLOOP2:
 
@@ -500,8 +197,8 @@ TEXTATLOOP2:
     JMP TEXTATSKIPTAB
 
 TEXTATNSKIPTAB:
-    LDA (TEXTPTR),Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
 
     CMP #31
     BCS TEXTATXCC
@@ -547,7 +244,6 @@ TEXTATCC:
     JMP TEXTATNEXT
 
 TEXTATCLS:
-    DEX
     JSR CLS
     JMP TEXTATNEXT
 
@@ -555,37 +251,32 @@ TEXTATXAT:
     JMP TEXTATAT
 
 TEXTATLF:
-    DEX
     JMP TEXTATNEXT2
 
 TEXTATPEN:
-    DEX
-    LDA (TEXTPTR), Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     CMP #$FF
     BNE TEXTATPEN2
     LDA #$0
 TEXTATPEN2:
     STA _PEN
-    DEX
     JMP TEXTATNEXT
 
 TEXTATPAPER:
-    DEX
-    LDA (TEXTPTR), Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     ; STA $d021
     ; STA $d020
-    DEX
+    STA _PAPER
     JMP TEXTATNEXT
 
 TEXTATCMOVEPREPARE:
-    DEX
-    LDA (TEXTPTR), Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     STA CLINEX
-    DEX
-    LDA (TEXTPTR), Y
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     STA CLINEY
 
 TEXTATCMOVE:
@@ -715,23 +406,24 @@ TEXTATCMOVESKIPY:
     JMP TEXTATNEXT
 
 TEXTATAT:
-    DEX
-    LDA (TEXTPTR), Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     SEC
     SBC XCURSYS
+    CLC
     ADC CONSOLEX1
     STA CLINEX
-    DEX
-    LDA (TEXTPTR), Y
-    JSR TEXTATINCTEXTPTR
+    JSR TEXTATTMREADCHAR
+    LDA SCREENCODE
     SEC
     SBC YCURSYS
+    CLC
     ADC CONSOLEY1
     STA CLINEY
     JMP TEXTATCMOVE
 
 TEXTATSP0:
+    LDY #0
     STA (COPYOFTEXTADDRESS),Y
     LDA _PEN
     AND #$07
@@ -743,14 +435,12 @@ TEXTATSKIPTAB:
     JSR TEXTATINCVIDEO
     DEC TABSTODRAW
     BNE TEXTATSKIPTAB2
-    DEX
 TEXTATSKIPTAB2:
     JMP TEXTATEND2X
 
 TEXTATINCX:
     INC XCURSYS
     JSR TEXTATINCVIDEO
-    DEX
     BNE TEXTATEND2X
     JMP TEXTATEND2
 TEXTATEND2X:
@@ -837,6 +527,7 @@ TEXTATNEXT:
     BEQ TEXTATXLOOP2
     JMP TEXTATLOOP2
 TEXTATXLOOP2:
+    LDX TEXTSIZE
     CPX #0
     BEQ TEXTATEND
     JMP TEXTATLOOP2
