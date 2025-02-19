@@ -58,7 +58,13 @@ La funzione ''FUJINET WRITE'' consente di scrivere dati su una connessione.
 
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
-void fujinet_write( Environment * _environment, char * _value ) {
+Variable * fujinet_write( Environment * _environment, char * _value ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
+
+    variable_store( _environment, err->name, 0 );
+)
+    return err;
 
 }
 

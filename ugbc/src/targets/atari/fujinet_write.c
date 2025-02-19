@@ -38,7 +38,9 @@
   * CODE SECTION 
   ****************************************************************************/
  
-void fujinet_write( Environment * _environment, char * _value ) {
+  Variable * fujinet_write( Environment * _environment, char * _value ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
 
     Variable * value = variable_retrieve( _environment, _value );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
@@ -59,6 +61,8 @@ void fujinet_write( Environment * _environment, char * _value ) {
             break;
     }
 
-    atari_fujinet_write( _environment, address->realName, size->realName );
+    atari_fujinet_write( _environment, address->realName, size->realName, err->realName );
 
+    return err;
+    
 }

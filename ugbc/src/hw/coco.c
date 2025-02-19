@@ -555,7 +555,7 @@ void coco_fujinet_read( Environment * _environment, char * _buffer, char * _size
 
 }
 
-void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size ) {
+void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result ) {
 
     deploy( serial, src_hw_coco_serial_asm);
     deploy( fujinet, src_hw_coco_fujinet_asm);
@@ -565,9 +565,24 @@ void coco_fujinet_write( Environment * _environment, char * _buffer, char * _siz
 
     cpu_call( _environment, "FUJINETWRITE" );
 
+    outline1( "STA %s", _result );
+    
 }
 
-void coco_fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+void coco_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+
+    outline1( "LDB #$%2.2x", _mode );
+
+    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+    outline1( "STA %s", _result );
+
+}
+
+void coco_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result ) {
 
     deploy( serial, src_hw_coco_serial_asm);
     deploy( fujinet, src_hw_coco_fujinet_asm);
@@ -575,6 +590,8 @@ void coco_fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
     outline1( "LDB %s", _mode );
 
     cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+    outline1( "STA %s", _result );
 
 }
 

@@ -43,22 +43,42 @@
 
 @english
 
-The ''FUJINET SET CHANNEL MODE'' command allows you to specify the channel mode of the connection.
+The ''FUJINET SET CHANNEL MODE'' command allows you to specify the channel 
+mode of the connection. Allowed modes are: 0 for body section, 1 for collect headers,
+2 for get headers, 3 for set headers and 4 for setting data. The value &Hfc 
+can be used for JSON mode. It returns 0 if ok, or an error otherwhise.
 
 @italian
 
-Il comando ''FUJINET SET CHANNEL MODE'' permette di specificare modo da utilizzare per la connessione.
-
-@syntax FUJINET SET CHANNEL MODE
-
-@example FUJINET SET CHANNEL MODE 1
+Il comando ''FUJINET SET CHANNEL MODE'' consente di specificare la modalità 
+canale della connessione. Le modalità consentite sono: 0 per la sezione body, 
+1 per raccogliere gli headers, 2 per ottenere intestazioni, 3 per impostare
+le intestazioni e 4 per impostare dati binari. Il valore &Hfc può essere 
+utilizzato per la modalità JSON. Restuisce 0 se ok, oppure un errore in caso
+contrario.
 
 @target atari coco
 </usermanual> */
 
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
-void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+Variable * fujinet_set_channel_mode( Environment * _environment, int _mode ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)");
+
+    variable_store( _environment, err->name, 0 );
+
+    return err;
+
+}
+
+Variable * fujinet_set_channel_mode_var( Environment * _environment, char * _mode ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)");
+    
+    variable_store( _environment, err->name, 0 );
+
+    return err;
 
 }
 

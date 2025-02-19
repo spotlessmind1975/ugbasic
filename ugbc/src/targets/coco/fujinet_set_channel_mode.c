@@ -38,10 +38,24 @@
   * CODE SECTION 
   ****************************************************************************/
 
-void fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+Variable * fujinet_set_channel_mode( Environment * _environment, int _mode ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
+
+    coco_fujinet_set_channel_mode( _environment, _mode, err->realName );
+
+    return err;
+
+}
+
+Variable * fujinet_set_channel_mode_var( Environment * _environment, char * _mode ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
 
     Variable * mode = variable_retrieve_or_define( _environment, _mode, VT_BYTE, 0 );
 
-    coco_fujinet_set_channel_mode( _environment, mode->realName );
+    coco_fujinet_set_channel_mode_var( _environment, mode->realName, err->realName );
+
+    return err;
 
 }

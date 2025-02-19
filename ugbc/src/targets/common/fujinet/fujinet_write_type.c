@@ -40,7 +40,13 @@
 
 #if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
 
-void fujinet_write_type( Environment * _environment, char * _value, VariableType _type ) {
+Variable * fujinet_write_type( Environment * _environment, char * _value, VariableType _type ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
+
+    variable_store( _environment, err->name, 0 );
+
+    return err;
 
 }
 

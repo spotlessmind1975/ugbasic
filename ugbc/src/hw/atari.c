@@ -699,7 +699,7 @@ void atari_fujinet_read( Environment * _environment, char * _buffer, char * _siz
 
 }
 
-void atari_fujinet_write( Environment * _environment, char * _buffer, char * _size ) {
+void atari_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result ) {
 
     deploy( serial, src_hw_atari_serial_asm);
     deploy( fujinet, src_hw_atari_fujinet_asm);
@@ -713,9 +713,25 @@ void atari_fujinet_write( Environment * _environment, char * _buffer, char * _si
 
     cpu_call( _environment, "FUJINETWRITE" );
 
+    outline1( "STA %s", _result );
+    
 }
 
-void atari_fujinet_set_channel_mode( Environment * _environment, char * _mode ) {
+void atari_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( fujinet, src_hw_atari_fujinet_asm);
+
+    outline1( "LDA #$%2.2x", (unsigned char)(_mode & 0xff ) );
+    outline0( "STA MATHPTR2" );
+
+    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+    outline1( "STA %s", _result );
+
+}
+
+void atari_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result ) {
 
     deploy( serial, src_hw_atari_serial_asm);
     deploy( fujinet, src_hw_atari_fujinet_asm);
@@ -724,6 +740,8 @@ void atari_fujinet_set_channel_mode( Environment * _environment, char * _mode ) 
     outline0( "STA MATHPTR2" );
 
     cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+
+    outline1( "STA %s", _result );
 
 }
 

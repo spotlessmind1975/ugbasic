@@ -40,7 +40,9 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-void fujinet_write_type( Environment * _environment, char * _data, VariableType _type ) {
+Variable * fujinet_write_type( Environment * _environment, char * _data, VariableType _type ) {
+
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
 
     Variable * data;
     if ( _type == 0 ) {
@@ -83,6 +85,8 @@ void fujinet_write_type( Environment * _environment, char * _data, VariableType 
             break;
     }
 
-    coco_fujinet_write( _environment, address->realName, size->realName );
+    coco_fujinet_write( _environment, address->realName, size->realName, err->realName );
 
+    return err;
+    
 }

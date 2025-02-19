@@ -106,7 +106,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NAME UPW UPB DOWNW DOWNB LEFTB LEFTW RIGHTB RIGHTW MEMPEEK MEMLOAD MEMSAVE
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
-%token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO
+%token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2870,7 +2870,21 @@ fujinet_functions :
     | PARSE JSON {
         $$ = fujinet_parse_json( _environment )->name;
     }
-    ;
+    | HTTP POST BIN OP expr CP {
+        $$ = fujinet_http_post_bin( _environment, $5 )->name;
+    }
+    | HTTP POST BIN OP expr as_datatype_mandatory CP  {
+        $$ = fujinet_http_post_bin_type( _environment, $5, $6 )->name;
+    }
+    | SET CHANNEL MODE OP expr CP {
+        $$ = fujinet_set_channel_mode_var( _environment, $5 )->name;
+    }
+    | WRITE OP expr CP {
+        $$ = fujinet_write( _environment, $3 )->name;
+    }
+    | WRITE OP expr as_datatype_mandatory CP {
+        $$ = fujinet_write_type( _environment, $3, $4 )->name;
+    };
 
 exponential_less:
     Identifier as_datatype_suffix_optional {
@@ -10346,7 +10360,7 @@ fujinet_definition :
         }
     }
     | SET CHANNEL MODE expr {
-        fujinet_set_channel_mode( _environment, $4 );
+        fujinet_set_channel_mode_var( _environment, $4 );
     }
     | CLOSE {
         fujinet_close( _environment );
@@ -10372,8 +10386,7 @@ fujinet_definition :
     | WRITE expr {
         fujinet_write( _environment, $2 );
     }
-    |
-    WRITE expr as_datatype_mandatory {
+    | WRITE expr as_datatype_mandatory {
         fujinet_write_type( _environment, $2, $3 );
     }
     ;

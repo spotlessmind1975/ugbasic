@@ -855,6 +855,7 @@ Hz { RETURN(HORIZONTAL,1); }
 HORN { RETURN(HORN,1); }
 HSCROLL { RETURN(HSCROLL,1); }
 Hs { RETURN(HSCROLL,1); }
+HTTP { RETURN(HTTP,1); }
 
 %{ /* --------------------------------- I --------------------------------- */ %}
 
@@ -1244,6 +1245,7 @@ POLYSYNTH { RETURN(POLYSYNTH,1); }
 PORT { RETURN(PORT,1); }
 Prt { RETURN(PORT,1); }
 POSITIVE { RETURN(POSITIVE,1); }
+POST { RETURN(POST,1); }
 PSG { RETURN(PSG,1); }
 Psg { RETURN(PSG,1); }
 Pst { RETURN(POSITIVE,1); }

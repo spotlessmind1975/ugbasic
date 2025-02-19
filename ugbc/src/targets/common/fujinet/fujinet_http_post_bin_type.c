@@ -32,37 +32,32 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../ugbc.h"
+ #include "../../../ugbc.h"
 
- /****************************************************************************
-  * CODE SECTION 
-  ****************************************************************************/
- 
-Variable * fujinet_write( Environment * _environment, char * _value ) {
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
 
-    Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
+Variable * fujinet_http_post_bin_type( Environment * _environment, char * _value, VariableType _type ) {
 
-    Variable * value = variable_retrieve( _environment, _value );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    MAKE_LABEL
 
-    switch( value->type ) {
-        case VT_STRING:
-            cpu_move_8bit( _environment, value->realName, size->realName );
-            cpu_addressof_16bit( _environment, value->realName, address->realName );
-            cpu_inc_16bit( _environment, address->realName );
-            break;
-        case VT_DSTRING:
-            cpu_dsdescriptor( _environment, value->realName, address->realName, size->realName );
-            break;
-        case VT_CHAR:
-            cpu_addressof_16bit( _environment, value->realName, address->realName );
-            cpu_store_8bit( _environment, size->realName, 1 );
-            break;
-    }
+    char errorLabel[MAX_TEMPORARY_STORAGE]; sprintf(errorLabel, "%serr", label );
 
-    coco_fujinet_write( _environment, address->realName, size->realName, err->realName );
+    Variable * err = variable_temporary( _environment, VT_BYTE, "(result)");
+
+    variable_move( _environment, fujinet_set_channel_mode( _environment, 4 )->name, err->name );
+
+    variable_compare_and_branch_const( _environment, err->name, 0, errorLabel, 0 );
+
+    variable_move( _environment, fujinet_write_type( _environment, _value, _type )->name, err->name );
+
+    variable_compare_and_branch_const( _environment, err->name, 0, errorLabel, 0 );
+
+    variable_move( _environment, fujinet_set_channel_mode( _environment, 0 )->name, err->name );
+
+    cpu_label( _environment, errorLabel );
 
     return err;
-    
+
 }

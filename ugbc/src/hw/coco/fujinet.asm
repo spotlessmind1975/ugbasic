@@ -290,6 +290,9 @@ FUJINETSETCHANNELMODE
     CLRA
     STa FUJINETPACKET_DAT+1
     JSR FUJINETPACKETWRITE
+    ; Implicit GET STATUS will be called.
+    JSR FUJINETGETSTATUS
+    LDA FUJINETERRORCODE
     RTS
 
 ; -------------------------------------------------------
