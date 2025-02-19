@@ -5163,7 +5163,6 @@ Variable *              sequence_load( Environment * _environment, char * _filen
 Variable *              sequence_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type, int _big_endian );
-Variable *              serial_status( Environment * _environment );
 Variable *              serial_write( Environment * _environment, char * _data );
 Variable *              serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian );
 void                    set_timer( Environment * _environment, char * _value );

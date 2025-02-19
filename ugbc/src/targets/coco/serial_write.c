@@ -63,6 +63,6 @@ Variable * serial_write( Environment * _environment, char * _data ) {
 
     Variable * data = variable_retrieve( _environment, _data );
 
-    return serial_write_type( _environment, _data, 0 );
+    return serial_write_type( _environment, _data, 0, 0 );
 
 }

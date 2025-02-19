@@ -53,7 +53,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 </usermanual> */
 
-Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
+Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian ) {
 
     Variable * orig;
     if ( _type == 0 ) {
@@ -64,7 +64,7 @@ Variable * serial_write_type( Environment * _environment, char * _data, Variable
 
     Variable * data = variable_temporary( _environment, orig->type, "(data)");
 
-    variable_move( _ednvironment, orig->name, data->name );
+    variable_move( _environment, orig->name, data->name );
 
     if ( !_big_endian ) {
         switch( VT_BITWIDTH( data->type ) ) {
