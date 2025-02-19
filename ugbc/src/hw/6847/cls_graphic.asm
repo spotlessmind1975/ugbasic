@@ -71,14 +71,19 @@ CLS13X
 CLS14X
     RTS
 
+CLSPATTERNS
+    fcb %00000000
+    fcb %01010101
+    fcb %10101010
+    fcb %11111111
+
 CLS7
 CLS9
 CLS11
 CLS13
     LDA _PAPER
-    ANDA #$03
-    LDB #$aa
-    MUL
+    LDX #CLSPATTERNS
+    LDA A, X
     JMP CLSG2
 
 CLS8
@@ -89,9 +94,8 @@ CLS12
 
 CLS14
     LDA _PAPER
-    CMPA #4
-    BEQ CLSG0
-    LDA #$FF
+    LDX #CLSPATTERNS
+    LDA A, X
     JMP CLSG2
 CLSG0    
     LDA #$0
