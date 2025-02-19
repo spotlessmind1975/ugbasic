@@ -82,6 +82,9 @@ ATARISTARTUPDONE:
 
 @ENDIF
 
+@IF deployed.serial && ! deployed.fujinet
+    JSR SERIALINIT
+@ENDIF
     RTS
 
 WAITTIMER:
