@@ -296,350 +296,350 @@ void coco_dsave( Environment * _environment, char * _filename, char * _offset, c
 
 }
 
-void coco_dojo_ready( Environment * _environment, char * _value ) {
+// void coco_dojo_ready( Environment * _environment, char * _value ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline0("JSR DOJOISREADY" );
-    outline1("STA %s", _value );
+//     outline0("JSR DOJOISREADY" );
+//     outline1("STA %s", _value );
 
-}
+// }
 
-void coco_dojo_read_byte( Environment * _environment, char * _value ) {
+// void coco_dojo_read_byte( Environment * _environment, char * _value ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline0("JSR DOJOREADBYTE" );
-    outline1("STA %s", _value );
+//     outline0("JSR DOJOREADBYTE" );
+//     outline1("STA %s", _value );
 
-}
+// }
 
-void coco_dojo_write_byte( Environment * _environment, char * _value ) {
+// void coco_dojo_write_byte( Environment * _environment, char * _value ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDA %s", _value );
-    outline0("JSR DOJOWRITEBYTE" );
+//     outline1("LDA %s", _value );
+//     outline0("JSR DOJOWRITEBYTE" );
 
-}
+// }
 
-void coco_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
+// void coco_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX %s", _username );
-    outline1("LDB %s", _size );
-    outline1("LDY %s", _password );
-    outline1("LDA %s", _password_size );
-    outline1("LDU #%s", _session_id );
-    outline0("JSR DOJOLOGIN" );
+//     outline1("LDX %s", _username );
+//     outline1("LDB %s", _size );
+//     outline1("LDY %s", _password );
+//     outline1("LDA %s", _password_size );
+//     outline1("LDU #%s", _session_id );
+//     outline0("JSR DOJOLOGIN" );
 
-}
+// }
 
-void coco_dojo_success( Environment * _environment, char * _id, char * _result ) {
+// void coco_dojo_success( Environment * _environment, char * _id, char * _result ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX #%s", _id );
-    outline0("JSR DOJOSUCCESS" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
+//     outline1("LDX #%s", _id );
+//     outline0("JSR DOJOSUCCESS" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
 
-}
+// }
 
-void coco_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
+// void coco_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX %s", _application );
-    outline1("LDB %s", _size );
-    outline1("LDY #%s", _session_id );
-    outline1("LDU #%s", _port_id );
-    outline0("JSR DOJOCREATEPORT" );
+//     outline1("LDX %s", _application );
+//     outline1("LDB %s", _size );
+//     outline1("LDY #%s", _session_id );
+//     outline1("LDU #%s", _port_id );
+//     outline0("JSR DOJOCREATEPORT" );
 
-}
+// }
 
-void coco_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
+// void coco_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX #%s", _port_id );
-    outline0("JSR DOJODESTROYPORT" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
+//     outline1("LDX #%s", _port_id );
+//     outline0("JSR DOJODESTROYPORT" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
 
-}
+// }
 
-void coco_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
+// void coco_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX %s", _username );
-    outline1("LDB %s", _size );
-    outline1("LDY %s", _application );
-    outline1("LDA %s", _application_size );
-    outline1("LDU #%s", _public_id );
-    outline0("PSHS U" );
-    outline1("LDU #%s", _session_id );
-    outline0("JSR DOJOFINDPORT" );
-    outline0("PULS U" );
+//     outline1("LDX %s", _username );
+//     outline1("LDB %s", _size );
+//     outline1("LDY %s", _application );
+//     outline1("LDA %s", _application_size );
+//     outline1("LDU #%s", _public_id );
+//     outline0("PSHS U" );
+//     outline1("LDU #%s", _session_id );
+//     outline0("JSR DOJOFINDPORT" );
+//     outline0("PULS U" );
 
-}
+// }
 
-void coco_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
+// void coco_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDX %s", _message );
-    outline1("LDB %s", _size );
-    outline1("LDY #%s", _port_id );
-    outline0("JSR DOJOPUTMESSAGE" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
+//     outline1("LDX %s", _message );
+//     outline1("LDB %s", _size );
+//     outline1("LDY #%s", _port_id );
+//     outline0("JSR DOJOPUTMESSAGE" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
 
-}
+// }
 
-void coco_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
+// void coco_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDY #%s", _port_id );
-    outline0("JSR DOJOPEEKMESSAGE" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
+//     outline1("LDY #%s", _port_id );
+//     outline0("JSR DOJOPEEKMESSAGE" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
 
-}
+// }
 
-void coco_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
+// void coco_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline1("LDY #%s", _port_id );
-    outline0("JSR DOJOGETMESSAGE" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
-    outline1("STB %s", _message );
+//     outline1("LDY #%s", _port_id );
+//     outline0("JSR DOJOGETMESSAGE" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
+//     outline1("STB %s", _message );
 
-}
+// }
 
-void coco_dojo_ping( Environment * _environment, char * _result ) {
+// void coco_dojo_ping( Environment * _environment, char * _result ) {
 
-    deploy( dojo, src_hw_coco_dojo_asm);
+//     deploy( dojo, src_hw_coco_dojo_asm);
 
-    outline0("JSR DOJOPING" );
-    cpu_ctoa( _environment );
-    outline1("STA %s", _result );
+//     outline0("JSR DOJOPING" );
+//     cpu_ctoa( _environment );
+//     outline1("STA %s", _result );
 
-}
+// }
 
-void coco_serial_read( Environment * _environment, char * _address, char * _size ) {
+// void coco_serial_read( Environment * _environment, char * _address, char * _size ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
 
-    outline1( "LDX %s", _address );
-    outline1( "LDB %s", _size );
-    outline0( "JSR SERIALREAD" );
+//     outline1( "LDX %s", _address );
+//     outline1( "LDB %s", _size );
+//     outline0( "JSR SERIALREAD" );
 
-}
+// }
 
-void coco_serial_write( Environment * _environment, char * _address, char * _size, char * _result ) {
+// void coco_serial_write( Environment * _environment, char * _address, char * _size, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
 
-    outline1( "LDX %s", _address );
-    outline1( "LDB %s", _size );
-    outline0( "JSR SERIALWRITE" );
-    outline1( "STB %s", _result );
+//     outline1( "LDX %s", _address );
+//     outline1( "LDB %s", _size );
+//     outline0( "JSR SERIALWRITE" );
+//     outline1( "STB %s", _result );
 
-}
+// }
 
-void coco_fujinet_set_device( Environment * _environment, int _device_id ) {
+// void coco_fujinet_set_device( Environment * _environment, int _device_id ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_store_8bit( _environment, "FUJINETDEVICEID", _device_id );
+//     cpu_store_8bit( _environment, "FUJINETDEVICEID", _device_id );
 
-}
+// }
 
-void coco_fujinet_set_device_var( Environment * _environment, char * _device_id ) {
+// void coco_fujinet_set_device_var( Environment * _environment, char * _device_id ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_move_8bit( _environment, _device_id, "FUJINETDEVICEID" );
+//     cpu_move_8bit( _environment, _device_id, "FUJINETDEVICEID" );
 
-}
+// }
 
-void coco_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting ) {
+// void coco_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_move_16bit( _environment, "FUJINETBYTESWAITING", _bytes_waiting );
+//     cpu_move_16bit( _environment, "FUJINETBYTESWAITING", _bytes_waiting );
 
-}
+// }
 
-void coco_fujinet_is_connected( Environment * _environment, char * _is_connected ) {
+// void coco_fujinet_is_connected( Environment * _environment, char * _is_connected ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_move_8bit( _environment, "FUJINETCONNECTED", _is_connected );
+//     cpu_move_8bit( _environment, "FUJINETCONNECTED", _is_connected );
 
-}
+// }
 
-void coco_fujinet_get_error( Environment * _environment, char * _error ) {
+// void coco_fujinet_get_error( Environment * _environment, char * _error ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_move_8bit( _environment, "FUJINETERRORCODE", _error );
+//     cpu_move_8bit( _environment, "FUJINETERRORCODE", _error );
 
-}
+// }
 
-void coco_fujinet_is_ready( Environment * _environment, char * _ready ) {
+// void coco_fujinet_is_ready( Environment * _environment, char * _ready ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_call( _environment, "FUJINETREADY" );
-    outline1( "STA %s", _ready );
+//     cpu_call( _environment, "FUJINETREADY" );
+//     outline1( "STA %s", _ready );
     
-}
+// }
 
-void coco_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result ) {
+// void coco_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDA %s", _mode );
-    outline1( "LDB %s", _trans );
-    outline0( "TFR D, U" );
-    outline1( "LDY %s", _url );
-    outline1( "LDB %s", _size );
+//     outline1( "LDA %s", _mode );
+//     outline1( "LDB %s", _trans );
+//     outline0( "TFR D, U" );
+//     outline1( "LDY %s", _url );
+//     outline1( "LDB %s", _size );
 
-    cpu_call( _environment, "FUJINETOPEN" );
+//     cpu_call( _environment, "FUJINETOPEN" );
 
-    outline1( "STA %s", _result );
+//     outline1( "STA %s", _result );
 
-}
+// }
 
-void coco_fujinet_close( Environment * _environment ) {
+// void coco_fujinet_close( Environment * _environment ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_call( _environment, "FUJINETCLOSE" );
+//     cpu_call( _environment, "FUJINETCLOSE" );
 
-}
+// }
 
-void coco_fujinet_get_status( Environment * _environment ) {
+// void coco_fujinet_get_status( Environment * _environment ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_call( _environment, "FUJINETGETSTATUS" );
+//     cpu_call( _environment, "FUJINETGETSTATUS" );
     
-}
+// }
 
-void coco_fujinet_read( Environment * _environment, char * _buffer, char * _size ) {
+// void coco_fujinet_read( Environment * _environment, char * _buffer, char * _size ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDY %s", _buffer );
-    outline1( "LDB %s", _size );
+//     outline1( "LDY %s", _buffer );
+//     outline1( "LDB %s", _size );
 
-    cpu_call( _environment, "FUJINETREAD" );
+//     cpu_call( _environment, "FUJINETREAD" );
 
-}
+// }
 
-void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result ) {
+// void coco_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDY %s", _buffer );
-    outline1( "LDB %s", _size );
+//     outline1( "LDY %s", _buffer );
+//     outline1( "LDB %s", _size );
 
-    cpu_call( _environment, "FUJINETWRITE" );
+//     cpu_call( _environment, "FUJINETWRITE" );
 
-    outline1( "STA %s", _result );
+//     outline1( "STA %s", _result );
     
-}
+// }
 
-void coco_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result ) {
+// void coco_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDB #$%2.2x", _mode );
+//     outline1( "LDB #$%2.2x", _mode );
 
-    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+//     cpu_call( _environment, "FUJINETSETCHANNELMODE" );
 
-    outline1( "STA %s", _result );
+//     outline1( "STA %s", _result );
 
-}
+// }
 
-void coco_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result ) {
+// void coco_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDB %s", _mode );
+//     outline1( "LDB %s", _mode );
 
-    cpu_call( _environment, "FUJINETSETCHANNELMODE" );
+//     cpu_call( _environment, "FUJINETSETCHANNELMODE" );
 
-    outline1( "STA %s", _result );
+//     outline1( "STA %s", _result );
 
-}
+// }
 
-void coco_fujinet_parse_json( Environment * _environment, char * _result ) {
+// void coco_fujinet_parse_json( Environment * _environment, char * _result ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    cpu_call( _environment, "FUJINETPARSEJSON" );
+//     cpu_call( _environment, "FUJINETPARSEJSON" );
 
-    outline1( "STA %s", _result );
+//     outline1( "STA %s", _result );
     
-}
+// }
 
-void coco_fujinet_json_query( Environment * _environment, char * _query, char * _size ) {
+// void coco_fujinet_json_query( Environment * _environment, char * _query, char * _size ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDY %s", _query );
-    outline1( "LDB %s", _size );
+//     outline1( "LDY %s", _query );
+//     outline1( "LDB %s", _size );
 
-    cpu_call( _environment, "FUJINETSETJSONQUERY" );
+//     cpu_call( _environment, "FUJINETSETJSONQUERY" );
 
-}
+// }
 
-void coco_fujinet_login( Environment * _environment, char * _login, char * _size ) {
+// void coco_fujinet_login( Environment * _environment, char * _login, char * _size ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDY %s", _login );
-    outline1( "LDB %s", _size );
+//     outline1( "LDY %s", _login );
+//     outline1( "LDB %s", _size );
     
-    cpu_call( _environment, "FUJINETLOGIN" );
+//     cpu_call( _environment, "FUJINETLOGIN" );
 
-}
+// }
 
-void coco_fujinet_password( Environment * _environment, char * _password, char * _size ) {
+// void coco_fujinet_password( Environment * _environment, char * _password, char * _size ) {
 
-    deploy( serial, src_hw_coco_serial_asm);
-    deploy( fujinet, src_hw_coco_fujinet_asm);
+//     deploy( serial, src_hw_coco_serial_asm);
+//     deploy( fujinet, src_hw_coco_fujinet_asm);
 
-    outline1( "LDY %s", _password );
-    outline1( "LDB %s", _size );
+//     outline1( "LDY %s", _password );
+//     outline1( "LDB %s", _size );
     
-    cpu_call( _environment, "FUJINETPASSWORD" );
+//     cpu_call( _environment, "FUJINETPASSWORD" );
 
-}
+// }
 
 #endif

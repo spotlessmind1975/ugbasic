@@ -284,20 +284,6 @@ void pc1403_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void pc1403_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void pc1403_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 
-void pc1403_dojo_ready( Environment * _environment, char * _value );
-void pc1403_dojo_read_byte( Environment * _environment, char * _value );
-void pc1403_dojo_write_byte( Environment * _environment, char * _value );
-
-void pc1403_dojo_ping( Environment * _environment, char * _result );
-void pc1403_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
-void pc1403_dojo_success( Environment * _environment, char * _id, char * _result );
-void pc1403_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
-void pc1403_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
-void pc1403_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
-void pc1403_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
-void pc1403_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
-void pc1403_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
-
 void pc1403_text( Environment * _environment, char * _text, char * _text_size, int _raw );
 
 #endif

@@ -288,54 +288,6 @@ void gb_put_key(  Environment * _environment, char *_string, char * _size ) {
 
 }
 
-void gb_dojo_ready( Environment * _environment, char * _value ) {
-
-}
-
-void gb_dojo_read_byte( Environment * _environment, char * _value ) {
-
-}
-
-void gb_dojo_write_byte( Environment * _environment, char * _value ) {
-
-}
-
-void gb_dojo_login( Environment * _environment, char * _username, char * _size, char * _password, char * _password_size, char * _session_id ) {
-
-}
-
-void gb_dojo_success( Environment * _environment, char * _id, char * _result ) {
-
-}
-
-void gb_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id ) {
-
-}
-
-void gb_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result ) {
-
-}
-
-void gb_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _public_id ) {
-
-}
-
-void gb_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result ) {
-
-}
-
-void gb_dojo_peek_message( Environment * _environment, char * _port_id, char * _result ) {
-
-}
-
-void gb_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message ) {
-
-}
-
-void gb_dojo_ping( Environment * _environment, char * _result ) {
-
-}
-
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
 

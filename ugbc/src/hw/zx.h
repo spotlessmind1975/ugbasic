@@ -312,20 +312,6 @@ void zx_timer_set_init( Environment * _environment, char * _timer, char * _init 
 void zx_timer_set_address( Environment * _environment, char * _timer, char * _address );
 void zx_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 
-void zx_dojo_ready( Environment * _environment, char * _value );
-void zx_dojo_read_byte( Environment * _environment, char * _value );
-void zx_dojo_write_byte( Environment * _environment, char * _value );
-
-void zx_dojo_ping( Environment * _environment, char * _result );
-void zx_dojo_login( Environment * _environment, char * _name, char * _name_size, char * _password, char * _size, char * _unique_id );
-void zx_dojo_success( Environment * _environment, char * _id, char * _result );
-void zx_dojo_create_port( Environment * _environment, char * _session_id, char * _application, char * _size, char * _port_id );
-void zx_dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _size, char * _application, char * _application_size, char * _port_id );
-void zx_dojo_put_message( Environment * _environment, char * _port_id, char * _message, char * _size, char * _result );
-void zx_dojo_peek_message( Environment * _environment, char * _port_id, char * _result );
-void zx_dojo_get_message( Environment * _environment, char * _port_id, char * _result, char * _message );
-void zx_dojo_destroy_port( Environment * _environment, char * _port_id, char * _result );
-
 void zx_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
 void zx_joystick( Environment * _environment, int _joystick, char * _result );
 
