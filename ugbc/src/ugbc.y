@@ -192,7 +192,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_next_animation
 %type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
 %type <integer> shuffle_definition_optional_rounds
-%type <string> serial_definition
+%type <string> serial_function
+%type <integer> optional_endianess
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -3748,7 +3749,7 @@ exponential_less:
     | ABS OP expr CP {
         $$ = absolute( _environment, $3 )->name;
     }
-    | SERIAL serial_definition {
+    | SERIAL serial_function {
         $$ = $2;
     }
     | TRUE {
@@ -10826,25 +10827,43 @@ positive_const_definitions :
     positive_const_definition
     | positive_const_definition OP_COMMA positive_const_definitions;
 
-serial_definition :
+serial_function :
     READ OP expr CP {
         $$ = serial_read( _environment, $3 )->name;
+    }
+    |
+    READ as_datatype_mandatory optional_endianess {
+        $$ = serial_read_type( _environment, $2, $3 )->name;
+    }
+    |
+    READ OP CP as_datatype_mandatory optional_endianess {
+        $$ = serial_read_type( _environment, $4, $5 )->name;
     }
     |
     WRITE OP expr CP {
         $$ = serial_write( _environment, $3 )->name;
     }
     |
-    WRITE OP expr as_datatype_mandatory CP {
-        $$ = serial_write_type( _environment, $3, $4 )->name;
+    WRITE OP expr as_datatype_mandatory CP optional_endianess  {
+        $$ = serial_write_type( _environment, $3, $4, $6 )->name;
+    };
+
+optional_endianess :
+    {
+        $$ = 0;
+    } | LITTLE ENDIAN {
+        $$ = 0;
+    } | BIG ENDIAN {
+        $$ = 1;
+    };
+
+serial_definition :
+    WRITE expr {
+        serial_write( _environment, $2 );
     }
     |
-    READ as_datatype_mandatory {
-        $$ = serial_read_type( _environment, $2 )->name;
-    }
-    |
-    STATUS {
-        $$ = serial_status( _environment )->name;
+    WRITE OP expr as_datatype_mandatory CP optional_endianess {
+        serial_write_type( _environment, $3, $4, $6 );
     };
 
 statement2nc:
@@ -10920,7 +10939,6 @@ statement2nc:
   | POLYLINE polyline_definition
   | CLIP clip_definition
   | USE use_definition
-  | SERIAL serial_definition
   | SET LINE expr {
       ((Environment *)_environment)->lineNeeded = 1;
       variable_move( _environment, $3, "LINE" );
@@ -10968,6 +10986,7 @@ statement2nc:
   | CHECK check_definition
   | DOJO dojo_definition
   | FUJINET fujinet_definition
+  | SERIAL serial_definition
   | dojo_definition
   | PRINT print_definition
   | TRAVEL travel_definition

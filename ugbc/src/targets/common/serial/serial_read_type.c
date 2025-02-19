@@ -32,13 +32,11 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
-
-extern char DATATYPE_AS_STRING[][16];
 
 /**
  * @brief Emit code for <strong>SERIAL READ datatype</strong>
@@ -49,47 +47,53 @@ extern char DATATYPE_AS_STRING[][16];
 /* <usermanual>
 @keyword SERIAL READ
 
-@target coco
+@english
+
+This command allows you to read one or more bytes, up to a whole string, 
+from the serial port. The simplest syntax is the one that allows you to 
+retrieve a string from the serial port, indicating the number of characters 
+(''chars'') to read. It is possible to omit the size (in bytes) to read 
+and instead directly indicate the ''type''. In this case, a piece of data 
+will be read from the serial port as long as the indicated type. In this last 
+use case, the programmer must pay particular attention to the order of the 
+bytes, where the data exceeds the size of one byte. In other words, the data 
+is read with the endianess prevailing on the target computer. To change this 
+behavior and ensure that the endianess is the same, regardless of the computer 
+used, it is necessary to use the ''BIG ENDIAN'' or ''LITTLE ENDIAN'' option, 
+to indicate the preferred endianess.
+
+@italian
+
+Questo comando permette di leggere uno o più bytes, fino a una stringa intera, 
+dalla porta seriale. La sintassi più semplice è quella che permette di recuperare una
+stringa dalla porta seriale, indicando il numero di caratteri (''chars'') da leggere. 
+E' possibile omettere la dimensione (in bytes) da leggere e indicare, invece, 
+direttamente, il tipo (''type''). In questo caso, sarà letto un dato dalla porta 
+seriale lungo tnato quanto il tipo indicato. In quest'ultimo caso d'uso, 
+particolare attenzione deve essere posta dal programmatore sull'ordine dei byte, 
+laddove il dato superi la dimensione di un byte. In altri termini, il dato viene 
+letto con la endianess prevalente sul computer target. Per cambiare questo 
+comportamento e garantire che l'endianess sia la stessa, a prescindere dal 
+computer utilizzato, è necessario usare l'opzione ''BIG ENDIAN'' o ''LITTLE ENDIAN'', 
+per indicare l'endianess di preferenzaa.
+
+@syntax = SERIAL READ [()] AS datatype [BIG ENDIAN|LITTLE ENDIAN]
+@syntax = SERIAL READ (chars)
+
+@example result = SERIAL READ AS BYTE
 
 </usermanual> */
 
+#if ! defined( __coco__ ) && ! defined( __atari__ )
+
 Variable * serial_read_type( Environment * _environment, VariableType _datatype, int _big_endian ) {
 
-    Variable * data = variable_temporary( _environment, _datatype, "(data)" );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+    Variable * result = variable_temporary( _environment, _datatype, "(data)" );
 
-    switch( VT_BITWIDTH( data->type ) ) {
-        case 32: 
-        case 16: 
-        case 8: {            
-            cpu_store_8bit( _environment, size->realName, VT_BITWIDTH( data->type ) >> 3 );
-            cpu_addressof_16bit( _environment, data->realName, address->realName );
-            break;
-        }
-        default:
-        case 0: {
-            CRITICAL_SERIAL_READ_UNSUPPORTED( DATATYPE_AS_STRING[_datatype]);
-            break;
-        }
-    }
+    variable_store( _environment, result->name, 0 );
 
-    coco_serial_read( _environment, address->realName, size->realName );
-
-    if ( !_big_endian ) {
-        switch( VT_BITWIDTH( data->type ) ) {
-            case 32: 
-                cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "3" ) );
-                cpu_swap_8bit( _environment, address_displacement( _environment, data->realName, "1" ), address_displacement( _environment, data->realName, "2" ) );
-                break;
-            case 16: 
-                cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "1" ) );
-                break;
-            case 8:
-                break;
-        }
-    }
-    
-    return data;
+    return result;
 
 }
+
+#endif

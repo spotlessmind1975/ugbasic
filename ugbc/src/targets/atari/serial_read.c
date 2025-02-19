@@ -32,43 +32,24 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+ #include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
- * 
- * @param _environment Current calling environment
- */
+Variable * serial_read( Environment * _environment, char * _size ) {
 
-/* <usermanual>
-@keyword SERIAL WRITE
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_BYTE, 1 );
+    Variable * result = variable_temporary( _environment, VT_DSTRING, "(result)" );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(data)" );
 
-@english
+    cpu_dsfree( _environment, result->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
 
-It is possible to write a specific data type by indicating it after the parameter.
-
-@italian
-
-E' possibile scrivere un tipo di dato specifico, indicandolo di seguito al parametro.
-
-@syntax = SERIAL WRITE( data AS datatype )
-
-@example result = SERIAL WRITE( 42 AS BYTE )
-
-</usermanual> */
-
-#if ! defined( __coco__ )
-
-Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
-
-    Variable * result = variable_temporary( _environment, _type, "(status)" );
-
+    atari_serial_read( _environment, address->realName, size->realName );
+    
     return result;
 
 }
-
-#endif

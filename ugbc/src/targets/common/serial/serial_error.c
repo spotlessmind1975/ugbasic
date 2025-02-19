@@ -32,42 +32,51 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
+ * @brief Emit code for <strong>SERIAL ERROR</strong>
  * 
  * @param _environment Current calling environment
  */
 
 /* <usermanual>
-@keyword SERIAL WRITE
+@keyword SERIAL ERROR
 
 @english
 
-This instruction allows you to write one or more bytes to the standard serial 
-connection. The instruction will return ''FALSE'' if any error occurs.
+This instruction allows you to know the reason why the last operation failed. 
+The numeric code must refer to the possible values ​​for the target considered. 
+Note that the value of zero means, in any target, "no error" and is the value 
+returned if everything went well.
 
 @italian
 
-Questa istruzione consente di scrivere uno o più byte sulla connessione 
-seriale standard. L'istruzione restituirà ''FALSE'' se si verifica un errore.
+Questa istruzione permette di conoscere il motivo per cui l'ultima operazione 
+è fallita. Il codice numerico deve essere riferito ai valori possibili per il 
+target considerato. Da notare che il valore di zero significa, in qualsiasi 
+target, "no error" ed è il valore restituito se tutto è andato per il meglio.
 
-@syntax = SERIAL WRITE( data )
+@syntax = SERIAL ERROR
 
-@example result = SERIAL WRITE( "test" )
+@example IF SERIAL ERROR > 0 THEN: PRINT "Some error occurred: ";SERIAL ERROR : ENDIF
+
+@target atari
+@target coco
 
 </usermanual> */
 
-#if ! defined( __coco__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ )
 
-Variable * serial_write( Environment * _environment, char * _data ) {
+Variable * serial_status( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(status)" );
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(data)" );
+
+    variable_store( _environment, result->name, 0 );
 
     return result;
 

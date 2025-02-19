@@ -38,6 +38,52 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * dojo_send( Environment * _environment, char * _value ) {
+/**
+ * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ */
+
+/* <usermanual>
+@keyword SERIAL WRITE
+
+@english
+
+This command allows you to write one or more bytes, up to a whole string, 
+to the serial port. The simplest syntax is to write a variable to the 
+serial port: in this case, the command will send the exact number of bytes 
+needed to the serial port. To ensure that the actual size is respected, it is 
+possible to indicate the type of data to be considered. Finally, in the case of 
+data types larger than a byte, it is possible to indicate the endianess with which 
+the data will be sent to the serial port.
+
+@italian
+
+Questo comando permette di scrivere uno o più bytes, fino a una stringa intera, 
+sulla porta seriale. La sintassi più semplice è quella che permette di scrivere 
+una variabile verso la porta seriale: in tal caso, il comando invierà l'esatto 
+numero di byte necessari verso la porta seriale. Per garantire il rispetto dela 
+dimensione effettiva, è possibile indicare il tipo di dati da considerare. 
+Infine, nel caso di tipi di dato di dimensioni superiori al byte, è possibile 
+indicare l'endianess con cui i dati saranno inviati sulla porta seriale.
+
+@syntax = SERIAL WRITE( variable [AS type] )
+@syntax SERIAL WRITE variable [AS type]
+
+@example result = SERIAL WRITE( 42 AS BYTE )
+
+</usermanual> */
+
+#if ! defined( __coco__ ) && ! defined( __atari__ )
+
+Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
+
+    Variable * result = variable_temporary( _environment, _type, "(status)" );
+
+    variable_store( _environment, result->name, 0 );
+
+    return result;
 
 }
+
+#endif

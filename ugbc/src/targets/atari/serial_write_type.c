@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+ #include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -40,20 +40,7 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-/**
- * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
- * 
- * @param _environment Current calling environment
- */
-
-/* <usermanual>
-@keyword SERIAL WRITE
-
-@target coco
-
-</usermanual> */
-
-Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
+Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian ) {
 
     Variable * orig;
     if ( _type == 0 ) {
@@ -62,22 +49,31 @@ Variable * serial_write_type( Environment * _environment, char * _data, Variable
         orig = variable_retrieve_or_define( _environment, _data, _type, 0 );
     }
 
-    Variable * data = variable_temporary( _environment, orig->type, "(data)");
+    Variable * data = NULL;
 
-    variable_move( _ednvironment, orig->name, data->name );
-
-    if ( !_big_endian ) {
+    if ( _big_endian ) {
         switch( VT_BITWIDTH( data->type ) ) {
             case 32: 
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
                 cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "3" ) );
                 cpu_swap_8bit( _environment, address_displacement( _environment, data->realName, "1" ), address_displacement( _environment, data->realName, "2" ) );
                 break;
             case 16: 
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
                 cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "1" ) );
                 break;
             case 8:
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
+                break;
+            default:
+                data = orig;
                 break;
         }
+    } else {
+        data = orig;
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
@@ -115,7 +111,7 @@ Variable * serial_write_type( Environment * _environment, char * _data, Variable
             break;
     }
 
-    coco_serial_write( _environment, address->realName, size->realName, result->realName );
+    atari_serial_write( _environment, address->realName, size->realName, result->realName );
 
     return result;
 

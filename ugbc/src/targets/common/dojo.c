@@ -32,12 +32,30 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+ #include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+ 
+extern char DATATYPE_AS_STRING[][16];
+ 
+void dojo_put_request0( int _command, char * _param1, char * _param2, char * _result ) {
 
-Variable * dojo_send( Environment * _environment, char * _value ) {
+}
+
+void dojo_put_request( int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+
+}
+
+void dojo_has_response( char * _result ) {
+
+}
+
+void dojo_get_response0( char * _status ) {
+
+}
+
+void dojo_get_response( char * _status, char * _data, char * _size ) {
 
 }

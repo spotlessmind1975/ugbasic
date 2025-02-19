@@ -32,40 +32,44 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>SERIAL STATUS</strong>
+ * @brief Emit code for <strong>SERIAL WRITE(...)</strong>
  * 
  * @param _environment Current calling environment
  */
 
 /* <usermanual>
-@keyword SERIAL STATUS
+@keyword SERIAL WRITE
 
 @english
 
-This instruction allows you to read the status of the last serial operation.
+This instruction allows you to write one or more bytes to the standard serial 
+connection. The instruction will return ''FALSE'' if any error occurs.
 
 @italian
 
-Questa istruzione consente di leggere lo stato dell'ultima operazione sulla porta seriale.
+Questa istruzione consente di scrivere uno o più byte sulla connessione 
+seriale standard. L'istruzione restituirà ''FALSE'' se si verifica un errore.
 
-@syntax = SERIAL STATUS
+@syntax = SERIAL WRITE( data )
 
-@example result = SERIAL STATUS
+@example result = SERIAL WRITE( "test" )
 
 </usermanual> */
 
-#if ! defined( __coco__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ )
 
-Variable * serial_status( Environment * _environment ) {
+Variable * serial_write( Environment * _environment, char * _data ) {
 
-    Variable * result = variable_temporary( _environment, VT_SBYTE, "(data)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(status)" );
+
+    variable_store( _environment, result->name, 0 );
 
     return result;
 

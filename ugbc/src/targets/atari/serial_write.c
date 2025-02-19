@@ -32,43 +32,14 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+ #include "../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>SERIAL READ datatype</strong>
- * 
- * @param _environment Current calling environment
- */
+Variable * serial_write( Environment * _environment, char * _data ) {
 
-/* <usermanual>
-@keyword SERIAL READ
-
-@english
-
-It is possible to read a specific data type by specifying it after the command.
-
-@italian
-
-E' possibile leggere un tipo di dato specifico, indicandolo di seguito al comando.
-
-@syntax = SERIAL READ AS datatype
-
-@example result = SERIAL READ AS BYTE
-
-</usermanual> */
-
-#if ! defined( __coco__ )
-
-Variable * serial_read_type( Environment * _environment, VariableType _datatype ) {
-
-    Variable * result = variable_temporary( _environment, _datatype, "(data)" );
-
-    return result;
+    return serial_write_type( _environment, _data, 0, 0 );
 
 }
-
-#endif

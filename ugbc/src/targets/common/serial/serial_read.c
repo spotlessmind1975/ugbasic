@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
@@ -44,32 +44,13 @@
  * @param _environment Current calling environment
  */
 
-/* <usermanual>
-@keyword SERIAL READ
-
-@english
-
-This instruction allows you to read one or more bytes from the standard serial 
-connection. The instruction will still wait for the number of bytes specified in the
-''size'' parameter to arrive. The result will be a string containing the data read.
-
-@italian
-
-Questa istruzione permette di leggere uno o più byte proveniente dalla connessione 
-seriale standard. L'istruzione attenderà comunque l'arrivo del numero di byte indicati 
-nel parametro ''size''. Il risultato sarà una stringa che conterrà i dati letti.
-
-@syntax = SERIAL READ( size )
-
-@example result = SERIAL READ( 1 )
-
-</usermanual> */
-
-#if ! defined( __coco__ )
+ #if ! defined( __coco__ ) && ! defined( __atari__ )
 
 Variable * serial_read( Environment * _environment, char * _size ) {
 
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(data)" );
+
+    variable_store_string( _environment, result->name, "" );
 
     return result;
 
