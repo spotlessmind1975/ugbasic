@@ -4730,18 +4730,6 @@ void                    defdgr_vars( Environment * _environment, char * _charact
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
-Variable *              dojo_create_port( Environment * _environment, char * _session_id, char * _application );
-Variable *              dojo_destroy_port( Environment * _environment, char * _port_id );
-Variable *              dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application );
-Variable *              dojo_put_message( Environment * _environment, char * _port_id, char *_message );
-Variable *              dojo_peek_message( Environment * _environment, char * _port_id );
-Variable *              dojo_get_message( Environment * _environment, char * _port_id );
-Variable *              dojo_login( Environment * _environment, char * _username, char * _password );
-Variable *              dojo_success( Environment * _environment, char * _id );
-Variable *              dojo_ping( Environment * _environment );
-Variable *              dojo_ready( Environment * _environment );
-Variable *              dojo_receive( Environment * _environment );
-void                    dojo_send( Environment * _environment, char * _value );
 void                    downw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
@@ -4751,6 +4739,20 @@ void                    draw_string( Environment * _environment, char * _string 
 void                    draw_tsb_string( Environment * _environment, char * _string, char * _x, char * _y, char * _c, int _preserve_color  );
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
+
+Variable *              dojo_ping( Environment * _environment );
+Variable *              dojo_ready( Environment * _environment );
+Variable *              dojo_receive( Environment * _environment );
+Variable *              dojo_send( Environment * _environment, char * _value );
+
+Variable *              dojo_create_port( Environment * _environment, char * _session_id, char * _application );
+Variable *              dojo_destroy_port( Environment * _environment, char * _port_id );
+Variable *              dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application );
+Variable *              dojo_get_message( Environment * _environment, char * _port_id );
+Variable *              dojo_login( Environment * _environment, char * _username, char * _password );
+Variable *              dojo_peek_message( Environment * _environment, char * _port_id );
+Variable *              dojo_put_message( Environment * _environment, char * _port_id, char *_message );
+Variable *              dojo_success( Environment * _environment, char * _id );
 
 //----------------------------------------------------------------------------
 // *E*
