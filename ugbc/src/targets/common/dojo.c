@@ -40,22 +40,52 @@
  
 extern char DATATYPE_AS_STRING[][16];
  
-void dojo_put_request0( int _command, char * _param1, char * _param2, char * _result ) {
+void dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_put_request0( _environment, _command, _param1, _param2, _result );
+    }
 
 }
 
-void dojo_put_request( int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+void dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_put_request( _environment, _command, _param1, _param2, _data, _size, _result );
+    }
 
 }
 
-void dojo_has_response( char * _result ) {
+void dojo_get_response0( Environment * _environment, char * _status ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_response0( _environment, _status );
+    }
 
 }
 
-void dojo_get_response0( char * _status ) {
+void dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_response( _environment, _status, _address, _size );
+    }
 
 }
 
-void dojo_get_response( char * _status, char * _data, char * _size ) {
+void dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_responsed( _environment, _status, _data, _size );
+    }
 
 }

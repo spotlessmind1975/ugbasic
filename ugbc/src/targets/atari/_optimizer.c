@@ -699,6 +699,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "GETIMAGE^"))   return 0;
     if(po_buf_match(name, "SID^"))   return 0;
     if(po_buf_match(name, "SIO^"))   return 0;
+    if(po_buf_match(name, "DOJO^"))   return 0;
     if(po_buf_match(name, "BLIT^"))   return 0;
     if(po_buf_match(name, "FADE^"))   return 0;
     if(po_buf_match(name, "TIMER^"))   return 0;

@@ -32,12 +32,21 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+ #include "../../../ugbc.h"
+ 
+Variable * dojo_get_id( Environment * _environment ) {
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+    MAKE_LABEL
 
-Variable * dojo_ready( Environment * _environment ) {
+    Variable * id = variable_temporary( _environment, VT_DWORD, "(unique id)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(unique id)" );
+
+    dojo_put_request0( _environment, DOJO_CMD_GETID, NULL, NULL, result->realName );
+    cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_get_responsed( _environment, result->realName, id->realName, NULL );
+
+    cpu_label( _environment, label );
+
+    return id;
 
 }
