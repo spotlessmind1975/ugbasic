@@ -194,6 +194,17 @@ void atari_dojo_serial_get_response_size( Environment * _environment, char * _st
 void atari_dojo_serial_get_response_payload( Environment * _environment, char * _address );
 void atari_dojo_serial_get_response_payloadd( Environment * _environment, char * _data );
 
+void atari_dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void atari_dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
+void atari_dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void atari_dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void atari_dojo_fujinet_get_response0( Environment * _environment, char * _status );
+void atari_dojo_fujinet_get_response( Environment * _environment, char * _status, char * _address, char * _size );
+void atari_dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void atari_dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _data );
+void atari_dojo_fujinet_get_response_payload( Environment * _environment, char * _address );
+void atari_dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data );
+
 void atari_fujinet_set_device( Environment * _environment, int _device_id );
 void atari_fujinet_set_device_var( Environment * _environment, char * _device_id );
 void atari_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting );

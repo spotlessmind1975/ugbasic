@@ -4754,6 +4754,7 @@ void                    draw_tsb_string( Environment * _environment, char * _str
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 
+void                    dojo_serial_begin( Environment * _environment );
 void                    dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
 void                    dojo_serial_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
@@ -4765,7 +4766,23 @@ void                    dojo_serial_get_responsed( Environment * _environment, c
 void                    dojo_serial_get_response_size( Environment * _environment, char * _status, char * _size );
 void                    dojo_serial_get_response_payload( Environment * _environment, char * _data );
 void                    dojo_serial_get_response_payloadd( Environment * _environment, char * _address );
+void                    dojo_serial_end( Environment * _environment );
 
+void                    dojo_fujinet_begin( Environment * _environment );
+void                    dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void                    dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
+void                    dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void                    dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void                    dojo_fujinet_has_response( Environment * _environment, char * _result );
+void                    dojo_fujinet_get_response0( Environment * _environment, char * _status );
+void                    dojo_fujinet_get_response( Environment * _environment, char * _status, char * _data, char * _size );
+void                    dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void                    dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _size );
+void                    dojo_fujinet_get_response_payload( Environment * _environment, char * _data );
+void                    dojo_fujinet_get_response_payloadd( Environment * _environment, char * _address );
+void                    dojo_fujinet_end( Environment * _environment );
+
+void                    dojo_begin( Environment * _environment );
 void                    dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
 void                    dojo_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
@@ -4777,6 +4794,7 @@ void                    dojo_get_responsed( Environment * _environment, char * _
 void                    dojo_get_response_size( Environment * _environment, char * _status, char * _size );
 void                    dojo_get_response_payload( Environment * _environment, char * _address );
 void                    dojo_get_response_payloadd( Environment * _environment, char * _data );
+void                    dojo_end( Environment * _environment );
 
 Variable *              dojo_create_port( Environment * _environment );
 Variable *              dojo_open_port( Environment * _environment, char * _name );

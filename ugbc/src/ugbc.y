@@ -3365,6 +3365,9 @@ exponential_less:
     | DOJO dojo_functions {
         $$ = $2;
     }
+    | dojo_functions {
+        $$ = $1;
+    }
     | FUJINET fujinet_functions {
         $$ = $2;
     }
@@ -10975,6 +10978,7 @@ statement2nc:
   | INSERT insert_definition
   | CHECK check_definition
   | DOJO dojo_definition
+  | dojo_definition
   | FUJINET fujinet_definition
   | SERIAL serial_definition
   | PRINT print_definition
