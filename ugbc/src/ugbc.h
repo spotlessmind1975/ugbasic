@@ -3424,6 +3424,7 @@ typedef struct _Environment {
 #define DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E363 - port name for DOJO OPEN PORT must be a string", v, t );
 #define DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E364 - port for PUT MESSAGE must be opened / created", v, t );
 #define DOJO_PUT_MESSAGE_STRING_REQUIRED( v, t ) CRITICAL3("E365 - message for PUT MESSAGE must be a string", v, t );
+#define DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E366 - port for PEEK MESSAGE must be opened / created", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4147,6 +4148,7 @@ int embed_scan_string (const char *);
 #define DOJO_CMD_OPEN_PORT                           0x02
 #define DOJO_CMD_SELECT_PORT                         0x03
 #define DOJO_CMD_PUT_MESSAGE                         0x04
+#define DOJO_CMD_PEEK_MESSAGE                        0x05
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
@@ -4772,6 +4774,7 @@ Variable *              dojo_create_port( Environment * _environment );
 Variable *              dojo_open_port( Environment * _environment, char * _name );
 Variable *              dojo_put_message( Environment * _environment, char * _port, char * _channel, char * _message );
 Variable *              dojo_error( Environment * _environment );
+Variable *              dojo_peek_message( Environment * _environment, char * _port, char * _channel );
 
 //----------------------------------------------------------------------------
 // *E*

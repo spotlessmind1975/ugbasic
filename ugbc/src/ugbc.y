@@ -2811,6 +2811,12 @@ dojo_functions :
     | PUT MESSAGE OP expr OP_COMMA expr CP {
         $$ = dojo_put_message( _environment, $4, NULL, $6 )->name;
     }
+    | PEEK MESSAGE OP expr OP_COMMA expr CP {
+        $$ = dojo_peek_message( _environment, $4, $6 )->name;
+    }
+    | PEEK MESSAGE OP expr CP {
+        $$ = dojo_peek_message( _environment, $4, NULL )->name;
+    }
     ;
 
 fujinet_functions : 
