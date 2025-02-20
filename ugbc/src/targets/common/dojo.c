@@ -109,3 +109,33 @@ void dojo_get_responsed( Environment * _environment, char * _status, char * _dat
     }
 
 }
+
+void dojo_get_response_size( Environment * _environment, char * _status, char * _size ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_response_size( _environment, _status, _size );
+    }
+
+}
+
+void dojo_get_response_payload( Environment * _environment, char * _address ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_response_payload( _environment, _address );
+    }
+
+}
+
+void dojo_get_response_payloadd( Environment * _environment, char * _data ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+
+    } else {
+        dojo_serial_get_response_payloadd( _environment, _data );
+    }
+
+}

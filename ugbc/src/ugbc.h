@@ -4149,6 +4149,8 @@ int embed_scan_string (const char *);
 #define DOJO_CMD_SELECT_PORT                         0x03
 #define DOJO_CMD_PUT_MESSAGE                         0x04
 #define DOJO_CMD_PEEK_MESSAGE                        0x05
+#define DOJO_CMD_GET_MESSAGE                         0x06
+
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
@@ -4760,6 +4762,9 @@ void                    dojo_serial_has_response( Environment * _environment, ch
 void                    dojo_serial_get_response0( Environment * _environment, char * _status );
 void                    dojo_serial_get_response( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_serial_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void                    dojo_serial_get_response_size( Environment * _environment, char * _status, char * _size );
+void                    dojo_serial_get_response_payload( Environment * _environment, char * _data );
+void                    dojo_serial_get_response_payloadd( Environment * _environment, char * _address );
 
 void                    dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
@@ -4769,12 +4774,16 @@ void                    dojo_has_response( Environment * _environment, char * _r
 void                    dojo_get_response0( Environment * _environment, char * _status );
 void                    dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size );
 void                    dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void                    dojo_get_response_size( Environment * _environment, char * _status, char * _size );
+void                    dojo_get_response_payload( Environment * _environment, char * _address );
+void                    dojo_get_response_payloadd( Environment * _environment, char * _data );
 
 Variable *              dojo_create_port( Environment * _environment );
 Variable *              dojo_open_port( Environment * _environment, char * _name );
 Variable *              dojo_put_message( Environment * _environment, char * _port, char * _channel, char * _message );
 Variable *              dojo_error( Environment * _environment );
 Variable *              dojo_peek_message( Environment * _environment, char * _port, char * _channel );
+Variable *              dojo_get_message( Environment * _environment, char * _port, char * _channel );
 
 //----------------------------------------------------------------------------
 // *E*

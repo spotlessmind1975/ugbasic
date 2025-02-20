@@ -808,6 +808,49 @@ void atari_dojo_serial_get_responsed( Environment * _environment, char * _status
 
 }
 
+void atari_dojo_serial_get_response_size( Environment * _environment, char * _status, char * _size ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( dojo, src_hw_atari_dojo_asm);
+
+    outline0( "JSR DOJOSERIALGETRESPONSE0" );
+    if ( _status ) {
+        outline1( "STA %s", _status );
+    }
+    if ( _size ) {
+        outline1( "STX %s", _size );
+    }
+
+}
+
+void atari_dojo_serial_get_response_payload( Environment * _environment, char * _address ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( dojo, src_hw_atari_dojo_asm);
+
+    outline1( "LDA %s", _address );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
+    outline0( "STA TMPPTR2+1" );
+
+    outline0( "JSR DOJOSERIALGETRESPONSEPAYLOAD" );
+
+}
+
+void atari_dojo_serial_get_response_payloadd( Environment * _environment, char * _data ) {
+
+    deploy( serial, src_hw_atari_serial_asm);
+    deploy( dojo, src_hw_atari_dojo_asm);
+
+    outline1( "LDA #<%s", _data );
+    outline0( "STA TMPPTR2" );
+    outline1( "LDA #>%s", _data );
+    outline0( "STA TMPPTR2+1" );
+
+    outline0( "JSR DOJOSERIALGETRESPONSEPAYLOAD" );
+
+}
+
 void atari_dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
 
     deploy( serial, src_hw_atari_serial_asm);
