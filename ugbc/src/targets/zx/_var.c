@@ -57,7 +57,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     vars_emit_byte( _environment, variable->realName, variable->initialValue);
                     break;
                 case VT_DOJOKA:
-                    outline1("%s: defs 8", variable->realName);
+                    outline1("%s: defs 4", variable->realName);
                     break;
                 case VT_IMAGEREF:
                     outline1("%s: defs 12", variable->realName);

@@ -2989,7 +2989,9 @@ typedef struct _Environment {
     int defaultArraySize;
 
     int drawUsingTsbSyntax;
-    
+
+    int dojoOnFujiNet;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3419,6 +3421,7 @@ typedef struct _Environment {
 #define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E360 - SERIAL WRITE unsupported for variable of given datatype", v, t );
 #define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E361 - SERIAL read unsupported for variable of given datatype", t );
 #define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E362 - FUJINET READ read unsupported for variable of given datatype", t );
+#define CRITICAL_DOJO_REGISTER_UNSUPPORTED_TYPE( v, t ) CRITICAL3("E363 - name for DOJO REGISTER must be a string", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4138,6 +4141,8 @@ int embed_scan_string (const char *);
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
+#define DOJO_CMD_CREATE_PORT                         0x01
+
 char * strtoupper( char * _string );
 char * basename( char * _path );
 
@@ -4740,19 +4745,22 @@ void                    draw_tsb_string( Environment * _environment, char * _str
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 
-Variable *              dojo_ping( Environment * _environment );
-Variable *              dojo_ready( Environment * _environment );
-Variable *              dojo_receive( Environment * _environment );
-Variable *              dojo_send( Environment * _environment, char * _value );
+void                    dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void                    dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void                    dojo_serial_has_response( Environment * _environment, char * _result );
+void                    dojo_serial_get_response0( Environment * _environment, char * _status );
+void                    dojo_serial_get_response( Environment * _environment, char * _status, char * _data, char * _size );
+void                    dojo_serial_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 
-Variable *              dojo_create_port( Environment * _environment, char * _session_id, char * _application );
-Variable *              dojo_destroy_port( Environment * _environment, char * _port_id );
-Variable *              dojo_find_port( Environment * _environment, char * _session_id, char * _username, char * _application );
-Variable *              dojo_get_message( Environment * _environment, char * _port_id );
-Variable *              dojo_login( Environment * _environment, char * _username, char * _password );
-Variable *              dojo_peek_message( Environment * _environment, char * _port_id );
-Variable *              dojo_put_message( Environment * _environment, char * _port_id, char *_message );
-Variable *              dojo_success( Environment * _environment, char * _id );
+void                    dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void                    dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void                    dojo_has_response( Environment * _environment, char * _result );
+void                    dojo_get_response0( Environment * _environment, char * _status );
+void                    dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size );
+void                    dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+
+Variable *              dojo_create_port( Environment * _environment );
+Variable *              dojo_error( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // *E*

@@ -74,7 +74,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 8,0", variable->realName);
+                        outhead1("%s: .res 4,0", variable->realName);
                     }        
                     break;
                 case VT_IMAGEREF:
@@ -377,7 +377,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_DOJOKA:
             outhead1("%s:", _variable->realName );
-            outline0(" .res 8, 0" );
+            outline0(" .res 4, 0" );
             break;
         case VT_IMAGEREF:
             outhead1("%s: .res 12,0", _variable->realName);

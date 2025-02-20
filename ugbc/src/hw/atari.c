@@ -99,7 +99,7 @@ void atari_wait_key_or_fire( Environment * _environment, int _port, int _release
     if ( _port == -1 ) {
         outline0("JSR WAITKEYFIRE");
     } else {
-        outline1("LDX #%2.2x", _port );
+        outline1("LDX #$%2.2x", _port );
         outline0("JSR WAITKEYFIREX");
     }
    
@@ -521,7 +521,7 @@ void atari_serial_read( Environment * _environment, char * _address, char * _siz
     outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
     outline0( "STA TMPPTR+1" );
     outline1( "LDA %s", _size );
-    outline0( "STA MATHPTR1" );
+    outline0( "STA MATHPTR0" );
     outline0( "JSR SERIALREAD" );
 
 }
@@ -535,7 +535,7 @@ void atari_serial_write( Environment * _environment, char * _address, char * _si
     outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
     outline0( "STA TMPPTR+1" );
     outline1( "LDA %s", _size );
-    outline0( "STA MATHPTR1" );
+    outline0( "STA MATHPTR0" );
     outline0( "JSR SERIALWRITE" );
 
 }
@@ -813,7 +813,7 @@ void atari_dojo_serial_put_request0( Environment * _environment, int _command, c
     deploy( serial, src_hw_atari_serial_asm);
     deploy( dojo, src_hw_atari_dojo_asm);
 
-    outline1( "LDA #%2.2x", _command );
+    outline1( "LDA #$%2.2x", _command );
     if ( _param1 ) {
         outline1( "LDX %s", _param1 );
     } else {
@@ -837,13 +837,13 @@ void atari_dojo_serial_put_request( Environment * _environment, int _command, ch
     deploy( dojo, src_hw_atari_dojo_asm);
 
     outline1( "LDA %s", _size );
-    outline0( "STA MATHPTR0" );
+    outline0( "STA MATHPTR2" );
     outline1( "LDA %s", _data );
     outline0( "STA TMPPTR2" );
     outline1( "LDA %s", address_displacement( _environment, _data, "1" ) );
     outline0( "STA TMPPTR2+1" );
 
-    outline1( "LDA %2.2x", _command );
+    outline1( "LDA #$%2.2x", _command );
     if ( _param1 ) {
         outline1( "LDX %s", _param1 );
     } else {

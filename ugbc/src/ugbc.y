@@ -107,6 +107,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
+%token REGISTER 
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2795,42 +2796,13 @@ frame_size : {
     } frame_size_definition;
 
 dojo_functions : 
-    RECEIVE {
-        $$ = dojo_receive( _environment )->name;
+    ERROR {
+        $$ = dojo_error( _environment  )->name;
     }
-    | RECEIVE OP CP {
-        $$ = dojo_receive( _environment )->name;
+    | CREATE PORT OP  CP {
+        $$ = dojo_create_port( _environment  )->name;
     }
-    | READY {
-        $$ = dojo_ready( _environment )->name;
-    }
-    | READY OP CP {
-        $$ = dojo_ready( _environment )->name;
-    }
-    | PING {
-        $$ = dojo_ping( _environment )->name;
-    }
-    | PING OP CP {
-        $$ = dojo_ping( _environment )->name;
-    }
-    | LOGIN OP expr OP_COMMA expr CP {
-        $$ = dojo_login( _environment, $3, $5 )->name;
-    }
-    | SUCCESS OP expr CP {
-        $$ = dojo_success( _environment, $3 )->name;
-    }
-    | CREATE PORT OP expr OP_COMMA expr CP {
-        $$ = dojo_create_port( _environment, $4, $6 )->name;
-    }
-    | FIND PORT OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = dojo_find_port( _environment, $4, $6, $8 )->name;
-    }
-    | PEEK MESSAGE OP expr CP {
-        $$ = dojo_peek_message( _environment, $4 )->name;
-    }
-    | GET MESSAGE OP expr CP {
-        $$ = dojo_get_message( _environment, $4 )->name;
-    };
+    ;
 
 fujinet_functions : 
     BYTES {
@@ -3366,7 +3338,6 @@ exponential_less:
     | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
         $$ = distance( _environment, $3, $5, $7, $9 )->name;
     }
-    | dojo_functions
     | READ END {
         $$ = read_end( _environment )->name;
       }
@@ -10341,15 +10312,7 @@ cmob_definition :
     };
 
 dojo_definition :
-    SEND expr {
-        dojo_send( _environment, $2 );
-    }
-    | DESTROY PORT expr {
-        dojo_destroy_port( _environment, $3 );
-    }
-    | PUT MESSAGE expr OP_COMMA expr {
-        dojo_put_message( _environment, $3, $5 );
-    };
+    ;
 
 fujinet_definition :
     DEVICE expr {
@@ -10987,7 +10950,6 @@ statement2nc:
   | DOJO dojo_definition
   | FUJINET fujinet_definition
   | SERIAL serial_definition
-  | dojo_definition
   | PRINT print_definition
   | TRAVEL travel_definition
   | BORDER border_definition

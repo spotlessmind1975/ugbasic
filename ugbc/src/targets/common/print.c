@@ -253,12 +253,15 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                             break;
                         }
                         case VT_DOJOKA: {
-                            char bufferName[MAX_TEMPORARY_STORAGE];
-                            sprintf(bufferName, "@dojoka(%s)", value->name);
-                            Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
-                            variable_store_string( _environment, tmp->name, bufferName );
-
-                            value = tmp;
+                            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of dojoka)");
+                            Variable * dojokaHandlePart = variable_temporary( _environment, VT_DWORD, "(part of dojoka)");
+                            cpu_addressof_16bit( _environment, value->realName, address->realName );
+                            variable_move( _environment, peekd_var( _environment, address->name )->name, dojokaHandlePart->name );
+                            print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, 0, _raw );
+                            // cpu_inc_32bit( _environment, address->realName );
+                            // variable_move( _environment, peekd_var( _environment, address->name )->name, dojokaHandlePart->name );
+                            // print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, _new_line, _raw );
+                            value = NULL;
 
                             break;
                         }
@@ -340,9 +343,11 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                             CRITICAL_PRINT_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
                     }
             }
-            text_text( _environment, value->name, _raw );
-            cpu_dsfree( _environment, value->realName );
-            cpu_store_8bit( _environment, value->realName, 0 );
+            if ( value ) {
+                text_text( _environment, value->name, _raw );
+                cpu_dsfree( _environment, value->realName );
+                cpu_store_8bit( _environment, value->realName, 0 );
+            }
         } else {
             text_text( _environment, value->name, _raw );
         }

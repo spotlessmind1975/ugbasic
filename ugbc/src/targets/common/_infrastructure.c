@@ -1005,7 +1005,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_MSPRITE ) {
         size *= 2;
     } else if ( var->arrayType == VT_DOJOKA ) {
-        size *= 8;
+        size *= 4;
     } else if ( var->arrayType == VT_IMAGEREF ) {
         size *= 16; // real: 12
     } else if ( var->arrayType == VT_PATH ) {
@@ -1428,7 +1428,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_MSPRITE ) {
                     size *= 2;
                 } else if ( destination->arrayType == VT_DOJOKA ) {
-                    size *= 8;
+                    size *= 4;
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
                     size *= 16; // Real: 12
                 } else if ( destination->arrayType == VT_PATH ) {
@@ -3108,10 +3108,10 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_DOJOKA:
                                     if ( target->size == 0 ) {
                                         target->size = source->size;
-                                        target->valueBuffer = malloc( 8 );
-                                        memset( target->valueBuffer, 0, 8 );
+                                        target->valueBuffer = malloc( 4 );
+                                        memset( target->valueBuffer, 0, 4 );
                                     }
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
                                     break;
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -3387,9 +3387,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_DOJOKA: {
                     if ( target->size == 0 ) {
-                        target->size = 8;
+                        target->size = 4;
                     }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 8 );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
                     break;
                 }
                 case VT_IMAGEREF: {
