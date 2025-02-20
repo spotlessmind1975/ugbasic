@@ -39,15 +39,27 @@
  ****************************************************************************/
  
 extern char DATATYPE_AS_STRING[][16];
- 
+
 void dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
 
     atari_dojo_serial_put_request0( _environment, _command, _param1, _param2, _result );
 }
 
-void dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+void dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result ) {
 
-    atari_dojo_serial_put_request( _environment, _command, _param1, _param2, _data, _size, _result );
+    atari_dojo_serial_put_request( _environment, _command, _param1, _param2, _address, _size, _result );
+
+}
+
+void dojo_serial_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+
+    atari_dojo_serial_put_requestd( _environment, _command, _param1, _param2, _data, _size, _result );
+
+}
+
+void dojo_serial_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result ) {
+
+    atari_dojo_serial_put_requestds( _environment, _command, _param1, _param2, _data, _size, _result );
 
 }
 
@@ -68,3 +80,4 @@ void dojo_serial_get_responsed( Environment * _environment, char * _status, char
     atari_dojo_serial_get_responsed( _environment, _status, _data, _size );
 
 }
+

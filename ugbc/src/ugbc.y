@@ -2805,6 +2805,12 @@ dojo_functions :
     | OPEN PORT OP expr CP {
         $$ = dojo_open_port( _environment, $4 )->name;
     }
+    | PUT MESSAGE OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = dojo_put_message( _environment, $4, $6, $8 )->name;
+    }
+    | PUT MESSAGE OP expr OP_COMMA expr CP {
+        $$ = dojo_put_message( _environment, $4, NULL, $6 )->name;
+    }
     ;
 
 fujinet_functions : 
@@ -10315,6 +10321,12 @@ cmob_definition :
     };
 
 dojo_definition :
+    PUT MESSAGE expr OP_COMMA expr OP_COMMA expr {
+        dojo_put_message( _environment, $3, $5, $7 );
+    }
+    | PUT MESSAGE expr OP_COMMA expr {
+        dojo_put_message( _environment, $3, NULL, $5 );
+    }
     ;
 
 fujinet_definition :
