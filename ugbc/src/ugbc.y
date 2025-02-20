@@ -2797,10 +2797,13 @@ frame_size : {
 
 dojo_functions : 
     ERROR {
-        $$ = dojo_error( _environment  )->name;
+        $$ = dojo_error( _environment )->name;
     }
-    | CREATE PORT OP  CP {
-        $$ = dojo_create_port( _environment  )->name;
+    | CREATE PORT OP CP {
+        $$ = dojo_create_port( _environment )->name;
+    }
+    | OPEN PORT OP expr CP {
+        $$ = dojo_open_port( _environment, $4 )->name;
     }
     ;
 

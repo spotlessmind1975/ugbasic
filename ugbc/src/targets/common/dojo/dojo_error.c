@@ -40,9 +40,7 @@
  
      Variable * error = variable_temporary( _environment, VT_BYTE, "(error)" );
 
-     outline0("; !!!!!!!" );
-     
-     cpu_move_8bit( _environment, "DOJOERROR", error->name );
+     cpu_move_8bit( _environment, "DOJOERROR", error->realName );
      
      return error;
  

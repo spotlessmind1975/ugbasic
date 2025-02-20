@@ -36,14 +36,34 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-Variable * dojo_create_port( Environment * _environment ) {
+Variable * dojo_open_port( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
+    Variable * port = variable_retrieve( _environment, _port );
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+
+    switch( port->type ) {
+        case VT_STRING: {            
+            cpu_move_8bit( _environment, port->realName, size->realName );
+            cpu_addressof_16bit( _environment, port->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        }
+        case VT_DSTRING: {            
+            cpu_dsdescriptor( _environment, port->realName, address->realName, size->realName );
+            break;
+        }
+        default:
+            DOJO_OPEN_PORT_STRING_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+            break;
+    }            
+    
     Variable * dojoHandle = variable_temporary( _environment, VT_DOJOKA, "(dojo handle)" );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(unique id)" );
 
-    dojo_put_request0( _environment, DOJO_CMD_CREATE_PORT, NULL, NULL, result->realName );
+    dojo_put_request( _environment, DOJO_CMD_OPEN_PORT, NULL, NULL, address->realName, size->realName, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
 

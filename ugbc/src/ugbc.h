@@ -3421,7 +3421,7 @@ typedef struct _Environment {
 #define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E360 - SERIAL WRITE unsupported for variable of given datatype", v, t );
 #define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E361 - SERIAL read unsupported for variable of given datatype", t );
 #define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E362 - FUJINET READ read unsupported for variable of given datatype", t );
-#define CRITICAL_DOJO_REGISTER_UNSUPPORTED_TYPE( v, t ) CRITICAL3("E363 - name for DOJO REGISTER must be a string", v, t );
+#define DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E363 - port name for DOJO OPEN PORT must be a string", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4142,6 +4142,7 @@ int embed_scan_string (const char *);
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
 #define DOJO_CMD_CREATE_PORT                         0x01
+#define DOJO_CMD_OPEN_PORT                           0x02
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
@@ -4760,6 +4761,7 @@ void                    dojo_get_response( Environment * _environment, char * _s
 void                    dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 
 Variable *              dojo_create_port( Environment * _environment );
+Variable *              dojo_open_port( Environment * _environment, char * _name );
 Variable *              dojo_error( Environment * _environment );
 
 //----------------------------------------------------------------------------
