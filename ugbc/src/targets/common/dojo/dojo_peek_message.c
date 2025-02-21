@@ -54,13 +54,14 @@
 
     cpu_store_8bit( _environment, peek->realName, 0 );
 
+    dojo_begin( _environment );
     dojo_put_requestds( _environment, DOJO_CMD_SELECT_PORT, NULL, NULL, port->realName, 4, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_put_request0( _environment, DOJO_CMD_PEEK_MESSAGE, channel ? channel->realName : NULL, NULL, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_get_responsed( _environment, result->realName, peek->realName, NULL );
-
     cpu_label( _environment, label );
+    dojo_end( _environment );
 
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
 

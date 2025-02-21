@@ -43,11 +43,13 @@ Variable * dojo_create_port( Environment * _environment ) {
     Variable * dojoHandle = variable_temporary( _environment, VT_DOJOKA, "(dojo handle)" );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(unique id)" );
 
+    dojo_begin( _environment );
     dojo_put_request0( _environment, DOJO_CMD_CREATE_PORT, NULL, NULL, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
 
     cpu_label( _environment, label );
+    dojo_end( _environment );
 
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
 

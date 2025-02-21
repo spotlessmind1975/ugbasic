@@ -70,6 +70,7 @@
             break;
     }     
 
+    dojo_begin( _environment );
     dojo_put_requestds( _environment, DOJO_CMD_SELECT_PORT, NULL, NULL, port->realName, 4, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_put_request( _environment, DOJO_CMD_PUT_MESSAGE, channel ? channel->realName : NULL, NULL, address->realName, size->realName, result->realName );
@@ -77,6 +78,7 @@
     dojo_get_response0( _environment, result->realName );
  
     cpu_label( _environment, label );
+    dojo_end( _environment );
 
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
     

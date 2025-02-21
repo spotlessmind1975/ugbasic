@@ -1141,6 +1141,7 @@ void atari_dojo_fujinet_put_request0( Environment * _environment, int _command, 
     }
     outline0( "JSR DOJOFUJINETPUTREQUEST0" );
     if ( _result ) {
+        outline0( "LDA #0" );
         outline1( "STA %s", _result );
     }
 
@@ -1172,6 +1173,7 @@ void atari_dojo_fujinet_put_request( Environment * _environment, int _command, c
     }
     outline0( "JSR DOJOFUJINETPUTREQUEST" );
     if ( _result ) {
+        outline0( "LDA #0" );
         outline1( "STA %s", _result );
     }
 
@@ -1203,6 +1205,7 @@ void atari_dojo_fujinet_put_requestd( Environment * _environment, int _command, 
     }
     outline0( "JSR DOJOFUJINETPUTREQUEST" );
     if ( _result ) {
+        outline0( "LDA #0" );
         outline1( "STA %s", _result );
     }
 
@@ -1234,6 +1237,7 @@ void atari_dojo_fujinet_put_requestds( Environment * _environment, int _command,
     }
     outline0( "JSR DOJOFUJINETPUTREQUEST" );
     if ( _result ) {
+        outline0( "LDA #0" );
         outline1( "STA %s", _result );
     }
 

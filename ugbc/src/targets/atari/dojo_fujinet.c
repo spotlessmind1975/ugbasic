@@ -43,7 +43,7 @@ extern char DATATYPE_AS_STRING[][16];
 void dojo_fujinet_begin( Environment * _environment ) {
 
     Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
-    variable_store_string( _environment, url->name, "http://dojo.ugbasic.iwashere.eu/dojo");
+    variable_store_string( _environment, url->name, "N:https://dojo.ugbasic.iwashere.eu/dojo.php");
 
     Variable * mode = variable_temporary( _environment, VT_BYTE, "(mode)" );
     variable_store( _environment, mode->name, 13 );
