@@ -1798,7 +1798,6 @@ typedef struct _Deployed {
     int flipimagex;
     int flipimagey;
     int random;
-    int dojo;
     int console;
     int music;
     int sidplayer;
@@ -1809,6 +1808,8 @@ typedef struct _Deployed {
     int remember;
     int memorize;
     int fujinet;
+    int dojo;
+    int dojo_fujinet;
 
 } Deployed;
 

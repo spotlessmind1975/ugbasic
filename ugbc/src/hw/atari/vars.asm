@@ -80,7 +80,6 @@ ICAUX6              = $034F     ; AUX 6
 
 CIOV                = $E456     ; JSR vector for CIO. All CIO operations go through this address
 
-
 SIODDEVIC = $300
 SIODUNIT = $301
 SIODCOMND = $302
@@ -185,3 +184,4 @@ TIMERP1 = $A6
 
 DLOADERROR:     .BYTE   $0
 DSAVEERROR:     .BYTE   $0
+

@@ -216,6 +216,9 @@ void atari_fujinet_close( Environment * _environment );
 void atari_fujinet_get_status( Environment * _environment );
 void atari_fujinet_read( Environment * _environment, char * _buffer, char * _size );
 void atari_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result );
+void atari_fujinet_writed( Environment * _environment, char * _buffer, char * _size, char * _result );
+void atari_fujinet_writeds( Environment * _environment, char * _buffer, int _size, char * _result );
+
 void atari_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result );
 void atari_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result );
 void atari_fujinet_parse_json( Environment * _environment, char * _result );

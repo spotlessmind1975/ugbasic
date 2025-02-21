@@ -42,48 +42,93 @@ extern char DATATYPE_AS_STRING[][16];
 
 void dojo_fujinet_begin( Environment * _environment ) {
 
+    Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
+    variable_store_string( _environment, url->name, "http://dojo.ugbasic.iwashere.eu/dojo");
+
+    Variable * mode = variable_temporary( _environment, VT_BYTE, "(mode)" );
+    variable_store( _environment, mode->name, 13 );
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+
+    switch( url->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, url->realName, size->realName );
+            cpu_addressof_16bit( _environment, url->realName, address->realName );
+            cpu_inc_16bit( _environment, address->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, url->realName, address->realName, size->realName );
+            break;
+    }
+
+    atari_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
+    atari_fujinet_set_channel_mode( _environment, 4, NULL );
+
 }
 
 void dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
+
+   atari_dojo_fujinet_put_request0( _environment, _command, _param1, _param2, _result );
 
 }
 
 void dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result ) {
 
+    atari_dojo_fujinet_put_request( _environment, _command, _param1, _param2, _address, _size, _result );
+
 }
 
 void dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
+
+    atari_dojo_fujinet_put_requestd( _environment, _command, _param1, _param2, _data, _size, _result );
 
 }
 
 void dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result ) {
 
+    atari_dojo_fujinet_put_requestds(  _environment, _command, _param1, _param2, _data, _size, _result );
+
 }
 
 void dojo_fujinet_get_response0( Environment * _environment, char * _status ) {
+
+    atari_dojo_fujinet_get_response0( _environment, _status );
 
 }
 
 void dojo_fujinet_get_response( Environment * _environment, char * _status, char * _address, char * _size ) {
 
+    atari_dojo_fujinet_get_response( _environment, _status, _address, _size );
+
 }
 
 void dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size ) {
+
+    atari_dojo_fujinet_get_responsed(_environment, _status, _data, _size );
 
 }
 
 void dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _size ) {
 
+    atari_dojo_fujinet_get_response_size( _environment, _status, _size );
+
 }
 
 void dojo_fujinet_get_response_payload( Environment * _environment, char * _address ) {
+
+    atari_dojo_fujinet_get_response_payload( _environment, _address );
 
 }
 
 void dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data ) {
 
+    atari_dojo_fujinet_get_response_payloadd( _environment, _data );
+
 }
 
 void dojo_fujinet_end( Environment * _environment ) {
+
+    fujinet_close( _environment );
 
 }

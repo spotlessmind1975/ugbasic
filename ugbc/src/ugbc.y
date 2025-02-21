@@ -8699,7 +8699,13 @@ audio_source :
     };
 
 define_definition :
-    FUJINET HDBDOS  {
+    DOJO FUJINET  {
+        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
+    }
+    | DOJO SERIAL {
+        ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
+    }
+    | FUJINET HDBDOS  {
         fujinet_define( _environment, FN_HDBDOS );
     }
     | FUJINET BECKER {
