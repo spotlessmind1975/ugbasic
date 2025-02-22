@@ -91,6 +91,12 @@ void dojo_fujinet_put_requestds( Environment * _environment, int _command, char 
 
 }
 
+void dojo_fujinet_partial( Environment * _environment ) {
+
+    coco_fujinet_set_channel_mode( _environment, 0, NULL );
+
+}
+
 void dojo_fujinet_get_response0( Environment * _environment, char * _status ) {
 
     coco_dojo_fujinet_get_response0( _environment, _status );

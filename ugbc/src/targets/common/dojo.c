@@ -90,6 +90,16 @@ void dojo_put_requestds( Environment * _environment, int _command, char * _param
 
 }
 
+void dojo_partial( Environment * _environment ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+        dojo_fujinet_partial( _environment );
+    } else {
+        // dojo_serial_partial( _environment );
+    }
+
+}
+
 void dojo_get_response0( Environment * _environment, char * _status ) {
 
     if ( _environment->dojoOnFujiNet ) {

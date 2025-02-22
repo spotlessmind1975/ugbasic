@@ -4774,6 +4774,7 @@ void                    dojo_fujinet_put_request0( Environment * _environment, i
 void                    dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
 void                    dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
 void                    dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void                    dojo_fujinet_partial( Environment * _environment );
 void                    dojo_fujinet_has_response( Environment * _environment, char * _result );
 void                    dojo_fujinet_get_response0( Environment * _environment, char * _status );
 void                    dojo_fujinet_get_response( Environment * _environment, char * _status, char * _data, char * _size );
@@ -4788,6 +4789,7 @@ void                    dojo_put_request0( Environment * _environment, int _comm
 void                    dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
 void                    dojo_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
 void                    dojo_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void                    dojo_partial( Environment * _environment );
 void                    dojo_has_response( Environment * _environment, char * _result );
 void                    dojo_get_response0( Environment * _environment, char * _status );
 void                    dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size );

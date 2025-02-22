@@ -67,6 +67,7 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
     outline0("; !!!!!!!!!!!!!");
     dojo_put_request( _environment, DOJO_CMD_OPEN_PORT, NULL, NULL, address->realName, size->realName, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_partial( _environment );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
 
     cpu_label( _environment, label );

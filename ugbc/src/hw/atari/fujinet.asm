@@ -47,7 +47,7 @@ fujiCmdQueryJson        =     'Q'
 fujiCmdRead             =     'R'
 fujiCmdStatus           =     'S'
 fujiCmdWrite            =     'W'
-fujiCmdSetChannelMode   =     $fc
+fujiCmdSetChannelMode   =     'M'
 fujiCmdSetLogin         =     $fd
 fujiCmdSetPassword      =     $fe
 
@@ -324,9 +324,9 @@ FUJINETSETCHANNELMODESERIAL:
     STA FUJINETPACKETSERIAL_DID
     LDA #fujiCmdSetChannelMode
     STA FUJINETPACKETSERIAL_CMD
-    LDA MATHPTR2
-    STA FUJINETPACKETSERIAL_DAT
     LDA #0
+    STA FUJINETPACKETSERIAL_DAT
+    LDA MATHPTR2
     STa FUJINETPACKETSERIAL_DAT+1
     JSR FUJINETPACKETWRITESERIAL
     ; Implicit GET STATUS will be called.
@@ -651,6 +651,13 @@ FUJINETREADSIO:
     LDA #0
     STA SIODAUX2
     JSR SIOV    
+    ; If SIODSTATS = DERROR (144), call GET STATUS for extended informations  
+    LDA SIODSTATS
+    CMP #144
+    BNE FUJINETREADSIODONE
+    JSR FUJINETGETSTATUSSIO
+    LDA FUJINETERRORCODE
+FUJINETREADSIODONE:
     RTS
 
 ; -------------------------------------------------------
@@ -679,11 +686,18 @@ FUJINETWRITESIO:
     STA SIODBYTLO
     LDA #0
     STA SIODBYTHI
+    LDA MATHPTR2
     STA SIODAUX1
+    LDA #0
     STA SIODAUX2
     JSR SIOV  
+    ; If SIODSTATS = DERROR (144), call GET STATUS for extended informations  
+    LDA SIODSTATS
+    CMP #144
+    BNE FUJINETWRITESIODONE
     JSR FUJINETGETSTATUSSIO
     LDA FUJINETERRORCODE
+FUJINETWRITESIODONE:
     RTS
 
 ; -------------------------------------------------------
@@ -708,7 +722,7 @@ FUJINETSETCHANNELMODESIO:
     LDA #0
     STA SIODBYTLO
     STA SIODBYTHI
-    LDA MATHPTR2
+    LDA #0
     STA SIODAUX1
     LDA MATHPTR2
     STA SIODAUX2

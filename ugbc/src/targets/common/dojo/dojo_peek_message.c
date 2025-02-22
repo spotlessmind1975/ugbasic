@@ -59,6 +59,7 @@
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_put_request0( _environment, DOJO_CMD_PEEK_MESSAGE, channel ? channel->realName : NULL, NULL, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_partial( _environment );
     dojo_get_responsed( _environment, result->realName, peek->realName, NULL );
     cpu_label( _environment, label );
     dojo_end( _environment );

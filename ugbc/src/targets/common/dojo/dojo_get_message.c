@@ -58,12 +58,13 @@
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_put_request0( _environment, DOJO_CMD_GET_MESSAGE, channel ? channel->realName : NULL, NULL, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_partial( _environment );
     dojo_get_response_size( _environment, result->realName, size->realName );
     cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
     dojo_get_response_payload( _environment, address->realName );
     dojo_end( _environment );
-    
+
     cpu_label( _environment, label );
 
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );

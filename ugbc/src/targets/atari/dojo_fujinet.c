@@ -43,7 +43,7 @@ extern char DATATYPE_AS_STRING[][16];
 void dojo_fujinet_begin( Environment * _environment ) {
 
     Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
-    variable_store_string( _environment, url->name, "N:https://dojo.ugbasic.iwashere.eu/dojo.php");
+    variable_store_string( _environment, url->name, "N:tcp://dojo.ugbasic.iwashere.eu:50666");
 
     Variable * mode = variable_temporary( _environment, VT_BYTE, "(mode)" );
     variable_store( _environment, mode->name, 13 );
@@ -88,6 +88,12 @@ void dojo_fujinet_put_requestd( Environment * _environment, int _command, char *
 void dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result ) {
 
     atari_dojo_fujinet_put_requestds(  _environment, _command, _param1, _param2, _data, _size, _result );
+
+}
+
+void dojo_fujinet_partial( Environment * _environment ) {
+
+    atari_fujinet_set_channel_mode( _environment, 0, NULL );
 
 }
 

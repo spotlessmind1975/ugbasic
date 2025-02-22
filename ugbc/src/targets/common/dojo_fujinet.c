@@ -62,6 +62,10 @@ void dojo_fujinet_put_requestds( Environment * _environment, int _command, char 
 
 }
 
+void dojo_fujinet_partial( Environment * _environment ) {
+
+}
+
 void dojo_fujinet_get_response0( Environment * _environment, char * _status ) {
 
 }
