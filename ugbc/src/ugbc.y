@@ -8702,7 +8702,13 @@ define_definition :
     DOJO FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
     }
+    | DOJO ON FUJINET  {
+        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
+    }
     | DOJO SERIAL {
+        ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
+    }
+    | DOJO ON SERIAL {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
     }
     | FUJINET HDBDOS  {
