@@ -129,6 +129,4 @@ void dojo_fujinet_get_response_payloadd( Environment * _environment, char * _dat
 
 void dojo_fujinet_end( Environment * _environment ) {
 
-    fujinet_close( _environment );
-
 }

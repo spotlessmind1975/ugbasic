@@ -53,6 +53,7 @@
         DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
     }
 
+    dojo_begin( _environment );
     dojo_put_requestds( _environment, DOJO_CMD_SELECT_PORT, NULL, NULL, port->realName, 4, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_put_request0( _environment, DOJO_CMD_GET_MESSAGE, channel ? channel->realName : NULL, NULL, result->realName );
@@ -61,7 +62,8 @@
     cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
     dojo_get_response_payload( _environment, address->realName );
-
+    dojo_end( _environment );
+    
     cpu_label( _environment, label );
 
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
