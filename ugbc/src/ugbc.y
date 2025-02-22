@@ -8726,6 +8726,9 @@ define_definition :
     | FUJINET SIO {
         fujinet_define( _environment, FN_SIO );
     }
+    | FUJINET ON SIO {
+        fujinet_define( _environment, FN_SIO );
+    }
     | SERIAL HDBDOS  {
         fujinet_define( _environment, FN_HDBDOS );
     }
