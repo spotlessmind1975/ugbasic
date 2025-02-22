@@ -84,7 +84,7 @@ per indicare l'endianess di preferenzaa.
 
 </usermanual> */
 
-#if ! defined( __coco__ ) && ! defined( __atari__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
 Variable * serial_read_type( Environment * _environment, VariableType _datatype, int _big_endian ) {
 

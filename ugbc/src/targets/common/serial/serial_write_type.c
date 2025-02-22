@@ -74,9 +74,9 @@ indicare l'endianess con cui i dati saranno inviati sulla porta seriale.
 
 </usermanual> */
 
-#if ! defined( __coco__ ) && ! defined( __atari__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
-Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type ) {
+Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian ) {
 
     Variable * result = variable_temporary( _environment, _type, "(status)" );
 

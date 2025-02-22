@@ -70,7 +70,7 @@ target, "no error" ed è il valore restituito se tutto è andato per il meglio.
 
 </usermanual> */
 
-#if ! defined( __coco__ ) && ! defined( __atari__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
 Variable * serial_status( Environment * _environment ) {
 

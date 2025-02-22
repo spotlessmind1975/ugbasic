@@ -44,7 +44,7 @@
  * @param _environment Current calling environment
  */
 
- #if ! defined( __coco__ ) && ! defined( __atari__ )
+ #if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
 Variable * serial_read( Environment * _environment, char * _size ) {
 
