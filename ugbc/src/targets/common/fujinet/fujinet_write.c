@@ -63,7 +63,7 @@ Variable * fujinet_write( Environment * _environment, char * _value ) {
     Variable * err = variable_temporary( _environment, VT_BYTE, "(err)" );
 
     variable_store( _environment, err->name, 0 );
-)
+
     return err;
 
 }
