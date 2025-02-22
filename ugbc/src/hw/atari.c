@@ -1158,7 +1158,7 @@ void atari_dojo_fujinet_put_request( Environment * _environment, int _command, c
     outline1( "LDA %s", _address );
     outline0( "STA MATHPTR4" );
     outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
-    outline0( "STA MATHPTR5+1" );
+    outline0( "STA MATHPTR5" );
 
     outline1( "LDA #$%2.2x", _command );
     if ( _param1 ) {
@@ -1190,7 +1190,7 @@ void atari_dojo_fujinet_put_requestd( Environment * _environment, int _command, 
     outline1( "LDA #<%s", _data );
     outline0( "STA MATHPTR4" );
     outline1( "LDA #>%s", _data );
-    outline0( "STA MATHPTR5+1" );
+    outline0( "STA MATHPTR5" );
 
     outline1( "LDA #$%2.2x", _command );
     if ( _param1 ) {
@@ -1222,7 +1222,7 @@ void atari_dojo_fujinet_put_requestds( Environment * _environment, int _command,
     outline1( "LDA #<%s", _data );
     outline0( "STA MATHPTR4" );
     outline1( "LDA #>%s", _data );
-    outline0( "STA MATHPTR5+1" );
+    outline0( "STA MATHPTR5" );
 
     outline1( "LDA #$%2.2x", _command );
     if ( _param1 ) {
