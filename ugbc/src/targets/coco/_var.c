@@ -677,6 +677,21 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string equ $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
+    if ( _environment->deployed.dojo || _environment->deployed.dojo_fujinet ) {
+        outhead0("DOJOERROR fcb $00" );
+        outhead0("DOJOPACKET" );
+        outhead0("DOJOPACKET_CMD" );
+        outhead0("DOJOPACKET_STATUS" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_PAR1" );
+        outhead0("DOJOPACKET_RSIZE" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_PAR2" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_SIZE" );
+        outline0("fcb $0" );
+    }
+
     buffered_push_output( _environment );
 
     if ( ( _environment->program.startingAddress < 0x2a00 ) ) {

@@ -52,7 +52,7 @@ Variable * serial_write_type( Environment * _environment, char * _data, Variable
     Variable * data = NULL;
 
     if ( _big_endian ) {
-        switch( VT_BITWIDTH( data->type ) ) {
+        switch( VT_BITWIDTH( orig->type ) ) {
             case 32: 
                 data = variable_temporary( _environment, orig->type, "(data)");
                 variable_move( _environment, orig->name, data->name );

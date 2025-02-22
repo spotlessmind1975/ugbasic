@@ -92,6 +92,10 @@ COCOSTARTUPDONE
     JSR COCODCOMMONSETUP
 @ENDIF
 
+@IF deployed.serial && deployed.fujinet
+    JSR FUJINETREADY
+@ENDIF
+
 @IF sysCallUsed
 
 SYSCALLDONE

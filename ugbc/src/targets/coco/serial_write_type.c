@@ -55,6 +55,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian ) {
 
+    
     Variable * orig;
     if ( _type == 0 ) {
         orig = variable_retrieve( _environment, _data );
@@ -62,22 +63,31 @@ Variable * serial_write_type( Environment * _environment, char * _data, Variable
         orig = variable_retrieve_or_define( _environment, _data, _type, 0 );
     }
 
-    Variable * data = variable_temporary( _environment, orig->type, "(data)");
-
-    variable_move( _environment, orig->name, data->name );
+    Variable * data = NULL;
 
     if ( !_big_endian ) {
-        switch( VT_BITWIDTH( data->type ) ) {
+        switch( VT_BITWIDTH( orig->type ) ) {
             case 32: 
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
                 cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "3" ) );
                 cpu_swap_8bit( _environment, address_displacement( _environment, data->realName, "1" ), address_displacement( _environment, data->realName, "2" ) );
                 break;
             case 16: 
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
                 cpu_swap_8bit( _environment, data->realName, address_displacement( _environment, data->realName, "1" ) );
                 break;
             case 8:
+                data = variable_temporary( _environment, orig->type, "(data)");
+                variable_move( _environment, orig->name, data->name );
+                break;
+            default:
+                data = orig;
                 break;
         }
+    } else {
+        data = orig;
     }
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
