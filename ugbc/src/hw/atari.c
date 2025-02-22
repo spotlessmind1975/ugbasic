@@ -1041,9 +1041,9 @@ void atari_dojo_fujinet_get_response( Environment * _environment, char * _status
     deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
 
     outline1( "LDA %s", _address );
-    outline0( "STA MATHPTR3" );
+    outline0( "STA MATHPTR4" );
     outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
-    outline0( "STA MATHPTR4+1" );
+    outline0( "STA MATHPTR5" );
 
     outline0( "JSR DOJOFUJINETGETRESPONSE" );
     if ( _status ) {
@@ -1062,9 +1062,9 @@ void atari_dojo_fujinet_get_responsed( Environment * _environment, char * _statu
     deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
 
     outline1( "LDA #<%s", _data );
-    outline0( "STA MATHPTR3" );
+    outline0( "STA MATHPTR4" );
     outline1( "LDA #>%s", _data );
-    outline0( "STA MATHPTR4+1" );
+    outline0( "STA MATHPTR5" );
 
     outline0( "JSR DOJOFUJINETGETRESPONSE" );
     if ( _status ) {
@@ -1099,9 +1099,9 @@ void atari_dojo_fujinet_get_response_payload( Environment * _environment, char *
     deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
 
     outline1( "LDA %s", _address );
-    outline0( "STA MATHPTR3" );
+    outline0( "STA MATHPTR4" );
     outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
-    outline0( "STA MATHPTR4+1" );
+    outline0( "STA MATHPTR5" );
 
     outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOAD" );
 
@@ -1114,9 +1114,9 @@ void atari_dojo_fujinet_get_response_payloadd( Environment * _environment, char 
     deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
 
     outline1( "LDA #<%s", _data );
-    outline0( "STA MATHPTR3" );
+    outline0( "STA MATHPTR4" );
     outline1( "LDA #>%s", _data );
-    outline0( "STA MATHPTR4+1" );
+    outline0( "STA MATHPTR5" );
 
     outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOAD" );
 
