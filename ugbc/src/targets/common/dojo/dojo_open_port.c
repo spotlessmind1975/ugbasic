@@ -36,6 +36,48 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
+/* <usermanual>
+@keyword OPEN PORT
+
+@english
+
+The ''OPEN PORT'' instruction allows you to open a port previously created with the 
+''CREATE PORT'' command. This command accepts, as a parameter, the string with the 
+unique and printable identification code of the port, equivalent to an 8-digit hexadecimal 
+code. The result of the call will be the same identifier, which can be used for other 
+instructions. The instruction will issue an error if the port is unknown.
+
+@italian
+
+L'istruzione ''OPEN PORT'' permette di aprire una porta creata in precedenza con il comando
+''CREATE PORT''. Questo comando accetta, come parametro, la stringa con il codice 
+identificativo univoco e stampabile della porta, equivalente a un codice di 8 cifre esadecimali.
+Il risultato della chiamata sarà il medesimo identificativo, utilizzabile per le altre istruzioni. 
+L'istruzione emetterà un errore nel caso in cui la porta sia sconosciuta. 
+
+@syntax [DOJO] OPEN PORT( id )
+
+@example handle = OPEN PORT( "ce420000" )
+
+@alias DOJO OPEN PORT
+
+@seeAlso CREATE PORT
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO OPEN PORT
+
+@english
+
+@italian
+
+@alias OPEN PORT
+
+@target atari, coco
+</usermanual> */
+
 Variable * dojo_open_port( Environment * _environment, char * _port ) {
 
     MAKE_LABEL

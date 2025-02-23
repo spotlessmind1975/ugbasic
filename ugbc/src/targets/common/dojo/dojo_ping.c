@@ -36,6 +36,55 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
+/* <usermanual>
+@keyword PING
+
+@english
+
+The ''PING'' instruction allows you to check whether the server is active and 
+whether communication is occurring correctly. It can be invoked without parameters, 
+to check whether the connection is working, or with one or two parameters, to check 
+whether the connection does not compromise the data transmitted. To check this, 
+you need to know that the two parameters, if provided, will be used to compose the 
+response. So, for example, by providing ''&H15'' and ''&H16'' as input parameters, 
+the result obtained should be ''&H15162A2B'' (in the case of a "big endian" 
+computer) or ''&2B2A1615'' (in the case of a "little endian" computer).
+
+@italian
+
+L'istruzione ''PING'' consente di verificare se il server è attivo e se la 
+comunicazione avviene correttamente. Si può invocare senza parametri, per 
+verificare se la connessione funziona, o con uno o due parametri, per verificare 
+che la connessione non comprometta i dati trasmessi. Per verificarlo è necessario 
+sapere che i due parametri,  se forniti, saranno utilizzati per comporre la risposta. 
+Quindi, ad esempio, fornendo ''&H15'' e ''&H16'' come parametri in ingresso, il 
+risultato ottenuto dovrà essere ''&H15162A2B'' (in caso di computer "big endian") oppure 
+''&2B2A1615''  (in caso di computer "little endian").
+
+@syntax [DOJO] PING[ ( [param1 [,param2] ] ) ]
+
+@example response = PING( &H15, &H16 )
+@example IF response = "15162A2B" OR response = "2B2A1615" THEN
+@example     PRINT "Data transmission ok!"
+@example ENDIF
+
+@seeAlso DOJO PING
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO PING
+
+@english
+
+@italian
+
+@alias PING
+
+@target atari, coco
+</usermanual> */
+
 Variable * dojo_ping( Environment * _environment, char * _param1, char * _param2 ) {
 
     MAKE_LABEL

@@ -36,6 +36,52 @@
  
  extern char DATATYPE_AS_STRING[][16];
  
+/* <usermanual>
+@keyword GET MESSAGE
+
+@english
+
+The ''GET MESSAGE'' statement allows you to retrieve the message present on the 
+specified port (''port''), and possibly on the specific channel (''channel''). 
+The message is returned as a string. If there are no messages at the time of the 
+call, or if the port is unknown, an empty string will be returned. The actual
+error must be retrieved with the ''DOJO ERROR'' command. If you want to avoid 
+fetching a message from an empty message queue, you can use the ''PEEK MESSAGE'' statement.
+
+@italian
+
+L'istruzione ''GET MESSAGE'' permette di recuperare il messaggio presente sulla 
+porta indicata (''port''), ed eventualmente sul canale specifico (''channel''). 
+Il messaggio viene restituito come una stringa. Se non vi sono messaggi al momento 
+della chiamata, oppure se la porta è sconosciuta, sarà restituita una stringa vuota. 
+L'errore effetivo va recuperato con il comando ''DOJO ERROR''. Se si vuole evitare 
+di prelevare un messaggio da una coda messaggi vuota, è possibile usare l'istruzione 
+''PEEK MESSAGE''.
+
+@syntax [DOJO] GET MESSAGE( port[, channel] )
+
+@example message = GET MESSAGE( myPort, myChannel )
+
+@alias DOJO GET MESSAGE
+
+@seeAlso PEEK MESSAGE
+@seeAlso DOJO ERROR
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO GET MESSAGE
+
+@english
+
+@italian
+
+@alias GET MESSAGE
+
+@target atari, coco
+</usermanual> */
+
  Variable * dojo_get_message( Environment * _environment, char * _port, char * _channel ) {
  
     MAKE_LABEL

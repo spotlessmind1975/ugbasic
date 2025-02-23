@@ -36,6 +36,46 @@
  
  extern char DATATYPE_AS_STRING[][16];
  
+/* <usermanual>
+@keyword PEEK MESSAGE
+
+@english
+
+The ''PEEK MESSAGE'' statement lets you know whether or not a message is present 
+on a given ''port'' (and ''channel''). If it is present, it returns ''TRUE'', otherwise 
+it returns ''FALSE''. If it is, you can retrieve the message using the ''GET MESSAGE'' command.
+
+@italian
+
+L'istruzione ''PEEK MESSAGE'' permette di sapere se è presente o meno un messaggio su una 
+data porta (''port'') (e canale, ''channell''). Se è presente, restituisce ''TRUE'' altrimenti 
+restituirà ''FALSE''. In caso positivo, sarà possibile recuperare il messaggio utilizzando 
+il comando ''GET MESSAGE''. 
+
+@syntax [DOJO] PEEK MESSAGE( port[, channel] )
+
+@example IF PEEK MESSAGE( myPort ) THEN: PRINT "there are messages!": ENDIF
+
+@alias DOJO PEEK MESSAGE
+
+@seeAlso GET MESSAGE
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO PEEK MESSAGE
+
+@english
+
+@italian
+
+@alias PEEK MESSAGE
+
+@target atari, coco
+</usermanual> */
+
+
  Variable * dojo_peek_message( Environment * _environment, char * _port, char * _channel ) {
  
     MAKE_LABEL

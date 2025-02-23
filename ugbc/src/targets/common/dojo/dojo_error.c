@@ -34,6 +34,26 @@
 
  #include "../../../ugbc.h"
  
+ /* <usermanual>
+@keyword DOJO ERROR
+
+@english
+
+The ''DOJO ERROR'' statement lets you know what the error code was for the last 
+DOJO statement executed.
+
+@italian
+
+L'istruzione ''DOJO ERROR'' permette di sapere qual è stato il codice di errore 
+riferito all'ultima istruzione DOJO eseguita. 
+
+@syntax DOJO ERROR
+
+@example IF DOJO ERROR > 0 THEN: PRINT "An error occurred." : ENDIF
+
+@target atari, coco
+</usermanual> */
+
  Variable * dojo_error( Environment * _environment ) {
  
      MAKE_LABEL

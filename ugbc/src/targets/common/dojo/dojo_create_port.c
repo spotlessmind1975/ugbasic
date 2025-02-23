@@ -37,7 +37,7 @@
 extern char DATATYPE_AS_STRING[][16];
 
 /* <usermanual>
-@keyword DOJO CREATE PORT
+@keyword CREATE PORT
 
 @english
 
@@ -61,6 +61,22 @@ tempo o per coordinare i partecipanti a una comunicazione.
 @syntax [DOJO] CREATE PORT [()]
 
 @example handle = CREATE PORT
+
+@alias DOJO CREATE PORT
+
+@seeAlso OPEN PORT
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword DOJO CREATE PORT
+
+@english
+
+@italian
+
+@alias CREATE PORT
 
 @target atari, coco
 </usermanual> */
