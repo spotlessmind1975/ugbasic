@@ -13,16 +13,15 @@ REM
 REM Questo esempio mostra come far comunicare
 REM tra loro le applicazioni, utilizzando FujiNet.
 REM 
-REM @include atari
+REM @include coco,atari
 
 DEFINE DOJO ON FUJINET
-DEFINE FUJINET ON HDBDOS
 
 CLS
 
-PRINT "================"
-PRINT "DOJO ON FUJINET"
-PRINT "================"
+PRINT "======================="
+PRINT "DOJO EXAMPLE ON FUJINET"
+PRINT "======================="
 PRINT
 
 DO

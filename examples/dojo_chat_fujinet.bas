@@ -24,9 +24,9 @@ DEFINE DOJO ON FUJINET
 
 CLS
 
-PRINT "==========="
-PRINT "CHAT CLIENT"
-PRINT "==========="
+PRINT "==========================="
+PRINT "DOJO CHAT CLIENT ON FUJINET"
+PRINT "==========================="
 PRINT
 
 DO

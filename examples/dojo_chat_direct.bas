@@ -23,9 +23,9 @@ REM @include coco,atari
 
 CLS
 
-PRINT "==========="
-PRINT "CHAT CLIENT"
-PRINT "==========="
+PRINT "================"
+PRINT "DOJO CHAT CLIENT"
+PRINT "================"
 PRINT
 
 DO
