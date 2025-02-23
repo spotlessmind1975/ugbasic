@@ -63,7 +63,7 @@ void dojo_fujinet_begin( Environment * _environment ) {
     }
 
     coco_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
-    coco_fujinet_set_channel_mode( _environment, 4, NULL );
+    // coco_fujinet_set_channel_mode( _environment, 4, NULL );
 
 }
 
@@ -93,7 +93,7 @@ void dojo_fujinet_put_requestds( Environment * _environment, int _command, char 
 
 void dojo_fujinet_partial( Environment * _environment ) {
 
-    coco_fujinet_set_channel_mode( _environment, 0, NULL );
+    // coco_fujinet_set_channel_mode( _environment, 0, NULL );
 
 }
 

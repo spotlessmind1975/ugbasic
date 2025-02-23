@@ -63,7 +63,7 @@ void dojo_fujinet_begin( Environment * _environment ) {
     }
 
     atari_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
-    atari_fujinet_set_channel_mode( _environment, 4, NULL );
+    // atari_fujinet_set_channel_mode( _environment, 4, NULL );
 
 }
 
@@ -93,7 +93,7 @@ void dojo_fujinet_put_requestds( Environment * _environment, int _command, char 
 
 void dojo_fujinet_partial( Environment * _environment ) {
 
-    atari_fujinet_set_channel_mode( _environment, 0, NULL );
+    // atari_fujinet_set_channel_mode( _environment, 0, NULL );
 
 }
 
@@ -135,6 +135,6 @@ void dojo_fujinet_get_response_payloadd( Environment * _environment, char * _dat
 
 void dojo_fujinet_end( Environment * _environment ) {
 
-    fujinet_close( _environment );
+    // fujinet_close( _environment );
 
 }
