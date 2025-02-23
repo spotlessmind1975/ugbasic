@@ -8700,10 +8700,12 @@ audio_source :
 
 define_definition :
     DOJO FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
+        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
+        fujinet_define( _environment, FN_SIO );
     }
     | DOJO ON FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
+        fujinet_define( _environment, FN_SIO );
     }
     | DOJO SERIAL {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
