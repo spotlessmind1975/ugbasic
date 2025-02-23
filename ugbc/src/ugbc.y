@@ -2823,6 +2823,15 @@ dojo_functions :
     | GET MESSAGE OP expr CP {
         $$ = dojo_get_message( _environment, $4, NULL )->name;
     }
+    | PING {
+        $$ = dojo_ping( _environment, NULL, NULL )->name;
+    }
+    | PING OP expr CP {
+        $$ = dojo_ping( _environment, $3, NULL )->name;
+    }
+    | PING OP expr OP_COMMA expr CP {
+        $$ = dojo_ping( _environment, $3, $5 )->name;
+    }
     ;
 
 fujinet_functions : 
@@ -8702,10 +8711,12 @@ define_definition :
     DOJO FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
         fujinet_define( _environment, FN_SIO );
+        dojo_init( _environment );
     }
     | DOJO ON FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
         fujinet_define( _environment, FN_SIO );
+        dojo_init( _environment );
     }
     | DOJO SERIAL {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
@@ -10358,6 +10369,15 @@ dojo_definition :
     }
     | PUT MESSAGE expr OP_COMMA expr {
         dojo_put_message( _environment, $3, NULL, $5 );
+    }
+    | PING {
+        dojo_ping( _environment, NULL, NULL );
+    }
+    | PING expr {
+        dojo_ping( _environment, $2, NULL );
+    }
+    | PING expr OP_COMMA expr {
+        dojo_ping( _environment, $2, $4 );
     }
     ;
 

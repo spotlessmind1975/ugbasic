@@ -41,24 +41,28 @@ extern char DATATYPE_AS_STRING[][16];
 
 @english
 
+The ''CREATE PORT'' statement creates a communication port on the DOJO server, which allows you to send and 
+receive messages. Each port has 256 independent communication channels, on which you can send and receive 
+messages. This statement returns a unique port identifier, which can be communicated to the user via the 
+''PRINT'' command and used as a 32-bit number. For this reason, the code contains 8 hexadecimal digits. 
+The identifier must be used to open a connection via the ''OPEN PORT'' command, in case you want to reuse 
+the connection at a later time or to coordinate the participants in a communication.
 
 @italian
 
-Questa istruzione permette di aprire una connessione sulla periferica selezionata. 
-Il paralmetro ''url'' dovrà contenere la specifica del dispositivo, nel formato 
-''N:PROTO://[HOSTNAME]:PORT/PATH/.../''. Il parametro mode, se indicato, specifica 
-la modalità secondo lo standard FujiNet (''4''=lettura, ''8''=scrittura, 
-''12''=lettura/scrittura, ''13''=POST, e così via). Il parametro ''trans'' indica 
-la modalità di traduzione dei cosiddetti "fine linea" da applicare ai dati in arrivo 
-(''0''=nessuna, ''1''=CR, ''2''=LF, ''3''=CRLF, ''4''=Pet). Questo comando può essere 
-usato anche come una funzione, per ottenere l'eventuale codice di errore, se di interesse.
+L'istruzione ''CREATE PORT'' consente di creare una porta di comunicazione sul server DOJO, che consente di 
+inviare e ricevere messaggi. Ogni porta dispone di 256 canali di comunicazione indipendenti, sui quali è 
+possibile inviare e ricevere messaggi. Questa istruzione restituisce un i dentificativo univoco della porta, 
+che può essere comunicato all'utente per mezzo del comando ''PRINT'' e usato come un numero di 32 bit. 
+Per questa ragione il codice contiene 8 cifre esadecimali. L'identificativo dovrà essere utilizzato per aprire
+una connessione tramite il comando OPEN PORT, laddove si voglia riutilizzare la connessione in un secondo 
+tempo o per coordinare i partecipanti a una comunicazione.
 
-@syntax FUJINET OPEN url, mode , trans
-@syntax = FUJINET OPEN ( url, mode , trans )
+@syntax [DOJO] CREATE PORT [()]
 
-@example IF FUJINET OPEN ( "telnet://localhost", 4, 0 ) THEN: PRINT "Opened!": ENDIF
+@example handle = CREATE PORT
 
-@target coco
+@target atari, coco
 </usermanual> */
 
 Variable * dojo_create_port( Environment * _environment ) {
@@ -72,6 +76,7 @@ Variable * dojo_create_port( Environment * _environment ) {
     dojo_put_request0( _environment, DOJO_CMD_CREATE_PORT, NULL, NULL, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_partial( _environment );
+    // wait_milliseconds( _environment, 500 );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
 
     cpu_label( _environment, label );

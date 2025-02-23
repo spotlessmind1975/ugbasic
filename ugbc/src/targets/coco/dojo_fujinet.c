@@ -40,7 +40,7 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-void dojo_fujinet_begin( Environment * _environment ) {
+void dojo_fujinet_init( Environment * _environment ) {
 
     Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
     variable_store_string( _environment, url->name, "N:tcp://dojo.ugbasic.iwashere.eu:50666");
@@ -63,7 +63,11 @@ void dojo_fujinet_begin( Environment * _environment ) {
     }
 
     coco_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
-    // coco_fujinet_set_channel_mode( _environment, 4, NULL );
+
+}
+
+
+void dojo_fujinet_begin( Environment * _environment ) {
 
 }
 

@@ -42,6 +42,10 @@ extern char DATATYPE_AS_STRING[][16];
 
 #if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
+void dojo_serial_init( Environment * _environment ) {
+
+}
+
 void dojo_serial_begin( Environment * _environment ) {
 
 }

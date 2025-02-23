@@ -40,6 +40,10 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
+void dojo_serial_init( Environment * _environment ) {
+
+}
+
 void dojo_serial_begin( Environment * _environment ) {
 
 }

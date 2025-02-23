@@ -32,70 +32,39 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
- #include "../../ugbc.h"
-
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+#include "../../../ugbc.h"
  
 extern char DATATYPE_AS_STRING[][16];
 
-#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
+Variable * dojo_ping( Environment * _environment, char * _param1, char * _param2 ) {
 
-void dojo_fujinet_init( Environment * _environment ) {
+    MAKE_LABEL
 
-}
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(ping ok)" );
 
-void dojo_fujinet_begin( Environment * _environment ) {
+    Variable * param1 = NULL;
+    if ( _param1 ) {
+        param1 = variable_retrieve_or_define( _environment, _param1, VT_BYTE, 0 );
+    }
+    Variable * param2 = NULL;
+    if ( _param2 ) {
+        param2 = variable_retrieve_or_define( _environment, _param2, VT_BYTE, 0 );
+    }
 
-}
+    Variable * dword = variable_temporary( _environment, VT_DWORD, "(pinged)" );
 
-void dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
+    dojo_begin( _environment );
+    dojo_put_request0( _environment, DOJO_CMD_PING, (param1)?param1->realName:NULL, (param2)?param2->realName:NULL, result->realName );
+    cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_partial( _environment );
+    // wait_milliseconds( _environment, 500 );
+    dojo_get_responsed( _environment, result->realName, dword->realName, NULL );
 
-}
+    cpu_label( _environment, label );
+    dojo_end( _environment );
 
-void dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result ) {
+    cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
 
-}
-
-void dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
-
-}
-
-void dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result ) {
-
-}
-
-void dojo_fujinet_partial( Environment * _environment ) {
-
-}
-
-void dojo_fujinet_get_response0( Environment * _environment, char * _status ) {
-
-}
-
-void dojo_fujinet_get_response( Environment * _environment, char * _status, char * _address, char * _size ) {
+    return dword;
 
 }
-
-void dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size ) {
-
-}
-
-void dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _size ) {
-
-}
-
-void dojo_fujinet_get_response_payload( Environment * _environment, char * _address ) {
-
-}
-
-void dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data ) {
-
-}
-
-void dojo_fujinet_end( Environment * _environment ) {
-
-}
-
-#endif

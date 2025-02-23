@@ -40,6 +40,16 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
+void dojo_init( Environment * _environment ) {
+
+    if ( _environment->dojoOnFujiNet ) {
+        dojo_fujinet_init( _environment );
+    } else {
+        dojo_serial_init( _environment );
+    }
+
+}
+
 void dojo_begin( Environment * _environment ) {
 
     if ( _environment->dojoOnFujiNet ) {

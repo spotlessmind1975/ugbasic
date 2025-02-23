@@ -4145,6 +4145,7 @@ int embed_scan_string (const char *);
 
 #define IMF_NOTE( o, n )                                ( ( o ) * IMF_NOTE_COUNT + ( n ) )
 
+#define DOJO_CMD_PING                                0x00
 #define DOJO_CMD_CREATE_PORT                         0x01
 #define DOJO_CMD_OPEN_PORT                           0x02
 #define DOJO_CMD_SELECT_PORT                         0x03
@@ -4755,6 +4756,7 @@ void                    draw_tsb_string( Environment * _environment, char * _str
 void                    dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void                    dstring_cleanup( Environment * _Environment );
 
+void                    dojo_serial_init( Environment * _environment );
 void                    dojo_serial_begin( Environment * _environment );
 void                    dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
@@ -4769,6 +4771,7 @@ void                    dojo_serial_get_response_payload( Environment * _environ
 void                    dojo_serial_get_response_payloadd( Environment * _environment, char * _address );
 void                    dojo_serial_end( Environment * _environment );
 
+void                    dojo_fujinet_init( Environment * _environment );
 void                    dojo_fujinet_begin( Environment * _environment );
 void                    dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
@@ -4784,6 +4787,7 @@ void                    dojo_fujinet_get_response_payload( Environment * _enviro
 void                    dojo_fujinet_get_response_payloadd( Environment * _environment, char * _address );
 void                    dojo_fujinet_end( Environment * _environment );
 
+void                    dojo_init( Environment * _environment );
 void                    dojo_begin( Environment * _environment );
 void                    dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void                    dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
@@ -4799,6 +4803,7 @@ void                    dojo_get_response_payload( Environment * _environment, c
 void                    dojo_get_response_payloadd( Environment * _environment, char * _data );
 void                    dojo_end( Environment * _environment );
 
+Variable *              dojo_ping( Environment * _environment, char * _param1, char * _param2 );
 Variable *              dojo_create_port( Environment * _environment );
 Variable *              dojo_open_port( Environment * _environment, char * _name );
 Variable *              dojo_put_message( Environment * _environment, char * _port, char * _channel, char * _message );
