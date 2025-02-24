@@ -96,7 +96,14 @@ void dojo_fujinet_put_requestds( Environment * _environment, int _command, char 
 
 void dojo_fujinet_partial( Environment * _environment ) {
 
-    // atari_fujinet_set_channel_mode( _environment, 0, NULL );
+    MAKE_LABEL
+
+    Variable * bw = variable_temporary( _environment, VT_WORD, "(bw)");
+
+    cpu_label( _environment, label );
+    atari_fujinet_get_status( _environment );
+    atari_fujinet_get_bytes_waiting( _environment, bw->realName );
+    cpu_compare_and_branch_16bit_const( _environment, bw->realName, 0, label, 1 );
 
 }
 
