@@ -277,8 +277,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 }
 
-int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
     deploy( c6847vars, src_hw_6847_vars_asm );
 
     _environment->fontWidth = 8;
@@ -674,6 +674,10 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     console_init( _environment );
 
+    console_calculate( _environment );
+
+    console_calculate_vars( _environment );
+
     if (_environment->vestigialConfig.clsImplicit ) {
         c6847_cls( _environment );
     }
@@ -685,10 +689,11 @@ void c6847_bitmap_enable( Environment * _environment, int _width, int _height, i
     ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
 
     if ( mode ) {
-        c6847_screen_mode_enable( _environment, mode );
 
         cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
         cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+
+        c6847_screen_mode_enable( _environment, mode );
 
         _environment->currentMode = mode->id;
         _environment->currentTileMode = 0;
