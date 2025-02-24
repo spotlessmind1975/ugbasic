@@ -43,7 +43,8 @@ H2STRING
 H2STRINGA
     LDA #0
     TFR D, U
-    LDB #0
+    ; LDB #0
+    DECB
     LEAU -1, U
 H2STRINGL1
     LDA B,X
@@ -54,7 +55,7 @@ H2STRINGL1
     STA 0,Y
     LEAY 2, Y
 H2STRINGL1A
-    INCB
+    DECB
     LEAU -1, U
     CMPU #$FFFF
     BNE H2STRINGL1
