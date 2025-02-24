@@ -253,23 +253,9 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                             break;
                         }
                         case VT_DOJOKA: {
-                            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of dojoka)");
-                            Variable * dojokaHandlePart = variable_temporary( _environment, VT_BYTE, "(part of dojoka)");
-                            cpu_addressof_16bit( _environment, value->realName, address->realName );
-                            variable_move( _environment, peek_var( _environment, address->name )->name, dojokaHandlePart->name );
-                            print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, 0, _raw );
-                            cpu_inc( _environment, address->realName );
-                            variable_move( _environment, peek_var( _environment, address->name )->name, dojokaHandlePart->name );
-                            print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, 0, _raw );
-                            cpu_inc( _environment, address->realName );
-                            variable_move( _environment, peek_var( _environment, address->name )->name, dojokaHandlePart->name );
-                            print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, 0, _raw );
-                            cpu_inc( _environment, address->realName );
-                            variable_move( _environment, peek_var( _environment, address->name )->name, dojokaHandlePart->name );
-                            print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, 0, _raw );
-                            // cpu_inc_32bit( _environment, address->realName );
-                            // variable_move( _environment, peekd_var( _environment, address->name )->name, dojokaHandlePart->name );
-                            // print( _environment, variable_hex( _environment, dojokaHandlePart->name )->name, _new_line, _raw );
+                            Variable * dojokaHandle = variable_temporary( _environment, VT_DWORD, "(dojoka)");
+                            cpu_mem_move_direct_size( _environment, value->realName, dojokaHandle->realName, 4 );
+                            print( _environment, variable_hex( _environment, dojokaHandle->name )->name, 0, _raw );
                             value = NULL;
 
                             break;
