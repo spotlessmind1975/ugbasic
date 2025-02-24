@@ -106,11 +106,15 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(unique id)" );
 
     dojo_begin( _environment );
-    outline0("; !!!!!!!!!!!!!");
     dojo_put_request( _environment, DOJO_CMD_OPEN_PORT, NULL, NULL, address->realName, size->realName, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_partial( _environment );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
+
+#if CPU_BIG_ENDIAN
+    cpu_swap_8bit( _environment, dojoHandle->realName, address_displacement( _environment, dojoHandle->realName, "3" ) );
+    cpu_swap_8bit( _environment, address_displacement( _environment, dojoHandle->realName, "1" ), address_displacement( _environment, dojoHandle->realName, "2" ) );
+#endif
 
     cpu_label( _environment, label );
     dojo_end( _environment );
