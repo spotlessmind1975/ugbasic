@@ -3429,6 +3429,8 @@ typedef struct _Environment {
 #define DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E367 - port for PEEK MESSAGE must be opened / created", v, t );
 #define CRITICAL_PLOT_X_UNSUPPORTED( v, t ) CRITICAL3("E368 - data type not supported for plotting abscissa", v, t );
 #define CRITICAL_PLOT_Y_UNSUPPORTED( v, t ) CRITICAL3("E369 - data type not supported for plotting ordinate", v, t );
+#define DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( v, t ) CRITICAL3("E370 - type of array's elements is not supported", v, t );
+#define DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E371 - array is too large to send as message", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4815,6 +4817,7 @@ Variable *              dojo_put_message( Environment * _environment, char * _po
 Variable *              dojo_error( Environment * _environment );
 Variable *              dojo_peek_message( Environment * _environment, char * _port, char * _channel );
 Variable *              dojo_get_message( Environment * _environment, char * _port, char * _channel );
+void                    dojo_get_message_inplace( Environment * _environment, char * _port, char * _channel, char * _variable );
 
 //----------------------------------------------------------------------------
 // *E*

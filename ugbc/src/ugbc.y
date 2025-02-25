@@ -10370,6 +10370,12 @@ dojo_definition :
     | PUT MESSAGE expr OP_COMMA expr {
         dojo_put_message( _environment, $3, NULL, $5 );
     }
+    | GET MESSAGE expr OP_COMMA expr {
+        dojo_get_message_inplace( _environment, $3, NULL, $5 );
+    }
+    | GET MESSAGE expr OP_COMMA expr OP_COMMA expr {
+        dojo_get_message_inplace( _environment, $3, $5, $7 );
+    }
     | PING {
         dojo_ping( _environment, NULL, NULL );
     }
