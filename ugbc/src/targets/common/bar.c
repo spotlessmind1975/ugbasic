@@ -113,6 +113,7 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
         Variable * y = variable_resident( _environment, VT_POSITION, "(y)" );
         
         char labelOrdered[MAX_TEMPORARY_STORAGE]; sprintf(labelOrdered, "%slo", label );
+        char labelRepeat[MAX_TEMPORARY_STORAGE]; sprintf(labelRepeat, "%srp", label );
 
         cpu_bvneq( _environment, yOrdered->realName, labelOrdered );
 
@@ -122,11 +123,18 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
 
         cpu_label( _environment, labelOrdered );
 
-        begin_for( _environment, y->name, y0->name, y1->name );
-            draw( _environment, x0->name, y->name, x1->name, y->name, c->name, _preserve_color );
-        end_for( _environment );
+        Variable * dy = variable_sub( _environment, y1->name, y0->name );
+        
+        variable_move( _environment, y0->name, y->name );
 
-    cpu_return( _environment );
+        cpu_label( _environment, labelRepeat );
+
+        draw( _environment, x0->name, y->name, x1->name, y->name, c->name, _preserve_color );
+        variable_increment( _environment, y->name );
+        variable_decrement( _environment, dy->name );
+        variable_compare_and_branch_const( _environment, dy->name, 0, labelRepeat, 0 );
+
+        cpu_return( _environment );
 
     deploy_end( bar );
 
