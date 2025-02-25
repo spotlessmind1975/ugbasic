@@ -3419,13 +3419,14 @@ typedef struct _Environment {
 #define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH_EXACT( w ) CRITICAL2i("E357 - invalid width for image, must be of 8 pixels", w );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT_EXACT( h ) CRITICAL2i("E358 - invalid height for image, must be of 8 pixels", h );
 #define CRITICAL_ARRAY_OUT_OF_BOUND( a ) CRITICAL2("E359 - array out of bound", a );
-#define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E360 - SERIAL WRITE unsupported for variable of given datatype", v, t );
-#define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E361 - SERIAL read unsupported for variable of given datatype", t );
-#define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E362 - FUJINET READ read unsupported for variable of given datatype", t );
-#define DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E363 - port name for DOJO OPEN PORT must be a string", v, t );
-#define DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E364 - port for PUT MESSAGE must be opened / created", v, t );
-#define DOJO_PUT_MESSAGE_STRING_REQUIRED( v, t ) CRITICAL3("E365 - message for PUT MESSAGE must be a string", v, t );
-#define DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E366 - port for PEEK MESSAGE must be opened / created", v, t );
+#define CRITICAL_FOR_OUTSIDE_LIMITS( v, a ) CRITICAL3i("E360 - FOR index out of data type size", v, a );
+#define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E361 - SERIAL WRITE unsupported for variable of given datatype", v, t );
+#define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E362 - SERIAL read unsupported for variable of given datatype", t );
+#define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E363 - FUJINET READ read unsupported for variable of given datatype", t );
+#define DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E364 - port name for DOJO OPEN PORT must be a string", v, t );
+#define DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E365 - port for PUT MESSAGE must be opened / created", v, t );
+#define DOJO_PUT_MESSAGE_STRING_REQUIRED( v, t ) CRITICAL3("E366 - message for PUT MESSAGE must be a string", v, t );
+#define DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E367 - port for PEEK MESSAGE must be opened / created", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4474,6 +4475,8 @@ void finalize_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
+
+int check_datatype_limits( VariableType _type, int _value );
 
 void define_implicit_array_if_needed( Environment * _Environment, char * _name );
 
