@@ -105,6 +105,17 @@ Altrimenti, restituirà ''TRUE'.
             cpu_dsdescriptor( _environment, message->realName, address->realName, size->realName );
             break;
         }
+        case VT_TARRAY: {
+            if ( VT_BITWIDTH( message->arrayType ) != 8 ) {
+                DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
+            }
+            if ( VT_BITWIDTH( message->size ) >= 255 ) {
+                DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
+            }
+            cpu_addressof_16bit( _environment, message->realName, address->realName );
+            cpu_store_8bit( _environment, size->realName, message->size );
+            break;
+        }
         default:
             DOJO_PUT_MESSAGE_STRING_REQUIRED( _message, DATATYPE_AS_STRING[message->type]);
             break;

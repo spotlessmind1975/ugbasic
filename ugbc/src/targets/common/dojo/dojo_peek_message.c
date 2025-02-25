@@ -87,6 +87,7 @@ il comando ''GET MESSAGE''.
     }
     Variable * peek = variable_temporary( _environment, VT_SBYTE, "(size)");
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)");
+    Variable * esito = variable_temporary( _environment, VT_BYTE, "(result)");
 
     if ( port->type != VT_DOJOKA ) {
         DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
@@ -95,16 +96,16 @@ il comando ''GET MESSAGE''.
     cpu_store_8bit( _environment, peek->realName, 0 );
 
     dojo_begin( _environment );
-    dojo_put_requestds( _environment, DOJO_CMD_SELECT_PORT, NULL, NULL, port->realName, 4, result->realName );
-    cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
-    dojo_put_request0( _environment, DOJO_CMD_PEEK_MESSAGE, channel ? channel->realName : NULL, NULL, result->realName );
-    cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
+    dojo_put_requestds( _environment, DOJO_CMD_SELECT_PORT, NULL, NULL, port->realName, 4, esito->realName );
+    cpu_compare_and_branch_8bit_const( _environment, esito->realName, 0, label, 0 );
+    dojo_put_request0( _environment, DOJO_CMD_PEEK_MESSAGE, channel ? channel->realName : NULL, NULL, esito->realName );
+    cpu_compare_and_branch_8bit_const( _environment, esito->realName, 0, label, 0 );
     dojo_partial( _environment );
     dojo_get_responsed( _environment, result->realName, peek->realName, NULL );
     cpu_label( _environment, label );
     dojo_end( _environment );
 
-    cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
+    cpu_move_8bit( _environment, esito->realName, "DOJOERROR" );
 
     return peek;
     
