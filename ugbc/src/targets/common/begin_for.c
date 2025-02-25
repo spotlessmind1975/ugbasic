@@ -304,6 +304,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
         if ( !loop->step || loop->step->value > 0 ) {
 
             if ( loop->from->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->from->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->from->value );
+                }
+
                 // Finish the loop if the index is less than lower bound.
                 isLastStep = variable_less_than_const( _environment, index->name, loop->from->value, 0 );
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
@@ -314,6 +319,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
             }
         
             if ( loop->to->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->to->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->to->value );
+                }
+
                 // Finish the loop if the index is less than upper bound.
                 isLastStep = variable_greater_than_const( _environment, index->name, loop->to->value, 0 );
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
@@ -327,6 +337,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
 
             // Finish the loop if the index is less than lower bound.
             if ( loop->from->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->from->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->from->value );
+                }
+
                 isLastStep = variable_greater_than_const( _environment, index->name, loop->from->value, 0 );
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
             } else {
@@ -336,6 +351,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
         
             // Finish the loop if the index is less than upper bound.
             if ( loop->to->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->to->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->to->value );
+                }
+
                 isLastStep = variable_less_than_const( _environment, index->name, loop->to->value, 0 );
                 cpu_bvneq( _environment, isLastStep->realName, endFor );
             } else {

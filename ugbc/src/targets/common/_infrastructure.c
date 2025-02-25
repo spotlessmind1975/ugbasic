@@ -13775,3 +13775,31 @@ void define_implicit_array_if_needed( Environment * _environment, char * _name )
         variable_array_type( _environment, _name, ((struct _Environment *)_environment)->defaultVariableType );
     }
 }
+
+int check_datatype_limits( VariableType _type, int _value ) {
+
+    if ( VT_SIGNED( _type ) ) {
+        switch( VT_BITWIDTH( _type ) ) {
+            case 8:
+                return abs(_value) < 0x7f;
+            case 16:
+                return abs(_value) < 0x7fff;
+            case 32:
+                return abs(_value) < 0x7fffffff;
+            default:
+                return 0;
+        }
+    } else {
+        switch( VT_BITWIDTH( _type ) ) {
+            case 8:
+                return _value < 0xff;
+            case 16:
+                return _value < 0xffff;
+            case 32:
+                return _value < 0xffffffff;
+            default:
+                return 0;
+        }
+    }
+
+}
