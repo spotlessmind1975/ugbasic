@@ -13781,22 +13781,22 @@ int check_datatype_limits( VariableType _type, int _value ) {
     if ( VT_SIGNED( _type ) ) {
         switch( VT_BITWIDTH( _type ) ) {
             case 8:
-                return abs(_value) < 0x7f;
+                return abs(_value) <= 0x7f;
             case 16:
-                return abs(_value) < 0x7fff;
+                return abs(_value) <= 0x7fff;
             case 32:
-                return abs(_value) < 0x7fffffff;
+                return abs(_value) <= 0x7fffffff;
             default:
                 return 0;
         }
     } else {
         switch( VT_BITWIDTH( _type ) ) {
             case 8:
-                return _value < 0xff;
+                return _value <= 0xff;
             case 16:
-                return _value < 0xffff;
+                return _value <= 0xffff;
             case 32:
-                return _value < 0xffffffff;
+                return _value <= 0xffffffff;
             default:
                 return 0;
         }
