@@ -323,6 +323,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_ADDRESS:
+        case VT_TARRAY:
             put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
             break;
         case VT_IMAGEREF:
