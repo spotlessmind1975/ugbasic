@@ -10424,6 +10424,103 @@ Variable * variable_array_count_vars( Environment * _environment, char * _name, 
 }
 
 /* <usermanual>
+@keyword ARRAY SUM
+
+@english
+
+The ''ARRAY SUM'' statement sums all the elements inside a vector or ''array''.
+
+@italian
+
+L'istruzione effettua la somma di tutti gli elementi all'interno di un vettore o matrice 
+array (quindi, un ''array'' generico).
+
+@syntax = [ARRAY] SUM( array )
+
+@example IF SUM(vector) = 0 THEN: PRINT "vector is empty!": ENDIF
+
+@alias SUM
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword SUM
+
+@english
+
+@italian
+
+@alias ARRAY SUM
+
+@target all
+</usermanual> */
+
+Variable * variable_array_sum_vars( Environment * _environment, char * _name ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+    Variable * sum = NULL;
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        char targetLabel[MAX_TEMPORARY_STORAGE]; sprintf( targetLabel, "%starget", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+            sum = variable_temporary( _environment, VT_WORD, "(sum)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+            sum = variable_temporary( _environment, VT_DWORD, "(sum)");
+        }
+        variable_store( _environment, index->name, 0 );
+        variable_store( _environment, sum->name, 0 );
+        Variable * value = variable_temporary( _environment, array->arrayType, "value");
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        cpu_label( _environment, loopLabel );
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_peekd( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 16:
+                    cpu_peekw( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 8:
+                    cpu_peek( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                default:
+                    CRITICAL_NOT_SUPPORTED( _name );
+            }
+            variable_add_inplace_vars( _environment, sum->name, value->name );
+            variable_increment( _environment, index->name );
+            variable_compare_and_branch_const( _environment, index->name, sizeInElements, label, 1 );
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+    return sum;
+
+}
+
+/* <usermanual>
 @keyword FILL (array)
 
 @english

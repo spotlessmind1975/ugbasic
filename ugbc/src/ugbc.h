@@ -5348,6 +5348,7 @@ void                    variable_add_inplace_mt( Environment * _environment, cha
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_array_count_vars( Environment * _environment, char * _name, char * _target );
+Variable *              variable_array_sum_vars( Environment * _environment, char * _name );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
 void                    variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean );
 void                    variable_array_fill_incremental( Environment * _environment, char * _name, int _min, int _count );
