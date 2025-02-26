@@ -3605,6 +3605,9 @@ exponential_less:
         variable_store( _environment, value->name, 0 );
         $$ = value->name;
     }
+    | ARRAY COUNT OP expr OP_COMMA expr CP {
+        $$ = variable_array_count_vars( _environment, $4, $6 )->name;
+    }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
     }

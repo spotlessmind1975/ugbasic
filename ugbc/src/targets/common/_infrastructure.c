@@ -10321,6 +10321,109 @@ static void variable_array_fill_value( Environment * _environment, char * _name,
 }
 
 /* <usermanual>
+@keyword ARRAY COUNT
+
+@english
+
+The ''ARRAY COUNT'' statement counts all the elements inside a vector or ''array'', 
+returning the number of times a certain ''value'' is present. If the value parameter is omitted, 
+the counting of elements with a value of zero (0) is intended.
+
+@italian
+
+L'istruzione effettua un conteggio di tutti gli elementi all'interno di un vettore o matrice 
+array (quindi, un ''array'' generico), restituendo il numero di volte in cui un certo valore (''value') 
+è presente. Se il parametro value viene omesso, si intende il contreggio degli elementi con valore zero.
+
+@syntax = [ARRAY] COUNT( array[, value] )
+
+@example IF COUNT(vector) = 0 THEN: PRINT "vector is empty!": ENDIF
+
+@alias COUNT
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword COUNT
+
+@english
+
+@italian
+
+@alias ARRAY COUNT
+
+@target all
+</usermanual> */
+
+Variable * variable_array_count_vars( Environment * _environment, char * _name, char * _target ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+    Variable * count = NULL;
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        char targetLabel[MAX_TEMPORARY_STORAGE]; sprintf( targetLabel, "%starget", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+            count = variable_temporary( _environment, VT_BYTE, "(count)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+            count = variable_temporary( _environment, VT_WORD, "(count)");
+        }
+        variable_store( _environment, index->name, 0 );
+        variable_store( _environment, count->name, 0 );
+        Variable * target = variable_retrieve_or_define( _environment, _target, array->arrayType, 0 );
+        Variable * value = variable_temporary( _environment, array->arrayType, "value");
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        cpu_label( _environment, loopLabel );
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_peekd( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 16:
+                    cpu_peekw( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 8:
+                    cpu_peek( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                default:
+                    CRITICAL_NOT_SUPPORTED( _name );
+            }
+            cpu_compare_and_branch_8bit_const( _environment, variable_compare( _environment, value->name, target->name )->realName, 0, targetLabel, 1 );
+            variable_increment( _environment, count->name );
+            cpu_label( _environment, targetLabel );
+            variable_increment( _environment, index->name );
+            variable_compare_and_branch_const( _environment, index->name, sizeInElements, label, 1 );
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+    return count;
+
+}
+
+/* <usermanual>
 @keyword FILL (array)
 
 @english
