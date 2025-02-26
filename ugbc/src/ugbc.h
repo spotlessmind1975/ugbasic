@@ -4663,6 +4663,7 @@ void                    blit_define_end_compound( Environment * _environment, in
 void                    blit_image( Environment * _environment, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _flags );
 void                    boom( Environment * _environment, int _duration, int _channels );
 void                    boom_var( Environment * _environment, char * _duration, char * _channels );
+void                    bottom( Environment * _environment );
 void                    box( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2, char * _c, int _preserve_color );
 Resource *              build_resource_for_sequence( Environment * _environment, char * _image, char * _frame, char * _sequence );
 
@@ -4979,6 +4980,7 @@ int                     is_do_loop( Environment * _environment );
 // *J*
 //----------------------------------------------------------------------------
 
+void                    jmove( Environment * _environment, char * _port, char * _x, char * _y, char * _minx, char * _maxx, char * _miny, char *_maxy, char * _xstep, char * _ystep  );
 Variable *              joy( Environment * _environment, int _port );
 Variable *              joydir( Environment * _environment, int _port );
 Variable *              joydir_semivars( Environment * _environment, char * _port );
@@ -5014,6 +5016,7 @@ void                    label_referred_define_numeric( Environment * _environmen
 void                    label_referred_define_named( Environment * _environment, char * _label );
 int                     label_referred_exists_named( Environment * _environment, char * _label );
 int                     label_referred_exists_numeric( Environment * _environment, int _label );
+void                    lbottom( Environment * _environment );
 void                    leftw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    leftb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 Variable *              load( Environment * _environment, char * _filename, char * _alias, int _at, int _bank_expansion, int _flags );
