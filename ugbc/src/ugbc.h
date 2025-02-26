@@ -5450,6 +5450,8 @@ void                    variable_xor_inplace( Environment * _environment, char *
 void                    variable_xor_inplace_vars( Environment * _environment, char * _source, char * _dest );
 void                    variable_xor_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              varptr( Environment * _environment, char * _identifier );
+void                    vcenter( Environment * _environment, char * _string, int _newline );
+void                    vhcenter( Environment * _environment, char * _string, int _newline, char * _width );
 void                    volume( Environment * _environment, int _volume, int _channels );
 void                    volume_vars( Environment * _environment, char * _volume, char * _channels );
 void                    volume_off( Environment * _environment, int _channels );
