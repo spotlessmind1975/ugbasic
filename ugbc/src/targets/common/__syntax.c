@@ -6324,3 +6324,56 @@ circa 65 secondi.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword FIND WIDTH
+
+@english
+
+This function calculates the width of a rectangle that fits on the screen at the 
+current resolution, taking into account that a certain ''number'' of rectangles fit on the 
+same line, and ensuring a bilateral ''offset'' of a certain number of pixels in total. 
+The number is rounded to the nearest 8 pixels.
+
+@italian
+
+Questa funzione calcola la larghezza di un rettangolo che sia iscritto nello schermo 
+della risoluzione attuale, tenendo conto di inserire un certo numero di rettangoli sulla 
+stessa linea, e garantendo un offset bilaterale di un certo numero di pixel. Il numero è 
+arrotondato al limite di 8 pixel più vicino.
+
+@syntax FIND WIDTH( number, offset )
+
+@example x = FIND WIDTH( 7, 16 )
+
+@seeAlso FIND HEIGHT
+
+@target all
+</usermanual> */
+
+
+/* <usermanual>
+@keyword FIND HEIGHT
+
+@english
+
+This function calculates the height of a rectangle that fits on the screen at the 
+current resolution, taking into account that a certain ''number'' of rectangles fit on the 
+same column, and ensuring a bilateral ''offset'' of a certain number of pixels in total. 
+The number is rounded to the nearest 8 pixels.
+
+@italian
+
+Questa funzione calcola l'altezza di un rettangolo che sia iscritto nello schermo 
+della risoluzione attuale, tenendo conto di inserire un certo numero di rettangoli sulla 
+stessa colonna, e garantendo un offset bilaterale di un certo numero di pixel. Il numero è 
+arrotondato al limite di 8 pixel più vicino.
+
+@syntax FIND HEIGHT( number, offset )
+
+@example x = FIND HEIGHT( 7, 16 )
+
+@seeAlso FIND HEIGHT
+
+@target all
+</usermanual> */
