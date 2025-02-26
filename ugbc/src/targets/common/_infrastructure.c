@@ -299,7 +299,7 @@ static int calculate_cast_type_best_fit( Environment * _environment, int _type1,
         return VT_FLOAT;
     } else {
         if ( VT_SIGNED( _type1 ) != VT_SIGNED( _type2 ) ) {
-            return VT_MAX_BITWIDTH_TYPE( _type1, _type2 );
+            return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
         } else {
             if ( VT_SIGNED( _type1 ) || VT_SIGNED( _type2 ) ) {
                 return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
@@ -6080,6 +6080,8 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
     int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
     source = variable_cast( _environment, source->name, best );
     target = variable_cast( _environment, target->name, best );
+
+    outline1("; best = %d", best );
 
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
