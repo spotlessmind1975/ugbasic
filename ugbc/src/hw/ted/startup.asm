@@ -138,6 +138,10 @@ TEDSTARTUP:
 	JSR CLST
 @ENDIF
 
+    LDA #$00
+    AND #$0f
+    STA $FF19
+
     RTS
 
 IMF_TOKEN_WAIT1								= $ff
