@@ -169,6 +169,9 @@ VIC2STARTUPL1:
 
 @ENDIF
 
+    LDA #$00
+    STA $D020
+
     CLI
 
 @IF vestigialConfig.clsImplicit
