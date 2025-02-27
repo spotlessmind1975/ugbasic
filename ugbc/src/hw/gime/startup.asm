@@ -256,6 +256,9 @@ GIMESTARTUP
     ; Turn on ROM/RAM
     JSR GIMEBANKROM
 
+    LDA #$00
+    STA GIMEBRDR
+
 @IF vestigialConfig.clsImplicit
 	JSR CLST
 @ENDIF
