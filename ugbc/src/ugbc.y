@@ -3618,8 +3618,14 @@ exponential_less:
     | ARRAY COUNT OP expr OP_COMMA expr CP {
         $$ = variable_array_count_vars( _environment, $4, $6 )->name;
     }
+    | COUNT OP expr OP_COMMA expr CP {
+        $$ = variable_array_count_vars( _environment, $3, $5 )->name;
+    }
     | ARRAY SUM OP expr CP {
         $$ = variable_array_sum_vars( _environment, $4 )->name;
+    }
+    | SUM OP expr CP {
+        $$ = variable_array_sum_vars( _environment, $3 )->name;
     }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
@@ -12379,6 +12385,13 @@ int main( int _argc, char *_argv[] ) {
     _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
 
     _environment->defaultArraySize = 10;
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        _environment->dstring.space = 512;
+        _environment->dstring.count = 32;
+        _environment->defaultVariableType = VT_BYTE;
+        _environment->clsImplicit = 1;
+    }
 
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
