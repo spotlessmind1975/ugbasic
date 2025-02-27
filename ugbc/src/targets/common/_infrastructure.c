@@ -3113,6 +3113,25 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     }
                                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
                                     break;
+                                case VT_DSTRING: {
+                                    Variable * dojokaHandle = variable_temporary( _environment, VT_DWORD, "(dojoka)");
+                                    cpu_mem_move_direct_size( _environment, source->realName, dojokaHandle->realName, 4 );
+                                    #if CPU_BIG_ENDIAN
+                                        cpu_swap_8bit( _environment, dojokaHandle->realName, address_displacement( _environment, dojokaHandle->realName, "3" ) );
+                                        cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
+                                    #endif
+                                    cpu_dsfree( _environment, target->realName );
+                                    cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, target->realName );
+                                    break;
+                                }
+                                case VT_DWORD: {
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
+                                    #if CPU_BIG_ENDIAN
+                                        cpu_swap_8bit( _environment, target->realName, address_displacement( _environment, target->realName, "3" ) );
+                                        cpu_swap_8bit( _environment, address_displacement( _environment, target->realName, "1" ), address_displacement( _environment, target->realName, "2" ) );
+                                    #endif
+                                    break;
+                                }
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
@@ -8594,6 +8613,10 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
         }
         case VT_DSTRING: {
             cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            break;
+        }
+        case VT_DOJOKA: {
+            cpu_store_8bit( _environment, size->realName, 8 );
             break;
         }
         default:
