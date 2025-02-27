@@ -234,6 +234,10 @@ VIC1STARTUP:
 	JSR CLST
 @ENDIF
 
+    LDA $900F
+    AND #$F8
+    STA $900F
+
     RTS
 
 IMF_TOKEN_WAIT1								= $ff
