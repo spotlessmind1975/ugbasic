@@ -541,6 +541,16 @@ TMS9918STARTUPL1:
         LD A, D
         LD (HL), A
 
+        LD E, $83
+        CALL VDPREGIN
+        AND $F0
+        LD B, A
+        LD E, $83
+        LD A, $0
+        AND $F0
+        OR B
+        CALL VDPSETREG
+        
         CALL VDPUNLOCK
 
         RET
