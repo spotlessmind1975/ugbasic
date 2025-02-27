@@ -191,6 +191,14 @@ SYSCALLDONE:
 	EXX
 	EI
 
+    LD BC,$7F10
+    OUT (C), C
+    LD A, $14
+    LD (PALETTEB), A
+    AND $1f
+    OR A, $40
+    OUT (C), A
+
 @IF vestigialConfig.clsImplicit
 	CALL CLSG
 @ENDIF
