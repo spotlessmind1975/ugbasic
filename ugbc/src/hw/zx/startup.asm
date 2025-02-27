@@ -159,6 +159,8 @@ ZXSTARTUPDONE:
 	CALL CLS
 @ENDIF
 
+    LD A, $00
+    OUT ($FE), A
     RET
     
 WAITTIMER:
