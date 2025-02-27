@@ -45,7 +45,8 @@ The ''OPEN PORT'' instruction allows you to open a port previously created with 
 ''CREATE PORT'' command. This command accepts, as a parameter, the string with the 
 unique and printable identification code of the port, equivalent to an 8-digit hexadecimal 
 code. The result of the call will be the same identifier, which can be used for other 
-instructions. The instruction will issue an error if the port is unknown.
+instructions. The instruction will issue an error if the port is unknown. In case the 
+provided port is an empty string, this command will behave like ''CREATE PORT''.
 
 @italian
 
@@ -53,7 +54,8 @@ L'istruzione ''OPEN PORT'' permette di aprire una porta creata in precedenza con
 ''CREATE PORT''. Questo comando accetta, come parametro, la stringa con il codice 
 identificativo univoco e stampabile della porta, equivalente a un codice di 8 cifre esadecimali.
 Il risultato della chiamata sarà il medesimo identificativo, utilizzabile per le altre istruzioni. 
-L'istruzione emetterà un errore nel caso in cui la porta sia sconosciuta. 
+L'istruzione emetterà un errore nel caso in cui la porta sia sconosciuta. Nel caso in cui la 
+porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE PORT''.
 
 @syntax [DOJO] OPEN PORT( id )
 
