@@ -110,6 +110,10 @@ GTIASTARTUPDONE:
 @ENDIF
 
     CLI
+
+    LDA #$00
+    STA $02c8
+    
     RTS
 
 GTIAAFTERINIT:
