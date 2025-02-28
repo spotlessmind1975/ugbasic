@@ -83,6 +83,7 @@ void cpu6502_inc_16bit( Environment * _environment, char * _variable );
 void cpu6502_inc_32bit( Environment * _environment, char * _variable );
 void cpu6502_dec( Environment * _environment, char * _variable );
 void cpu6502_dec_16bit( Environment * _environment, char * _variable );
+void cpu6502_dec_32bit( Environment * _environment, char * _variable );
 void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
@@ -398,6 +399,7 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_inc_32bit( _environment, _variable ) cpu6502_inc_32bit( _environment, _variable )
 #define cpu_dec( _environment, _variable ) cpu6502_dec( _environment, _variable );
 #define cpu_dec_16bit( _environment, _variable ) cpu6502_dec_16bit( _environment, _variable );
+#define cpu_dec_32bit( _environment, _variable ) cpu6502_dec_32bit( _environment, _variable );
 #define cpu_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_16bit( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_less_than_32bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_32bit( _environment, _source, _destination, _name, _equal, _signed )
 #define cpu_less_than_8bit( _environment, _source, _destination, _name, _equal, _signed ) cpu6502_less_than_8bit( _environment, _source, _destination, _name, _equal, _signed )

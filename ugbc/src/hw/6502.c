@@ -5034,6 +5034,32 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6502_dec_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    inline( cpu_dec_32bit )
+
+        outline1("DEC %s", _variable );
+        outline1("LDA %s", _variable );
+        outline0("CMP #$FF" );
+        outline1("BNE %s", label );
+        outline1("DEC %s", address_displacement(_environment, _variable, "1") );
+        outline1("LDA %s", address_displacement(_environment, _variable, "1") );
+        outline0("CMP #$FF" );
+        outline1("BNE %s", label );
+        outline1("DEC %s", address_displacement(_environment, _variable, "2") );
+        outline1("LDA %s", address_displacement(_environment, _variable, "2") );
+        outline0("CMP #$FF" );
+        outline1("BNE %s", label );
+        outline1("DEC %s", address_displacement(_environment, _variable, "3") );
+        outline1("LDA %s", address_displacement(_environment, _variable, "3") );
+        outhead1("%s:", label );
+
+    no_embedded( cpu_dec_32bit )
+
+}
+
 void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
