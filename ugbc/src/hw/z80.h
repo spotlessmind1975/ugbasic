@@ -237,6 +237,7 @@ void z80_greater_than_memory_size( Environment * _environment, char *_source, ch
 void z80_inc_16bit( Environment * _environment, char * _variable );
 void z80_dec_16bit( Environment * _environment, char * _variable );
 void z80_inc_32bit( Environment * _environment, char * _variable );
+void z80_dec_32bit( Environment * _environment, char * _variable );
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size );
 void z80_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size );
 void z80_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size );
@@ -544,6 +545,7 @@ void z80_float_single_exp( Environment * _environment, char * _value, char * _re
 #define cpu_inc_16bit( _environment, _variable ) z80_inc_16bit( _environment, _variable )
 #define cpu_dec_16bit( _environment, _variable ) z80_dec_16bit( _environment, _variable )
 #define cpu_inc_32bit( _environment, _variable ) z80_inc_32bit( _environment, _variable )
+#define cpu_dec_32bit( _environment, _variable ) z80_dec_32bit( _environment, _variable )
 #define cpu_mem_move( _environment, _source, _destination,  _size ) z80_mem_move( _environment, _source, _destination, _size )
 #define cpu_mem_move_16bit( _environment, _source, _destination,  _size ) z80_mem_move_16bit( _environment, _source, _destination, _size )
 #define cpu_mem_move_direct( _environment, _source, _destination,  _size ) z80_mem_move_direct( _environment, _source, _destination, _size )

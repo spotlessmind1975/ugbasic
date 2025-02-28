@@ -4580,6 +4580,24 @@ void z80_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void z80_dec_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, (%s)", _variable  );
+    outline0("DEC HL" );
+    outline1("LD (%s), HL", _variable  );
+    outline0("LD A, L" );
+    outline0("AND H" );
+    outline0("CP $FF" );
+    outline1("JR NZ, %s", label );
+    outline1("LD HL, (%s)", _variable  );
+    outline0("DEC HL" );
+    outline1("LD (%s), HL", _variable  );
+    outhead1("%s:", label );
+
+}
+
 void z80_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     deploy( duff, src_hw_z80_duff_asm );
