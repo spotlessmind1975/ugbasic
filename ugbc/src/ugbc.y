@@ -10967,7 +10967,10 @@ serial_definition :
     };
 
 jmove_definition :
-    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        jmove( _environment, $1, $3, $5, $7, $9, $11, $13, NULL, NULL );
+    }
+    | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         jmove( _environment, $1, $3, $5, $7, $9, $11, $13, $15, $17 );
     }
     ;

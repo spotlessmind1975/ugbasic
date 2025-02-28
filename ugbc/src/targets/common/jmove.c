@@ -71,6 +71,22 @@ void jmove( Environment * _environment, char * _port, char * _x, char * _y, char
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
+    Variable * xstep = NULL;
+    if ( _xstep ) {
+        xstep = variable_retrieve( _environment, _xstep );
+    } else {
+        xstep = variable_temporary( _environment, VT_BYTE, "(xstep)" );
+        variable_store( _environment, xstep->name, 1 );
+    }
+
+    Variable * ystep = NULL;
+    if ( _ystep ) {
+        ystep = variable_retrieve( _environment, _ystep );
+    } else {
+        ystep = variable_temporary( _environment, VT_BYTE, "(ystep)" );
+        variable_store( _environment, ystep->name, 1 );
+    }
+
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(compare)" );
     
     Variable * joymove = joydir_semivars( _environment, _port );
@@ -81,22 +97,22 @@ void jmove( Environment * _environment, char * _port, char * _x, char * _y, char
     char detectedRightLabel[MAX_TEMPORARY_STORAGE]; sprintf(detectedRightLabel, "%sdetectedright", label );
 
     variable_compare_and_branch_const( _environment, joymove->name, 2, detectedDownLabel, 0 );
-    add_complex_vars( _environment, y->name, _ystep, _miny, _maxy, 1 );    
+    add_complex_vars( _environment, y->name, ystep->name, _miny, _maxy, 1 );    
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedDownLabel );
     variable_compare_and_branch_const( _environment, joymove->name, 1, detectedLeftLabel, 0 );
-    add_complex_vars( _environment, y->name, variable_complement_const( _environment, _ystep, 0 )->name, _miny, _maxy, 1 );    
+    add_complex_vars( _environment, y->name, variable_complement_const( _environment, ystep->name, 0 )->name, _miny, _maxy, 1 );    
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedLeftLabel );
     variable_compare_and_branch_const( _environment, joymove->name, 8,  detectedRightLabel, 0 );
-    add_complex_vars( _environment, x->name, _xstep, _minx, _maxx, 1 );    
+    add_complex_vars( _environment, x->name, xstep->name, _minx, _maxx, 1 );    
     cpu_jump( _environment, detectedLabel );
 
     cpu_label( _environment, detectedRightLabel );
     variable_compare_and_branch_const( _environment, joymove->name, 4,  detectedLabel, 0 );
-    add_complex_vars( _environment, x->name,  variable_complement_const( _environment, _xstep, 0 )->name, _minx, _maxx, 1 );    
+    add_complex_vars( _environment, x->name,  variable_complement_const( _environment, xstep->name, 0 )->name, _minx, _maxx, 1 );    
 
     cpu_label( _environment, detectedLabel );
 
