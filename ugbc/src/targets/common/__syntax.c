@@ -6377,3 +6377,34 @@ arrotondato al limite di 8 pixel più vicino.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword FUNCTION
+
+@english
+
+The ''FUNCTION'' command is an instruction that allows you to define custom functions within 
+a program. These functions can be called multiple times, simplifying the code and making it 
+more modular. The syntax accepts a ''name'', one or more ''parameters'', followed by
+an equal sign and from an expression between square brackets. Functions are limited to a single 
+expression, but parameters are local or global to the function, following the current context. 
+
+The use of this instruction can avoid repeating the same calculation multiple times, the code 
+becomes more organized and easier to read and complex functions can be created with a single 
+line of code.
+
+@italian
+Il comando ''FUNCTION'' è un'istruzione che consente di definire funzioni personalizzate all'interno
+del programma. Queste funzioni possono essere chiamate più volte, semplificando il codice e rendendolo
+più modulare. La sintassi accetta un ''nome'', uno o più ''parametri'', seguiti da
+un segno di uguale e da un'espressione tra parentesi quadre. Le funzioni sono limitate a una singola
+espressione, ma i parametri sono locali o globali alla funzione, seguendo il contesto corrente.
+
+L'uso di questa istruzione può evitare di ripetere lo stesso calcolo più volte, il codice
+diventa più organizzato e più facile da leggere e funzioni complesse possono essere create con una singola
+riga di codice.
+
+@syntax FUNCTION name[parameters] = [expression]
+@example FUNCTION pow2[a] = [a*a]
+
+</usermanual> */

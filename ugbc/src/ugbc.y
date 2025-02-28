@@ -11480,6 +11480,15 @@ statement2nc:
       end_procedure( _environment, $4 );
       ((struct _Environment *)_environment)->emptyProcedure = 0;
   }
+  | FUNCTION Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->protothread = 0;
+    } OSP parameters CSP {
+        ((struct _Environment *)_environment)->emptyProcedure = 0;
+        begin_procedure( _environment, $2 );
+    } OP_ASSIGN OSP expr CSP {
+        end_procedure( _environment, $10 );
+  }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       proc( _environment, $2 );
