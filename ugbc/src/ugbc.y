@@ -2815,6 +2815,9 @@ dojo_functions :
     | OPEN PORT OP expr CP {
         $$ = dojo_open_port( _environment, $4 )->name;
     }
+    | PORT OP expr CP {
+        $$ = dojo_open_port( _environment, $3 )->name;
+    }
     | PUT MESSAGE OP expr OP_COMMA expr OP_COMMA expr CP {
         $$ = dojo_put_message( _environment, $4, $6, $8 )->name;
     }

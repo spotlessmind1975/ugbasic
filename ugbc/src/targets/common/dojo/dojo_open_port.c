@@ -57,7 +57,7 @@ Il risultato della chiamata sarà il medesimo identificativo, utilizzabile per l
 L'istruzione emetterà un errore nel caso in cui la porta sia sconosciuta. Nel caso in cui la 
 porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE PORT''.
 
-@syntax [DOJO] OPEN PORT( id )
+@syntax [[DOJO] OPEN] PORT( id )
 
 @example handle = OPEN PORT( "ce420000" )
 
@@ -70,6 +70,18 @@ porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE
 
 /* <usermanual>
 @keyword DOJO OPEN PORT
+
+@english
+
+@italian
+
+@alias OPEN PORT
+
+@target atari, coco
+</usermanual> */
+
+/* <usermanual>
+@keyword PORT
 
 @english
 
