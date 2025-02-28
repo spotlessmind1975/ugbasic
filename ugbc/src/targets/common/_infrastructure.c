@@ -10584,7 +10584,7 @@ Infine, puoi riempire l'array con un valore di incremento, correlato all'indice,
 utilizzando la parola chiave ''INCREMENTAL''.
 
 @syntax FILL v1 WITH value[,v2 WITH  value[,...]]
-@syntax FILL v1 WITH [value] [RANDOM] [MAX value] [COUNT count][, v2 WITH [value] [RANDOM] [MAX value]  [COUNT count] [,...]]
+@syntax FILL v1 [WITH [value]] [RANDOM] [MAX value] [COUNT count][, v2 WITH [value] [RANDOM] [MAX value]  [COUNT count] [,...]]
 @syntax FILL v1 [WITH [INCREMENTAL]] [MIN value] [COUNT count][, v1 [WITH [INCREMENTAL]] [MIN value] [COUNT count] [,...]]
 
 @example DIM a(42) AS BYTE
