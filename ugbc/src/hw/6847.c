@@ -749,7 +749,7 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy( plot, src_hw_6847_plot_asm );
+    deploy_preferred( plot, src_hw_6847_plot_asm );
 
     outline1("LDB %2.2x", (_x & 0xff ) );
     outline0("STB <PLOTX");
@@ -782,7 +782,7 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c 
     }
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy( plot, src_hw_6847_plot_asm );
+    deploy_preferred( plot, src_hw_6847_plot_asm );
     
     switch( VT_BITWIDTH( x->type ) ) {
         case 32:
@@ -857,7 +857,7 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy( plot, src_hw_6847_plot_asm );
+    deploy_preferred( plot, src_hw_6847_plot_asm );
 
     switch( VT_BITWIDTH( x->type ) ) {
         case 32:
