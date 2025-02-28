@@ -7616,6 +7616,10 @@ fill_definition_array :
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, $3 );
     }
+    | Identifier RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        define_implicit_array_if_needed( _environment, $1 );
+        variable_array_fill_random( _environment, $1, 0, $3, $4, $5, 0 );
+    }
     | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
