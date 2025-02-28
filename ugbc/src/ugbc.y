@@ -3211,6 +3211,9 @@ exponential_less:
         index->value = ++((struct _Environment *)_environment )->tilesetCount;
         $$ = index->name;
       }
+    | NEW OP const_expr OP_COMMA const_expr CP {        
+        $$ = new_image( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode )->name;
+      }
     | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
       }
@@ -5600,6 +5603,10 @@ get_definition_expression:
         Variable * k = inkey( _environment );
         variable_move( _environment, k->name, p->name );
     }
+    | OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
+        get_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, 0 );
+        gr_locate( _environment, $2, $4 );
+    }
     | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
@@ -5693,7 +5700,11 @@ put_action :
     };
 
 put_definition_expression:
-    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+    OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
+        put_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, FLAG_WITH_PALETTE );
+        gr_locate( _environment, $2, $4 );
+    }
+    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         put_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, FLAG_WITH_PALETTE );
         gr_locate( _environment, $2, $4 );
     }
@@ -6685,6 +6696,9 @@ add_definition :
         variable_add_inplace( _environment, $1, $4 );
     }
     | Identifier OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
+    }
+    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
         add_complex_vars( _environment, $1, $3, $5, $7, $8 );
     }
     | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
