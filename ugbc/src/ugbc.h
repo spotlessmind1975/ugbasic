@@ -1449,6 +1449,7 @@ typedef struct _Embedded {
     int cpu_inc_32bit;
     int cpu_dec;
     int cpu_dec_16bit;
+    int cpu_dec_32bit;
     int cpu_less_than_16bit_const;
     int cpu_less_than_32bit_const;
     int cpu_less_than_8bit_const;
@@ -5166,6 +5167,7 @@ void                    put_tilemap_inline( Environment * _environment, char * _
 
 Variable *              random_value( Environment * _environment, VariableType _type );
 void                    randomize( Environment * _environment, char * _seed );
+Variable *              range( Environment * _environment, char * _expression, char * _min, char * _max );
 void                    raster_at( Environment * _environment, char * _label, int _position );
 void                    raster_at_var( Environment * _environment, char * _label, char * _position );
 Variable *              read_end( Environment * _environment );
