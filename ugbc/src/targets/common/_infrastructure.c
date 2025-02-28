@@ -4769,11 +4769,13 @@ void variable_decrement( Environment * _environment, char * _source ) {
     Variable * source = variable_retrieve( _environment, _source );
 
     switch( VT_BITWIDTH( source->type ) ) {
-        case 32:
         case 1:
         case 0:
             // @todo DEC VT_FLOAT to be supported?
             CRITICAL_DATATYPE_UNSUPPORTED("DEC", DATATYPE_AS_STRING[source->type])
+            break;
+        case 32:
+            cpu_dec_32bit( _environment, source->realName );
             break;
         case 16:
             cpu_dec_16bit( _environment, source->realName );
