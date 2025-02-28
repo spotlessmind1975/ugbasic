@@ -7865,7 +7865,23 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
     switch( VT_BITWIDTH( value->type ) ) {
         case 1:
         case 0:
-            CRITICAL_STR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
+            switch( value->type ) {
+                case VT_DOJOKA: {
+                        Variable * dojokaHandle = variable_temporary( _environment, VT_DWORD, "(dojoka)");
+                        cpu_mem_move_direct_size( _environment, value->realName, dojokaHandle->realName, 4 );
+                        #if CPU_BIG_ENDIAN
+                            cpu_swap_8bit( _environment, dojokaHandle->realName, address_displacement( _environment, dojokaHandle->realName, "3" ) );
+                            cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
+                        #endif
+                        cpu_dsfree( _environment, result->realName );
+                        cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, result->realName );
+                        value = NULL;
+                    }
+                    break;
+                default:
+                    CRITICAL_STR_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type]);
+                    break;
+            }
             break;
         case 32:
         case 16:
@@ -7873,13 +7889,15 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
             break;
     }
 
-    variable_store_string( _environment, result->name, "          " );
-    cpu_dswrite( _environment, result->realName );
-    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
-
-    cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+    if ( value ) {
+        variable_store_string( _environment, result->name, "          " );
+        cpu_dswrite( _environment, result->realName );
+        cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
     
-    cpu_dsresize( _environment, result->realName, size->realName );
+        cpu_number_to_string( _environment, value->realName, address->realName, size->realName, VT_BITWIDTH( value->type ), VT_SIGNED( value->type ) );
+        
+        cpu_dsresize( _environment, result->realName, size->realName );
+    }
     
     return result;
     
