@@ -4057,6 +4057,26 @@ void cpu6809_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu6809_dec_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    inline( cpu_dec_32bit )
+
+        outline1("LDD %s", address_displacement( _environment, _variable, "2" ) );
+        outline0("SUBD #1" );
+        outline1("STD %s", address_displacement( _environment, _variable, "2" ) );
+        outline0("CMPD #$FFFF" );
+        outline1("BNE %s", label );
+        outline1("LDD %s", _variable );
+        outline0("SUBD #1" );
+        outline1("STD %s", _variable );
+        outhead1("%s", label );
+
+    no_embedded( cpu_dec_32bit )
+
+}
+
 void cpu6809_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     deploy_preferred( duff, src_hw_6809_duff_asm );
