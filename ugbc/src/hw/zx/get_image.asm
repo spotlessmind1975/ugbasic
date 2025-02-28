@@ -36,10 +36,11 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 ; ----------------------------------------------------------------------------
-; - Put image on bitmap
+; - Get image on bitmap
 ; ----------------------------------------------------------------------------
 
 GETIMAGE:
+    
 ;     LD A, (CURRENTMODE)
 ;     ; BITMAP_MODE_STANDARD
 ;     CP 0
@@ -53,10 +54,11 @@ GETIMAGE:
 ; GETIMAGE1X:
 ;     RET
 
-    DI
+; GETIMAGE1:
+;     RET
 
-GETIMAGE1:
 GETIMAGE0:
+GETIMAGE1:
     LD A, (HL)
     LD (IMAGEW), A
     ADD HL, 1
@@ -64,31 +66,33 @@ GETIMAGE0:
     LD (IMAGEW+1), A
     ADD HL, 1
     LD A, (HL)
-    SRL A
-    SRL A
-    SRL A
+    ; SRL A
+    ; SRL A
+    ; SRL A
     LD (IMAGEH), A
     LD (IMAGEH2), A
     ADD HL, 1
 
     PUSH HL
 
-    LD A, (IMAGEX)
-    AND $7
-    LD B, A
-    LD A, $8
-    SUB B
-    LD B, A
-    LD E, 1
-GETIMAGE0A:
-    DEC B
-    JR Z,GETIMAGE0B
-    SLA E
-    JMP GETIMAGE0A
+;     LD A, (IMAGEX)
+;     AND $7
+;     LD B, A
+;     LD A, $8
+;     SUB B
+;     LD B, A
+;     LD E, 1
+; GETIMAGE0A:
+;     DEC B
+;     JR Z,GETIMAGE0B
+;     SLA E
+;     JMP GETIMAGE0A
 GETIMAGE0B:
     LD A, (IMAGEY)
+    AND $F8
     LD B, A
     LD A, (IMAGEX)
+    AND $F8
     LD C, A
 
     LD A,B
@@ -119,11 +123,15 @@ GETIMAGE0B:
     POP DE
     POP HL
 
+    LD A, (IMAGEY)
+    AND $F8
+    LD IXL, A
+
     LD A, (IMAGEH)
     LD C, A
-    SLA C
-    SLA C
-    SLA C
+    ; SLA C
+    ; SLA C
+    ; SLA C
     LD A, (IMAGEW+1)
     LD B, A
     LD A, (IMAGEW)
@@ -155,11 +163,16 @@ GETIMAGE0CP:
     PUSH BC
     PUSH HL
     
-    LD A, (IMAGEY)
-    ADD A, 1
-    LD (IMAGEY), A
+    INC IXL
+
+    LD A, (CURRENTHEIGHT)
+    CP IXL
+    JR Z, GETDONEY
+
+    LD A, IXL
     LD B, A
     LD A, (IMAGEX)
+    AND $F8
     LD C, A
 
     LD A,B
@@ -195,11 +208,36 @@ GETIMAGE0CP:
     DEC C
     JR NZ, GETIMAGE0CP
 
+    JP GETDONEYY
     ;;;;
+
+GETDONEY:
+
+    PUSH HL
+    POP DE
+    POP HL
+
+    POP BC
+
+GETDONEYY:
+
+    LD A, (IMAGEY)
+    AND $F8
+    LD IXL, A
+
+    LD A, (IMAGET)
+    AND $1
+    CMP $0
+    JP Z, GETDONE
 
     PUSH HL
 
-    LD HL,(IMAGEX)
+    LD A, (IMAGEX)
+    AND $F8
+    LD L,A
+    LD A,0
+    LD H,A
+    AND A
     SRA H
     RR L
     SRA H
@@ -208,7 +246,12 @@ GETIMAGE0CP:
     RR L
     LD DE,HL
 
-    LD HL,(IMAGEY)
+    LD A, (IMAGEY)
+    AND $f8
+    LD L,A
+    LD A,0
+    LD H,A
+    AND A
     SLA L
     RL H
     SLA L
@@ -223,7 +266,11 @@ GETIMAGE0CP:
     POP HL
 
     LD A, (IMAGEH)
+    SRL A
+    SRL A
+    SRL A
     LD C, A
+    ; INC C
     LD A, (IMAGEW+1)
     LD B, A
     LD A, (IMAGEW)
@@ -244,13 +291,26 @@ GETIMAGE00CP:
 
     PUSH BC
 
-    LD A, (IMAGEW)   
+    LD A, (IMAGEW+1)
+    LD B, A
+    LD A, (IMAGEW)
+    SRL B
+    RR A
+    SRL B
+    RR A
+    SRL B
+    RR A
     LD C, A
     LD A, 0
     LD B, A
 
-    ADD HL, 64
+    PUSH HL
+    LD HL, DE
+    ADD HL, 32
+    AND A
     SBC HL, BC
+    LD DE, HL
+    POP HL
 
     POP BC
 
@@ -265,10 +325,15 @@ GETIMAGE00CP:
     RR A
     LD B, A
 
+    INC IXL
+    LD A, (CURRENTHEIGHT)
+    CP IXL
+    JR Z, GETDONE
+
     DEC C
     JR NZ, GETIMAGE00CP
 
-    EI
-    
+GETDONE:
+
     RET
 

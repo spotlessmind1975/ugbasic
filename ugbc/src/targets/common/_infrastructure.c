@@ -2578,16 +2578,13 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                             }
                             Variable * word = variable_temporary( _environment, VT_SWORD, "(word)");
                             Variable * scale = variable_temporary( _environment, VT_FLOAT, "(scale)");
-                            variable_store_float( _environment, scale->name, 65536 );
-                            variable_move_higher_32bit_16bit( _environment, source, word );
+                            variable_move( _environment, source->name, word->name );
                             switch( target->precision ) {
                                 case FT_FAST:
                                     cpu_float_fast_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
-                                    cpu_float_fast_mul( _environment, target->realName, scale->realName, target->realName );
                                     break;
                                 case FT_SINGLE:
                                     cpu_float_single_from_16( _environment, word->realName, target->realName, VT_SIGNED( source->type ) );
-                                    cpu_float_fast_mul( _environment, target->realName, scale->realName, target->realName );
                                     break;
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -14024,22 +14021,22 @@ int check_datatype_limits( VariableType _type, int _value ) {
     if ( VT_SIGNED( _type ) ) {
         switch( VT_BITWIDTH( _type ) ) {
             case 8:
-                return abs(_value) < 0x7f;
+                return abs(_value) <= 0x7f;
             case 16:
-                return abs(_value) < 0x7fff;
+                return abs(_value) <= 0x7fff;
             case 32:
-                return abs(_value) < 0x7fffffff;
+                return abs(_value) <= 0x7fffffff;
             default:
                 return 0;
         }
     } else {
         switch( VT_BITWIDTH( _type ) ) {
             case 8:
-                return _value < 0xff;
+                return _value <= 0xff;
             case 16:
-                return _value < 0xffff;
+                return _value <= 0xffff;
             case 32:
-                return _value < 0xffffffff;
+                return _value <= 0xffffffff;
             default:
                 return 0;
         }
