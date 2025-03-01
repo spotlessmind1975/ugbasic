@@ -12481,11 +12481,11 @@ Variable * origin_resolution_relative_transform_x( Environment * _environment, c
 
         if ( _x ) {
             Variable * originX = variable_retrieve( _environment, _x );
-            x = variable_retrieve( _environment, _x );
-            if ( _is_relative ) {
-                x = variable_add( _environment, "XGR", x->name );
+            if ( !_is_relative ) {
+                return originX;
             }
-            x->origin = originX;
+            x = variable_temporary( _environment, originX->type, "(x)" );
+            variable_move( _environment, variable_add( _environment, "XGR", originX->name )->name, x->name );
         } else {
             x = variable_retrieve( _environment, "XGR" );
         }
@@ -12550,11 +12550,11 @@ Variable * origin_resolution_relative_transform_y( Environment * _environment, c
 
         if ( _y ) {
             Variable * originY = variable_retrieve( _environment, _y );
-            y = variable_retrieve( _environment, _y );
-            if ( _is_relative ) {
-                y = variable_add( _environment, "YGR", y->name );
+            if ( !_is_relative ) {
+                return originY;
             }
-            y->origin = originY;
+            y = variable_temporary( _environment, originY->type, "(y)" );
+            variable_move( _environment, variable_add( _environment, "YGR", originY->name )->name, y->name );
         } else {
             y = variable_retrieve( _environment, "YGR" );
         }
