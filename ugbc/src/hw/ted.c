@@ -3226,4 +3226,18 @@ void ted_wait_duration_vars( Environment * _environment, char * _channels ) {
 
 }
 
+
+void ted_screen( Environment * _environment, char * _x, char * _y, char * _c ) {
+
+    deploy( screen, src_hw_ted_screen_asm);
+
+    outline1( "LDA %s", _x );
+    outline0( "STA MATHPTR1" );
+    outline1( "LDA %s", _y );
+    outline0( "STA MATHPTR0" );
+    outline0( "JSR SCREEN" );
+    outline1( "STA %s", _c );
+
+}
+
 #endif
