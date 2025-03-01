@@ -4969,6 +4969,7 @@ Variable *              images_load_from_buffer( Environment * _environment, cha
 void                    insert( Environment * _environment, char * _string, char * _x, char * _y, char * _w, char * _h, char * _color );
 Variable *              in_var( Environment * _environment, char * _port );
 void                    ink( Environment * _environment, char * _expression );
+void                    inkb( Environment * _environment, char * _value, char * _color1, char * _color2 );
 Variable *              inkey( Environment * _environment );
 void                    input( Environment * _environment, char * _variable, VariableType _default_type );
 Variable *              input_string( Environment * _environment, char * _size );

@@ -107,7 +107,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
-%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR
+%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6603,7 +6603,21 @@ polyline_definition:
 ink_definition:
     expr {
         ink( _environment, $1 );
+    };
+
+inkb_definition:
+    expr OP_COMMA expr OP_COMMA expr {
+        inkb( _environment, $1, $3, $5 );
     }
+    | expr OP_COMMA OP_COMMA expr {
+        inkb( _environment, $1, NULL, $4 );
+    }
+    | expr OP_COMMA expr OP_COMMA {
+        inkb( _environment, $1, $3, NULL );
+    }
+    | expr OP_COMMA OP_COMMA {
+        inkb( _environment, $1, NULL, NULL );
+    };
 
 on_goto_definition:
       Identifier {
@@ -11144,6 +11158,7 @@ statement2nc:
       variable_move( _environment, $3, "LINE" );
   }
   | INK ink_definition
+  | INKB inkb_definition
   | VAR var_definition
   | TEXTADDRESS OP_ASSIGN expr {
       variable_move( _environment, $3, "ADDRESS" );
