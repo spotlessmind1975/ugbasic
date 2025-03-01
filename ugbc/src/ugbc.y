@@ -5617,10 +5617,16 @@ get_definition_expression:
                 CRITICAL_GET_NEED_STRING( $2 );
             }
         }
-        wait_key( _environment, 0 );
-        Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
-        Variable * k = inkey( _environment );
-        variable_move( _environment, k->name, p->name );
+        Variable * variable = variable_retrieve( _environment, $1 );
+        if ( variable->type == VT_IMAGE ) {
+            Variable * zero = variable_temporary( _environment, VT_POSITION, "(zero)" );
+            get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 0 );
+        } else {
+            wait_key( _environment, 0 );
+            Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
+            Variable * k = inkey( _environment );
+            variable_move( _environment, k->name, p->name );
+        }
     }
     | OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
         get_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, 0 );
