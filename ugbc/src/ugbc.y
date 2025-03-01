@@ -3418,6 +3418,12 @@ exponential_less:
     | PEEKD OP expr CP {
         $$ = peekd_var( _environment, $3 )->name;
       }
+    | SCREEN OP expr OP_COMMA expr CP {
+        $$ = screen_var( _environment, $3, $5, 0 )->name;
+      }
+    | SCREEN OP_DOLLAR OP expr OP_COMMA expr CP {
+        $$ = screen_var( _environment, $4, $6, 1 )->name;
+      }
     | XPEN {
         $$ = xpen( _environment )->name;
       }

@@ -1811,6 +1811,7 @@ typedef struct _Deployed {
     int fujinet;
     int dojo;
     int dojo_fujinet;
+    int screen;
 
 } Deployed;
 
@@ -5226,6 +5227,7 @@ Variable *              screen_page( Environment * _environment );
 Variable *              screen_tiles_get( Environment * _environment );
 Variable *              screen_tiles_get_height( Environment * _environment );
 Variable *              screen_tiles_get_width( Environment * _environment );
+Variable *              screen_var( Environment * _environment, char * _x, char * _y, int _as_string );
 void                    screen_vertical_scroll( Environment * _environment, int _displacement );
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
 void                    scroll( Environment * _environment, int _dx, int _dy );
