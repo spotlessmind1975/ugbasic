@@ -11022,7 +11022,10 @@ serial_definition :
     };
 
 jmove_definition :
-    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr   {
+        jmove( _environment, $1, $3, $5, $7, $9, $7, $9, NULL, NULL );
+    }
+    | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
         jmove( _environment, $1, $3, $5, $7, $9, $11, $13, NULL, NULL );
     }
     | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
@@ -11032,6 +11035,16 @@ jmove_definition :
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
         variable_store( _environment, zero->name, 0 );
         jmove( _environment, zero->name, $2, $4, $6, $8, $10, $12, $14, $16 );
+    }
+    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
+        variable_store( _environment, zero->name, 0 );
+        jmove( _environment, zero->name, $2, $4, $6, $8, $10, $12, NULL, NULL );
+    }
+    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
+        variable_store( _environment, zero->name, 0 );
+        jmove( _environment, zero->name, $2, $4, $6, $8, $6, $8, NULL, NULL );
     }
     ;
 
