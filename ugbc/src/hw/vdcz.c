@@ -3060,4 +3060,18 @@ int vdcz_palette_extract( Environment * _environment, char * _data, int _width, 
     return uniquePaletteCount;
 
 }
+
+void vdcz_screen( Environment * _environment, char * _x, char * _y, char * _c ) {
+
+    deploy( screen, src_hw_vdcz_screen_asm);
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD B, A" );
+    outline0("CALL SCREEN" );
+    outline1("LD (%s), A", _c );
+
+}
+
 #endif
