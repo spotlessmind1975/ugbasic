@@ -52,7 +52,7 @@ Variable * key_state_var( Environment * _environment, char * _scancode ) {
 
     Variable * s = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0 );
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
     Variable * key = scancode( _environment );
 
