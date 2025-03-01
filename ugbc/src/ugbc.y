@@ -107,7 +107,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
-%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT
+%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5610,6 +5610,23 @@ plot_definition_expression:
 plot_definition:
     plot_definition_expression;
 
+plotr_definition_expression:
+      expr OP_COMMA expr OP_COMMA optional_expr {
+        Variable * x = origin_resolution_relative_transform_x( _environment, $1, 1 );
+        Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
+        plot( _environment, x->name, y->name, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x->name, y->name );
+    }
+    | expr OP_COMMA expr {
+        Variable * x = origin_resolution_relative_transform_x( _environment, $1, 1 );
+        Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
+        plot( _environment, x->name, y->name, NULL, 0 );
+        gr_locate( _environment, x->name, y->name );
+    };
+
+plotr_definition:
+    plotr_definition_expression;
+
 circle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
@@ -11099,6 +11116,7 @@ statement2nc:
   | GRAPHICS graphics_definition
   | POINT point_definition
   | PLOT plot_definition
+  | PLOTR plotr_definition
   | CIRCLE circle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition

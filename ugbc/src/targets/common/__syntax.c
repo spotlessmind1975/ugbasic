@@ -6408,3 +6408,48 @@ riga di codice.
 @example FUNCTION pow2[a] = [a*a]
 
 </usermanual> */
+
+/* <usermanual>
+@keyword PLOTR
+
+@english
+
+The ''PLOTR'' command allows you to draw individual points on the screen, behaving 
+very similarly to the ''PLOT'' command. The difference is that ''PLOTR'' draws the 
+point starting from the last stored position. So the origin of the point does not 
+coincide with the origin of the screen. If the color is not provided, the default 
+color is the one set with the last ''INK'' / ''PEN'' command. 
+
+@italian
+
+Il comando ''PLOTR'' consente di disegnare singoli punti sullo schermo, comportandosi 
+in modo molto simile al comando ''PLOT''. La differenza è che ''PLOTR'' disegna il 
+punto a partire dall'ultima posizione memorizzata. Quindi l'origine del punto non 
+coincide con l'origine dello schermo.  Se il colore non viene fornito, il colore 
+predefinito è quello impostato con l'ultimo comando ''INK'' / ''PEN''. 
+
+@syntax PLOTR x, y[, color]
+
+@example PLOTR 1,1
+
+@target atari
+@target atarixl
+@target c128
+@target c128z
+@target c64
+@target c64reu
+@target coco
+@target coco3
+@target coleco
+@target cpc
+@target d32
+@target d64
+@target mo5
+@target msx1
+@target pc128op
+@target pc1403
+@target plus4
+@target sc3000
+@target to8
+@target zx
+</usermanual> */
