@@ -3113,10 +3113,10 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 case VT_DSTRING: {
                                     Variable * dojokaHandle = variable_temporary( _environment, VT_DWORD, "(dojoka)");
                                     cpu_mem_move_direct_size( _environment, source->realName, dojokaHandle->realName, 4 );
-                                    #if CPU_BIG_ENDIAN
+                                    // #if CPU_BIG_ENDIAN
                                         cpu_swap_8bit( _environment, dojokaHandle->realName, address_displacement( _environment, dojokaHandle->realName, "3" ) );
                                         cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
-                                    #endif
+                                    // #endif
                                     cpu_dsfree( _environment, target->realName );
                                     cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, target->realName );
                                     break;

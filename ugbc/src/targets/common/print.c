@@ -255,10 +255,8 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                         case VT_DOJOKA: {
                             Variable * dojokaHandle = variable_temporary( _environment, VT_DWORD, "(dojoka)");
                             cpu_mem_move_direct_size( _environment, value->realName, dojokaHandle->realName, 4 );
-                            #if CPU_BIG_ENDIAN
-                                cpu_swap_8bit( _environment, dojokaHandle->realName, address_displacement( _environment, dojokaHandle->realName, "3" ) );
-                                cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
-                            #endif
+                            cpu_swap_8bit( _environment, dojokaHandle->realName, address_displacement( _environment, dojokaHandle->realName, "3" ) );
+                            cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
                             print( _environment, variable_hex( _environment, dojokaHandle->name )->name, 0, _raw );
                             value = NULL;
 
