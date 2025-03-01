@@ -5392,6 +5392,9 @@ as_datatype_suffix :
     | OP_DOLLAR {
         $$ = VT_DSTRING;
     }
+    | OP_DOLLAR2 {
+        $$ = VT_DOJOKA;
+    }
     ;
 
 as_datatype_suffix_optional : 
