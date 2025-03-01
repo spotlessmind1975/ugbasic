@@ -756,6 +756,8 @@ FSIZE { RETURN(FSIZE,1); }
 Fs { RETURN(FILESIZE,1); }
 FIND { RETURN(FIND,1); }
 Fn { RETURN(FIND,1); }
+FHEIGHT { RETURN(FHEIGHT,1); }
+Fh { RETURN(FHEIGHT,1); }
 FINAL { RETURN(FINAL,1); }
 FIn { RETURN(FINAL,1); }
 FINGER { RETURN(FINGER,1); }
@@ -790,6 +792,8 @@ FUJINET { RETURN(FUJINET,1); }
 Fj { RETURN(FUJINET,1); }
 FUNCTION { RETURN(FUNCTION,1); }
 Fu { RETURN(FUNCTION,1); }
+FWIDTH { RETURN(FWIDTH,1); }
+Fw { RETURN(FWIDTH,1); }
 FX { RETURN(FX,1); }
 
 %{ /* --------------------------------- G --------------------------------- */ %}

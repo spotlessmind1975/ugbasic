@@ -107,7 +107,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
-%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE
+%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1030,6 +1030,11 @@ const_factor:
         	int width = ( widthModulus / 8 ) * 8;
             $$ = width;
       }
+      | FWIDTH OP const_expr OP_COMMA const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth - $5 ) / $3;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
       | SCREEN WIDTH {
           $$ = ((Environment *)_environment)->screenWidth;
       }
@@ -1209,6 +1214,11 @@ const_factor:
       }
       | FIND HEIGHT OP const_expr OP_COMMA const_expr CP {
         	int heightModulus = ( ((Environment *)_environment)->screenHeight - $6 ) / $4;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | FHEIGHT OP const_expr OP_COMMA const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight - $5 ) / $3;
         	int height = ( heightModulus / 8 ) * 8;
             $$ = height;
       }
