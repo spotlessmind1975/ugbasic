@@ -4334,6 +4334,24 @@ void sm83_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void sm83_dec_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    outline1("LD HL, (%s)", _variable  );
+    outline0("DEC HL" );
+    outline1("LD (%s), HL", _variable  );
+    outline0("LD A, L" );
+    outline0("AND H" );
+    outline0("CP $FF" );
+    outline1("JR NZ, %s", label );
+    outline1("LD HL, (%s)", _variable  );
+    outline0("DEC HL" );
+    outline1("LD (%s), HL", _variable  );
+    outhead1("%s:", label );
+
+}
+
 void sm83_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     deploy( duff, src_hw_sm83_duff_asm );

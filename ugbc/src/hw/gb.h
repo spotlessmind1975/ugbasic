@@ -408,4 +408,6 @@ void gb_wait_duration_vars( Environment * _environment, char * _channel );
 
 void gb_music( Environment * _environment, char * _music, int _size, int _loop );
 
+void gb_screen( Environment * _environment, char * _x, char * _y, char * _c );
+
 #endif
