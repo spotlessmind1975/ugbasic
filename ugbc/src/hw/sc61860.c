@@ -4544,6 +4544,36 @@ void sc61860_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
+void sc61860_dec_32bit( Environment * _environment, char * _variable ) {
+
+    MAKE_LABEL
+
+    op_lda( _environment, _variable );
+    op_deca( _environment );
+    op_sta( _environment, _variable );
+    op_cp_direct( _environment, 0xff );
+    op_jnz( _environment, label );
+
+    op_lda( _environment, address_displacement( _environment, _variable, "1" ) );
+    op_deca( _environment );
+    op_sta( _environment, address_displacement( _environment, _variable, "1" ) );
+    op_cp_direct( _environment, 0 );
+    op_jnz( _environment, label );
+
+    op_lda( _environment, address_displacement( _environment, _variable, "2" ) );
+    op_deca( _environment );
+    op_sta( _environment, address_displacement( _environment, _variable, "2" ) );
+    op_cp_direct( _environment, 0 );
+    op_jnz( _environment, label );
+
+    op_lda( _environment, address_displacement( _environment, _variable, "3" ) );
+    op_deca( _environment );
+    op_sta( _environment, address_displacement( _environment, _variable, "3" ) );
+
+    outhead1("%s:", label );
+
+}
+
 void sc61860_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL

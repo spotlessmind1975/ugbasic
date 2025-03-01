@@ -249,6 +249,9 @@
 #define IMAGE_HEIGHT_SIZE       1
 #define IMAGE_HEIGHT_OFFSET     0
 
+#define TEXT_COLUMNS_COUNT      24
+#define TEXT_ROWS_COUNT          1
+
 void pc1403_initialization( Environment * _environment );
 
 void pc1403_wait_key( Environment * _environment, int _release );
