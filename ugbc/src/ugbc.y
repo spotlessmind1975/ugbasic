@@ -107,7 +107,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMPOS MEMOR MEMDEF MEMLEN MEMRESTORE MEMCONT MEMCLR CPUSM83
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
-%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB
+%token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6805,6 +6805,20 @@ add_definition :
     }
     ;
 
+addc_definition :
+    Identifier OP_COMMA expr OP_COMMA expr TO expr  {
+        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    }
+    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    }
+    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+        add_complex( _environment, $1, $4, $7, $10, 1 );
+    }
+    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        add_complex_mt( _environment, $2, $5, $7, $9, 1 );
+    };
+
 xor_definition :
     Identifier OP_COMMA expr {
         variable_xor_inplace_vars( _environment, $1, $3 );
@@ -11170,6 +11184,7 @@ statement2nc:
       variable_move( _environment, $3, "EMPTYTILE" );
   }
   | ADD add_definition
+  | ADDC addc_definition
   | MUL mul_definition
   | DIV div_definition
   | XOR xor_definition
