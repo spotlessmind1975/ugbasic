@@ -11028,6 +11028,11 @@ jmove_definition :
     | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         jmove( _environment, $1, $3, $5, $7, $9, $11, $13, $15, $17 );
     }
+    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
+        variable_store( _environment, zero->name, 0 );
+        jmove( _environment, zero->name, $2, $4, $6, $8, $10, $12, $14, $16 );
+    }
     ;
 
 statement2nc:
