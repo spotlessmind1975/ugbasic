@@ -3762,4 +3762,18 @@ void gtia_fade( Environment * _environment, char * _ticks ) {
 
 }
 
+void gtia_screen( Environment * _environment, char * _x, char * _y, char * _c ) {
+
+    deploy( gtiavars, src_hw_gtia_vars_asm);
+    deploy( screen, src_hw_gtia_screen_asm);
+
+    outline1( "LDA %s", _x );
+    outline0( "STA MATHPTR1" );
+    outline1( "LDA %s", _y );
+    outline0( "STA MATHPTR0" );
+    outline0( "JSR SCREEN" );
+    outline1( "STA %s", _c );
+
+}
+
 #endif

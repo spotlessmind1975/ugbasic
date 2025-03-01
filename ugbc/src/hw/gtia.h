@@ -328,4 +328,6 @@ int gtia_palette_extract( Environment * _environment, char * _data, int _width, 
 void gtia_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
 void gtia_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 
+void gtia_screen( Environment * _environment, char * _x, char * _y, char * _c );
+
 #endif
