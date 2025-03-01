@@ -221,4 +221,6 @@ void vic2_calculate_sequence_frame_offset( Environment * _environment, char * _o
 void vic2_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 void vic2_fade( Environment * _environment, char * _ticks );
 
+void vic2_screen( Environment * _environment, char * _x, char * _y, char * _c );
+
 #endif
