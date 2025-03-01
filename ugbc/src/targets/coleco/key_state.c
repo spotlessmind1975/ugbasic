@@ -42,7 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * key_state( Environment * _environment, int _scancode ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
     return result;
 
@@ -50,7 +50,7 @@ Variable * key_state( Environment * _environment, int _scancode ) {
 
 Variable * key_state_var( Environment * _environment, char * _scancode ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEY STATE)");
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
     return result;
 
