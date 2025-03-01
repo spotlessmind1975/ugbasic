@@ -35,67 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-    ; This small routine is useful to calculate the starting address of
-    ; textual video ram, given the current X and Y cursors coordinates.
-
-CALCPOS
-
-    ; Start from the beginning of the video RAM.
-
-    LDX TEXTADDRESS
-    STX <COPYOFTEXTADDRESS
-
-    ; Load the number of rows to move ahead.
-
-    LDB <YCURSYS
-
-    ; If zero, we can skip this step.
-
-    BEQ CALCPOSSKIP
-
-    ; Load the size of a video text screen line.
-
-    LDA CURRENTTILESWIDTH
-
-    ; For each row...
-
-CALCPOSLOOP1
-
-    ; Increment the address of the size of a row:
-    ; we have to increment the address twice,
-    ; since each character has a character code
-    ; and a character attribute.
-
-    ANDCC #$FE
-    PSHS D
-    TFR A, B
-    ABX
-    ABX
-    PULS D
-
-    ; Decrement the number of rows.
-
-    DECB
-
-    ; Until the rows are finished, let's go ahead!
-
-    BNE CALCPOSLOOP1
-
-CALCPOSSKIP
-
-    ; Now we can add the X position. Again, twice.
-    LDA <XCURSYS
-    PSHS D
-    TFR A, B
-    ABX
-    ABX
-    PULS D    
-
-    ; Store the position.
-    STX <COPYOFTEXTADDRESS
-
-    RTS
-
     ; This small routine will print a string on the screen, when
     ; in text mode. This routine will try to avoid to do anything
     ; if in graphic mode and / or the string is empty.

@@ -3074,4 +3074,16 @@ void gime_flip_image( Environment * _environment, Resource * _image, char * _fra
 
 }
 
+void gime_screen( Environment * _environment, char * _x, char * _y, char * _c ) {
+
+    deploy_preferred( textEncodedAt, src_hw_gime_text_at_asm );
+    deploy( screen, src_hw_gime_screen_asm);
+
+    outline1("LDA %s", _x );
+    outline1("LDB %s", _y );
+    outline0("JSR SCREEN" );
+    outline1("STA %s", _c );
+
+}
+
 #endif
