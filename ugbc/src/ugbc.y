@@ -4313,11 +4313,17 @@ exponential_less:
     | JOY OP expr CP {
         $$ = joy_vars( _environment, $3 )->name;
     }
+    | JOYX {
+        $$ = joyx( _environment, 0 )->name;
+    }
     | JOYX OP OP_HASH const_expr CP {
         $$ = joyx( _environment, $4 )->name;
     }
     | JOYX OP expr CP {
         $$ = joyx_vars( _environment, $3 )->name;
+    }
+    | JOY X  {
+        $$ = joyx( _environment, 0 )->name;
     }
     | JOY X OP OP_HASH const_expr CP {
         $$ = joyx( _environment, $5 )->name;
@@ -4325,17 +4331,26 @@ exponential_less:
     | JOY X OP expr CP {
         $$ = joyx_vars( _environment, $4 )->name;
     }
+    | JOYY {
+        $$ = joyy( _environment, 0 )->name;
+    }
     | JOYY OP OP_HASH const_expr CP {
         $$ = joyy( _environment, $4 )->name;
     }
     | JOYY OP expr CP {
         $$ = joyy_vars( _environment, $3 )->name;
     }
+    | JOY Y {
+        $$ = joyy( _environment, 0 )->name;
+    }
     | JOY Y OP OP_HASH const_expr CP {
         $$ = joyy( _environment, $5 )->name;
     }
     | JOY Y OP expr CP {
         $$ = joyy_vars( _environment, $4 )->name;
+    }
+    | JOYDIR {
+        $$ = joydir( _environment, 0 )->name;
     }
     | JOYDIR OP expr CP {
         $$ = joydir_semivars( _environment, $3 )->name;
@@ -4346,11 +4361,17 @@ exponential_less:
     | JUP OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;
     }
+    | JUP {
+        $$ = joy_direction( _environment, 0, JOY_UP )->name;
+    }
     | JUP OP OP_HASH const_expr CP {
         $$ = joy_direction( _environment, $4, JOY_UP )->name;
     }
     | JDOWN OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_DOWN )->name;
+    }
+    | JDOWN {
+        $$ = joy_direction( _environment, 0, JOY_DOWN )->name;
     }
     | JDOWN OP OP_HASH const_expr CP {
         $$ = joy_direction( _environment, $4, JOY_DOWN )->name;
@@ -4358,14 +4379,23 @@ exponential_less:
     | JLEFT OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_LEFT )->name;
     }
+    | JLEFT {
+        $$ = joy_direction( _environment, 0, JOY_LEFT )->name;
+    }
     | JLEFT OP OP_HASH const_expr CP {
         $$ = joy_direction( _environment, $4, JOY_LEFT )->name;
+    }
+    | JRIGHT {
+        $$ = joy_direction( _environment, 0, JOY_RIGHT )->name;
     }
     | JRIGHT OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_RIGHT )->name;
     }
     | JRIGHT OP OP_HASH const_expr CP {
         $$ = joy_direction( _environment, $4, JOY_RIGHT )->name;
+    }
+    | JFIRE {
+        $$ = joy_direction( _environment, 0, JOY_FIRE )->name;
     }
     | JFIRE OP expr CP {
         $$ = joy_direction_semivars( _environment, $3, JOY_FIRE )->name;
