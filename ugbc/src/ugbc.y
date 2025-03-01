@@ -11609,8 +11609,8 @@ statement2nc:
     } OSP parameters CSP {
         ((struct _Environment *)_environment)->emptyProcedure = 0;
         begin_procedure( _environment, $2 );
-    } OP_ASSIGN OSP expr CSP {
-        end_procedure( _environment, $10 );
+    } OP_ASSIGN expr {
+        end_procedure( _environment, $9 );
   }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;

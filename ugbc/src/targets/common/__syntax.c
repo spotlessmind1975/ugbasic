@@ -6405,7 +6405,7 @@ diventa più organizzato e più facile da leggere e funzioni complesse possono e
 riga di codice.
 
 @syntax FUNCTION name[parameters] = [expression]
-@example FUNCTION pow2[a] = [a*a]
+@example FUNCTION pow2[a] = a*a
 
 </usermanual> */
 
