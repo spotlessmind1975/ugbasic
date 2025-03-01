@@ -2835,4 +2835,17 @@ void tms9918_flip_image( Environment * _environment, Resource * _image, char * _
 
 }
 
+void tms9918_screen( Environment * _environment, char * _x, char * _y, char * _c ) {
+
+    deploy( screen, src_hw_tms9918_screen_asm);
+
+    outline1("LD A, (%s)", _x );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD B, A" );
+    outline0("CALL SCREEN" );
+    outline1("LD (%s), A", _c );
+
+}
+
 #endif
