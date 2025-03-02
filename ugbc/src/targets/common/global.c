@@ -57,10 +57,12 @@ As with disc names, the "wild card" characters ''*'' and ''?'' can also
 be included. In this case, the ''*'' character is used to mean "match this 
 with any list of characters in the variable name, until the next control 
 character is reached", and the ''?'' character means "match this with any 
-single character in the variable name". 
+single character in the variable name". If no parameter is given, a "*" 
+is implictly assumed.
 
 ''GLOBAL'' or ''SHARED'' should be employed before the first use of the 
-variable. Only strings may be used for this technique.
+variable. Only strings may be used for this technique. 
+
 
 @italian
 Questa parola chiave imposta un elenco di variabili a cui è possibile 
@@ -76,10 +78,12 @@ indicare "corrisponde a un qualsiasi elenco di caratteri nel nome della
 variabile, fino a quando non viene raggiunto il carattere di controllo 
 successivo", e il carattere ''?''" significa "abbinalo a qualsiasi 
 carattere singolo nel nome della variabile". Solo le stringhe possono 
-essere utilizzate con questa tecnica.
+essere utilizzate con questa tecnica. Se non viene inserito alcun parametro,
+si intende "*".
 
-@syntax GLOBAL var1[, var2[, ...] ]
+@syntax GLOBAL [var1[, var2[, ...] ]]
 @syntax GLOBAL "string1"[, "string2"[, ...] ]
+@syntax GLOBAL : REM is like GLOBAL "*"
 
 @example GLOBAL test
 @example GLOBAL "a*", b, "*c"
@@ -99,9 +103,14 @@ void global( Environment * _environment ) {
         CRITICAL_GLOBAL_ONLY_OUTSIDE_PROCEDURES();
     }
 
-    int i = 0;
-    for( i=0; i<_environment->parameters; ++i ) {
-        variable_global( _environment, _environment->parametersEach[i] );
+    if ( _environment->parameters == 0 ) {
+        variable_global( _environment, "*" );
+    } else {
+        int i = 0;
+        for( i=0; i<_environment->parameters; ++i ) {
+            variable_global( _environment, _environment->parametersEach[i] );
+        }
     }
+
     _environment->parameters = 0;
 }
