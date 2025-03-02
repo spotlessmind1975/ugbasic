@@ -5691,8 +5691,21 @@ ellipse_definition_expression:
 ellipse_definition:
     ellipse_definition_expression;
 
+get_message_definition_params : {
+        ((struct _Environment *)_environment)->dojoChannelName = NULL;
+        ((struct _Environment *)_environment)->dojoObjectName = NULL;
+    } | OP_COMMA expr  {
+        ((struct _Environment *)_environment)->dojoChannelName = NULL;
+        ((struct _Environment *)_environment)->dojoObjectName = strdup( $2 );
+    }
+    | OP_COMMA expr OP_COMMA expr {
+        ((struct _Environment *)_environment)->dojoChannelName = strdup( $2 );
+        ((struct _Environment *)_environment)->dojoObjectName = strdup( $4 );
+    };
+
 get_definition_expression:
-    Identifier as_datatype_suffix_optional {
+    Identifier as_datatype_suffix_optional get_message_definition_params {
+
         if ( $2 != 0 ) {
             if ( $2 != VT_STRING && $2 != VT_DSTRING ) {
                 CRITICAL_GET_NEED_STRING( $2 );
@@ -5702,13 +5715,18 @@ get_definition_expression:
         if ( variable->type == VT_IMAGE ) {
             Variable * zero = variable_temporary( _environment, VT_POSITION, "(zero)" );
             get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 1 );
+        } else if ( variable->type == VT_DOJOKA ) {
+            if ( !((struct _Environment *)_environment)->dojoObjectName ) {
+                DOJO_GET_MESSAGE_MISSING_VARIABLE( );
+            }
+            dojo_get_message_inplace( _environment, $1, ((struct _Environment *)_environment)->dojoChannelName, ((struct _Environment *)_environment)->dojoObjectName );
         } else {
             wait_key( _environment, 0 );
             Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
             Variable * k = inkey( _environment );
             variable_move( _environment, k->name, p->name );
         }
-    }
+    } 
     | OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
         get_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
