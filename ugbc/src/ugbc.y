@@ -1025,8 +1025,18 @@ const_factor:
       | TILES {
           $$ = ((Environment *)_environment)->screenTiles;
       }
+      | FIND WIDTH OP const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $4;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
       | FIND WIDTH OP const_expr OP_COMMA const_expr CP {
         	int widthModulus = ( ((Environment *)_environment)->screenWidth - $6 ) / $4;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
+      | FWIDTH OP const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $3;
         	int width = ( widthModulus / 8 ) * 8;
             $$ = width;
       }
@@ -1212,8 +1222,18 @@ const_factor:
       | HEIGHT {
           $$ = ((Environment *)_environment)->screenHeight;
       }
+      | FIND HEIGHT OP const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $4;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
       | FIND HEIGHT OP const_expr OP_COMMA const_expr CP {
         	int heightModulus = ( ((Environment *)_environment)->screenHeight - $6 ) / $4;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | FHEIGHT OP const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $3;
         	int height = ( heightModulus / 8 ) * 8;
             $$ = height;
       }
