@@ -3439,6 +3439,7 @@ typedef struct _Environment {
 #define DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( v, t ) CRITICAL3("E370 - type of array's elements is not supported", v, t );
 #define DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E371 - array is too large to send as message", v, t );
 #define DOJO_GET_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E372 - missing variable for GET MESSAGE" );
+#define DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

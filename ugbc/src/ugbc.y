@@ -10605,8 +10605,22 @@ cmob_definition :
     };
 
 dojo_definition :
-    PUT MESSAGE expr OP_COMMA expr OP_COMMA expr {
+    PUT Identifier OP_COMMA expr OP_COMMA expr {
+        Variable * id = variable_retrieve( _environment, $2 );
+        if ( id->type != VT_DOJOKA ) {
+            DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
+        }
+        dojo_put_message( _environment, $2, $4, $6 );
+    }
+    | PUT MESSAGE expr OP_COMMA expr OP_COMMA expr {
         dojo_put_message( _environment, $3, $5, $7 );
+    }
+    | PUT Identifier OP_COMMA expr {
+        Variable * id = variable_retrieve( _environment, $2 );
+        if ( id->type != VT_DOJOKA ) {
+            DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
+        }
+        dojo_put_message( _environment, $2, NULL, $4 );
     }
     | PUT MESSAGE expr OP_COMMA expr {
         dojo_put_message( _environment, $3, NULL, $5 );
