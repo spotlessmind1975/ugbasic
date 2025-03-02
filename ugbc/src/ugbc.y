@@ -11718,6 +11718,14 @@ statement2nc:
     } OP_ASSIGN expr {
         end_procedure( _environment, $9 );
   }
+  | FUNCTION Identifier {
+      ((struct _Environment *)_environment)->parameters = 0;
+      ((struct _Environment *)_environment)->protothread = 0;
+      ((struct _Environment *)_environment)->emptyProcedure = 0;
+      begin_procedure( _environment, $2 );
+    } OP_ASSIGN expr {
+        end_procedure( _environment, $5 );
+  }
   | PROC Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       proc( _environment, $2 );
