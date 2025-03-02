@@ -2857,6 +2857,9 @@ dojo_functions :
     | PEEK MESSAGE OP expr OP_COMMA expr CP {
         $$ = dojo_peek_message( _environment, $4, $6 )->name;
     }
+    | PEEK OP expr OP_COMMA expr CP {
+        $$ = dojo_peek_message( _environment, $3, $5 )->name;
+    }
     | PEEK MESSAGE OP expr CP {
         $$ = dojo_peek_message( _environment, $4, NULL )->name;
     }
@@ -3430,7 +3433,12 @@ exponential_less:
         $$ = peek_var( _environment, $3 )->name;
       }
     | PEEK OP expr CP {
-        $$ = peek_var( _environment, $3 )->name;
+        Variable * id = variable_retrieve( _environment, $3 );
+        if ( id->type == VT_DOJOKA ) {
+            $$ = dojo_peek_message( _environment, $3, NULL )->name;
+        } else {
+            $$ = peek_var( _environment, $3 )->name;
+        }
       }
     | PEEKW OP expr CP {
         $$ = peekw_var( _environment, $3 )->name;
