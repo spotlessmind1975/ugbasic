@@ -12652,13 +12652,6 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->defaultArraySize = 10;
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        _environment->dstring.space = 512;
-        _environment->dstring.count = 32;
-        _environment->defaultVariableType = VT_BYTE;
-        _environment->vestigialConfig.clsImplicit = 1;
-    }
-
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
 #endif
@@ -13058,6 +13051,13 @@ int main( int _argc, char *_argv[] ) {
 
     if ( ! _argv[optind+1] && !_environment->exeFileName ) {
         show_usage_and_exit( _argc, _argv );
+    }
+
+    if ( _environment->tenLinerRulesEnforced ) {
+        _environment->dstring.space = 512;
+        _environment->dstring.count = 32;
+        _environment->defaultVariableType = VT_BYTE;
+        _environment->vestigialConfig.clsImplicit = 1;
     }
 
     _environment->sourceFileName = strdup(_argv[optind] );
