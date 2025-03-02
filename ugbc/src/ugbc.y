@@ -5673,7 +5673,7 @@ get_definition_expression:
         Variable * variable = variable_retrieve( _environment, $1 );
         if ( variable->type == VT_IMAGE ) {
             Variable * zero = variable_temporary( _environment, VT_POSITION, "(zero)" );
-            get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 0 );
+            get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 1 );
         } else {
             wait_key( _environment, 0 );
             Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
@@ -7737,14 +7737,26 @@ fill_definition_array :
         variable_array_fill( _environment, $1, $3 );
     }
     | Identifier RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
+            randomize( _environment, get_timer( _environment )->name );
+            ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
+        }
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, 0, $3, $4, $5, 0 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+        if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
+            randomize( _environment, get_timer( _environment )->name );
+            ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
+        }
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
     }
     | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+        if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
+            randomize( _environment, get_timer( _environment )->name );
+            ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
+        }
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
     }

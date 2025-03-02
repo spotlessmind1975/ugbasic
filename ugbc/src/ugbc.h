@@ -2995,6 +2995,8 @@ typedef struct _Environment {
 
     int dojoOnFujiNet;
 
+    int randomizeTimerCalled;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
