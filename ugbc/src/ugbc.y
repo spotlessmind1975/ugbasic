@@ -2863,8 +2863,14 @@ dojo_functions :
     | PEEK MESSAGE OP expr CP {
         $$ = dojo_peek_message( _environment, $4, NULL )->name;
     }
+    | GET OP expr OP_COMMA expr CP {
+        $$ = dojo_get_message( _environment, $3, $5 )->name;
+    }
     | GET MESSAGE OP expr OP_COMMA expr CP {
         $$ = dojo_get_message( _environment, $4, $6 )->name;
+    }
+    | GET OP expr CP {
+        $$ = dojo_get_message( _environment, $3, NULL )->name;
     }
     | GET MESSAGE OP expr CP {
         $$ = dojo_get_message( _environment, $4, NULL )->name;
