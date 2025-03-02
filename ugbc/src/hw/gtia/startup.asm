@@ -112,6 +112,14 @@ GTIASTARTUPDONE:
     CLI
 
     LDA #$00
+    STA $02c4
+    LDA #$00
+    STA $02c5
+    LDA #$00
+    STA $02c6
+    LDA #$00
+    STA $02c7
+    LDA #$00
     STA $02c8
     
     RTS
