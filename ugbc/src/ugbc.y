@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC
+%token ENDPROC EXITIF
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -11574,6 +11574,9 @@ statement2nc:
   | EXIT IF expr {
       exit_loop_if( _environment, $3, 0 );  
   }
+  | EXITIF expr {
+      exit_loop_if( _environment, $2, 0 );  
+  }
   | EXIT Integer {
       exit_loop( _environment, $2 );  
   }
@@ -11583,8 +11586,14 @@ statement2nc:
   | EXIT IF expr OP_COMMA Integer {
       exit_loop_if( _environment, $3, $5 );  
   }
+  | EXITIF expr OP_COMMA Integer {
+      exit_loop_if( _environment, $2, $4 );  
+  }
   | EXIT IF expr OP_COMMA direct_integer {
       exit_loop_if( _environment, $3, $5 );  
+  }
+  | EXITIF expr OP_COMMA direct_integer {
+      exit_loop_if( _environment, $2, $4 );  
   }
   | EXIT Integer IF expr {
       exit_loop_if( _environment, $4, $2 );  
