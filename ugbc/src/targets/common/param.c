@@ -89,7 +89,12 @@ Variable * param_procedure( Environment * _environment, char * _name ) {
     }
 
     char paramName[MAX_TEMPORARY_STORAGE]; sprintf(paramName,"%s__PARAM", _name );
-    Variable * param = variable_retrieve( _environment, paramName );
+    Variable * param;
+    if ( variable_exists( _environment, paramName ) ) {
+        param = variable_retrieve( _environment, paramName );
+    } else {
+        param = variable_retrieve_or_define( _environment, paramName, _environment->defaultVariableType, 0 );
+    }
     
     return param;
 
