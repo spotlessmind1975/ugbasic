@@ -8932,7 +8932,7 @@ define_definition :
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
     }
     | DOJO VIRTUALIZED FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
+        ((struct _Environment *)_environment)->dojoOnVirtualizedFujiNet = 1;        
     }
     | DOJO ON FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
@@ -12479,6 +12479,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
     printf("\t-a           Show statistics on assembly listing generated\n" );
     printf("\t-d           Enable debugging of LOAD IMAGE\n" );
+    printf("\t-F           Enable DOJO over FujiNet\n" );
+    printf("\t-f           Enable DOJO over virtualized FujiNet\n" );
     printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );

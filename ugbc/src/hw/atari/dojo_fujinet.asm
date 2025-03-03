@@ -35,6 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+DOJOFUJINETINITIALIZED:
+    .BYTE $00
+
 DOJOFUJINETPUTREQUEST0:
     PHA
     LDA #0

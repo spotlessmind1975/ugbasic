@@ -42,32 +42,45 @@ extern char DATATYPE_AS_STRING[][16];
 
 void dojo_fujinet_init( Environment * _environment ) {
 
-    Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
-    variable_store_string( _environment, url->name, "N:tcp://dojo.ugbasic.iwashere.eu:50666");
+    deploy_begin( dojo_fujinet_init );
 
-    Variable * mode = variable_temporary( _environment, VT_BYTE, "(mode)" );
-    variable_store( _environment, mode->name, 13 );
+        Variable * url = variable_temporary( _environment, VT_STRING, "(url)");
+        variable_store_string( _environment, url->name, "N:tcp://dojo.ugbasic.iwashere.eu:50666");
 
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
+        Variable * mode = variable_temporary( _environment, VT_BYTE, "(mode)" );
+        variable_store( _environment, mode->name, 13 );
 
-    switch( url->type ) {
-        case VT_STRING:
-            cpu_move_8bit( _environment, url->realName, size->realName );
-            cpu_addressof_16bit( _environment, url->realName, address->realName );
-            cpu_inc_16bit( _environment, address->realName );
-            break;
-        case VT_DSTRING:
-            cpu_dsdescriptor( _environment, url->realName, address->realName, size->realName );
-            break;
-    }
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+        Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
-    coco_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
+        switch( url->type ) {
+            case VT_STRING:
+                cpu_move_8bit( _environment, url->realName, size->realName );
+                cpu_addressof_16bit( _environment, url->realName, address->realName );
+                cpu_inc_16bit( _environment, address->realName );
+                break;
+            case VT_DSTRING:
+                cpu_dsdescriptor( _environment, url->realName, address->realName, size->realName );
+                break;
+        }
+
+        coco_fujinet_open( _environment, address->realName, size->realName, mode->realName, NULL, NULL );
+
+        cpu_return( _environment );
+
+    deploy_end( dojo_fujinet_init );
 
 }
 
 
 void dojo_fujinet_begin( Environment * _environment ) {
+
+    MAKE_LABEL
+
+    cpu_compare_and_branch_8bit_const( _environment, "DOJOFUJINETINITIALIZED", 0, label, 0 );
+    cpu_call( _environment, "lib_dojo_fujinet_init" );
+    cpu_store_8bit( _environment, "DOJOFUJINETINITIALIZED", 0xff );
+    cpu_label( _environment, label );
 
 }
 

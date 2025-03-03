@@ -449,6 +449,10 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if (_environment->dojoOnVirtualizedFujiNet || _environment->dojoOnFujiNet ) {
+        dojo_fujinet_init( _environment );
+    }
+
     vars_emit_constants( _environment );
 
     if ( _environment->dataSegment ) {
@@ -639,7 +643,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
         outhead0("DATAPTRE");
     }
-    
+
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outhead2("cstring%d fcb %d", staticStrings->id, (int)strlen(staticStrings->value) );
@@ -718,6 +722,12 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( plot, src_hw_6847_plot_asm )
 
     outhead0("CODESTART2");
+
+    if (_environment->dojoOnVirtualizedFujiNet ) {
+        fujinet_define( _environment, FN_BECKER );
+    } else if ( _environment->dojoOnFujiNet ) {
+        fujinet_define( _environment, FN_HDBDOS );
+    }
 
     buffered_prepend_output( _environment );
 

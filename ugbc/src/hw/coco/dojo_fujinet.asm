@@ -35,6 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+DOJOFUJINETINITIALIZED
+    fcb $00
+
 DOJOFUJINETPUTREQUEST0
     PSHS D
     LDA #0

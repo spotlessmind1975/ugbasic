@@ -452,6 +452,10 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
+        dojo_fujinet_init( _environment );
+    }
+
     vars_emit_constants( _environment );
 
     if ( _environment->dataSegment ) {
@@ -767,6 +771,10 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
     
     outhead0("CODESTART:");
+
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
+        fujinet_define( _environment, FN_SIO );
+    }
 
     buffered_prepend_output( _environment );
 

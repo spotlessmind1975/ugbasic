@@ -42,7 +42,7 @@ extern char DATATYPE_AS_STRING[][16];
 
 void dojo_init( Environment * _environment ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_init( _environment );
     } else {
         dojo_serial_init( _environment );
@@ -52,7 +52,7 @@ void dojo_init( Environment * _environment ) {
 
 void dojo_begin( Environment * _environment ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_begin( _environment );
     } else {
         dojo_serial_begin( _environment );
@@ -62,7 +62,7 @@ void dojo_begin( Environment * _environment ) {
 
 void dojo_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_put_request0( _environment, _command, _param1, _param2, _result );
     } else {
         dojo_serial_put_request0( _environment, _command, _param1, _param2, _result );
@@ -72,7 +72,7 @@ void dojo_put_request0( Environment * _environment, int _command, char * _param1
 
 void dojo_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_put_request( _environment, _command, _param1, _param2, _address, _size, _result );
     } else {
         dojo_serial_put_request( _environment, _command, _param1, _param2, _address, _size, _result );
@@ -82,7 +82,7 @@ void dojo_put_request( Environment * _environment, int _command, char * _param1,
 
 void dojo_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_put_requestd( _environment, _command, _param1, _param2, _data, _size, _result );
     } else {
         dojo_serial_put_requestd( _environment, _command, _param1, _param2, _data, _size, _result );
@@ -92,7 +92,7 @@ void dojo_put_requestd( Environment * _environment, int _command, char * _param1
 
 void dojo_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_put_requestds( _environment, _command, _param1, _param2, _data, _size, _result );
     } else {
         dojo_serial_put_requestds( _environment, _command, _param1, _param2, _data, _size, _result );
@@ -102,7 +102,7 @@ void dojo_put_requestds( Environment * _environment, int _command, char * _param
 
 void dojo_partial( Environment * _environment ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_partial( _environment );
     } else {
         // dojo_serial_partial( _environment );
@@ -112,7 +112,7 @@ void dojo_partial( Environment * _environment ) {
 
 void dojo_get_response0( Environment * _environment, char * _status ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response0( _environment, _status );
     } else {
         dojo_serial_get_response0( _environment, _status );
@@ -122,7 +122,7 @@ void dojo_get_response0( Environment * _environment, char * _status ) {
 
 void dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response( _environment, _status, _address, _size );
     } else {
         dojo_serial_get_response( _environment, _status, _address, _size );
@@ -132,7 +132,7 @@ void dojo_get_response( Environment * _environment, char * _status, char * _addr
 
 void dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_responsed( _environment, _status, _data, _size );
     } else {
         dojo_serial_get_responsed( _environment, _status, _data, _size );
@@ -142,7 +142,7 @@ void dojo_get_responsed( Environment * _environment, char * _status, char * _dat
 
 void dojo_get_response_size( Environment * _environment, char * _status, char * _size ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response_size( _environment, _status, _size );
     } else {
         dojo_serial_get_response_size( _environment, _status, _size );
@@ -152,7 +152,7 @@ void dojo_get_response_size( Environment * _environment, char * _status, char * 
 
 void dojo_get_response_payload( Environment * _environment, char * _address ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response_payload( _environment, _address );
     } else {
         dojo_serial_get_response_payload( _environment, _address );
@@ -162,7 +162,7 @@ void dojo_get_response_payload( Environment * _environment, char * _address ) {
 
 void dojo_get_response_payloadd( Environment * _environment, char * _data ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response_payloadd( _environment, _data );
     } else {
         dojo_serial_get_response_payloadd( _environment, _data );
@@ -172,7 +172,7 @@ void dojo_get_response_payloadd( Environment * _environment, char * _data ) {
 
 void dojo_end( Environment * _environment ) {
 
-    if ( _environment->dojoOnFujiNet ) {
+    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_end( _environment );
     } else {
         dojo_serial_end( _environment );

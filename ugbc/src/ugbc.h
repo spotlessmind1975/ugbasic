@@ -1812,7 +1812,8 @@ typedef struct _Deployed {
     int dojo;
     int dojo_fujinet;
     int screen;
-
+    int dojo_fujinet_init;
+    
 } Deployed;
 
 typedef struct _DString {
