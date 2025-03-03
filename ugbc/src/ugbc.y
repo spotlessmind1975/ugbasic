@@ -12604,6 +12604,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-L <listing> Output filename with assembly listing file\n" );
 #endif
     printf("\t-E           Show stats of embedded modules\n" );
+    printf("\t-F           Enable DOJO on FujiNet\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     printf("\t-V           Output version (example: '%s')\n", version );
     printf("\t-v           Output generated files\n" );
@@ -12706,7 +12707,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:FG:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
         switch (opt) {
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
@@ -12756,6 +12757,9 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 'P':
                     _environment->profileFileName = strdup(optarg);
+                    break;
+                case 'F':
+                    _environment->dojoOnFujiNet = 1;
                     break;
                 case 'A':
                     _environment->appMakerFileName = strdup(optarg);
