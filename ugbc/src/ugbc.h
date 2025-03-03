@@ -2994,6 +2994,7 @@ typedef struct _Environment {
     int drawUsingTsbSyntax;
 
     int dojoOnFujiNet;
+    int dojoOnVirtualizedFujiNet;
 
     int randomizeTimerCalled;
 

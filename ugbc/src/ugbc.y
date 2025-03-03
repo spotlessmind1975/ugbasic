@@ -12706,7 +12706,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:FfG:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
         switch (opt) {
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
@@ -12753,6 +12753,12 @@ int main( int _argc, char *_argv[] ) {
                     if( access( _environment->executerFileName, F_OK ) != 0 ) {
                         CRITICAL("Option '-X': executer not found.");
                     }
+                    break;
+                case 'F':
+                    _environment->dojoOnFujiNet = 1;
+                    break;
+                case 'f':
+                    _environment->dojoOnVirtualizedFujiNet = 1;
                     break;
                 case 'P':
                     _environment->profileFileName = strdup(optarg);
