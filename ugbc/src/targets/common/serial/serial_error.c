@@ -50,7 +50,7 @@
 @english
 
 This instruction allows you to know the reason why the last operation failed. 
-The numeric code must refer to the possible values ​​for the target considered. 
+The numeric code must refer to the possible values for the target considered. 
 Note that the value of zero means, in any target, "no error" and is the value 
 returned if everything went well.
 
