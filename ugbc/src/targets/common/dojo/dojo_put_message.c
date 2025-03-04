@@ -117,7 +117,12 @@ Altrimenti, restituirà ''TRUE'.
             break;
         }
         default:
-            DOJO_PUT_MESSAGE_STRING_REQUIRED( _message, DATATYPE_AS_STRING[message->type]);
+            if ( message->size < 256 && message->size > 0 ) {
+                cpu_addressof_16bit( _environment, message->realName, address->realName );
+                cpu_store_8bit( _environment, size->realName, message->size );
+            } else {
+                DOJO_PUT_MESSAGE_STRING_REQUIRED( _message, DATATYPE_AS_STRING[message->type]);
+            }
             break;
     }     
 
