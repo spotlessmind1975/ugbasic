@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED
+%token ENDPROC EXITIF VIRTUALIZED APP
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -2842,6 +2842,9 @@ dojo_functions :
     }
     | CREATE PORT OP CP {
         $$ = dojo_create_port( _environment )->name;
+    }
+    | APP OP expr CP {
+        $$ = dojo_app( _environment, $3 )->name;
     }
     | OPEN PORT OP expr CP {
         $$ = dojo_open_port( _environment, $4 )->name;
@@ -5730,7 +5733,7 @@ get_definition_expression:
             get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 1 );
         } else if ( variable->type == VT_DOJOKA ) {
             if ( !((struct _Environment *)_environment)->dojoObjectName ) {
-                DOJO_GET_MESSAGE_MISSING_VARIABLE( );
+                CRITICAL_DOJO_GET_MESSAGE_MISSING_VARIABLE( );
             }
             dojo_get_message_inplace( _environment, $1, ((struct _Environment *)_environment)->dojoChannelName, ((struct _Environment *)_environment)->dojoObjectName );
         } else {
@@ -10611,7 +10614,7 @@ dojo_definition :
     PUT Identifier OP_COMMA expr OP_COMMA expr {
         Variable * id = variable_retrieve( _environment, $2 );
         if ( id->type != VT_DOJOKA ) {
-            DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
+            CRITICAL_DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
         }
         dojo_put_message( _environment, $2, $4, $6 );
     }
@@ -10621,7 +10624,7 @@ dojo_definition :
     | PUT Identifier OP_COMMA expr {
         Variable * id = variable_retrieve( _environment, $2 );
         if ( id->type != VT_DOJOKA ) {
-            DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
+            CRITICAL_DOJO_PUT_MESSAGE_MISSING_VARIABLE( );
         }
         dojo_put_message( _environment, $2, NULL, $4 );
     }

@@ -98,7 +98,7 @@ di prelevare un messaggio da una coda messaggi vuota, è possibile usare l'istru
     Variable * esito = variable_temporary( _environment, VT_BYTE, "(result)");
 
     if ( port->type != VT_DOJOKA ) {
-        DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+        CRITICAL_DOJO_GET_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
     }
 
     dojo_begin( _environment );

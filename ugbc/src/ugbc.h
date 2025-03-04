@@ -3432,16 +3432,18 @@ typedef struct _Environment {
 #define CRITICAL_SERIAL_WRITE_UNSUPPORTED( v, t ) CRITICAL3("E361 - SERIAL WRITE unsupported for variable of given datatype", v, t );
 #define CRITICAL_SERIAL_READ_UNSUPPORTED( t ) CRITICAL2("E362 - SERIAL read unsupported for variable of given datatype", t );
 #define CRITICAL_FUJINET_READ_UNSUPPORTED( t ) CRITICAL2("E363 - FUJINET READ read unsupported for variable of given datatype", t );
-#define DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E364 - port name for DOJO OPEN PORT must be a string", v, t );
-#define DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E365 - port for PUT MESSAGE must be opened / created", v, t );
-#define DOJO_PUT_MESSAGE_STRING_REQUIRED( v, t ) CRITICAL3("E366 - message for PUT MESSAGE must be a string", v, t );
-#define DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E367 - port for PEEK MESSAGE must be opened / created", v, t );
+#define CRITICAL_DOJO_OPEN_PORT_STRING_REQUIRED( v, t ) CRITICAL3("E364 - port name for DOJO OPEN PORT must be a string", v, t );
+#define CRITICAL_DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E365 - port for PUT MESSAGE must be opened / created", v, t );
+#define CRITICAL_DOJO_PUT_MESSAGE_STRING_REQUIRED( v, t ) CRITICAL3("E366 - message for PUT MESSAGE must be a string", v, t );
+#define CRITICAL_DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E367 - port for PEEK MESSAGE must be opened / created", v, t );
 #define CRITICAL_PLOT_X_UNSUPPORTED( v, t ) CRITICAL3("E368 - data type not supported for plotting abscissa", v, t );
 #define CRITICAL_PLOT_Y_UNSUPPORTED( v, t ) CRITICAL3("E369 - data type not supported for plotting ordinate", v, t );
-#define DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( v, t ) CRITICAL3("E370 - type of array's elements is not supported", v, t );
-#define DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E371 - array is too large to send as message", v, t );
-#define DOJO_GET_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E372 - missing variable for GET MESSAGE" );
-#define DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
+#define CRITICAL_DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( v, t ) CRITICAL3("E370 - type of array's elements is not supported", v, t );
+#define CRITICAL_DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E371 - array is too large to send as message", v, t );
+#define CRITICAL_DOJO_GET_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E372 - missing variable for GET MESSAGE" );
+#define CRITICAL_DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
+#define CRITICAL_DOJO_APP_STRING_REQUIRED( v, t ) CRITICAL3("E374 - name for APP must be a string", v, t );
+#define CRITICAL_DOJO_GET_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E375 - port for GET MESSAGE must be opened / created", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4168,7 +4170,8 @@ int embed_scan_string (const char *);
 #define DOJO_CMD_PUT_MESSAGE                         0x04
 #define DOJO_CMD_PEEK_MESSAGE                        0x05
 #define DOJO_CMD_GET_MESSAGE                         0x06
-
+#define DOJO_CMD_APP                                 0x07
+#define DOJO_CMD_DOWNLOAD                            0x08
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
@@ -4830,6 +4833,8 @@ Variable *              dojo_error( Environment * _environment );
 Variable *              dojo_peek_message( Environment * _environment, char * _port, char * _channel );
 Variable *              dojo_get_message( Environment * _environment, char * _port, char * _channel );
 void                    dojo_get_message_inplace( Environment * _environment, char * _port, char * _channel, char * _variable );
+
+Variable *              dojo_app( Environment * _environment, char * _name );
 
 //----------------------------------------------------------------------------
 // *E*

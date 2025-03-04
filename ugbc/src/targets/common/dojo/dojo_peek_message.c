@@ -91,7 +91,7 @@ il comando ''GET MESSAGE''. Da notare che la parola chiave ''MESSAGE'' può esse
     Variable * esito = variable_temporary( _environment, VT_BYTE, "(result)");
 
     if ( port->type != VT_DOJOKA ) {
-        DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+        CRITICAL_DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
     }
 
     cpu_store_8bit( _environment, peek->realName, 0 );

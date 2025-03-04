@@ -32,71 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+ #include "../../../ugbc.h"
  
-extern char DATATYPE_AS_STRING[][16];
-
+ extern char DATATYPE_AS_STRING[][16];
+ 
 /* <usermanual>
-@keyword OPEN PORT
-
+@keyword APP
+ 
 @english
-
-The ''OPEN PORT'' instruction allows you to open a port previously created with the 
-''CREATE PORT'' command. This command accepts, as a parameter, the string with the 
-unique and printable identification code of the port, equivalent to an 8-digit hexadecimal 
-code. The result of the call will be the same identifier, which can be used for other 
-instructions. The instruction will issue an error if the port is unknown. In case the 
-provided port is an empty string, this command will behave like ''CREATE PORT''.
-
+ 
+The ''APP'' command allows you to uniquely identify an application with respect to the services 
+exposed by DOJO.
+ 
 @italian
+ 
+Il comando APP permette di identificare, in modo univoco, una applicazione rispetto ai servizi esposti da DOJO.
 
-L'istruzione ''OPEN PORT'' permette di aprire una porta creata in precedenza con il comando
-''CREATE PORT''. Questo comando accetta, come parametro, la stringa con il codice 
-identificativo univoco e stampabile della porta, equivalente a un codice di 8 cifre esadecimali.
-Il risultato della chiamata sarà il medesimo identificativo, utilizzabile per le altre istruzioni. 
-L'istruzione emetterà un errore nel caso in cui la porta sia sconosciuta. Nel caso in cui la 
-porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE PORT''.
+@syntax [DOJO] APP
 
-@syntax [[DOJO] OPEN] PORT( id )
+@example handle = APP( "test" )
 
-@example handle = OPEN PORT( "ce420000" )
-
-@alias DOJO OPEN PORT
-
-@seeAlso CREATE PORT
+@alias DOJO APP
 
 @target atari, coco
 </usermanual> */
-
-/* <usermanual>
-@keyword DOJO OPEN PORT
-
-@english
-
-@italian
-
-@alias OPEN PORT
-
-@target atari, coco
-</usermanual> */
-
-/* <usermanual>
-@keyword PORT
-
-@english
-
-@italian
-
-@alias OPEN PORT
-
-@target atari, coco
-</usermanual> */
-
-Variable * dojo_open_port( Environment * _environment, char * _port ) {
-
+ 
+ /* <usermanual>
+ @keyword DOJO APP
+ 
+ @english
+ 
+ @italian
+ 
+ @alias APP
+ 
+ @target atari, coco
+ </usermanual> */
+ 
+ Variable * dojo_app( Environment * _environment, char * _name ) {
+ 
     MAKE_LABEL
 
-    Variable * port = variable_retrieve( _environment, _port );
+    Variable * port = variable_retrieve( _environment, _name );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
@@ -112,7 +89,7 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
             break;
         }
         default:
-            CRITICAL_DOJO_OPEN_PORT_STRING_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+            CRITICAL_DOJO_APP_STRING_REQUIRED( _name, DATATYPE_AS_STRING[port->type]);
             break;
     }            
     
@@ -120,7 +97,7 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
     Variable * result = variable_temporary( _environment, VT_BYTE, "(unique id)" );
 
     dojo_begin( _environment );
-    dojo_put_request( _environment, DOJO_CMD_OPEN_PORT, NULL, NULL, address->realName, size->realName, result->realName );
+    dojo_put_request( _environment, DOJO_CMD_APP, NULL, NULL, address->realName, size->realName, result->realName );
     cpu_compare_and_branch_8bit_const( _environment, result->realName, 0, label, 0 );
     dojo_partial( _environment );
     dojo_get_responsed( _environment, result->realName, dojoHandle->realName, NULL );
@@ -131,5 +108,6 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
     cpu_move_8bit( _environment, result->realName, "DOJOERROR" );
 
     return dojoHandle;
-
-}
+ 
+ }
+ 
