@@ -150,32 +150,12 @@ void dojo_get_response_size( Environment * _environment, char * _status, char * 
 
 }
 
-void dojo_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
-
-    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
-        dojo_fujinet_get_response_sizew( _environment, _status, _size );
-    } else {
-        dojo_serial_get_response_sizew( _environment, _status, _size );
-    }
-
-}
-
 void dojo_get_response_payload( Environment * _environment, char * _address ) {
 
     if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
         dojo_fujinet_get_response_payload( _environment, _address );
     } else {
         dojo_serial_get_response_payload( _environment, _address );
-    }
-
-}
-
-void dojo_get_response_payloadw( Environment * _environment, char * _address ) {
-
-    if ( _environment->dojoOnFujiNet || _environment->dojoOnVirtualizedFujiNet ) {
-        dojo_fujinet_get_response_payloadw( _environment, _address );
-    } else {
-        dojo_serial_get_response_payloadw( _environment, _address );
     }
 
 }

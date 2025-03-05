@@ -3444,8 +3444,6 @@ typedef struct _Environment {
 #define CRITICAL_DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
 #define CRITICAL_DOJO_APP_STRING_REQUIRED( v, t ) CRITICAL3("E374 - name for APP must be a string", v, t );
 #define CRITICAL_DOJO_GET_MESSAGE_DOJOKA_REQUIRED( v, t ) CRITICAL3("E375 - port for GET MESSAGE must be opened / created", v, t );
-#define CRITICAL_DOJO_DOWNLOAD_DOJOKA_REQUIRED( v, t ) CRITICAL3("E376 - app for DOWNLOAD must be assigned", v, t );
-#define CRITICAL_DOJO_DOWNLOAD_STRING_REQUIRED( v, t ) CRITICAL3("E377 - resource for DOWNLOAD must be a string", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4173,8 +4171,7 @@ int embed_scan_string (const char *);
 #define DOJO_CMD_PEEK_MESSAGE                        0x05
 #define DOJO_CMD_GET_MESSAGE                         0x06
 #define DOJO_CMD_APP                                 0x07
-#define DOJO_CMD_SELECT_APP                          0x08
-#define DOJO_CMD_DOWNLOAD                            0x09
+#define DOJO_CMD_DOWNLOAD                            0x08
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
@@ -4792,10 +4789,8 @@ void                    dojo_serial_get_response0( Environment * _environment, c
 void                    dojo_serial_get_response( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_serial_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_serial_get_response_size( Environment * _environment, char * _status, char * _size );
-void                    dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _size );
-void                    dojo_serial_get_response_payload( Environment * _environment, char * _address );
-void                    dojo_serial_get_response_payloadd( Environment * _environment, char * _data );
-void                    dojo_serial_get_response_payloadw( Environment * _environment, char * _address );
+void                    dojo_serial_get_response_payload( Environment * _environment, char * _data );
+void                    dojo_serial_get_response_payloadd( Environment * _environment, char * _address );
 void                    dojo_serial_end( Environment * _environment );
 
 void                    dojo_fujinet_init( Environment * _environment );
@@ -4810,10 +4805,8 @@ void                    dojo_fujinet_get_response0( Environment * _environment, 
 void                    dojo_fujinet_get_response( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _size );
-void                    dojo_fujinet_get_response_sizew( Environment * _environment, char * _status, char * _size );
-void                    dojo_fujinet_get_response_payload( Environment * _environment, char * _address );
-void                    dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data );
-void                    dojo_fujinet_get_response_payloadw( Environment * _environment, char * _address );
+void                    dojo_fujinet_get_response_payload( Environment * _environment, char * _data );
+void                    dojo_fujinet_get_response_payloadd( Environment * _environment, char * _address );
 void                    dojo_fujinet_end( Environment * _environment );
 
 void                    dojo_init( Environment * _environment );
@@ -4828,10 +4821,8 @@ void                    dojo_get_response0( Environment * _environment, char * _
 void                    dojo_get_response( Environment * _environment, char * _status, char * _address, char * _size );
 void                    dojo_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 void                    dojo_get_response_size( Environment * _environment, char * _status, char * _size );
-void                    dojo_get_response_sizew( Environment * _environment, char * _status, char * _size );
 void                    dojo_get_response_payload( Environment * _environment, char * _address );
 void                    dojo_get_response_payloadd( Environment * _environment, char * _data );
-void                    dojo_get_response_payloadw( Environment * _environment, char * _address );
 void                    dojo_end( Environment * _environment );
 
 Variable *              dojo_ping( Environment * _environment, char * _param1, char * _param2 );
@@ -4844,8 +4835,6 @@ Variable *              dojo_get_message( Environment * _environment, char * _po
 void                    dojo_get_message_inplace( Environment * _environment, char * _port, char * _channel, char * _variable );
 
 Variable *              dojo_app( Environment * _environment, char * _name );
-void                    dojo_download( Environment * _environment, char * _app, char * _resource, char * _data );
-void                    dojo_download_address( Environment * _environment, char * _app, char * _resource, char * _address );
 
 //----------------------------------------------------------------------------
 // *E*

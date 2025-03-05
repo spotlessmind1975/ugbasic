@@ -878,22 +878,6 @@ void atari_dojo_serial_get_response_size( Environment * _environment, char * _st
 
 }
 
-void atari_dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
-
-    deploy( serial, src_hw_atari_serial_asm);
-    deploy( dojo, src_hw_atari_dojo_asm);
-
-    outline0( "JSR DOJOSERIALGETRESPONSEW0" );
-    if ( _status ) {
-        outline1( "STA %s", _status );
-    }
-    if ( _size ) {
-        outline1( "STX %s", _size );
-        outline1( "STY %s", address_displacement( _environment, _size, "1" ) );
-    }
-
-}
-
 void atari_dojo_serial_get_response_payload( Environment * _environment, char * _address ) {
 
     deploy( serial, src_hw_atari_serial_asm);
@@ -919,20 +903,6 @@ void atari_dojo_serial_get_response_payloadd( Environment * _environment, char *
     outline0( "STA TMPPTR2+1" );
 
     outline0( "JSR DOJOSERIALGETRESPONSEPAYLOAD" );
-
-}
-
-void atari_dojo_serial_get_response_payloadw( Environment * _environment, char * _address ) {
-
-    deploy( serial, src_hw_atari_serial_asm);
-    deploy( dojo, src_hw_atari_dojo_asm);
-
-    outline1( "LDA %s", _address );
-    outline0( "STA TMPPTR2" );
-    outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
-    outline0( "STA TMPPTR2+1" );
-
-    outline0( "JSR DOJOSERIALGETRESPONSEPAYLOADW" );
 
 }
 
@@ -1122,23 +1092,6 @@ void atari_dojo_fujinet_get_response_size( Environment * _environment, char * _s
 
 }
 
-void atari_dojo_fujinet_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
-
-    deploy( serial, src_hw_atari_serial_asm);
-    deploy( fujinet, src_hw_atari_fujinet_asm);
-    deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
-
-    outline0( "JSR DOJOFUJINETGETRESPONSEW0" );
-    if ( _status ) {
-        outline1( "STA %s", _status );
-    }
-    if ( _size ) {
-        outline1( "STX %s", _size );
-        outline1( "STY %s", address_displacement( _environment, _size, "1" ) );
-    }
-
-}
-
 void atari_dojo_fujinet_get_response_payload( Environment * _environment, char * _address ) {
 
     deploy( serial, src_hw_atari_serial_asm);
@@ -1166,21 +1119,6 @@ void atari_dojo_fujinet_get_response_payloadd( Environment * _environment, char 
     outline0( "STA MATHPTR5" );
 
     outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOAD" );
-
-}
-
-void atari_dojo_fujinet_get_response_payloadw( Environment * _environment, char * _address ) {
-
-    deploy( serial, src_hw_atari_serial_asm);
-    deploy( fujinet, src_hw_atari_fujinet_asm);
-    deploy( dojo_fujinet, src_hw_atari_dojo_fujinet_asm);
-
-    outline1( "LDA %s", _address );
-    outline0( "STA MATHPTR4" );
-    outline1( "LDA %s", address_displacement( _environment, _address, "1" ) );
-    outline0( "STA MATHPTR5" );
-
-    outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOADW" );
 
 }
 
