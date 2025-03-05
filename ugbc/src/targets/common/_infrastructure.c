@@ -299,7 +299,26 @@ static int calculate_cast_type_best_fit( Environment * _environment, int _type1,
         return VT_FLOAT;
     } else {
         if ( VT_SIGNED( _type1 ) != VT_SIGNED( _type2 ) ) {
-            return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
+            int bits1 = VT_BITWIDTH( _type1 ) + VT_SIGNED( _type1 );
+            int bits2 = VT_BITWIDTH( _type2 ) + VT_SIGNED( _type2 );
+            int type = 0;
+            if ( bits1 < bits2 ) {
+                type = _type2;
+            } else if ( bits2 < bits1 ) {
+                type = _type1;
+            } else {
+                return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
+            }
+            switch( type ) {
+                case VT_BYTE:
+                case VT_SBYTE:
+                    return VT_SWORD;
+                case VT_WORD:
+                case VT_SWORD:
+                    return VT_SDWORD;
+                default:
+                    return  VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
+            }
         } else {
             if ( VT_SIGNED( _type1 ) || VT_SIGNED( _type2 ) ) {
                 return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
