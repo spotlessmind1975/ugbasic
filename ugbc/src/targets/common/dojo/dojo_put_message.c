@@ -91,7 +91,7 @@ Altrimenti, restituirà ''TRUE'.
      Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)");
  
      if ( port->type != VT_DOJOKA ) {
-        CRITICAL_DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+        DOJO_PUT_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
      }
 
      switch( message->type ) {
@@ -107,10 +107,10 @@ Altrimenti, restituirà ''TRUE'.
         }
         case VT_TARRAY: {
             if ( VT_BITWIDTH( message->arrayType ) != 8 ) {
-                CRITICAL_DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
+                DOJO_PUT_MESSAGE_ARRAY_TYPE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
             }
             if ( VT_BITWIDTH( message->size ) >= 255 ) {
-                CRITICAL_DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
+                DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( _message, DATATYPE_AS_STRING[message->arrayType]);
             }
             cpu_addressof_16bit( _environment, message->realName, address->realName );
             cpu_store_8bit( _environment, size->realName, message->size );
@@ -121,7 +121,7 @@ Altrimenti, restituirà ''TRUE'.
                 cpu_addressof_16bit( _environment, message->realName, address->realName );
                 cpu_store_8bit( _environment, size->realName, message->size );
             } else {
-                CRITICAL_DOJO_PUT_MESSAGE_STRING_REQUIRED( _message, DATATYPE_AS_STRING[message->type]);
+                DOJO_PUT_MESSAGE_STRING_REQUIRED( _message, DATATYPE_AS_STRING[message->type]);
             }
             break;
     }     

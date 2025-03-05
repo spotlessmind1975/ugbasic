@@ -112,7 +112,7 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
             break;
         }
         default:
-            CRITICAL_DOJO_OPEN_PORT_STRING_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+            DOJO_OPEN_PORT_STRING_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
             break;
     }            
     

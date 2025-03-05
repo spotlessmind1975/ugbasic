@@ -53,7 +53,7 @@
     cpu_addressof_16bit( _environment, result->realName, address->realName );
 
     if ( port->type != VT_DOJOKA ) {
-        CRITICAL_DOJO_GET_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
+        DOJO_PEEK_MESSAGE_DOJOKA_REQUIRED( _port, DATATYPE_AS_STRING[port->type]);
     }
 
     dojo_begin( _environment );
