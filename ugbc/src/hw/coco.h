@@ -68,8 +68,10 @@ void coco_dojo_serial_get_response0( Environment * _environment, char * _status 
 void coco_dojo_serial_get_response( Environment * _environment, char * _status, char * _address, char * _size );
 void coco_dojo_serial_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 void coco_dojo_serial_get_response_size( Environment * _environment, char * _status, char * _data );
+void coco_dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _data );
 void coco_dojo_serial_get_response_payload( Environment * _environment, char * _address );
 void coco_dojo_serial_get_response_payloadd( Environment * _environment, char * _data );
+void coco_dojo_serial_get_response_payloadw( Environment * _environment, char * _address );
 
 void coco_dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
 void coco_dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
@@ -79,8 +81,10 @@ void coco_dojo_fujinet_get_response0( Environment * _environment, char * _status
 void coco_dojo_fujinet_get_response( Environment * _environment, char * _status, char * _address, char * _size );
 void coco_dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
 void coco_dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _data );
+void coco_dojo_fujinet_get_response_sizew( Environment * _environment, char * _status, char * _data );
 void coco_dojo_fujinet_get_response_payload( Environment * _environment, char * _address );
 void coco_dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data );
+void coco_dojo_fujinet_get_response_payloadw( Environment * _environment, char * _address );
 
 void coco_fujinet_set_device( Environment * _environment, int _device_id );
 void coco_fujinet_set_device_var( Environment * _environment, char * _device_id );

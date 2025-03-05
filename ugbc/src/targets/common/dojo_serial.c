@@ -82,7 +82,15 @@ void dojo_serial_get_response_size( Environment * _environment, char * _status, 
 
 }
 
+void dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
+
+}
+
 void dojo_serial_get_response_payload( Environment * _environment, char * _address ) {
+
+}
+
+void dojo_serial_get_response_payloadw( Environment * _environment, char * _address ) {
 
 }
 

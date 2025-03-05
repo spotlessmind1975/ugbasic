@@ -95,9 +95,21 @@ void dojo_serial_get_response_size( Environment * _environment, char * _status, 
 
 }
 
+void dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
+
+    coco_dojo_serial_get_response_sizew( _environment, _status, _size );
+
+}
+
 void dojo_serial_get_response_payload( Environment * _environment, char * _address ) {
 
     coco_dojo_serial_get_response_payload( _environment, _address );
+
+}
+
+void dojo_serial_get_response_payloadw( Environment * _environment, char * _address ) {
+
+    coco_dojo_serial_get_response_payloadw( _environment, _address );
 
 }
 

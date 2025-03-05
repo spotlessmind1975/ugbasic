@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED APP
+%token ENDPROC EXITIF VIRTUALIZED APP DOWNLOAD
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -10636,6 +10636,12 @@ dojo_definition :
     }
     | GET MESSAGE expr OP_COMMA expr OP_COMMA expr {
         dojo_get_message_inplace( _environment, $3, $5, $7 );
+    }
+    | DOWNLOAD expr OP_COMMA expr OP_COMMA expr {
+        dojo_download( _environment, $2, $4, $6 );
+    }
+    | DOWNLOAD expr OP_COMMA expr ADDRESS expr {
+        dojo_download_address( _environment, $2, $4, $6 );
     }
     | PING {
         dojo_ping( _environment, NULL, NULL );

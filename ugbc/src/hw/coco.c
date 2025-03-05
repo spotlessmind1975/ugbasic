@@ -721,6 +721,21 @@ void coco_dojo_serial_get_response_size( Environment * _environment, char * _sta
 
 }
 
+void coco_dojo_serial_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline0( "JSR DOJOSERIALGETRESPONSEW0" );
+    if ( _status ) {
+        outline1( "STA %s", _status );
+    }
+    if ( _size ) {
+        outline1( "STU %s", _size );
+    }
+
+}
+
 void coco_dojo_serial_get_response_payload( Environment * _environment, char * _address ) {
 
     deploy( serial, src_hw_coco_serial_asm);
@@ -740,6 +755,17 @@ void coco_dojo_serial_get_response_payloadd( Environment * _environment, char * 
     outline1( "LDY #%s", _data );
 
     outline0( "JSR DOJOSERIALGETRESPONSEPAYLOAD" );
+
+}
+
+void coco_dojo_serial_get_response_payloadw( Environment * _environment, char * _address ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( dojo, src_hw_coco_dojo_asm);
+
+    outline1( "LDY %s", _address );
+
+    outline0( "JSR DOJOSERIALGETRESPONSEPAYLOADW" );
 
 }
 
@@ -912,6 +938,22 @@ void coco_dojo_fujinet_get_response_size( Environment * _environment, char * _st
 
 }
 
+void coco_dojo_fujinet_get_response_sizew( Environment * _environment, char * _status, char * _size ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+    deploy( dojo_fujinet, src_hw_coco_dojo_fujinet_asm);
+
+    outline0( "JSR DOJOFUJINETGETRESPONSEW0" );
+    if ( _status ) {
+        outline1( "STA %s", _status );
+    }
+    if ( _size ) {
+        outline1( "STU %s", _size );
+    }
+
+}
+
 void coco_dojo_fujinet_get_response_payload( Environment * _environment, char * _address ) {
 
     deploy( serial, src_hw_coco_serial_asm);
@@ -933,6 +975,18 @@ void coco_dojo_fujinet_get_response_payloadd( Environment * _environment, char *
     outline1( "LDY #%s", _data );
 
     outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOAD" );
+
+}
+
+void coco_dojo_fujinet_get_response_payloadw( Environment * _environment, char * _address ) {
+
+    deploy( serial, src_hw_coco_serial_asm);
+    deploy( fujinet, src_hw_coco_fujinet_asm);
+    deploy( dojo_fujinet, src_hw_coco_dojo_fujinet_asm);
+
+    outline1( "LDY %s", _address );
+
+    outline0( "JSR DOJOFUJINETGETRESPONSEPAYLOADW" );
 
 }
 
