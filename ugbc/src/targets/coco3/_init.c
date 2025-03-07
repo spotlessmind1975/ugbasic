@@ -82,6 +82,7 @@ void target_initialization( Environment * _environment ) {
     deploy_deferred( startup, src_hw_coco3_startup_asm);
     bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
+    outline0( "JSR COCO3STARTUP2");
     outline0( "JSR COCO3STARTUP" );
 
     setup_text_variables( _environment );

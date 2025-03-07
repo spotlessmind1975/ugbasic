@@ -445,6 +445,10 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
 void variable_cleanup( Environment * _environment ) {
     int i=0;
 
+    if (_environment->dojoOnVirtualizedFujiNet || _environment->dojoOnFujiNet ) {
+        dojo_fujinet_init( _environment );
+    }
+    
     vars_emit_constants( _environment );
 
     if ( _environment->dataSegment ) {
@@ -673,6 +677,13 @@ void variable_cleanup( Environment * _environment ) {
     }
     outhead0("IRQSTACK0 rzb 512");
     outhead0("IRQSTACK");
+    outhead0("COCO3STARTUP2")
+    if (_environment->dojoOnVirtualizedFujiNet ) {
+        fujinet_define( _environment, FN_BECKER );
+    } else if ( _environment->dojoOnFujiNet ) {
+        fujinet_define( _environment, FN_HDBDOS );
+    }
+    outline0("RTS");
 
     deploy_inplace( irq, src_hw_coco3_irq_asm);
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
