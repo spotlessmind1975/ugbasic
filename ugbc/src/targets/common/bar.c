@@ -124,6 +124,13 @@ void bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char *
         cpu_label( _environment, labelOrdered );
 
         Variable * dy = variable_sub( _environment, y1->name, y0->name );
+
+        // If we are compiling "Beyond The Door" game with a recent
+        // version of the compiler (>1.17), we must guarantee that
+        // bar will be drawn with +1 pixel vertically.
+        if ( _environment->vestigialConfig.rchack_btd_1171 ) {
+            variable_increment( _environment, dy->name );
+        }
         
         variable_move( _environment, y0->name, y->name );
 

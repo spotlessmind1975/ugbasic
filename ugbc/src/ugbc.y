@@ -6510,7 +6510,7 @@ rec_definition_expression:
         Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
         Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
         variable_move( _environment, x2->name, x2p->name );
-        variable_decrement( _environment, x2p->name );
+        variable_decrement( _environment, x2p->name );        
         Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
         Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
         variable_move( _environment, y2->name, y2p->name );
@@ -13077,6 +13077,13 @@ int main( int _argc, char *_argv[] ) {
     _environment->sourceFileName = strdup(_argv[optind] );
 
     /* retrocompatible hacks */
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( _environment->sourceFileName, "btd-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_btd_1171 = 1;
+    }
+
     // If we are compiling "Cocon" game with a recent
     // version of the compiler (>1.16.3), we must use the disruptive
     // optimization rule to reduce executable size.

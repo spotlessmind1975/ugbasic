@@ -1861,6 +1861,11 @@ typedef struct _VestigialConfig {
     
     /* retrocompatible hacks */
 
+    // If 1 we are compiling "Beyond the Door" game with
+    // a recent version of the compiler.
+    
+    char rchack_btd_1171;
+
     // If 1 we are compiling "Cocon" game with a recent
     // version of the compiler, that use the disruptive
     // optimization rule to reduce executable size.
