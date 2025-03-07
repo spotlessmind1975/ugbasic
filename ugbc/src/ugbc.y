@@ -6508,11 +6508,15 @@ box_definition:
 rec_definition_expression:
     mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
         Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
-        variable_decrement( _environment, x2->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );
         Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
-        variable_decrement( _environment, y2->name );
-        box( _environment, $1, $3, x2->name, y2->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
-        gr_locate( _environment, x2->name, y2->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
     };
 
 rec_definition:
