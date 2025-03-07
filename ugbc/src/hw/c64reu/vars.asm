@@ -151,3 +151,5 @@ REUREUBASE          = $DF04
 REUTRANSLEN         = $DF07
 REUIRQMAXK          = $DF09
 REUCONTROL          = $DF0A
+
+DOJOERROR:          .BYTE $00

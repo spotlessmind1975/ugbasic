@@ -130,6 +130,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDSHIFT" );
 
+    variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
+    variable_global( _environment, "DOJOERROR" );
+
     outhead0("org 32768");
 
     outhead0("CODESTART:");

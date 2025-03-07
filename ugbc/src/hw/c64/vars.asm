@@ -140,3 +140,4 @@ DLOADERROR:         .BYTE   $0
 DSAVEERROR:         .BYTE   $0
 
 OLDD018:            .BYTE   $0
+DOJOERROR:          .BYTE $00
