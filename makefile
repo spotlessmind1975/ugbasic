@@ -232,6 +232,13 @@ built: paths toolchain compiler $(COMPILED) $(EXECUTABLES)
 so: paths toolchain compiler $(EXECUTABLESSO)
 
 #------------------------------------------------ 
+# so:
+#    COMPILE EXAMPLES stand alone w/o compilers
+#------------------------------------------------ 
+# 
+sonc: paths $(EXECUTABLESSO)
+
+#------------------------------------------------ 
 # verify:
 #    COMPILE EXAMPLES both and compare
 #------------------------------------------------ 
