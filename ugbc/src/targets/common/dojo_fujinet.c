@@ -40,7 +40,7 @@
  
 extern char DATATYPE_AS_STRING[][16];
 
-#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
+#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ ) && ! defined( __coco3__ ) 
 
 void dojo_fujinet_init( Environment * _environment ) {
 

@@ -566,6 +566,21 @@ void variable_cleanup( Environment * _environment ) {
         }
     }    
 
+    if ( _environment->deployed.dojo || _environment->deployed.dojo_fujinet ) {
+        outhead0("DOJOERROR fcb $00" );
+        outhead0("DOJOPACKET" );
+        outhead0("DOJOPACKET_CMD" );
+        outhead0("DOJOPACKET_STATUS" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_PAR1" );
+        outhead0("DOJOPACKET_RSIZE" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_PAR2" );
+        outline0("fcb $0" );
+        outhead0("DOJOPACKET_SIZE" );
+        outline0("fcb $0" );
+    }
+
     variable_on_memory_init( _environment, 0 );
 
     DataSegment * dataSegment = _environment->dataSegment;

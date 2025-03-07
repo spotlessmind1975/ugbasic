@@ -59,4 +59,47 @@ void coco3_timer_set_address( Environment * _environment, char * _timer, char * 
 void coco3_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void coco3_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 
+void coco3_serial_read( Environment * _environment, char * _address, char * _size );
+void coco3_serial_write( Environment * _environment, char * _address, char * _size, char * _result );
+
+void coco3_dojo_serial_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void coco3_dojo_serial_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
+void coco3_dojo_serial_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void coco3_dojo_serial_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void coco3_dojo_serial_get_response0( Environment * _environment, char * _status );
+void coco3_dojo_serial_get_response( Environment * _environment, char * _status, char * _address, char * _size );
+void coco3_dojo_serial_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void coco3_dojo_serial_get_response_size( Environment * _environment, char * _status, char * _data );
+void coco3_dojo_serial_get_response_payload( Environment * _environment, char * _address );
+void coco3_dojo_serial_get_response_payloadd( Environment * _environment, char * _data );
+
+void coco3_dojo_fujinet_put_request0( Environment * _environment, int _command, char * _param1, char * _param2, char * _result );
+void coco3_dojo_fujinet_put_request( Environment * _environment, int _command, char * _param1, char * _param2, char * _address, char * _size, char * _result );
+void coco3_dojo_fujinet_put_requestd( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, char * _size, char * _result );
+void coco3_dojo_fujinet_put_requestds( Environment * _environment, int _command, char * _param1, char * _param2, char * _data, int _size, char * _result );
+void coco3_dojo_fujinet_get_response0( Environment * _environment, char * _status );
+void coco3_dojo_fujinet_get_response( Environment * _environment, char * _status, char * _address, char * _size );
+void coco3_dojo_fujinet_get_responsed( Environment * _environment, char * _status, char * _data, char * _size );
+void coco3_dojo_fujinet_get_response_size( Environment * _environment, char * _status, char * _data );
+void coco3_dojo_fujinet_get_response_payload( Environment * _environment, char * _address );
+void coco3_dojo_fujinet_get_response_payloadd( Environment * _environment, char * _data );
+
+void coco3_fujinet_set_device( Environment * _environment, int _device_id );
+void coco3_fujinet_set_device_var( Environment * _environment, char * _device_id );
+void coco3_fujinet_get_bytes_waiting( Environment * _environment, char * _bytes_waiting );
+void coco3_fujinet_is_connected( Environment * _environment, char * _is_connected );
+void coco3_fujinet_get_error( Environment * _environment, char * _error );
+void coco3_fujinet_is_ready( Environment * _environment, char * _ready );
+void coco3_fujinet_open( Environment * _environment, char * _url, char * _size, char * _mode, char * _trans, char * _result );
+void coco3_fujinet_close( Environment * _environment );
+void coco3_fujinet_get_status( Environment * _environment );
+void coco3_fujinet_read( Environment * _environment, char * _buffer, char * _size );
+void coco3_fujinet_write( Environment * _environment, char * _buffer, char * _size, char * _result );
+void coco3_fujinet_set_channel_mode( Environment * _environment, int _mode, char * _result );
+void coco3_fujinet_set_channel_mode_var( Environment * _environment, char * _mode, char * _result );
+void coco3_fujinet_parse_json( Environment * _environment, char * _result );
+void coco3_fujinet_json_query( Environment * _environment, char * _query, char * _size );
+void coco3_fujinet_login( Environment * _environment, char * _login, char * _size );
+void coco3_fujinet_password( Environment * _environment, char * _password, char * _size );
+
 #endif
