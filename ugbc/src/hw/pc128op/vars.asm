@@ -96,3 +96,4 @@ YCURSYS equ $4e
 BANKSHADOW      fcb     $00
 
 DATAPTR fdb  0
+DOJOERROR fcb 0
