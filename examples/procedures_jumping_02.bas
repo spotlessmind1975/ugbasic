@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM USER-DEFINED PROCEDURES EXITING FROM A PROCEDURE
 REM
 REM This small example will show a way to exit from a procedure,
@@ -21,7 +21,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
    CLS
    
    PROCEDURE escape
-      FOR prison = 1 TO 1000000000
+      FOR prison = 1 TO 10000
          IF prison == 10 THEN : POP PROC : ENDIF
          PRINT "I AM ABANDONED."
       NEXT
