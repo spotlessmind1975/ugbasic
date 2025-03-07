@@ -1961,6 +1961,23 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
     }
 
     switch( VT_BITWIDTH( y->type ) ) {
+        case 32:
+            if ( _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+                if ( x->initializedByConstant ) {
+                    outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
+                } else {
+                    outline1("LDB %s+3", y->realName );
+                }
+                outline0("STB <(IMAGEY+1)" );
+            } else {
+                if ( x->initializedByConstant ) {
+                    outline1("LDD #$%4.4x", (unsigned int)(y->value&0xffff) );
+                } else {
+                    outline1("LDD %s+2", y->realName );
+                }
+                outline0("STD <IMAGEY" );
+            }
+            break;
         case 16:
             if ( y->initializedByConstant ) {
                 outline1("LDB #$%2.4x", y->value );
@@ -1978,7 +1995,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
             outline0("STB <(IMAGEY+1)" );
             break;
         default:
-            CRITICAL_PUT_IMAGE_X_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
+            CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
     }
 
     if( _flags ) {
