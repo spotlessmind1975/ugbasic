@@ -3337,9 +3337,6 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
             outline1("BMI %smi", label );
-            if ( _equal ) {
-                outline1("BEQ %smi", label);
-            }
             outhead1("%spl:", label );
             outline0("LDA #$00" );
             if ( _other ) {
@@ -3444,9 +3441,6 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
             outline1("BMI %smi", label );
-            if ( _equal ) {
-                outline1("BEQ %smi", label);
-            }
             outhead1("%spl:", label );
             outline0("LDA #$00" );
             outline1("STA %s", _other);
