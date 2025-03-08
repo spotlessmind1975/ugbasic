@@ -3337,6 +3337,9 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
             outline1("BMI %smi", label );
+            if ( _equal ) {
+                outline1("BEQ %smi", label);
+            }
             outhead1("%spl:", label );
             outline0("LDA #$00" );
             if ( _other ) {
@@ -3412,6 +3415,23 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
     inline( cpu_less_than_32bit_const )
 
         if ( _signed ) {
+
+            if ( _equal ) {
+
+                cpu6502_compare_32bit_const( _environment, _source, _destination, _other,  1 );
+    
+                if ( _other ) {
+                    outline1("LDA %s", _other);
+                } else {
+                    outline1("LDA %s", _destination);
+                }
+    
+                outline1("BEQ %sless", label );
+                outline1("JMP %sdone", label );
+                outhead1("%sless:", label );
+    
+            }
+    
             outline1("LDA %s", _source);
             outline1("CMP #$%2.2x", ( _destination & 0xff ) );
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
@@ -3425,16 +3445,22 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
             outhead1("%sv0:", label );
             outline1("BMI %smi", label );
             if ( _equal ) {
-                outline1("BEQ %smi", label );
+                outline1("BEQ %smi", label);
             }
             outhead1("%spl:", label );
-            outline0("LDA #$FF" );
+            outline0("LDA #$00" );
             outline1("STA %s", _other);
             outline1("JMP %sen", label );
             outhead1("%smi:", label );
-            outline0("LDA #$00" );
+            outline0("LDA #$ff" );
             outline1("STA %s", _other);
             outhead1("%sen:", label);
+
+            if ( _equal ) {
+
+                outhead1("%sdone:", label );
+    
+            }
 
         } else {
             outline1("LDA %s", address_displacement(_environment, _source, "3"));
