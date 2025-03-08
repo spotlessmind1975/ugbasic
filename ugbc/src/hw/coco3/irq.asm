@@ -74,11 +74,21 @@ OLDD
 
 ISVCIRQ
 
+    NOP
+    NOP
+    NOP
+
     ; Save CC!
 
     PSHS D
     TFR CC, A
     STA OLDCC
+
+    LDA #$7e
+    STA ISVCIRQ
+    LDD #ISVCIRQFAILSAFE
+    STD ISVCIRQ+1
+
     PULS D
 
     ; PSHS CC
@@ -171,6 +181,11 @@ ISVCIRQMMUOK2
     ; Push PC
     LDD OLDISVC2
     PSHS D
+
+    LDA #$12
+    STA ISVCIRQ
+    STA ISVCIRQ+1
+    STA ISVCIRQ+2
 
     ; Push CC (restore CC!)
     LDA OLDCC

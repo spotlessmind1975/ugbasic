@@ -98,6 +98,7 @@ PALETTELIMIT               fcb 0
 GIMEVIDMSHADOW             fcb 0
 GIMEMMUSTART               fcb 3
 GIMEMMUCOUNT               fcb 1
+GIMEINIT1BACKUP            fcb 0
 GIMEINIT1SHADOW            fcb 0
 
 GIMESCREENCURRENT          fcb $8
