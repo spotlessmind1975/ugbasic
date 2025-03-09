@@ -67,7 +67,8 @@ if the ''var'' si less than ''min'', the variable will be set to ''max''.
 It is possible to "clamp" the value of ''var'' instead of turn around
 the limits. By using the ''CLAMP'' keyword, you can change the behaviour:
 ''var'' will be assigned to ''min'' if a value is lesser than ''min'' and
-to ''max'' if a value is greater than ''max''.
+to ''max'' if a value is greater than ''max''. The same can be obtained by
+using the keyword ''ADDC''.
 
 The purpose of this second syntax is to prevent a variable from taking 
 invalid value for your program. It can also help to simulating real-world 
@@ -90,13 +91,14 @@ assumere dopo l'incremento. In altre parole, la ''variable'' viene
 incrementata, ma il suo valore viene "compresso" tra ''min'' e ''max''. 
 Se il risultato dell'addizione fosse stato maggiore di ''max'', il 
 valore sarebbe stato impostato su ''min''. Altrimenti, se ''var'' 
-è minore di ''min'', la variabile verrà impostata su ''max''.
+è minore di ''min'', la variabile verrà impostata su ''max''. 
 
 È possibile "bloccare" il valore di ''var'' invece di aggirare i 
 limiti. Utilizzando la parola chiave ''CLAMP'', è possibile 
 modificare il comportamento: ''var'' verrà assegnato a ''min'' 
 se un valore è minore di ''min'' e a ''max'' se un valore 
-è maggiore di ''max''.
+è maggiore di ''max''. Si otterrà lo stesso comportamento usando
+la parola chiave ''ADDC''.
 
 Lo scopo di questa seconda sintassi è impedire a una variabile di 
 assumere valori non validi per il tuo programma. Può anche aiutare 
@@ -110,10 +112,24 @@ difficoltà superi un certo valore.
 
 @syntax ADD var, expr [, min TO max] [CLAMP]
 
+@alias ADDC
+
 @example ADD y,10
 @example ADD x,42,1 TO 100 CLAMP
+@example ADDC x,42,1 TO 100 : REM equal to the previous command
 
 @usedInExample maths_fast_02.bas
+
+@target all
+</usermanual> */
+/* <usermanual>
+@keyword ADDC
+
+@english
+
+@italian
+
+@alias ADD
 
 @target all
 </usermanual> */

@@ -57,7 +57,8 @@ oggetto di aggiornamento, è possibile indicare i limiti minimo e massimo di
 movimento. Se le variabili sono già oltre i limiti, non saranno effettuati 
 aggiornamenti.
  
-@syntax JMOVE port,x,y,minx,maxx,miny,maxy[,stepx,stepy]
+@syntax JMOVE [port,]x,y,minx,maxx,miny,maxy[,stepx,stepy]
+@syntax JMOVE [port,]x,y,min,max
 
 @example JMOVE 0, playerX, playerY, 0, 10, 0, 42
 

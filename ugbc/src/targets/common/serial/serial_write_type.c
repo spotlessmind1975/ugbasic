@@ -67,8 +67,8 @@ dimensione effettiva, è possibile indicare il tipo di dati da considerare.
 Infine, nel caso di tipi di dato di dimensioni superiori al byte, è possibile 
 indicare l'endianess con cui i dati saranno inviati sulla porta seriale.
 
-@syntax = SERIAL WRITE( variable [AS type] )
-@syntax SERIAL WRITE variable [AS type]
+@syntax = SERIAL WRITE( variable [AS type] ) [BIG ENDIAN|LITTLE ENDIAN]
+@syntax SERIAL WRITE variable [AS type] [BIG ENDIAN|LITTLE ENDIAN]
 
 @example result = SERIAL WRITE( 42 AS BYTE )
 

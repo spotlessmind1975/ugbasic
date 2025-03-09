@@ -62,6 +62,7 @@ porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE
 @example handle = OPEN PORT( "ce420000" )
 
 @alias DOJO OPEN PORT
+@alias PORT
 
 @seeAlso CREATE PORT
 
@@ -76,6 +77,7 @@ porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE
 @italian
 
 @alias OPEN PORT
+@alias PORT
 
 @target atari, coco
 </usermanual> */
@@ -88,6 +90,7 @@ porta fornita sia una stringa vuota, questo comando si comporterà come ''CREATE
 @italian
 
 @alias OPEN PORT
+@alias DOJO OPEN PORT
 
 @target atari, coco
 </usermanual> */
