@@ -542,6 +542,14 @@ PUTIMAGE2COMMONE5DB
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGE2YDEFDB
+    LDD <IMAGEW
+    CMPD #127
+    LBLE PUTIMAGE2YDEFDBW128
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- ORIGINAL VERSION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
     ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
     ; STA BASE_SEGMENT+$c0
@@ -771,6 +779,218 @@ PUTIMAGECOMMONEDB
 	RTS
 
 @ENDIF
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w < 128, no double y)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGE2YDEFDBW128
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+
+PUTIMAGE2L1DB000W128
+    ; LDB <(IMAGEW+1)
+    DECB
+PUTIMAGE2L1DBW128
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L1DBW128
+
+    ; LDU <IMAGEW
+    ; LEAU -128, U
+    ; STU <IMAGEW
+    ; CMPU #0
+    ; BLE PUTIMAGE2L1DB001
+
+    ; LEAY 128, Y
+    ; LEAX 128, X
+    ; JMP PUTIMAGE2L1DB000
+
+; PUTIMAGE2L1DB001
+
+;     LDA <IMAGEF
+;     ANDA #64
+;     CMPA #0
+;     BEQ PUTIMAGE2L1DBN
+
+;     LDA <IMAGEF
+;     ANDA #1
+;     CMPA #1
+;     BEQ PUTIMAGE2L1DBN0
+
+;     ORA #65
+;     STA <IMAGEF
+
+;     LDD <IMAGEW2
+;     STD <IMAGEW
+;     LDB CURRENTSL
+;     LEAX B, X
+;     JMP PUTIMAGE2L1DB000
+
+; PUTIMAGE2L1DBN0
+;     LDA <IMAGEF
+;     ANDA #$FE
+;     STA <IMAGEF
+
+PUTIMAGE2L1DBNW128
+
+    LDB <(IMAGEW2+1)
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ PUTIMAGECOMMONE2DBW128
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+    JMP PUTIMAGE2L1DB000W128
+
+PUTIMAGECOMMONE2DBW128
+
+    LDB <(IMAGEY2+1)
+    STB <(IMAGEY+1)
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+    STD <IMAGEW
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+    ; LDA BASE_SEGMENT+$c0
+    ; ANDA #$fe
+    ; STA BASE_SEGMENT+$c0
+
+    LDB <(IMAGEW+1)
+
+PUTIMAGE2L12DB000W128
+    DECB
+PUTIMAGE2L12DBW128
+    LDA B,Y
+    STA B,X
+    DECB
+    CMPB #0
+    BGE PUTIMAGE2L12DBW128
+
+    ; LDU <IMAGEW
+    ; LEAU -128, U
+    ; STU <IMAGEW
+    ; CMPU #0
+    ; BLE PUTIMAGE2L12DB001
+
+;     LEAY 128, Y
+;     LEAX 128, X
+;     JMP PUTIMAGE2L12DB000
+
+; PUTIMAGE2L12DB001
+
+;     LDA <IMAGEF
+;     ANDA #64
+;     CMPA #0
+;     BEQ PUTIMAGE2L12DBN
+
+;     LDA <IMAGEF
+;     ANDA #1
+;     CMPA #1
+;     BEQ PUTIMAGE2L12DBN0
+
+;     ORA #65
+;     STA <IMAGEF
+
+;     LDD <IMAGEW2
+;     STD <IMAGEW
+;     LDB CURRENTSL
+;     LEAX B, X
+;     JMP PUTIMAGE2L12DB000
+
+; PUTIMAGE2L12DBN0
+;     LDA <IMAGEF
+;     ANDA #$FE
+;     STA <IMAGEF
+
+; PUTIMAGE2L12DBN
+
+    LDB <(IMAGEW2+1)
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    LBEQ PUTIMAGECOMMONE5DBW128
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+    JMP PUTIMAGE2L12DB000W128
+
+PUTIMAGECOMMONE5DBW128
+
+    ; LDD <IMAGEY2
+    ; STD <IMAGEY
+
+;     LDA CURRENTMODE
+;     CMPA #3
+;     BEQ PUTIMAGECOMMONE53
+;     LDU #4
+;     JMP PUTIMAGECOMMONE50
+; PUTIMAGECOMMONE53
+;     LDU #16
+;     JMP PUTIMAGECOMMONE50
+
+; PUTIMAGECOMMONE50
+;     LDA #0
+;     STA BASE_SEGMENT+$DB
+; PUTIMAGECOMMONE50L1
+;     LDD ,Y
+;     LEAY 2,Y
+;     STB BASE_SEGMENT+$DA
+;     STA BASE_SEGMENT+$DA
+;     LEAU -1, U
+;     CMPU #$FFFF
+    ; BNE PUTIMAGECOMMONE50L1
+
+PUTIMAGECOMMONEDBW128
+
+@IF PC128OP
+
+    PSHS D
+    LDA #7
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    ANDCC #$AF
+    
+	RTS
+
+@ENDIF
+
 
 ; ----------------------------------------------
 ; Version active on double buffering OFF
