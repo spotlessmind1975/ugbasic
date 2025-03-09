@@ -1053,6 +1053,14 @@ PUTIMAGE2YDEFDBW128EVEN4
     DECA
     STA <MATHPTR0
 
+    LDA <IMAGEH
+    CMPA #16
+    BEQ PUTIMAGE2YDEFDBW128EVEN4HX
+    CMPA #8
+    BEQ PUTIMAGE2YDEFDBW128EVEN4HX
+    CMPA #4
+    BEQ PUTIMAGE2YDEFDBW128EVEN4HX
+
 @IF PC128OP
 
     LEAX $8000,X
@@ -1116,6 +1124,248 @@ PUTIMAGE2L12DB000W128EVEN4
 
 PUTIMAGECOMMONE5DBW128EVEN4
 PUTIMAGECOMMONEDBW128EVEN4
+
+    JMP PUTIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 4, h = 16, 8, 4)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGE2YDEFDBW128EVEN4HX
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+    CMPA #8
+    LBEQ PUTIMAGE2L1DB000W128EVEN4H8
+    CMPA #4
+    LBEQ PUTIMAGE2L1DB000W128EVEN4H4
+
+PUTIMAGE2L1DB000W128EVEN4H16
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+PUTIMAGE2L1DB000W128EVEN4H8
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+PUTIMAGE2L1DB000W128EVEN4H4
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+
+    LDB <(IMAGEY2+1)
+    STB <(IMAGEY+1)
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+    LDA <IMAGEH
+    CMPA #8
+    LBEQ PUTIMAGE2L1DB000W128EVEN4H8A
+    CMPA #4
+    LBEQ PUTIMAGE2L1DB000W128EVEN4H4A
+
+PUTIMAGE2L1DB000W128EVEN4H16A
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+PUTIMAGE2L1DB000W128EVEN4H8A
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+PUTIMAGE2L1DB000W128EVEN4H4A
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,Y++
+    STD ,X++
+    LDD ,Y++
+    STD ,X++
+
+    JMP PUTIMAGECOMMONEDBW128EVENFINAL
 
 PUTIMAGECOMMONEDBW128EVENFINAL
 
