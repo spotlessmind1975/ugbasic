@@ -37,25 +37,26 @@
  extern char DATATYPE_AS_STRING[][16];
  
  /* <usermanual>
-@keyword GET MESSAGE
+@keyword PUT MESSAGE
 
 @english
 
 The ''PUT MESSAGE'' statement allows you to send a message to the ''port'' (and optionally 
-the given ''channel''). The message must be a string. If there is an error sending, an 
+the given ''channel''). The message must be a string or an array (up to 256 bytes). If there is an error sending, an 
 error is raised and the statement returns ''FALSE''. Otherwise, it returns ''TRUE''.
 
 @italian
 
 L'istruzione ''PUT MESSAGE'' consente di inviare un messaggio sulla porta (''port'') 
-ed, eventualmente, sul canale (''channel'') dato. Il messaggio deve essere una stringa. 
-In caso di errore nell'invio, viene emesso un errore e l'istruzione restituità ''FALSE''. 
-Altrimenti, restituirà ''TRUE'.
+ed, eventualmente, sul canale (''channel'') dato. Il messaggio deve essere una stringa
+oppure un array (fino a un massimo di 256 bytes). In caso di errore nell'invio, viene 
+emesso un errore e l'istruzione restituità ''FALSE''. Altrimenti, restituirà ''TRUE'.
 
-@syntax = [DOJO] PUT MESSAGE( port[, channel], message )
-@syntax [DOJO] PUT MESSAGE port[, channel], message )
+@syntax = [DOJO] PUT [MESSAGE]( port[, channel], message )
+@syntax [DOJO] PUT [MESSAGE] port[, channel], message )
 
-@example PUT MESSAGE port, "helllo!"
+@example PUT MESSAGE port, "hello!"
+@example DIM a(20) AS BYTE: a(1)=42: PUT port, 42, a
 
 @alias DOJO PUT MESSAGE
 

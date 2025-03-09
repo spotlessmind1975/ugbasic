@@ -6417,7 +6417,7 @@ considerato come zero (0).
 The ''FUNCTION'' command is an instruction that allows you to define custom functions within 
 a program. These functions can be called multiple times, simplifying the code and making it 
 more modular. The syntax accepts a ''name'', one or more ''parameters'', followed by
-an equal sign and from an expression between square brackets. Functions are limited to a single 
+an equal sign and from an expression. Functions are limited to a single 
 expression, but parameters are local or global to the function, following the current context. 
 
 The use of this instruction can avoid repeating the same calculation multiple times, the code 
@@ -6478,9 +6478,37 @@ predefinito è quello impostato con l'ultimo comando ''INK'' / ''PEN''.
 @target mo5
 @target msx1
 @target pc128op
-@target pc1403
 @target plus4
 @target sc3000
 @target to8
 @target zx
+</usermanual> */
+
+/* <usermanual>
+@keyword SCREEN (function)
+
+@english
+
+The ''SCREEN'' function allows you to know the contents of the text memory,
+given the coordinates. There are two versions of this function: one without 
+the dollar symbol, which returns a ''BYTE'' with the value, and one with the 
+dollar symbol, which returns a string with that value. Note that this function 
+will always return zero if it is used in a target that does not have a text 
+mode, and an unspecified value, if you are operating in a graphics mode.
+
+@italian
+
+La funzione ''SCREEN'' consente di conoscere il contenuto della memoria testuale, 
+date le coordinate. Di questa funzione esistono due versioni: quella senza il 
+simbolo del dollaro, che restituisce un ''BYTE'' con il valore, e quella con il 
+simbolo del dollaro, che restituisce una stringa avente quel valore. Da notare che 
+questa funzione ritornerà sempre zero se viene usata in un target che non dispone 
+di una modalità testuale, e un valore non precisato, se si sta operando con una 
+modalità grafica. 
+
+@syntax = SCREEN(x,y)
+@syntax = SCREEN$(x,y)
+
+@example PRINT SCREEN(10,10)
+
 </usermanual> */
