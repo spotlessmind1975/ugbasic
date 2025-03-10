@@ -372,9 +372,10 @@ GETIMAGECOMMONEDB
 ; Version active on double buffering OFF
 ; ----------------------------------------------
 
+GETIMAGEORIG
+
 @IF ! vestigialConfig.doubleBufferSelected || ! vestigialConfig.doubleBuffer
 
-GETIMAGEORIG
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
