@@ -40,7 +40,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__vg5000__) || defined(__c128z__) || defined(__vtech__)
 
 void z80_init( Environment * _environment ) {
 
@@ -6799,7 +6799,7 @@ void z80_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
+#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__) && !defined(__vtech__)
     outhead0("section data_user" );
 #endif
     outhead1("stringscount =                  %d", count );
@@ -6809,7 +6809,7 @@ void z80_dstring_vars( Environment * _environment ) {
     outhead0("WORKING:                      DEFS stringsspace" );
     outhead0("TEMPORARY:                    DEFS stringsspace" );
     outhead0("FREE_STRING:                  DW (stringsspace-1)" );
-#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
+#if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__) && !defined(__vtech__)
     outhead0("section code_user" );
 #endif
 

@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED
+%token ENDPROC EXITIF VIRTUALIZED VTECH
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1202,7 +1202,8 @@ const_factor:
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__)
+            defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__) || \
+            defined( __vtech__) 
             $$ = 1;
         #else
             $$ = 0;
@@ -3208,7 +3209,8 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
+    defined(__vtech__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3219,7 +3221,8 @@ exponential_less:
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__)
+    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
+    defined(__vtech__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -4058,7 +4061,7 @@ exponential_less:
         defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
         defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
         defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__) || defined(__gb__)
+        defined( __c64reu__) || defined(__gb__) || defined(__vtech__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -9360,7 +9363,8 @@ target :
     CPUZ80 {
         #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
             defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) 
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+            defined(__vtech__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9480,6 +9484,14 @@ target :
     |
     CPC {
         #ifdef __cpc__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    VTECH {
+        #ifdef __vtech__
             $$ = 1;
         #else
             $$ = 0;
@@ -12467,6 +12479,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
 #elif __pc1403__
     char target[MAX_TEMPORARY_STORAGE] = "Sharp PC-1403";
+#elif __vtech__
+    char target[MAX_TEMPORARY_STORAGE] = "VTech Laser200/210/305/310";
 #endif
 
     printf("--------------------------------------------------\n");
@@ -12603,10 +12617,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __pc1403__
     printf("\t                ram - RAM loadable by debugger\n" );
     #define defaultExtension "ram"
+#elif __vtech__
+    printf("\t                vz - file snapshot\n" );
+    #define defaultExtension "vz"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__) || defined(__vtech__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
@@ -12712,6 +12729,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __pc1403__
     _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+#elif __vz__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
 #endif
 
     while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:FfG:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {

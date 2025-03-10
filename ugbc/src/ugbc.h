@@ -257,7 +257,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_ATR = 10,
     OUTPUT_FILE_TYPE_REU = 11,
     OUTPUT_FILE_TYPE_RAM = 12,
-    OUTPUT_FILE_TYPE_GB = 13
+    OUTPUT_FILE_TYPE_GB = 13,
+    OUTPUT_FILE_TYPE_VZ = 14
 
 } OutputFileType;
 
@@ -1702,6 +1703,8 @@ typedef struct _Deployed {
     int sn76489startup2;
     int audio1startup;
     int audio1bitnoirq;
+    int vtechvars;
+    int vtechstartup;
 
     int draw;
     int bar;
@@ -5663,6 +5666,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_gb.h"
     #include "hw/sm83.h"
     #include "hw/gb.h"
+#elif __vtech__
+    #include "../src-generated/modules_vtech.h"
+    #include "hw/z80.h"
+    #include "hw/vtech.h"
+    #include "hw/6847z.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

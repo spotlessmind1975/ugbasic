@@ -256,6 +256,13 @@ ifeq ($(target),pc1403)
   audio=
   io=
 endif
+ifeq ($(target),vtech)
+  cpu=z80
+  video=6847z
+  video2=
+  audio=
+  io=
+endif
 
 #------------------------------------------------ 
 # BISON
@@ -427,13 +434,21 @@ SOURCES_6809 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c)
 src-generated/6809_%.c: $(MODULES_6809)
 	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
 
-# Motorola 6847
+# Motorola 6847 (for CPU 6809)
 
 MODULES_6847 := $(wildcard src/hw/6847/*.asm)
 SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)) $(FONTS)
 
 src-generated/6847_%.c: $(MODULES_6847)
 	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
+
+# Motorola 6847 (for CPU Z80)
+
+MODULES_6847Z := $(wildcard src/hw/6847z/*.asm)
+SOURCES_6847Z := $(subst src/hw/6847z/,src-generated/6847z_,$(MODULES_6847Z:.asm=.c)) $(FONTS)
+
+src-generated/6847z_%.c: $(MODULES_6847Z)
+	@xxd -i $(subst src-generated/6847z_,src/hw/6847z/,$(@:.c=.asm)) >$@
 
 # Thomson EF9345
 
@@ -931,6 +946,19 @@ src-generated/modules_vg5000.c: $(SOURCES_Z80) $(SOURCES_VG5000) $(SOURCES_EF934
 	@cat $(SOURCES_Z80) $(SOURCES_EF9345) $(SOURCES_VG5000) >src-generated/modules_vg5000.c
 	@grep "src" src-generated/modules_vg5000.c | awk -f modules.awk >src-generated/modules_vg5000.h
 	@grep "data" src-generated/modules_vg5000.c | awk -f modules.awk >>src-generated/modules_vg5000.h
+
+# VTech Laser200, 210, 305 and 310
+
+MODULES_VTECH := $(wildcard src/hw/vtech/*.asm)
+SOURCES_VTECH := $(subst src/hw/vtech/,src-generated/vtech_,$(MODULES_VTECH:.asm=.c))
+
+src-generated/vtech_%.c: $(MODULES_VTECH)
+	@xxd -i $(subst src-generated/vtech_,src/hw/vtech/,$(@:.c=.asm)) >$@
+
+src-generated/modules_vtech.c: $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) $(FONTS)
+	@cat $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) $(FONTS) >src-generated/modules_vtech.c
+	@grep "src" src-generated/modules_vtech.c | awk -f modules.awk >src-generated/modules_vtech.h
+	@grep "data" src-generated/modules_vtech.c | awk -f modules.awk >>src-generated/modules_vtech.h
 
 # ZX Spectrum
 
