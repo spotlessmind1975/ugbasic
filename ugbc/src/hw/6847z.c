@@ -1063,82 +1063,70 @@ void c6847z_scroll_text( Environment * _environment, int _direction, int _overla
 
 void c6847z_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    // deploy( c6847vars, src_hw_6847_vars_asm);
-    // deploy( textEncodedAt, src_hw_6847_text_at_asm );
+    // deploy( vScrollTextUp, src_hw_6847z_vscroll_text_up_asm );
+    deploy( textEncodedAt, src_hw_6847z_text_at_asm );
 
-    // outline1("LDY %s", _text);
-    // outline0("STY <TEXTPTR" );
-    // outline1("LDA %s", _text_size);
-    // outline0("STA <TEXTSIZE" );
+    outline1("LD DE, (%s)", _text);
+    outline1("LD A, (%s)", _text_size);
+    outline0("LD C, A");
 
-    // if ( _raw ) {
-    //     if ( _environment->currentMode < 7 ) {
-    //         deploy( clsText, src_hw_6847_cls_text_asm );
-    //         deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
-    //         deploy( textEncodedAtTextRaw, src_hw_6847_text_at_text_raw_asm );
-    //         outline0("JSR TEXTATTILEMODERAW");
-    //     } else {
-    //         deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-    //         deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
-    //         deploy( textEncodedAtGraphicRaw, src_hw_6847_text_at_graphic_raw_asm );
-    //         outline0("JSR TEXTATBITMAPMODERAW");
-    //     }
-    // } else {
-    //     if ( _environment->currentMode < 7 ) {
-    //         deploy( clsText, src_hw_6847_cls_text_asm );
-    //         deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
-    //         deploy( textEncodedAtText, src_hw_6847_text_at_text_asm );
-    //         outline0("JSR TEXTATTILEMODE");
-    //     } else {
-    //         deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-    //         deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
-    //         deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
-    //         outline0("JSR TEXTATBITMAPMODE");
-    //     }
-    // }
+    if ( _raw ) {
+        if ( _environment->currentMode < 7 ) {
+            // deploy( clsText, src_hw_6847_cls_text_asm );
+            // deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
+            // deploy( textEncodedAtTextRaw, src_hw_6847_text_at_text_raw_asm );
+            // outline0("JSR TEXTATTILEMODERAW");
+        } else {
+            // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+            // deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+            // deploy( textEncodedAtGraphicRaw, src_hw_6847_text_at_graphic_raw_asm );
+            // outline0("JSR TEXTATBITMAPMODERAW");
+        }
+    } else {
+        if ( _environment->currentMode < 7 ) {
+            // deploy( clsText, src_hw_6847_cls_text_asm );
+            // deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy( textEncodedAtText, src_hw_6847z_text_at_text_asm );
+            outline0("CALL TEXTATTILEMODE");
+        } else {
+            // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+            // deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
+            // deploy( textEncodedAtGraphic, src_hw_6847_text_at_graphic_asm );
+            // outline0("JSR TEXTATBITMAPMODE");
+        }
+    }
 
 }
 
 void c6847z_initialization( Environment * _environment ) {
 
     // deploy( c6847vars, src_hw_6847_vars_asm );
-    // deploy( c6847startup, src_hw_6847_startup_asm );
+    deploy( c6847startup, src_hw_6847z_startup_asm );
 
-    // variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
-    // variable_global( _environment, "CURRENTMODE" );
-    // variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
-    // variable_global( _environment, "CURRENTTILEMODE" );
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
 
-    // variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
-    // variable_global( _environment, "CURRENTWIDTH" );
-    // variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 128  );
-    // variable_global( _environment, "CURRENTHEIGHT" );
-    // variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 32 );
-    // variable_global( _environment, "CURRENTTILESWIDTH" );
-    // variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 16 );
-    // variable_global( _environment, "CURRENTTILESHEIGHT" );
-    // variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
-    // variable_global( _environment, "CURRENTTILES" );
-    // variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
-    // variable_global( _environment, "FONTWIDTH" );
-    // variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
-    // variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 128  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 32 );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 16 );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
+    variable_global( _environment, "CURRENTTILES" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
+    variable_global( _environment, "FONTHEIGHT" );
 
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric Internal");
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric External");
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, 8, 8, "Semigraphics 4" );
-    // SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 0, 64, 48, 4, 8, 8, "Semigraphics 6" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, 8, 8, "Semigraphics 4" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, 8, 8, "Color Graphics 2" );
 
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, 8, 8, "Color Graphics 6" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 1, 256, 192, 2, 8, 8, "Resolution Graphics 6" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR3, 1, 128, 96, 4, 8, 8, "Color Graphics 3" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION3, 1, 128, 192, 2, 8, 8, "Resolution Graphics 3" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, 8, 8, "Color Graphics 2" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION2, 1, 128, 96, 2, 8, 8, "Resolution Graphics 2" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR1, 1, 64, 64, 4, 8, 8, "Color Graphics 1" );
-    // SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION1, 1, 128, 64, 2, 8, 8, "Resolution Graphics 1" );
-
-    // outline0("JSR C6847STARTUP");
+    outline0("CALL C6847ZSTARTUP");
 
     // variable_import( _environment, "XGR", VT_POSITION, 0 );
     // variable_global( _environment, "XGR" );
@@ -1146,8 +1134,10 @@ void c6847z_initialization( Environment * _environment ) {
     // variable_global( _environment, "YGR" );
     // variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
     // variable_global( _environment, "LINE" );
-    // variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
-    // variable_global( _environment, "TABCOUNT" );
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    variable_global( _environment, "TABCOUNT" );
+    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    variable_global( _environment, "TABSTODRAW" );
 
     // variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
     // variable_global( _environment, "PLOTCPE" );
@@ -1170,27 +1160,27 @@ void c6847z_initialization( Environment * _environment ) {
     // variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
     // variable_global( _environment, "RESOLUTIONY" );
 
-    // _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
+    _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
 
-    // font_descriptors_init( _environment, 0 );
+    font_descriptors_init( _environment, 0 );
 
-    // _environment->fontWidth = 8;
-    // _environment->fontHeight = 8;
-    // _environment->screenTilesWidth = 32;
-    // _environment->screenTilesHeight = 16;
-    // _environment->consoleTilesWidth = 32;
-    // _environment->consoleTilesHeight = 16;
-    // _environment->screenTiles = 128;
-    // _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
-    // _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
-    // _environment->screenShades = 4;
-    // _environment->screenColors = 4;
+    _environment->fontWidth = 8;
+    _environment->fontHeight = 8;
+    _environment->screenTilesWidth = 32;
+    _environment->screenTilesHeight = 16;
+    _environment->consoleTilesWidth = 32;
+    _environment->consoleTilesHeight = 16;
+    _environment->screenTiles = 128;
+    _environment->screenWidth = _environment->screenTilesWidth*_environment->fontWidth;
+    _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
+    _environment->screenShades = 4;
+    _environment->screenColors = 4;
 
-    // console_init( _environment );
+    console_init( _environment );
     
-    // if ( _environment->vestigialConfig.clsImplicit ) {
-    //     c6847z_cls( _environment );
-    // }
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        c6847z_cls( _environment );
+    }
 
 }
 

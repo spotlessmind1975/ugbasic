@@ -448,7 +448,8 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("VZHEADER:");
     outline0("DEFB $20, $20, $00, $00"); // preamble
     out0("DEFB ");
-    for( i=0, c=strlen(filename); i<c; ++i ) {
+    int cs;
+    for( i=0, cs=strlen(filename); i<cs; ++i ) {
         if ( i == 16 ) {
             break;
         }

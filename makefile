@@ -125,7 +125,7 @@ endif
 ifeq ($(target),pc1403)
   output=ram
 endif
-ifeq ($(target),vetch)
+ifeq ($(target),vtech)
   output=vz
 endif
 endif
