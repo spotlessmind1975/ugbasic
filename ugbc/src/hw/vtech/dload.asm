@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             DLOAD ROUTINE ON CPC                            *
+;*                             DLOAD ROUTINE ON VTECH                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -37,57 +37,58 @@
 
 ; HL: filename, B: filename length
 ; DE: address
-CPCDLOAD:
-
-    PUSH DE
-    PUSH HL
-    PUSH BC
-
-    CALL CPCIRQSYSTEM
-
-    LD DE, $40
-    LD HL, $B0FF
-    CALL $BCCB
-    POP BC
-    POP HL
-
-    LD DE, $C000
-    CALL $BC77
-    POP DE
-
-    JR NC, CPCDLOADERROR
-
-    LD HL, DE
-    CALL $BC83
-    
-    CALL $BC7A
-
-    JP CPCDLOADDONE
-
-CPCDLOADERROR:
-    LD (DLOADERROR), A
-
-CPCDLOADDONE:
-
-    CALL CPCIRQUGBASIC
-    
-	DI
-	LD HL, IRQTIMERVOID
-	LD A, L
-	LD (IRQTIMERADDR+1), A
-	LD A, H
-	LD (IRQTIMERADDR+2), A
-	EXX
-	LD B, $7F
-	LD A, (GAVALUE)
-	OR A, $0C
-	LD (GAVALUE), A
-	LD C, A
-	OUT (C), C
-	EXX
-	EI
-
-    CALL RESETPALETTE
-
+VTECHDLOAD:
     RET
+
+;     PUSH DE
+;     PUSH HL
+;     PUSH BC
+
+;     CALL VTECHIRQSYSTEM
+
+;     LD DE, $40
+;     LD HL, $B0FF
+;     CALL $BCCB
+;     POP BC
+;     POP HL
+
+;     LD DE, $C000
+;     CALL $BC77
+;     POP DE
+
+;     JR NC, VTECHDLOADERROR
+
+;     LD HL, DE
+;     CALL $BC83
+    
+;     CALL $BC7A
+
+;     JP VTECHDLOADDONE
+
+; VTECHDLOADERROR:
+;     LD (DLOADERROR), A
+
+; VTECHDLOADDONE:
+
+;     CALL VTECHIRQUGBASIC
+    
+; 	DI
+; 	LD HL, IRQTIMERVOID
+; 	LD A, L
+; 	LD (IRQTIMERADDR+1), A
+; 	LD A, H
+; 	LD (IRQTIMERADDR+2), A
+; 	EXX
+; 	LD B, $7F
+; 	LD A, (GAVALUE)
+; 	OR A, $0C
+; 	LD (GAVALUE), A
+; 	LD C, A
+; 	OUT (C), C
+; 	EXX
+; 	EI
+
+;     CALL RESETPALETTE
+
+;     RET
 

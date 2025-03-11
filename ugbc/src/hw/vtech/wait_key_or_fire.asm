@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           WAIT KEY OR FIRE ON CPC                           *
+;*                           WAIT KEY OR FIRE ON VTECH                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -42,253 +42,253 @@
 ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
 ; a key pressed, we must also wait for FREE(0) state, first.
 
-@IF joystickConfig.sync
+; @IF joystickConfig.sync
 
-    WAITKEYFIREA0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIREA1
-    WAITKEYFIREA0X:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIREA0X
-    WAITKEYFIREA1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-        @ENDIF
-        CALL JOYSTICKREAD0
-        AND $10
-        LD B, A
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIREA1
-        RET
+;     WAITKEYFIREA0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIREA1
+;     WAITKEYFIREA0X:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIREA0X
+;     WAITKEYFIREA1:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;         @ENDIF
+;         CALL JOYSTICKREAD0
+;         AND $10
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIREA1
+;         RET
 
-    WAITKEYFIREA:
-        CP $0
-        JR Z, WAITKEYFIREA0
+;     WAITKEYFIREA:
+;         CP $0
+;         JR Z, WAITKEYFIREA0
 
-    WAITKEYFIREB0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIREB1
-    WAITKEYFIREB0X:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIREB0X
-    WAITKEYFIREB1:
-        CALL JOYSTICKREAD1
-        AND $10
-        LD B, A
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIREB1
-        RET
+;     WAITKEYFIREB0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIREB1
+;     WAITKEYFIREB0X:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIREB0X
+;     WAITKEYFIREB1:
+;         CALL JOYSTICKREAD1
+;         AND $10
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIREB1
+;         RET
 
-    WAITKEYFIRE:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIRE1
-    WAITKEYFIRE0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIRE0
-    WAITKEYFIRE1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-        @ENDIF    
-        CALL JOYSTICKREAD0
-        AND $10
-        LD B, A
-        CALL JOYSTICKREAD1
-        AND $10
-        OR B
-        LD B, A
-        @IF keyboardConfig.sync
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIRE1
-        RET
+;     WAITKEYFIRE:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIRE1
+;     WAITKEYFIRE0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIRE0
+;     WAITKEYFIRE1:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;         @ENDIF    
+;         CALL JOYSTICKREAD0
+;         AND $10
+;         LD B, A
+;         CALL JOYSTICKREAD1
+;         AND $10
+;         OR B
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIRE1
+;         RET
 
-@ELSE
+; @ELSE
 
-    WAITKEYFIREA0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIREA1
-    WAITKEYFIREA0X:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIREA0X
-    WAITKEYFIREA1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-        @ENDIF
-        LD A, (JOYSTICK0)
-        AND $10
-        OR B
-        LD B, A
-        @IF keyboardConfig.sync
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIREA1
-        RET
+;     WAITKEYFIREA0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIREA1
+;     WAITKEYFIREA0X:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIREA0X
+;     WAITKEYFIREA1:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;         @ENDIF
+;         LD A, (JOYSTICK0)
+;         AND $10
+;         OR B
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIREA1
+;         RET
 
-    WAITKEYFIREA:
-        CP $0
-        JR Z, WAITKEYFIREA0
+;     WAITKEYFIREA:
+;         CP $0
+;         JR Z, WAITKEYFIREA0
 
-    WAITKEYFIREB0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIREB1
-    WAITKEYFIREB0X:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIREB0X
-    WAITKEYFIREB1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-        @ENDIF
-        LD A, (JOYSTICK1)
-        AND $10
-        OR B
-        LD B, A
-        @IF keyboardConfig.sync
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIREB1
-        RET
+;     WAITKEYFIREB0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIREB1
+;     WAITKEYFIREB0X:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIREB0X
+;     WAITKEYFIREB1:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;         @ENDIF
+;         LD A, (JOYSTICK1)
+;         AND $10
+;         OR B
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIREB1
+;         RET
 
-    WAITKEYFIRE:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR Z, WAITKEYFIRE1
-    WAITKEYFIRE0:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        CP 0
-        JR NZ, WAITKEYFIRE0
-    WAITKEYFIRE1:
-        @IF keyboardConfig.sync
-            CALL SCANCODERAW
-        @ENDIF
-        LD A, (JOYSTICK0)
-        AND $10
-        LD B, A
-        LD A, (JOYSTICK1)
-        AND $10
-        OR B
-        LD B, A
-        @IF keyboardConfig.sync
-            LD A, (KEYBOARDACTUAL)
-            XOR $FF
-        @ELSE
-            LD A, (KEYBOARDASFSTATE)
-        @ENDIF
-        OR B
-        CP 0
-        JR Z, WAITKEYFIRE1
-        RET
+;     WAITKEYFIRE:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR Z, WAITKEYFIRE1
+;     WAITKEYFIRE0:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         CP 0
+;         JR NZ, WAITKEYFIRE0
+;     WAITKEYFIRE1:
+;         @IF keyboardConfig.sync
+;             CALL SCANCODERAW
+;         @ENDIF
+;         LD A, (JOYSTICK0)
+;         AND $10
+;         LD B, A
+;         LD A, (JOYSTICK1)
+;         AND $10
+;         OR B
+;         LD B, A
+;         @IF keyboardConfig.sync
+;             LD A, (KEYBOARDACTUAL)
+;             XOR $FF
+;         @ELSE
+;             LD A, (KEYBOARDASFSTATE)
+;         @ENDIF
+;         OR B
+;         CP 0
+;         JR Z, WAITKEYFIRE1
+;         RET
 
-@ENDIF
+; @ENDIF

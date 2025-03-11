@@ -29,15 +29,15 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          INTERNAL VARIABLES FOR CPC                         *
+;*                          INTERNAL VARIABLES FOR VTECH                         *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF verticalOverlapRequired
+; @IF verticalOverlapRequired
 
-VSCROLLBUFFERLINE: DEFS 80*8,  0
+; VSCROLLBUFFERLINE: DEFS 80*8,  0
 
-@ENDIF
+; @ENDIF
 
