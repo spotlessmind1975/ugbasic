@@ -6155,7 +6155,6 @@ void cpu6809_move_nbit_indirect( Environment * _environment, int _n, char *_sour
             outline1("STD %d,X", stepIndex+2);
             stepIndex += 4;
             _n -= 32;
-            break;
         } else {
             switch( _n ) {
                 case 32: case 31: case 30: case 29:
@@ -6211,7 +6210,6 @@ void cpu6809_move_nbit_indirect2( Environment * _environment, int _n, char * _va
             outline1("STD %s", address_displacement(_environment, _source, step2) );
             stepIndex += 4;
             _n -= 32;
-            break;
         } else {
             switch( _n ) {
                 case 32: case 31: case 30: case 29:
