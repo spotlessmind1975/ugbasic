@@ -145,7 +145,7 @@ void mmob( Environment * _environment, char * _sprite, char * _sx, char * _sy, c
 
         cpu_label( _environment, loopLabel );
 
-            travel_path( _environment, path->name, x->name, y->name );
+            travel_path( _environment, path->name, x->name, y->name, NULL );
 
             sprite_at_vars( _environment, sprite->name, x->name, y->name );
 

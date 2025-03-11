@@ -49,20 +49,58 @@
 /* <usermanual>
 @keyword TRAVEL
 
+The ''TRAVEL'' command allows you to move an entity (for example, a character in a video 
+game, a robot in a simulated environment, or a cursor on a map) from a starting point to 
+a destination point, following a previous created ''PATH''. The coordinates of the 
+starting point and of the destination point are given using the ''CREATE PATH'' command.
+So, this command will update a pair of variables (''x'',''y'') with the next point. 
+Optionally, you can give a multiplier factor (''times''), in order to move more than one pixel
+at a time.
+
+The command uses the Bresenham algorithm to calculate the sequence of intermediate 
+coordinates that define the most efficient path between the starting point and the 
+destination point. The Bresenham algorithm is particularly suitable for drawing 
+straight lines on discrete grids (such as pixel grids), ensuring an optimized path in 
+terms of steps. In other words, the entity is moved along the calculated path, 
+updating its coordinates at each step. The speed of the movement can be controlled by 
+the ''times'' parameter. If the speed is not specified, a value of 1 is implicit considered.
+
+The Bresenham algorithm is efficient and ensures an optimized path, but produces straight 
+paths. In scenarios where more complex paths are required (e.g. with curves or obstacles), 
+more advanced pathfinding algorithms may be needed. 
+
 @italian
 
-@syntax TRAVEL path TO x, y
+Il comando ''TRAVEL'' consente di spostare un'entità (ad esempio, un personaggio in un videogioco, un robot in un ambiente simulato o un cursore su una mappa) da un punto di partenza a un punto di destinazione, seguendo un ''PATH'' creato in precedenza. Le coordinate del punto di partenza e del punto di destinazione vengono fornite utilizzando il comando ''CREATE PATH''.
+Quindi, questo comando aggiornerà una coppia di variabili (''x'',''y'') con il punto successivo.
+Facoltativamente, è possibile fornire un fattore moltiplicatore (''times''), per spostare più di un pixel
+alla volta.
+
+Il comando utilizza l'algoritmo di Bresenham per calcolare la sequenza di coordinate intermedie che definiscono il percorso più efficiente tra il punto di partenza e il punto di destinazione. L'algoritmo di Bresenham è particolarmente adatto per disegnare linee rette su griglie discrete (come le griglie di pixel), garantendo un percorso ottimizzato in termini di passaggi. In altre parole, l'entità viene spostata lungo il percorso calcolato,
+aggiornando le sue coordinate a ogni passo. La velocità del movimento può essere controllata dal
+parametro ''times''. Se la velocità non è specificata, viene implicitamente considerato un valore pari a 1.
+
+L'algoritmo di Bresenham è efficiente e garantisce un percorso ottimizzato, ma produce percorsi
+retti. In scenari in cui sono richiesti percorsi più complessi (ad esempio con curve o ostacoli),
+potrebbero essere necessari algoritmi di pathfinding più avanzati.
+
+@syntax TRAVEL path TO x, y [BY times]
 
 </usermanual> */
 
-void travel_path( Environment * _environment, char * _p, char * _x, char * _y ) {
+void travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times ) {
 
     deploy_begin( travel_path );
+
+        MAKE_LABEL
+        char loopLabel[ MAX_TEMPORARY_STORAGE ]; sprintf( loopLabel, "%stimes", label );
 
         Variable * path = variable_define( _environment, "travelpath__path", VT_PATH, 0 );
 
         Variable * xout = variable_define( _environment, "travelpath__xout", VT_POSITION, 0 );
         Variable * yout = variable_define( _environment, "travelpath__yout", VT_POSITION, 0 );
+
+        Variable * times = variable_define( _environment, "travelpath__times", VT_BYTE, 0 );
 
         Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
         Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
@@ -82,6 +120,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y ) 
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "10" ), stepy->realName );
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "12" ), fraction->realName );
 
+        cpu_label( _environment, loopLabel );
+
         if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
             variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
             if_then( _environment, variable_greater_than_const( _environment, fraction->name, 0, 1 )->name );
@@ -98,6 +138,9 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y ) 
             variable_move( _environment, variable_add( _environment, y->name, stepy->name )->name, y->name );
             variable_move( _environment, variable_add( _environment, fraction->name, dx2->name )->name, fraction->name );
         end_if_then( _environment );
+
+        cpu_dec( _environment, times->realName );
+        cpu_compare_and_branch_8bit_const( _environment, times->realName, 0, loopLabel, 0 );
 
         cpu_move_16bit( _environment, x->realName, path->realName );
         cpu_move_16bit( _environment, y->realName, address_displacement( _environment, path->realName, "2" ) );
@@ -121,8 +164,19 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y ) 
     Variable * path = variable_retrieve( _environment, "travelpath__path" );
     Variable * xout = variable_retrieve( _environment, "travelpath__xout" );
     Variable * yout = variable_retrieve( _environment, "travelpath__yout" );
+    Variable * ptimes = variable_retrieve( _environment, "travelpath__times" );
 
     variable_move( _environment, p->name, path->name );
+    if ( _times ) {
+        Variable * times = variable_retrieve( _environment, _times );
+        if ( times->initializedByConstant ) {
+            variable_store( _environment, ptimes->name, times->value );
+        } else {
+            variable_move( _environment, times->name, ptimes->name );
+        }
+    } else {
+        variable_store( _environment, ptimes->name, 1 );
+    }
 
     cpu_call( _environment, "lib_travel_path" );
 
