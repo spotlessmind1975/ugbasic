@@ -434,23 +434,28 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
+    char * filename = strtoupper( basename( _environment->exeFileName ) );
+
     // outhead0("SECTION code_user");
-    outhead1("ORG $%4.4x", _environment->program.startingAddress);
+    outhead1("ORG $%4.4x", ( _environment->program.startingAddress - 24 ));
+    outhead0("VZHEADER:");
+    outline0("DEFB $20, $20, $00, $00"); // preamble
+    out0("DEFB ");
+    for( int i=0, c=strlen(filename); i<c; ++i ) {
+        if ( c == 16 ) {
+            break;
+        }
+        out1("$%2.2x, ", filename[i]);
+    }
+    for( ; i<16; ++i ) {
+        out0("$00, ");
+    }
+    outline0("$00");
+    outline2("DEFB $f1, $%2.2x, $%2.2x", (unsigned char)(_environment->program.startingAddress&0xff), (unsigned char)(_environment->program.startingAddress>>8) & 0xff); // file type and starting address
     outline0("JP CODESTART");
 
-    // .org        $7B00-24
-    // .db 20h,20h,00h,00h,4Ch,4Ch,41h,4Eh,44h,45h,52h,2Eh,56h,5Ah,00h,00h
-    // .db 00h,00h,00h,00h,00h,F1h,00h,7Bh
-    // pippo:
-    //     JP pippo
-        
-            
-    deploy_inplace_preferred( vScrollTextDown, src_hw_6847z_vscroll_text_down_asm );
-    deploy_inplace_preferred( vScrollTextUp, src_hw_6847z_vscroll_text_up_asm );
+    deploy_inplace_preferred( vScrollTextDown, src_hw_6847z_vscroll_text_asm );
     deploy_inplace_preferred( vtechvars, src_hw_6847z_vars_asm);
-    // outhead0("SECTION data_user");
-    // outhead0("ORG $7030");
-    // outhead0("SECTION code_user");
 
     deploy( startup, src_hw_vtech_startup_asm);
 

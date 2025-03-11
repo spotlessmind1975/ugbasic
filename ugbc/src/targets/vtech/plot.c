@@ -53,7 +53,7 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c, int _pres
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    vtech_pset_vars( _environment, _x, _y, _c );
+    c6847z_pset_vars( _environment, _x, _y, _c );
 
     if ( _c && !_preserve_color ) {
         pen( _environment, _c );

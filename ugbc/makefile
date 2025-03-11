@@ -955,8 +955,8 @@ SOURCES_VTECH := $(subst src/hw/vtech/,src-generated/vtech_,$(MODULES_VTECH:.asm
 src-generated/vtech_%.c: $(MODULES_VTECH)
 	@xxd -i $(subst src-generated/vtech_,src/hw/vtech/,$(@:.c=.asm)) >$@
 
-src-generated/modules_vtech.c: $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) $(FONTS)
-	@cat $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) $(FONTS) >src-generated/modules_vtech.c
+src-generated/modules_vtech.c: $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z)
+	@cat $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) >src-generated/modules_vtech.c
 	@grep "src" src-generated/modules_vtech.c | awk -f modules.awk >src-generated/modules_vtech.h
 	@grep "data" src-generated/modules_vtech.c | awk -f modules.awk >>src-generated/modules_vtech.h
 

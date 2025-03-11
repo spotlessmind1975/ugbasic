@@ -52,6 +52,6 @@ void back( Environment * _environment, char * _color ) {
 
     paper( _environment, _color );
 
-    vtech_back( _environment );
+    c6847z_back( _environment );
 
 }

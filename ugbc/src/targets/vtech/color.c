@@ -56,7 +56,7 @@
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
-    vtech_background_color( _environment, _index, _shade );
+    // c6847z_background_color( _environment, _index, _shade );
 
 }
 
@@ -72,9 +72,9 @@ void color( Environment * _environment, int _index, int _shade ) {
  */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
-    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
+    // Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
     
-    vtech_background_color_semivars( _environment, _index, shade->realName );
+    // c6847z_background_color_semivars( _environment, _index, shade->realName );
 
 }
 
@@ -90,9 +90,9 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
  */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
-    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
-    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
+    // Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    // Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
     
-    vtech_background_color_vars( _environment, index->realName, shade->realName );
+    // c6847z_background_color_vars( _environment, index->realName, shade->realName );
 
 }

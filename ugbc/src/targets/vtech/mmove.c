@@ -54,7 +54,7 @@ void mmove_memory_memory( Environment * _environment, char * _from, char * _to, 
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
     Variable * to = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( VT_BITWIDTH( size->type ) != 16 ) {
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
@@ -78,13 +78,13 @@ void mmove_memory_video( Environment * _environment, char * _from, char * _to, c
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
     Variable * to = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( VT_BITWIDTH( size->type ) != 16 ) {
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
     }
 
-    vtech_move_memory_video( _environment, from->realName, to->realName, size->realName );
+    cpu_mem_move_16bit( _environment, from->realName, to->realName, size->realName );
 
 }
 
@@ -102,13 +102,13 @@ void mmove_video_memory( Environment * _environment, char * _from, char * _to, c
 
     Variable * from = variable_retrieve_or_define( _environment, _from, VT_ADDRESS, 0 );
     Variable * to = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _to, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( VT_BITWIDTH( size->type ) != 16 ) {
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
     }
 
-    vtech_move_video_memory( _environment, from->realName, to->realName, size->realName );
+    cpu_mem_move_16bit( _environment, from->realName, to->realName, size->realName );
 
 }
 

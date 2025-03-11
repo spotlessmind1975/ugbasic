@@ -54,15 +54,15 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 
     _channels = 0x08; // noise channel!
 
-    ay8910_start( _environment, ( _channels & 0x07 ) );
-    ay8910_set_frequency( _environment, _channels, 1000 );
+    // ay8910_start( _environment, ( _channels & 0x07 ) );
+    // ay8910_set_frequency( _environment, _channels, 1000 );
 
     long durationInTicks = ( _duration / 20 ) & 0xff;
 
-    ay8910_set_duration( _environment, _channels, durationInTicks );
+    // ay8910_set_duration( _environment, _channels, durationInTicks );
 
     if ( ! _environment->audioConfig.async ) {
-        ay8910_wait_duration( _environment, _channels );
+        // ay8910_wait_duration( _environment, _channels );
     }
 
 }
@@ -84,18 +84,18 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
     Variable * noiseChannel = variable_temporary( _environment, VT_BYTE, "(channel)" );
     variable_store( _environment, noiseChannel->name, 0x08 ); // noise channel!
 
-    ay8910_start_var( _environment, noiseChannel->realName );
+    // ay8910_start_var( _environment, noiseChannel->realName );
 
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, noiseChannel->realName, VT_WORD, 0x07 );
         Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-        ay8910_set_duration_vars( _environment, noiseChannel->realName, durationInTicks->realName );
+        // ay8910_set_duration_vars( _environment, noiseChannel->realName, durationInTicks->realName );
     } else {
-        ay8910_set_duration_vars( _environment, noiseChannel->realName, NULL );
+        // ay8910_set_duration_vars( _environment, noiseChannel->realName, NULL );
     } 
 
     if ( ! _environment->audioConfig.async ) {
-        ay8910_wait_duration_vars( _environment, noiseChannel->realName );
+        // ay8910_wait_duration_vars( _environment, noiseChannel->realName );
     }
 
 }

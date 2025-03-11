@@ -51,6 +51,6 @@ void cls( Environment * _environment, char * _paper ) {
         paper( _environment, "PAPER" );
     }
 
-    vtech_cls( _environment );
+    c6847z_cls( _environment );
     
 }

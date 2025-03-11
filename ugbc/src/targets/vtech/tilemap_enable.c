@@ -65,6 +65,6 @@ void tilemap_enable( Environment * _environment, int _width, int _height, int _c
     
     bitmap_disable( _environment );
 
-    vtech_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
+    c6847z_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
     
 }

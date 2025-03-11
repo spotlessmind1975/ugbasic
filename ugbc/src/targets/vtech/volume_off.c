@@ -67,7 +67,7 @@ singola voce.
 </usermanual> */
 void volume_off( Environment * _environment, int _channels ) {
 
-    ay8910_set_volume( _environment, _channels, 0 );
+    // ay8910_set_volume( _environment, _channels, 0 );
 
 }
 
@@ -92,9 +92,9 @@ void volume_off_var( Environment * _environment, char * _channels ) {
 
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        ay8910_set_volume_semi_var( _environment, channels->realName, 0 );
+        // ay8910_set_volume_semi_var( _environment, channels->realName, 0 );
     } else {
-        ay8910_set_volume_semi_var( _environment, NULL, 0 );
+        // ay8910_set_volume_semi_var( _environment, NULL, 0 );
     }
 
 }

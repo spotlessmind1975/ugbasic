@@ -40,6 +40,6 @@
 
 void text_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    vtech_hscroll_screen( _environment, _direction, _overlap );
+    c6847z_hscroll_screen( _environment, _direction, _overlap );
     
 }

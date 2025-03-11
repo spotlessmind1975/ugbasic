@@ -61,7 +61,7 @@ void move_tile( Environment * _environment, char * _tile, char * _x, char * _y )
             CRITICAL_CANNOT_MOVE_UNROLLED_TILE( _tile );
             break;
         case VT_TILES:
-            vtech_move_tiles( _environment, _tile, _x, _y );
+            c6847z_move_tiles( _environment, _tile, _x, _y );
             break;
     }
 

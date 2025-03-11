@@ -38,6 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
+
 /**
  * @brief 
  * 
@@ -47,37 +48,14 @@
  */
  /* <usermanual>
 @keyword PMODE
-@target vtech
+
+@target d32
 </usermanual> */
 void pmode( Environment * _environment, int _mode, int _start_page ) {
 
     int m = 0;
 
-    switch( _mode ) {
-        // 0	128x96
-        case 0:
-            m = BITMAP_MODE_GRAPHIC0;
-            break;
-        // 1	128x96
-        case 1:
-            m = BITMAP_MODE_GRAPHIC0;
-            break;
-        // 2	192x128
-        case 2:
-            m = BITMAP_MODE_GRAPHIC1;
-            break;
-        // 3	192x128
-        case 3:
-            m = BITMAP_MODE_GRAPHIC1;
-            break;
-        // 4	256x192
-        case 4:
-            m = BITMAP_MODE_GRAPHIC1;
-            break;
-        default:
-            WARNING_SCREEN_MODE( _mode );
-            break;
-    }
+    WARNING_SCREEN_MODE( _mode );
 
     if ( m ) {
 
@@ -85,7 +63,7 @@ void pmode( Environment * _environment, int _mode, int _start_page ) {
 
         if ( mode ) {
             
-            vtech_screen_mode_enable( _environment, mode );    
+            c6847z_screen_mode_enable( _environment, mode );    
 
             _environment->currentMode = mode->id;
             _environment->currentTileMode = mode->bitmap ? 0 : 1;

@@ -44,7 +44,7 @@
 </usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    vtech_hscroll_line( _environment, _direction, _overlap );
+    c6847z_hscroll_line( _environment, _direction, _overlap );
     
 }
 

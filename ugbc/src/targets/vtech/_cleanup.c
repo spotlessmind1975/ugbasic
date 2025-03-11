@@ -44,8 +44,7 @@ void target_prepare_finalization( Environment * _environment ) {
 
 void target_finalization( Environment * _environment ) {
 
-    ay8910_finalization( _environment );
-    vtech_finalization( _environment );
+    c6847z_finalization( _environment );
 
     if ( ! _environment->anyProtothread ) {
         outhead0("PROTOTHREADINIT:" );

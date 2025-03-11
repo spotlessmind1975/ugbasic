@@ -51,6 +51,4 @@
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    vtech_wait_vbl( _environment, _raster_line );
-
 }

@@ -45,12 +45,9 @@
  */
 void paper( Environment * _environment, char * _color ) {
 
-    Variable * paper = variable_retrieve( _environment, "PAPER" );
+    Variable * paper = variable_retrieve_or_define( _environment, "PAPER", VT_COLOR, COLOR_BLACK );
     Variable * color = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 
     variable_move( _environment, color->name, paper->name );
-    
-    vtech_background_color_semivars( _environment, 0, color->realName );
-    // vtech_border_color( _environment, color->realName );
     
 }

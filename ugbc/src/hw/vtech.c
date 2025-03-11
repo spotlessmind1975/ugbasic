@@ -550,4 +550,19 @@ void vtech_put_key(  Environment * _environment, char *_string, char * _size ) {
 
 }
 
+void vtech_sys_call( Environment * _environment, int _destination ) {
+
+    _environment->sysCallUsed = 1;
+
+    outline0("PUSH HL" );
+    outline0("LD HL, SYSCALL0" );
+    outline0("INC HL" );
+    outline1("LD (HL), 0x%2.2x", (_destination & 0xff ) );
+    outline0("INC HL" );
+    outline1("LD (HL), 0x%2.2x", ((_destination>>8) & 0xff ) );
+    outline0("POP HL" );
+    outline0("CALL SYSCALL");
+
+}
+
 #endif

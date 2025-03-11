@@ -155,6 +155,8 @@
 #define BANK_COUNT          0
 #define BANK_SIZE           0
 
+#define MAX_AUDIO_CHANNELS      1
+
 void vtech_wait_key( Environment * _environment, int _release );
 void vtech_wait_fire( Environment * _environment, int _port, int _release );
 void vtech_wait_fire_semivar( Environment * _environment, char * _port, int _release );
@@ -182,5 +184,6 @@ void vtech_timer_set_address( Environment * _environment, char * _timer, char * 
 void vtech_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void vtech_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
 void vtech_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+void vtech_sys_call( Environment * _environment, int _destination );
 
 #endif

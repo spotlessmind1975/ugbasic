@@ -64,6 +64,6 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
             break;        
     }
 
-    vtech_text( _environment, address->realName, size->realName, _raw );
+    c6847z_text( _environment, address->realName, size->realName, _raw );
 
 }

@@ -55,8 +55,8 @@
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
-    ay8910_start( _environment, ( _channels & 0x07 ) );
-    ay8910_set_note( _environment, _channels, _note );
+    // ay8910_start( _environment, ( _channels & 0x07 ) );
+    // ay8910_set_note( _environment, _channels, _note );
     if ( _delay ) {
         wait_milliseconds( _environment, _delay );
     }
@@ -79,11 +79,11 @@ void play_vars( Environment * _environment, char * _note, char * _delay, char * 
     Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 42 );
     if ( _channels ) {
         Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        ay8910_start_var( _environment, channels->realName );
-        ay8910_set_note_vars( _environment, channels->realName, note->realName );
+        // ay8910_start_var( _environment, channels->realName );
+        // ay8910_set_note_vars( _environment, channels->realName, note->realName );
     } else {
-        ay8910_start_var( _environment, NULL );
-        ay8910_set_note_vars( _environment, NULL, note->realName );
+        // ay8910_start_var( _environment, NULL );
+        // ay8910_set_note_vars( _environment, NULL, note->realName );
     }
     if ( _delay ) {
         wait_milliseconds_var( _environment, _delay );

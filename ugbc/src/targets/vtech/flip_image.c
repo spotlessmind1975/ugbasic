@@ -109,15 +109,15 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        c6847z_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        c6847z_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        c6847z_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        c6847z_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -130,21 +130,21 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vtech_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+                c6847z_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
             } else {
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vtech_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
+                        c6847z_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
                     } else {
-                        vtech_flip_image( _environment, resource, frame->realName, "", image->frameSize, image->frameCount, _direction );
+                        c6847z_flip_image( _environment, resource, frame->realName, "", image->frameSize, image->frameCount, _direction );
                     }
                 } else {
                     if ( !frame ) {
-                        vtech_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
+                        c6847z_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
                     } else {
-                        vtech_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
+                        c6847z_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
                     }
                 }
             }
@@ -177,9 +177,9 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
-                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    c6847z_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    c6847z_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -191,13 +191,13 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vtech_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+                c6847z_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
             } else {
                 if ( !frame ) {
-                    vtech_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
+                    c6847z_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
                 } else {
-                    vtech_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                    c6847z_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
                 }
             }
             break;
@@ -227,10 +227,10 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vtech_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
+                c6847z_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
 
             } else {        
-                vtech_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
+                c6847z_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
             }
             break;
         default:

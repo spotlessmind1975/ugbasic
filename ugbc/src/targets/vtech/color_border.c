@@ -52,7 +52,7 @@ void color_border( Environment * _environment, int _color ) {
     
     char color[MAX_TEMPORARY_STORAGE]; sprintf(color, "$%2.2x", _color);
 
-    vtech_border_color( _environment, color );
+    c6847z_border_color( _environment, color );
 
 }
 
@@ -70,6 +70,6 @@ void color_border_var( Environment * _environment, char * _color ) {
     // Safety check -- expression must exists (it should be always true)
     Variable * color = variable_retrieve( _environment, _color );
 
-    vtech_border_color( _environment, color->realName );
+    c6847z_border_color( _environment, color->realName );
 
 }
