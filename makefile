@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 vtech zx))
 endif
 
 ifdef 10liner
@@ -124,6 +124,9 @@ ifeq ($(target),zx)
 endif
 ifeq ($(target),pc1403)
   output=ram
+endif
+ifeq ($(target),vetch)
+  output=vz
 endif
 endif
 
@@ -939,6 +942,27 @@ generated/vic20/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg
 
 generated/vic20/exeso/%.d64: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.d64=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/vic20/exeso/,,$(@:.d64=.bas))
+
+#------------------------------------------------ 
+# vtech:
+#    VTECH LASER 200/305/310
+#------------------------------------------------ 
+# 
+toolchain.vtech: z88dk
+
+generated/vtech/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vtech$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/vtech/asm/,,$(@:.asm=.bas)) ../$@ 
+
+generated/vtech/exe/%.vz:
+	@$(Z80ASM) -D__vtech__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.vz=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.vz=.sym)) $(subst /exe/,/asm/,$(@:.vz=.osym))
+	@php sym2vtech.php $(subst /exe/,/asm/,$(@:.vz=.osym)) >$(subst /exe/,/asm/,$(@:.vz=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.vz=.o))
+	@mv $(subst /exe/,/asm/,$(@:.vz=.bin)) $(@:.vz=.)
+	@rm -f $(@:.vz=.bin) $(@:.vz=_*.bin) $(@:.vz=.) $(@:.vz=_*.) $(dir $@)main.
+
+generated/vtech/exeso/%.vz: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.vz=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vtech$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.vz=.info) -o ../$@ -O vz $(subst generated/vtech/exeso/,,$(@:.vz=.bas))
 
 #------------------------------------------------ 
 # zx:
