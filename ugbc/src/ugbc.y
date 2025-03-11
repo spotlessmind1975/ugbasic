@@ -10708,13 +10708,13 @@ optional_by :
     };
 
 travel_definition :
-    Identifier TO expr OP_COMMA expr optional_by {
+    Identifier TO Identifier OP_COMMA Identifier optional_by {
         travel_path( _environment, $1, $3, $5, $6 );
     }
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );
-    } indexes CP TO expr OP_COMMA expr optional_by {
+    } indexes CP TO Identifier OP_COMMA Identifier optional_by {
         Variable * path = variable_move_from_array( _environment, $1 );
         travel_path( _environment, path->name, $7, $9, $10 );
         variable_move_array( _environment, $1, path->name );
