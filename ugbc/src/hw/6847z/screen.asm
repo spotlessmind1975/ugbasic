@@ -36,19 +36,21 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 SCREEN
-    STA <MATHPTR0
-    LDA CURRENTMODE
-    CMPA #7
-    BCS SCREEN0
-    LDA #0
-    RTS
-
-SCREEN0
-    LDA <MATHPTR0
-    PSHS D
-    JSR CALCPOST0
-    PULS D
-
-    LDA ,Y
+    RET
     
-    RTS
+;     STA <MATHPTR0
+;     LDA CURRENTMODE
+;     CMPA #7
+;     BCS SCREEN0
+;     LDA #0
+;     RTS
+
+; SCREEN0
+;     LDA <MATHPTR0
+;     PSHS D
+;     JSR CALCPOST0
+;     PULS D
+
+;     LDA ,Y
+    
+;     RTS

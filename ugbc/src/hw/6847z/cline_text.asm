@@ -36,65 +36,67 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINE
-    LDA CURRENTMODE
-    CMPA #2
-    BHI CLINE0X
-    JMP CLINET
-CLINE0X
-    RTS
+    RET
 
-CLINET
-    LDX TEXTADDRESS
+;     LDA CURRENTMODE
+;     CMPA #2
+;     BHI CLINE0X
+;     JMP CLINET
+; CLINE0X
+;     RTS
 
-    LDA CURRENTTILESWIDTH
-    LDB <CLINEY
-    CMPB #0
-    BEQ CLINESKIP
-CLINEL1
-    ANDCC #$FE
-    LEAX A, X
-    DECB
-    CMPB #0
-    BNE CLINEL1
+; CLINET
+;     LDX TEXTADDRESS
 
-CLINESKIP
-    LDA <CHARACTERS
-    CMPA #0
-    BEQ CLINEENTIRE
+;     LDA CURRENTTILESWIDTH
+;     LDB <CLINEY
+;     CMPB #0
+;     BEQ CLINESKIP
+; CLINEL1
+;     ANDCC #$FE
+;     LEAX A, X
+;     DECB
+;     CMPB #0
+;     BNE CLINEL1
 
-    ANDCC #$FE
-    LDA <CLINEX
-    LEAX A, X
+; CLINESKIP
+;     LDA <CHARACTERS
+;     CMPA #0
+;     BEQ CLINEENTIRE
 
-    LDB <CHARACTERS
-    LDU #0
+;     ANDCC #$FE
+;     LDA <CLINEX
+;     LEAX A, X
 
-CLINEINCX
-    LDA EMPTYTILE
-    STA ,X
-    LEAX 1, X    
-    INC <CLINEX
-    DECB
-    CMPB #0
-    BEQ CLINEDONE
-    LDA <CLINEX
-    CMPA CONSOLEX2
-    BLE CLINEINCX
+;     LDB <CHARACTERS
+;     LDU #0
 
-CLINEINCX2     
-CLINEDONE
-    RTS
+; CLINEINCX
+;     LDA EMPTYTILE
+;     STA ,X
+;     LEAX 1, X    
+;     INC <CLINEX
+;     DECB
+;     CMPB #0
+;     BEQ CLINEDONE
+;     LDA <CLINEX
+;     CMPA CONSOLEX2
+;     BLE CLINEINCX
 
-CLINEENTIRE
-    LDB <CLINEX
+; CLINEINCX2     
+; CLINEDONE
+;     RTS
 
-CLINEINC2X
-    LDA EMPTYTILE
-    STA B, X
+; CLINEENTIRE
+;     LDB <CLINEX
+
+; CLINEINC2X
+;     LDA EMPTYTILE
+;     STA B, X
         
-    INCB
-    INC <CLINEX
-    LDB <CLINEX
-    CMPB CONSOLEX2
-    BLE CLINEINC2X
-    RTS
+;     INCB
+;     INC <CLINEX
+;     LDB <CLINEX
+;     CMPB CONSOLEX2
+;     BLE CLINEINC2X
+;     RTS

@@ -36,52 +36,54 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLST
-    LDA CURRENTMODE
-    CMPA #0
-    BNE CLS0X
-    JMP CLS0
-CLS0X
-    CMPA #1
-    BNE CLS1X
-    JMP CLS1
-CLS1X
-    CMPA #2
-    BNE CLS2X
-    JMP CLS2
-CLS2X
-    CMPA #3
-    BNE CLS3X
-    JMP CLS3
-CLS3X
-    CMPA #4
-    BNE CLS4X
-    JMP CLS4
-CLS4X
-    CMPA #5
-    BNE CLS5X
-    JMP CLS5
-CLS5X
-    CMPA #6
-    BNE CLS6X
-    JMP CLS6
-CLS6X
-    RTS
+    RET
 
-CLS0
-CLS1
-CLS2
-CLS3
-CLS4
-CLS5
-CLS6
-CLST2
-    LDY TEXTADDRESS
-    LDX CURRENTFRAMESIZE
-    LDA EMPTYTILE
-CLST3
-    STA , Y+
-    LEAX -1, X
-    CMPX #0
-    BNE CLST3
+;     LDA CURRENTMODE
+;     CMPA #0
+;     BNE CLS0X
+;     JMP CLS0
+; CLS0X
+;     CMPA #1
+;     BNE CLS1X
+;     JMP CLS1
+; CLS1X
+;     CMPA #2
+;     BNE CLS2X
+;     JMP CLS2
+; CLS2X
+;     CMPA #3
+;     BNE CLS3X
+;     JMP CLS3
+; CLS3X
+;     CMPA #4
+;     BNE CLS4X
+;     JMP CLS4
+; CLS4X
+;     CMPA #5
+;     BNE CLS5X
+;     JMP CLS5
+; CLS5X
+;     CMPA #6
+;     BNE CLS6X
+;     JMP CLS6
+; CLS6X
+;     RTS
 
-    RTS
+; CLS0
+; CLS1
+; CLS2
+; CLS3
+; CLS4
+; CLS5
+; CLS6
+; CLST2
+;     LDY TEXTADDRESS
+;     LDX CURRENTFRAMESIZE
+;     LDA EMPTYTILE
+; CLST3
+;     STA , Y+
+;     LEAX -1, X
+;     CMPX #0
+;     BNE CLST3
+
+;     RTS

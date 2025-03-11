@@ -36,64 +36,67 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CPUMEMMOVE
-    CMPU #0
-    BEQ CPUMEMMOVEDONE
-CPUMEMMOVEL1
-    LDA ,Y+
-    STA ,X+
-    LEAU -1,U
-    CMPU #$0
-    BNE CPUMEMMOVEL1
-CPUMEMMOVEDONE
-    RTS
+    RET
+
+;     CMPU #0
+;     BEQ CPUMEMMOVEDONE
+; CPUMEMMOVEL1
+;     LDA ,Y+
+;     STA ,X+
+;     LEAU -1,U
+;     CMPU #$0
+;     BNE CPUMEMMOVEL1
+; CPUMEMMOVEDONE
+;     RTS
     
 C6847STARTUP
+    RET
+    
+;     ; (4) Default screen mode is semigraphic-4
 
-    ; (4) Default screen mode is semigraphic-4
+;     STA $FFC0
+;     STA $FFC2
+;     STA $FFC4
+;     LDA $FF22
+;     ANDA #$7F
+;     STA $FF22  
 
-    STA $FFC0
-    STA $FFC2
-    STA $FFC4
-    LDA $FF22
-    ANDA #$7F
-    STA $FF22  
+;     LDA $03
+;     STA $FF98
+;     RTS
 
-    LDA $03
-    STA $FF98
-    RTS
+; ; Change the start of the image in RAM to display in CoCo 1 and 2 text and
+; ; graphics modes. The value in $F0-$F6 times 512 is the start of video RAM.
+; ;
+; ; Input : D - Address
+; ;
+; C6847VIDEOSTARTATT
+;     ANDB #0
+;     ANDA #$FE
+;     STD TEXTADDRESS
+;     BRA C6847VIDEOSTARTAT
 
-; Change the start of the image in RAM to display in CoCo 1 and 2 text and
-; graphics modes. The value in $F0-$F6 times 512 is the start of video RAM.
-;
-; Input : D - Address
-;
-C6847VIDEOSTARTATT
-    ANDB #0
-    ANDA #$FE
-    STD TEXTADDRESS
-    BRA C6847VIDEOSTARTAT
+; C6847VIDEOSTARTATB
+;     ANDB #0
+;     ANDA #$FE
+;     STD BITMAPADDRESS
+;     BRA C6847VIDEOSTARTAT
 
-C6847VIDEOSTARTATB
-    ANDB #0
-    ANDA #$FE
-    STD BITMAPADDRESS
-    BRA C6847VIDEOSTARTAT
-
-C6847VIDEOSTARTAT
-    TFR A, B
-    LSRA
-    LDB #$07
-    LDX #$FFC6
-C6847VIDEOSTARTATL1
-    RORA
-    BCC C6847VIDEOSTARTATB0
-    STA 1,X
-    BRA C6847VIDEOSTARTATL1NX
-C6847VIDEOSTARTATB0
-    STA ,X
-C6847VIDEOSTARTATL1NX
-    LEAX 2,X
-    DECB
-    BNE C6847VIDEOSTARTATL1
-    RTS
+; C6847VIDEOSTARTAT
+;     TFR A, B
+;     LSRA
+;     LDB #$07
+;     LDX #$FFC6
+; C6847VIDEOSTARTATL1
+;     RORA
+;     BCC C6847VIDEOSTARTATB0
+;     STA 1,X
+;     BRA C6847VIDEOSTARTATL1NX
+; C6847VIDEOSTARTATB0
+;     STA ,X
+; C6847VIDEOSTARTATL1NX
+;     LEAX 2,X
+;     DECB
+;     BNE C6847VIDEOSTARTATL1
+;     RTS
 

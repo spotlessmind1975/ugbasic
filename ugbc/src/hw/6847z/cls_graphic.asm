@@ -36,80 +36,82 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLSG
-    LDA CURRENTMODE
-    CMPA #7
-    BNE CLS7X
-    JMP CLS7
-CLS7X
-    CMPA #8
-    BNE CLS8X
-    JMP CLS8
-CLS8X
-    CMPA #9
-    BNE CLS9X
-    JMP CLS9
-CLS9X
-    CMPA #10
-    BNE CLS10X
-    JMP CLS10
-CLS10X
-    CMPA #11
-    BNE CLS11X
-    JMP CLS11
-CLS11X
-    CMPA #12
-    BNE CLS12X
-    JMP CLS12
-CLS12X
-    CMPA #13
-    BNE CLS13X
-    JMP CLS13
-CLS13X
-    CMPA #14
-    BNE CLS14X
-    JMP CLS14
-CLS14X
-    RTS
+    RET
 
-CLSPATTERNS
-    fcb %00000000
-    fcb %01010101
-    fcb %10101010
-    fcb %11111111
+;     LDA CURRENTMODE
+;     CMPA #7
+;     BNE CLS7X
+;     JMP CLS7
+; CLS7X
+;     CMPA #8
+;     BNE CLS8X
+;     JMP CLS8
+; CLS8X
+;     CMPA #9
+;     BNE CLS9X
+;     JMP CLS9
+; CLS9X
+;     CMPA #10
+;     BNE CLS10X
+;     JMP CLS10
+; CLS10X
+;     CMPA #11
+;     BNE CLS11X
+;     JMP CLS11
+; CLS11X
+;     CMPA #12
+;     BNE CLS12X
+;     JMP CLS12
+; CLS12X
+;     CMPA #13
+;     BNE CLS13X
+;     JMP CLS13
+; CLS13X
+;     CMPA #14
+;     BNE CLS14X
+;     JMP CLS14
+; CLS14X
+;     RTS
 
-CLS7
-CLS9
-CLS11
-CLS13
-    LDA _PAPER
-    ANDA #$03
-    LDX #CLSPATTERNS
-    LDA A, X
-    JMP CLSG2
+; CLSPATTERNS
+;     fcb %00000000
+;     fcb %01010101
+;     fcb %10101010
+;     fcb %11111111
 
-CLS8
-CLS10
-CLS12
-    LDA #$0
-    JMP CLSG2
+; CLS7
+; CLS9
+; CLS11
+; CLS13
+;     LDA _PAPER
+;     ANDA #$03
+;     LDX #CLSPATTERNS
+;     LDA A, X
+;     JMP CLSG2
 
-CLS14
-    LDA _PAPER
-    ANDA #$03
-    LDX #CLSPATTERNS
-    LDA A, X
-    JMP CLSG2
-CLSG0    
-    LDA #$0
-    JMP CLSG2
+; CLS8
+; CLS10
+; CLS12
+;     LDA #$0
+;     JMP CLSG2
 
-CLSG2
-    LDY BITMAPADDRESS
-    LDX CURRENTFRAMESIZE
-CLSGL1
-    STA , Y+
-    LEAX -1, X
-    CMPX #0
-    BNE CLSGL1
+; CLS14
+;     LDA _PAPER
+;     ANDA #$03
+;     LDX #CLSPATTERNS
+;     LDA A, X
+;     JMP CLSG2
+; CLSG0    
+;     LDA #$0
+;     JMP CLSG2
 
-    RTS
+; CLSG2
+;     LDY BITMAPADDRESS
+;     LDX CURRENTFRAMESIZE
+; CLSGL1
+;     STA , Y+
+;     LEAX -1, X
+;     CMPX #0
+;     BNE CLSGL1
+
+;     RTS

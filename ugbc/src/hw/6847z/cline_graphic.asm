@@ -36,209 +36,211 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 CLINEG
-CLINEGGO
-    LDA CURRENTMODE
-    CMPA #7
-    BNE CLINEG7X
-    JMP CLINEG7
-CLINEG7X
-    CMPA #8
-    BNE CLINEG8X
-    JMP CLINEG8
-CLINEG8X
-    CMPA #9
-    BNE CLINEG9X
-    JMP CLINEG9
-CLINEG9X
-    CMPA #10
-    BNE CLINEG10X
-    JMP CLINEG10
-CLINEG10X
-    CMPA #11
-    BNE CLINEG11X
-    JMP CLINEG11
-CLINEG11X
-    CMPA #12
-    BNE CLINEG12X
-    JMP CLINEG12
-CLINEG12X
-    CMPA #13
-    BNE CLINEG13X
-    JMP CLINEG13
-CLINEG13X
-    CMPA #14
-    BNE CLINEG14X
-    JMP CLINEG14
-CLINEG14X
-    RTS
+    RET
 
-;-----------------------------------------------------------------------------
-; BITMAP MODE
-;-----------------------------------------------------------------------------
+; CLINEGGO
+;     LDA CURRENTMODE
+;     CMPA #7
+;     BNE CLINEG7X
+;     JMP CLINEG7
+; CLINEG7X
+;     CMPA #8
+;     BNE CLINEG8X
+;     JMP CLINEG8
+; CLINEG8X
+;     CMPA #9
+;     BNE CLINEG9X
+;     JMP CLINEG9
+; CLINEG9X
+;     CMPA #10
+;     BNE CLINEG10X
+;     JMP CLINEG10
+; CLINEG10X
+;     CMPA #11
+;     BNE CLINEG11X
+;     JMP CLINEG11
+; CLINEG11X
+;     CMPA #12
+;     BNE CLINEG12X
+;     JMP CLINEG12
+; CLINEG12X
+;     CMPA #13
+;     BNE CLINEG13X
+;     JMP CLINEG13
+; CLINEG13X
+;     CMPA #14
+;     BNE CLINEG14X
+;     JMP CLINEG14
+; CLINEG14X
+;     RTS
 
-; The 64 x 64 Color Graphics mode generates a display matrix of 64 
-; elements wide by 64 elements high. Each element may be one of four 
-; colors. A 1K x 8 display memory is required. Each pixel equals 
-; four dot-clocks by three scan lines.
-CLINEG7
+; ;-----------------------------------------------------------------------------
+; ; BITMAP MODE
+; ;-----------------------------------------------------------------------------
 
-    JSR CALCPOS7
+; ; The 64 x 64 Color Graphics mode generates a display matrix of 64 
+; ; elements wide by 64 elements high. Each element may be one of four 
+; ; colors. A 1K x 8 display memory is required. Each pixel equals 
+; ; four dot-clocks by three scan lines.
+; CLINEG7
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS7
 
-; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
-; by 64 elements high. Each element may be either ON or OFF. However, 
-; the entire display may be one of two colors, selected by using the 
-; color set select pin. A 1K x 8 display memory is required. Each 
-; pixel equals two dotclocks by three scan lines.
-CLINEG8
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS8
+; ; The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
+; ; by 64 elements high. Each element may be either ON or OFF. However, 
+; ; the entire display may be one of two colors, selected by using the 
+; ; color set select pin. A 1K x 8 display memory is required. Each 
+; ; pixel equals two dotclocks by three scan lines.
+; CLINEG8
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS8
 
-; The 128 x 64 Color Graphics mode generates a display matrix 128 
-; elements wide by 64 elements high. Each element may be one of four 
-; colors. A 2K x 8 display memory is required. Each pixel equals
-; two dot-clocks by three scan lines.
-CLINEG9
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS9
+; ; The 128 x 64 Color Graphics mode generates a display matrix 128 
+; ; elements wide by 64 elements high. Each element may be one of four 
+; ; colors. A 2K x 8 display memory is required. Each pixel equals
+; ; two dot-clocks by three scan lines.
+; CLINEG9
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS9
 
-; The 128 x 96 Graphics mode generates a display matrix 128 
-; elements wide by 96 elements high. Each element may be either 
-; ON or OFF. However, the entire display may be one of two colors
-; selected by using the color select pin. A 2K x 8 display memory 
-; is required. Each pixel equals two dot-clocks by two scan lines.
-CLINEG10
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS10
+; ; The 128 x 96 Graphics mode generates a display matrix 128 
+; ; elements wide by 96 elements high. Each element may be either 
+; ; ON or OFF. However, the entire display may be one of two colors
+; ; selected by using the color select pin. A 2K x 8 display memory 
+; ; is required. Each pixel equals two dot-clocks by two scan lines.
+; CLINEG10
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS10
 
-; The 128 x 96 Color Graphics mode generates a display 128 elements 
-; wide by 96 elements high. Each element may be one of four colors. 
-; A 3K x 8 display memory is required. Each pixel equals two 
-; dot-clocks by two scan lines.
-CLINEG11
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS11
+; ; The 128 x 96 Color Graphics mode generates a display 128 elements 
+; ; wide by 96 elements high. Each element may be one of four colors. 
+; ; A 3K x 8 display memory is required. Each pixel equals two 
+; ; dot-clocks by two scan lines.
+; CLINEG11
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS11
 
-; The 128 x 192 Graphics mode generates a display matrix 128 elements 
-; wide by 192 elements high. Each element may be either ON or OFF
-; but the ON elements may be one of two colors selected with color 
-; set select pin. A 3K x 8 display memory is required. Each pixel 
-; equals two dot-clocks by one scan line.
-CLINEG12
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS12
+; ; The 128 x 192 Graphics mode generates a display matrix 128 elements 
+; ; wide by 192 elements high. Each element may be either ON or OFF
+; ; but the ON elements may be one of two colors selected with color 
+; ; set select pin. A 3K x 8 display memory is required. Each pixel 
+; ; equals two dot-clocks by one scan line.
+; CLINEG12
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS12
 
-;  The 128 x 192 Color Graphics mode generates a display 128 elements 
-;  wide by 192 elements high. Each element may be one of four colors.
-;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
-;  by one scan line.
-CLINEG13
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS13
+; ;  The 128 x 192 Color Graphics mode generates a display 128 elements 
+; ;  wide by 192 elements high. Each element may be one of four colors.
+; ;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
+; ;  by one scan line.
+; CLINEG13
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS13
 
-; The 256 x 192 Graphics mode generates a display 256 elements wide by 
-; 192 elements high. Each element may be either ON or OFF, but the ON 
-; element may be one of two colors selected with the color set select pin. 
-; A 6K x 8 display memory is required. Each pixel equals one 
-; dot-clock by one scan line.
-CLINEG14
+;     JMP CLINEGCOMMON
 
-    JSR CALCPOS14
+; ; The 256 x 192 Graphics mode generates a display 256 elements wide by 
+; ; 192 elements high. Each element may be either ON or OFF, but the ON 
+; ; element may be one of two colors selected with the color set select pin. 
+; ; A 6K x 8 display memory is required. Each pixel equals one 
+; ; dot-clock by one scan line.
+; CLINEG14
 
-    JMP CLINEGCOMMON
+;     JSR CALCPOS14
 
-CLINEGCOMMON
+;     JMP CLINEGCOMMON
 
-    LDD #0
-    STA   <MATHPTR4
-    STB   <MATHPTR5    
+; CLINEGCOMMON
 
-    LDB <CHARACTERS
-CLINEGLOOP2
+;     LDD #0
+;     STA   <MATHPTR4
+;     STB   <MATHPTR5    
 
-    PSHS D
-    LDA <CLINEX
-    STA <MATHPTR0
-    LDA <CLINEY
-    STA <MATHPTR1
-    JSR CALCPOSG
-    PULS D
+;     LDB <CHARACTERS
+; CLINEGLOOP2
 
-    LDU #0
+;     PSHS D
+;     LDA <CLINEX
+;     STA <MATHPTR0
+;     LDA <CLINEY
+;     STA <MATHPTR1
+;     JSR CALCPOSG
+;     PULS D
+
+;     LDU #0
     
-CLINEGSP0
+; CLINEGSP0
 
-    PSHS D,Y,X
+;     PSHS D,Y,X
 
-CLINEGSP0L1
-    LDA CURRENTMODE
-    CMPA #7
-    BEQ CLINEGSP0L1M
-    CMPA #9
-    BEQ CLINEGSP0L1M
-    CMPA #11
-    BEQ CLINEGSP0L1M
-    CMPA #13
-    BEQ CLINEGSP0L1M
+; CLINEGSP0L1
+;     LDA CURRENTMODE
+;     CMPA #7
+;     BEQ CLINEGSP0L1M
+;     CMPA #9
+;     BEQ CLINEGSP0L1M
+;     CMPA #11
+;     BEQ CLINEGSP0L1M
+;     CMPA #13
+;     BEQ CLINEGSP0L1M
 
-    LDA #0
-    STA ,X
-    JMP CLINEGSP0L1M2
+;     LDA #0
+;     STA ,X
+;     JMP CLINEGSP0L1M2
 
-CLINEGSP0L1M
+; CLINEGSP0L1M
 
-    LDA #0
-    STA , X+
-    STA , X
-    JMP CLINEGSP0L1M2
+;     LDA #0
+;     STA , X+
+;     STA , X
+;     JMP CLINEGSP0L1M2
 
-CLINEGSP0L1M2
+; CLINEGSP0L1M2
     
-    LDA CURRENTSL
-    LEAX A, X 
+;     LDA CURRENTSL
+;     LEAX A, X 
 
-    ANDCC #$FE
-    LDA <PATTERN
-    EORA #$FF
-    ADDA #1
-    LEAX A, X 
-    LEAU 1, U
-    CMPU #8
-    BEQ CLINEGSP0L1X
-    JMP CLINEGSP0L1
+;     ANDCC #$FE
+;     LDA <PATTERN
+;     EORA #$FF
+;     ADDA #1
+;     LEAX A, X 
+;     LEAU 1, U
+;     CMPU #8
+;     BEQ CLINEGSP0L1X
+;     JMP CLINEGSP0L1
 
-CLINEGSP0L1X
+; CLINEGSP0L1X
 
-    PULS D,Y,X
+;     PULS D,Y,X
 
-    LDA <PATTERN
-    LEAX A, X 
-    LEAX 1, X
+;     LDA <PATTERN
+;     LEAX A, X 
+;     LEAX 1, X
 
-    INC <CLINEX
-CLINEGNEXTX
-    LDA <CLINEX
-    CMPA CONSOLEX2
-    BHI CLINEGNEXT2
-    JMP CLINEGNEXT
-CLINEGNEXT2
-    RTS
-CLINEGNEXT
-    DECB
-    BEQ CLINEGEND
-    JMP CLINEGLOOP2
-CLINEGEND
-    RTS
+;     INC <CLINEX
+; CLINEGNEXTX
+;     LDA <CLINEX
+;     CMPA CONSOLEX2
+;     BHI CLINEGNEXT2
+;     JMP CLINEGNEXT
+; CLINEGNEXT2
+;     RTS
+; CLINEGNEXT
+;     DECB
+;     BEQ CLINEGEND
+;     JMP CLINEGLOOP2
+; CLINEGEND
+;     RTS
