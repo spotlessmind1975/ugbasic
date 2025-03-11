@@ -40,6 +40,6 @@
 
 void sys_call( Environment * _environment, int _address ) {
 
-    cpc_sys_call( _environment, _address );
+    vtech_sys_call( _environment, _address );
 
 }

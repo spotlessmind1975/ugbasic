@@ -47,7 +47,7 @@
  */
  /* <usermanual>
 @keyword PMODE
-@target cpc
+@target vtech
 </usermanual> */
 void pmode( Environment * _environment, int _mode, int _start_page ) {
 
@@ -85,7 +85,7 @@ void pmode( Environment * _environment, int _mode, int _start_page ) {
 
         if ( mode ) {
             
-            cpc_screen_mode_enable( _environment, mode );    
+            vtech_screen_mode_enable( _environment, mode );    
 
             _environment->currentMode = mode->id;
             _environment->currentTileMode = mode->bitmap ? 0 : 1;

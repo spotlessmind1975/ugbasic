@@ -47,12 +47,12 @@
  */
 /* <usermanual>
 @keyword DLOAD
-@target cpc
+@target vtech
 </usermanual> */
 /* <usermanual>
 @keyword DLOAD ERROR
 
-@target cpc
+@target vtech
 </usermanual> */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
@@ -72,6 +72,6 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         WARNING_DLOAD_IGNORED_SIZE( _filename );
     }
 
-    cpc_dload( _environment, _filename, _offset, _address, _size );
+    vtech_dload( _environment, _filename, _offset, _address, _size );
 
 }

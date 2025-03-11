@@ -46,12 +46,12 @@
  */
 /* <usermanual>
 @keyword COLOR BACK
-@target cpc
+@target vtech
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 
     paper( _environment, _color );
 
-    cpc_back( _environment );
+    vtech_back( _environment );
 
 }

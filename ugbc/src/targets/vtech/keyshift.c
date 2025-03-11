@@ -44,7 +44,7 @@ Variable * keyshift( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of KEYSHIFT)");
 
-    cpc_keyshift( _environment, result->realName );
+    vtech_keyshift( _environment, result->realName );
 
     return result;
 

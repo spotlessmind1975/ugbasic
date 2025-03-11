@@ -62,7 +62,7 @@ indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà eme
 @example SHOOT
 @example SHOOT ON %001
 
-@target cpc
+@target vtech
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 

@@ -48,7 +48,7 @@
 /* <usermanual>
 @keyword TILE FIRST
 
-@target cpc
+@target vtech
 </usermanual> */
 Variable * tile_get_first( Environment * _environment, char * _tile ) {
 

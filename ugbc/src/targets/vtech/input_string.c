@@ -61,7 +61,7 @@ Variable * input_string( Environment * _environment, char * _size ) {
 
     cpu_label( _environment, repeatLabel );
 
-    cpc_inkey( _environment, key->realName );
+    vtech_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, key->realName, repeatLabel );
 

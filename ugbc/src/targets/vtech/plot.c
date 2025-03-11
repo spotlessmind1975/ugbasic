@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword PLOT
 
-@target cpc
+@target vtech
  </usermanual> */
 void plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color ) {
 
@@ -53,7 +53,7 @@ void plot( Environment * _environment, char * _x, char * _y, char *_c, int _pres
         _y = variable_retrieve( _environment, "YGR" )->name;
     }
 
-    cpc_pset_vars( _environment, _x, _y, _c );
+    vtech_pset_vars( _environment, _x, _y, _c );
 
     if ( _c && !_preserve_color ) {
         pen( _environment, _c );

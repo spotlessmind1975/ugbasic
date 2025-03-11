@@ -42,9 +42,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    _environment->program.startingAddress = 0x100;
-
-    // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
+    _environment->program.startingAddress = 0x7b00;
 
     _environment->audioConfig.async = 1;
 
@@ -64,29 +62,29 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
     variable_global( _environment, "TIMERADDRESS" );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "TILESADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "TILESADDRESS" );    
     variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
-    variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "COPYOFBITMAPADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COPYOFBITMAPADDRESS" );
-    variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COPYOFCOLORMAPADDRESS" );
-    variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "COPYOFTEXTADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COPYOFTEXTADDRESS" );    
-    variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0xc000 );
+    variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COPYOFTILESADDRESS" );    
 
-    variable_import( _environment, "CPCTIMER", VT_WORD, 0 );
-    variable_global( _environment, "CPCTIMER" );    
+    variable_import( _environment, "VTECHTIMER", VT_WORD, 0 );
+    variable_global( _environment, "VTECHTIMER" );    
 
     variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
     variable_global( _environment, "IRQVECTOR" );   
@@ -107,9 +105,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
-    variable_import( _environment, "AY8910TIMER", VT_BUFFER, 8 );
-    variable_global( _environment, "AY8910TIMER" );    
-
     variable_import( _environment, "CLINEX", VT_BYTE, 0 );
     variable_global( _environment, "CLINEX" );    
 
@@ -126,7 +121,6 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
     outhead0("CODESTART:")
-    outline0("LD SP, $C000");
 
     z80_init( _environment );
 
@@ -136,10 +130,9 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    cpc_initialization( _environment );
-    ay8910_initialization( _environment );
+    c6847z_initialization( _environment );
     
-    outline0("CALL CPCSTARTUP");
+    outline0("CALL VTECHSTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );

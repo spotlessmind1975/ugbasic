@@ -94,7 +94,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
     print( _environment, underscore->name, 0, 0 );
     cmove_direct( _environment, -1, 0 );
 
-    cpc_inkey( _environment, key->realName );
+    vtech_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, key->realName, repeatLabel );
 

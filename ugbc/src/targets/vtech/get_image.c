@@ -73,28 +73,28 @@ void get_image( Environment * _environment, char * _image, char * _x1, char * _y
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    cpc_get_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
+                    vtech_get_image( _environment, image->realName, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _palette );
                 } else {
-                    cpc_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
+                    vtech_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _palette );
                 }
             } else {
                 if ( !frame ) {
-                    cpc_get_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
+                    vtech_get_image( _environment, image->realName, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _palette );
                 } else {
-                    cpc_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
+                    vtech_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _palette );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                cpc_get_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
+                vtech_get_image( _environment, image->realName, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _palette );
             } else {
-                cpc_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
+                vtech_get_image( _environment, image->realName, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _palette );
             }
             break;
         case VT_IMAGE:
         case VT_TARRAY:
-            cpc_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
+            vtech_get_image( _environment, image->realName, x1->realName, y1->realName, NULL, NULL, 0, 0, _palette );
             break;
         default:
             CRITICAL_GET_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

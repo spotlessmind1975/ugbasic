@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword BOOM
-@target cpc
+@target vtech
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
@@ -77,7 +77,7 @@ void boom( Environment * _environment, int _duration, int _channels ) {
  */
 /* <usermanual>
 @keyword BOOM
-@target cpc
+@target vtech
 </usermanual> */
 void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 

@@ -42,6 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 void wait_key( Environment * _environment, int _release ) {
 
-    cpc_wait_key( _environment, _release );
+    vtech_wait_key( _environment, _release );
 
 }

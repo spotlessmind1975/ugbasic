@@ -62,7 +62,7 @@ Definisce il punto di arrivo di un loop di gioco.
 
 @example END GAMELOOP
 
-@target cpc
+@target vtech
 </usermanual> */
 void end_gameloop( Environment * _environment ) {
 

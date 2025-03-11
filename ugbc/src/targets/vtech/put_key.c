@@ -61,6 +61,6 @@ void put_key( Environment * _environment, char * _string ) {
             break;
     }
 
-    cpc_put_key( _environment, address->realName, size->realName );
+    vtech_put_key( _environment, address->realName, size->realName );
 
 }

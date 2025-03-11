@@ -51,7 +51,7 @@
  */
 /* <usermanual>
 @keyword PLAY (instruction)
-@target cpc
+@target vtech
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 

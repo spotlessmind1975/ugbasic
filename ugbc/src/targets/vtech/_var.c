@@ -445,14 +445,14 @@ void variable_cleanup( Environment * _environment ) {
     //     JP pippo
         
             
-    deploy_inplace_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
-    deploy_inplace_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
-    deploy_inplace_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy_inplace_preferred( vScrollTextDown, src_hw_6847z_vscroll_text_down_asm );
+    deploy_inplace_preferred( vScrollTextUp, src_hw_6847z_vscroll_text_up_asm );
+    deploy_inplace_preferred( vtechvars, src_hw_6847z_vars_asm);
     // outhead0("SECTION data_user");
     // outhead0("ORG $7030");
     // outhead0("SECTION code_user");
 
-    deploy( startup, src_hw_cpc_startup_asm);
+    deploy( startup, src_hw_vtech_startup_asm);
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {

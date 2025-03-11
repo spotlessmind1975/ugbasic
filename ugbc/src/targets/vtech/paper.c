@@ -50,7 +50,7 @@ void paper( Environment * _environment, char * _color ) {
 
     variable_move( _environment, color->name, paper->name );
     
-    cpc_background_color_semivars( _environment, 0, color->realName );
-    // cpc_border_color( _environment, color->realName );
+    vtech_background_color_semivars( _environment, 0, color->realName );
+    // vtech_border_color( _environment, color->realName );
     
 }

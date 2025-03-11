@@ -48,7 +48,7 @@
  */
 Variable * new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    Variable * result = cpc_new_sequence( _environment, _sequences, _frames, _width, _height, _mode );
+    Variable * result = vtech_new_sequence( _environment, _sequences, _frames, _width, _height, _mode );
 
     result->offsettingFrames = offsetting_size_count( _environment, result->frameSize, _frames );
     offsetting_add_variable_reference( _environment, result->offsettingFrames, result, 0 );

@@ -103,15 +103,15 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -124,21 +124,21 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                vtech_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        cpc_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        vtech_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        cpc_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        vtech_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        cpc_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vtech_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        cpc_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vtech_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -171,9 +171,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
-                    cpc_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    cpc_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -185,13 +185,13 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                vtech_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    cpc_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    vtech_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    cpc_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    vtech_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -221,9 +221,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                vtech_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {        
-                cpc_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
+                vtech_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:
@@ -305,7 +305,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    cpc_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    vtech_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
 }
 

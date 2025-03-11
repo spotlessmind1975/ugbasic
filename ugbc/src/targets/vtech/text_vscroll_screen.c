@@ -44,6 +44,6 @@ void text_vscroll_screen( Environment * _environment, int _direction, int _overl
         _environment->verticalOverlapRequired = 1;
     }
     
-    cpc_scroll_text( _environment, _direction, _overlap );
+    vtech_scroll_text( _environment, _direction, _overlap );
 
 }

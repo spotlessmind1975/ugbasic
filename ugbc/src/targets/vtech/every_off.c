@@ -52,6 +52,6 @@ void every_off( Environment * _environment, char * _timer ) {
         timerRealName = timer->realName;
     }
 
-    cpc_timer_set_status_off( _environment, timerRealName );
+    vtech_timer_set_status_off( _environment, timerRealName );
 
 }

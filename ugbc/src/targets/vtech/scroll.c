@@ -40,6 +40,6 @@
 
 void scroll( Environment * _environment, int _dx, int _dy ) {
 
-    cpc_scroll( _environment, _dx, _dy );
+    vtech_scroll( _environment, _dx, _dy );
     
 }

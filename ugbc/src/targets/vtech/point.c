@@ -41,13 +41,13 @@
 /* <usermanual>
 @keyword POINT (function)
 
-@target cpc
+@target vtech
  </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 
     Variable * result = variable_temporary( _environment, VT_COLOR, "(point's result)");
 
-    cpc_pget_color_vars( _environment, _x, _y, result->name );
+    vtech_pget_color_vars( _environment, _x, _y, result->name );
 
     return result;
 

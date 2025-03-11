@@ -42,6 +42,6 @@ extern char DATATYPE_AS_STRING[][16];
 
 Variable * clear_key( Environment * _environment ) {
 
-    cpc_clear_key( _environment );
+    vtech_clear_key( _environment );
 
 }

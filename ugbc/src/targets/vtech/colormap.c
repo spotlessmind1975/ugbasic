@@ -64,7 +64,7 @@ void colormap_at( Environment * _environment, int _address ) {
     // Let's define the special variable and fill up with the value.
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, _address );
 
-    // TODO: colormapAddress must be retrieved by a cpc_get_colormapAddress()
+    // TODO: colormapAddress must be retrieved by a vtech_get_colormapAddress()
 
     variable_store( _environment, colormapAddress->name, 0x5800 );
 
@@ -90,7 +90,7 @@ void colormap_at_var( Environment * _environment, char * _address ) {
     
 
     // Let's define the special variable and fill up with the value.
-    // TODO: colormapAddress must be retrieved by a cpc_get_colormapAddress()
+    // TODO: colormapAddress must be retrieved by a vtech_get_colormapAddress()
     Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0x0000 );
 

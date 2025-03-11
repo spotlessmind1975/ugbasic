@@ -52,7 +52,7 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword FLIP IMAGE
-@target cpc
+@target vtech
 </usermanual> */
 void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
 
@@ -109,15 +109,15 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        cpc_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        vtech_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -130,21 +130,21 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+                vtech_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
             } else {
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        cpc_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
+                        vtech_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
                     } else {
-                        cpc_flip_image( _environment, resource, frame->realName, "", image->frameSize, image->frameCount, _direction );
+                        vtech_flip_image( _environment, resource, frame->realName, "", image->frameSize, image->frameCount, _direction );
                     }
                 } else {
                     if ( !frame ) {
-                        cpc_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
+                        vtech_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
                     } else {
-                        cpc_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
+                        vtech_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
                     }
                 }
             }
@@ -177,9 +177,9 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
                 if ( !frame ) {
-                    cpc_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    cpc_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    vtech_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -191,13 +191,13 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
+                vtech_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
             } else {
                 if ( !frame ) {
-                    cpc_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
+                    vtech_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
                 } else {
-                    cpc_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                    vtech_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
                 }
             }
             break;
@@ -227,10 +227,10 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                cpc_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
+                vtech_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
 
             } else {        
-                cpc_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
+                vtech_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
             }
             break;
         default:

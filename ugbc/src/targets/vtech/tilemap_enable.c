@@ -59,12 +59,12 @@ Abilita la modalità a tiles.
 
 @example TILEMAP ENABLE
 
-@target cpc
+@target vtech
 </usermanual> */
 void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     
     bitmap_disable( _environment );
 
-    cpc_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
+    vtech_tilemap_enable( _environment, _width, _height, _colors, _tile_width, _tile_height );
     
 }

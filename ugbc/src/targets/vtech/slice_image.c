@@ -53,40 +53,40 @@ void slice_image( Environment * _environment, char * _image, char * _frame, char
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
-    CpcSliceImageFunction cpc_slice_image = NULL;;
+    CpcSliceImageFunction vtech_slice_image = NULL;;
     if ( 
             ! _environment->sliceImageX && ! _environment->sliceImageY
             ) {
-        cpc_slice_image = cpc_slice_image_copy;
+        vtech_slice_image = vtech_slice_image_copy;
     } else {
-        cpc_slice_image = cpc_slice_image_extract;
+        vtech_slice_image = vtech_slice_image_extract;
     }
 
     switch( image->type ) {
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    cpc_slice_image( _environment, image->realName, "", "", image->frameSize, image->frameCount, destination->realName );
+                    vtech_slice_image( _environment, image->realName, "", "", image->frameSize, image->frameCount, destination->realName );
                 } else {
-                    cpc_slice_image( _environment, image->realName, frame->realName, "", image->frameSize, image->frameCount, destination->realName );
+                    vtech_slice_image( _environment, image->realName, frame->realName, "", image->frameSize, image->frameCount, destination->realName );
                 }
             } else {
                 if ( !frame ) {
-                    cpc_slice_image( _environment, image->realName, "", sequence->realName, image->frameSize, image->frameCount, destination->realName );
+                    vtech_slice_image( _environment, image->realName, "", sequence->realName, image->frameSize, image->frameCount, destination->realName );
                 } else {
-                    cpc_slice_image( _environment, image->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, destination->realName );
+                    vtech_slice_image( _environment, image->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, destination->realName );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                cpc_slice_image( _environment, image->realName, "", NULL, image->frameSize, 0, destination->realName );
+                vtech_slice_image( _environment, image->realName, "", NULL, image->frameSize, 0, destination->realName );
             } else {
-                cpc_slice_image( _environment, image->realName, frame->realName, NULL, image->frameSize, 0, destination->realName );
+                vtech_slice_image( _environment, image->realName, frame->realName, NULL, image->frameSize, 0, destination->realName );
             }
             break;
         case VT_IMAGE:
-            cpc_slice_image( _environment, image->realName, NULL, NULL, 0, 0, destination->realName );
+            vtech_slice_image( _environment, image->realName, NULL, NULL, 0, 0, destination->realName );
             break;
         default:
             CRITICAL_SLICE_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

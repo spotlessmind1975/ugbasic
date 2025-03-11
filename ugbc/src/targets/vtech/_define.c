@@ -40,6 +40,6 @@
 
 int define_audio_target_check( Environment * _environment, int _value ) {
 
-    return _value == ADN_AY8910;
+    return 0;
 
 }

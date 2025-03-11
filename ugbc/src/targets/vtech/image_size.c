@@ -40,6 +40,6 @@
 
 int image_size( Environment * _environment, int _width, int _height ) {
 
-    return cpc_image_size( _environment, _width, _height, _environment->currentMode );
+    return vtech_image_size( _environment, _width, _height, _environment->currentMode );
 
 }

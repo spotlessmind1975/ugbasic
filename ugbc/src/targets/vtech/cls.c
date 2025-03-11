@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword CLS
 
-@target cpc
+@target vtech
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
@@ -51,6 +51,6 @@ void cls( Environment * _environment, char * _paper ) {
         paper( _environment, "PAPER" );
     }
 
-    cpc_cls( _environment );
+    vtech_cls( _environment );
     
 }

@@ -84,7 +84,7 @@ void mmove_memory_video( Environment * _environment, char * _from, char * _to, c
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
     }
 
-    cpc_move_memory_video( _environment, from->realName, to->realName, size->realName );
+    vtech_move_memory_video( _environment, from->realName, to->realName, size->realName );
 
 }
 
@@ -108,7 +108,7 @@ void mmove_video_memory( Environment * _environment, char * _from, char * _to, c
         CRITICAL_CANNOT_MMOVE_INVALID_SIZE( _size );
     }
 
-    cpc_move_video_memory( _environment, from->realName, to->realName, size->realName );
+    vtech_move_video_memory( _environment, from->realName, to->realName, size->realName );
 
 }
 

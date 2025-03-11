@@ -65,9 +65,9 @@ void every_ticks_call( Environment * _environment, char * _timing, char * _name,
         timerRealName = timer->realName;
     }
 
-    cpc_timer_set_address( _environment, timerRealName, procedure->realName );
-    cpc_timer_set_counter( _environment, timerRealName, timing->realName );
-    cpc_timer_set_init( _environment, timerRealName, timing->realName );
+    vtech_timer_set_address( _environment, timerRealName, procedure->realName );
+    vtech_timer_set_counter( _environment, timerRealName, timing->realName );
+    vtech_timer_set_init( _environment, timerRealName, timing->realName );
 
 }
 
