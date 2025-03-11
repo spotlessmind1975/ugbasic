@@ -74,25 +74,25 @@
 #define TEXT_COLUMNS_COUNT          32
 #define TEXT_ROWS_COUNT             16
 
-#define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
-#define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512
+// #define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
+// #define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512
 
 #define TILEMAP_MODE_SEMIGRAPHICS4  2       // Semigraphics 4	        64 × 32	8	512
-#define TILEMAP_MODE_SEMIGRAPHICS6  3       // Semigraphics 6	        64 × 48	4	512
-#define TILEMAP_MODE_SEMIGRAPHICS8  4       // Semigraphics 8	        64 × 64	2	2048
-#define TILEMAP_MODE_SEMIGRAPHICS12  5       // Semigraphics 12	        64 × 96	1	3072
-#define TILEMAP_MODE_SEMIGRAPHICS24  6       // Semigraphics 24	        64 × 192	1	6144
+// #define TILEMAP_MODE_SEMIGRAPHICS6  3       // Semigraphics 6	        64 × 48	4	512
+// #define TILEMAP_MODE_SEMIGRAPHICS8  4       // Semigraphics 8	        64 × 64	2	2048
+// #define TILEMAP_MODE_SEMIGRAPHICS12  5       // Semigraphics 12	        64 × 96	1	3072
+// #define TILEMAP_MODE_SEMIGRAPHICS24  6       // Semigraphics 24	        64 × 192	1	6144
 
-#define BITMAP_MODE_COLOR1          7       // Color Graphics 1	64 × 64	4	1024
-#define BITMAP_MODE_RESOLUTION1     8       // Resolution Graphics 1	128 × 64	1 + Black	1024
+// #define BITMAP_MODE_COLOR1          7       // Color Graphics 1	64 × 64	4	1024
+// #define BITMAP_MODE_RESOLUTION1     8       // Resolution Graphics 1	128 × 64	1 + Black	1024
 #define BITMAP_MODE_COLOR2          9       // Color Graphics 2	128 × 64	4	2048
-#define BITMAP_MODE_RESOLUTION2	    10       // Resolution Graphics 2 128 × 96	1 + Black	1536
-#define BITMAP_MODE_COLOR3          11       // Color Graphics 3	128 × 96	4	3072
-#define BITMAP_MODE_RESOLUTION3     12      // Resolution Graphics 3	128 × 192	1 + Black	3072
-#define BITMAP_MODE_COLOR6          13      // Color Graphics 6	128 × 192	4	6144
-#define BITMAP_MODE_RESOLUTION6     14      // Resolution Graphics 6	256 × 192	1 + Black	6144
+// #define BITMAP_MODE_RESOLUTION2	    10       // Resolution Graphics 2 128 × 96	1 + Black	1536
+// #define BITMAP_MODE_COLOR3          11       // Color Graphics 3	128 × 96	4	3072
+// #define BITMAP_MODE_RESOLUTION3     12      // Resolution Graphics 3	128 × 192	1 + Black	3072
+// #define BITMAP_MODE_COLOR6          13      // Color Graphics 6	128 × 192	4	6144
+// #define BITMAP_MODE_RESOLUTION6     14      // Resolution Graphics 6	256 × 192	1 + Black	6144
 
-#define BITMAP_MODE_DEFAULT     BITMAP_MODE_RESOLUTION6
+#define BITMAP_MODE_DEFAULT     BITMAP_MODE_COLOR2
 #define BITMAP_MODE_STANDARD    BITMAP_MODE_DEFAULT
 
 #define SPRITE_COUNT                0
@@ -112,42 +112,42 @@
 // EVEN addresses sets bit Vx off (0) in Video Display Generator (VDG)
 // circuitry. Poking a value to ODD addresses sets bit on (1) in VDG circuit.
 
-#define SAM_V0_CLR outline0("STA $FFC0")
-#define SAM_V0_SET outline0("STA $FFC1")
-#define SAM_V1_CLR outline0("STA $FFC2")
-#define SAM_V1_SET outline0("STA $FFC3")
-#define SAM_V2_CLR outline0("STA $FFC4")
-#define SAM_V2_SET outline0("STA $FFC5")
+// #define SAM_V0_CLR outline0("STA $FFC0")
+// #define SAM_V0_SET outline0("STA $FFC1")
+// #define SAM_V1_CLR outline0("STA $FFC2")
+// #define SAM_V1_SET outline0("STA $FFC3")
+// #define SAM_V2_CLR outline0("STA $FFC4")
+// #define SAM_V2_SET outline0("STA $FFC5")
 
-#define SAM_F0_CLR outline0("STA $FFC6")
-#define SAM_F0_SET outline0("STA $FFC7")
-#define SAM_F1_CLR outline0("STA $FFC8")
-#define SAM_F1_SET outline0("STA $FFC9")
-#define SAM_F2_CLR outline0("STA $FFCA")
-#define SAM_F2_SET outline0("STA $FFCB")
-#define SAM_F3_CLR outline0("STA $FFCC")
-#define SAM_F3_SET outline0("STA $FFCD")
-#define SAM_F4_CLR outline0("STA $FFCE")
-#define SAM_F4_SET outline0("STA $FFCF")
-#define SAM_F5_CLR outline0("STA $FFD0")
-#define SAM_F5_SET outline0("STA $FFD1")
-#define SAM_F6_CLR outline0("STA $FFD2")
-#define SAM_F6_SET outline0("STA $FFD3")
+// #define SAM_F0_CLR outline0("STA $FFC6")
+// #define SAM_F0_SET outline0("STA $FFC7")
+// #define SAM_F1_CLR outline0("STA $FFC8")
+// #define SAM_F1_SET outline0("STA $FFC9")
+// #define SAM_F2_CLR outline0("STA $FFCA")
+// #define SAM_F2_SET outline0("STA $FFCB")
+// #define SAM_F3_CLR outline0("STA $FFCC")
+// #define SAM_F3_SET outline0("STA $FFCD")
+// #define SAM_F4_CLR outline0("STA $FFCE")
+// #define SAM_F4_SET outline0("STA $FFCF")
+// #define SAM_F5_CLR outline0("STA $FFD0")
+// #define SAM_F5_SET outline0("STA $FFD1")
+// #define SAM_F6_CLR outline0("STA $FFD2")
+// #define SAM_F6_SET outline0("STA $FFD3")
 
-#define GM0_SET     outline0("LDA $FF22"); outline0("ORA #$10"); outline0("STA $FF22");
-#define GM0_CLR     outline0("LDA $FF22"); outline0("ANDA #$EF"); outline0("STA $FF22");
-#define GM1_SET     outline0("LDA $FF22"); outline0("ORA #$20"); outline0("STA $FF22");
-#define GM1_CLR     outline0("LDA $FF22"); outline0("ANDA #$DF"); outline0("STA $FF22");
-#define GM2_SET     outline0("LDA $FF22"); outline0("ORA #$40"); outline0("STA $FF22");
-#define GM2_CLR     outline0("LDA $FF22"); outline0("ANDA #$BF"); outline0("STA $FF22");
+// #define GM0_SET     outline0("LDA $FF22"); outline0("ORA #$10"); outline0("STA $FF22");
+// #define GM0_CLR     outline0("LDA $FF22"); outline0("ANDA #$EF"); outline0("STA $FF22");
+// #define GM1_SET     outline0("LDA $FF22"); outline0("ORA #$20"); outline0("STA $FF22");
+// #define GM1_CLR     outline0("LDA $FF22"); outline0("ANDA #$DF"); outline0("STA $FF22");
+// #define GM2_SET     outline0("LDA $FF22"); outline0("ORA #$40"); outline0("STA $FF22");
+// #define GM2_CLR     outline0("LDA $FF22"); outline0("ANDA #$BF"); outline0("STA $FF22");
 
-#define CSS_SET     outline0("LDA $FF22"); outline0("ORA #$08"); outline0("STA $FF22");
-#define CSS_CLR     outline0("LDA $FF22"); outline0("ANDA #$F7"); outline0("STA $FF22");
+// #define CSS_SET     outline0("LDA $FF22"); outline0("ORA #$08"); outline0("STA $FF22");
+// #define CSS_CLR     outline0("LDA $FF22"); outline0("ANDA #$F7"); outline0("STA $FF22");
 
 // (3) These registers work with $FF22 for setting modes, and should match up
 
-#define VDG_GRAPH  outline0("LDA $FF22"); outline0("ORA #$80"); outline0("STA $FF22");  
-#define VDG_TEXT   outline0("LDA $FF22"); outline0("ANDA #$7f"); outline0("STA $FF22");  
+// #define VDG_GRAPH  outline0("LDA $FF22"); outline0("ORA #$80"); outline0("STA $FF22");  
+// #define VDG_TEXT   outline0("LDA $FF22"); outline0("ANDA #$7f"); outline0("STA $FF22");  
 
 // (4) Default screen mode is semigraphic-4
 // (5) Mode correspondence between the SAM and the VDG:
@@ -205,87 +205,87 @@
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
-int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
+int c6847z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
-void c6847_initialization( Environment * _environment );
-void c6847_finalization( Environment * _environment );
+void c6847z_initialization( Environment * _environment );
+void c6847z_finalization( Environment * _environment );
 
-void c6847_back( Environment * _environment );
-void c6847_background_color( Environment * _environment, char * _index, char * _background_color );
-void c6847_border_color( Environment * _environment, char * _border_color );
-void c6847_collision( Environment * _environment, char * _sprite_mask, char * _result );
-void c6847_hit( Environment * _environment, char * _sprite_mask, char * _result );
-void c6847_next_raster( Environment * _environment );
-void c6847_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
-void c6847_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
-void c6847_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
-void c6847_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
-void c6847_bitmap_disable( Environment * _environment );
-void c6847_bitmap_at( Environment * _environment, char * _address );
-void c6847_colormap_at( Environment * _environment, char * _address );
-void c6847_textmap_at( Environment * _environment, char * _address );
-void c6847_tiles_at( Environment * _environment, char * _address );
-void c6847_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
+void c6847z_back( Environment * _environment );
+void c6847z_background_color( Environment * _environment, char * _index, char * _background_color );
+void c6847z_border_color( Environment * _environment, char * _border_color );
+void c6847z_collision( Environment * _environment, char * _sprite_mask, char * _result );
+void c6847z_hit( Environment * _environment, char * _sprite_mask, char * _result );
+void c6847z_next_raster( Environment * _environment );
+void c6847z_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+void c6847z_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
+void c6847z_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
+void c6847z_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
+void c6847z_bitmap_disable( Environment * _environment );
+void c6847z_bitmap_at( Environment * _environment, char * _address );
+void c6847z_colormap_at( Environment * _environment, char * _address );
+void c6847z_textmap_at( Environment * _environment, char * _address );
+void c6847z_tiles_at( Environment * _environment, char * _address );
+void c6847z_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 
-void c6847_bank_select( Environment * _environment, int _bank );
-void c6847_screen_on( Environment * _environment );
-void c6847_screen_off( Environment * _environment );
-void c6847_screen_rows( Environment * _environment, char * _rows );
-void c6847_screen_columns( Environment * _environment, char * _columns );
+void c6847z_bank_select( Environment * _environment, int _bank );
+void c6847z_screen_on( Environment * _environment );
+void c6847z_screen_off( Environment * _environment );
+void c6847z_screen_rows( Environment * _environment, char * _rows );
+void c6847z_screen_columns( Environment * _environment, char * _columns );
 
-void c6847_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
-void c6847_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
-void c6847_sprite_enable( Environment * _environment, char *_sprite );
-void c6847_sprite_disable( Environment * _environment, char * _sprite );
-void c6847_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
-void c6847_sprite_expand_vertical( Environment * _environment, char * _sprite );
-void c6847_sprite_expand_horizontal( Environment * _environment, char * _sprite );
-void c6847_sprite_compress_vertical( Environment * _environment, char * _sprite );
-void c6847_sprite_compress_horizontal( Environment * _environment, char * _sprite );
-void c6847_sprite_multicolor( Environment * _environment, char * _sprite );
-void c6847_sprite_monocolor( Environment * _environment, char * _sprite );
-void c6847_sprite_color( Environment * _environment, char * _sprite, char * _color );
-void c6847_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
-void c6847_vertical_scroll( Environment * _environment, char * _displacement );
-void c6847_horizontal_scroll( Environment * _environment, char * _displacement );
+void c6847z_sprite_data_from( Environment * _environment, char * _sprite, char * _address );
+void c6847z_sprite_data_set( Environment * _environment, char * _sprite, char * _address );
+void c6847z_sprite_enable( Environment * _environment, char *_sprite );
+void c6847z_sprite_disable( Environment * _environment, char * _sprite );
+void c6847z_sprite_at( Environment * _environment, char * _sprite, char * _x, char * _y );
+void c6847z_sprite_expand_vertical( Environment * _environment, char * _sprite );
+void c6847z_sprite_expand_horizontal( Environment * _environment, char * _sprite );
+void c6847z_sprite_compress_vertical( Environment * _environment, char * _sprite );
+void c6847z_sprite_compress_horizontal( Environment * _environment, char * _sprite );
+void c6847z_sprite_multicolor( Environment * _environment, char * _sprite );
+void c6847z_sprite_monocolor( Environment * _environment, char * _sprite );
+void c6847z_sprite_color( Environment * _environment, char * _sprite, char * _color );
+void c6847z_sprite_priority( Environment * _environment, char * _sprite, char * _priority );
+void c6847z_vertical_scroll( Environment * _environment, char * _displacement );
+void c6847z_horizontal_scroll( Environment * _environment, char * _displacement );
 
-void c6847_tiles_get( Environment * _environment, char * _result );
-void c6847_get_width( Environment * _environment, char * _result );
-void c6847_get_height( Environment * _environment, char * _result );
+void c6847z_tiles_get( Environment * _environment, char * _result );
+void c6847z_get_width( Environment * _environment, char * _result );
+void c6847z_get_height( Environment * _environment, char * _result );
 
-void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c );
-void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c );
-void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
-void c6847_cls( Environment * _environment );
-void c6847_scroll_text( Environment * _environment, int _direction, int _overlap );
-void c6847_hscroll_line( Environment * _environment, int _direction, int _overlap );
-void c6847_hscroll_screen( Environment * _environment, int _direction, int _overlap );
-void c6847_text( Environment * _environment, char * _text, char * _text_size, int _raw );
-void c6847_cline( Environment * _environment, char * _characters );
-void c6847_scroll( Environment * _environment, int _dx, int _dy );
+void c6847z_pset_int( Environment * _environment, int _x, int _y, int *_c );
+void c6847z_pset_vars( Environment * _environment, char *_x, char *_y, char * _c );
+void c6847z_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
+void c6847z_cls( Environment * _environment );
+void c6847z_scroll_text( Environment * _environment, int _direction, int _overlap );
+void c6847z_hscroll_line( Environment * _environment, int _direction, int _overlap );
+void c6847z_hscroll_screen( Environment * _environment, int _direction, int _overlap );
+void c6847z_text( Environment * _environment, char * _text, char * _text_size, int _raw );
+void c6847z_cline( Environment * _environment, char * _characters );
+void c6847z_scroll( Environment * _environment, int _dx, int _dy );
 
-Variable * c6847_get_raster_line( Environment * _environment );
+Variable * c6847z_get_raster_line( Environment * _environment );
 
-int c6847_image_size( Environment * _environment, int _width, int _height, int _mode );
-Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
-void c6847_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
-void c6847_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
-Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode );
-Variable * c6847_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
-Variable * c6847_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
-void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
+int c6847z_image_size( Environment * _environment, int _width, int _height, int _mode );
+Variable * c6847z_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+void c6847z_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
+void c6847z_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
+Variable * c6847z_new_image( Environment * _environment, int _width, int _height, int _mode );
+Variable * c6847z_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
+Variable * c6847z_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
+void c6847z_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette );
 
-void c6847_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
-void c6847_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
-void c6847_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
-void c6847_use_tileset( Environment * _environment, char * _tileset );
-void c6847_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
-void c6847_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
-int c6847_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
+void c6847z_put_tile( Environment * _environment, char * _image, char * _x, char * _y );
+void c6847z_put_tiles( Environment * _environment, char * _image, char * _x, char * _y, char *_w, char *_h );
+void c6847z_move_tiles( Environment * _environment, char * _image, char * _x, char * _y );
+void c6847z_use_tileset( Environment * _environment, char * _tileset );
+void c6847z_tile_at( Environment * _environment, char * _x, char * _y, char * _result );
+void c6847z_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
+int c6847z_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 
-void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
-void c6847_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+void c6847z_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count );
+void c6847z_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
 
-void c6847_screen( Environment * _environment, char * _x, char * _y, char * _c );
+void c6847z_screen( Environment * _environment, char * _x, char * _y, char * _c );
 
 #endif
