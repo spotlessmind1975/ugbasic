@@ -12879,6 +12879,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
+                    } else if ( strcmp( optarg, "vz") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

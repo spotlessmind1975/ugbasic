@@ -434,15 +434,22 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
-    char * filename = strtoupper( basename( _environment->exeFileName ) );
+    char * embeddedFilename = _environment->exeFileName;
+    if ( !embeddedFilename ) {
+        embeddedFilename = _environment->asmFileName;
+        if ( !embeddedFilename ) {
+            embeddedFilename = strdup("MAIN.VZ");
+        }
+    }
+    char * filename = strtoupper( basename( embeddedFilename ) );
 
     // outhead0("SECTION code_user");
     outhead1("ORG $%4.4x", ( _environment->program.startingAddress - 24 ));
     outhead0("VZHEADER:");
     outline0("DEFB $20, $20, $00, $00"); // preamble
     out0("DEFB ");
-    for( int i=0, c=strlen(filename); i<c; ++i ) {
-        if ( c == 16 ) {
+    for( i=0, c=strlen(filename); i<c; ++i ) {
+        if ( i == 16 ) {
             break;
         }
         out1("$%2.2x, ", filename[i]);
