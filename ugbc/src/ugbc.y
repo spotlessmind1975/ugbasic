@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED VTECH
+%token ENDPROC EXITIF VIRTUALIZED BY VTECH
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -196,6 +196,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> shuffle_definition_optional_rounds
 %type <string> serial_function
 %type <integer> optional_endianess
+%type <string> optional_by
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -10710,16 +10711,24 @@ raw_optional :
         $$ = 1;
     };
 
+optional_by :
+    {
+        $$ = NULL;
+    }
+    | BY expr {
+        $$ = $2;
+    };
+
 travel_definition :
-    Identifier TO expr OP_COMMA expr {
-        travel_path( _environment, $1, $3, $5 );
+    Identifier TO expr OP_COMMA expr optional_by {
+        travel_path( _environment, $1, $3, $5, $6 );
     }
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );
-    } indexes CP TO expr OP_COMMA expr {
+    } indexes CP TO expr OP_COMMA expr optional_by {
         Variable * path = variable_move_from_array( _environment, $1 );
-        travel_path( _environment, path->name, $7, $9 );
+        travel_path( _environment, path->name, $7, $9, $10 );
         variable_move_array( _environment, $1, path->name );
         parser_array_cleanup( _environment );
     };
