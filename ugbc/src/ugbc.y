@@ -197,6 +197,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> serial_function
 %type <integer> optional_endianess
 %type <string> optional_by
+%type <string> optional_clamp
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -10707,6 +10708,16 @@ optional_by :
         $$ = $2;
     };
 
+optional_clamp : 
+    {
+        $$ = NULL;
+    }
+    | CLAMP {
+        Variable * true = variable_temporary( _environment, VT_SBYTE, "(true)");
+        variable_store( _environment, true->name, 0xff );
+        $$ = true->name;
+    };
+
 travel_definition_array_first :
     Identifier {
         ((struct _Environment *)_environment)->travelX = $1;
@@ -10739,7 +10750,7 @@ travel_definition_array :
     travel_definition_array_first OP_COMMA travel_definition_array_second;
 
 travel_definition :
-    Identifier TO travel_definition_array optional_by {
+    Identifier TO travel_definition_array optional_by optional_clamp {
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
@@ -10754,7 +10765,7 @@ travel_definition :
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
-        travel_path( _environment, $1, x, y, $4, NULL );
+        travel_path( _environment, $1, x, y, $4, $5 );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
             variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
@@ -10767,7 +10778,7 @@ travel_definition :
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );
-    } indexes CP TO travel_definition_array optional_by {
+    } indexes CP TO travel_definition_array optional_by optional_clamp {
         Variable * path = variable_move_from_array( _environment, $1 );
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
@@ -10783,7 +10794,7 @@ travel_definition :
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
-        travel_path( _environment, path->name, x, y, $8, NULL );
+        travel_path( _environment, path->name, x, y, $8, $9 );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
             variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );

@@ -12914,8 +12914,6 @@ ArrayReference * parser_array_retrieve( Environment * _environment ) {
     memcpy( result->arrayIndexesEach, ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], MAX_ARRAY_DIMENSIONS * sizeof( char * ) );
     memcpy( result->arrayIndexesDirectEach, ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex], MAX_ARRAY_DIMENSIONS * sizeof( int ) );
 
-    printf("parser_array_retrieve() -> %d indexes\n", result->arrayIndexes );
-    
     return result;
 
 }
@@ -12932,7 +12930,6 @@ void parser_array_init( Environment * _environment ) {
 void parser_array_init_by( Environment * _environment, ArrayReference * _array_reference ) {
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
-    printf( "parser_array_init_by: %d indexes\n", _array_reference->arrayIndexes );
     ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = _array_reference->arrayIndexes;
     memcpy( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], _array_reference->arrayIndexesEach, MAX_ARRAY_DIMENSIONS * sizeof( char * ) );
     memcpy( ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex], _array_reference->arrayIndexesDirectEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
