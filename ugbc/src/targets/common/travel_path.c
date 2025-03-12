@@ -56,7 +56,8 @@ starting point and of the destination point are given using the ''CREATE PATH'' 
 So, this command will update a pair of variables (''x'',''y'') with the next point. 
 Optionally, you can give a multiplier factor (''times''), in order to move more than one pixel
 at a time. By adding the ''CLAMP'' keyword, the increment of the coordinate variables 
-will be limited to the coordinates of the destination point.
+will be limited to the coordinates of the destination point. The function version can be
+used to check if destination coordinate is reached (if ''CLAMP'' has been requested).
 
 The command uses the Bresenham algorithm to calculate the sequence of intermediate 
 coordinates that define the most efficient path between the starting point and the 
@@ -81,13 +82,22 @@ Il comando utilizza l'algoritmo di Bresenham per calcolare la sequenza di coordi
 aggiornando le sue coordinate a ogni passo. La velocità del movimento può essere controllata dal
 parametro ''times''. Se la velocità non è specificata, viene implicitamente considerato un 
 valore pari a 1. Aggiungendo la parola chiave ''CLAMP'', l'incremento delle variabili coordinate 
-sarà limitato alle coordinate del punto di destinazione.
+sarà limitato alle coordinate del punto di destinazione. Nella versione che ritorna un valore,
+è possibile utilizzare tale valore per comprendere se le coordinate di destinazione sono
+state raggiunte (purché sia stata usata la parola chiave ''CLAMP'').
 
 L'algoritmo di Bresenham è efficiente e garantisce un percorso ottimizzato, ma produce percorsi
 retti. In scenari in cui sono richiesti percorsi più complessi (ad esempio con curve o ostacoli),
 potrebbero essere necessari algoritmi di pathfinding più avanzati.
 
 @syntax TRAVEL path TO x, y [BY times] [CLAMP]
+@syntax = TRAVEL ( path TO x, y [BY times] [CLAMP] )
+
+@example ebltPath = CREATE PATH(posX, posY TO endX, endY)
+@example DO
+@example     EXIT IF TRAVEL( ebltPath TO ebltX, ebltY CLAMP )
+@example     PUT IMAGE enmBlt FRAME 0 AT ebltX, ebltY
+@example LOOP
 
 </usermanual> */
 
