@@ -885,6 +885,25 @@ typedef struct _AtlasDescriptor {
 
 } AtlasDescriptor;
 
+typedef struct _ArrayReference {
+
+    /**
+     * Temporary storage for array access
+     */
+    int arrayIndexes;
+
+    /**
+     * Temporary storage for array access
+     */
+    char * arrayIndexesEach[MAX_ARRAY_DIMENSIONS];
+
+    /**
+     * Temporary storage for array access (using constants)
+     */
+    int arrayIndexesDirectEach[MAX_ARRAY_DIMENSIONS];
+
+} ArrayReference;
+
 /**
  * @brief Structure of a single variable
  */
@@ -3007,6 +3026,11 @@ typedef struct _Environment {
     char * dojoChannelName;
     char * dojoObjectName;
 
+    char * travelX;
+    ArrayReference * travelXAR;
+    char * travelY;
+    ArrayReference * travelYAR;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -4566,9 +4590,11 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 //----------------------------------------------------------------------------
 
 void parser_array_init( Environment * _environment );
+void parser_array_init_by( Environment * _environment, ArrayReference * _array_reference );
 void parser_array_index_symbolic( Environment * _environment, char * _index );
 void parser_array_index_numeric( Environment * _environment, int _index );
 void parser_array_cleanup( Environment * _environment );
+ArrayReference * parser_array_retrieve( Environment * _environment );
 
 //----------------------------------------------------------------------------
 // Other
