@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMEMMOVE
+CPUMEMMOVE:
     RET
 
 ;     CMPU #0
@@ -49,7 +49,7 @@ CPUMEMMOVE
 ; CPUMEMMOVEDONE
 ;     RTS
     
-C6847STARTUP
+C6847ZSTARTUP:
     RET
     
 ;     ; (4) Default screen mode is semigraphic-4
