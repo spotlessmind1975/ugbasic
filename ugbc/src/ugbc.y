@@ -10754,7 +10754,7 @@ travel_definition :
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
-        travel_path( _environment, $1, x, y, $4 );
+        travel_path( _environment, $1, x, y, $4, NULL );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
             variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
@@ -10783,7 +10783,7 @@ travel_definition :
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
-        travel_path( _environment, path->name, x, y, $8 );
+        travel_path( _environment, path->name, x, y, $8, NULL );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
             variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );

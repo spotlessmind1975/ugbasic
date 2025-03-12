@@ -5370,7 +5370,7 @@ Variable *              tileset_load( Environment * _environment, char * _filena
 Variable *              tilemap_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              tileset_of_vars( Environment * _environment, char * _tilemap );
-void                    travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times );
+void                    travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times, char * _limited );
 
 //----------------------------------------------------------------------------
 // *u*

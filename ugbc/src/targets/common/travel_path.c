@@ -88,12 +88,14 @@ potrebbero essere necessari algoritmi di pathfinding più avanzati.
 
 </usermanual> */
 
-void travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times ) {
+void travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times, char * _limited ) {
 
     deploy_begin( travel_path );
 
         MAKE_LABEL
         char loopLabel[ MAX_TEMPORARY_STORAGE ]; sprintf( loopLabel, "%stimes", label );
+        char unlimitedLabel[ MAX_TEMPORARY_STORAGE ]; sprintf( unlimitedLabel, "%sunlimited", label );
+        char doneLabel[ MAX_TEMPORARY_STORAGE ]; sprintf( doneLabel, "%sdone", label );
 
         Variable * path = variable_define( _environment, "travelpath__path", VT_PATH, 0 );
 
@@ -101,6 +103,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         Variable * yout = variable_define( _environment, "travelpath__yout", VT_POSITION, 0 );
 
         Variable * times = variable_define( _environment, "travelpath__times", VT_BYTE, 0 );
+        Variable * limited = variable_define( _environment, "travelpath__limited", VT_SBYTE, 0 );
+        Variable * check = variable_temporary( _environment, VT_SBYTE, "(stepx)");
 
         Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
         Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
@@ -111,6 +115,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         Variable * dy2 = variable_temporary( _environment, VT_SBYTE, "(dy2)");
         Variable * stepx = variable_temporary( _environment, VT_SBYTE, "(stepx)");
         Variable * stepy = variable_temporary( _environment, VT_SBYTE, "(stepy)");
+        Variable * x1 = variable_temporary( _environment, VT_POSITION, "(x1)" );
+        Variable * y1 = variable_temporary( _environment, VT_POSITION, "(y1)" );
 
         cpu_move_16bit( _environment, path->realName, x->realName );
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "2" ), y->realName );
@@ -119,8 +125,21 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "6" ), stepx->realName );
         cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "7" ), stepy->realName );
         cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "8" ), fraction->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "10" ), x1->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "12" ), y1->realName );
 
         cpu_label( _environment, loopLabel );
+
+        cpu_compare_and_branch_8bit_const( _environment, limited->realName, 0, unlimitedLabel, 1 );
+
+        variable_move( _environment,
+            variable_and( _environment, 
+                variable_compare( _environment, x->name, x1->name )->name,
+                variable_compare( _environment, y->name, x1->name )->name
+            )->name, check->name );
+        cpu_compare_and_branch_8bit_const( _environment, check->realName, 0xff, doneLabel, 1 );
+
+        cpu_label( _environment, unlimitedLabel );
 
         if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
             variable_move( _environment, variable_add( _environment, x->name, stepx->name )->name, x->name );
@@ -141,6 +160,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
 
         cpu_dec( _environment, times->realName );
         cpu_compare_and_branch_8bit_const( _environment, times->realName, 0, loopLabel, 0 );
+
+        cpu_label( _environment, doneLabel );
 
         cpu_move_16bit( _environment, x->realName, path->realName );
         cpu_move_16bit( _environment, y->realName, address_displacement( _environment, path->realName, "2" ) );
@@ -165,6 +186,7 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
     Variable * xout = variable_retrieve( _environment, "travelpath__xout" );
     Variable * yout = variable_retrieve( _environment, "travelpath__yout" );
     Variable * ptimes = variable_retrieve( _environment, "travelpath__times" );
+    Variable * plimited = variable_retrieve( _environment, "travelpath__limited" );
 
     variable_move( _environment, p->name, path->name );
     if ( _times ) {
@@ -176,6 +198,13 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         }
     } else {
         variable_store( _environment, ptimes->name, 1 );
+    }
+
+    if ( _limited ) {
+        Variable * limited = variable_retrieve_or_define( _environment, _limited, VT_SBYTE, 0 );
+        variable_move( _environment, limited->name, plimited->name );
+    } else {
+        variable_store( _environment, plimited->name, 0 );
     }
 
     cpu_call( _environment, "lib_travel_path" );
