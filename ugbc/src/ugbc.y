@@ -197,6 +197,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> serial_function
 %type <integer> optional_endianess
 %type <string> optional_by
+%type <string> optional_clamp
+%type <string> travel_function
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -3437,6 +3439,9 @@ exponential_less:
     | READ END {
         $$ = read_end( _environment )->name;
       }
+    | TRAVEL travel_function {
+        $$ = $2;
+    }
     | DOJO dojo_functions {
         $$ = $2;
     }
@@ -10719,19 +10724,168 @@ optional_by :
         $$ = $2;
     };
 
+optional_clamp : 
+    {
+        $$ = NULL;
+    }
+    | CLAMP {
+        Variable * true = variable_temporary( _environment, VT_SBYTE, "(true)");
+        variable_store( _environment, true->name, 0xff );
+        $$ = true->name;
+    };
+
+travel_definition_array_first :
+    Identifier {
+        ((struct _Environment *)_environment)->travelX = $1;
+        ((struct _Environment *)_environment)->travelXAR = NULL;
+    }
+    | Identifier OP {
+        parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $1 );        
+    } indexes CP {
+        ((struct _Environment *)_environment)->travelX = $1;
+        ((struct _Environment *)_environment)->travelXAR = parser_array_retrieve( _environment );
+        parser_array_cleanup( _environment );        
+    };
+
+travel_definition_array_second :
+    Identifier {
+        ((struct _Environment *)_environment)->travelY = $1;
+        ((struct _Environment *)_environment)->travelYAR = NULL;
+    }
+    | Identifier OP {
+        parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $1 );        
+    } indexes CP {
+        ((struct _Environment *)_environment)->travelY = $1;
+        ((struct _Environment *)_environment)->travelYAR = parser_array_retrieve( _environment );
+        parser_array_cleanup( _environment );        
+    };
+
+travel_definition_array : 
+    travel_definition_array_first OP_COMMA travel_definition_array_second;
+
 travel_definition :
-    Identifier TO expr OP_COMMA expr optional_by {
-        travel_path( _environment, $1, $3, $5, $6 );
+    Identifier TO travel_definition_array optional_by optional_clamp {
+        char * x;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
+            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+        } else {
+            x = ((struct _Environment *)_environment)->travelX;
+        }
+        char * y;
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
+            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+        } else {
+            y = ((struct _Environment *)_environment)->travelY;
+        }
+        travel_path( _environment, $1, x, y, $4, $5 );
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+        }
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+        }
     }
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );
-    } indexes CP TO expr OP_COMMA expr optional_by {
+    } indexes CP TO travel_definition_array optional_by optional_clamp {
         Variable * path = variable_move_from_array( _environment, $1 );
-        travel_path( _environment, path->name, $7, $9, $10 );
+        char * x;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
+            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+        } else {
+            x = ((struct _Environment *)_environment)->travelX;
+        }
+        char * y;
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
+            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+        } else {
+            y = ((struct _Environment *)_environment)->travelY;
+        }
+        travel_path( _environment, path->name, x, y, $8, $9 );
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            parser_array_cleanup( _environment );        
+        }
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            parser_array_cleanup( _environment );        
+        }        
         variable_move_array( _environment, $1, path->name );
         parser_array_cleanup( _environment );
-    };
+    }
+    ;
+
+travel_function :
+    OP Identifier TO travel_definition_array optional_by optional_clamp CP {
+        char * x;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
+            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+        } else {
+            x = ((struct _Environment *)_environment)->travelX;
+        }
+        char * y;
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
+            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+        } else {
+            y = ((struct _Environment *)_environment)->travelY;
+        }
+        $$ = travel_path( _environment, $2, x, y, $5, $6 )->name;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+        }
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+        }
+    }
+    | OP Identifier OP {
+        parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
+    } indexes CP TO travel_definition_array optional_by optional_clamp CP {
+        Variable * path = variable_move_from_array( _environment, $2 );
+        char * x;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
+            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+        } else {
+            x = ((struct _Environment *)_environment)->travelX;
+        }
+        char * y;
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
+            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+        } else {
+            y = ((struct _Environment *)_environment)->travelY;
+        }
+        $$ = travel_path( _environment, path->name, x, y, $9, $10 )->name;
+        if ( ((struct _Environment *)_environment)->travelXAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            parser_array_cleanup( _environment );        
+        }
+        if ( ((struct _Environment *)_environment)->travelYAR ) {
+            parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
+            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            parser_array_cleanup( _environment );        
+        }        
+        variable_move_array( _environment, $2, path->name );
+        parser_array_cleanup( _environment );
+    }
+    ;
 
 animation_type :
       SIMPLE {
@@ -11338,7 +11492,12 @@ statement2nc:
   | FUJINET fujinet_definition
   | SERIAL serial_definition
   | PRINT print_definition
-  | TRAVEL travel_definition
+  | TRAVEL {
+   ((struct _Environment *)_environment)->travelX = NULL; 
+   ((struct _Environment *)_environment)->travelXAR = NULL; 
+   ((struct _Environment *)_environment)->travelY = NULL; 
+   ((struct _Environment *)_environment)->travelYAR = NULL; 
+  }travel_definition
   | BORDER border_definition
   | PRINT BUFFER print_buffer_definition
   | PRINT BUFFER RAW print_buffer_raw_definition

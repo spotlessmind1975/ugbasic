@@ -297,7 +297,7 @@ void movement( Environment * _environment, char * _identifier, char * _atlas, ch
 
             if ( (_environment->movementDeltaX == 0) && (_environment->movementDeltaY == 0) ) {
                 //      TRAVEL t TO x, y
-                travel_path( _environment, prefixPathVar->name, prefixXVar->name, prefixYVar->name, NULL );
+                travel_path( _environment, prefixPathVar->name, prefixXVar->name, prefixYVar->name, NULL, NULL );
             } else {
                 if ( _environment->movementDeltaX == 1) {
                     // 		INC prefixXVar

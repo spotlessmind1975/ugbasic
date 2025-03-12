@@ -12906,12 +12906,33 @@ StaticString * string_reserve( Environment * _environment, char * _value ) {
 
 }
 
+ArrayReference * parser_array_retrieve( Environment * _environment ) {
+
+    ArrayReference * result = malloc( sizeof( ArrayReference ) );
+    memset( result, 0, sizeof( ArrayReference ) );
+    result->arrayIndexes = ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex];
+    memcpy( result->arrayIndexesEach, ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], MAX_ARRAY_DIMENSIONS * sizeof( char * ) );
+    memcpy( result->arrayIndexesDirectEach, ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex], MAX_ARRAY_DIMENSIONS * sizeof( int ) );
+
+    return result;
+
+}
+
 void parser_array_init( Environment * _environment ) {
 
     ++((struct _Environment *)_environment)->arrayNestedIndex;
     memset( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( char * ) * MAX_ARRAY_DIMENSIONS );
     memset( ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex], 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
     ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = 0;
+
+}
+
+void parser_array_init_by( Environment * _environment, ArrayReference * _array_reference ) {
+
+    ++((struct _Environment *)_environment)->arrayNestedIndex;
+    ((struct _Environment *)_environment)->arrayIndexes[((struct _Environment *)_environment)->arrayNestedIndex] = _array_reference->arrayIndexes;
+    memcpy( ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex], _array_reference->arrayIndexesEach, MAX_ARRAY_DIMENSIONS * sizeof( char * ) );
+    memcpy( ((struct _Environment *)_environment)->arrayIndexesDirectEach[((struct _Environment *)_environment)->arrayNestedIndex], _array_reference->arrayIndexesDirectEach, MAX_ARRAY_DIMENSIONS * sizeof( int ) );
 
 }
 
