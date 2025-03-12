@@ -3031,6 +3031,8 @@ typedef struct _Environment {
     char * travelY;
     ArrayReference * travelYAR;
 
+    int transparencyCoarse;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
