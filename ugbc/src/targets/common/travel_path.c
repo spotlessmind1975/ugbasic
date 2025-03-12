@@ -55,7 +55,8 @@ a destination point, following a previous created ''PATH''. The coordinates of t
 starting point and of the destination point are given using the ''CREATE PATH'' command.
 So, this command will update a pair of variables (''x'',''y'') with the next point. 
 Optionally, you can give a multiplier factor (''times''), in order to move more than one pixel
-at a time.
+at a time. By adding the ''CLAMP'' keyword, the increment of the coordinate variables 
+will be limited to the coordinates of the destination point.
 
 The command uses the Bresenham algorithm to calculate the sequence of intermediate 
 coordinates that define the most efficient path between the starting point and the 
@@ -78,17 +79,19 @@ alla volta.
 
 Il comando utilizza l'algoritmo di Bresenham per calcolare la sequenza di coordinate intermedie che definiscono il percorso più efficiente tra il punto di partenza e il punto di destinazione. L'algoritmo di Bresenham è particolarmente adatto per disegnare linee rette su griglie discrete (come le griglie di pixel), garantendo un percorso ottimizzato in termini di passaggi. In altre parole, l'entità viene spostata lungo il percorso calcolato,
 aggiornando le sue coordinate a ogni passo. La velocità del movimento può essere controllata dal
-parametro ''times''. Se la velocità non è specificata, viene implicitamente considerato un valore pari a 1.
+parametro ''times''. Se la velocità non è specificata, viene implicitamente considerato un 
+valore pari a 1. Aggiungendo la parola chiave ''CLAMP'', l'incremento delle variabili coordinate 
+sarà limitato alle coordinate del punto di destinazione.
 
 L'algoritmo di Bresenham è efficiente e garantisce un percorso ottimizzato, ma produce percorsi
 retti. In scenari in cui sono richiesti percorsi più complessi (ad esempio con curve o ostacoli),
 potrebbero essere necessari algoritmi di pathfinding più avanzati.
 
-@syntax TRAVEL path TO x, y [BY times]
+@syntax TRAVEL path TO x, y [BY times] [CLAMP]
 
 </usermanual> */
 
-void travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times, char * _limited ) {
+Variable * travel_path( Environment * _environment, char * _p, char * _x, char * _y, char * _times, char * _limited ) {
 
     deploy_begin( travel_path );
 
@@ -127,6 +130,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "8" ), fraction->realName );
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "10" ), x1->realName );
         cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "12" ), y1->realName );
+
+        cpu_store_8bit( _environment, check->realName, 0 );
 
         cpu_label( _environment, loopLabel );
 
@@ -174,6 +179,9 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         cpu_move_16bit( _environment, x->realName, xout->realName );
         cpu_move_16bit( _environment, y->realName, yout->realName );
 
+        outline0("; pippero");
+        cpu_move_8bit( _environment, check->realName, limited->realName );
+
         cpu_return( _environment );
 
     deploy_end( travel_path )
@@ -200,10 +208,12 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
         variable_store( _environment, ptimes->name, 1 );
     }
 
+    Variable * limited;
     if ( _limited ) {
-        Variable * limited = variable_retrieve_or_define( _environment, _limited, VT_SBYTE, 0 );
+        limited = variable_retrieve_or_define( _environment, _limited, VT_SBYTE, 0 );
         variable_move( _environment, limited->name, plimited->name );
     } else {
+        limited = variable_temporary( _environment, VT_SBYTE, "(limited)" );
         variable_store( _environment, plimited->name, 0 );
     }
 
@@ -212,5 +222,8 @@ void travel_path( Environment * _environment, char * _p, char * _x, char * _y, c
     variable_move( _environment, path->name, p->name );
     variable_move( _environment, xout->name, x->name );
     variable_move( _environment, yout->name, y->name );
+    variable_move( _environment, plimited->name, limited->name );
+
+    return limited;
 
 }
