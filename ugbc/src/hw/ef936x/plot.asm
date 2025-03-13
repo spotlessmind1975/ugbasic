@@ -587,6 +587,7 @@ PLOTD3HIDB
     ASLA
     STA <MATHPTR5
     LDA , X
+    ANDA #$0F
     ORA <MATHPTR5
     STA , X
     ; LDA $2000, X
@@ -600,6 +601,7 @@ PLOTD3LODB
     ; ORA <MATHPTR5
     ; STA , X
     LDA $2000, X
+    ANDA #$F0   
     ORA <MATHPTR5
     STA $2000, X
     JMP PLOTD3FDB
