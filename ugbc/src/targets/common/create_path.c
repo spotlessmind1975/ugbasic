@@ -116,9 +116,9 @@ Variable * create_path( Environment * _environment, char * _x0, char * _y0, char
         end_if_then( _environment );
 
         variable_move_naked( _environment, dy->name, dy2->name );
-        dy2 = variable_sl_const( _environment, dy2->name, 1 );
+        variable_move_naked( _environment, variable_sl_const( _environment, dy2->name, 1 )->name, dy2->name );
         variable_move_naked( _environment, dx->name, dx2->name );
-        dx2 = variable_sl_const( _environment, dx2->name, 1 );
+        variable_move_naked( _environment, variable_sl_const( _environment, dx2->name, 1 )->name, dx2->name );;
 
         if_then( _environment, variable_greater_than( _environment, dx2->name, dy2->name, 0 )->name );
             variable_move( _environment, variable_sub( _environment, dy2->name, dx->name)->name, fraction->name);

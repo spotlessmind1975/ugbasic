@@ -150,7 +150,7 @@ Variable * travel_path( Environment * _environment, char * _p, char * _x, char *
         variable_move( _environment,
             variable_and( _environment, 
                 variable_compare( _environment, x->name, x1->name )->name,
-                variable_compare( _environment, y->name, x1->name )->name
+                variable_compare( _environment, y->name, y1->name )->name
             )->name, check->name );
         cpu_compare_and_branch_8bit_const( _environment, check->realName, 0xff, doneLabel, 1 );
 
