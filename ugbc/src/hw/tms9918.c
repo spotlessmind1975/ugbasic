@@ -1378,6 +1378,25 @@ void tms9918_cls( Environment * _environment ) {
 
 }
 
+void tms9918_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+    
+    if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+        // deploy( clsBox, src_hw_cpc_cls_box_asm );
+        // outline1("LD A, (%S)", _x1);
+        // outline0("LD B, A");
+        // outline1("LD A, (%S)", _y1);
+        // outline0("LD C, A");
+        // outline1("LD A, (%S)", _x2);
+        // outline0("LD D, A");
+        // outline1("LD A, (%S)", _y2);
+        // outline0("LD E, A");
+        // outline0("CALL CLSBOX");
+    } else {
+
+    }
+
+}
+
 void tms9918_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {

@@ -2345,6 +2345,25 @@ void vdcz_cls( Environment * _environment ) {
 
 }
 
+void vcdz_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
+        // deploy( clsBox, src_hw_vdcz_cls_box_asm );
+        // outline1("LD A, (%S)", _x1);
+        // outline0("LD B, A");
+        // outline1("LD A, (%S)", _y1);
+        // outline0("LD C, A");
+        // outline1("LD A, (%S)", _x2);
+        // outline0("LD D, A");
+        // outline1("LD A, (%S)", _y2);
+        // outline0("LD E, A");
+        // outline0("CALL CLSBOX");
+    } else {
+
+    }
+
+}
+
 void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {

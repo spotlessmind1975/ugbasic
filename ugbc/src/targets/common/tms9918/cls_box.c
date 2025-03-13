@@ -38,12 +38,17 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void cls( Environment * _environment, char * _paper ) {
+#if defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
 
-    // if ( _paper ) {
-    //     paper( _environment, _paper );
-    // }
+void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 
-    pc1403_cls( _environment );
-    
+   Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+   Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+   Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
+   Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_POSITION, 0 );
+
+   tms9918_cls_box( _environment, x1->realName, y1->realName, x2->realName, y2->realName );
+
 }
+
+#endif

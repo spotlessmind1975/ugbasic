@@ -1023,6 +1023,10 @@ void gb_cls( Environment * _environment ) {
 
 }
 
+void gb_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+    
+}
+
 void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {

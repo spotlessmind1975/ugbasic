@@ -34,16 +34,21 @@
 
 #include "../../ugbc.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+ /****************************************************************************
+  * CODE SECTION 
+  ****************************************************************************/
+ 
+#if defined(__coco__) || defined(__d32__) || defined(__d64__)
 
-void cls( Environment * _environment, char * _paper ) {
+ void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+ 
+    Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+    Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * x2 = variable_retrieve_or_define( _environment, _x2, VT_POSITION, 0 );
+    Variable * y2 = variable_retrieve_or_define( _environment, _y2, VT_POSITION, 0 );
 
-    // if ( _paper ) {
-    //     paper( _environment, _paper );
-    // }
+    c6847_cls_box( _environment, x1->realName, y1->realName, x2->realName, y2->realName );
+ 
+ }
 
-    pc1403_cls( _environment );
-    
-}
+ #endif

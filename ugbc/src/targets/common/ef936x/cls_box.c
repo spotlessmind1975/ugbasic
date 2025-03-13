@@ -32,18 +32,23 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
+ 
+#if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
 
-void cls( Environment * _environment, char * _paper ) {
+void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 
-    // if ( _paper ) {
-    //     paper( _environment, _paper );
-    // }
+   Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
+   Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+   Variable * w = variable_retrieve_or_define( _environment, _w, VT_WORD, 0 );
+   Variable * h = variable_retrieve_or_define( _environment, _h, VT_BYTE, 0 );
 
-    pc1403_cls( _environment );
-    
+   ef936x_cls_box( _environment, x1->realName, y1->realName, w->realName, h->realName );
+
 }
+
+#endif

@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/* <usermanual>
-@keyword CLS
-
-@target c128z
-</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

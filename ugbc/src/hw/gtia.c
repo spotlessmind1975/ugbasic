@@ -1933,6 +1933,22 @@ void gtia_cls( Environment * _environment ) {
 
 }
 
+void gtia_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+    
+    // deploy( clsBox, src_hw_gtia_cls_box_asm );
+
+    // outline1("LDA %s", _x1);
+    // outline0("STA MATHPTR0");
+    // outline1("LDA %s", _y1);
+    // outline0("STA MATHPTR1");
+    // outline1("LDA %s", _x2);
+    // outline0("STA MATHPTR2");
+    // outline1("LDA %s", _y2);
+    // outline0("STA MATHPTR3");
+    // outline0("JSR CLSBOX");
+
+}
+
 void gtia_clear( Environment * _environment, char * _pattern ) {
     
     deploy( cls, src_hw_gtia_cls_asm );

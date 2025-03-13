@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/* <usermanual>
-@keyword CLS
-
-@target coco
-</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

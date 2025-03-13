@@ -1452,6 +1452,27 @@ void gime_cls( Environment * _environment ) {
 
 }
 
+void gime_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
+
+    if ( _environment->currentTileMode ) {
+
+    } else {
+        // deploy( clsBox, src_hw_gime_cls_box_asm );
+        // outline1("LDA %s", _x1 );
+        // outline1("STA <MATHPTR0", _x1 );
+        // outline1("LDA %s", _y1 );
+        // outline1("STA <MATHPTR1", _y1 );
+        // outline1("LDA %s", _x2 );
+        // outline1("STA <MATHPTR2", _x2 );
+        // outline1("LDA %s", _y2 );
+        // outline1("STA <MATHPTR3", _y2 );
+        // outline0("JSR CLSBOX");
+    }
+
+}
+
 void gime_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
