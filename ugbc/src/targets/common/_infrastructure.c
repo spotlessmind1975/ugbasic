@@ -9305,7 +9305,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, 14*8, offset->realName, result->realName );
+                    cpu_move_nbit_indirect2( _environment, 18*8, offset->realName, result->realName );
 
                     break;
 
