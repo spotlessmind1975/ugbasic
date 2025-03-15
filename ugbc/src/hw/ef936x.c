@@ -660,10 +660,25 @@ void ef936x_get_height( Environment * _environment, char *_result ) {
 }
 
 void ef936x_cls( Environment * _environment ) {
-
+    
     deploy( clsGraphic, src_hw_ef936x_cls_asm );
-
+    
     outline0("JSR CLS");
+
+}    
+    
+void ef936x_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    deploy( clsBox, src_hw_ef936x_cls_box_asm );
+    outline1("LDD %s", _x1 );
+    outline0("STD <IMAGEX" );
+    outline1("LDD %s", _y1 );
+    outline0("STD <IMAGEY" );
+    outline1("LDD %s", _w );
+    outline0("STD <IMAGEW" );
+    outline1("LDA %s", _h );
+    outline0("STA <IMAGEH" );
+    outline0("JSR CLSBOX");
 
 }
 

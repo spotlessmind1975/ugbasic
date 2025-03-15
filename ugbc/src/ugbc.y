@@ -11565,6 +11565,9 @@ statement2nc:
   | VHCENTER vhcenter_definition
   | VHCENTRE vhcenter_definition
   | JMOVE jmove_definition
+  | CLS expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+      cls_box( _environment, $2, $4, $6, $8 );
+  }
   | CLS {
       cls( _environment, NULL );
       home( _environment );

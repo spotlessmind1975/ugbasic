@@ -184,6 +184,22 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
 }
 
+void zx_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    deploy( clsBox, src_hw_zx_cls_box_asm );
+
+    outline1("LD A, (%s)", _x1 );
+    outline0("LD (IMAGEX), A" );
+    outline1("LD A, (%s)", _y1 );
+    outline0("LD (IMAGEY), A" );
+    outline1("LD HL, (%s)", _w);
+    outline0("LD (IMAGEW), A" );
+    outline1("LD A, (%s)", _h );
+    outline0("LD (IMAGEH), A" );
+    outline0("CALL CLSBOX");
+
+}
+
 void zx_inkey( Environment * _environment, char * _key ) {
 
     _environment->bitmaskNeeded = 1;

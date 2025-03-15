@@ -84,13 +84,13 @@ Variable * create_path( Environment * _environment, char * _x0, char * _y0, char
 
         Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
         Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
-        Variable * dx = variable_temporary( _environment, VT_SBYTE, "(dx2)");
-        Variable * dy = variable_temporary( _environment, VT_SBYTE, "(dy2)");
-        Variable * dx2 = variable_temporary( _environment, VT_SBYTE, "(dx2)");
-        Variable * dy2 = variable_temporary( _environment, VT_SBYTE, "(dy2)");
-        Variable * stepx = variable_temporary( _environment, VT_SBYTE, "(stepx)");
-        Variable * stepy = variable_temporary( _environment, VT_SBYTE, "(stepy)");
-        Variable * fraction = variable_temporary( _environment, VT_SBYTE, "(fraction)" );
+        Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx2)");
+        Variable * dy = variable_temporary( _environment, VT_POSITION, "(dy2)");
+        Variable * dx2 = variable_temporary( _environment, VT_POSITION, "(dx2)");
+        Variable * dy2 = variable_temporary( _environment, VT_POSITION, "(dy2)");
+        Variable * stepx = variable_temporary( _environment, VT_POSITION, "(stepx)");
+        Variable * stepy = variable_temporary( _environment, VT_POSITION, "(stepy)");
+        Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)" );
 
         variable_move( _environment, x0->name, x->name );
         variable_move( _environment, y0->name, y->name );
@@ -129,13 +129,13 @@ Variable * create_path( Environment * _environment, char * _x0, char * _y0, char
 
         cpu_move_16bit( _environment, x->realName, path->realName );
         cpu_move_16bit( _environment, y->realName, address_displacement( _environment, path->realName, "2" ) );
-        cpu_move_8bit( _environment, dx2->realName, address_displacement( _environment, path->realName, "4" ) );
-        cpu_move_8bit( _environment, dy2->realName, address_displacement( _environment, path->realName, "5" ) );
-        cpu_move_8bit( _environment, stepx->realName, address_displacement( _environment, path->realName, "6" ) );
-        cpu_move_8bit( _environment, stepy->realName, address_displacement( _environment, path->realName, "7" ) );
-        cpu_move_8bit( _environment, fraction->realName, address_displacement( _environment, path->realName, "8" ) );
-        cpu_move_16bit( _environment, x1->realName, address_displacement( _environment, path->realName, "10" ) );
-        cpu_move_16bit( _environment, y1->realName, address_displacement( _environment, path->realName, "12" ) );
+        cpu_move_16bit( _environment, dx2->realName, address_displacement( _environment, path->realName, "4" ) );
+        cpu_move_16bit( _environment, dy2->realName, address_displacement( _environment, path->realName, "6" ) );
+        cpu_move_16bit( _environment, stepx->realName, address_displacement( _environment, path->realName, "8" ) );
+        cpu_move_16bit( _environment, stepy->realName, address_displacement( _environment, path->realName, "10" ) );
+        cpu_move_16bit( _environment, fraction->realName, address_displacement( _environment, path->realName, "12" ) );
+        cpu_move_16bit( _environment, x1->realName, address_displacement( _environment, path->realName, "14" ) );
+        cpu_move_16bit( _environment, y1->realName, address_displacement( _environment, path->realName, "16" ) );
 
         cpu_return( _environment );
 

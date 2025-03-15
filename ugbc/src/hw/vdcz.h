@@ -158,6 +158,7 @@ void vdcz_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void vdcz_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void vdcz_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void vdcz_cls( Environment * _environment );
+void vdcz_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h );
 void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap );
 void vdcz_hscroll_line( Environment * _environment, int _direction, int _overlap );
 void vdcz_hscroll_screen( Environment * _environment, int _direction, int _overlap );

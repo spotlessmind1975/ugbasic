@@ -1041,6 +1041,25 @@ void c6847_cls( Environment * _environment ) {
 
 }
 
+void c6847_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    if ( _environment->currentMode < 7 ) {
+
+    } else {
+        deploy( clsBox, src_hw_6847_cls_box_asm );
+        outline1("LDD %s", _x1 );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", _y1 );
+        outline0("STD <IMAGEY"  );
+        outline1("LDA %s", _w );
+        outline0("STA <IMAGEW" );
+        outline1("LDA %s", _h );
+        outline0("STA <IMAGEH" );
+        outline0("JSR CLSBOX");
+    }
+
+}
+
 void c6847_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _environment->currentMode < 7 ) {

@@ -63,7 +63,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     outline1("%s: defs 12", variable->realName);
                     break;
                 case VT_PATH:
-                    outline1("%s: defs 14", variable->realName);
+                    outline1("%s: defs 18", variable->realName);
                     break;
                 case VT_WORD:
                 case VT_SWORD:

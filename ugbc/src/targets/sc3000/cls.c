@@ -38,11 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/* <usermanual>
-@keyword CLS
-
-@target sc3000
-</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

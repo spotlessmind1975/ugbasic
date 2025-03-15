@@ -574,11 +574,45 @@ PLOTD3DB
     ;---------
 
     LDB <(PLOTX+1)
-    ANDB #$01
+    ANDB #$03
+    BEQ PLOTD3LODB0
     CMPB #$01
-    BEQ PLOTD3LODB
+    BEQ PLOTD3LODB1
+    CMPB #$02
+    BEQ PLOTD3LODB2
+    BRA PLOTD3LODB3
 
-PLOTD3HIDB
+PLOTD3LODB0
+
+    LDA <MATHPTR5
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA $2000, X
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA $2000, X
+    ; LDA $2000, X
+    ; ORA <MATHPTR5
+    ; STA $2000, X
+    JMP PLOTD3FDB
+
+PLOTD3LODB1
+
+    ; LDA , X
+    ; ORA <MATHPTR5
+    ; STA , X
+    ; LDA $2000, X
+    LDA $2000, X
+    ANDA #$F0   
+    ORA <MATHPTR5
+    ; STA $2000, X
+    STA $2000, X
+    JMP PLOTD3FDB
+
+PLOTD3LODB2
 
     LDA <MATHPTR5
     ASLA
@@ -590,20 +624,14 @@ PLOTD3HIDB
     ANDA #$0F
     ORA <MATHPTR5
     STA , X
-    ; LDA $2000, X
-    ; ORA <MATHPTR5
-    ; STA $2000, X
     JMP PLOTD3FDB
 
-PLOTD3LODB
+PLOTD3LODB3
 
-    ; LDA , X
-    ; ORA <MATHPTR5
-    ; STA , X
-    LDA $2000, X
+    LDA , X
     ANDA #$F0   
     ORA <MATHPTR5
-    STA $2000, X
+    STA , X
     JMP PLOTD3FDB
 
 PLOTD3FDB

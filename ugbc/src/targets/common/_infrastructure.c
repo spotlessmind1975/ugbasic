@@ -1028,7 +1028,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_IMAGEREF ) {
         size *= 16; // real: 12
     } else if ( var->arrayType == VT_PATH ) {
-        size *= 16; // real: 14
+        size *= 32; // real: 18
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1451,7 +1451,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
                     size *= 16; // Real: 12
                 } else if ( destination->arrayType == VT_PATH ) {
-                    size *= 16; // Real: 14
+                    size *= 32; // Real: 18
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -2979,7 +2979,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_PATH:
                             switch( target->type ) {
                                 case VT_PATH: {
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 18 );
                                     break;
                                 }
                                 default:
@@ -3436,9 +3436,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_PATH: {
                     if ( target->size == 0 ) {
-                        target->size = 14;
+                        target->size = 18;
                     }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 18 );
                     break;
                 }
                 case VT_MUSIC:
@@ -9000,6 +9000,8 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
     switch( _array->arrayType ) {
         case VT_PATH:
+            offset = variable_sl_const( _environment, offset->name, 5 );
+            break;
         case VT_IMAGEREF:
             offset = variable_sl_const( _environment, offset->name, 4 );
             break;
@@ -9031,7 +9033,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
         switch( _array->arrayType ) {
             case VT_PATH:
-                cpu_move_nbit_indirect( _environment, 14 * 8, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, 18 * 8, _value->realName, offset->realName );
                 break;
             case VT_IMAGEREF:
                 cpu_move_nbit_indirect( _environment, 12 * 8, _value->realName, offset->realName );
@@ -9299,11 +9301,11 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 }
                 case VT_PATH: {
 
-                    offset = variable_sl_const( _environment, offset->name, 4 );
+                    offset = variable_sl_const( _environment, offset->name, 5 );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, 14*8, offset->realName, result->realName );
+                    cpu_move_nbit_indirect2( _environment, 18*8, offset->realName, result->realName );
 
                     break;
 

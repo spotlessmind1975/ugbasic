@@ -44,11 +44,6 @@
  * @param _environment Current calling environment
  * @param _paper Color to use to clear the screen (NULL = default one)
  */
-/* <usermanual>
-@keyword CLS
-
-@target c64
-</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

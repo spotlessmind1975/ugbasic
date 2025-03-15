@@ -1690,6 +1690,7 @@ typedef struct _Deployed {
     int cls;
     int clsText;
     int clsGraphic;
+    int clsBox;
     int textCline;
     int textClineGraphic;
     int textHScroll;
@@ -4742,6 +4743,7 @@ Variable *              clear_key( Environment * _environment );
 void                    cline( Environment * _environment, char * _characters );
 void                    clip( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    cls( Environment * _environment, char * _paper );
+void                    cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h );
 void                    cmove( Environment * _environment, char * _dx, char * _dy );
 void                    cmove_direct( Environment * _environment, int _dx, int _dy );
 Variable *              collision_to( Environment * _environment, int _sprite );

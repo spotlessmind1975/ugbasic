@@ -1452,6 +1452,27 @@ void gime_cls( Environment * _environment ) {
 
 }
 
+void gime_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
+
+    if ( _environment->currentTileMode ) {
+
+    } else {
+        deploy( clsBox, src_hw_gime_cls_box_asm );
+        outline1("LDD %s", _x1 );
+        outline0("STD <IMAGEX");
+        outline1("LDD %s", _y1 );
+        outline0("STD <IMAGEY" );
+        outline1("LDD %s", _w );
+        outline0("STD <IMAGEW" );
+        outline1("LDA %s", _h );
+        outline0("STA <IMAGEH" );
+        outline0("JSR CLSBOX");
+    }
+
+}
+
 void gime_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy_preferred( vScrollText, src_hw_gime_vscroll_text_asm );
