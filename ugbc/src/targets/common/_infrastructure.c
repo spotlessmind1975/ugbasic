@@ -14052,6 +14052,9 @@ const char *strrstr(const char *haystack, const char *needle)
 
 void define_implicit_array_if_needed( Environment * _environment, char * _name ) {
     if ( !variable_exists( _environment, _name ) ) {
+        if ( _environment->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( _name );
+        }
         memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         ((struct _Environment *)_environment)->arrayDimensions = 1;
         ((struct _Environment *)_environment)->arrayDimensionsEach[0] = ((struct _Environment *)_environment)->defaultArraySize;
