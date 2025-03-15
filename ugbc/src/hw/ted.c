@@ -1270,6 +1270,30 @@ void ted_cls( Environment * _environment ) {
 
 }
 
+void ted_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( clsBox, src_hw_ted_cls_box_asm );
+
+        outline1("LDA %s", _x1);
+        outline0("STA IMAGEX");
+        outline1("LDA %s", address_displacement( _environment, _x1, "1" ) );
+        outline0("STA IMAGEX+1");
+        outline1("LDA %s", _y1);
+        outline0("STA IMAGEY");
+        outline1("LDA %s", _w);
+        outline0("STA IMAGEW");
+        outline1("LDA %s", address_displacement( _environment, _w, "1" ) );
+        outline0("STA IMAGEW+1");
+        outline1("LDA %s", _h);
+        outline0("STA IMAGEH");
+        outline0("JSR CLSBOX");
+    } else {
+        
+    }
+
+}
+
 void ted_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );

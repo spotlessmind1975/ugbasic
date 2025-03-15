@@ -255,6 +255,8 @@ PLOTD
     ; during video RAM operation. This routine can simply bank in video 
     ; memory at the beginning of execution and bank out at the end.
 
+    ORCC #$50
+
     JSR GIMEBANKVIDEO
 
     LDA , X           ;get row with point in it
@@ -337,6 +339,8 @@ PLOTP
 
     JSR GIMEBANKROM
     
+    ANDCC #$AF
+
     RTS
 
 PLOTORBIT

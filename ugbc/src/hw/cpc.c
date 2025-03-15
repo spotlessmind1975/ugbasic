@@ -980,6 +980,31 @@ void cpc_cls( Environment * _environment ) {
 
 }
 
+void cpc_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+    
+    deploy( clsBox, src_hw_cpc_cls_box_asm );
+
+    outline1("LD A, (%s)", _x1);
+    outline0("LD E, A");
+    outline1("LD A, (%s)", address_displacement( _environment, _x1, "1" ) );
+    outline0("LD IXH, A");
+
+    outline1("LD A, (%s)", _y1);
+    outline0("LD D, A");
+
+    outline1("LD A, (%s)", _x1);
+    outline0("LD E, A");
+    outline1("LD A, (%s)", address_displacement( _environment, _x1, "1" ) );
+    outline0("LD IXH, A");
+
+    outline1("LD A, (%s)", _w);
+    outline0("LD C, A");
+    outline1("LD A, (%s)", _h);
+    outline0("LD B, A");
+    outline0("CALL CLSBOX");
+
+}
+
 void cpc_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     if ( _direction > 0 ) {

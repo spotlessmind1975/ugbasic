@@ -1933,6 +1933,26 @@ void gtia_cls( Environment * _environment ) {
 
 }
 
+void gtia_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+    
+    deploy( clsBox, src_hw_gtia_cls_box_asm );
+
+    outline1("LDA %s", _x1);
+    outline0("STA IMAGEX");
+    outline1("LDA %s", address_displacement( _environment, _x1, "1" ) );
+    outline0("STA IMAGEX+1");
+    outline1("LDA %s", _y1);
+    outline0("STA IMAGEY");
+    outline1("LDA %s", _w);
+    outline0("STA IMAGEW");
+    outline1("LDA %s", address_displacement( _environment, _w, "1" ) );
+    outline0("STA IMAGEW+1");
+    outline1("LDA %s", _h);
+    outline0("STA IMAGEH");
+    outline0("JSR CLSBOX");
+
+}
+
 void gtia_clear( Environment * _environment, char * _pattern ) {
     
     deploy( cls, src_hw_gtia_cls_asm );
