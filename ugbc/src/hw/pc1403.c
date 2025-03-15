@@ -182,10 +182,6 @@ void pc1403_cls( Environment * _environment ) {
 
 }
 
-void pc1403_cls_box( Environment * _environment, char * _x1, char  * _y1, char * _x2, char * _y2 ) {
-
-}
-
 void pc1403_inkey( Environment * _environment, char * _key ) {
 
     CRITICAL_UNIMPLEMENTED("pc1403_inkey");

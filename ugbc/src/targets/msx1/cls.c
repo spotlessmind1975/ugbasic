@@ -38,6 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword CLS
+
+@target msx1
+</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     if ( _paper ) {

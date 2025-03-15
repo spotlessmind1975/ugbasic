@@ -38,6 +38,11 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/* <usermanual>
+@keyword CLS
+
+@target pc1403
+</usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 
     // if ( _paper ) {

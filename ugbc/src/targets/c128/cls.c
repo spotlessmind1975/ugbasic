@@ -65,14 +65,7 @@ the ability to set a default background color, if possible. The clearing
 occurs with respect to the selected mode, so it will be a "pixel by pixel" 
 clearing (if in bitmap mode) or "tile by tile" (if in tile mode). In the 
 second case, the value of the ''EMPTYTILE'' variable will be used, 
-possibly overridden. 
-
-In the case of a graphical erasure, you can also indicate the coordinate 
-from which to start erasing the screen as well as the size of the erasure 
-(in terms of width and height). Particular attention must be paid to the 
-fact that these metrics are relative to the limits of the underlying hardware: 
-therefore, if a byte contains for example 4 pixels, the coordinates and 
-dimensions will be "modulo 4".
+possibly overridden
 
 @italian
 
@@ -94,25 +87,16 @@ quindi sarà una cancellazione "pixel per pixel" (se in modalità bitmap) o
 "tile per tile" (se in modalità tile). Nel secondo caso, verrà utilizzato 
 il valore della variabile ''EMPTYTILE'', eventualmente sovrascritto
 
-Nel caso di una cancellazione in modalità grafica, è possibile indicare 
-anche la coordinata da cui partire per cancellare lo schermo nonché la 
-dimensione della cancellazione (in termini di larghezza e altezza). 
-Particolare attenzione si deve porre sul fatto che tali metriche sono 
-relative ai limiti dell'hardware sottostante: quindi, se un byte contiene 
-ad esempio 4 pixel, le coordinate e le dimensioni saranno "modulo 4".
-
 @syntax CLS
 @syntax CLS color
-@syntax CLS x, y, w, h
 
 @example CLS
 @example CLS WHITE
-@example CLS 100, 100, 8, 8
 
 @usedInExample texts_position_01.bas
 @usedInExample texts_position_02.bas
 
-@target all
+@target c128
 @alias PCLS
 </usermanual> */
 

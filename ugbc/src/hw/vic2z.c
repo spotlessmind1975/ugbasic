@@ -1493,10 +1493,6 @@ void vic2z_cls( Environment * _environment ) {
 
 }
 
-void vic2z_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
-
-}
-
 void vic2z_scroll_text( Environment * _environment, int _direction ) {
 
     if ( _direction > 0 ) {

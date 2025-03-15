@@ -156,7 +156,6 @@ void ef9345_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void ef9345_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void ef9345_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
 void ef9345_cls( Environment * _environment );
-void ef9345_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h );
 void ef9345_scroll_text( Environment * _environment, int _direction, int _overlap );
 void ef9345_hscroll_line( Environment * _environment, int _direction, int _overlap );
 void ef9345_hscroll_screen( Environment * _environment, int _direction, int _overlap );

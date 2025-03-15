@@ -1270,26 +1270,6 @@ void ted_cls( Environment * _environment ) {
 
 }
 
-void ted_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
-
-    if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
-        // deploy( clsBox, src_hw_ted_cls_box_asm );
-
-        // outline1("LDA %s", _x1);
-        // outline0("STA MATHPTR0");
-        // outline1("LDA %s", _y1);
-        // outline0("STA MATHPTR1");
-        // outline1("LDA %s", _x2);
-        // outline0("STA MATHPTR2");
-        // outline1("LDA %s", _y2);
-        // outline0("STA MATHPTR3");
-        // outline0("JSR CLSBOX");
-    } else {
-        
-    }
-
-}
-
 void ted_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
