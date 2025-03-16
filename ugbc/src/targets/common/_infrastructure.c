@@ -9187,7 +9187,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             offset = variable_sl_const( _environment, offset->name, 5 );
             break;
         case VT_VECTOR:
-            offset = variable_sl_const( _environment, offset->name, 4 );
+            offset = variable_sl_const( _environment, offset->name, 2 );
             break;
         case VT_IMAGEREF:
             offset = variable_sl_const( _environment, offset->name, 4 );
@@ -9502,11 +9502,11 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 }
                 case VT_VECTOR: {
 
-                    offset = variable_sl_const( _environment, offset->name, 5 );
+                    offset = variable_sl_const( _environment, offset->name, 2 );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, 18*8, offset->realName, result->realName );
+                    cpu_move_nbit_indirect2( _environment, 4*8, offset->realName, result->realName );
 
                     break;
 
