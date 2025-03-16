@@ -1730,6 +1730,7 @@ typedef struct _Deployed {
     int bar;
     int ellipse;
     int create_path;
+    int create_vector;
     int travel_path;
     int fade;
 
@@ -4782,6 +4783,7 @@ void                    const_define_float( Environment * _environment, char * _
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
+Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    cset( Environment * _environment, char * _value );
 

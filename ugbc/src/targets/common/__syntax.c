@@ -6512,3 +6512,65 @@ modalità grafica.
 @example PRINT SCREEN(10,10)
 
 </usermanual> */
+
+/* <usermanual>
+@keyword VECTOR (data type)
+
+@english
+
+The ''VECTOR'' datatype represents a two-dimensional geometric vector, i.e.
+an oriented segment that represents a quantity with: module (or magnitude),
+as the length of the segment, which indicates the magnitude of the quantity;
+direction: the line on which the segment lies, i.e. the orientation of the 
+segment on the line.
+
+In a Cartesian coordinate system, a two-dimensional vector is defined by a
+pair of numbers (x, y), which represent its components along the x and y axes. 
+These components can be viewed as the coordinates of the vector's endpoint, 
+assuming that the initial point is the origin (0, 0). 
+
+Given a variable of ''VECTOR'' data type, you can access to coordinates
+using the ''X()'' and ''Y()'' functions.
+
+Vectors can be added or subtracted, and they are performed by adding or 
+subtracting the corresponding components; you can do a scalar product,
+where both components are multiplied by the scalar; you can do a dot
+product, an operation that returns a number related to the angle between
+two vectors.
+
+Two-dimensional geometric vectors are a fundamental tool in many areas of 
+mathematics, physics, and computer science, especially in computer graphics 
+and the simulation of physical phenomena.
+
+@italian
+
+Il tipo di dati ''VECTOR'' rappresenta un vettore geometrico bidimensionale, ovvero
+un segmento orientato che rappresenta una quantità con: modulo (o magnitudine),
+come lunghezza del segmento, che indica la magnitudine della quantità;
+direzione: la linea su cui giace il segmento, ovvero l'orientamento del
+segmento in linea.
+
+In un sistema di coordinate cartesiane, un vettore bidimensionale è definito da una
+coppia di numeri (x, y), che rappresentano i suoi componenti lungo gli assi x e y.
+Questi componenti possono essere visti come le coordinate del punto finale del vettore,
+supponendo che il punto iniziale sia l'origine (0, 0).
+
+Data una variabile di tipo di dati ''VECTOR'', è possibile accedere alle coordinate
+utilizzando le funzioni ''X()'' e ''Y()''.
+
+I vettori possono essere aggiunti o sottratti e vengono eseguiti aggiungendo o
+sottraendo i componenti corrispondenti; puoi fare un prodotto scalare,
+in cui entrambe le componenti vengono moltiplicate per lo scalare; puoi fare un prodotto scalare,
+un'operazione che restituisce un numero correlato all'angolo tra
+due vettori.
+
+I vettori geometrici bidimensionali sono uno strumento fondamentale in molti settori della
+matematica, della fisica e dell'informatica, specialmente nella computer grafica
+e nella simulazione di fenomeni fisici.
+
+@syntax DIM v AS VECTOR
+@example PLOT X(v),Y(v), RED
+
+@target all
+</usermanual> */
+
