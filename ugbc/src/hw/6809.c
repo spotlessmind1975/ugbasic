@@ -6264,7 +6264,9 @@ void cpu6809_float_single_from_double_to_int_array( Environment * _environment, 
     int right[4];
     int steps = 0;
     int exp = 0;
-    int mantissa_bits = 32;
+    int mantissa_bits = 31;
+
+    // printf("value = %f\n", _value );
 
     memset( &right[0], 0, sizeof( int ) * 4 );
 
@@ -6292,6 +6294,8 @@ void cpu6809_float_single_from_double_to_int_array( Environment * _environment, 
 
     left = (unsigned int) integral;
 
+    // printf("  integral = %f (%d)\n", integral, left );
+
     // Step 3: Convert the Fractional Portion to Binary
     // The fractional portion of the number must also be converted to binary, though the conversion process 
     // is much different from what you're used to. The algorithm you'll used is based on performing repeated 
@@ -6310,7 +6314,7 @@ void cpu6809_float_single_from_double_to_int_array( Environment * _environment, 
 
     while( ( fractional != 1.0 ) && ( steps < mantissa_bits ) ) {
 
-        // printf("%f %d %2.2x %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], (unsigned char) right[3] );
+        // printf(" > %f %d %2.2x %2.2x %2.2x %2.2x\n", fractional, steps, (unsigned char) right[0], (unsigned char) right[1], (unsigned char) right[2], (unsigned char) right[3] );
 
         right[3] = right[3] << 1;
         right[2] = right[2] << 1;

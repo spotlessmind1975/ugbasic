@@ -1802,6 +1802,7 @@ ZX { RETURN(ZX,1); }
 [0-9][a-fA-F0-9]+[hH] { int c = strlen(yytext); yytext[c-1] = 0; yylval.integer = strtol(yytext,0,16); RETURN(Integer,1); }
 %[0-1]+ { yylval.integer = strtol(yytext+1,0,2); RETURN(Integer,1); }
 [0-9]+ { yylval.integer = atoi(yytext); RETURN(Integer,1);  }
+-[0-9]*\.[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 [0-9]*\.[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 [0-9]*\.[0-9]+E[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 [0-9]*\.[0-9]+E-[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }

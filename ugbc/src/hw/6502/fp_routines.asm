@@ -881,7 +881,8 @@ SWAP1:
 ;     RESULT IN EXP/MANT1.  EXP/MANT2 UNEFFECTED
 ;
 ;
-FLOAT: LDA #$8E
+
+FLOATS:LDA #$8E
        STA X1      ; SET EXPN TO 14 DEC
        LDA #0      ; CLEAR LOW ORDER BYTE
        STA M1+2
@@ -1146,6 +1147,28 @@ FCMPE:
 ;
 ;
 
+FLOAT: LDA #0
+       STA MATHPTR0
+       LDA M1
+       AND #$80
+       CMP #$80
+       BNE FLOATX
+       STA MATHPTR0
+       LDA M1+1
+       EOR #$FF
+       STA M1+1
+       LDA M1
+       EOR #$FF
+       STA M1
+       INC M1+1
+       BNE FLOATX
+       INC M1
+FLOATX:JSR FLOATS
+RTS2:  LDA MATHPTR0
+       BEQ RTS2X
+       JSR FCOMPL
+RTS2X: RTS
+
 ; A BCD to Floating-Point Binary Routine
 ; Marvin L. De Jong
 ; from Compute! Issue 9 / February 1981 / Page 46
@@ -1156,56 +1179,93 @@ FCMPE:
 
 ; Note: The original listing had many errors (e.g. "#" missing). These have been corrected.
 
-
+       ;  OVFLO  = $00           ; overflow byte for the accumulator when it is shifted left or multiplied by ten.
+       ;  MSB    = $01           ; most-significant byte of the accumulator.
+       ;  NMSB   = $02           ; next-most-significant byte of the accumulator.
+       ;  NLSB   = $03           ; next-least-significant byte of the accumulator.
+       ;  LSB    = $04           ; least-significant byte of the accumulator.
+       ;  BEXP   = $05           ; contains the binary exponent, bit seven is the sign bit.
+       ;  CHAR   = $06           ; used to store the character input from the keyboard.
+       ;  MFLAG  = $07           ; set to $FF when a minus sign is entered.
+       ;  DPFLAG = $08           ; decimal point flag, set when decimal point is entered.
+       ;  ESIGN  = $0A           ; set to $FF when a minus sign is entered for the exponent.
+       ;  MEM    = $00           ; ???
+       ;  ACC    = $00           ; ???
+       ;  ACCB   = $10           ; ???
+       ;  TEMP   = $0B           ; temporary storage location.
+       ;  EVAL   = $0C           ; value of the decimal exponent entered after the "E."
+       ;  DEXP   = $17           ; current value of the decimal exponent.
+       ;  BCDA   = $20           ; BCD accumulator (5 bytes)
+       ;  BCDN   = $25           ; ???
 
 ; Listing 3. A Floating-Point Binary to BCD Routine.
 
-BEGIN:  
+       ; WOZNIAK: $80, $40, $00, $00 =  0.5
+       ; WOZNIAK: $7e, $80, $00, $00 = -0.5
 
-        LDA #0
-        STA MFLAG               ; Initially set MFLAG to 0.
-        STA LSB                 ; LSB is always zero
-        STA DEXP
+       ;     EXPONENT:    THE EXPONENT REPRESENTS POWERS OF TWO.  THE
+       ;       REPRESENTATION IS 2'S COMPLEMENT EXCEPT THAT THE SIGN
+       ;       BIT (BIT 7) IS COMPLEMENTED.  THIS ALLOWS DIRECT COMPARISON
+       ;       OF EXPONENTS FOR SIZE SINCE THEY ARE STORED IN INCREASING
+       ;       NUMERICAL SEQUENCE RANGING FROM $00 (-128) TO $FF (+127)
+       ;       ($ MEANS NUMBER IS HEXADECIMAL).
 
-        LDA M1                  ; If M1 is negative
-        BPL BEGINPLUS
-        LDA #$FF                ; Store $FF in MFLAG
-        STA MFLAG
-BEGINPLUS:
-        CLC                     ; Shift all mantissa bytes left one position.
-        LDA M1+2
-        ROL A
-        STA NLSB
-        LDA M1+1
-        ROL A
-        STA NMSB
-        LDA M1
-        ROL A
-        STA MSB
+       ; BCD   :  $01, $80, $00, $00      -> MFLAG = 0  = 0.5
+       ; BCD   :  $01, $80, $00, $00      -> MFLAG = ff =-0.5
 
-        LDA X1                  ; Handle exponent
-        EOR #%10000000          ; Toggle bit 7
-        CLC                     ; Add one
-        ADC #1
-        STA BEXP
+BEGIN: 
+
+       LDA #0
+       STA MFLAG
+       STA LSB
+       CLC
+       LDA M1+2
+       ROL A
+       STA NLSB
+       LDA M1+1
+       ROL A
+       STA NMSB
+       LDA M1
+       ROL A
+       STA MSB
+       LDA X1
+       EOR #$80
+       CLC
+       ADC #1
+       STA BEXP
+
+       LDA M1
+       AND #$80
+       CMP #$80
+       BNE BEGINL1
+
+       LDA #$FF
+       STA MFLAG
+
+       LDA MSB
+       EOR #$FF
+       STA MSB
+
+       LDA NMSB
+       EOR #$FF
+       STA NMSB
+
+       LDA NLSB
+       EOR #$FF
+       STA NLSB
+
+       LDA LSB
+       EOR #$FF
+       STA LSB
+
+BEGINL1:
 
         LDA MSB         ; Test MSB to see if mantissa is zero.
         BNE BRT         ; If it is, print a zero and then get out.
-        LDA M1
-        CMP #$80
-        BEQ BRTM1
         LDA #'0'        ; Get ASCII zero.
         STA MATHPTR0
         JSR OUTCH       ; Jump to output subroutine.
         RTS             ; Return to calling routine.
-BRTM1:
-        LDA #'-'
-        STA MATHPTR0
-        JSR OUTCH
-        LDA #'1'
-        STA MATHPTR0
-        JSR OUTCH       ; Jump to output subroutine.
-        RTS
 BRT:    LDA #$00        ; Clear OVFLO location.
         STA OVFLO
 BRY:    LDA BEXP        ; Is the binary exponent negative?
@@ -1249,50 +1309,18 @@ BRV:    LDA TEMP        ; Test to see if we need to round
         BPL BCD         ; up. No.
         SEC             ; Yes. Add one to mantissa.
         LDX #$04
-BRS:    
-@IF C128
-        LDA ACC+4
-        ADC #$00
-        STA ACC+4
-
-        LDA ACC+3
-        ADC #$00
-        STA ACC+3
-
-        LDA ACC+2
-        ADC #$00
-        STA ACC+2
-
-        LDA ACC+1
-        ADC #$00
-        STA ACC+1
-@ELSE
-        LDA ACC,X
+BRS:    LDA ACC,X
         ADC #$00
         STA ACC,X
         DEX
         BNE BRS
-@ENDIF
-
 BCD:    JSR CONVD       ; Jump to 32 bit binary-to-BCD routine.
 BRMA:   LDY #$04        ; Rotate BCD accumulator right until non-significant zeros are shifted out or DEXP is zero, whichever comes first.
-BRP:    
-
-@IF C128
-BRQ:    CLC
-        ROR BCDA+4
-        ROR BCDA+3
-        ROR BCDA+2
-        ROR BCDA+1
-        ROR BCDA
-@ELSE
-        LDX #$04
+BRP:    LDX #$04
         CLC
 BRQ:    ROR BCDA,X
         DEX
         BPL BRQ
-@ENDIF
-
         DEY
         BNE BRP
         INC DEXP        ; Increment exponent for each shift right. Get out when DEXP = 0.
@@ -1311,20 +1339,9 @@ BRNA:   LDA #$0B        ; Set digit counter to eleven.
 BRI:    LDY #$04        ; Rotate BCD accumulator left to output most-significant digits first. But first bypass zeros.
 BRH:    CLC
         LDX #$FB
-BRG:    
-
-@IF C128
-        ROL BCDN-5
-        ROL BCDN-4
-        ROL BCDN-3
-        ROL BCDN-2
-        ROL BCDN-1
-@ELSE
-        ROL BCDN,X
+BRG:    ROL BCDN,X
         INX
         BNE BRG
-@ENDIF
-
         ROL OVFLO       ; Rotate digit into OVFLO.
         DEY
         BNE BRH
@@ -1340,20 +1357,9 @@ BRX:    CLC             ; Convert digit to ASCII and output it.
         LDY #$04        ; Output the remaining digits.
 BRL:    CLC
         LDX #$FB
-BRJ:    
-
-@IF C128
-        ROL BCDN-5
-        ROL BCDN-4
-        ROL BCDN-3
-        ROL BCDN-2
-        ROL BCDN-1
-@ELSE
-        ROL BCDN,X      ; Rotate a digit at a time into
+BRJ:    ROL BCDN,X      ; Rotate a digit at a time into
         INX             ; OVFLO, then output it. One digit is four bits or one nibble.
         BNE BRJ
-@ENDIF
-
         ROL OVFLO
         DEY
         BNE BRL
@@ -1412,100 +1418,28 @@ ARND1:
 
 TENX:   CLC             ; Shift accumulator left.
         LDX #$04        ; Accumulator contains four bytes so X is set to four.
-BR1:    
-
-@IF C128
-        LDA ACC+4
-        ROL A
-        STA ACCB+4
-
-        LDA ACC+3
-        ROL A
-        STA ACCB+3
-
-        LDA ACC+2
-        ROL A
-        STA ACCB+2
-
-        LDA ACC+1
-        ROL A
-        STA ACCB+1
-
-        LDA ACC
-        ROL A
-        STA ACCB
-@ELSE
-        LDA ACC,X
+BR1:    LDA ACC,X
         ROL A           ; Shift a byte left.
         STA ACCB,X      ; Store it in accumulator B.
         DEX
         BPL BR1         ; Back to get another byte.
-@ENDIF
-
         LDX #$04        ; Now shift accumulator B left once again to get "times four."
         CLC
-BR2:    
-
-@IF C128
-        ROL ACCB+4
-        ROL ACCB+3
-        ROL ACCB+2
-        ROL ACCB+1
-        ROL ACCB+0
-@ELSE
-        ROL ACCB,X      ; Shift one byte left.
+BR2:    ROL ACCB,X      ; Shift one byte left.
         DEX
         BPL BR2         ; Back to get another byte.
-@ENDIF
-
         LDX #$04        ; Add accumulator to accumulator B to get A + 4* A = 5* A.
         CLC
-BR3:    
-
-@IF C128
-        LDA ACC+4
-        ADC ACCB+4
-        STA ACC+4
-
-        LDA ACC+3
-        ADC ACCB+3
-        STA ACC+3
-
-        LDA ACC+2
-        ADC ACCB+2
-        STA ACC+2
-
-        LDA ACC+1
-        ADC ACCB+1
-        STA ACC+1
-
-        LDA ACC
-        ADC ACCB
-        STA ACC
-@ELSE
-        LDA ACC,X
+BR3:    LDA ACC,X
         ADC ACCB,X
         STA ACC,X       ; Result into accumulator.
         DEX
         BPL BR3
-@ENDIF
-
         LDX #$04        ; Finally, shift accumulator left one bit to get 2*5* A = 10* A.
         CLC
-BR4:    
-
-@IF C128
-        ROL ACC+4
-        ROL ACC+3
-        ROL ACC+2
-        ROL ACC+1
-        ROL ACC
-@ELSE
-        ROL ACC,X
+BR4:    ROL ACC,X
         DEX
         BPL BR4         ; Get another byte.
-@ENDIF
-
         RTS
 
 ; Listing 3. Normalize the Mantissa Subroutine.
@@ -1523,36 +1457,11 @@ BR6:    LDA OVFLO       ; Any bits set in the overflow byte? Yes, then rotate ri
         BVC BR6
 BR5:    BCC BR7         ; Did the last rotate cause a carry? Yes, then round the mantissa upward.
         LDX #$04
-BR8:    
-
-@IF C128
-        LDA ACC+4
-        ADC #$00        ; Carry is set so one is added
-        STA ACC+4
-
-        LDA ACC+3
-        ADC #$00        ; Carry is set so one is added
-        STA ACC+3
-
-        LDA ACC+2
-        ADC #$00        ; Carry is set so one is added
-        STA ACC+2
-
-        LDA ACC+1
-        ADC #$00        ; Carry is set so one is added
-        STA ACC+1
-
-        LDA ACC
-        ADC #$00        ; Carry is set so one is added
-        STA ACC
-@ELSE
-        LDA ACC,X
+BR8:    LDA ACC,X
         ADC #$00        ; Carry is set so one is added
         STA ACC,X
         DEX
         BPL BR8
-@ENDIF
-
         BMI BR6         ; Check overflow byte once more.
 
 BR7:    LDY #$20        ; Y will limit the number of left shifts to 32.
@@ -1560,44 +1469,22 @@ BR10:   LDA MSB
         BMI BR11        ; If mantissa has a one in its most-significant bit, get out.
         CLC
         LDX #$04
-BR9:    
-
-@IF C128
-        ROL ACC+4
-        ROL ACC+3
-        ROL ACC+2
-        ROL ACC+1
-@ELSE
-        ROL ACC,X       ; Shift accumulator left one bit.
+BR9:    ROL ACC,X       ; Shift accumulator left one bit.
         DEX
         BNE BR9
-@ENDIF
-
         DEC BEXP        ; Decrement binary exponent for each left shift.
         DEY
         BNE BR10        ; No more than $20 = 32 bits shifted.
-
 BR11:   RTS             ; That's it.
+
 
 ; Listing 5. A 32 Bit Binary-to-BCD Subroutine.
 
 CONVD:  LDX #$05        ; Clear BCD accumulator.
         LDA #$00
-BRM:    
-
-@IF C128
-        STA BCDA+5
-        STA BCDA+4
-        STA BCDA+3
-        STA BCDA+2
-        STA BCDA+1
-        STA BCDA
-@ELSE
-        STA BCDA,X      ; Zeros into BCD accumulator.
+BRM:    STA BCDA,X      ; Zeros into BCD accumulator.
         DEX
         BPL BRM
-@ENDIF
-
         SED             ; Decimal mode for add.
         LDY #$20        ; Y has number of bits to be converted. Rotate binary number into carry.
 BRN:    ASL LSB
@@ -1605,36 +1492,11 @@ BRN:    ASL LSB
         ROL NMSB
         ROL MSB
         LDX #$FB        ; X will control a five byte addition. Get least-significant byte of the BCD accumulator, add is to itself, then store.
-BRO:    
-
-@IF C128
-        LDA BCDN-5
-        ADC BCDN-5
-        STA BCDN-5
-
-        LDA BCDN-4
-        ADC BCDN-4
-        STA BCDN-4
-
-        LDA BCDN-3
-        ADC BCDN-3
-        STA BCDN-3
-
-        LDA BCDN-2
-        ADC BCDN-2
-        STA BCDN-2
-
-        LDA BCDN-1
-        ADC BCDN-1
-        STA BCDN-1
-@ELSE
-        LDA BCDN,X
+BRO:    LDA BCDN,X
         ADC BCDN,X
         STA BCDN,X
         INX             ; Repeat until all five bytes have been added.
         BNE BRO
-@ENDIF
-
         DEY             ; Get another bit from the binary number.
         BNE BRN
         CLD             ; Back to binary mode.
@@ -1645,61 +1507,16 @@ BRO:
 START:  CLD             ; Decimal mode not required
         LDX #$20        ; Clear all the memory locations used for storage by this routine by loading them with zeros.
         LDA #$00
-CLEAR:  
-
-@IF C128
-        STA MEM+32
-        STA MEM+31
-        STA MEM+30
-        STA MEM+29
-        STA MEM+28
-        STA MEM+27
-        STA MEM+26
-        STA MEM+25
-
-        STA MEM+24
-        STA MEM+23
-        STA MEM+22
-        STA MEM+21
-        STA MEM+20
-        STA MEM+19
-        STA MEM+18
-        STA MEM+17
-
-        STA MEM+16
-        STA MEM+15
-        STA MEM+14
-        STA MEM+13
-        STA MEM+12
-        STA MEM+11
-        STA MEM+10
-        STA MEM+9
-
-        STA MEM+8
-        STA MEM+7
-        STA MEM+6
-        STA MEM+5
-        STA MEM+4
-        STA MEM+3
-        STA MEM+2
-        STA MEM+1
-
-        STA MEM
-@ELSE
-        STA MEM,X
+CLEAR:  STA MEM,X
         DEX
         BPL CLEAR
-@ENDIF
-
         JSR INPUT       ; Get ASCII representation of
-        LDA MATHPTR0
         CMP #'+'        ; BCD digit. Is it a + sign?
         BEQ PLUS        ; Yes, get another character.   
         CMP #'-'        ; Is it a minus sign?
         BNE NTMNS
         DEC MFLAG       ; Yes, set minus flag to $FF.
 PLUS:   JSR INPUT       ; Get the next character.
-        LDA MATHPTR0
 NTMNS:  CMP #'.'        ; Is character a decimal point?
         BNE DIGIT       ; No. Perhaps it is a digit. Yes, check flag.
         LDA DPFLAG      ; Was the decimal point flag set?
@@ -1718,32 +1535,11 @@ DIGIT:  CMP #$30        ; Is the character a digit?
         ADC LSB
         STA LSB         ; Next, any "carry" will be added to the other bytes of the accumulator.
         LDX #$03
-ADDIG:  
-
-@IF C128
-        LDA #$00
-        ADC ACC+3
-        STA ACC+3
-
-        LDA #$00
-        ADC ACC+2
-        STA ACC+2
-
-        LDA #$00
-        ADC ACC+1
-        STA ACC+1
-
-        LDA #$00
-        ADC ACC
-        STA ACC
-@ELSE
-        LDA #$00
+ADDIG:  LDA #$00
         ADC ACC,X       ; Add carry here.
         STA ACC,X       ; And save result.
         DEX
         BPL ADDIG       ; The new digit has been added.
-@ENDIF
-
         LDA DPFLAG      ; Check the decimal point flag.
         BEQ PLUS        ; If not set, get another character.
         DEC DEXP        ; If set, decrement the exponent, then get another character.
@@ -1836,32 +1632,11 @@ BRC:    DEC BEXP        ; Division is finished, now normalize.
         BPL BRE
         SEC             ; Add one.
         LDX #$04        ; X is byte counter.
-BRD:    
-
-@IF C128
-        LDA ACC+4
-        ADC #$00        ; Add the carry.
-        STA ACC+4
-
-        LDA ACC+3
-        ADC #$00        ; Add the carry.
-        STA ACC+3
-
-        LDA ACC+2
-        ADC #$00        ; Add the carry.
-        STA ACC+2
-
-        LDA ACC+1
-        ADC #$00        ; Add the carry.
-        STA ACC+1
-@ELSE
-        LDA ACC,X       ; Get the LSB.
+BRD:    LDA ACC,X       ; Get the LSB.
         ADC #$00        ; Add the carry.
         STA ACC,X       ; Result into mantissa.
         DEX
         BNE BRD         ; Back to complete addition.
-@ENDIF
-
         BCC BRE         ; No carry from MSB so finish.
         ROR MSB         ; A carry, put in bit seven, and increase the binary exponent.
         INC BEXP
@@ -2105,6 +1880,16 @@ FCOSL1:
        JMP FCOSL1
 
 FCOSOK:
+
+       LDA RES
+       STA X1
+       LDA RES+1
+       STA M1
+       LDA RES+2
+       STA M1+1
+       LDA RES+3
+       STA M1+2
+
        ; 
        ; cos x = 1
        LDA N1

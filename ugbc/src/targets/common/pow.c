@@ -90,7 +90,7 @@ calcolare le potenze.
 
 Variable * powering( Environment * _environment, char * _base, char * _exponential ) {
 
-    Variable * base = variable_retrieve_or_define( _environment, _base, VT_SWORD, 0 );
+    Variable * base = variable_retrieve( _environment, _base );
     Variable * exponential = variable_retrieve_or_define( _environment, _exponential, VT_SWORD, 0 );
 
     Variable * result, * temporary;
@@ -101,6 +101,7 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
         case VT_SWORD:
         case VT_WORD:
         case VT_POSITION:
+        case VT_FLOAT:
             break;
         default:
             CRITICAL_POW_UNSUPPORTED( _base, DATATYPE_AS_STRING[base->type]);
@@ -161,8 +162,34 @@ Variable * powering( Environment * _environment, char * _base, char * _exponenti
             cpu_bvneq( _environment, counter->realName, label );
             cpu_label( _environment, endLabel );
             break;
-        case 0:
-            CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[base->type]);
+        case 0: {
+            switch( base->type ) {
+                case VT_FLOAT: {
+                    result = variable_temporary( _environment, VT_FLOAT, "(result of pow)");
+                    temporary = variable_temporary( _environment, VT_FLOAT, "(result of pow)");
+                    variable_store_float( _environment, result->name, 1 );
+                    cpu_bveq( _environment, counter->realName, endLabel );
+                    cpu_label( _environment, label );
+                    switch( base->precision ) {
+                        case FT_FAST:
+                            cpu_float_fast_mul( _environment, base->realName, result->realName, temporary->realName );
+                            break;
+                        case FT_SINGLE:
+                            cpu_float_single_mul( _environment, base->realName, result->realName, temporary->realName );
+                            break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[base->type], "FLOAT" );
+                    }
+                    variable_move( _environment, temporary->name, result->name );
+                    cpu_dec( _environment, counter->realName );
+                    cpu_bvneq( _environment, counter->realName, label );
+                    cpu_label( _environment, endLabel );
+                    break;
+                }
+                default:
+                    CRITICAL_POW_UNSUPPORTED( _exponential, DATATYPE_AS_STRING[base->type]);
+            }
+        }
     }
     return result;
 }
