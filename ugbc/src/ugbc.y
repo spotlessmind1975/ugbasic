@@ -3967,6 +3967,12 @@ exponential_less:
     | Y GRAPHIC OP expr CP {
         $$ = y_graphic_get( _environment, $4 )->name;
     }
+    | X OP expr CP {
+        $$ = vector_get_x( _environment, $3 )->name;
+    }
+    | Y OP expr CP {
+        $$ = vector_get_y( _environment, $3 )->name;
+    }
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
     }
