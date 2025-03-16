@@ -3526,7 +3526,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         CRITICAL_VARIABLE(_destination);
     }
 
-    if ( source->type == VT_STRING || source->type == VT_DSTRING) {
+    if ( source->type == VT_STRING || source->type == VT_DSTRING || source->type == VT_VECTOR ) {
 
     } else {
 
@@ -3592,6 +3592,12 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_mem_move( _environment, address1->realName, address->realName, size1->realName );
                     cpu_math_add_16bit_with_8bit( _environment, address->realName, size1->realName, address->realName );
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
+                    break;
+                }
+                case VT_VECTOR: {
+                    result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
+                    cpu_math_add_16bit( _environment, result->realName, target->realName, result->realName );
+                    cpu_math_add_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
                     break;
                 }
                 case VT_FLOAT:

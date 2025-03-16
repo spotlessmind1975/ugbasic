@@ -7017,6 +7017,9 @@ datatype :
     | COLOR {
         $$ = VT_COLOR;
     }
+    | VECTOR {
+        $$ = VT_VECTOR;
+    }
     | COLOUR {
         $$ = VT_COLOR;
     }
@@ -7040,9 +7043,6 @@ datatype :
     }
     | PATH {
         $$ = VT_PATH;
-    }
-    | VECTOR {
-        $$ = VT_VECTOR;
     }
     | MUSIC {
         $$ = VT_MUSIC;
