@@ -4391,57 +4391,98 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
         return variable_mul2_const( _environment, _source, target->value );
     } 
 
-    int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
-    source = variable_cast( _environment, source->name, best );
-    target = variable_cast( _environment, target->name, best );
-
     Variable * result = NULL;
-    switch( VT_BITWIDTH( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) ) {
-        case 32:
-            WARNING_BITWIDTH(_source, _destination );
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
-            #ifdef CPU_BIG_ENDIAN
-                {
-                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "2") );
-                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
-                    cpu_math_mul_16bit_to_32bit( _environment, sourceRealName, targetRealName, result->realName, VT_SIGNED( source->type ) );
-                }
-            #else
-                cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
-            #endif
-            break;
-        case 16:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
-            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
-            break;
-        case 8:
-            result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of multiplication)" );
-            cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
-            break;
-        case 0:
-            switch( source->type ) {
-                case VT_FLOAT:
-                    result = variable_temporary( _environment, VT_FLOAT, "(result of multiplication)" );
-                    switch( target->precision ) {
-                        case FT_FAST: {
-                            cpu_float_fast_mul( _environment, source->realName, target->realName, result->realName );
-                            break;
-                        }
-                        case FT_SINGLE: {
-                            cpu_float_single_mul( _environment, source->realName, target->realName, result->realName );
-                            break;
-                        }
-                        default:
-                            CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
-                            break;
-                    }
-                    break; 
-                default:
-                    CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
-            }
-            break;
-    }
+    if ( source->type != VT_VECTOR && target->type != VT_VECTOR ) {
+        int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+        source = variable_cast( _environment, source->name, best );
+        target = variable_cast( _environment, target->name, best );
 
+        switch( VT_BITWIDTH( VT_MAX_BITWIDTH_TYPE( source->type, target->type ) ) ) {
+            case 32:
+                WARNING_BITWIDTH(_source, _destination );
+                result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
+                #ifdef CPU_BIG_ENDIAN
+                    {
+                        char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, "2") );
+                        char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, "2") );
+                        cpu_math_mul_16bit_to_32bit( _environment, sourceRealName, targetRealName, result->realName, VT_SIGNED( source->type ) );
+                    }
+                #else
+                    cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+                #endif
+                break;
+            case 16:
+                result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SDWORD : VT_DWORD, "(result of multiplication)" );
+                cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+                break;
+            case 8:
+                result = variable_temporary( _environment, VT_SIGNED( source->type ) ? VT_SWORD : VT_WORD, "(result of multiplication)" );
+                cpu_math_mul_8bit_to_16bit( _environment, source->realName, target->realName, result->realName, VT_SIGNED( source->type ) );
+                break;
+            case 0:
+                switch( source->type ) {
+                    case VT_FLOAT:
+                        result = variable_temporary( _environment, VT_FLOAT, "(result of multiplication)" );
+                        switch( target->precision ) {
+                            case FT_FAST: {
+                                cpu_float_fast_mul( _environment, source->realName, target->realName, result->realName );
+                                break;
+                            }
+                            case FT_SINGLE: {
+                                cpu_float_single_mul( _environment, source->realName, target->realName, result->realName );
+                                break;
+                            }
+                            default:
+                                CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
+                                break;
+                        }
+                        break; 
+                    default:
+                        CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
+                }
+                break;
+        }
+    } else {
+        if ( source->type != VT_VECTOR ) {
+            source = variable_cast( _environment, source->name, VT_POSITION );
+        }
+        if ( target->type != VT_VECTOR ) {
+            target = variable_cast( _environment, target->name, VT_POSITION );
+        }
+
+        switch( VT_BITWIDTH( source->type ) ) {
+            case 16: {
+                Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(result of multiplication)" );
+                Variable * posx = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
+                Variable * posy = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
+                cpu_math_mul_16bit_to_32bit( _environment, target->realName, source->realName, tmp->realName, 1 );
+                variable_move( _environment, tmp->name, posx->name );
+                cpu_math_mul_16bit_to_32bit( _environment, address_displacement( _environment, target->realName, "2" ), source->realName, tmp->realName, 1 );
+                variable_move( _environment, tmp->name, posy->name );
+                result = create_vector( _environment, posx->name, posy->name );
+                break;
+            }
+            case 0:
+                switch( target->type ) {
+                    case VT_POSITION:
+                            Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(result of multiplication)" );
+                            Variable * posx = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
+                            Variable * posy = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
+                            cpu_math_mul_16bit_to_32bit( _environment, source->realName, target->realName, tmp->realName, 1 );
+                            variable_move( _environment, tmp->name, posx->name );
+                            cpu_math_mul_16bit_to_32bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, tmp->realName, 1 );
+                            variable_move( _environment, tmp->name, posy->name );
+                            result = create_vector( _environment, posx->name, posy->name );
+                            break;
+                    default:
+                        CRITICAL_MUL_UNSUPPORTED(_destination, DATATYPE_AS_STRING[target->type]);
+                }
+                break;
+            default:
+                CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
+        }
+
+    }
     return result;
 }
 
