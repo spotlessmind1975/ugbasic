@@ -881,7 +881,8 @@ SWAP1:
 ;     RESULT IN EXP/MANT1.  EXP/MANT2 UNEFFECTED
 ;
 ;
-FLOAT: LDA #$8E
+
+FLOATS:LDA #$8E
        STA X1      ; SET EXPN TO 14 DEC
        LDA #0      ; CLEAR LOW ORDER BYTE
        STA M1+2
@@ -1145,6 +1146,28 @@ FCMPE:
 ;
 ;
 ;
+
+FLOAT: LDA #0
+       STA MATHPTR0
+       LDA M1
+       AND #$80
+       CMP #$80
+       BNE FLOATX
+       STA MATHPTR0
+       LDA M1+1
+       EOR #$FF
+       STA M1+1
+       LDA M1
+       EOR #$FF
+       STA M1
+       INC M1+1
+       BNE FLOATX
+       INC M1
+FLOATX:JSR FLOATS
+RTS2:  LDA MATHPTR0
+       BEQ RTS2X
+       JSR FCOMPL
+RTS2X: RTS
 
 ; A BCD to Floating-Point Binary Routine
 ; Marvin L. De Jong
