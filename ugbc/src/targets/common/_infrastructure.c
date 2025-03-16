@@ -4103,8 +4103,8 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
             switch( source->type ) {
                 case VT_VECTOR: {
                     result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
-                    cpu_math_add_16bit_const( _environment, result->realName, VT_ESIGN_16BIT( source->type, -_destination ), result->realName );
-                    cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), VT_ESIGN_16BIT( source->type, -_destination ), address_displacement( _environment, result->realName, "2" ) );
+                    cpu_math_add_16bit_const( _environment, result->realName, VT_SIGN_16BIT( -_destination ), result->realName );
+                    cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), VT_SIGN_16BIT( -_destination ), address_displacement( _environment, result->realName, "2" ) );
                     break;
                 }
             }
@@ -4131,7 +4131,12 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
  */
 void variable_sub_inplace( Environment * _environment, char * _source, char * _dest ) {
     Variable * source = variable_retrieve( _environment, _source );
-    Variable * target = variable_cast( _environment, _dest, source->type );
+    Variable * target;
+    if ( source->type == VT_VECTOR ) {
+        target = variable_cast( _environment, _dest, VT_POSITION );
+    } else {
+        target = variable_cast( _environment, _dest, source->type );
+    }
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
             cpu_math_sub_32bit( _environment, source->realName, target->realName, source->realName );
@@ -4147,6 +4152,10 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
             break;
         case 0:
             switch( source->type ) {
+                case VT_VECTOR:
+                    cpu_math_sub_16bit( _environment, source->realName, target->realName, source->realName );
+                    cpu_math_sub_16bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, address_displacement( _environment, source->realName, "2" ) );
+                    break;
                 case VT_FLOAT:
                     switch( target->precision ) {
                         case FT_FAST: {
