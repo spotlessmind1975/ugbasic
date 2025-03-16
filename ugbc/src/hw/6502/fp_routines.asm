@@ -2105,6 +2105,16 @@ FCOSL1:
        JMP FCOSL1
 
 FCOSOK:
+
+       LDA RES
+       STA X1
+       LDA RES+1
+       STA M1
+       LDA RES+2
+       STA M1+1
+       LDA RES+3
+       STA M1+2
+
        ; 
        ; cos x = 1
        LDA N1
