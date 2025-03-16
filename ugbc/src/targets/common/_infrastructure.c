@@ -3986,11 +3986,17 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             cpu_dsresize( _environment, result->realName, size3->realName );
     } else {
 
-        int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
-        source = variable_cast( _environment, source->name, best );
-        target = variable_cast( _environment, target->name, best );
-        result = variable_temporary( _environment, VT_SIGN( best ), "(result of subtracting)" );
+        if ( source->type == VT_VECTOR ) {
 
+        } else {
+    
+            int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
+            source = variable_cast( _environment, source->name, best );
+            target = variable_cast( _environment, target->name, best );
+            result = variable_temporary( _environment, VT_SIGN( best ), "(result of subtracting)" );
+        
+        }
+    
         switch( VT_BITWIDTH( source->type ) ) {
             case 32:
                 cpu_math_sub_32bit( _environment, source->realName, target->realName, result->realName );
@@ -4021,6 +4027,36 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                                 break;
                         }
                         break; 
+                    case VT_VECTOR: {
+                        switch( VT_BITWIDTH( target->type ) ) {
+                            case 32:
+                            case 16:
+                            case 8: {
+                                Variable * x = vector_get_x( _environment, source->name );
+                                Variable * y = vector_get_y( _environment, source->name );
+                                result = create_vector( _environment, 
+                                            variable_sub( _environment, x->name, target->name )->name,
+                                            variable_sub( _environment, y->name, target->name )->name
+                                        );
+                                break;
+                            }
+                            case 1:
+                                CRITICAL_SUB_UNSUPPORTED( _dest, DATATYPE_AS_STRING[target->type]);
+                            case 0:
+                                switch( target->type ) {
+                                    case VT_VECTOR:
+                                        result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
+                                        cpu_math_sub_16bit( _environment, result->realName, target->realName, result->realName );
+                                        cpu_math_sub_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
+                                        break;
+                                    default:
+                                        CRITICAL_SUB_UNSUPPORTED( _dest, DATATYPE_AS_STRING[target->type]);
+                                }
+                                break;
+                        }
+                        break;
+                    }
+
                     default:
                         CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
                 }
@@ -4061,10 +4097,19 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
             cpu_math_add_8bit_const( _environment, source->realName, VT_ESIGN_8BIT( source->type, -_destination ), result->realName );
             break;
         case 1:
-        case 0:
             CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             break;
-    }
+        case 0:
+            switch( source->type ) {
+                case VT_VECTOR: {
+                    result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
+                    cpu_math_add_16bit_const( _environment, result->realName, VT_ESIGN_16BIT( source->type, -_destination ), result->realName );
+                    cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), VT_ESIGN_16BIT( source->type, -_destination ), address_displacement( _environment, result->realName, "2" ) );
+                    break;
+                }
+            }
+            CRITICAL_SUB_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+        }
 
     return result;
 }
