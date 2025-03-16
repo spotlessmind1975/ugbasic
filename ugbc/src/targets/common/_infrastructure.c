@@ -3265,7 +3265,20 @@ Variable * variable_add_const( Environment * _environment, char * _source, int  
             cpu_math_add_8bit_const( _environment, source->realName, _destination, result->realName );
             break;
         case 1:
+            CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+            break;
         case 0:
+            switch( source->type ) {
+                case VT_VECTOR: {
+                    result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
+                    outline0("; create vector(1)");
+                    cpu_math_add_16bit_const( _environment, result->realName, _destination, result->realName );
+                    outline0("; create vector(2)");
+                    cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), _destination, address_displacement( _environment, result->realName, "2" ) );
+                    outline0("; create vector(x)");
+                    break;
+                }
+            }
             CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             break;
     }
@@ -3595,9 +3608,32 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     break;
                 }
                 case VT_VECTOR: {
-                    result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
-                    cpu_math_add_16bit( _environment, result->realName, target->realName, result->realName );
-                    cpu_math_add_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
+                    switch( VT_BITWIDTH( target->type ) ) {
+                        case 32:
+                        case 16:
+                        case 8: {
+                            Variable * x = vector_get_x( _environment, source->name );
+                            Variable * y = vector_get_y( _environment, source->name );
+                            result = create_vector( _environment, 
+                                        variable_add( _environment, x->name, target->name )->name,
+                                        variable_add( _environment, y->name, target->name )->name
+                                    );
+                            break;
+                        }
+                        case 1:
+                            CRITICAL_ADD_UNSUPPORTED( _destination, DATATYPE_AS_STRING[target->type]);
+                        case 0:
+                            switch( target->type ) {
+                                case VT_VECTOR:
+                                    result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
+                                    cpu_math_add_16bit( _environment, result->realName, target->realName, result->realName );
+                                    cpu_math_add_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
+                                    break;
+                                default:
+                                    CRITICAL_ADD_UNSUPPORTED( _destination, DATATYPE_AS_STRING[target->type]);
+                            }
+                            break;
+                    }
                     break;
                 }
                 case VT_FLOAT:
