@@ -1029,6 +1029,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 16; // real: 12
     } else if ( var->arrayType == VT_PATH ) {
         size *= 32; // real: 18
+    } else if ( var->arrayType == VT_VECTOR ) {
+        size *= 4;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
@@ -1143,6 +1145,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Timr%d", UNIQUE_ID);
         } else if ( _type == VT_PATH ) {
             sprintf(name, "Tpat%d", UNIQUE_ID);
+        } else if ( _type == VT_VECTOR ) {
+            sprintf(name, "Tvec%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGES ) {
@@ -1174,6 +1178,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
         } else if ( _type == VT_IMAGEREF ) {
             var->locked = 1;
         } else if ( _type == VT_PATH ) {
+            var->locked = 1;
+        } else if ( _type == VT_VECTOR ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             var->locked = 1;
@@ -1238,6 +1244,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Timr%d", UNIQUE_ID);
     } else if ( _type == VT_PATH ) {
         sprintf(name, "Tpat%d", UNIQUE_ID);
+    } else if ( _type == VT_VECTOR ) {
+        sprintf(name, "Tvec%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGE ) {
         sprintf(name, "Timg%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGES ) {
@@ -1269,6 +1277,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
     } else if ( _type == VT_IMAGEREF ) {
         var->locked = 1;
     } else if ( _type == VT_PATH ) {
+        var->locked = 1;
+    } else if ( _type == VT_VECTOR ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGE ) {
         var->locked = 1;
@@ -1452,6 +1462,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 16; // Real: 12
                 } else if ( destination->arrayType == VT_PATH ) {
                     size *= 32; // Real: 18
+                } else if ( destination->arrayType == VT_VECTOR ) {
+                    size *= 4;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
                 } else if ( destination->arrayType == VT_TILESET ) {
@@ -2987,6 +2999,17 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
+                        case VT_VECTOR:
+                            switch( target->type ) {
+                                case VT_VECTOR: {
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
+                                    break;
+                                }
+                                default:
+                                    CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                                    break;
+                            }
+                            break;
                         case VT_IMAGE:
                             switch( target->type ) {
                                 case VT_IMAGE:
@@ -3439,6 +3462,13 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                         target->size = 18;
                     }
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 18 );
+                    break;
+                }
+                case VT_VECTOR: {
+                    if ( target->size == 0 ) {
+                        target->size = 4;
+                    }
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
                     break;
                 }
                 case VT_MUSIC:
@@ -9002,6 +9032,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         case VT_PATH:
             offset = variable_sl_const( _environment, offset->name, 5 );
             break;
+        case VT_VECTOR:
+            offset = variable_sl_const( _environment, offset->name, 4 );
+            break;
         case VT_IMAGEREF:
             offset = variable_sl_const( _environment, offset->name, 4 );
             break;
@@ -9034,6 +9067,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         switch( _array->arrayType ) {
             case VT_PATH:
                 cpu_move_nbit_indirect( _environment, 18 * 8, _value->realName, offset->realName );
+                break;
+            case VT_VECTOR:
+                cpu_move_nbit_indirect( _environment, 4 * 8, _value->realName, offset->realName );
                 break;
             case VT_IMAGEREF:
                 cpu_move_nbit_indirect( _environment, 12 * 8, _value->realName, offset->realName );
@@ -9300,6 +9336,17 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
                 }
                 case VT_PATH: {
+
+                    offset = variable_sl_const( _environment, offset->name, 5 );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_nbit_indirect2( _environment, 18*8, offset->realName, result->realName );
+
+                    break;
+
+                }
+                case VT_VECTOR: {
 
                     offset = variable_sl_const( _environment, offset->name, 5 );
 

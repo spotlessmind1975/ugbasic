@@ -518,7 +518,10 @@ typedef enum _VariableType {
     VT_IMAGEREF = 31,
 
     /** PATH */
-    VT_PATH = 32
+    VT_PATH = 32,
+
+    /** VECTOR */
+    VT_VECTOR = 33
 
 } VariableType;
 

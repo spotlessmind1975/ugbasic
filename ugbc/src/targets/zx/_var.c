@@ -65,6 +65,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_PATH:
                     outline1("%s: defs 18", variable->realName);
                     break;
+                case VT_VECTOR:
+                    outline1("%s: defs 4", variable->realName);
+                    break;
                 case VT_WORD:
                 case VT_SWORD:
                 case VT_POSITION:

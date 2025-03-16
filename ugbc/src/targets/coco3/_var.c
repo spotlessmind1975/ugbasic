@@ -252,6 +252,13 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                         outhead1("%s rzb 18", variable->realName);
                     }   
                     break;
+                case VT_VECTOR:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 4", variable->realName);
+                    }   
+                    break;
                 case VT_STRING:
                     if ( ! variable->valueString ) {
                         printf("%s", variable->realName);
