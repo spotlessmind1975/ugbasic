@@ -99,7 +99,8 @@ char DATATYPE_AS_STRING[][16] = {
     "MSPRITE",
     "DOJOKA",
     "IMAGEREF",
-    "PATH"
+    "PATH",
+    "VECTOR"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -3271,11 +3272,8 @@ Variable * variable_add_const( Environment * _environment, char * _source, int  
             switch( source->type ) {
                 case VT_VECTOR: {
                     result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
-                    outline0("; create vector(1)");
                     cpu_math_add_16bit_const( _environment, result->realName, _destination, result->realName );
-                    outline0("; create vector(2)");
                     cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), _destination, address_displacement( _environment, result->realName, "2" ) );
-                    outline0("; create vector(x)");
                     break;
                 }
             }
@@ -3680,8 +3678,19 @@ void variable_add_inplace( Environment * _environment, char * _source, int _dest
             case 8:
                 cpu_math_add_8bit_const( _environment, source->realName, _destination, source->realName );
                 break;
+            case 0: {
+                switch( source->type ) {
+                    case VT_VECTOR:
+                        cpu_math_add_16bit_const( _environment, source->realName, _destination, source->realName );
+                        cpu_math_add_16bit_const( _environment, address_displacement( _environment, source->realName, "2" ), _destination, address_displacement( _environment, source->realName, "2" ) );
+                        break;
+                    default:
+                        CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
+                }
+
+            }
             case 1:
-            case 0:
+            default:
                 CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
         }
 
@@ -3715,11 +3724,15 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
         target = variable_cast( _environment, _destination, VT_DSTRING );
     }
 
-    if ( source->type != target->type ) {
-        target = variable_cast( _environment, _destination, source->type );
-        if ( ! target ) {
-            CRITICAL_VARIABLE(_destination);
+    if ( source->type != VT_VECTOR ) {
+        if ( source->type != target->type ) {
+            target = variable_cast( _environment, _destination, source->type );
+            if ( ! target ) {
+                CRITICAL_VARIABLE(_destination);
+            }
         }
+    } else {
+        target = variable_cast( _environment, _destination, VT_POSITION );
     }
 
     switch( VT_BITWIDTH( source->type ) ) {
@@ -3736,6 +3749,10 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
             CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
         case 0:
             switch( source->type ) {
+                case VT_VECTOR:
+                    cpu_math_add_16bit( _environment, source->realName, target->realName, source->realName );
+                    cpu_math_add_16bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, address_displacement( _environment, source->realName, "2" ) );
+                    break;
                 case VT_FLOAT:
                     switch( target->precision ) {
                         case FT_FAST: {
