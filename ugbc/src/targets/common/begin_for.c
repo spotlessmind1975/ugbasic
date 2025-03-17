@@ -159,20 +159,22 @@ void begin_for_from_assign( Environment * _environment, char * _from ) {
     Loop * loop = _environment->loops;
 
     Variable * from = variable_retrieve( _environment, _from );
-    Variable * fromResident = variable_resident( _environment, loop->index->type, "(from)" );
 
-    if ( from->initializedByConstant ) {
-        variable_store( _environment, fromResident->name, from->value );
-    } else {
+    if ( !from->initializedByConstant ) {
+
+        Variable * fromResident = variable_resident( _environment, loop->index->type, "(from)" );
+
         variable_move( _environment, from->name, fromResident->name );
-    }
 
-    cpu_return( _environment );
+        cpu_return( _environment );
+
+        loop->fromResident = fromResident;
+        loop->fromResident->locked = 1;
+
+    }
 
     loop->from = from;
     loop->from->locked = 1;
-    loop->fromResident = fromResident;
-    loop->fromResident->locked = 1;
 
     loop->to = NULL;
 
@@ -192,20 +194,26 @@ void begin_for_to_assign( Environment * _environment, char * _to ) {
 
     Loop * loop = _environment->loops;
     Variable * to = variable_retrieve( _environment, _to );
-    Variable * toResident = variable_resident( _environment, loop->index->type, "(to)" );
 
-    if ( to->initializedByConstant ) {
-        variable_store( _environment, toResident->name, to->value );
-    } else {
-        variable_move( _environment, to->name, toResident->name );
+    if ( !to->initializedByConstant ) {
+
+        Variable * toResident = variable_resident( _environment, loop->index->type, "(to)" );
+
+        if ( to->initializedByConstant ) {
+            variable_store( _environment, toResident->name, to->value );
+        } else {
+            variable_move( _environment, to->name, toResident->name );
+        }
+    
+        cpu_return( _environment );
+    
+        loop->toResident = toResident;
+        loop->toResident->locked = 1;
+    
     }
-
-    cpu_return( _environment );
 
     loop->to = to;
     loop->to->locked = 1;
-    loop->toResident = toResident;
-    loop->toResident->locked = 1;
 
 }
 
@@ -226,15 +234,45 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
     Variable * from = loop->fromResident;
     Variable * to = loop->toResident;
 
-    // Calculate the maximum rappresentable size for the index, based on from and to.
-    int maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
+    int maxType = 0;
+
+    if ( from ) {
+
+        if ( to ) {
+
+            maxType = VT_MAX_BITWIDTH_TYPE( from->type, to->type );
+        
+            if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
+                maxType = VT_SIGN( maxType );
+            }
+    
+        } else {
+            
+            maxType = from->type;
+
+        }
+    
+    } else {
+
+        if ( to ) {
+        
+            maxType = to->type;
+
+        } else {
+            
+            maxType = VT_MAX_BITWIDTH_TYPE( variable_type_from_numeric_value( _environment, from->value ), variable_type_from_numeric_value( _environment, to->value ) );
+
+            if ( from->value < 0 || to->value < 0 ) {
+                maxType = VT_SIGN( maxType );
+            }
+    
+        }
+
+    }
 
     Variable * stepResident = NULL;
     if ( _step ) {
         Variable * step = variable_retrieve( _environment, _step );
-        if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) || VT_SIGNED( step->type ) ) {
-            maxType = VT_SIGN( maxType );
-        }
         // In this version, the step is given
         stepResident = variable_resident( _environment, maxType, "(step)" );
 
@@ -246,9 +284,6 @@ void begin_for_step_assign( Environment * _environment, char * _step ) {
         loop->step = step;
         loop->step->locked = 1;
     } else {
-        if ( VT_SIGNED( from->type ) || VT_SIGNED( to->type ) ) {
-            maxType = VT_SIGN( maxType );
-        }
         // In this version, the step is not given - by default, step = 1
         stepResident = variable_resident( _environment, maxType, "(step 1)" );
         variable_store( _environment, stepResident->name, 1 );
@@ -270,10 +305,18 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     unsigned char beginForToPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForToPrepare, "%sprepto", loop->label );
     unsigned char beginForStepPrepare[MAX_TEMPORARY_STORAGE]; sprintf(beginForStepPrepare, "%sprepstep", loop->label );
 
+    Variable * from = loop->fromResident;
+    Variable * to = loop->toResident;
+    Variable * step = loop->stepResident;
+
     cpu_label( _environment, beginForPrepareAfter );
 
-    cpu_call( _environment, beginForFromPrepare );
-    cpu_call( _environment, beginForToPrepare );
+    if ( from ) {
+        cpu_call( _environment, beginForFromPrepare );
+    }
+    if ( to ) {
+        cpu_call( _environment, beginForToPrepare );
+    }
     cpu_call( _environment, beginForStepPrepare );
 
     Variable * index = NULL;
@@ -283,10 +326,6 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
         index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
     }
 
-    Variable * from = loop->fromResident;
-    Variable * to = loop->toResident;
-    Variable * step = loop->stepResident;
-
     unsigned char beginFor[MAX_TEMPORARY_STORAGE]; sprintf(beginFor, "%sbf", loop->label );
     unsigned char backwardFor[MAX_TEMPORARY_STORAGE]; sprintf(backwardFor, "%sback", loop->label );
     unsigned char forwardFor[MAX_TEMPORARY_STORAGE]; sprintf(forwardFor, "%sforw", loop->label );
@@ -295,7 +334,11 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
 
     Variable * isLastStep;
 
-    variable_move( _environment, loop->fromResident->name, index->name );
+    if ( from ) {
+        variable_move( _environment, loop->fromResident->name, index->name );
+    } else {
+        variable_store( _environment, index->name, loop->from->value );
+    }
 
     cpu_label( _environment, beginFor );
 
@@ -376,26 +419,68 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
         cpu_jump( _environment, backwardFor );
     
         cpu_label( _environment, forwardFor );
-    
-        // Finish the loop if the index is less than lower bound.
-        isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
-        cpu_bvneq( _environment, isLastStep->realName, endFor );
-    
-        // Finish the loop if the index is less than upper bound.
-        isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
-        cpu_bvneq( _environment, isLastStep->realName, endFor );
-    
-        cpu_jump( _environment, continueFor );
+
+            if ( loop->from->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->from->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->from->value );
+                }
+
+                // Finish the loop if the index is less than lower bound.
+                isLastStep = variable_less_than_const( _environment, index->name, loop->from->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                // Finish the loop if the index is less than lower bound.
+                isLastStep = variable_less_than( _environment, index->name, loop->fromResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
+        
+            if ( loop->to->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->to->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->to->value );
+                }
+
+                // Finish the loop if the index is less than upper bound.
+                isLastStep = variable_greater_than_const( _environment, index->name, loop->to->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                // Finish the loop if the index is less than upper bound.
+                isLastStep = variable_greater_than( _environment, index->name, loop->toResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
+        
+            cpu_jump( _environment, continueFor );
     
         cpu_label( _environment, backwardFor );
     
-        // Finish the loop if the index is less than lower bound.
-        isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
-        cpu_bvneq( _environment, isLastStep->realName, endFor );
-    
-        // Finish the loop if the index is less than upper bound.
-        isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
-        cpu_bvneq( _environment, isLastStep->realName, endFor );
+            // Finish the loop if the index is less than lower bound.
+            if ( loop->from->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->from->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->from->value );
+                }
+
+                isLastStep = variable_greater_than_const( _environment, index->name, loop->from->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                isLastStep = variable_greater_than( _environment, index->name, loop->fromResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
+        
+            // Finish the loop if the index is less than upper bound.
+            if ( loop->to->initializedByConstant ) {
+
+                if ( !check_datatype_limits( index->type, loop->to->value ) ) {
+                    CRITICAL_FOR_OUTSIDE_LIMITS( index->name, loop->to->value );
+                }
+
+                isLastStep = variable_less_than_const( _environment, index->name, loop->to->value, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            } else {
+                isLastStep = variable_less_than( _environment, index->name, loop->toResident->name, 0 );
+                cpu_bvneq( _environment, isLastStep->realName, endFor );
+            }
     
     }
 
