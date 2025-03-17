@@ -1731,6 +1731,7 @@ typedef struct _Deployed {
     int ellipse;
     int create_path;
     int create_vector;
+    int rotate_vector;
     int travel_path;
     int fade;
 
@@ -5248,6 +5249,7 @@ Variable *              rnd( Environment * _environment, char * _value );
 Variable *              rnd0( Environment * _environment );
 Variable *              rnd1( Environment * _environment );
 void                    rot( Environment * _environment, char * _angle, char * _step );
+Variable *              rotate_vector( Environment * _environment, char * _vector, char * _angle );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
 Variable *              running( Environment * _environment, char * _thread_id, char * _procedure_name );
