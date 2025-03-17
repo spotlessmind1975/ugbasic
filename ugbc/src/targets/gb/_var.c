@@ -88,7 +88,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code");
                     }
                     break;
-                case VT_VECTOR:
+                case VT_VECTOR2:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {

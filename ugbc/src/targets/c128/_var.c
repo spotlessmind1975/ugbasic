@@ -87,7 +87,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s: .res 18,0", variable->realName);
                     }        
                     break;
-                case VT_VECTOR:
+                case VT_VECTOR2:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
@@ -384,7 +384,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_PATH:
             outhead1("%s: .res 18,0", _variable->realName);
             break;
-        case VT_VECTOR:
+        case VT_VECTOR2:
             outhead1("%s: .res 4,0", _variable->realName);
             break;
         case VT_WORD:

@@ -69,7 +69,7 @@ Variable * create_vector( Environment * _environment, char * _x, char * _y ) {
 
     deploy_begin( create_vector );
 
-        Variable * vector = variable_define( _environment, "createvector__vector", VT_VECTOR, 0 );
+        Variable * vector = variable_define( _environment, "createvector__vector", VT_VECTOR2, 0 );
 
         Variable * x = variable_define( _environment, "createvector__x", VT_POSITION, 0 );
         Variable * y = variable_define( _environment, "createvector__y", VT_POSITION, 0 );

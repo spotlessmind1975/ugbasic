@@ -521,7 +521,7 @@ typedef enum _VariableType {
     VT_PATH = 32,
 
     /** VECTOR */
-    VT_VECTOR = 33
+    VT_VECTOR2 = 33
 
 } VariableType;
 

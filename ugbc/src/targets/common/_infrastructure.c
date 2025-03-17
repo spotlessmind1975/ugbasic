@@ -1030,7 +1030,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 16; // real: 12
     } else if ( var->arrayType == VT_PATH ) {
         size *= 32; // real: 18
-    } else if ( var->arrayType == VT_VECTOR ) {
+    } else if ( var->arrayType == VT_VECTOR2 ) {
         size *= 4;
     } else if ( var->arrayType == VT_TILE ) {
         size *= 1;
@@ -1146,7 +1146,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Timr%d", UNIQUE_ID);
         } else if ( _type == VT_PATH ) {
             sprintf(name, "Tpat%d", UNIQUE_ID);
-        } else if ( _type == VT_VECTOR ) {
+        } else if ( _type == VT_VECTOR2 ) {
             sprintf(name, "Tvec%d", UNIQUE_ID);
         } else if ( _type == VT_IMAGE ) {
             sprintf(name, "Timg%d", UNIQUE_ID);
@@ -1180,7 +1180,7 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             var->locked = 1;
         } else if ( _type == VT_PATH ) {
             var->locked = 1;
-        } else if ( _type == VT_VECTOR ) {
+        } else if ( _type == VT_VECTOR2 ) {
             var->locked = 1;
         } else if ( _type == VT_IMAGE ) {
             var->locked = 1;
@@ -1245,7 +1245,7 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Timr%d", UNIQUE_ID);
     } else if ( _type == VT_PATH ) {
         sprintf(name, "Tpat%d", UNIQUE_ID);
-    } else if ( _type == VT_VECTOR ) {
+    } else if ( _type == VT_VECTOR2 ) {
         sprintf(name, "Tvec%d", UNIQUE_ID);
     } else if ( _type == VT_IMAGE ) {
         sprintf(name, "Timg%d", UNIQUE_ID);
@@ -1279,7 +1279,7 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         var->locked = 1;
     } else if ( _type == VT_PATH ) {
         var->locked = 1;
-    } else if ( _type == VT_VECTOR ) {
+    } else if ( _type == VT_VECTOR2 ) {
         var->locked = 1;
     } else if ( _type == VT_IMAGE ) {
         var->locked = 1;
@@ -1463,7 +1463,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 16; // Real: 12
                 } else if ( destination->arrayType == VT_PATH ) {
                     size *= 32; // Real: 18
-                } else if ( destination->arrayType == VT_VECTOR ) {
+                } else if ( destination->arrayType == VT_VECTOR2 ) {
                     size *= 4;
                 } else if ( destination->arrayType == VT_TILE ) {
                     size *= 1;
@@ -3000,9 +3000,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;
-                        case VT_VECTOR:
+                        case VT_VECTOR2:
                             switch( target->type ) {
-                                case VT_VECTOR: {
+                                case VT_VECTOR2: {
                                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 4 );
                                     break;
                                 }
@@ -3270,7 +3270,7 @@ Variable * variable_add_const( Environment * _environment, char * _source, int  
             break;
         case 0:
             switch( source->type ) {
-                case VT_VECTOR: {
+                case VT_VECTOR2: {
                     result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
                     cpu_math_add_16bit_const( _environment, result->realName, _destination, result->realName );
                     cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), _destination, address_displacement( _environment, result->realName, "2" ) );
@@ -3475,7 +3475,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                     cpu_mem_move_direct_size( _environment, source->realName, target->realName, 18 );
                     break;
                 }
-                case VT_VECTOR: {
+                case VT_VECTOR2: {
                     if ( target->size == 0 ) {
                         target->size = 4;
                     }
@@ -3537,7 +3537,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
         CRITICAL_VARIABLE(_destination);
     }
 
-    if ( source->type == VT_STRING || source->type == VT_DSTRING || source->type == VT_VECTOR ) {
+    if ( source->type == VT_STRING || source->type == VT_DSTRING || source->type == VT_VECTOR2 ) {
 
     } else {
 
@@ -3605,7 +3605,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                     cpu_mem_move( _environment, address2->realName, address->realName, size2->realName );
                     break;
                 }
-                case VT_VECTOR: {
+                case VT_VECTOR2: {
                     switch( VT_BITWIDTH( target->type ) ) {
                         case 32:
                         case 16:
@@ -3622,7 +3622,7 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                             CRITICAL_ADD_UNSUPPORTED( _destination, DATATYPE_AS_STRING[target->type]);
                         case 0:
                             switch( target->type ) {
-                                case VT_VECTOR:
+                                case VT_VECTOR2:
                                     result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
                                     cpu_math_add_16bit( _environment, result->realName, target->realName, result->realName );
                                     cpu_math_add_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
@@ -3680,7 +3680,7 @@ void variable_add_inplace( Environment * _environment, char * _source, int _dest
                 break;
             case 0: {
                 switch( source->type ) {
-                    case VT_VECTOR:
+                    case VT_VECTOR2:
                         cpu_math_add_16bit_const( _environment, source->realName, _destination, source->realName );
                         cpu_math_add_16bit_const( _environment, address_displacement( _environment, source->realName, "2" ), _destination, address_displacement( _environment, source->realName, "2" ) );
                         break;
@@ -3724,7 +3724,7 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
         target = variable_cast( _environment, _destination, VT_DSTRING );
     }
 
-    if ( source->type != VT_VECTOR ) {
+    if ( source->type != VT_VECTOR2 ) {
         if ( source->type != target->type ) {
             target = variable_cast( _environment, _destination, source->type );
             if ( ! target ) {
@@ -3749,7 +3749,7 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
             CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
         case 0:
             switch( source->type ) {
-                case VT_VECTOR:
+                case VT_VECTOR2:
                     cpu_math_add_16bit( _environment, source->realName, target->realName, source->realName );
                     cpu_math_add_16bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, address_displacement( _environment, source->realName, "2" ) );
                     break;
@@ -3986,7 +3986,7 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
             cpu_dsresize( _environment, result->realName, size3->realName );
     } else {
 
-        if ( source->type == VT_VECTOR ) {
+        if ( source->type == VT_VECTOR2 ) {
 
         } else {
     
@@ -4027,7 +4027,7 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                                 break;
                         }
                         break; 
-                    case VT_VECTOR: {
+                    case VT_VECTOR2: {
                         switch( VT_BITWIDTH( target->type ) ) {
                             case 32:
                             case 16:
@@ -4044,7 +4044,7 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                                 CRITICAL_SUB_UNSUPPORTED( _dest, DATATYPE_AS_STRING[target->type]);
                             case 0:
                                 switch( target->type ) {
-                                    case VT_VECTOR:
+                                    case VT_VECTOR2:
                                         result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
                                         cpu_math_sub_16bit( _environment, result->realName, target->realName, result->realName );
                                         cpu_math_sub_16bit( _environment, address_displacement( _environment, result->realName, "2" ), address_displacement( _environment, target->realName, "2" ), address_displacement( _environment, result->realName, "2" ) );
@@ -4101,7 +4101,7 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
             break;
         case 0:
             switch( source->type ) {
-                case VT_VECTOR: {
+                case VT_VECTOR2: {
                     result = create_vector( _environment, vector_get_x( _environment, source->name )->name, vector_get_y( _environment, source->name )->name );
                     cpu_math_add_16bit_const( _environment, result->realName, VT_SIGN_16BIT( -_destination ), result->realName );
                     cpu_math_add_16bit_const( _environment, address_displacement( _environment, result->realName, "2" ), VT_SIGN_16BIT( -_destination ), address_displacement( _environment, result->realName, "2" ) );
@@ -4132,7 +4132,7 @@ Variable * variable_sub_const( Environment * _environment, char * _source, int _
 void variable_sub_inplace( Environment * _environment, char * _source, char * _dest ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target;
-    if ( source->type == VT_VECTOR ) {
+    if ( source->type == VT_VECTOR2 ) {
         target = variable_cast( _environment, _dest, VT_POSITION );
     } else {
         target = variable_cast( _environment, _dest, source->type );
@@ -4152,7 +4152,7 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
             break;
         case 0:
             switch( source->type ) {
-                case VT_VECTOR:
+                case VT_VECTOR2:
                     cpu_math_sub_16bit( _environment, source->realName, target->realName, source->realName );
                     cpu_math_sub_16bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, address_displacement( _environment, source->realName, "2" ) );
                     break;
@@ -4392,7 +4392,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
     } 
 
     Variable * result = NULL;
-    if ( source->type != VT_VECTOR && target->type != VT_VECTOR ) {
+    if ( source->type != VT_VECTOR2 && target->type != VT_VECTOR2 ) {
         int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
         source = variable_cast( _environment, source->name, best );
         target = variable_cast( _environment, target->name, best );
@@ -4443,10 +4443,10 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
                 break;
         }
     } else {
-        if ( source->type != VT_VECTOR ) {
+        if ( source->type != VT_VECTOR2 ) {
             source = variable_cast( _environment, source->name, VT_POSITION );
         }
-        if ( target->type != VT_VECTOR ) {
+        if ( target->type != VT_VECTOR2 ) {
             target = variable_cast( _environment, target->name, VT_POSITION );
         }
 
@@ -9186,7 +9186,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         case VT_PATH:
             offset = variable_sl_const( _environment, offset->name, 5 );
             break;
-        case VT_VECTOR:
+        case VT_VECTOR2:
             offset = variable_sl_const( _environment, offset->name, 2 );
             break;
         case VT_IMAGEREF:
@@ -9222,7 +9222,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_PATH:
                 cpu_move_nbit_indirect( _environment, 18 * 8, _value->realName, offset->realName );
                 break;
-            case VT_VECTOR:
+            case VT_VECTOR2:
                 cpu_move_nbit_indirect( _environment, 4 * 8, _value->realName, offset->realName );
                 break;
             case VT_IMAGEREF:
@@ -9500,7 +9500,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                     break;
 
                 }
-                case VT_VECTOR: {
+                case VT_VECTOR2: {
 
                     offset = variable_sl_const( _environment, offset->name, 2 );
 

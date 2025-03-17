@@ -7018,7 +7018,7 @@ datatype :
         $$ = VT_COLOR;
     }
     | VECTOR {
-        $$ = VT_VECTOR;
+        $$ = VT_VECTOR2;
     }
     | COLOUR {
         $$ = VT_COLOR;

@@ -61,7 +61,7 @@ Variable * vector_get_x( Environment * _environment, char * _vector ) {
 
     Variable * vector = variable_retrieve( _environment, _vector );
 
-    if ( vector->type != VT_VECTOR ) {
+    if ( vector->type != VT_VECTOR2 ) {
         CRITICAL_VECTOR_GET_X_VECTOR_NEEDED( _vector );
     }
 
