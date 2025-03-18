@@ -409,4 +409,14 @@ void pc128op_put_key(  Environment * _environment, char *_string, char * _size )
 
 }
 
+void pc128op_dload( Environment * _environment, char * _address, char * _size ) {
+
+    deploy( dload, src_hw_pc128op_dload_asm);
+
+    outline1("LDX %s", _address );
+    outline1("LDU %s", _size );
+    outline0("JSR DLOAD" );
+
+}
+
 #endif

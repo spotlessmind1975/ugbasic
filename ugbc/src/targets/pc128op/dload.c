@@ -55,4 +55,17 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
 
+    if ( _filename ) {
+        WARNING_DLOAD_IGNORED_FILENAME( _filename );
+    }
+
+    if ( _offset ) {
+        WARNING_DLOAD_IGNORED_OFFSET( _filename );
+    }
+
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
+
+    pc128op_dload( _environment, address->realName, size->realName );
+
 }
