@@ -519,7 +519,10 @@ typedef enum _VariableType {
     VT_IMAGEREF = 31,
 
     /** PATH */
-    VT_PATH = 32
+    VT_PATH = 32,
+
+    /** VECTOR */
+    VT_VECTOR2 = 33
 
 } VariableType;
 
@@ -1730,6 +1733,8 @@ typedef struct _Deployed {
     int bar;
     int ellipse;
     int create_path;
+    int create_vector;
+    int rotate_vector;
     int travel_path;
     int fade;
 
@@ -3477,6 +3482,8 @@ typedef struct _Environment {
 #define DOJO_PUT_MESSAGE_ARRAY_SIZE_UNSUPPORTED( v, t ) CRITICAL3("E371 - array is too large to send as message", v, t );
 #define DOJO_GET_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E372 - missing variable for GET MESSAGE" );
 #define DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
+#define CRITICAL_VECTOR_GET_X_VECTOR_NEEDED( v ) CRITICAL2("E374 - X needs a VECTOR variable", v );
+#define CRITICAL_VECTOR_GET_Y_VECTOR_NEEDED( v ) CRITICAL2("E375 - Y needs a VECTOR variable", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4782,6 +4789,7 @@ void                    const_define_float( Environment * _environment, char * _
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
+Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 void                    cset( Environment * _environment, char * _value );
 
@@ -5244,6 +5252,7 @@ Variable *              rnd( Environment * _environment, char * _value );
 Variable *              rnd0( Environment * _environment );
 Variable *              rnd1( Environment * _environment );
 void                    rot( Environment * _environment, char * _angle, char * _step );
+Variable *              rotate_vector( Environment * _environment, char * _vector, char * _angle );
 void                    run( Environment * _environment );
 void                    run_parallel( Environment * _environment );
 Variable *              running( Environment * _environment, char * _thread_id, char * _procedure_name );
@@ -5506,6 +5515,8 @@ void                    variable_xor_inplace_vars( Environment * _environment, c
 void                    variable_xor_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              varptr( Environment * _environment, char * _identifier );
 void                    vcenter( Environment * _environment, char * _string, int _newline );
+Variable *              vector_get_x( Environment * _environment, char * _vector );
+Variable *              vector_get_y( Environment * _environment, char * _vector );
 void                    vhcenter( Environment * _environment, char * _string, int _newline, char * _width );
 void                    volume( Environment * _environment, int _volume, int _channels );
 void                    volume_vars( Environment * _environment, char * _volume, char * _channels );

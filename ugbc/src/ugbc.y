@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VTECH
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE 
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3537,6 +3537,9 @@ exponential_less:
     | CREATE PATH OP optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr CP {
         $$ = create_path( _environment, $4, $6, $8, $10  )->name;
     }
+    | CREATE VECTOR OP expr OP_COMMA expr CP {
+        $$ = create_vector( _environment, $4, $6 )->name;
+    }
     | VARBANK OP Identifier CP {
         Variable * variable = variable_retrieve( _environment, $3 );
         Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");
@@ -3966,6 +3969,15 @@ exponential_less:
     }
     | Y GRAPHIC OP expr CP {
         $$ = y_graphic_get( _environment, $4 )->name;
+    }
+    | ROTATE VECTOR OP expr OP_COMMA expr CP {
+        $$ = rotate_vector( _environment, $4, $6 )->name;
+    }
+    | X OP expr CP {
+        $$ = vector_get_x( _environment, $3 )->name;
+    }
+    | Y OP expr CP {
+        $$ = vector_get_y( _environment, $3 )->name;
     }
     | WIDTH {
         $$ = screen_get_width( _environment )->name;
@@ -7010,6 +7022,9 @@ datatype :
     }
     | COLOR {
         $$ = VT_COLOR;
+    }
+    | VECTOR {
+        $$ = VT_VECTOR2;
     }
     | COLOUR {
         $$ = VT_COLOR;
