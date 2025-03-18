@@ -97,8 +97,15 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
     fclose( file );
     fileStorage->size = size;
 
-    fileStorage->next = _environment->currentStorage->files;
-    _environment->currentStorage->files = fileStorage;
-    _environment->currentFileStorage = fileStorage;
+    if ( ! _environment->currentStorage->files ) {
+        _environment->currentStorage->files = fileStorage;
+    } else {
+        FileStorage * first = _environment->currentStorage->files;
+        while( first->next ) {
+            first = first->next;
+        }
+        first->next = fileStorage;
+        
+    }
 
 }
