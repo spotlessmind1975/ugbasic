@@ -108,4 +108,6 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
         
     }
 
+    _environment->currentFileStorage = fileStorage;
+
 }
