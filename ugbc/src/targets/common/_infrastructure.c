@@ -4464,7 +4464,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
             }
             case 0:
                 switch( target->type ) {
-                    case VT_POSITION:
+                    case VT_POSITION: {
                             Variable * tmp = variable_temporary( _environment, VT_SDWORD, "(result of multiplication)" );
                             Variable * posx = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
                             Variable * posy = variable_temporary( _environment, VT_POSITION, "(result of multiplication)" );
@@ -4474,6 +4474,7 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
                             variable_move( _environment, tmp->name, posy->name );
                             result = create_vector( _environment, posx->name, posy->name );
                             break;
+                    }
                     default:
                         CRITICAL_MUL_UNSUPPORTED(_destination, DATATYPE_AS_STRING[target->type]);
                 }

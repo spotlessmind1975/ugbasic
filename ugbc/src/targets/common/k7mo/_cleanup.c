@@ -212,13 +212,68 @@ int convertbintok7(Environment * _environment)
         bank = bank->next;
 
     }
-        
-    fclose(fr);
-    fclose(fw);
 
-    remove(temporaryFileName);
+    Storage * storage = _environment->storage;
+
+    if ( storage ) {
+
+        FileStorage * fileStorage = storage->files;
+
+        while( fileStorage ) {
+
+            char bankNumber[MAX_TEMPORARY_STORAGE];
+            strcpy( bankNumber, fileStorage->targetName );
+
+            int size = 0;
+            char * buffer;
+
+            if ( fileStorage->content && fileStorage->size ) {
+                size = fileStorage->size + 2;
+                buffer = malloc( size );
+                memset( buffer, 0, size );
+                memcpy( buffer, fileStorage->content, fileStorage->size );
+            } else {
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                buffer = malloc( size + 2 );
+                memset( buffer, 0, size + 2 );
+                (void)!fread( buffer, size, 1, file );
+                fclose( file );
+            }
+
+            new_blk(0); /* k7 block 0: file name + type */
+            write_bytes(fw, bankNumber, 11); /* file name */
+            write_bytes(fw, &file_type[0], 3); /* file type */
+            out_blk(fw); /* done with block 0 */
+
+            new_blk(1); /* k7 block 2: content of file */
+            write_byte(fw, 0); /* binary chunk */
+            write_word(fw, size); /* size of chunk */
+            write_word(fw, 0x6000); /* load address */
+            for (int i=0;i<size;i++)
+            {
+                unsigned char byt = buffer[i];
+                write_byte(fw, byt); /* data */
+            }
+            
+            out_blk(fw); /* done with k7 block 1 */
+
+            fileStorage = fileStorage->next;
+
+        }
     
-    return 0;
+        storage = storage->next;
+
+    }
+
+    new_blk(0xff); /* k7 block 0xff : end of k7 file */
+    out_blk(fw); /* done with it */
+
 }
 
 #endif

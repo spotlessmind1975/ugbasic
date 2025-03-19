@@ -3509,6 +3509,7 @@ typedef struct _Environment {
 #define WARNING_DLOAD_IGNORED_SIZE( f ) WARNING2("W007 - size for DLOAD is ignored", f );
 #define WARNING_DLOAD_IGNORED_OFFSET( f ) WARNING2("W008 - offset for DLOAD is ignored", f );
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
+#define WARNING_DLOAD_IGNORED_FILENAME( f ) WARNING2("W010 - filename for DLOAD is ignored", f );
 
 int assemblyLineIsAComment( char * _buffer );
 const char* strstrcase( const char* _x, const char* _y );
