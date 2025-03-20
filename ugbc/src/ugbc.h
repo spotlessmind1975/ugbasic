@@ -242,6 +242,13 @@ typedef enum _MusicType {
 
 } MusicType;
 
+typedef enum _FileStorageFormat {
+
+    FSF_BINARY = 0,
+    FSF_CSV = 1
+
+} FileStorageFormat;
+
 typedef enum _OutputFileType {
 
     OUTPUT_FILE_TYPE_BIN = 0,
@@ -3481,6 +3488,7 @@ typedef struct _Environment {
 #define DOJO_PUT_MESSAGE_MISSING_VARIABLE( ) CRITICAL("E373 - PUT MESSAGE needs a DOJOKA variable" );
 #define CRITICAL_VECTOR_GET_X_VECTOR_NEEDED( v ) CRITICAL2("E374 - X needs a VECTOR variable", v );
 #define CRITICAL_VECTOR_GET_Y_VECTOR_NEEDED( v ) CRITICAL2("E375 - Y needs a VECTOR variable", v );
+#define CRITICAL_FILE_NOT_FOUND( n ) CRITICAL2("E376 - file not found", n );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4553,6 +4561,8 @@ int banks_get_default_resident( Environment * _environment, int _bank );
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
 
+char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size );
+
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
 POBuffer po_buf_del( POBuffer buf );
@@ -4916,7 +4926,7 @@ void                    exit_procedure( Environment * _environment );
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 int                     file_size( Environment * _environment, char * _target_name );
-void                    file_storage( Environment * _environment, char * _source_name, char *_target_name );
+void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );

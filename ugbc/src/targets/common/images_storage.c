@@ -75,7 +75,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 </usermanual> */
 Variable * images_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
 
-    file_storage( _environment, _source_name, _target_name );
+    file_storage( _environment, _source_name, _target_name, FSF_BINARY, 0 );
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 

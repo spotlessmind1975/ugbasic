@@ -14292,3 +14292,95 @@ int check_datatype_limits( VariableType _type, int _value ) {
     }
 
 }
+
+char * file_read_csv( Environment * _environment, char * _filename, VariableType _type, int * _size ) {
+
+    FILE * handle = fopen( _filename, "rt" );
+    if ( ! handle ) {
+        CRITICAL_FILE_NOT_FOUND( _filename );
+    }
+
+    Constant * constants = malloc( sizeof( Constant ) );
+    memset( constants, 0, sizeof( Constant ) );
+
+    Constant * current = constants;
+
+    while( !feof( handle ) ) {
+
+        char valueString[MAX_TEMPORARY_STORAGE];
+        memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+        int p=0, j=0;
+
+        while( !feof( handle ) ) {
+            char c = fgetc(handle);
+            if ( j == 0 ) {
+                if ( (c < '0') || (c > '9') ) {
+                    continue;
+                }
+                j = 1;
+            } else {
+                if ( (c < '0') || (c > '9') ) {
+                    break;
+                }
+            }
+            valueString[p] = c;
+            ++p;
+        }
+
+        current->value = atoi( valueString );
+
+        current->next = malloc( sizeof( Constant ) );
+        memset( current->next, 0, sizeof( Constant ) );
+        current = current->next;
+
+    }
+
+    fclose( handle );
+
+    *_size = 0;
+    Constant * first = constants;
+    while( first->next ) {
+        first = first->next;
+        ++*_size;
+    }
+
+    char * buffer = malloc( *_size * ( VT_BITWIDTH( _type ) >> 3 ) ), * ptr = buffer;
+    int i=0;
+    current = constants;
+    while(current->next) {
+        switch( VT_BITWIDTH(_type) ) {
+            case 8:
+                *ptr = (current->value) & 0xff;
+                ++ptr;
+                break;
+            case 16:
+                #ifdef CPU_BIG_ENDIAN
+                    *ptr = ( current->value >> 8 ) & 0xff;
+                    *(ptr+1) = ( current->value ) & 0xff;
+                #else
+                    *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                    *ptr = ( current->value ) & 0xff;
+                #endif
+                ptr += 2;
+                break;
+            case 32:
+                #ifdef CPU_BIG_ENDIAN
+                    *ptr = ( current->value >> 24 ) & 0xff;
+                    *(ptr+1) = ( current->value >> 16 ) & 0xff;
+                    *(ptr+2) = ( current->value >> 8 ) & 0xff;
+                    *(ptr+3) = ( current->value ) & 0xff;
+                #else
+                    *(ptr+3) = ( current->value >> 24 ) & 0xff;
+                    *(ptr+2) = ( current->value >> 16 ) & 0xff;
+                    *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                    *ptr = ( current->value ) & 0xff;
+                #endif
+                ptr += 4;
+                break;
+        }
+        current = current->next;
+    }
+
+    return buffer;
+
+}

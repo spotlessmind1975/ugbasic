@@ -75,7 +75,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 </usermanual> */
 Variable * image_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
-    file_storage( _environment, _source_name, _target_name );
+    file_storage( _environment, _source_name, _target_name, FSF_BINARY, 0 );
 
     // No we are going to load the image from the PC.
     // Those variables will maintain the data of the original image.
