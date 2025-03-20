@@ -54,6 +54,10 @@ IRQSVC:
     CALL JOYSTICKMANAGER
 @ENDIF
 
+    LD BC, (C128ZTIMER)
+    INC BC
+    LD (C128ZTIMER), BC
+
     LD BC, $D019
     LD A, $FF
     OUT (C), A
