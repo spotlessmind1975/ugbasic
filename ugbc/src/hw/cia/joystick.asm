@@ -109,6 +109,13 @@ JOYSTICKREAD1:
         JSR JOYSTICKREAD0
         AND #$10
         BEQ WAITFIRE0
+        CPX #0
+        BEQ WAITFIRE0D
+    WAITFIRE0L1:
+        JSR JOYSTICKREAD0
+        AND #$10
+        BNE WAITFIRE0L1
+    WAITFIRE0D:
         RTS
 
     WAITFIREA:
@@ -121,6 +128,13 @@ JOYSTICKREAD1:
         JSR JOYSTICKREAD1
         AND #$10
         BEQ WAITFIRE1
+        CPX #0
+        BEQ WAITFIRE1D
+    WAITFIRE1L1:
+        JSR JOYSTICKREAD1
+        AND #$10
+        BNE WAITFIRE1L1
+    WAITFIRE1D:
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
@@ -132,6 +146,17 @@ JOYSTICKREAD1:
         AND #$10
         ORA MATHPTR0
         BEQ WAITFIRE
+        CPX #0
+        BEQ WAITFIRED
+    WAITFIREL1:
+        JSR JOYSTICKREAD0
+        AND #$10
+        STA MATHPTR0
+        JSR JOYSTICKREAD1
+        AND #$10
+        ORA MATHPTR0
+        BNE WAITFIREL1
+    WAITFIRED:
         RTS
 
 @ELSE
@@ -196,6 +221,13 @@ JOYSTICK1:      .BYTE   $0
         LDA JOYSTICK0
         AND #$10
         BEQ WAITFIRE0
+        CPX #0
+        BEQ WAITFIRE0D
+    WAITFIRE0L1:
+        LDA JOYSTICK0
+        AND #$10
+        BNE WAITFIRE0L1
+    WAITFIRE0D:
         RTS
 
     WAITFIREA:
@@ -208,6 +240,13 @@ JOYSTICK1:      .BYTE   $0
         LDA JOYSTICK1
         AND #$10
         BEQ WAITFIRE1
+        CPX #0
+        BEQ WAITFIRE1D
+    WAITFIRE1L1:
+        LDA JOYSTICK1
+        AND #$10
+        BNE WAITFIRE1L1
+    WAITFIRE1D:
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
@@ -229,6 +268,27 @@ JOYSTICK1:      .BYTE   $0
         ; If both are zero, recheck again.
         BEQ WAITFIRE
 
+        CPX #0
+        BEQ WAITFIRED
+
+    WAITFIREDL1:
+    
+        ; Read dedicated storage for JOY(0)
+
+        LDA JOYSTICK0
+        AND #$10
+        STA MATHPTR0
+
+        ; Read dedicated storage for JOY(1)
+
+        LDA JOYSTICK1
+        AND #$10
+        ORA MATHPTR0
+
+        ; If both are zero, recheck again.
+        BNE WAITFIREDL1
+
+    WAITFIRED:
         RTS
 
 @ENDIF

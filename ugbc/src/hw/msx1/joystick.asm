@@ -118,7 +118,16 @@ JOYSTICKREAD1:
         CALL JOYSTICKREAD0
         AND $10
         CP 0
-        JR Z, WAITFIRE
+        JR Z, WAITFIRE0
+        LD A, B
+        CP 0
+        JR Z, WAITFIRE0D
+    WAITFIRE0L1:
+        CALL JOYSTICKREAD0
+        AND $10
+        CP 0
+        JR NZ, WAITFIRE0L1
+    WAITFIRE0D:
         RET
 
     WAITFIRE1:
@@ -126,6 +135,15 @@ JOYSTICKREAD1:
         AND $10
         CP 0
         JR Z, WAITFIRE
+        LD A, B
+        CP 0
+        JR Z, WAITFIRE1D
+    WAITFIRE1L1:
+        CALL JOYSTICKREAD1
+        AND $10
+        CP 0
+        JR NZ, WAITFIRE1L1
+    WAITFIRE1D:
         RET
 
     WAITFIRE:
@@ -137,6 +155,18 @@ JOYSTICKREAD1:
         OR C
         CP 0
         JR Z, WAITFIRE
+        CP 0
+        JR Z, WAITFIRED
+    WAITFIREL1:
+        CALL JOYSTICKREAD0
+        AND $10
+        LD C, A
+        CALL JOYSTICKREAD1
+        AND $10
+        OR C
+        CP 0
+        JR NZ, WAITFIREL1
+    WAITFIRED:
         RET
 
 @ELSE
@@ -161,7 +191,16 @@ JOYSTICKREAD1:
         LD A, (JOYSTICKREAD0)
         AND $10
         CP 0
-        JR Z, WAITFIRE
+        JR Z, WAITFIRE0
+        LD A, B
+        CP 0
+        JR Z, WAITFIRE0D
+    WAITFIRE0L1: 
+        LD A, (JOYSTICKREAD0)
+        AND $10
+        CP 0
+        JR NZ, WAITFIRE0
+    WAITFIRE0D:
         RET
 
     WAITFIRE1:
@@ -169,6 +208,15 @@ JOYSTICKREAD1:
         AND $10
         CP 0
         JR Z, WAITFIRE
+        LD A, B
+        CP 0
+        JR Z, WAITFIRE1D
+    WAITFIRE1L1: 
+        LD A, (JOYSTICKREAD1)
+        AND $10
+        CP 0
+        JR NZ, WAITFIRE1
+    WAITFIRE1D:
         RET
 
     WAITFIRE:
@@ -180,6 +228,19 @@ JOYSTICKREAD1:
         OR C
         CP 0
         JR Z, WAITFIRE
+        LD A, B
+        CP 0
+        JR Z, WAITFIRED
+    WAITFIREL1: 
+        LD A, (JOYSTICKREAD0)
+        AND $10
+        LD C, A
+        LD A, (JOYSTICKREAD1)
+        AND $10
+        OR C
+        CP 0
+        JR NZ, WAITFIREL1
+    WAITFIRED:
         RET
 
 @ENDIF

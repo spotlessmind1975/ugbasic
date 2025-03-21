@@ -62,7 +62,7 @@
         JR Z, WAITKEYFIREA1
         RET
 
-    WAITFIREA:
+    WAITKEYFIREA:
         CP 0
         JR Z, WAITKEYFIREA0
 

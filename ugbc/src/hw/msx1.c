@@ -182,11 +182,12 @@ void msx1_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_msx1_joystick_asm );
 
+    outline1("LD B, $%2.2x", _release );
     if ( _port == -1 ) {
         outline0("CALL WAITFIRE");
     } else {
         outline1("LD A, $%2.2x", _port );
-        outline0("CALL WAITKEYFIREA");
+        outline0("CALL WAITFIRE");
     }
    
 }
@@ -197,11 +198,12 @@ void msx1_wait_fire_semivar( Environment * _environment, char * _port, int _rele
 
     deploy( joystick, src_hw_msx1_joystick_asm );
 
+    outline1("LD B, $%2.2x", _release );
     if ( ! _port ) {
         outline0("CALL WAITFIRE");
     } else {
         outline1("LD A, (%s)", _port );
-        outline0("CALL WAITKEYFIREA");
+        outline0("CALL WAITFIRE");
     }
    
 }
