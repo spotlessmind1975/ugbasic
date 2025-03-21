@@ -78,6 +78,7 @@ void sc3000_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_sc3000_joystick_asm );
 
+    outline1("LD B, $%2.2x", _release );
     outline0("CALL WAITFIRE");
    
 }
@@ -88,6 +89,7 @@ void sc3000_wait_fire_semivar( Environment * _environment, char * _port, int _re
 
     deploy( joystick, src_hw_sc3000_joystick_asm );
 
+    outline1("LD B, $%2.2x", _release );
     outline0("CALL WAITFIRE");
    
 }
