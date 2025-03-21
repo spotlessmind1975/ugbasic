@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -12121,6 +12121,21 @@ statement2nc:
   }
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
+  }
+  | BEG TYPE Identifier {
+        begin_type( _environment, $3 );
+  }
+  | TYPE Identifier {
+        begin_type( _environment, $2 );
+  }
+  | Identifier AS datatype {
+
+  }
+  | END TYPE {
+        end_type( _environment );
+  }
+  | ENDTYPE {
+        end_type( _environment );
   }
   | BEG STORAGE const_expr_string {
         begin_storage( _environment, $3, NULL );

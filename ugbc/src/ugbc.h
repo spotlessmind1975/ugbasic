@@ -1166,6 +1166,30 @@ typedef struct _Variable {
 
 } Variable;
 
+typedef struct _TypeEntry {
+
+    char * name;
+
+    VariableType type;
+
+    int offset;
+
+    struct _TypeEntry * next;
+
+} TypeEntry;
+
+typedef struct _Type {
+
+    char * name;
+
+    int size;
+
+    struct _TypeEntry * first;
+
+    struct _Type * next;
+    
+} Type;
+
 typedef struct _Procedure {
 
     /** Name of the procedure (in the program) */
@@ -2335,6 +2359,10 @@ typedef struct _Environment {
      */
     FileStorage * currentFileStorage;
 
+    Type * types;
+
+    Type * currentType;
+
     /**
      * List of defined labels.
      */
@@ -3489,6 +3517,9 @@ typedef struct _Environment {
 #define CRITICAL_VECTOR_GET_X_VECTOR_NEEDED( v ) CRITICAL2("E374 - X needs a VECTOR variable", v );
 #define CRITICAL_VECTOR_GET_Y_VECTOR_NEEDED( v ) CRITICAL2("E375 - Y needs a VECTOR variable", v );
 #define CRITICAL_FILE_NOT_FOUND( n ) CRITICAL2("E376 - file not found", n );
+#define CRITICAL_TYPE_NESTED_UNSUPPORTED( n ) CRITICAL2("E377 - cannot define a nested TYPE (a TYPE inside a TYPE)", n ); 
+#define CRITICAL_TYPE_ALREADY_DEFINED( n ) CRITICAL2("E378 - TYPE already defined", n ); 
+#define CRITICAL_TYPE_NOT_OPENED( ) CRITICAL("E379 - cannot END an unopened TYPE" ); 
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4539,6 +4570,8 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
+Type * type_find( Type * _first, char * _name );
+
 int check_datatype_limits( VariableType _type, int _value );
 
 void define_implicit_array_if_needed( Environment * _Environment, char * _name );
@@ -4706,6 +4739,7 @@ void                    begin_loop( Environment * _environment, int _do );
 void                    begin_procedure( Environment * _environment, char * _name );
 void                    begin_repeat( Environment * _environment );
 void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
+void                    begin_type( Environment * _environment, char * _name );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
 void                    bell( Environment * _environment, int _note, int _duration, int _channels );
@@ -4906,6 +4940,7 @@ void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
 void                    end_storage( Environment * _environment );
+void                    end_type( Environment * _environment );
 void                    end_while( Environment * _environment );
 void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 char *                  escape_newlines( char * _string );

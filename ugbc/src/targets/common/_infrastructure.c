@@ -14384,3 +14384,17 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
     return buffer;
 
 }
+
+Type * type_find( Type * _first, char * _name ) {
+
+    Type * current = _first;
+
+    while( current ) {
+        if ( strcmp( current->name, _name ) == 0 ) {
+            return current;
+        }
+    }
+
+    return NULL;
+
+}
