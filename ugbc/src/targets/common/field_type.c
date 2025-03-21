@@ -38,21 +38,38 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>ENDSTORAGE</strong>
- * 
- * @param _environment Current calling environment
- * @param _value Value to the return
- */
-void end_type( Environment * _environment ) {
+void field_type( Environment * _environment, char * _name, VariableType _datatype ) {
 
-    if ( ! _environment->currentType ) {
-        CRITICAL_TYPE_NOT_OPENED();
+    if ( !_environment->currentType ) {
+        CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE(_name);
     }
 
-    _environment->currentType->next = _environment->types;
-    _environment->types = _environment->currentType;
-    _environment->currentType = NULL;
+    if ( VT_BITWIDTH( _datatype ) == 0 ) {
+        CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
+    }
 
-};
+    TypeEntry * typeEntry = malloc( sizeof( TypeEntry ) );
+    memset( typeEntry, 0, sizeof( TypeEntry ) );
 
+    int currentOffset = 0;
+    TypeEntry * current = _environment->currentType->first;
+    TypeEntry * last = NULL;
+    if ( current ) {
+        while( current ) {
+            currentOffset = current->offset + VT_BITWIDTH( current->type ) >> 3;
+            last = current;
+            current = current->next;
+        }
+    }
+
+    typeEntry->name = strdup( _name );
+    typeEntry->type = _datatype;
+    typeEntry->offset = currentOffset;
+    
+    if ( last ) {
+        last->next = typeEntry;
+    } else {
+        _environment->currentType->first = typeEntry;
+    }
+    
+}

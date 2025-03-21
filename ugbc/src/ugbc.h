@@ -1187,7 +1187,7 @@ typedef struct _Type {
     struct _TypeEntry * first;
 
     struct _Type * next;
-    
+
 } Type;
 
 typedef struct _Procedure {
@@ -3520,6 +3520,8 @@ typedef struct _Environment {
 #define CRITICAL_TYPE_NESTED_UNSUPPORTED( n ) CRITICAL2("E377 - cannot define a nested TYPE (a TYPE inside a TYPE)", n ); 
 #define CRITICAL_TYPE_ALREADY_DEFINED( n ) CRITICAL2("E378 - TYPE already defined", n ); 
 #define CRITICAL_TYPE_NOT_OPENED( ) CRITICAL("E379 - cannot END an unopened TYPE" ); 
+#define CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE( n ) CRITICAL2("E380 - cannot define outside a TYPE", n ); 
+#define CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE( n ) CRITICAL2("E381 - cannot use this type inside a TYPE", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4960,6 +4962,7 @@ void                    exit_procedure( Environment * _environment );
 
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
+void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );

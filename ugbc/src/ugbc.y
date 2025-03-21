@@ -12129,7 +12129,7 @@ statement2nc:
         begin_type( _environment, $2 );
   }
   | Identifier AS datatype {
-
+        field_type( _environment, $1, $3 );
   }
   | END TYPE {
         end_type( _environment );
