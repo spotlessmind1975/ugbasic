@@ -92,7 +92,7 @@ IRQSVC:
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
 
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard
@@ -103,7 +103,7 @@ MSPRITESMANAGERADDRESS:
     LDA #1
     STA $D019
 
-@IF deployed.joystick
+@IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF
 @IF deployed.keyboard
