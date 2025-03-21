@@ -63,6 +63,15 @@ void coco_ypen( Environment * _environment, char * _destination ) {
    
 }
 
+void coco_spen( Environment * _environment, char * _destination ) {
+
+    MAKE_LABEL
+
+    outline0("LDA $FF62");    
+    outline1("STA %s", _destination);
+   
+}
+
 void coco_color_border( Environment * _environment, char * _color ) {
 
 }

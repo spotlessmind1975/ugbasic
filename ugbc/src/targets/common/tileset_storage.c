@@ -73,7 +73,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 </usermanual> */
 Variable * tileset_storage( Environment * _environment, char * _source_name, char * _target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
 
-    file_storage( _environment, _source_name, _target_name );
+    file_storage( _environment, _source_name, _target_name, FSF_BINARY, 0  );
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 

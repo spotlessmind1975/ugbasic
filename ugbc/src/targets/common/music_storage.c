@@ -70,7 +70,7 @@ lo stesso nome, è possibile indicare un alias (''AS target'').
 </usermanual> */
 Variable * music_storage( Environment * _environment, char * _source_name, char * _target_name, int _bank_expansion ) {
 
-    file_storage( _environment, _source_name, _target_name );
+    file_storage( _environment, _source_name, _target_name, FSF_BINARY, 0 );
 
     Variable * result = music_load_to_variable( _environment, _source_name, _target_name, _bank_expansion );
 

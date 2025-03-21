@@ -44,6 +44,7 @@
 
 void coco_xpen( Environment * _environment, char * _destination );
 void coco_ypen( Environment * _environment, char * _destination );
+void coco_spen( Environment * _environment, char * _destination );
 
 void coco_busy_wait( Environment * _environment, char * _timing );
 

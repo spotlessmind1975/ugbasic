@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE 
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3479,6 +3479,9 @@ exponential_less:
       }
     | YPEN {
         $$ = ypen( _environment )->name;
+      }
+    | SPEN {
+        $$ = spen( _environment )->name;
       }
     | XGR {
         $$ = "XGR";
@@ -12144,10 +12147,16 @@ statement2nc:
         begin_storage( _environment, $2, $4 );
   }
   | FILEX const_expr_string {
-        file_storage( _environment, $2, NULL );
+        file_storage( _environment, $2, NULL, FSF_BINARY, 0 );
+  }
+  | FILEX const_expr_string CSV OF datatype {
+        file_storage( _environment, $2, NULL, FSF_CSV, $5 );
   }
   | FILEX const_expr_string AS const_expr_string {
-        file_storage( _environment, $2, $4 );
+        file_storage( _environment, $2, $4, FSF_BINARY, 0 );
+  }
+  | FILEX const_expr_string AS const_expr_string CSV OF datatype {
+        file_storage( _environment, $2, $4, FSF_CSV, $7 );
   }
   | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
         Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );

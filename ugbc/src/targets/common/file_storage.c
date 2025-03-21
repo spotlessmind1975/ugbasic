@@ -61,17 +61,18 @@ di massa. La sintassi di base prevede di indicare il nome del file sorgente che
 sarà inserito nel supporto. Se non si vuole utilizzare lo stesso nome, è possibile 
 indicare un alias (''AS target'').
 
-@syntax FILE source [AS target]
+@syntax FILE source [AS target] [CSV OF type]
 
 @example FILE "examples/data.dat"
 @example FILE "sprites.png" AS "sprites.dat"
+@example FILE "examples/data.csv" CSV OF BYTE
 
 @usedInExample storage_example_01.bas
 
 @seeAlso BEGIN STORAGE
 @target all
 </usermanual> */
-void file_storage( Environment * _environment, char * _source_name, char * _target_name ) {
+void file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type ) {
 
     if ( !_environment->currentStorage ) {
         CRITICAL_STORAGE_NOT_OPENED();
@@ -87,15 +88,26 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
         fileStorage->targetName = basename( _source_name );
     }
 
-    FILE * file = fopen( _source_name, "rb" );
-    if ( !file ) {
-        CRITICAL_DLOAD_MISSING_FILE( _source_name );
+    switch( _format ) {
+        case FSF_BINARY: {
+            FILE * file = fopen( _source_name, "rb" );
+            if ( !file ) {
+                CRITICAL_DLOAD_MISSING_FILE( _source_name );
+            }
+            fseek( file, 0, SEEK_END );
+            int size = ftell( file );
+            fseek( file, 0, SEEK_SET );
+            fclose( file );
+            fileStorage->size = size;
+            break;
+        }
+        case FSF_CSV: {
+            int size;
+            fileStorage->content = file_read_csv( _environment, _source_name, _type, &size );
+            fileStorage->size = size;
+            break;
+        }
     }
-    fseek( file, 0, SEEK_END );
-    int size = ftell( file );
-    fseek( file, 0, SEEK_SET );
-    fclose( file );
-    fileStorage->size = size;
 
     if ( ! _environment->currentStorage->files ) {
         _environment->currentStorage->files = fileStorage;
@@ -105,7 +117,6 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
             first = first->next;
         }
         first->next = fileStorage;
-        
     }
 
     _environment->currentFileStorage = fileStorage;

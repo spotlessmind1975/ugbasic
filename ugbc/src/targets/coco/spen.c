@@ -38,32 +38,25 @@
  * CODE SECTION 
  ****************************************************************************/
 
+/**
+ * @brief Emit ASM code for <b>= SPEN()</b>
+ * 
+ * This function can be used to read the X (horizontal) position of the 
+ * electronic pen connected to the hardware. The result is stored in a 
+ * temporary variable.
+ * 
+ * @param _environment Current calling environment
+ * @return Variable* Variable with the result of the reading
+ */
 /* <usermanual>
-@keyword TIMER
-
-@target c128z
+@keyword SPEN
 </usermanual> */
+Variable * spen( Environment * _environment ) {
 
-Variable * get_timer( Environment * _environment ) {
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(result)" );
 
-    Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
-
-    cpu_move_16bit( _environment, "C128ZTIMER", result->realName );
+    coco_spen( _environment, result->realName );
     
     return result;
-    
-}
 
-/* <usermanual>
-@keyword TIMER
-
-@target c128z
-</usermanual> */
-
-void set_timer( Environment * _environment, char * _value ) {
-
-    Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
-
-    cpu_move_16bit( _environment, value->realName, "C128ZTIMER" );
-        
 }
