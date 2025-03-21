@@ -126,6 +126,7 @@ void pia_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_pia_joystick_asm );
 
+    outline1("LDB #$%2.2x", _release );
     if ( _port == -1 ) {
         outline0("JSR WAITFIRE");
     } else {
@@ -141,11 +142,12 @@ void pia_wait_fire_semivar( Environment * _environment, char * _port, int _relea
 
     deploy( joystick, src_hw_pia_joystick_asm );
 
+    outline1("LDB #$%2.2x", _release );
     if ( !_port ) {
         outline0("JSR WAITFIRE");
     } else {
         outline1("LDA %s", _port );
-        outline0("JSR WAITFIREAA");
+        outline0("JSR WAITFIREA");
     }
    
 }
