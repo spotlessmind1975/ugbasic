@@ -2951,31 +2951,48 @@ fujinet_functions :
         $$ = fujinet_write_type( _environment, $3, $4 )->name;
     };
 
+array_retrieve : 
+    {
+        ((struct _Environment *)_environment)->currentFieldName = NULL;
+    }
+    | OP_PERIOD Identifier {
+        ((struct _Environment *)_environment)->currentFieldName = $2;
+    };
+
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $1 );
     }
-      OP indexes CP {
-        VariableType vt = $2;
-        if ( vt == 0 ) {
-            vt = ((struct _Environment *)_environment)->defaultVariableType;
-        }
-        Variable * array;
-        if ( ! variable_exists( _environment, $1 ) ) {
-            if ( ((struct _Environment *)_environment)->optionExplicit ) {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            } else {
-                array = variable_define( _environment, $1, VT_TARRAY, 0 );
-                array->arrayType = vt;
-                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+      OP indexes CP array_retrieve {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            Variable * array;
+            array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
             }
-        }        
-        array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
+            $$ = variable_move_from_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName )->name;
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            VariableType vt = $2;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
+            Variable * array;
+            if ( ! variable_exists( _environment, $1 ) ) {
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $1 );
+                } else {
+                    array = variable_define( _environment, $1, VT_TARRAY, 0 );
+                    array->arrayType = vt;
+                    array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+                }
+            }        
+            array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            $$ = variable_move_from_array( _environment, $1 )->name;
         }
-        $$ = variable_move_from_array( _environment, $1 )->name;
         parser_array_cleanup( _environment );
     }
     | OSP Identifier as_datatype_suffix_optional CSP {
@@ -5510,6 +5527,9 @@ as_datatype_suffix_optional :
 var_definition_simple:
   Identifier as_datatype {
       variable_define( _environment, $1, $2, 0 );
+      if ( $2 == VT_TYPE ) {
+        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+      }
   }
   |
   Identifier as_datatype_suffix {
@@ -5546,10 +5566,6 @@ var_definition_simple:
       Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_define( _environment, $1, vt, 0 );
       variable_move( _environment, v->name, d->name );
-  }
-  | Identifier AS Identifier {
-      Variable * v = variable_define( _environment, $1, VT_TYPE, 0 );
-      variable_set_type( _environment, v->name, $3 );
   }
   ;
 
@@ -7093,6 +7109,14 @@ datatype :
     }
     | THREAD {
         $$ = VT_THREAD;
+    }
+    | Identifier {
+        $$ = VT_TYPE;
+        Type * type = type_find( ((struct _Environment *)_environment)->types, $1 );
+        if ( ! type ) {
+            CRITICAL_UNKNOWN_TYPE( $1 );
+        }
+        ((struct _Environment *)_environment)->currentType = type;
     };
 
 const_array_definition :
@@ -7610,6 +7634,9 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+        if ( $2 == VT_TYPE ) {
+            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+        }
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -7655,12 +7682,18 @@ dim_definition :
             variable_array_type( _environment, $1, VT_BYTE );
         } else {
             if ( $2 ) {
+                if ( $2 == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
                 variable_array_type( _environment, $1, $2 );
             } else {
+                if ( $8 == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
                 variable_array_type( _environment, $1, $8 );
             }
         }
-
+        
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $11;
@@ -7742,10 +7775,18 @@ dim_definition :
                  ) {
                 variable_array_type( _environment, $1, VT_BYTE );
             } else {
-                variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
+                int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+                if ( realType == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
+                variable_array_type( _environment, $1, realType );
             }
         } else {
-            variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
+            int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+            if ( realType == VT_TYPE ) {
+                variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            }
+            variable_array_type( _environment, $1, realType );
         }
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -11386,6 +11427,16 @@ jmove_definition :
     }
     ;
 
+array_assignment :
+    OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->currentFieldName = NULL;
+        ((struct _Environment *)_environment)->currentExpression = $2;
+  }
+  | OP_PERIOD Identifier OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->currentFieldName = $2;
+        ((struct _Environment *)_environment)->currentExpression = $4;
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -12459,14 +12510,23 @@ statement2nc:
   | Identifier {
         parser_array_init( _environment );
     }    
-      OP indexes CP OP_ASSIGN expr {
-        define_implicit_array_if_needed( _environment, $1 );
-        Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
+      OP indexes CP array_assignment {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            variable_move_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName, ((struct _Environment *)_environment)->currentExpression );
+            parser_array_cleanup( _environment );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            variable_move_array( _environment, $1, ((struct _Environment *)_environment)->currentExpression );
+            parser_array_cleanup( _environment );
         }
-        variable_move_array( _environment, $1, $7 );
-        parser_array_cleanup( _environment );
   }
   | Identifier OP_DOLLAR {
         parser_array_init( _environment );

@@ -43,7 +43,7 @@ endif
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
-BISON_OPTIONS=--locations -d
+BISON_OPTIONS=--locations -d -Wcounterexamples
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
 LIBS=-lm $(LIBXML2)

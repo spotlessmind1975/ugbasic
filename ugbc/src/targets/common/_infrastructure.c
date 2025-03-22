@@ -100,7 +100,8 @@ char DATATYPE_AS_STRING[][16] = {
     "DOJOKA",
     "IMAGEREF",
     "PATH",
-    "VECTOR"
+    "VECTOR",
+    "TYPE"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -1036,6 +1037,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         size *= 1;
     } else if ( var->arrayType == VT_TILES ) {
         size *= 4;
+    } else if ( var->arrayType == VT_TYPE ) {
+        size *= var->typeType->size;
     } else if ( var->arrayType == VT_BIT ) {
         size >>= 3 ;
         if ( _environment->bitPosition ) {
@@ -14448,7 +14451,7 @@ void variable_set_type( Environment * _environment, char *_name, char * _type ) 
     if ( ! var ) {
         CRITICAL_VARIABLE( _name );
     }
-    if ( var->type != VT_TYPE ) {
+    if ( var->type != VT_TYPE && var->type != VT_TARRAY ) {
         CRITICAL_VARIABLE_TYPE_NEEDED( _name );
     }
     Type * type = type_find( _environment->types, _type );
@@ -14528,3 +14531,150 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
 
 }
 
+void variable_move_array_type( Environment * _environment, char * _array, char * _field, char * _value  ) {
+
+    MAKE_LABEL;
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _array );
+    }
+    if ( array->arrayType != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    if ( !array->typeType ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    Field * field = field_find( array->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    Variable * value = variable_cast( _environment, _value, field->type );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, array->name );
+
+    offset = variable_sl_const( _environment, offset->name, ( array->typeType->size >> 3 ) );
+
+    variable_add_inplace( _environment, offset->name, field->offset );
+
+    if ( array->bankAssigned == -1 ) {
+
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 8:
+                cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+        }
+
+    } else {
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 4 );
+                break;
+            case 16:
+                bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
+                break;
+            case 8:
+                bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+        }
+
+    }
+
+}
+
+Variable * variable_move_from_array_type( Environment * _environment, char * _array, char * _field ) {
+
+    MAKE_LABEL
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _array );
+    }
+    if ( array->arrayType != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    if ( !array->typeType ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    Field * field = field_find( array->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * result = variable_temporary( _environment, field->type, "(element from array)" );
+
+    Variable * offset = calculate_offset_in_array( _environment, array->name);
+
+    offset = variable_sl_const( _environment, offset->name, ( array->typeType->size >> 3 ) );
+
+    variable_add_inplace( _environment, offset->name, field->offset );
+    
+    if ( array->bankAssigned == -1 ) {
+
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                break;
+            case 8:
+                cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                break;
+            case 1:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+        }
+
+    } else {
+
+            switch( VT_BITWIDTH( field->type ) ) {
+                case 32:
+                    bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 4 );
+                    break;
+                case 16:
+                    bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
+                    break;
+                case 8:
+                    bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
+                    break;
+                case 1:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                case 0:
+                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+            }
+
+    }
+
+    return result;
+
+}

@@ -3079,6 +3079,9 @@ typedef struct _Environment {
 
     int transparencyCoarse;
     
+    char * currentExpression;
+    char * currentFieldName;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -5512,7 +5515,9 @@ Variable *              variable_mod( Environment * _environment, char * _source
 Variable *              variable_move( Environment * _environment, char * _source, char * _dest );
 void                    variable_move_array( Environment * _environment, char * _array, char * _value  );
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
+void                    variable_move_array_type( Environment * _environment, char * _array, char * _field, char * _value  );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
+Variable *              variable_move_from_array_type( Environment * _environment, char * _array, char * _field );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
 Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );
