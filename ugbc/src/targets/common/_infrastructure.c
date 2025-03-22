@@ -8739,7 +8739,7 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
             variable_store( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
             return offset;
         } else {
-            Variable * offset = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+            Variable * offset = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0);
             return offset;
         }
     } else {
