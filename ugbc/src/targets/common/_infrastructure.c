@@ -1038,7 +1038,8 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_TILES ) {
         size *= 4;
     } else if ( var->arrayType == VT_TYPE ) {
-        size *= log2(var->typeType->size);
+        int os = VT_OPTIMAL_SHIFT( var->typeType->size );
+        size *= (1 << os);
     } else if ( var->arrayType == VT_BIT ) {
         size >>= 3 ;
         if ( _environment->bitPosition ) {
@@ -9216,7 +9217,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
     switch( _array->arrayType ) {
         case VT_TYPE:
-            offset = variable_sl_const( _environment, offset->name, log2( _array->typeType->size) );
+            offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(_array->typeType->size) );
             break;
         case VT_PATH:
             offset = variable_sl_const( _environment, offset->name, 5 );
@@ -9464,7 +9465,10 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
 
     Variable * result = variable_temporary( _environment, _array->arrayType, "(element from array)" );
     result->typeType = _array->typeType;
-
+    if ( _array->typeType ) {
+        result->size = _array->typeType->size;
+    }
+    
     if ( _array->bankAssigned == -1 ) {
 
         if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
@@ -9533,7 +9537,7 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                 }
                 case VT_TYPE: {
 
-                    offset = variable_sl_const( _environment, offset->name, log2(_array->typeType->size) );
+                    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(_array->typeType->size) );
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
@@ -13120,7 +13124,10 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     if ( var->offsettingFrames ) {
         offsetting_add_variable_reference( _environment, var->offsettingFrames, var, 0 );
     }
-    var->typeType = expr->typeType;
+    if ( expr->typeType ) {
+        var->typeType = expr->typeType;
+        var->size = expr->typeType->size;
+    }
 
     var->offsettingSequences = expr->offsettingSequences;
     if ( var->offsettingSequences ) {
@@ -14582,7 +14589,7 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
 
     Variable * offset = calculate_offset_in_array( _environment, array->name );
 
-    offset = variable_sl_const( _environment, offset->name, log2(array->typeType->size) );
+    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(array->typeType->size) );
 
     variable_add_inplace( _environment, offset->name, field->offset );
 
@@ -14653,7 +14660,7 @@ Variable * variable_move_from_array_type( Environment * _environment, char * _ar
     Variable * result = variable_temporary( _environment, field->type, "(element from array)" );
     Variable * offset = calculate_offset_in_array( _environment, array->name);
 
-    offset = variable_sl_const( _environment, offset->name, log2(array->typeType->size) );
+    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(array->typeType->size) );
 
     variable_add_inplace( _environment, offset->name, field->offset );
     

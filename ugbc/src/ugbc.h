@@ -587,6 +587,8 @@ typedef struct _Resource {
 #define VT_POW2_3( t, v )             ( ( (t) == (v) ) ? 3 : 0 )
 #define VT_POW2_4( t, v )             ( ( (t) == (v) ) ? 4 : 0 )
 
+#define VT_OPTIMAL_SHIFT( s )         ( (s<=2)?(log2(s)):(log2(s)+1) )
+
 #define VT_MAX_BITWIDTH_TYPE( a, b ) \
         ( ( ( a == VT_FLOAT ) || ( b == VT_FLOAT ) ) ? ( VT_FLOAT ) : \
             ( VT_BITWIDTH( a ) > VT_BITWIDTH( b ) ) ? ( a ) : ( b ) )

@@ -56,7 +56,7 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
     Field * last = NULL;
     if ( current ) {
         while( current ) {
-            currentOffset = current->offset + VT_BITWIDTH( current->type ) >> 3;
+            currentOffset = current->offset + (VT_BITWIDTH( current->type ) >> 3);
             last = current;
             current = current->next;
         }
@@ -73,5 +73,5 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
     } else {
         _environment->currentType->first = field;
     }
-    
+
 }

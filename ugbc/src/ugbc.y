@@ -12395,6 +12395,9 @@ statement2nc:
             if ( !((struct _Environment *)_environment)->optionExplicit ) {
                 variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
                 variable->typeType = expr->typeType;
+                if (variable->typeType) {
+                    variable->size = expr->size;
+                }
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
                 if ( variable->type == VT_IMAGE || variable->type == VT_IMAGES || variable->type == VT_IMAGE ) {
                     expr->usedImage = 1;
@@ -12429,6 +12432,8 @@ statement2nc:
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
                 }
             }
+
+            outline2("; move( %d, %d )", variable->size, expr->size );
 
             if ( variable->type != expr->type ) {
                 Variable * casted = variable_cast( _environment, expr->name, variable->type );
