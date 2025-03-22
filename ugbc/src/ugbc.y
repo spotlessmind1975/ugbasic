@@ -49,7 +49,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
-%token OP_EXCLAMATION OP_DOLLAR2
+%token OP_EXCLAMATION OP_DOLLAR2 OP_PERIOD
 
 %token RASTER AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -4663,7 +4663,10 @@ exponential_less:
         } else {
           variable_store_string( _environment, $$, $7 );
         }
-    }      
+    }
+    | Identifier OP_PERIOD Identifier {
+        $$ = variable_move_from_type( _environment, $1, $3 )->name;
+    }
     ;
 
 exponential:
@@ -12450,6 +12453,9 @@ statement2nc:
       }
       ((struct _Environment *)_environment)->currentArray = var;
   } array_reassign
+  | Identifier OP_PERIOD Identifier OP_ASSIGN expr {
+        variable_move_type( _environment, $1, $3, $5 );
+  }
   | Identifier {
         parser_array_init( _environment );
     }    

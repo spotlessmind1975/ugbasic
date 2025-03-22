@@ -48,12 +48,12 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
         CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
     }
 
-    TypeEntry * typeEntry = malloc( sizeof( TypeEntry ) );
-    memset( typeEntry, 0, sizeof( TypeEntry ) );
+    Field * field = malloc( sizeof( Field ) );
+    memset( field, 0, sizeof( Field ) );
 
     int currentOffset = 0;
-    TypeEntry * current = _environment->currentType->first;
-    TypeEntry * last = NULL;
+    Field * current = _environment->currentType->first;
+    Field * last = NULL;
     if ( current ) {
         while( current ) {
             currentOffset = current->offset + VT_BITWIDTH( current->type ) >> 3;
@@ -62,16 +62,16 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
         }
     }
 
-    typeEntry->name = strdup( _name );
-    typeEntry->type = _datatype;
-    typeEntry->offset = currentOffset;
+    field->name = strdup( _name );
+    field->type = _datatype;
+    field->offset = currentOffset;
 
-    _environment->currentType->size = currentOffset +  (VT_BITWIDTH( typeEntry->type ) >> 3);
+    _environment->currentType->size = currentOffset +  (VT_BITWIDTH( field->type ) >> 3);
 
     if ( last ) {
-        last->next = typeEntry;
+        last->next = field;
     } else {
-        _environment->currentType->first = typeEntry;
+        _environment->currentType->first = field;
     }
     
 }

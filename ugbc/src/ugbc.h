@@ -1171,7 +1171,7 @@ typedef struct _Variable {
 
 } Variable;
 
-typedef struct _TypeEntry {
+typedef struct _Field {
 
     char * name;
 
@@ -1179,9 +1179,9 @@ typedef struct _TypeEntry {
 
     int offset;
 
-    struct _TypeEntry * next;
+    struct _Field * next;
 
-} TypeEntry;
+} Field;
 
 typedef struct _Type {
 
@@ -1189,7 +1189,7 @@ typedef struct _Type {
 
     int size;
 
-    struct _TypeEntry * first;
+    struct _Field * first;
 
     struct _Type * next;
 
@@ -3529,6 +3529,8 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE( n ) CRITICAL2("E381 - cannot use this type inside a TYPE", n );  
 #define CRITICAL_VARIABLE_TYPE_NEEDED( n ) CRITICAL2("E382 - variable TYPE is needed", n );  
 #define CRITICAL_UNKNOWN_TYPE( n ) CRITICAL2("E382 - unknown TYPE", n );  
+#define CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( n ) CRITICAL2("E383 - cannot access to fields of a non TYPE variable", n );  
+#define CRITICAL_UNKNOWN_FIELD_ON_TYPE( n ) CRITICAL2("E384 - unknown TYPE field ", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4580,6 +4582,7 @@ ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
 Type * type_find( Type * _first, char * _name );
+Field * field_find( Type * _type, char * _name );
 
 int check_datatype_limits( VariableType _type, int _value );
 
@@ -5511,7 +5514,9 @@ void                    variable_move_array( Environment * _environment, char * 
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
+Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
 Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );
+void                    variable_move_type( Environment * _environment, char * _type, char * _field, char * _value  );
 Variable *              variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul2_const( Environment * _environment, char * _source, int _bits );

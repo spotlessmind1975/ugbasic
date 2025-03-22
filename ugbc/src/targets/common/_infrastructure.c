@@ -14427,6 +14427,21 @@ Type * type_find( Type * _first, char * _name ) {
 
 }
 
+Field * field_find( Type * _type, char * _name ) {
+
+    Field * current = _type->first;
+
+    while( current ) {
+        if ( strcmp( current->name, _name ) == 0 ) {
+            return current;
+        }
+        current = current->next;
+    }
+
+    return NULL;
+
+}
+
 void variable_set_type( Environment * _environment, char *_name, char * _type ) {
 
     Variable * var = variable_retrieve( _environment, _name );
@@ -14444,3 +14459,72 @@ void variable_set_type( Environment * _environment, char *_name, char * _type ) 
     var->size = type->size;
  
 }
+
+Variable * variable_move_from_type( Environment * _environment, char * _type, char * _field ) {
+
+    Variable * result = NULL;
+
+    Variable * typeVar = variable_retrieve( _environment, _type );
+    if ( typeVar->type != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _type );
+    }
+    Field * field = field_find( typeVar->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+    
+    result = variable_temporary( _environment, field->type, "(element from array)" );
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString, "%2.2x", field->offset );
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 32:
+            cpu_move_32bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+            break;
+        case 16:
+            cpu_move_16bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+            break;
+        case 8:
+            cpu_move_8bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+    }
+
+    return result;
+
+}
+
+void variable_move_type( Environment * _environment, char * _type, char * _field, char * _value  ) {
+
+    Variable * typeVar = variable_retrieve( _environment, _type );
+    if ( typeVar->type != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _type );
+    }
+    Field * field = field_find( typeVar->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    Variable * value = variable_cast( _environment, _value, field->type );
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString, "%2.2x", field->offset );
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 32:
+            cpu_move_32bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+            break;
+        case 16:
+            cpu_move_16bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+            break;
+        case 8:
+            cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+    }
+
+}
+

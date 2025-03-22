@@ -217,6 +217,7 @@ INCLUDE             BEGIN(incl);
 [\x0d] { }
 _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 [\x0a] { ++yylineno; RETURN(NewLine,0); }
+"." { RETURN(OP_PERIOD,1); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
 "(" { RETURN(OP,1); }
