@@ -44,7 +44,7 @@
  * @brief Emit code for <strong>FADE</strong>
  */
  
-void fade_out( Environment * _environment ) {
+void fade_out( Environment * _environment, char * _period  ) {
 
 }
 

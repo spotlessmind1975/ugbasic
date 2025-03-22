@@ -44,10 +44,15 @@
  * @brief Emit code for <strong>FADE</strong>
  */
  
-void fade_in( Environment * _environment ) {
+void fade_in( Environment * _environment, char * _period ) {
 
-    ef936x_fade_in( _environment );
-    
+    if ( _period ) {
+        Variable * period = variable_retrieve_or_define( _environment, _period, VT_WORD, 1 );
+        ef936x_fade_in( _environment, period->realName );
+    } else {
+        ef936x_fade_in( _environment, NULL );
+    }    
+
 }
 
 #endif

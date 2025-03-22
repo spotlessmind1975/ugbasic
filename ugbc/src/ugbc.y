@@ -199,6 +199,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_by
 %type <string> optional_clamp
 %type <string> travel_function
+%type <string> optional_period
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -4996,18 +4997,44 @@ sleep_definition:
     sleep_definition_simple
   | sleep_definition_expression;
 
+fade_in_palette:
+    OP_HASH const_expr {
+        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
+    }
+    | expr {
+        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    }
+    | OP_HASH const_expr {
+        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
+    } OP_COMMA fade_in_palette
+    | expr {
+        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    } OP_COMMA fade_in_palette;
+
+optional_period : {
+    $$ = NULL;
+    }
+    | PERIOD expr {
+        $$ = $2;
+    };
+
 fade_definition:
     OUT {
-      fade_out( _environment );
+      fade_out( _environment, NULL );
+    }
+    | OUT PERIOD expr {
+      fade_out( _environment, $3 );
     }
     | IN {
-      fade_in( _environment );
+      fade_in( _environment, NULL );
     }
-    | expr ticks {
-      fade_ticks_var( _environment, $1 );
+    | IN {
+      ((struct _Environment *)_environment)->paletteIndex = 0;
+    } fade_in_palette optional_period {
+      fade_in( _environment, $4 );
     }
-    | expr milliseconds {
-      fade_milliseconds_var( _environment, $1 );
+    | IN PERIOD expr {
+      fade_in( _environment, $3 );
     }
     ;
 

@@ -4975,10 +4975,13 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
-void                    fade_in( Environment * _environment );
+void                    fade_in( Environment * _environment, char * _period  );
+void                    fade_in_color( Environment * _environment, int _index, int _shade );
+void                    fade_in_color_semivars( Environment * _environment, int _index, char * _shade );
+void                    fade_in_color_vars( Environment * _environment, char * _index, char * _shade );
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
-void                    fade_out( Environment * _environment );
+void                    fade_out( Environment * _environment, char * _period  );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
