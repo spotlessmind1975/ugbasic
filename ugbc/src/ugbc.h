@@ -648,7 +648,8 @@ typedef struct _Resource {
         ( t == VT_SEQUENCE ) + \
         ( t == VT_MUSIC ) + \
         ( t == VT_TILEMAP ) + \
-        ( t == VT_DOJOKA ) \
+        ( t == VT_DOJOKA ) + \
+        ( t == VT_TYPE ) \
     )
 
 /**
@@ -5524,7 +5525,9 @@ void                    variable_move_array( Environment * _environment, char * 
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
 void                    variable_move_array_type( Environment * _environment, char * _array, char * _field, char * _value  );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
+void                    variable_move_from_array_inplace( Environment * _environment, char * _array, char * _value );
 Variable *              variable_move_from_array_type( Environment * _environment, char * _array, char * _field );
+void                    variable_move_from_array_type_inplace( Environment * _environment, char * _array, char * _field, char * _value );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
 Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );

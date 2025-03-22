@@ -6575,3 +6575,29 @@ e nella simulazione di fenomeni fisici.
 @target all
 </usermanual> */
 
+/* <usermanual>
+@keyword LET (data type)
+
+@english
+
+The ''LET'' command is a statement used to assign a value to a variable. 
+Although it is optional, and the assignment can be done simply by writing 
+''variable = value'', this command can help to produce a more optimized
+code, since its syntax is a bit more limited. So, ''LET'' allows you to 
+store a value (numeric or text) in a memory location represented by a 
+''variable'', helping ugBASIC to retrieve it in an more optimized way.
+
+@italian
+
+Il comando ''LET'' è un'istruzione utilizzata per assegnare un valore a una variabile.
+Sebbene sia facoltativo e l'assegnazione possa essere eseguita semplicemente scrivendo
+''variabile = valore'', questo comando può aiutare a produrre un codice più ottimizzato,
+poiché la sua sintassi è un po' più limitata. Quindi, ''LET'' consente di
+memorizzare un valore (numerico o di testo) in una posizione di memoria rappresentata da una
+''variabile'', aiutando ugBASIC a recuperarlo in modo più ottimizzato.
+
+@syntax LET variable = expression
+@example LET v = t(i)
+
+@target all
+</usermanual> */

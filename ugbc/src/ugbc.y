@@ -11470,6 +11470,19 @@ array_assignment :
         ((struct _Environment *)_environment)->currentExpression = $4;
     };
 
+let_definition :
+    Identifier OP_ASSIGN Identifier {
+        parser_array_init( _environment );
+    }
+      OP indexes CP array_retrieve {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            variable_move_from_array_type_inplace( _environment, $3, ((struct _Environment *)_environment)->currentFieldName, $1 );
+        } else {
+            variable_move_from_array_inplace( _environment, $3, $1 );
+        }
+        parser_array_cleanup( _environment );
+    };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -12419,6 +12432,7 @@ statement2nc:
         }
       }
   }
+  | LET let_definition
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * variable;
