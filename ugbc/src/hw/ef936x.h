@@ -236,5 +236,6 @@ void ef936x_tile_at( Environment * _environment, char * _x, char * _y, char * _r
 void ef936x_slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination );
 int ef936x_palette_extract( Environment * _environment, char * _data, int _width, int _height, int _depth, int _flags, RGBi * _palette );
 void ef936x_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+void ef936x_fade_out( Environment * _environment );
 
 #endif

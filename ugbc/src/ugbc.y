@@ -4997,7 +4997,10 @@ sleep_definition:
   | sleep_definition_expression;
 
 fade_definition:
-    expr ticks {
+    OUT {
+      fade_out( _environment );
+    }
+    | expr ticks {
       fade_ticks_var( _environment, $1 );
     }
     | expr milliseconds {
