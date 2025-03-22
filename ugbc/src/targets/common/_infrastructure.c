@@ -14531,8 +14531,6 @@ void variable_set_type( Environment * _environment, char *_name, char * _type ) 
 
 Variable * variable_move_from_type( Environment * _environment, char * _type, char * _field ) {
 
-    Variable * result = NULL;
-
     Variable * typeVar = variable_retrieve( _environment, _type );
     if ( typeVar->type != VT_TYPE ) {
         CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _type );
@@ -14542,7 +14540,26 @@ Variable * variable_move_from_type( Environment * _environment, char * _type, ch
         CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
     }
     
-    result = variable_temporary( _environment, field->type, "(element from array)" );
+    Variable * result = variable_temporary( _environment, field->type, "(element from array)" );
+
+    variable_move_from_type_inplace( _environment, _type, _field, result->name );
+
+    return result;
+
+}
+
+void variable_move_from_type_inplace( Environment * _environment, char * _type, char * _field, char * _value ) {
+
+    Variable * typeVar = variable_retrieve( _environment, _type );
+    if ( typeVar->type != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _type );
+    }
+    Field * field = field_find( typeVar->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    Variable * result = variable_retrieve_or_define( _environment, _value, field->type, 0 );
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
     sprintf( offsetAsString, "%2.2x", field->offset );
@@ -14560,8 +14577,6 @@ Variable * variable_move_from_type( Environment * _environment, char * _type, ch
         case 0:
             CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
     }
-
-    return result;
 
 }
 
@@ -14725,11 +14740,7 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
     }
 
-    Variable * result = variable_retrieve( _environment, _value );
-
-    if ( result->type != field->type ) {
-        CRITICAL_CANNOT_CAST(DATATYPE_AS_STRING[result->type],DATATYPE_AS_STRING[field->type]);
-    }
+    Variable * result = variable_retrieve_or_define( _environment, _value, field->type, 0 );
 
     Variable * offset = calculate_offset_in_array( _environment, array->name);
 

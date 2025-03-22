@@ -5530,6 +5530,7 @@ Variable *              variable_move_from_array_type( Environment * _environmen
 void                    variable_move_from_array_type_inplace( Environment * _environment, char * _array, char * _field, char * _value );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
+void                    variable_move_from_type_inplace( Environment * _environment, char * _type, char * _field, char * _value );
 Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );
 void                    variable_move_type( Environment * _environment, char * _type, char * _field, char * _value  );
 Variable *              variable_move_naked( Environment * _environment, char * _source, char * _dest );

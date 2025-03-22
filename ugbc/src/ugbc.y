@@ -11481,6 +11481,9 @@ let_definition :
             variable_move_from_array_inplace( _environment, $3, $1 );
         }
         parser_array_cleanup( _environment );
+    }
+    | Identifier OP_ASSIGN Identifier OP_PERIOD Identifier {
+        variable_move_from_type_inplace( _environment, $3, $5, $1 );
     };
 
 statement2nc:
