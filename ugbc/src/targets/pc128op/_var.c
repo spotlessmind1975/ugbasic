@@ -93,6 +93,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;
                 case VT_MUSIC:
                 case VT_BUFFER:
+                case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         // force 2 bytes to help even alignment (1->2 bytes)

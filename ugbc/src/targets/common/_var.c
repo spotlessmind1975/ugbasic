@@ -59,6 +59,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_TILESET:
                 case VT_TILES:
                 case VT_BUFFER:
+                case VT_TYPE:
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -93,6 +94,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_TILESET:
                 case VT_TILES:
                 case VT_BUFFER:
+                case VT_TYPE:
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:

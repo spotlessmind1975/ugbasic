@@ -3410,6 +3410,7 @@ exponential_less:
             case VT_IMAGES:
             case VT_SEQUENCE:
             case VT_BUFFER:
+            case VT_TYPE:
             case VT_STRING: 
                 break;
             default:

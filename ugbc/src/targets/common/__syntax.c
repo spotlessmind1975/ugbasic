@@ -840,20 +840,21 @@ immagini per individuare il colore da utilizzare.
 @keyword SIZE
 
 @english
-To get the (static) size of a buffer you can use the ''SIZE'' command. This command 
-will return, in bytes, the size of the given buffer. It is possible to apply this 
-command to any type of static data, such as ''BUFFER'', ''IMAGE'', ''IMAGES'' and 
-constant strings.
+To get the size of a variable you can use the ''SIZE'' command. This command 
+will return, in bytes, the size of the memory area used by that
+variable. It is possible to apply this  command to any type of static data, 
+such as ''BUFFER'', ''IMAGE'', ''IMAGES'', ''TYPE'' and constant strings.
 
 @italian
-Per ottenere la dimensione (statica) di un buffer è possibile utilizzare il comando ''SIZE''. 
-Tale comando restituisce, in bytes, la dimensione del buffer dato. E' possibile applicare 
-questo comando a qualsiasi tipo di dato statico, quali ''BUFFER'', ''IMAGE'', ''IMAGES'' e
-stringe costanti.
+Per ottenere la dimensione di una variabile puoi usare il comando ''SIZE''. 
+Questo comando restituirà, in byte, la dimensione dell'area di memoria 
+utilizzata da quella variabile. È possibile applicare questo comando a 
+qualsiasi tipo di dati statici, come ''BUFFER'', ''IMAGE'', ''IMAGES'', 
+''TYPE'' e stringhe costanti.
 
-@syntax ... = SIZE([resource])
+@syntax ... = SIZE(variable)
 
-@example PRINT SIZE(image)
+@example PRINT SIZE(var)
 
 @usedInExample buffers_definition_02.bas
 @usedInExample buffers_definition_03.bas
