@@ -1038,7 +1038,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_TILES ) {
         size *= 4;
     } else if ( var->arrayType == VT_TYPE ) {
-        size *= var->typeType->size;
+        size *= log2(var->typeType->size);
     } else if ( var->arrayType == VT_BIT ) {
         size >>= 3 ;
         if ( _environment->bitPosition ) {
@@ -1828,6 +1828,7 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                 }
             } else {
                 Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
+                temporary->typeType = destination->typeType;
                 temporary->valueBuffer = malloc( _size );
                 memcpy( temporary->valueBuffer, _buffer, _size );
                 temporary->size = _size;
@@ -9214,6 +9215,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
     Variable * offset = calculate_offset_in_array( _environment, _array->name );
 
     switch( _array->arrayType ) {
+        case VT_TYPE:
+            offset = variable_sl_const( _environment, offset->name, log2( _array->typeType->size) );
+            break;
         case VT_PATH:
             offset = variable_sl_const( _environment, offset->name, 5 );
             break;
@@ -9250,6 +9254,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
         switch( _array->arrayType ) {
+            case VT_TYPE:
+                cpu_move_nbit_indirect( _environment, _array->typeType->size * 8, _value->realName, offset->realName );
+                break;
             case VT_PATH:
                 cpu_move_nbit_indirect( _environment, 18 * 8, _value->realName, offset->realName );
                 break;
@@ -9311,6 +9318,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
     } else {
 
         switch( _array->arrayType ) {
+            case VT_TYPE:
+                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
+                break;
             case VT_FLOAT:
                 CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
                 break;
@@ -9453,6 +9463,7 @@ Variable * variable_move_from_array_bit( Environment * _environment, Variable * 
 Variable * variable_move_from_array_byte( Environment * _environment, Variable * _array ) {
 
     Variable * result = variable_temporary( _environment, _array->arrayType, "(element from array)" );
+    result->typeType = _array->typeType;
 
     if ( _array->bankAssigned == -1 ) {
 
@@ -9516,6 +9527,17 @@ Variable * variable_move_from_array_byte( Environment * _environment, Variable *
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
                     cpu_move_32bit_indirect2( _environment, offset->realName, result->realName );
+
+                    break;
+
+                }
+                case VT_TYPE: {
+
+                    offset = variable_sl_const( _environment, offset->name, log2(_array->typeType->size) );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_nbit_indirect2( _environment, _array->typeType->size*8, offset->realName, result->realName );
 
                     break;
 
@@ -13098,6 +13120,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     if ( var->offsettingFrames ) {
         offsetting_add_variable_reference( _environment, var->offsettingFrames, var, 0 );
     }
+    var->typeType = expr->typeType;
 
     var->offsettingSequences = expr->offsettingSequences;
     if ( var->offsettingSequences ) {
@@ -14559,7 +14582,7 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
 
     Variable * offset = calculate_offset_in_array( _environment, array->name );
 
-    offset = variable_sl_const( _environment, offset->name, ( array->typeType->size >> 3 ) );
+    offset = variable_sl_const( _environment, offset->name, log2(array->typeType->size) );
 
     variable_add_inplace( _environment, offset->name, field->offset );
 
@@ -14628,10 +14651,9 @@ Variable * variable_move_from_array_type( Environment * _environment, char * _ar
     }
 
     Variable * result = variable_temporary( _environment, field->type, "(element from array)" );
-
     Variable * offset = calculate_offset_in_array( _environment, array->name);
 
-    offset = variable_sl_const( _environment, offset->name, ( array->typeType->size >> 3 ) );
+    offset = variable_sl_const( _environment, offset->name, log2(array->typeType->size) );
 
     variable_add_inplace( _environment, offset->name, field->offset );
     

@@ -12394,6 +12394,7 @@ statement2nc:
         } else {
             if ( !((struct _Environment *)_environment)->optionExplicit ) {
                 variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+                variable->typeType = expr->typeType;
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
                 if ( variable->type == VT_IMAGE || variable->type == VT_IMAGES || variable->type == VT_IMAGE ) {
                     expr->usedImage = 1;
