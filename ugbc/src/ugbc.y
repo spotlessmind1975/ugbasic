@@ -5543,6 +5543,10 @@ var_definition_simple:
       Variable * d = variable_define( _environment, $1, vt, 0 );
       variable_move( _environment, v->name, d->name );
   }
+  | Identifier AS Identifier {
+      Variable * v = variable_define( _environment, $1, VT_TYPE, 0 );
+      variable_set_type( _environment, v->name, $3 );
+  }
   ;
 
 var_definition_complex:

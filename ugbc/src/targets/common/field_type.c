@@ -65,7 +65,9 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
     typeEntry->name = strdup( _name );
     typeEntry->type = _datatype;
     typeEntry->offset = currentOffset;
-    
+
+    _environment->currentType->size = currentOffset +  (VT_BITWIDTH( typeEntry->type ) >> 3);
+
     if ( last ) {
         last->next = typeEntry;
     } else {

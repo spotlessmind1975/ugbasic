@@ -528,7 +528,10 @@ typedef enum _VariableType {
     VT_PATH = 32,
 
     /** VECTOR */
-    VT_VECTOR2 = 33
+    VT_VECTOR2 = 33,
+
+    /** TYPE */
+    VT_TYPE = 34
 
 } VariableType;
 
@@ -1160,6 +1163,8 @@ typedef struct _Variable {
      *
      */
     int usedImage;
+
+    struct _Type * typeType;
 
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
@@ -3522,6 +3527,8 @@ typedef struct _Environment {
 #define CRITICAL_TYPE_NOT_OPENED( ) CRITICAL("E379 - cannot END an unopened TYPE" ); 
 #define CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE( n ) CRITICAL2("E380 - cannot define outside a TYPE", n ); 
 #define CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE( n ) CRITICAL2("E381 - cannot use this type inside a TYPE", n );  
+#define CRITICAL_VARIABLE_TYPE_NEEDED( n ) CRITICAL2("E382 - variable TYPE is needed", n );  
+#define CRITICAL_UNKNOWN_TYPE( n ) CRITICAL2("E382 - unknown TYPE", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5520,6 +5527,7 @@ int                     variable_exists( Environment * _environment, char * _nam
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
+void                    variable_set_type( Environment * _environment, char * _source, char * _type );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
 void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );

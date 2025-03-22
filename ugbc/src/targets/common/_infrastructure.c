@@ -14393,8 +14393,27 @@ Type * type_find( Type * _first, char * _name ) {
         if ( strcmp( current->name, _name ) == 0 ) {
             return current;
         }
+        current = current->next;
     }
 
     return NULL;
 
+}
+
+void variable_set_type( Environment * _environment, char *_name, char * _type ) {
+
+    Variable * var = variable_retrieve( _environment, _name );
+    if ( ! var ) {
+        CRITICAL_VARIABLE( _name );
+    }
+    if ( var->type != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _name );
+    }
+    Type * type = type_find( _environment->types, _type );
+    if ( ! type ) {
+        CRITICAL_UNKNOWN_TYPE( _type );
+    }
+    var->typeType = type;
+    var->size = type->size;
+ 
 }
