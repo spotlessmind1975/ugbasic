@@ -2524,4 +2524,12 @@ void ef936x_fade_out( Environment * _environment ) {
 
 }
 
+void ef936x_fade_in( Environment * _environment ) {
+
+    deploy( fade, src_hw_ef936x_fade_asm );
+
+    outline0("JSR FADEIN");
+
+}
+
 #endif

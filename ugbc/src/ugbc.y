@@ -5000,6 +5000,9 @@ fade_definition:
     OUT {
       fade_out( _environment );
     }
+    | IN {
+      fade_in( _environment );
+    }
     | expr ticks {
       fade_ticks_var( _environment, $1 );
     }
