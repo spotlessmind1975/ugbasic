@@ -14448,11 +14448,11 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
                 currentField = currentField->next;
                 current = current->next;
             }
-            *_size += bytes;
-            ++*_count;
             if ( !current ) {
                 break;
             }
+            *_size += bytes;
+            ++*_count;
         }
 
         char * buffer = malloc( *_size ), * ptr = buffer, * lastPtr = buffer;
@@ -14492,8 +14492,8 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
                         ptr += 4;
                         break;
                 }
-                current = current->next;
                 currentField = currentField->next;
+                current = current->next;
             }
             lastPtr += bytes;
             ptr = lastPtr;
