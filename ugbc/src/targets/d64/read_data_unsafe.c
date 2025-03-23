@@ -111,6 +111,15 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                         cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
                         break;
                     }
+                    case VT_TYPE: {
+                        int os = VT_OPTIMAL_SHIFT( variable->typeType->size );
+                        int bytes = 1 << os;
+                        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+                        cpu_addressof_16bit( _environment, variable->realName, address->realName );
+                        cpu_mem_move_size( _environment, dataptr->realName, address->realName, bytes );
+                        cpu_math_add_16bit_const( _environment, dataptr->realName, bytes, dataptr->realName );
+                        break;
+                    }                    
                     default:
                         CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
                 }
