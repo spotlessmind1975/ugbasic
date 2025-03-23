@@ -178,7 +178,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> read_safeness
 %type <integer> line_mode box_mode put_action
 %type <string> timer_number timer_number_comma
-%type <string> dload_from_offset dload_to_address dload_size_size
+%type <string> dload_from_offset dload_to_address dload_size_size dload_to_bank
 %type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
 %type <string> optional_step
@@ -10198,6 +10198,15 @@ dsave_definition :
         dsave( _environment, $1, $2, $3, $4 );
     };
 
+dload_to_bank :
+    {
+        $$ = NULL;
+    }
+    |
+    BANK expr {
+        $$ = $2;
+    };
+
 dload_from_offset :
     {
         $$ = NULL;
@@ -10226,8 +10235,8 @@ dload_size_size :
     };
 
 dload_definition :
-    expr dload_from_offset dload_to_address dload_size_size {
-        dload( _environment, $1, $2, $3, $4 );
+    expr dload_from_offset dload_to_address dload_to_bank dload_size_size {
+        dload( _environment, $1, $2, $3, $4, $5 );
     };
 
 to_variable : 

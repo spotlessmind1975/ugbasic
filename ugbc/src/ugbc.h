@@ -4883,7 +4883,7 @@ void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
-void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
 void                    downw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );

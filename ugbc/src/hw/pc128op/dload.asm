@@ -35,12 +35,16 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-DLOADBLOCK
-    rzb 256
-
 ; Y: destination address
 ; U: size
 DLOAD
+    
+    STA <MATHPTR2
+    CMPA #0
+    BEQ DLOAD
+    LEAX $6000, X
+    
+DLOAD2
 
     STU <MATHPTR0
 
@@ -80,11 +84,26 @@ DLOADL1REPEAT
     JMP DLOADL1MV2L
 
 DLOADL1MV2L
+
+    LDA <MATHPTR2
+    BEQ DLOADL1MV2LRAM
+
+    PSHS D, U
+    TFR U, D
+    LDB <MATHPTR2
+    CLRA
+    TFR D, U
+    JSR BANKWRITE
+    PULS D, U
+
+    BRA DLOADL1REPEAT2
+
+DLOADL1MV2LRAM
     LDA ,Y+
     STA ,X+
     LEAU -1, U
     CMPU #0
-    BNE DLOADL1MV2L
+    BNE DLOADL1MV2LRAM
 
 DLOADL1REPEAT2
 
@@ -113,11 +132,28 @@ DLOADL1REPEAT2
     JMP DLOADL1MV2L
 
 DLOADL1MV2
+
+    LDA <MATHPTR2
+    BEQ DLOADL1MV2RAM
+
+    PSHS D, U
+    TFR U, D
+    LDB <MATHPTR2
+    CLRA
+    TFR D, U
+    JSR BANKWRITE
+    PULS D, U
+
+    BRA DLOADL1MV2DONE
+
+DLOADL1MV2RAM
     LDA ,Y+
     STA ,X+
     LEAU -1, U
     CMPU #0
-    BNE DLOADL1MV2
+    BNE DLOADL1MV2RAM
+
+DLOADL1MV2DONE
 
     LDA #0
     SWI
