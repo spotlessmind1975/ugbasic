@@ -111,6 +111,7 @@ Variable * travel_path( Environment * _environment, char * _p, char * _x, char *
         char doneLabel[ MAX_TEMPORARY_STORAGE ]; sprintf( doneLabel, "%sdone", label );
 
         Variable * path = variable_define( _environment, "travelpath__path", VT_PATH, 0 );
+        path->bankReadOrWrite = 1;
 
         Variable * xout = variable_define( _environment, "travelpath__xout", VT_POSITION, 0 );
         Variable * yout = variable_define( _environment, "travelpath__yout", VT_POSITION, 0 );
