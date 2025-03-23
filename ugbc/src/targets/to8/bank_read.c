@@ -151,6 +151,13 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
 
+    outline1("; variable_exists_by_realname( ..., %s )", _address2 );
+    if ( variable_exists_by_realname( _environment, _address2 ) ) {
+        Variable * address2 = variable_retrieve_by_realname( _environment, _address2 );
+        outline1("; %s->bankReadOrWrite = 1", _address2 );
+        address2->bankReadOrWrite = 1;
+    }
+    
     outline0("; bank read rvd")
     outline1("LDU %s", address_displacement( _environment, bank->realName, "-1" ) );
     outline1("LDY %s", realAddress->realName );
@@ -182,6 +189,13 @@ void bank_read_vars_bank_direct_size_vars( Environment * _environment, int _bank
     deploy_preferred( bank, src_hw_to8_bank_asm );
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+
+    outline1("; variable_exists_by_realname( ..., %s )", _address2 );
+    if ( variable_exists_by_realname( _environment, _address2 ) ) {
+        Variable * address2 = variable_retrieve_by_realname( _environment, _address2 );
+        outline1("; %s->bankReadOrWrite = 1", _address2 );
+        address2->bankReadOrWrite = 1;
+    }
 
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
@@ -216,6 +230,8 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve( _environment, _address2 );
+
+    address2->bankReadOrWrite = 1;
 
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
