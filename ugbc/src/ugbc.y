@@ -7201,6 +7201,9 @@ const_array_definitions :
 
     };
 
+text_or_csv : 
+    TEXT | CSV;
+    
 array_assign:
     {
         if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -7256,7 +7259,7 @@ array_assign:
         ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
-    | OP_ASSIGN LOAD String AS TEXT {
+    | OP_ASSIGN LOAD String AS text_or_csv {
 
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
 
