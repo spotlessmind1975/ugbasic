@@ -14433,51 +14433,122 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
 
     fclose( handle );
 
-    *_size = 0;
-    Constant * first = constants;
-    while( first->next ) {
-        first = first->next;
-        *_size += VT_BITWIDTH(_type) >> 3;
-    }
+    if ( _type == VT_TYPE ) {
 
-    char * buffer = malloc( *_size * ( VT_BITWIDTH( _type ) >> 3 ) ), * ptr = buffer;
-    int i=0;
-    current = constants;
-    while(current->next) {
-        switch( VT_BITWIDTH(_type) ) {
-            case 8:
-                *ptr = (current->value) & 0xff;
-                ++ptr;
+        int os = VT_OPTIMAL_SHIFT( _environment->currentType->size );
+        int bytes = 1 << os;
+
+        Constant * current = constants;
+
+        *_size = 0;
+        while( current ) {
+            Field * currentField = _environment->currentType->first;
+            while( currentField && current ) {
+                currentField = currentField->next;
+                current = current->next;
+            }
+            *_size += bytes;
+            if ( !current ) {
                 break;
-            case 16:
-                #ifdef CPU_BIG_ENDIAN
-                    *ptr = ( current->value >> 8 ) & 0xff;
-                    *(ptr+1) = ( current->value ) & 0xff;
-                #else
-                    *(ptr+1) = ( current->value >> 8 ) & 0xff;
-                    *ptr = ( current->value ) & 0xff;
-                #endif
-                ptr += 2;
-                break;
-            case 32:
-                #ifdef CPU_BIG_ENDIAN
-                    *ptr = ( current->value >> 24 ) & 0xff;
-                    *(ptr+1) = ( current->value >> 16 ) & 0xff;
-                    *(ptr+2) = ( current->value >> 8 ) & 0xff;
-                    *(ptr+3) = ( current->value ) & 0xff;
-                #else
-                    *(ptr+3) = ( current->value >> 24 ) & 0xff;
-                    *(ptr+2) = ( current->value >> 16 ) & 0xff;
-                    *(ptr+1) = ( current->value >> 8 ) & 0xff;
-                    *ptr = ( current->value ) & 0xff;
-                #endif
-                ptr += 4;
-                break;
+            }
         }
-        current = current->next;
-    }
 
-    return buffer;
+        char * buffer = malloc( *_size ), * ptr = buffer, * lastPtr = buffer;
+        int i=0;
+        Field * currentField = _environment->currentType->first;
+        current = constants;
+        while( current ) {
+
+            while(current&&currentField) {
+                switch( VT_BITWIDTH(currentField->type) ) {
+                    case 8:
+                        *ptr = (current->value) & 0xff;
+                        ++ptr;
+                        break;
+                    case 16:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( current->value >> 8 ) & 0xff;
+                            *(ptr+1) = ( current->value ) & 0xff;
+                        #else
+                            *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                            *ptr = ( current->value ) & 0xff;
+                        #endif
+                        ptr += 2;
+                        break;
+                    case 32:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( current->value >> 24 ) & 0xff;
+                            *(ptr+1) = ( current->value >> 16 ) & 0xff;
+                            *(ptr+2) = ( current->value >> 8 ) & 0xff;
+                            *(ptr+3) = ( current->value ) & 0xff;
+                        #else
+                            *(ptr+3) = ( current->value >> 24 ) & 0xff;
+                            *(ptr+2) = ( current->value >> 16 ) & 0xff;
+                            *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                            *ptr = ( current->value ) & 0xff;
+                        #endif
+                        ptr += 4;
+                        break;
+                }
+                current = current->next;
+                currentField = currentField->next;
+            }
+            lastPtr += bytes;
+            ptr = lastPtr;
+            currentField = _environment->currentType->first;
+        }
+    
+        return buffer;
+    
+    } else {
+
+        *_size = 0;
+        Constant * first = constants;
+        while( first->next ) {
+            first = first->next;
+            *_size += VT_BITWIDTH(_type) >> 3;
+        }
+    
+        char * buffer = malloc( *_size ), * ptr = buffer;
+        int i=0;
+        current = constants;
+        while(current) {
+            switch( VT_BITWIDTH(_type) ) {
+                case 8:
+                    *ptr = (current->value) & 0xff;
+                    ++ptr;
+                    break;
+                case 16:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( current->value >> 8 ) & 0xff;
+                        *(ptr+1) = ( current->value ) & 0xff;
+                    #else
+                        *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                        *ptr = ( current->value ) & 0xff;
+                    #endif
+                    ptr += 2;
+                    break;
+                case 32:
+                    #ifdef CPU_BIG_ENDIAN
+                        *ptr = ( current->value >> 24 ) & 0xff;
+                        *(ptr+1) = ( current->value >> 16 ) & 0xff;
+                        *(ptr+2) = ( current->value >> 8 ) & 0xff;
+                        *(ptr+3) = ( current->value ) & 0xff;
+                    #else
+                        *(ptr+3) = ( current->value >> 24 ) & 0xff;
+                        *(ptr+2) = ( current->value >> 16 ) & 0xff;
+                        *(ptr+1) = ( current->value >> 8 ) & 0xff;
+                        *ptr = ( current->value ) & 0xff;
+                    #endif
+                    ptr += 4;
+                    break;
+            }
+            current = current->next;
+        }
+    
+        return buffer;
+    
+    }
 
 }
 
