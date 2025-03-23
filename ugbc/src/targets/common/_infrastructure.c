@@ -14437,7 +14437,7 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
     Constant * first = constants;
     while( first->next ) {
         first = first->next;
-        ++*_size;
+        *_size += VT_BITWIDTH(_type) >> 3;
     }
 
     char * buffer = malloc( *_size * ( VT_BITWIDTH( _type ) >> 3 ) ), * ptr = buffer;
