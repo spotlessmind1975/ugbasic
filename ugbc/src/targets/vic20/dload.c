@@ -54,7 +54,7 @@
 
 @target vic20
 </usermanual> */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
 
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
