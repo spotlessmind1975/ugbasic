@@ -3084,6 +3084,8 @@ typedef struct _Environment {
     
     char * currentExpression;
     char * currentFieldName;
+    Field * currentField;
+    Constant * currentFieldsValues;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -3537,6 +3539,7 @@ typedef struct _Environment {
 #define CRITICAL_UNKNOWN_TYPE( n ) CRITICAL2("E382 - unknown TYPE", n );  
 #define CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( n ) CRITICAL2("E383 - cannot access to fields of a non TYPE variable", n );  
 #define CRITICAL_UNKNOWN_FIELD_ON_TYPE( n ) CRITICAL2("E384 - unknown TYPE field ", n );  
+#define CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( n ) CRITICAL2("E385 - not enough value on DATA for given TYPE ", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4866,6 +4869,7 @@ DataSegment *           data_segment_find_numeric( Environment * _environment, i
 DataSegment *           data_segment_define_or_retrieve( Environment * _environment, char * _name );
 DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _environment, int _number );
 void                    data_string( Environment * _environment, char * _value );
+void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );

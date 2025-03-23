@@ -10065,7 +10065,31 @@ exec_definition :
 
 data_definition_single :
     const_expr {
-        data_numeric( _environment, $1 );
+        if ( ((struct _Environment *)_environment)->currentType ) {
+            Constant * c = malloc( sizeof( Constant ) );
+            memset( c, 0, sizeof( Constant ) );
+
+            c->value = $1;
+            
+            if ( ((struct _Environment *)_environment)->currentFieldsValues ) {
+                Constant * last = ((struct _Environment *)_environment)->currentFieldsValues;
+                while( last->next ) {
+                    last = last->next;
+                }
+                last->next = c;
+            } else {
+                ((struct _Environment *)_environment)->currentFieldsValues = c;
+            }
+
+            ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentField->next;
+            if ( ! ((struct _Environment *)_environment)->currentField ) {
+                data_type( _environment );
+                ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
+                ((struct _Environment *)_environment)->currentFieldsValues = NULL;
+            }
+        } else {
+            data_numeric( _environment, $1 );
+        }
     }
     | const_expr_floating {
         data_floating( _environment, $1 );
@@ -10075,7 +10099,13 @@ data_definition_single :
     };
 
 data_definition_data :
-    data_definition_single
+    data_definition_single {
+        if ( ((struct _Environment *)_environment)->currentType ) {
+            if ( ((struct _Environment *)_environment)->currentField != ((struct _Environment *)_environment)->currentType->first ) {
+                CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( ((struct _Environment *)_environment)->currentType->name );
+            }
+        }
+    }
     | data_definition_single OP_COMMA data_definition_data
     | LOAD String AS TEXT {
 
@@ -10120,6 +10150,14 @@ data_definition :
     } data_definition_data
     | as_datatype_mandatory {
         ((struct _Environment *)_environment)->dataDataType = $1;
+
+        if ( ((struct _Environment *)_environment)->dataDataType == VT_TYPE ) {
+            ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
+        } else {
+            ((struct _Environment *)_environment)->currentType = NULL;
+            ((struct _Environment *)_environment)->currentField = NULL;
+        }
+
     } data_definition_data;
 
 clear_definition : 
