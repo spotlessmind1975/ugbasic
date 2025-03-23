@@ -244,7 +244,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
 
                     } else {
                         if ( variable->type == VT_TARRAY ) {
-                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
+                            if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
                             // force +1 byte if size is odd
