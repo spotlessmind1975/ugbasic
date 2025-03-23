@@ -4616,7 +4616,7 @@ int banks_get_default_resident( Environment * _environment, int _bank );
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
 
-char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size );
+char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size, int * _count );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 

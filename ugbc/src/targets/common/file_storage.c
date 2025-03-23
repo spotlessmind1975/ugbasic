@@ -102,8 +102,8 @@ void file_storage( Environment * _environment, char * _source_name, char * _targ
             break;
         }
         case FSF_CSV: {
-            int size;
-            fileStorage->content = file_read_csv( _environment, _source_name, _type, &size );
+            int size, count;
+            fileStorage->content = file_read_csv( _environment, _source_name, _type, &size, &count );
             fileStorage->size = size;
             break;
         }

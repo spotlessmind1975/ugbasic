@@ -14389,7 +14389,7 @@ int check_datatype_limits( VariableType _type, int _value ) {
 
 }
 
-char * file_read_csv( Environment * _environment, char * _filename, VariableType _type, int * _size ) {
+char * file_read_csv( Environment * _environment, char * _filename, VariableType _type, int * _size, int * _count ) {
 
     FILE * handle = fopen( _filename, "rt" );
     if ( ! handle ) {
@@ -14440,6 +14440,7 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
 
         Constant * current = constants;
 
+        *_count = 0;
         *_size = 0;
         while( current ) {
             Field * currentField = _environment->currentType->first;
@@ -14448,6 +14449,7 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
                 current = current->next;
             }
             *_size += bytes;
+            ++*_count;
             if ( !current ) {
                 break;
             }
