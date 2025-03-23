@@ -9087,30 +9087,36 @@ void variable_store_array_const_byte( Environment * _environment, Variable * _ar
                 break;
             case VT_TILES:
                 cpu_store_32bit( _environment, _array->realName, _value );
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 4 );
                 break;
             case VT_TILE:
             case VT_TILESET:
             case VT_SPRITE:
                 cpu_store_8bit( _environment, _array->realName, _value );
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 1 );
                 break;
             case VT_MSPRITE:
                 cpu_store_16bit( _environment, _array->realName, _value );
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 2 );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
                         cpu_store_32bit( _environment, _array->realName, _value );
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 4 );
                         break;
                     case 16:
                         cpu_store_16bit( _environment, _array->realName, _value );
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 2 );
                         break;
                     case 8:
                         cpu_store_8bit( _environment, _array->realName, _value );
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _array->name, _array->bankAssigned, offset->name, 1 );
                         break;
                     case 0:
@@ -9324,31 +9330,38 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
         switch( _array->arrayType ) {
             case VT_TYPE:
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
                 break;
             case VT_FLOAT:
                 CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
                 break;
             case VT_TILES:
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
                 break;
             case VT_TILE:
             case VT_TILESET:
             case VT_SPRITE:
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
                 break;
             case VT_MSPRITE:
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
                         break;
                     case 16:
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
                         break;
                     case 8:
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
                         break;
                     case 1:
@@ -9356,9 +9369,11 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                     case 0:
                         switch( _array->arrayType ) {
                             case VT_PATH:
+                                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 18 );
                                 break;
                             case VT_TYPE:
+                                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
                                 break;
                             default:
@@ -9726,6 +9741,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                 offset = variable_sl_const( _environment, offset->name, 4 );
 
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 4 );
 
                 break;
@@ -9737,6 +9753,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                 offset = variable_sl_const( _environment, offset->name, 0 );
 
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 1 );
 
                 break;
@@ -9746,6 +9763,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                 offset = variable_sl_const( _environment, offset->name, 1 );
 
+                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 2 );
 
                 break;
@@ -9800,13 +9818,15 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 4 );
                         break;
                     case 16:
-                        outline3("; bank_read_vars_bank_direct_size( ..., %d, %s, %s, 2)", _array->bankAssigned, offset->name, _result->name );
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 2 );
                         break;
                     case 8:
+                        cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                         bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 1 );
                         break;
                     case 1:
@@ -9814,10 +9834,11 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                     case 0:
                         switch( _array->arrayType ) {
                             case VT_PATH:
+                                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 18 );
                                 break;
                             case VT_TYPE:
-                                outline0("; ok!");
+                                cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, _array->typeType->size );
                                 break;
                             default:
@@ -14772,12 +14793,15 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
 
         switch( VT_BITWIDTH( field->type ) ) {
             case 32:
+                cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 4 );
                 break;
             case 16:
+                cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
                 break;
             case 8:
+                cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
                 break;
             case 1:
@@ -14877,12 +14901,15 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
 
             switch( VT_BITWIDTH( field->type ) ) {
                 case 32:
+                    cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                     bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 4 );
                     break;
                 case 16:
+                    cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                     bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
                     break;
                 case 8:
+                    cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                     bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
                     break;
                 case 1:
