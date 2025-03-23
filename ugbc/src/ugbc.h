@@ -50,6 +50,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "libs/tsx.h"
 #include "libs/tmx.h"
