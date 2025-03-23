@@ -200,6 +200,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_clamp
 %type <string> travel_function
 %type <string> optional_period
+%type <string> optional_field
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -8831,6 +8832,14 @@ read_safeness :
         $$ = ((struct _Environment *)_environment)->optionReadSafe;
     };
 
+optional_field : 
+    {
+        $$ = NULL;
+    }
+    | OP_PERIOD Identifier {
+        $$ = $2;
+    };
+
 read_definition_single :
      read_safeness Identifier as_datatype_suffix_optional {
         if ( $3 ) {
@@ -8842,18 +8851,44 @@ read_definition_single :
     }
     | read_safeness Identifier {
         parser_array_init( _environment );
-    } OP indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
+        if ( variable_exists( _environment, $2 ) ) {
+            Variable * v = variable_retrieve( _environment, $2 );
+            if ( v->arrayType == VT_TYPE ) {
+                ((struct _Environment *)_environment)->currentType = v->typeType;
+            } else {
+                ((struct _Environment *)_environment)->currentType = NULL;
+            }
+        }
+    } OP indexes CP optional_field {
+        if ( !((struct _Environment *)_environment)->currentType ) {
+            define_implicit_array_if_needed( _environment, $2 );
+        }
         Variable * a = variable_retrieve( _environment, $2 );
         if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
-        Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
-        read_data( _environment, read->name, $1 );
-        if ( a->arrayType == VT_DSTRING ) {
-            variable_move_array_string( _environment, $2, read->name );
+        Variable * read;
+        if ( ! ((struct _Environment *)_environment)->currentType ) {
+            read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
         } else {
-            variable_move_array( _environment, $2, read->name );
+            if ( ! a->typeType ) {
+                CRITICAL_VARIABLE_TYPE_NEEDED( $2 );
+            }
+            ((struct _Environment *)_environment)->currentField = field_find( a->typeType, $7 );
+            if ( ! ((struct _Environment *)_environment)->currentField ) {
+                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $7 );
+            }
+            read = variable_temporary( _environment, ((struct _Environment *)_environment)->currentField->type, "(temp for array)" );
+        }
+        read_data( _environment, read->name, $1 );
+        if ( ! ((struct _Environment *)_environment)->currentType ) {
+            if ( a->arrayType == VT_DSTRING ) {
+                variable_move_array_string( _environment, $2, read->name );
+            } else {
+                variable_move_array( _environment, $2, read->name );
+            }
+        } else {
+            variable_move_array_type( _environment, $2, ((struct _Environment *)_environment)->currentField->name, read->name );
         }
         parser_array_cleanup( _environment );
     }
@@ -8872,7 +8907,8 @@ read_definition_single :
         read_data( _environment, read->name, $1 );
         variable_move_array_string( _environment, $2, read->name );
         parser_array_cleanup( _environment );
-    };
+    }
+    ;
 
 read_definition :
     read_definition_single
@@ -10146,16 +10182,17 @@ data_definition_data :
 
 data_definition :
     {
+        ((struct _Environment *)_environment)->currentType = NULL;
+        ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = 0;
     } data_definition_data
     | as_datatype_mandatory {
+        ((struct _Environment *)_environment)->currentType = NULL;
+        ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = $1;
 
         if ( ((struct _Environment *)_environment)->dataDataType == VT_TYPE ) {
             ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
-        } else {
-            ((struct _Environment *)_environment)->currentType = NULL;
-            ((struct _Environment *)_environment)->currentField = NULL;
         }
 
     } data_definition_data;
