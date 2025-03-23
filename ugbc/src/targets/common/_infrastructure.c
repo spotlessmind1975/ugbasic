@@ -14558,10 +14558,12 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
     } else {
 
         *_size = 0;
+        *_count = 0;
         Constant * first = constants;
-        while( first->next ) {
+        while( first ) {
             first = first->next;
             *_size += VT_BITWIDTH(_type) >> 3;
+            ++*_count;
         }
     
         char * buffer = malloc( *_size ), * ptr = buffer;

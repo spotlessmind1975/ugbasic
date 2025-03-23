@@ -7269,7 +7269,7 @@ array_assign:
             char * valueBuffer = file_read_csv( _environment, $3, currentArray->arrayType, &size, &count );
 
             if ( currentArray->arrayDimensions == 1 ) {
-                if ( currentArray->size < 0 ) {
+                if ( currentArray->arrayDimensionsEach[0] < 0 ) {
                     currentArray->size = size;
                     currentArray->arrayDimensionsEach[0] = count;
                 } else {
