@@ -244,9 +244,9 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
 
                     } else {
                         if ( variable->type == VT_TARRAY ) {
-                            if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
-                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
-                            }
+                            // if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
+                            //     CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
+                            // }
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
                                 outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
@@ -790,6 +790,8 @@ void variable_cleanup( Environment * _environment ) {
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry_image( _environment, variable );
+                    variable_cleanup_entry( _environment, variable, 1 );
+                    variable_cleanup_entry_bit( _environment, variable, 1 );
                 } 
                 
                 Variable * variable = _environment->tempResidentVariables;

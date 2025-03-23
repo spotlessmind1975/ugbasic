@@ -873,6 +873,12 @@ int variable_exists( Environment * _environment, char * _name ) {
 
 }
 
+int variable_exists_by_realname( Environment * _environment, char * _name ) {
+
+    return variable_retrieve_by_realname( _environment, _name ) != NULL;
+
+}
+
 int variable_delete( Environment * _environment, char * _name ) {
 
     Variable * var = NULL;
@@ -6330,8 +6336,6 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
     source = variable_cast( _environment, source->name, best );
     target = variable_cast( _environment, target->name, best );
 
-    outline1("; best = %d", best );
-
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of compare)" );
     switch( VT_BITWIDTH( source->type ) ) {
         case 32:
@@ -9348,8 +9352,18 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                         bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
                         break;
                     case 1:
-                    case 0:
                         CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
+                    case 0:
+                        switch( _array->arrayType ) {
+                            case VT_PATH:
+                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 18 );
+                                break;
+                            case VT_TYPE:
+                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
+                                break;
+                            default:
+                                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
+                        }
                 }
                 break;
         }
@@ -9686,6 +9700,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                             CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
                         case 0:
                             CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
+                            
                     }
 
                 }
@@ -9771,7 +9786,16 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                         CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
                         break;
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
+                        switch( _array->arrayType ) {
+                            case VT_PATH:
+                                offset = variable_sl_const( _environment, offset->name, 5 );
+                                break;
+                            case VT_TYPE:
+                                offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT( _array->typeType->size ) );
+                                break;
+                            default:
+                                CRITICAL_DATATYPE_UNSUPPORTED("array(4a)", DATATYPE_AS_STRING[_array->arrayType]);
+                        }
                 }
 
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
@@ -9788,7 +9812,17 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                     case 1:
                         CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
                     case 0:
-                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
+                        switch( _array->arrayType ) {
+                            case VT_PATH:
+                                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 18 );
+                                break;
+                            case VT_TYPE:
+                                outline0("; ok!");
+                                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, _array->typeType->size );
+                                break;
+                            default:
+                                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
+                        }
                 }
 
             }
@@ -9848,8 +9882,6 @@ Variable * variable_move_from_array( Environment * _environment, char * _array )
     } else {
         result = variable_move_from_array_bit( _environment, array );
     }
-
-    outline1("; move from array to = %s", result->realName );
 
     return result;
 

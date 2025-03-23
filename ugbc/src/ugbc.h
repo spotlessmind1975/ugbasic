@@ -5559,6 +5559,7 @@ void                    variable_temporary_remove( Environment * _environment, c
 void                    variable_reset( Environment * _environment );
 Variable *              variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 int                     variable_exists( Environment * _environment, char * _name );
+int                     variable_exists_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
