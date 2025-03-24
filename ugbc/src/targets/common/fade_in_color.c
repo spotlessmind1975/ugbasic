@@ -33,44 +33,39 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#include "../../libs/msc1.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+#if !(defined(__pc128op__))
 
-/**
- * @brief Emit code for <strong>DLOAD(...)</strong>
- * 
- * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
- */
- /* <usermanual>
-@keyword DLOAD
-
-@target atari
-@target atarixl
-</usermanual> */
-/* <usermanual>
-@keyword DLOAD ERROR
-
-@target atari
-@target atarixl
-</usermanual> */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
-
-    if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
-    }
-
-    if ( _environment->sandbox ) {
-        CRITICAL_SANDBOX_ENFORCED( "DLOAD");
-    }
-
-    if ( ! _address ) {
-        CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
-    }
-
-    atari_dload( _environment, _filename, _offset, _address, _size );
+void fade_in_color( Environment * _environment, int _index, int _shade ) {
 
 }
+
+/**
+ * @brief Emit ASM code for instruction <b>COLOR [expression], [expression]</b>
+ * 
+ * This function outputs the ASM code to change the common color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of common color to set
+ * @param _common_color Expression with the index of the color to use
+ */
+void fade_in_color_semivars( Environment * _environment, int _index, char *_shade ) {
+
+}
+
+/**
+ * @brief Emit ASM code for instruction <b>COLOR [expression], [expression]</b>
+ * 
+ * This function outputs the ASM code to change the common color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of common color to set
+ * @param _common_color Expression with the index of the color to use
+ */
+void fade_in_color_vars( Environment * _environment, char *_index, char *_shade ) {
+    
+}
+
+#endif

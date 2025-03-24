@@ -187,6 +187,7 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
     outline1("LDB #$%2.2x", ( _index & 0x0f ) * 2 );
     outline0("STB BASE_SEGMENT+$DB" );
     outline1("LDD #$%4.4x", _background_color );
+    outline1("STD SHADOWPALETTE+$%2.2x", ( _index & 0x0f ) * 2 );
     outline0("STB BASE_SEGMENT+$DA" );
     outline0("STA BASE_SEGMENT+$DA" );
 
@@ -223,7 +224,13 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
     outline1("LDD %s", _background_color );
     outline0("STB BASE_SEGMENT+$DA" );
     outline0("STA BASE_SEGMENT+$DA" );
-    
+    outline0("LDX #SHADOWPALETTE" );
+    outline1("LDB %s", _index );
+    outline0("LSLB" );
+    outline0("ABX" );
+    outline1("LDD %s", _background_color );
+    outline0("STD B,X" );
+
 }
 
 /**
@@ -238,12 +245,13 @@ void ef936x_background_color_vars( Environment * _environment, char * _index, ch
  */
 void ef936x_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
-    outline1("LDB #$%2.2x", (_index*2) );
+    outline1("LDB #$%2.2x", (( _index & 0x0f ) *2) );
     outline0("STB BASE_SEGMENT+$DB" );
     outline1("LDD %s", _background_color );
     outline0("STB BASE_SEGMENT+$DA" );
     outline0("STA BASE_SEGMENT+$DA" );
-    
+    outline1("STD SHADOWPALETTE+$%2.2x", ( _index & 0x0f ) * 2 );
+
 }
 
 /**
@@ -260,11 +268,10 @@ void ef936x_background_color_get_vars( Environment * _environment, char * _index
 
     outline1("LDB %s", _index );
     outline0("ASLB" );
-    outline0("STB BASE_SEGMENT+$DB" );
-    outline0("LDB BASE_SEGMENT+$DA" );
-    outline0("LDA BASE_SEGMENT+$DA" );
+    outline0("LDX #SHADOWPALETTE" );
+    outline0("LDD B,X" );
     outline1("STD %s", _background_color );
-    
+
 }
 
 /**
@@ -2510,6 +2517,59 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outhead1("%s", label );
 
     }
+
+}
+
+void ef936x_fade_out( Environment * _environment, char * _period ) {
+
+    deploy( fade, src_hw_ef936x_fade_asm );
+
+    if ( _period ) {
+        outline1( "LDD %s", _period );
+    } else {
+        outline0( "LDD #4" );
+    }
+    outline0( "STD FADEOUTPERIOD+1" );
+    outline0("JSR FADEOUT");
+
+}
+
+void ef936x_fade_in( Environment * _environment, char * _period  ) {
+
+    deploy( fade, src_hw_ef936x_fade_asm );
+
+    if ( _period ) {
+        outline1( "LDD %s", _period );
+    } else {
+        outline0( "LDD #4" );
+    }
+    outline0( "STD FADEINPERIOD+1" );
+    outline0("JSR FADEIN");
+
+}
+
+void ef936x_fade_in_color( Environment * _environment, int _index, int _background_color ) {
+
+    outline1("LDD #$%4.4x", _background_color );
+    outline1("STD COMMONPALETTE+$%2.2x", ( _index & 0x0f ) * 2 );
+
+}
+
+void ef936x_fade_in_color_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    outline0("LDX #COMMONPALETTE" );
+    outline1("LDB %s", _index );
+    outline0("LSLB" );
+    outline0("ABX" );
+    outline1("LDD %s", _background_color );
+    outline0("STD ,X" );
+
+}
+
+void ef936x_fade_in_color_semivars( Environment * _environment, int _index, char * _background_color ) {
+
+    outline1("LDD %s", _background_color );
+    outline1("STD COMMONPALETTE+$%2.2x", ( _index & 0x0f ) * 2 );
 
 }
 

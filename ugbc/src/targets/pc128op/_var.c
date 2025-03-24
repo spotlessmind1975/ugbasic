@@ -93,6 +93,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;
                 case VT_MUSIC:
                 case VT_BUFFER:
+                case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         // force 2 bytes to help even alignment (1->2 bytes)
@@ -233,6 +234,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             }                             
                             
                         } else {
+                            outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
                                 outhead2("%s rzb %d", variable->realName, variable->size+1);
@@ -242,10 +244,11 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         }
 
                     } else {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         if ( variable->type == VT_TARRAY ) {
-                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
-                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
-                            }
+                            // if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
+                            //     CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
+                            // }
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
                                 outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
@@ -789,6 +792,8 @@ void variable_cleanup( Environment * _environment ) {
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry_image( _environment, variable );
+                    variable_cleanup_entry( _environment, variable, 1 );
+                    variable_cleanup_entry_bit( _environment, variable, 1 );
                 } 
                 
                 Variable * variable = _environment->tempResidentVariables;
@@ -824,6 +829,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("fcb $ff");
 
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
+    deploy_inplace_preferred( vars, src_hw_pc128op_vars_asm);
     deploy_inplace_preferred( startup, src_hw_pc128op_startup_asm);
     deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );

@@ -49,7 +49,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token NewLine 
 %token OP_SEMICOLON OP_COLON OP_COMMA OP_PLUS OP_MINUS OP_EQUAL OP_ASSIGN OP_LT OP_LTE OP_GT OP_GTE 
 %token OP_DISEQUAL OP_MULTIPLICATION OP_MULTIPLICATION2 OP_DOLLAR OP_DIVISION OP_DIVISION2 QM HAS IS OF OP_HASH OP_POW OP_ASSIGN_DIRECT
-%token OP_EXCLAMATION OP_DOLLAR2
+%token OP_EXCLAMATION OP_DOLLAR2 OP_PERIOD
 
 %token RASTER AT COLOR COLOUR BORDER WAIT NEXT WITH BANK SPRITE DATA FROM OP CP 
 %token ENABLE DISABLE HALT BITMAP SCREEN ON OFF ROWS VERTICAL SCROLL VAR AS TEMPORARY 
@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -178,7 +178,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> read_safeness
 %type <integer> line_mode box_mode put_action
 %type <string> timer_number timer_number_comma
-%type <string> dload_from_offset dload_to_address dload_size_size
+%type <string> dload_from_offset dload_to_address dload_size_size dload_to_bank
 %type <string> dsave_to_offset dsave_from_address dsave_size_size
 %type <string> to_variable
 %type <string> optional_step
@@ -199,6 +199,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_by
 %type <string> optional_clamp
 %type <string> travel_function
+%type <string> optional_period
+%type <string> optional_field
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -2952,31 +2954,48 @@ fujinet_functions :
         $$ = fujinet_write_type( _environment, $3, $4 )->name;
     };
 
+array_retrieve : 
+    {
+        ((struct _Environment *)_environment)->currentFieldName = NULL;
+    }
+    | OP_PERIOD Identifier {
+        ((struct _Environment *)_environment)->currentFieldName = $2;
+    };
+
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $1 );
     }
-      OP indexes CP {
-        VariableType vt = $2;
-        if ( vt == 0 ) {
-            vt = ((struct _Environment *)_environment)->defaultVariableType;
-        }
-        Variable * array;
-        if ( ! variable_exists( _environment, $1 ) ) {
-            if ( ((struct _Environment *)_environment)->optionExplicit ) {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            } else {
-                array = variable_define( _environment, $1, VT_TARRAY, 0 );
-                array->arrayType = vt;
-                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+      OP indexes CP array_retrieve {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            Variable * array;
+            array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
             }
-        }        
-        array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
+            $$ = variable_move_from_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName )->name;
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            VariableType vt = $2;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
+            Variable * array;
+            if ( ! variable_exists( _environment, $1 ) ) {
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $1 );
+                } else {
+                    array = variable_define( _environment, $1, VT_TARRAY, 0 );
+                    array->arrayType = vt;
+                    array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+                }
+            }        
+            array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            $$ = variable_move_from_array( _environment, $1 )->name;
         }
-        $$ = variable_move_from_array( _environment, $1 )->name;
         parser_array_cleanup( _environment );
     }
     | OSP Identifier as_datatype_suffix_optional CSP {
@@ -3413,6 +3432,7 @@ exponential_less:
             case VT_IMAGES:
             case VT_SEQUENCE:
             case VT_BUFFER:
+            case VT_TYPE:
             case VT_STRING: 
                 break;
             default:
@@ -4665,7 +4685,10 @@ exponential_less:
         } else {
           variable_store_string( _environment, $$, $7 );
         }
-    }      
+    }
+    | Identifier OP_PERIOD Identifier {
+        $$ = variable_move_from_type( _environment, $1, $3 )->name;
+    }
     ;
 
 exponential:
@@ -4978,12 +5001,44 @@ sleep_definition:
     sleep_definition_simple
   | sleep_definition_expression;
 
-fade_definition:
-    expr ticks {
-      fade_ticks_var( _environment, $1 );
+fade_in_palette:
+    OP_HASH const_expr {
+        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
     }
-    | expr milliseconds {
-      fade_milliseconds_var( _environment, $1 );
+    | expr {
+        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    }
+    | OP_HASH const_expr {
+        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
+    } OP_COMMA fade_in_palette
+    | expr {
+        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
+    } OP_COMMA fade_in_palette;
+
+optional_period : {
+    $$ = NULL;
+    }
+    | PERIOD expr {
+        $$ = $2;
+    };
+
+fade_definition:
+    OUT {
+      fade_out( _environment, NULL );
+    }
+    | OUT PERIOD expr {
+      fade_out( _environment, $3 );
+    }
+    | IN {
+      fade_in( _environment, NULL );
+    }
+    | IN {
+      ((struct _Environment *)_environment)->paletteIndex = 0;
+    } fade_in_palette optional_period {
+      fade_in( _environment, $4 );
+    }
+    | IN PERIOD expr {
+      fade_in( _environment, $3 );
     }
     ;
 
@@ -5509,6 +5564,9 @@ as_datatype_suffix_optional :
 var_definition_simple:
   Identifier as_datatype {
       variable_define( _environment, $1, $2, 0 );
+      if ( $2 == VT_TYPE ) {
+        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+      }
   }
   |
   Identifier as_datatype_suffix {
@@ -6860,28 +6918,49 @@ limits:
     {
         ((struct _Environment *)_environment)->upperLimit = NULL;
         ((struct _Environment *)_environment)->lowerLimit = NULL;
+        ((struct _Environment *)_environment)->clamp = 0;
     }
     | OP_COMMA expr TO expr clamp_optional {
-        ((struct _Environment *)_environment)->upperLimit = $2;
-        ((struct _Environment *)_environment)->lowerLimit = $4;
+        ((struct _Environment *)_environment)->lowerLimit = $2;
+        ((struct _Environment *)_environment)->upperLimit = $4;
         ((struct _Environment *)_environment)->clamp = $5;
     };
 
 add_definition :
-    Identifier OP_COMMA expr {
-        variable_add_inplace_vars( _environment, $1, $3 );
+    Identifier optional_field OP_COMMA expr {
+        if ( $2 ) {
+            variable_add_inplace_type_vars( _environment, $1, $2, $4 );
+        } else {
+            variable_add_inplace_vars( _environment, $1, $4 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr {
-        variable_add_inplace( _environment, $1, $4 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr {
+        if ( $2 ) {
+            variable_add_inplace_type( _environment, $1, $2, $5 );
+        } else {
+            variable_add_inplace( _environment, $1, $5 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
-        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, $9 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
-        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, $9 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
-        add_complex( _environment, $1, $4, $7, $10, $11 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type( _environment, $1, $2, $5, $8, $11, $12 );
+        } else {
+            add_complex( _environment, $1, $5, $8, $11, $12 );
+        }
     }
     | OSP Identifier CSP OP_COMMA expr {
         variable_add_inplace_mt( _environment, $2, $5 );
@@ -6891,26 +6970,53 @@ add_definition :
     }
     | Identifier OP {
         parser_array_init( _environment );        
-    } indexes CP OP_COMMA expr limits {
-        define_implicit_array_if_needed( _environment, $1 );
-        add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+    } indexes CP optional_field OP_COMMA expr limits {
+        if ( $6 ) {
+            add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        }
         parser_array_cleanup( _environment );
     }
     ;
 
 addc_definition :
-    Identifier OP_COMMA expr OP_COMMA expr TO expr  {
-        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr  {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, 1 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
-        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, 1 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
-        add_complex( _environment, $1, $4, $7, $10, 1 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+        if ( $2 ) {
+            add_complex_type( _environment, $1, $2, $5, $8, $11, 1 );
+        } else {
+            add_complex( _environment, $1, $5, $8, $11, 1 );
+        }
     }
     | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
         add_complex_mt( _environment, $2, $5, $7, $9, 1 );
-    };
+    }
+    | Identifier OP {
+        parser_array_init( _environment );        
+    } indexes CP optional_field OP_COMMA expr limits {
+        if ( $6 ) {
+            add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
+        }
+        parser_array_cleanup( _environment );
+    }
 
 xor_definition :
     Identifier OP_COMMA expr {
@@ -7088,6 +7194,14 @@ datatype :
     }
     | THREAD {
         $$ = VT_THREAD;
+    }
+    | Identifier {
+        $$ = VT_TYPE;
+        Type * type = type_find( ((struct _Environment *)_environment)->types, $1 );
+        if ( ! type ) {
+            CRITICAL_UNKNOWN_TYPE( $1 );
+        }
+        ((struct _Environment *)_environment)->currentType = type;
     };
 
 const_array_definition :
@@ -7137,6 +7251,9 @@ const_array_definitions :
     | const_array_definitions1 {
 
     };
+
+text_or_csv : 
+    TEXT | CSV;
 
 array_assign:
     {
@@ -7193,67 +7310,19 @@ array_assign:
         ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
         ((struct _Environment *)_environment)->currentArray = NULL;
     }
-    | OP_ASSIGN LOAD String AS TEXT {
+    | OP_ASSIGN LOAD String AS text_or_csv {
 
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
 
             Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
             
-            currentArray->arrayInitialization = NULL;
-
-            FILE * handle = fopen( $3, "rt" );
-            if ( ! handle ) {
-                CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
-            }
-
-            currentArray->arrayInitialization = malloc( sizeof( Constant ) );
-            memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
-
-            Constant * current = currentArray->arrayInitialization;
-
-            while( !feof( handle ) ) {
-
-                char valueString[MAX_TEMPORARY_STORAGE];
-                memset( valueString, 0, MAX_TEMPORARY_STORAGE );
-                int p=0, j=0;
-
-                while( !feof( handle ) ) {
-                    char c = fgetc(handle);
-                    if ( j == 0 ) {
-                        if ( (c < '0') || (c > '9') ) {
-                            continue;
-                        }
-                        j = 1;
-                    } else {
-                        if ( (c < '0') || (c > '9') ) {
-                            break;
-                        }
-                    }
-                    valueString[p] = c;
-                    ++p;
-                }
-
-                current->value = atoi( valueString );
-
-                current->next = malloc( sizeof( Constant ) );
-                memset( current->next, 0, sizeof( Constant ) );
-                current = current->next;
-
-            }
-
-            fclose( handle );
-
-            int size = 0;
-            Constant * first = currentArray->arrayInitialization;
-            while( first->next ) {
-                first = first->next;
-                ++size;
-            }
+            int size, count;
+            char * valueBuffer = file_read_csv( _environment, $3, currentArray->arrayType, &size, &count );
 
             if ( currentArray->arrayDimensions == 1 ) {
-                if ( currentArray->size < 0 ) {
-                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
-                    currentArray->arrayDimensionsEach[0] = size;
+                if ( currentArray->arrayDimensionsEach[0] < 0 ) {
+                    currentArray->size = size;
+                    currentArray->arrayDimensionsEach[0] = count;
                 } else {
                     if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                         CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
@@ -7265,46 +7334,7 @@ array_assign:
                 }
             }
 
-            char * buffer = malloc( currentArray->size ), * ptr = buffer;
-            int i=0;
-            Constant * initializationValues = currentArray->arrayInitialization;
-            while(initializationValues->next) {
-                switch( VT_BITWIDTH(currentArray->arrayType) ) {
-                    case 8:
-                        *ptr = (initializationValues->value) & 0xff;
-                        ++ptr;
-                        break;
-                    case 16:
-                        #ifdef CPU_BIG_ENDIAN
-                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value ) & 0xff;
-                        #else
-                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                            *ptr = ( initializationValues->value ) & 0xff;
-                        #endif
-                        ptr += 2;
-                        break;
-                    case 32:
-                        #ifdef CPU_BIG_ENDIAN
-                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
-                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
-                            *(ptr+3) = ( initializationValues->value ) & 0xff;
-                        #else
-                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
-                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                            *ptr = ( initializationValues->value ) & 0xff;
-                        #endif
-                        ptr += 4;
-                        break;
-                }
-                initializationValues = initializationValues->next;
-            }
-            if ( ( ptr - buffer ) != currentArray->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
-            }
-            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = valueBuffer;
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
 
@@ -7605,6 +7635,9 @@ dim_definition :
           ((struct _Environment *)_environment)->arrayDimensions = 0;
       } OP dimensions CP {
         ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+        if ( $2 == VT_TYPE ) {
+            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+        }
         variable_array_type( _environment, $1, $2 );
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -7650,12 +7683,18 @@ dim_definition :
             variable_array_type( _environment, $1, VT_BYTE );
         } else {
             if ( $2 ) {
+                if ( $2 == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
                 variable_array_type( _environment, $1, $2 );
             } else {
+                if ( $8 == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
                 variable_array_type( _environment, $1, $8 );
             }
         }
-
+        
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
         array->readonly = $11;
@@ -7737,10 +7776,18 @@ dim_definition :
                  ) {
                 variable_array_type( _environment, $1, VT_BYTE );
             } else {
-                variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
+                int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+                if ( realType == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
+                variable_array_type( _environment, $1, realType );
             }
         } else {
-            variable_array_type( _environment, $1, ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7 );
+            int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+            if ( realType == VT_TYPE ) {
+                variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            }
+            variable_array_type( _environment, $1, realType );
         }
     } array_assign readonly_optional on_bank_explicit {
         Variable * array = variable_retrieve( _environment, $1 );
@@ -8752,6 +8799,14 @@ read_safeness :
         $$ = ((struct _Environment *)_environment)->optionReadSafe;
     };
 
+optional_field : 
+    {
+        $$ = NULL;
+    }
+    | OP_PERIOD Identifier {
+        $$ = $2;
+    };
+
 read_definition_single :
      read_safeness Identifier as_datatype_suffix_optional {
         if ( $3 ) {
@@ -8763,18 +8818,44 @@ read_definition_single :
     }
     | read_safeness Identifier {
         parser_array_init( _environment );
-    } OP indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
+        if ( variable_exists( _environment, $2 ) ) {
+            Variable * v = variable_retrieve( _environment, $2 );
+            if ( v->arrayType == VT_TYPE ) {
+                ((struct _Environment *)_environment)->currentType = v->typeType;
+            } else {
+                ((struct _Environment *)_environment)->currentType = NULL;
+            }
+        }
+    } OP indexes CP optional_field {
+        if ( !((struct _Environment *)_environment)->currentType ) {
+            define_implicit_array_if_needed( _environment, $2 );
+        }
         Variable * a = variable_retrieve( _environment, $2 );
         if ( a->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
-        Variable * read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
-        read_data( _environment, read->name, $1 );
-        if ( a->arrayType == VT_DSTRING ) {
-            variable_move_array_string( _environment, $2, read->name );
+        Variable * read;
+        if ( ! ((struct _Environment *)_environment)->currentType ) {
+            read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
         } else {
-            variable_move_array( _environment, $2, read->name );
+            if ( ! a->typeType ) {
+                CRITICAL_VARIABLE_TYPE_NEEDED( $2 );
+            }
+            ((struct _Environment *)_environment)->currentField = field_find( a->typeType, $7 );
+            if ( ! ((struct _Environment *)_environment)->currentField ) {
+                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $7 );
+            }
+            read = variable_temporary( _environment, ((struct _Environment *)_environment)->currentField->type, "(temp for array)" );
+        }
+        read_data( _environment, read->name, $1 );
+        if ( ! ((struct _Environment *)_environment)->currentType ) {
+            if ( a->arrayType == VT_DSTRING ) {
+                variable_move_array_string( _environment, $2, read->name );
+            } else {
+                variable_move_array( _environment, $2, read->name );
+            }
+        } else {
+            variable_move_array_type( _environment, $2, ((struct _Environment *)_environment)->currentField->name, read->name );
         }
         parser_array_cleanup( _environment );
     }
@@ -8793,7 +8874,8 @@ read_definition_single :
         read_data( _environment, read->name, $1 );
         variable_move_array_string( _environment, $2, read->name );
         parser_array_cleanup( _environment );
-    };
+    }
+    ;
 
 read_definition :
     read_definition_single
@@ -9995,7 +10077,31 @@ exec_definition :
 
 data_definition_single :
     const_expr {
-        data_numeric( _environment, $1 );
+        if ( ((struct _Environment *)_environment)->currentType ) {
+            Constant * c = malloc( sizeof( Constant ) );
+            memset( c, 0, sizeof( Constant ) );
+
+            c->value = $1;
+            
+            if ( ((struct _Environment *)_environment)->currentFieldsValues ) {
+                Constant * last = ((struct _Environment *)_environment)->currentFieldsValues;
+                while( last->next ) {
+                    last = last->next;
+                }
+                last->next = c;
+            } else {
+                ((struct _Environment *)_environment)->currentFieldsValues = c;
+            }
+
+            ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentField->next;
+            if ( ! ((struct _Environment *)_environment)->currentField ) {
+                data_type( _environment );
+                ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
+                ((struct _Environment *)_environment)->currentFieldsValues = NULL;
+            }
+        } else {
+            data_numeric( _environment, $1 );
+        }
     }
     | const_expr_floating {
         data_floating( _environment, $1 );
@@ -10005,7 +10111,13 @@ data_definition_single :
     };
 
 data_definition_data :
-    data_definition_single
+    data_definition_single {
+        if ( ((struct _Environment *)_environment)->currentType ) {
+            if ( ((struct _Environment *)_environment)->currentField != ((struct _Environment *)_environment)->currentType->first ) {
+                CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( ((struct _Environment *)_environment)->currentType->name );
+            }
+        }
+    }
     | data_definition_single OP_COMMA data_definition_data
     | LOAD String AS TEXT {
 
@@ -10046,10 +10158,19 @@ data_definition_data :
 
 data_definition :
     {
+        ((struct _Environment *)_environment)->currentType = NULL;
+        ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = 0;
     } data_definition_data
     | as_datatype_mandatory {
+        ((struct _Environment *)_environment)->currentType = NULL;
+        ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = $1;
+
+        if ( ((struct _Environment *)_environment)->dataDataType == VT_TYPE ) {
+            ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
+        }
+
     } data_definition_data;
 
 clear_definition : 
@@ -10137,6 +10258,15 @@ dsave_definition :
         dsave( _environment, $1, $2, $3, $4 );
     };
 
+dload_to_bank :
+    {
+        $$ = NULL;
+    }
+    |
+    BANK expr {
+        $$ = $2;
+    };
+
 dload_from_offset :
     {
         $$ = NULL;
@@ -10165,8 +10295,8 @@ dload_size_size :
     };
 
 dload_definition :
-    expr dload_from_offset dload_to_address dload_size_size {
-        dload( _environment, $1, $2, $3, $4 );
+    expr dload_from_offset dload_to_address dload_to_bank dload_size_size {
+        dload( _environment, $1, $2, $3, $4, $5 );
     };
 
 to_variable : 
@@ -10759,29 +10889,39 @@ optional_clamp :
     };
 
 travel_definition_array_first :
-    Identifier {
-        ((struct _Environment *)_environment)->travelX = $1;
-        ((struct _Environment *)_environment)->travelXAR = NULL;
+    Identifier optional_field {
+        if ( $2 ) {
+            ((struct _Environment *)_environment)->travelX = $1;
+            ((struct _Environment *)_environment)->travelXF = $2;
+            ((struct _Environment *)_environment)->travelXAR = NULL;
+        } else {
+            ((struct _Environment *)_environment)->travelX = $1;
+            ((struct _Environment *)_environment)->travelXF = NULL;
+            ((struct _Environment *)_environment)->travelXAR = NULL;
+        }
     }
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );        
-    } indexes CP {
+    } indexes CP optional_field {
         ((struct _Environment *)_environment)->travelX = $1;
+        ((struct _Environment *)_environment)->travelXF = $6;
         ((struct _Environment *)_environment)->travelXAR = parser_array_retrieve( _environment );
         parser_array_cleanup( _environment );        
     };
 
 travel_definition_array_second :
-    Identifier {
+    Identifier optional_field {
         ((struct _Environment *)_environment)->travelY = $1;
+        ((struct _Environment *)_environment)->travelYF = $2;
         ((struct _Environment *)_environment)->travelYAR = NULL;
     }
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );        
-    } indexes CP {
+    } indexes CP optional_field {
         ((struct _Environment *)_environment)->travelY = $1;
+        ((struct _Environment *)_environment)->travelYF = $6;
         ((struct _Environment *)_environment)->travelYAR = parser_array_retrieve( _environment );
         parser_array_cleanup( _environment );        
     };
@@ -10794,25 +10934,55 @@ travel_definition :
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
-            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                if ( ! ax->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ax->name );
+                }
+                Field * field = field_find( ax->typeType, ((struct _Environment *)_environment)->travelXF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelXF );
+                }
+                x = variable_temporary( _environment, field->type, "(x)" )->name;
+            } else {
+                x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            }
         } else {
             x = ((struct _Environment *)_environment)->travelX;
         }
         char * y;
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
-            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                if ( ! ay->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ay->name );
+                }
+                Field * field = field_find( ay->typeType, ((struct _Environment *)_environment)->travelYF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelYF );
+                }
+                y = variable_temporary( _environment, field->type, "(y)" )->name;
+            } else {
+                y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            }
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
         travel_path( _environment, $1, x, y, $4, $5 );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelX, ((struct _Environment *)_environment)->travelXF, x );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            }
         }
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelY, ((struct _Environment *)_environment)->travelYF, y );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            }
         }
     }
     | Identifier OP {
@@ -10823,26 +10993,56 @@ travel_definition :
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
-            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                if ( ! ax->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ax->name );
+                }
+                Field * field = field_find( ax->typeType, ((struct _Environment *)_environment)->travelXF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelXF );
+                }
+                x = variable_temporary( _environment, field->type, "(x)" )->name;
+            } else {
+                x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            }
         } else {
             x = ((struct _Environment *)_environment)->travelX;
         }
         char * y;
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
-            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                if ( ! ay->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ay->name );
+                }
+                Field * field = field_find( ay->typeType, ((struct _Environment *)_environment)->travelYF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelYF );
+                }
+                y = variable_temporary( _environment, field->type, "(y)" )->name;
+            } else {
+                y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            }
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
         travel_path( _environment, path->name, x, y, $8, $9 );
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelX, ((struct _Environment *)_environment)->travelXF, x );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            }
             parser_array_cleanup( _environment );        
         }
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelY, ((struct _Environment *)_environment)->travelYF, y );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            }
             parser_array_cleanup( _environment );        
         }        
         variable_move_array( _environment, $1, path->name );
@@ -10855,25 +11055,57 @@ travel_function :
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
-            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                if ( ! ax->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ax->name );
+                }
+                Field * field = field_find( ax->typeType, ((struct _Environment *)_environment)->travelXF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelXF );
+                }
+                x = variable_temporary( _environment, field->type, "(x)" )->name;
+            } else {
+                x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            }
         } else {
             x = ((struct _Environment *)_environment)->travelX;
         }
         char * y;
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
-            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                if ( ! ay->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ay->name );
+                }
+                Field * field = field_find( ay->typeType, ((struct _Environment *)_environment)->travelYF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelYF );
+                }
+                y = variable_temporary( _environment, field->type, "(y)" )->name;
+            } else {
+                y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            }
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
         $$ = travel_path( _environment, $2, x, y, $5, $6 )->name;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelX, ((struct _Environment *)_environment)->travelXF, x );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            }
+            parser_array_cleanup( _environment );        
         }
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelY, ((struct _Environment *)_environment)->travelYF, y );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            }
+            parser_array_cleanup( _environment );
         }
     }
     | OP Identifier OP {
@@ -10884,26 +11116,56 @@ travel_function :
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             Variable * ax = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelX );
-            x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                if ( ! ax->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ax->name );
+                }
+                Field * field = field_find( ax->typeType, ((struct _Environment *)_environment)->travelXF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelXF );
+                }
+                x = variable_temporary( _environment, field->type, "(x)" )->name;
+            } else {
+                x = variable_temporary( _environment, ax->arrayType, "(x)" )->name;
+            }
         } else {
             x = ((struct _Environment *)_environment)->travelX;
         }
         char * y;
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             Variable * ay = variable_retrieve( _environment, ((struct _Environment *)_environment)->travelY );
-            y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                if ( ! ay->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( ay->name );
+                }
+                Field * field = field_find( ay->typeType, ((struct _Environment *)_environment)->travelYF );
+                if ( ! field ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( ((struct _Environment *)_environment)->travelYF );
+                }
+                y = variable_temporary( _environment, field->type, "(y)" )->name;
+            } else {
+                y = variable_temporary( _environment, ay->arrayType, "(y)" )->name;
+            }
         } else {
             y = ((struct _Environment *)_environment)->travelY;
         }
         $$ = travel_path( _environment, path->name, x, y, $9, $10 )->name;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelXAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            if ( ((struct _Environment *)_environment)->travelXF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelX, ((struct _Environment *)_environment)->travelXF, x );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelX, x );
+            }
             parser_array_cleanup( _environment );        
         }
         if ( ((struct _Environment *)_environment)->travelYAR ) {
             parser_array_init_by( _environment, ((struct _Environment *)_environment)->travelYAR );
-            variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            if ( ((struct _Environment *)_environment)->travelYF ) {
+                variable_move_array_type( _environment, ((struct _Environment *)_environment)->travelY, ((struct _Environment *)_environment)->travelYF, y );
+            } else {
+                variable_move_array( _environment, ((struct _Environment *)_environment)->travelY, y );
+            }
             parser_array_cleanup( _environment );        
         }        
         variable_move_array( _environment, $2, path->name );
@@ -11210,7 +11472,7 @@ offset_definitions :
     };
 
 const_definition :
-  | STRING Identifier OP_ASSIGN const_expr_string_const {
+  STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             Constant * c1 = constant_find( ((Environment *)_environment)->constants, $4 );
 
@@ -11389,6 +11651,32 @@ jmove_definition :
         jmove( _environment, zero->name, $2, $4, $6, $8, $6, $8, NULL, NULL );
     }
     ;
+
+array_assignment :
+    OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->currentFieldName = NULL;
+        ((struct _Environment *)_environment)->currentExpression = $2;
+  }
+  | OP_PERIOD Identifier OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->currentFieldName = $2;
+        ((struct _Environment *)_environment)->currentExpression = $4;
+    };
+
+let_definition :
+    Identifier OP_ASSIGN Identifier {
+        parser_array_init( _environment );
+    }
+      OP indexes CP array_retrieve {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            variable_move_from_array_type_inplace( _environment, $3, ((struct _Environment *)_environment)->currentFieldName, $1 );
+        } else {
+            variable_move_from_array_inplace( _environment, $3, $1 );
+        }
+        parser_array_cleanup( _environment );
+    }
+    | Identifier OP_ASSIGN Identifier OP_PERIOD Identifier {
+        variable_move_from_type_inplace( _environment, $3, $5, $1 );
+    };
 
 statement2nc:
     BANK bank_definition
@@ -11614,11 +11902,19 @@ statement2nc:
   | PUT KEY expr {
       put_key( _environment, $3 );
   }
-  | INC Identifier {
-      variable_increment( _environment, $2 );
+  | INC Identifier optional_field {
+        if ( $3 ) {
+            variable_increment_type( _environment, $2, $3 );
+        } else {
+            variable_increment( _environment, $2 );
+        }      
   }
-  | DEC Identifier {
-      variable_decrement( _environment, $2 );
+  | DEC Identifier optional_field {
+        if ( $3 ) {
+            variable_decrement_type( _environment, $2, $3 );
+        } else {
+            variable_decrement( _environment, $2 );
+        }
   }
   | INC TI {
       Variable * ti = get_timer( _environment );
@@ -11632,16 +11928,24 @@ statement2nc:
   }
   | INC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
-        variable_increment_array( _environment, $2 );
+    } indexes CP optional_field {
+        if ( $7 ) {
+            variable_increment_array_type( _environment, $2, $7 );
+        } else {
+            define_implicit_array_if_needed( _environment, $2 );
+            variable_increment_array( _environment, $2 );
+        }
         parser_array_cleanup( _environment );
   }
   | DEC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
-        variable_decrement_array( _environment, $2 );
+    } indexes CP optional_field {
+        if ( $7 ) {
+            variable_decrement_array_type( _environment, $2, $7 );
+        } else {
+            define_implicit_array_if_needed( _environment, $2 );
+            variable_decrement_array( _environment, $2 );
+        }
         parser_array_cleanup( _environment );
   }
   | INC OSP Identifier CSP {
@@ -12134,6 +12438,21 @@ statement2nc:
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
+  | BEG TYPE Identifier {
+        begin_type( _environment, $3 );
+  }
+  | TYPE Identifier {
+        begin_type( _environment, $2 );
+  }
+  | Identifier AS datatype {
+        field_type( _environment, $1, $3 );
+  }
+  | END TYPE {
+        end_type( _environment );
+  }
+  | ENDTYPE {
+        end_type( _environment );
+  }
   | BEG STORAGE const_expr_string {
         begin_storage( _environment, $3, NULL );
   }
@@ -12324,6 +12643,7 @@ statement2nc:
         }
       }
   }
+  | LET let_definition
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * variable;
@@ -12332,6 +12652,10 @@ statement2nc:
         } else {
             if ( !((struct _Environment *)_environment)->optionExplicit ) {
                 variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+                variable->typeType = expr->typeType;
+                if (variable->typeType) {
+                    variable->size = expr->size;
+                }
 #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
                 if ( variable->type == VT_IMAGE || variable->type == VT_IMAGES || variable->type == VT_IMAGE ) {
                     expr->usedImage = 1;
@@ -12366,6 +12690,8 @@ statement2nc:
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
                 }
             }
+
+            outline2("; move( %d, %d )", variable->size, expr->size );
 
             if ( variable->type != expr->type ) {
                 Variable * casted = variable_cast( _environment, expr->name, variable->type );
@@ -12442,17 +12768,29 @@ statement2nc:
       }
       ((struct _Environment *)_environment)->currentArray = var;
   } array_reassign
+  | Identifier OP_PERIOD Identifier OP_ASSIGN expr {
+        variable_move_type( _environment, $1, $3, $5 );
+  }
   | Identifier {
         parser_array_init( _environment );
     }    
-      OP indexes CP OP_ASSIGN expr {
-        define_implicit_array_if_needed( _environment, $1 );
-        Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
+      OP indexes CP array_assignment {
+        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            variable_move_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName, ((struct _Environment *)_environment)->currentExpression );
+            parser_array_cleanup( _environment );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            variable_move_array( _environment, $1, ((struct _Environment *)_environment)->currentExpression );
+            parser_array_cleanup( _environment );
         }
-        variable_move_array( _environment, $1, $7 );
-        parser_array_cleanup( _environment );
   }
   | Identifier OP_DOLLAR {
         parser_array_init( _environment );

@@ -33,44 +33,46 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#include "../../libs/msc1.h"
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+void fade_in_color( Environment * _environment, int _index, int _shade ) {
+
+    ef936x_fade_in_color( _environment, _index, _shade );
+
+}
 
 /**
- * @brief Emit code for <strong>DLOAD(...)</strong>
+ * @brief Emit ASM code for instruction <b>COLOR [expression], [expression]</b>
+ * 
+ * This function outputs the ASM code to change the common color, among 
+ * those available. It should be used where the command is invoked with expressions.
  * 
  * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
+ * @param _index Expression with the index of common color to set
+ * @param _common_color Expression with the index of the color to use
  */
- /* <usermanual>
-@keyword DLOAD
+void fade_in_color_semivars( Environment * _environment, int _index, char *_shade ) {
 
-@target atari
-@target atarixl
-</usermanual> */
-/* <usermanual>
-@keyword DLOAD ERROR
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
+    
+    ef936x_fade_in_color_semivars( _environment, _index, shade->realName );
+    
+}
 
-@target atari
-@target atarixl
-</usermanual> */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
+/**
+ * @brief Emit ASM code for instruction <b>COLOR [expression], [expression]</b>
+ * 
+ * This function outputs the ASM code to change the common color, among 
+ * those available. It should be used where the command is invoked with expressions.
+ * 
+ * @param _environment Current calling environment
+ * @param _index Expression with the index of common color to set
+ * @param _common_color Expression with the index of the color to use
+ */
+void fade_in_color_vars( Environment * _environment, char *_index, char *_shade ) {
 
-    if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
-    }
-
-    if ( _environment->sandbox ) {
-        CRITICAL_SANDBOX_ENFORCED( "DLOAD");
-    }
-
-    if ( ! _address ) {
-        CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
-    }
-
-    atari_dload( _environment, _filename, _offset, _address, _size );
-
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
+    
+    ef936x_fade_in_color_vars( _environment, index->realName, shade->realName );
+    
 }

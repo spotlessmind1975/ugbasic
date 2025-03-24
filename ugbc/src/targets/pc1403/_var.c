@@ -158,6 +158,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
+                case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s: .db 0x0", variable->realName );

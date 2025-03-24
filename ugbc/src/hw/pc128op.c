@@ -409,10 +409,15 @@ void pc128op_put_key(  Environment * _environment, char *_string, char * _size )
 
 }
 
-void pc128op_dload( Environment * _environment, char * _address, char * _size ) {
+void pc128op_dload( Environment * _environment, char * _address, char * _bank, char * _size ) {
 
     deploy( dload, src_hw_pc128op_dload_asm);
 
+    if ( _bank ) {
+        outline1("LDA %s", _bank );
+    } else {
+        outline0("CLRA" );
+    }
     outline1("LDX %s", _address );
     outline1("LDU %s", _size );
     outline0("JSR DLOAD" );

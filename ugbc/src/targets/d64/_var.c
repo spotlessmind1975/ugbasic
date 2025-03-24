@@ -172,6 +172,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MUSIC:
                 case VT_BUFFER:
+                case VT_TYPE:
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {

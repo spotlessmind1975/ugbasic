@@ -33,44 +33,45 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#include "../../libs/msc1.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>DLOAD(...)</strong>
- * 
- * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
- */
- /* <usermanual>
-@keyword DLOAD
+void field_type( Environment * _environment, char * _name, VariableType _datatype ) {
 
-@target atari
-@target atarixl
-</usermanual> */
-/* <usermanual>
-@keyword DLOAD ERROR
-
-@target atari
-@target atarixl
-</usermanual> */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
-
-    if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
+    if ( !_environment->currentType ) {
+        CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE(_name);
     }
 
-    if ( _environment->sandbox ) {
-        CRITICAL_SANDBOX_ENFORCED( "DLOAD");
+    if ( VT_BITWIDTH( _datatype ) == 0 ) {
+        CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
     }
 
-    if ( ! _address ) {
-        CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
+    Field * field = malloc( sizeof( Field ) );
+    memset( field, 0, sizeof( Field ) );
+
+    int currentOffset = 0;
+    Field * current = _environment->currentType->first;
+    Field * last = NULL;
+    if ( current ) {
+        while( current ) {
+            currentOffset = current->offset + (VT_BITWIDTH( current->type ) >> 3);
+            last = current;
+            current = current->next;
+        }
     }
 
-    atari_dload( _environment, _filename, _offset, _address, _size );
+    field->name = strdup( _name );
+    field->type = _datatype;
+    field->offset = currentOffset;
+
+    _environment->currentType->size = currentOffset +  (VT_BITWIDTH( field->type ) >> 3);
+
+    if ( last ) {
+        last->next = field;
+    } else {
+        _environment->currentType->first = field;
+    }
 
 }

@@ -33,44 +33,26 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
-#include "../../libs/msc1.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>DLOAD(...)</strong>
+ * @brief Emit code for <strong>ENDSTORAGE</strong>
  * 
  * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
+ * @param _value Value to the return
  */
- /* <usermanual>
-@keyword DLOAD
+void end_type( Environment * _environment ) {
 
-@target atari
-@target atarixl
-</usermanual> */
-/* <usermanual>
-@keyword DLOAD ERROR
-
-@target atari
-@target atarixl
-</usermanual> */
-void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
-
-    if ( _environment->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
+    if ( ! _environment->currentType ) {
+        CRITICAL_TYPE_NOT_OPENED();
     }
 
-    if ( _environment->sandbox ) {
-        CRITICAL_SANDBOX_ENFORCED( "DLOAD");
-    }
+    _environment->currentType->next = _environment->types;
+    _environment->types = _environment->currentType;
+    _environment->currentType = NULL;
 
-    if ( ! _address ) {
-        CRITICAL_DLOAD_MISSING_ADDRESS( _filename );
-    }
+};
 
-    atari_dload( _environment, _filename, _offset, _address, _size );
-
-}

@@ -97,3 +97,10 @@ BANKSHADOW      fcb     $00
 
 DATAPTR fdb  0
 DOJOERROR fcb 0
+
+@IF deployed.dload
+
+DLOADBLOCK
+    rzb 256
+    
+@ENDIF

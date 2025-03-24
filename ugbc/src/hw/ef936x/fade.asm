@@ -9,7 +9,7 @@
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
 ;  *
-;  * Unless required by applicable law or agreed to in writing, software
+;  * Unless required by applicaBLO law or agreed to in writing, software
 ;  * distributed under the License is distributed on an "AS IS" BASIS,
 ;  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 ;  * See the License for the specific language governing permissions and
@@ -29,138 +29,121 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                   DLOAD ROUTINES ON OLIVETTI PRODEST PC128                  *
+;*                            FADE ROUTINE ON EF936X                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Y: destination address
-; U: size
-DLOAD
-    
-    STA <MATHPTR2
+
+FADEDONE
+    fcb $0
+
+FADEINDEX
+    fcb $0
+
+FADEOUT
+    LDB #15
+    STB FADEDONE
+    LDB #0
+    STB FADEINDEX
+    LDX #SHADOWPALETTE
+FADEOUTL1
+    LDD , X
+    SUBA #$01
     CMPA #0
-    BEQ DLOAD
-    LEAX $6000, X
-    
-DLOAD2
-
-    STU <MATHPTR0
-
-    ORCC #$50
-
-DLOADL1
-    PSHS D,X
-
-    LDA #1
-    SWI
-    FCB $22
-
-DLOADL1REPEAT
-
-    LDY #DLOADBLOCK
-
-    LDA #1
-    LDB #0
-    SWI
-    FCB $20
-
-    CMPB #0
-    BEQ DLOADL1REPEAT
-    CMPB #$FF
-    BEQ DLOADL1REPEAT
-
-    LEAY 6,Y
-
-    LDU <MATHPTR0
-    CMPU #$00F9
-    BLE DLOADL1MV2
-
-    LEAU -$00F9, U
-    STU <MATHPTR0
-
-    LDU #$00F9
-    JMP DLOADL1MV2L
-
-DLOADL1MV2L
-
-    LDA <MATHPTR2
-    BEQ DLOADL1MV2LRAM
-
-    PSHS D, U
-    TFR U, D
-    LDB <MATHPTR2
+    BGT FADEOUTL1B
     CLRA
-    TFR D, U
-    JSR BANKWRITE
-    PULS D, U
-
-    BRA DLOADL1REPEAT2
-
-DLOADL1MV2LRAM
-    LDA ,Y+
-    STA ,X+
-    LEAU -1, U
-    CMPU #0
-    BNE DLOADL1MV2LRAM
-
-DLOADL1REPEAT2
-
-    LDY #DLOADBLOCK
-
-    LDA #1
-    LDB #0
-    SWI
-    FCB $20
-
+FADEOUTL1B
+    PSHS D
+    TFR B, A
+    ANDB #$0F
+    SUBB #$01
     CMPB #0
-    BEQ DLOADL1REPEAT
-    CMPB #$FF
-    BEQ DLOADL1REPEAT
-
-    LEAY 1,Y
-
-    LDU <MATHPTR0
-    CMPU #$00FE
-    BLE DLOADL1MV2
-
-    LEAU -$00FE, U
-    STU <MATHPTR0
-    
-    LDU #$00Fe
-    JMP DLOADL1MV2L
-
-DLOADL1MV2
-
-    LDA <MATHPTR2
-    BEQ DLOADL1MV2RAM
-
-    PSHS D, U
-    TFR U, D
-    LDB <MATHPTR2
+    BGT FADEOUTL1C
+    CLRB
+FADEOUTL1C
+    ANDA #$F0
+    SUBB #$10
+    CMPB #0
+    BGT FADEOUTL1D
     CLRA
-    TFR D, U
-    JSR BANKWRITE
-    PULS D, U
-
-    BRA DLOADL1MV2DONE
-
-DLOADL1MV2RAM
-    LDA ,Y+
-    STA ,X+
-    LEAU -1, U
-    CMPU #0
-    BNE DLOADL1MV2RAM
-
-DLOADL1MV2DONE
-
-    LDA #0
-    SWI
-    FCB $22
-    PULS D,X
-
-    ANDCC #$AF
-
+FADEOUTL1D
+    STA <MATHPTR0
+    ORB <MATHPTR0
+    STA <MATHPTR0
+    PULS D
+    LDB <MATHPTR0
+    CMPD #0
+    BGT FADEOUTP
+    DEC FADEDONE
+FADEOUTP
+    PSHS D
+    LDB FADEINDEX
+    ASLB
+    STB BASE_SEGMENT+$DB
+    PULS D
+    STB BASE_SEGMENT+$DA
+    STA BASE_SEGMENT+$DA
+    STD ,X
+    LEAX 2, X
+    INC FADEINDEX
+    LDB FADEINDEX
+    CMPB #16
+    BLE FADEOUTL1
+FADEWL1
+    LDB FADEDONE
+    BLE FADEOUTDONE2
+FADEOUTPERIOD
+    LDD #1
+    JSR WAITTIMER
+    BRA FADEOUT
+FADEOUTDONE2
     RTS
 
+FADEIN
+    LDB #15
+    STB FADEDONE
+    LDB #0
+    STB FADEINDEX
+    LDX #SHADOWPALETTE
+    LDY #COMMONPALETTE
+FADEINL1
+    LDA , X
+    ADDA #$01
+    CMPA ,Y
+    BLS FADEINL1B
+    LDA , Y
+FADEINL1B
+    LDB 1,X
+    ADDB #$11
+    CMPB 1,Y
+    BLS FADEINL2
+    LDB 1,Y
+FADEINL2
+    CMPD ,Y
+    BNE FADEINP
+    DEC FADEDONE
+FADEINP
+    PSHS D
+    LDB FADEINDEX
+    ASLB
+    STB BASE_SEGMENT+$DB
+    PULS D
+    STB BASE_SEGMENT+$DA
+    STA BASE_SEGMENT+$DA
+    STD ,X
+    LEAX 2, X
+    LEAY 2, Y
+    INC FADEINDEX
+    LDB FADEINDEX
+    CMPB #16
+    BLE FADEINL1
+    LDB FADEDONE
+    BLE FADEINDONE2
+FADEINPERIOD
+    LDD #1
+    JSR WAITTIMER
+    BRA FADEIN
+FADEINDONE2
+    RTS

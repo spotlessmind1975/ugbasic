@@ -840,20 +840,21 @@ immagini per individuare il colore da utilizzare.
 @keyword SIZE
 
 @english
-To get the (static) size of a buffer you can use the ''SIZE'' command. This command 
-will return, in bytes, the size of the given buffer. It is possible to apply this 
-command to any type of static data, such as ''BUFFER'', ''IMAGE'', ''IMAGES'' and 
-constant strings.
+To get the size of a variable you can use the ''SIZE'' command. This command 
+will return, in bytes, the size of the memory area used by that
+variable. It is possible to apply this  command to any type of static data, 
+such as ''BUFFER'', ''IMAGE'', ''IMAGES'', ''TYPE'' and constant strings.
 
 @italian
-Per ottenere la dimensione (statica) di un buffer è possibile utilizzare il comando ''SIZE''. 
-Tale comando restituisce, in bytes, la dimensione del buffer dato. E' possibile applicare 
-questo comando a qualsiasi tipo di dato statico, quali ''BUFFER'', ''IMAGE'', ''IMAGES'' e
-stringe costanti.
+Per ottenere la dimensione di una variabile puoi usare il comando ''SIZE''. 
+Questo comando restituirà, in byte, la dimensione dell'area di memoria 
+utilizzata da quella variabile. È possibile applicare questo comando a 
+qualsiasi tipo di dati statici, come ''BUFFER'', ''IMAGE'', ''IMAGES'', 
+''TYPE'' e stringhe costanti.
 
-@syntax ... = SIZE([resource])
+@syntax ... = SIZE(variable)
 
-@example PRINT SIZE(image)
+@example PRINT SIZE(var)
 
 @usedInExample buffers_definition_02.bas
 @usedInExample buffers_definition_03.bas
@@ -6574,3 +6575,29 @@ e nella simulazione di fenomeni fisici.
 @target all
 </usermanual> */
 
+/* <usermanual>
+@keyword LET (data type)
+
+@english
+
+The ''LET'' command is a statement used to assign a value to a variable. 
+Although it is optional, and the assignment can be done simply by writing 
+''variable = value'', this command can help to produce a more optimized
+code, since its syntax is a bit more limited. So, ''LET'' allows you to 
+store a value (numeric or text) in a memory location represented by a 
+''variable'', helping ugBASIC to retrieve it in an more optimized way.
+
+@italian
+
+Il comando ''LET'' è un'istruzione utilizzata per assegnare un valore a una variabile.
+Sebbene sia facoltativo e l'assegnazione possa essere eseguita semplicemente scrivendo
+''variabile = valore'', questo comando può aiutare a produrre un codice più ottimizzato,
+poiché la sua sintassi è un po' più limitata. Quindi, ''LET'' consente di
+memorizzare un valore (numerico o di testo) in una posizione di memoria rappresentata da una
+''variabile'', aiutando ugBASIC a recuperarlo in modo più ottimizzato.
+
+@syntax LET variable = expression
+@example LET v = t(i)
+
+@target all
+</usermanual> */

@@ -63,8 +63,7 @@ floaters/
 lader/
 manic/
 mge/
-*.asm
-*..json
+*.json
 cvn/
 star/
 stg/

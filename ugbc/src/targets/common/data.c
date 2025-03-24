@@ -33,6 +33,7 @@
  ****************************************************************************/
 
 #include "../../ugbc.h"
+#include <math.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -315,5 +316,83 @@ void data_string( Environment * _environment, char * _value ) {
     } else {
         data->data = dataDataSegment;
     }
+
+}
+
+void data_type( Environment * _environment ) {
+
+    VariableType type;
+
+    DataSegment * data;
+
+    int os = VT_OPTIMAL_SHIFT( _environment->currentType->size );
+    int bytes = 1 << os;
+
+    if ( _environment->lastDefinedLabel ) {
+        if ( _environment->lastDefinedLabelIsNumeric ) {
+            data = data_segment_define_or_retrieve_numeric( _environment, _environment->lastDefinedLabelNumeric );
+        } else {
+            data = data_segment_define_or_retrieve( _environment, _environment->lastDefinedLabel );
+        }
+    } else {
+        data = data_segment_define_or_retrieve( _environment, "DATA" );
+    }
+
+    DataDataSegment * dataDataSegment = malloc( sizeof( DataDataSegment ) );
+    memset( dataDataSegment, 0, sizeof( DataDataSegment ) );
+    dataDataSegment->size = bytes;
+    dataDataSegment->data = malloc( bytes );
+    memset( dataDataSegment->data, 0, bytes );
+    dataDataSegment->type = VT_TYPE;
+    Constant * current = _environment->currentFieldsValues;
+    Field * currentField = _environment->currentType->first;
+    int offset = 0;
+    while( current ) {
+        switch( VT_BITWIDTH( currentField->type ) ) {
+            case 8:
+                dataDataSegment->data[offset] = (unsigned char)current->value & 0xff;
+                ++offset;
+                break;
+            case 16:
+#if defined(CPU_BIG_ENDIAN)
+                dataDataSegment->data[offset+1] = (unsigned char)current->value & 0xff;
+                dataDataSegment->data[offset] = (unsigned char)((current->value>>8) & 0xff);
+#else
+                dataDataSegment->data[offset] = (unsigned char)current->value & 0xff;
+                dataDataSegment->data[offset+1] = (unsigned char)((current->value>>8) & 0xff);
+#endif
+                offset+=2;
+                break;
+            case 32:
+#if defined(CPU_BIG_ENDIAN)
+                dataDataSegment->data[offset+3] = (unsigned char)current->value & 0xff;
+                dataDataSegment->data[offset+2] = (unsigned char)((current->value>>8) & 0xff);
+                dataDataSegment->data[offset+1] = (unsigned char)((current->value>>16) & 0xff);
+                dataDataSegment->data[offset] = (unsigned char)((current->value>>24) & 0xff);
+#else
+                dataDataSegment->data[offset] = (unsigned char)current->value & 0xff;
+                dataDataSegment->data[offset+1] = (unsigned char)((current->value>>8) & 0xff);
+                dataDataSegment->data[offset+2] = (unsigned char)((current->value>>16) & 0xff);
+                dataDataSegment->data[offset+3] = (unsigned char)((current->value>>24) & 0xff);
+#endif
+                offset+=4;
+                break;
+        }
+        current = current->next;
+        currentField = currentField->next;
+    }
+
+    DataDataSegment * final = data->data;
+
+    if ( final ) {
+        while( final->next ) {
+            final = final->next;
+        }
+        final->next = dataDataSegment;
+    } else {
+        data->data = dataDataSegment;
+    }
+    
+    data->type = VT_TYPE;
 
 }

@@ -118,6 +118,16 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
                     cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
                     break;
                 }
+                case VT_TYPE: {
+                    Field * field = variable->typeType->first;
+                    while( field ) {
+                        Variable * data = variable_temporary( _environment, field->type, "(data)");
+                        read_data_safe( _environment, data->name );
+                        variable_move_type( _environment, variable->name, field->name, data->name );
+                        field = field->next;
+                    }
+                    break;
+                }
                 default:
                     CRITICAL_READ_DATA_TYPE_NOT_SUPPORTED( _variable, DATATYPE_AS_STRING[variable->type] );
             }
@@ -128,7 +138,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 
     cpu_label( _environment, typeMismatchDuringReadLabel );
 
-    if ( variable->type != VT_DSTRING ) {
+    if ( variable->type != VT_DSTRING && variable->type != VT_TYPE ) {
 
         cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_BYTE, byteReadLabel, 1 );
         cpu_compare_and_branch_8bit_const( _environment, datatype->realName, VT_SBYTE, byteReadLabel, 1 );

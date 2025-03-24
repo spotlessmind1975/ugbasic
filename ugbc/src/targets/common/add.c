@@ -185,6 +185,57 @@ void add_complex_vars( Environment * _environment, char * _variable, char * _exp
 
 }
 
+void add_complex_type_vars( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
+
+    MAKE_LABEL
+
+    char lessThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( lessThanLabel, "%sl", label );
+    char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
+    
+    variable_add_inplace_type_vars( _environment, _variable, _field, _expression );
+
+    if ( _limit_lower ) {
+
+        Variable * variable = variable_retrieve( _environment, _variable );
+        Field * field = field_find( variable->typeType, _field );
+        Variable * realValue = variable_temporary( _environment, field->type, "(temp)");
+        variable_move_type( _environment, variable->name, field->name, realValue->name );
+
+        Variable * less = variable_less_than( _environment, realValue->name, _limit_lower, 0 );
+
+        cpu_bveq( _environment, less->realName, greaterThanLabel );
+
+        if ( _clamp ) {
+            variable_move_type( _environment, _variable, _field, _limit_lower );
+        } else {
+            variable_move_type( _environment, _variable, _field, _limit_upper );
+        }     
+
+        cpu_jump( _environment, endLabel );
+
+        cpu_label( _environment, greaterThanLabel );
+
+        if ( _limit_upper ) {
+
+            Variable * greater = variable_greater_than( _environment, realValue->name, _limit_upper, 0 );
+
+            cpu_bveq( _environment, greater->realName, endLabel );
+
+            if ( _clamp ) {
+                variable_move_type( _environment, _variable, _field, _limit_upper );
+            } else {
+                variable_move_type( _environment, _variable, _field, _limit_lower );
+            }
+
+        }
+        
+        cpu_label( _environment, endLabel );
+
+    }
+
+}
+
 /**
  * @brief Emit code for <strong>ADD x,y,a TO b</strong>
  * 
@@ -241,6 +292,19 @@ void add_complex_array( Environment * _environment, char * _variable, char * _ex
 
 }
 
+void add_complex_array_type( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
+
+    outline0("; variable_move_from_array_type" );
+    Variable * value = variable_move_from_array_type( _environment, _variable, _field );
+
+    outline0("; add_complex_vars" );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper, _clamp );
+
+    outline0("; variable_move_array_type" );
+    variable_move_array_type( _environment, _variable, _field, value->name );
+
+}
+
 void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp ) { 
 
     MAKE_LABEL
@@ -273,6 +337,49 @@ void add_complex( Environment * _environment, char * _variable, int _expression,
         variable_store( _environment, _variable, _limit_upper );
     } else {
         variable_store( _environment, _variable, _limit_lower );
+    }
+
+    cpu_label( _environment, endLabel );
+
+}
+
+void add_complex_type( Environment * _environment, char * _variable, char * _field, int _expression, int _limit_lower, int _limit_upper, int _clamp ) { 
+
+    MAKE_LABEL
+
+    char lessThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( lessThanLabel, "%sl", label );
+    char greaterThanLabel[MAX_TEMPORARY_STORAGE]; sprintf( greaterThanLabel, "%sg", label );
+    char endLabel[MAX_TEMPORARY_STORAGE]; sprintf( endLabel, "%se", label );
+    
+    variable_add_inplace_type( _environment, _variable, _field, _expression );
+
+    Variable * variable = variable_retrieve( _environment, _variable );
+    Field * field = field_find( variable->typeType, _field );
+    Variable * realValue = variable_temporary( _environment, field->type, "(temp)");
+    variable_move_type( _environment, variable->name, field->name, realValue->name );
+
+    Variable * less = variable_less_than_const( _environment, realValue->name, _limit_lower, 0 );
+
+    cpu_bveq( _environment, less->realName, greaterThanLabel );
+
+    if ( _clamp ) {
+        variable_store_type( _environment, _variable, _field, _limit_lower );
+    } else {
+        variable_store_type( _environment, _variable, _field, _limit_upper );
+    }
+
+    cpu_jump( _environment, endLabel );
+
+    cpu_label( _environment, greaterThanLabel );
+
+    Variable * lesser = variable_less_than_const( _environment, realValue->name, _limit_upper, 1 );
+
+    cpu_bvneq( _environment, lesser->realName, endLabel );
+
+    if ( _clamp ) {
+        variable_store_type( _environment, _variable, _field, _limit_upper );
+    } else {
+        variable_store_type( _environment, _variable, _field, _limit_lower );
     }
 
     cpu_label( _environment, endLabel );

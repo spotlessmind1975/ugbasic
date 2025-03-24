@@ -219,6 +219,7 @@ INCLUDE             BEGIN(incl);
 [\x0d] { }
 _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
 [\x0a] { ++yylineno; RETURN(NewLine,0); }
+"." { RETURN(OP_PERIOD,1); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
 "(" { RETURN(OP,1); }
@@ -711,6 +712,8 @@ ENDSELECT { RETURN(ENDSELECT,1); }
 Es { RETURN(ENDSELECT,1); }
 ENDSTORAGE { RETURN(ENDSTORAGE,1); }
 Ens { RETURN(ENDSTORAGE,1); }
+ENDTYPE { RETURN(ENDTYPE,1); }
+Et { RETURN(ENDTYPE,1); }
 ENABLE { RETURN(ENABLE,1); }
 En { RETURN(ENABLE,1); }
 ENVELOPE { RETURN(ENVELOPE,1); }

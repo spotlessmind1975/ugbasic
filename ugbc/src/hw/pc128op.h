@@ -278,6 +278,6 @@ void pc128op_timer_set_counter( Environment * _environment, char * _timer, char 
 void pc128op_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void pc128op_timer_set_address( Environment * _environment, char * _timer, char * _address );
 
-void pc128op_dload( Environment * _environment, char * _address, char * _size );
+void pc128op_dload( Environment * _environment, char * _address, char * _bank, char * _size );
 
 #endif

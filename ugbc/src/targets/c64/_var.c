@@ -240,6 +240,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                     }
                 case VT_BUFFER:
+                case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s: .byte $0", variable->realName );
@@ -474,6 +475,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_MUSIC:
         case VT_BUFFER:
+        case VT_TYPE:
             if ( _variable->bankAssigned != -1 ) {
                 outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );
                 outhead1("%s: .byte $0", _variable->realName );

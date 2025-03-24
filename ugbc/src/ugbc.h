@@ -50,6 +50,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "libs/tsx.h"
 #include "libs/tmx.h"
@@ -529,7 +530,10 @@ typedef enum _VariableType {
     VT_PATH = 32,
 
     /** VECTOR */
-    VT_VECTOR2 = 33
+    VT_VECTOR2 = 33,
+
+    /** TYPE */
+    VT_TYPE = 34
 
 } VariableType;
 
@@ -584,6 +588,8 @@ typedef struct _Resource {
 #define VT_POW2_2( t, v )             ( ( (t) == (v) ) ? 2 : 0 )
 #define VT_POW2_3( t, v )             ( ( (t) == (v) ) ? 3 : 0 )
 #define VT_POW2_4( t, v )             ( ( (t) == (v) ) ? 4 : 0 )
+
+#define VT_OPTIMAL_SHIFT( s )         ( (s<=2)?(log2(s)):(log2(s)+1) )
 
 #define VT_MAX_BITWIDTH_TYPE( a, b ) \
         ( ( ( a == VT_FLOAT ) || ( b == VT_FLOAT ) ) ? ( VT_FLOAT ) : \
@@ -644,7 +650,8 @@ typedef struct _Resource {
         ( t == VT_SEQUENCE ) + \
         ( t == VT_MUSIC ) + \
         ( t == VT_TILEMAP ) + \
-        ( t == VT_DOJOKA ) \
+        ( t == VT_DOJOKA ) + \
+        ( t == VT_TYPE ) \
     )
 
 /**
@@ -1162,10 +1169,36 @@ typedef struct _Variable {
      */
     int usedImage;
 
+    struct _Type * typeType;
+
     /** Link to the next variable (NULL if this is the last one) */
     struct _Variable * next;
 
 } Variable;
+
+typedef struct _Field {
+
+    char * name;
+
+    VariableType type;
+
+    int offset;
+
+    struct _Field * next;
+
+} Field;
+
+typedef struct _Type {
+
+    char * name;
+
+    int size;
+
+    struct _Field * first;
+
+    struct _Type * next;
+
+} Type;
 
 typedef struct _Procedure {
 
@@ -2338,6 +2371,10 @@ typedef struct _Environment {
      */
     FileStorage * currentFileStorage;
 
+    Type * types;
+
+    Type * currentType;
+
     /**
      * List of defined labels.
      */
@@ -3043,11 +3080,18 @@ typedef struct _Environment {
     char * dojoObjectName;
 
     char * travelX;
+    char * travelXF;
     ArrayReference * travelXAR;
     char * travelY;
+    char * travelYF;
     ArrayReference * travelYAR;
 
     int transparencyCoarse;
+    
+    char * currentExpression;
+    char * currentFieldName;
+    Field * currentField;
+    Constant * currentFieldsValues;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -3100,12 +3144,21 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
-#define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-#define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#if defined(_DEBUG)
+    #define CRITICAL( s ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL2( s, v ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL2i( s, v ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#else
+    #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+#endif
 
 #define CRITICAL_INTERNAL_ERROR( v ) CRITICAL2("E000 - Internal error", v );
 #define CRITICAL_UNIMPLEMENTED( v ) CRITICAL2("E000 - Internal method not implemented:", v );
@@ -3492,6 +3545,16 @@ typedef struct _Environment {
 #define CRITICAL_VECTOR_GET_X_VECTOR_NEEDED( v ) CRITICAL2("E374 - X needs a VECTOR variable", v );
 #define CRITICAL_VECTOR_GET_Y_VECTOR_NEEDED( v ) CRITICAL2("E375 - Y needs a VECTOR variable", v );
 #define CRITICAL_FILE_NOT_FOUND( n ) CRITICAL2("E376 - file not found", n );
+#define CRITICAL_TYPE_NESTED_UNSUPPORTED( n ) CRITICAL2("E377 - cannot define a nested TYPE (a TYPE inside a TYPE)", n ); 
+#define CRITICAL_TYPE_ALREADY_DEFINED( n ) CRITICAL2("E378 - TYPE already defined", n ); 
+#define CRITICAL_TYPE_NOT_OPENED( ) CRITICAL("E379 - cannot END an unopened TYPE" ); 
+#define CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE( n ) CRITICAL2("E380 - cannot define outside a TYPE", n ); 
+#define CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE( n ) CRITICAL2("E381 - cannot use this type inside a TYPE", n );  
+#define CRITICAL_VARIABLE_TYPE_NEEDED( n ) CRITICAL2("E382 - variable TYPE is needed", n );  
+#define CRITICAL_UNKNOWN_TYPE( n ) CRITICAL2("E382 - unknown TYPE", n );  
+#define CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( n ) CRITICAL2("E383 - cannot access to fields of a non TYPE variable", n );  
+#define CRITICAL_UNKNOWN_FIELD_ON_TYPE( n ) CRITICAL2("E384 - unknown TYPE field ", n );  
+#define CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( n ) CRITICAL2("E385 - not enough value on DATA for given TYPE ", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4542,6 +4605,9 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
 Bank * bank_find( Bank * _first, char * _name );
 
+Type * type_find( Type * _first, char * _name );
+Field * field_find( Type * _type, char * _name );
+
 int check_datatype_limits( VariableType _type, int _value );
 
 void define_implicit_array_if_needed( Environment * _Environment, char * _name );
@@ -4564,7 +4630,7 @@ int banks_get_default_resident( Environment * _environment, int _bank );
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
 
-char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size );
+char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size, int * _count );
 
 #define FUNCTION_STUB( t )   Variable * result = variable_temporary( _environment, t, "(stub)" ); return result;
 
@@ -4637,8 +4703,11 @@ Variable * parser_casted_numeric( Environment * _environment, VariableType _type
 
 Variable *              absolute( Environment * _environment, char * _value );
 void                    add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp );
+void                    add_complex_type( Environment * _environment, char * _variable, char * _field, int _expression, int _limit_lower, int _limit_upper, int _clamp );
 void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp );
+void                    add_complex_type_vars( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp );
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
+void                    add_complex_array_type( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
 void                    allow( Environment * _environment );
@@ -4709,6 +4778,7 @@ void                    begin_loop( Environment * _environment, int _do );
 void                    begin_procedure( Environment * _environment, char * _name );
 void                    begin_repeat( Environment * _environment );
 void                    begin_storage( Environment * _environment, char * _name, char * _file_name );
+void                    begin_type( Environment * _environment, char * _name );
 void                    begin_while( Environment * _environment );
 void                    begin_while_condition( Environment * _environment, char * _expression );
 void                    bell( Environment * _environment, int _note, int _duration, int _channels );
@@ -4817,10 +4887,11 @@ DataSegment *           data_segment_find_numeric( Environment * _environment, i
 DataSegment *           data_segment_define_or_retrieve( Environment * _environment, char * _name );
 DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _environment, int _number );
 void                    data_string( Environment * _environment, char * _value );
+void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
-void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
 void                    downw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    downb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
@@ -4909,6 +4980,7 @@ void                    end_repeat( Environment * _environment );
 void                    end_repeat_condition( Environment * _environment, char * _expression );
 void                    end_select_case( Environment * _environment );
 void                    end_storage( Environment * _environment );
+void                    end_type( Environment * _environment );
 void                    end_while( Environment * _environment );
 void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 char *                  escape_newlines( char * _string );
@@ -4926,8 +4998,14 @@ void                    exit_procedure( Environment * _environment );
 // *F*
 //----------------------------------------------------------------------------
 
+void                    fade_in( Environment * _environment, char * _period  );
+void                    fade_in_color( Environment * _environment, int _index, int _shade );
+void                    fade_in_color_semivars( Environment * _environment, int _index, char * _shade );
+void                    fade_in_color_vars( Environment * _environment, char * _index, char * _shade );
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
+void                    fade_out( Environment * _environment, char * _period  );
+void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
@@ -5418,7 +5496,9 @@ void                    upb( Environment * _environment, char * _line, char * _c
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_add_const( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, int _dest );
+void                    variable_add_inplace_type( Environment * _environment, char * _source, char * _field, int _dest );
 void                    variable_add_inplace_vars( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace_type_vars( Environment * _environment, char * _source, char * _field, char * _dest );
 void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );
 void                    variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
@@ -5441,7 +5521,9 @@ Variable *              variable_compare_not( Environment * _environment, char *
 Variable *              variable_compare_not_const( Environment * _environment, char * _source, int _dest );
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 void                    variable_decrement( Environment * _environment, char * _source );
+void                    variable_decrement_type( Environment * _environment, char * _source, char * _field );
 void                    variable_decrement_array( Environment * _environment, char * _source );
+void                    variable_decrement_array_type( Environment * _environment, char * _source, char * _field );
 void                    variable_decrement_mt( Environment * _environment, char * _source );
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
@@ -5458,7 +5540,9 @@ Variable *              variable_hex( Environment * _environment, char * _value 
 Variable *              variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );
+void                    variable_increment_type( Environment * _environment, char * _source, char * _field );
 void                    variable_increment_array( Environment * _environment, char * _source );
+void                    variable_increment_array_type( Environment * _environment, char * _source, char * _field );
 void                    variable_increment_mt( Environment * _environment, char * _source );
 Variable *              variable_int( Environment * _environment, char * _expression );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );
@@ -5467,9 +5551,16 @@ Variable *              variable_mod( Environment * _environment, char * _source
 Variable *              variable_move( Environment * _environment, char * _source, char * _dest );
 void                    variable_move_array( Environment * _environment, char * _array, char * _value  );
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
+void                    variable_move_array_type( Environment * _environment, char * _array, char * _field, char * _value  );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
+void                    variable_move_from_array_inplace( Environment * _environment, char * _array, char * _value );
+Variable *              variable_move_from_array_type( Environment * _environment, char * _array, char * _field );
+void                    variable_move_from_array_type_inplace( Environment * _environment, char * _array, char * _field, char * _value );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
+Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
+void                    variable_move_from_type_inplace( Environment * _environment, char * _type, char * _field, char * _value );
 Variable *              variable_move_to_mt( Environment * _environment, char * _source, char * _destination );
+void                    variable_move_type( Environment * _environment, char * _type, char * _field, char * _value  );
 Variable *              variable_move_naked( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_mul2_const( Environment * _environment, char * _source, int _bits );
@@ -5482,10 +5573,13 @@ void                    variable_temporary_remove( Environment * _environment, c
 void                    variable_reset( Environment * _environment );
 Variable *              variable_resize_buffer( Environment * _environment, char * _destination, int _size );
 int                     variable_exists( Environment * _environment, char * _name );
+int                     variable_exists_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve( Environment * _environment, char * _name );
 Variable *              variable_retrieve_by_realname( Environment * _environment, char * _name );
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
+void                    variable_set_type( Environment * _environment, char * _source, char * _type );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
+Variable *              variable_store_type( Environment * _environment, char * _source, char * _signed, unsigned int _value );
 void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 void                    variable_store_array_const( Environment * _environment, char * _array, int _value  );

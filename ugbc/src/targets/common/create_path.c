@@ -76,6 +76,7 @@ Variable * create_path( Environment * _environment, char * _x0, char * _y0, char
     deploy_begin( create_path );
 
         Variable * path = variable_define( _environment, "createpath__path", VT_PATH, 0 );
+        path->bankReadOrWrite = 1;
 
         Variable * x0 = variable_define( _environment, "createpath__x0", VT_POSITION, 0 );
         Variable * y0 = variable_define( _environment, "createpath__y0", VT_POSITION, 0 );
