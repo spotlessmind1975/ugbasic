@@ -4847,6 +4847,29 @@ void variable_increment_array( Environment * _environment, char * _source ) {
 
 }
 
+void variable_increment_array_type( Environment * _environment, char * _source, char * _field ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    if ( array->arrayType != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+    }
+    Variable * value = variable_move_from_array_type( _environment, array->name, _field );
+
+    variable_increment( _environment, value->name );
+
+    variable_move_array_type( _environment, array->name, _field, value->name );
+
+    return;
+
+}
+
 /**
  * @brief Store a variable's value
  * 
@@ -5047,6 +5070,30 @@ void variable_decrement_array( Environment * _environment, char * _source ) {
     return;
 
 }
+
+void variable_decrement_array_type( Environment * _environment, char * _source, char * _field ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * array = variable_retrieve( _environment, _source );
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    if ( array->arrayType != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+    }
+    Variable * value = variable_move_from_array_type( _environment, array->name, _field );
+
+    variable_decrement( _environment, value->name );
+
+    variable_move_array_type( _environment, array->name, _field, value->name );
+
+    return;
+
+}
+
 
 /**
  * @brief Decrement a variable by one

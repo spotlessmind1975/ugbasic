@@ -5512,6 +5512,7 @@ Variable *              variable_compare_not_const( Environment * _environment, 
 Variable *              variable_complement_const( Environment * _environment, char * _source, int _mask );
 void                    variable_decrement( Environment * _environment, char * _source );
 void                    variable_decrement_array( Environment * _environment, char * _source );
+void                    variable_decrement_array_type( Environment * _environment, char * _source, char * _field );
 void                    variable_decrement_mt( Environment * _environment, char * _source );
 Variable *              variable_define( Environment * _environment, char * _name, VariableType _type, int _value );
 Variable *              variable_define_no_init( Environment * _environment, char * _name, VariableType _type );
@@ -5529,6 +5530,7 @@ Variable *              variable_export( Environment * _environment, char * _nam
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );
 void                    variable_increment_array( Environment * _environment, char * _source );
+void                    variable_increment_array_type( Environment * _environment, char * _source, char * _field );
 void                    variable_increment_mt( Environment * _environment, char * _source );
 Variable *              variable_int( Environment * _environment, char * _expression );
 Variable *              variable_less_than( Environment * _environment, char * _source, char * _dest, int _equal );

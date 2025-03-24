@@ -11728,16 +11728,24 @@ statement2nc:
   }
   | INC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
-        variable_increment_array( _environment, $2 );
+    } indexes CP optional_field {
+        if ( $7 ) {
+            variable_increment_array_type( _environment, $2, $7 );
+        } else {
+            define_implicit_array_if_needed( _environment, $2 );
+            variable_increment_array( _environment, $2 );
+        }
         parser_array_cleanup( _environment );
   }
   | DEC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
-        variable_decrement_array( _environment, $2 );
+    } indexes CP optional_field {
+        if ( $7 ) {
+            variable_decrement_array_type( _environment, $2, $7 );
+        } else {
+            define_implicit_array_if_needed( _environment, $2 );
+            variable_decrement_array( _environment, $2 );
+        }
         parser_array_cleanup( _environment );
   }
   | INC OSP Identifier CSP {
