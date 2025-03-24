@@ -3077,8 +3077,10 @@ typedef struct _Environment {
     char * dojoObjectName;
 
     char * travelX;
+    char * travelXF;
     ArrayReference * travelXAR;
     char * travelY;
+    char * travelYF;
     ArrayReference * travelYAR;
 
     int transparencyCoarse;
