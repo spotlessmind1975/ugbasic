@@ -6979,18 +6979,41 @@ add_definition :
     ;
 
 addc_definition :
-    Identifier OP_COMMA expr OP_COMMA expr TO expr  {
-        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr  {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, 1 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
-        add_complex_vars( _environment, $1, $3, $5, $7, 1 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, 1 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
-        add_complex( _environment, $1, $4, $7, $10, 1 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+        if ( $2 ) {
+            add_complex_type( _environment, $1, $2, $5, $8, $11, 1 );
+        } else {
+            add_complex( _environment, $1, $5, $8, $11, 1 );
+        }
     }
     | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
         add_complex_mt( _environment, $2, $5, $7, $9, 1 );
-    };
+    }
+    | Identifier OP {
+        parser_array_init( _environment );        
+    } indexes CP optional_field OP_COMMA expr limits {
+        if ( $6 ) {
+            add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
+        }
+        parser_array_cleanup( _environment );
+    }
 
 xor_definition :
     Identifier OP_COMMA expr {
