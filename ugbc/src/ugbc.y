@@ -6915,10 +6915,11 @@ limits:
     {
         ((struct _Environment *)_environment)->upperLimit = NULL;
         ((struct _Environment *)_environment)->lowerLimit = NULL;
+        ((struct _Environment *)_environment)->clamp = 0;
     }
     | OP_COMMA expr TO expr clamp_optional {
-        ((struct _Environment *)_environment)->upperLimit = $2;
-        ((struct _Environment *)_environment)->lowerLimit = $4;
+        ((struct _Environment *)_environment)->lowerLimit = $2;
+        ((struct _Environment *)_environment)->upperLimit = $4;
         ((struct _Environment *)_environment)->clamp = $5;
     };
 
@@ -6967,8 +6968,12 @@ add_definition :
     | Identifier OP {
         parser_array_init( _environment );        
     } indexes CP optional_field OP_COMMA expr limits {
-        define_implicit_array_if_needed( _environment, $1 );
-        add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        if ( $6 ) {
+            add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        } else {
+            define_implicit_array_if_needed( _environment, $1 );
+            add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        }
         parser_array_cleanup( _environment );
     }
     ;

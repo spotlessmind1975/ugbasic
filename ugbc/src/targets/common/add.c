@@ -292,6 +292,19 @@ void add_complex_array( Environment * _environment, char * _variable, char * _ex
 
 }
 
+void add_complex_array_type( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp ) { 
+
+    outline0("; variable_move_from_array_type" );
+    Variable * value = variable_move_from_array_type( _environment, _variable, _field );
+
+    outline0("; add_complex_vars" );
+    add_complex_vars( _environment, value->name, _expression, _limit_lower, _limit_upper, _clamp );
+
+    outline0("; variable_move_array_type" );
+    variable_move_array_type( _environment, _variable, _field, value->name );
+
+}
+
 void add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp ) { 
 
     MAKE_LABEL
