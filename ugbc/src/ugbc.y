@@ -11011,7 +11011,7 @@ offset_definitions :
     };
 
 const_definition :
-  | STRING Identifier OP_ASSIGN const_expr_string_const {
+  STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             Constant * c1 = constant_find( ((Environment *)_environment)->constants, $4 );
 
