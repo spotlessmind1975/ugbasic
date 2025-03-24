@@ -11710,11 +11710,19 @@ statement2nc:
   | PUT KEY expr {
       put_key( _environment, $3 );
   }
-  | INC Identifier {
-      variable_increment( _environment, $2 );
+  | INC Identifier optional_field {
+        if ( $3 ) {
+            variable_increment_type( _environment, $2, $3 );
+        } else {
+            variable_increment( _environment, $2 );
+        }      
   }
-  | DEC Identifier {
-      variable_decrement( _environment, $2 );
+  | DEC Identifier optional_field {
+        if ( $3 ) {
+            variable_decrement_type( _environment, $2, $3 );
+        } else {
+            variable_decrement( _environment, $2 );
+        }
   }
   | INC TI {
       Variable * ti = get_timer( _environment );

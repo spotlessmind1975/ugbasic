@@ -4820,6 +4820,41 @@ void variable_increment( Environment * _environment, char * _source ) {
     return;
 }
 
+void variable_increment_type( Environment * _environment, char * _source, char * _field ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    if ( source->type != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+    }
+    Field * field = field_find( source->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString,  "%2.2x", field->offset );
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 32:
+        case 1:
+        case 0:
+            // @todo INC VT_FLOAT to be supported?
+            CRITICAL_DATATYPE_UNSUPPORTED("INC", DATATYPE_AS_STRING[field->type])
+            break;
+        case 16:
+            cpu_inc_16bit( _environment, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 8:
+            cpu_inc( _environment, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+    }
+    return;
+}
+
 /**
  * @brief Increment a variable by one
  * 
@@ -5039,6 +5074,44 @@ void variable_decrement( Environment * _environment, char * _source ) {
             break;
         case 8:
             cpu_dec( _environment, source->realName );
+            break;
+    }
+    return;
+}
+
+void variable_decrement_type( Environment * _environment, char * _source, char * _field ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    if ( source->type != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+    }
+    Field * field = field_find( source->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString,  "%2.2x", field->offset );
+
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 1:
+        case 0:
+            // @todo DEC VT_FLOAT to be supported?
+            CRITICAL_DATATYPE_UNSUPPORTED("DEC", DATATYPE_AS_STRING[source->type])
+            break;
+        case 32:
+            cpu_dec_32bit( _environment, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 16:
+            cpu_dec_16bit( _environment, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 8:
+            cpu_dec( _environment, address_displacement( _environment, source->realName, offsetAsString ) );
             break;
     }
     return;
