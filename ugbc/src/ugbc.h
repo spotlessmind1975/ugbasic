@@ -4698,7 +4698,9 @@ Variable * parser_casted_numeric( Environment * _environment, VariableType _type
 
 Variable *              absolute( Environment * _environment, char * _value );
 void                    add_complex( Environment * _environment, char * _variable, int _expression, int _limit_lower, int _limit_upper, int _clamp );
+void                    add_complex_type( Environment * _environment, char * _variable, char * _field, int _expression, int _limit_lower, int _limit_upper, int _clamp );
 void                    add_complex_vars( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp );
+void                    add_complex_type_vars( Environment * _environment, char * _variable, char * _field, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp );
 void                    add_complex_array( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 void                    add_complex_mt( Environment * _environment, char * _variable, char * _expression, char * _limit_lower, char * _limit_upper, int _clamp  );
 char *                  address_displacement( Environment * _environment, char * _address, char * _displacement );
@@ -5488,7 +5490,9 @@ void                    upb( Environment * _environment, char * _line, char * _c
 Variable *              variable_add( Environment * _environment, char * _source, char * _dest );
 Variable *              variable_add_const( Environment * _environment, char * _source, int _dest );
 void                    variable_add_inplace( Environment * _environment, char * _source, int _dest );
+void                    variable_add_inplace_type( Environment * _environment, char * _source, char * _field, int _dest );
 void                    variable_add_inplace_vars( Environment * _environment, char * _source, char * _dest );
+void                    variable_add_inplace_type_vars( Environment * _environment, char * _source, char * _field, char * _dest );
 void                    variable_add_inplace_array( Environment * _environment, char * _source, char * _destination );
 void                    variable_add_inplace_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_and( Environment * _environment, char * _left, char * _right );
@@ -5569,6 +5573,7 @@ Variable *              variable_retrieve_by_realname( Environment * _environmen
 Variable *              variable_retrieve_or_define( Environment * _environment, char * _name, VariableType _type, int _value );
 void                    variable_set_type( Environment * _environment, char * _source, char * _type );
 Variable *              variable_store( Environment * _environment, char * _source, unsigned int _value );
+Variable *              variable_store_type( Environment * _environment, char * _source, char * _signed, unsigned int _value );
 void                    variable_store_mt( Environment * _environment, char * _source, unsigned int _value );
 Variable *              variable_store_array( Environment * _environment, char * _destination, unsigned char * _buffer, int _size, int _at );
 void                    variable_store_array_const( Environment * _environment, char * _array, int _value  );

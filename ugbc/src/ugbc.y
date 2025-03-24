@@ -6923,20 +6923,40 @@ limits:
     };
 
 add_definition :
-    Identifier OP_COMMA expr {
-        variable_add_inplace_vars( _environment, $1, $3 );
+    Identifier optional_field OP_COMMA expr {
+        if ( $2 ) {
+            variable_add_inplace_type_vars( _environment, $1, $2, $4 );
+        } else {
+            variable_add_inplace_vars( _environment, $1, $4 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr {
-        variable_add_inplace( _environment, $1, $4 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr {
+        if ( $2 ) {
+            variable_add_inplace_type( _environment, $1, $2, $5 );
+        } else {
+            variable_add_inplace( _environment, $1, $5 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
-        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, $9 );
+        }
     }
-    | Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
-        add_complex_vars( _environment, $1, $3, $5, $7, $8 );
+    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
+        } else {
+            add_complex_vars( _environment, $1, $4, $6, $8, $9 );
+        }
     }
-    | Identifier OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
-        add_complex( _environment, $1, $4, $7, $10, $11 );
+    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
+        if ( $2 ) {
+            add_complex_type( _environment, $1, $2, $5, $8, $11, $12 );
+        } else {
+            add_complex( _environment, $1, $5, $8, $11, $12 );
+        }
     }
     | OSP Identifier CSP OP_COMMA expr {
         variable_add_inplace_mt( _environment, $2, $5 );
@@ -6946,9 +6966,9 @@ add_definition :
     }
     | Identifier OP {
         parser_array_init( _environment );        
-    } indexes CP OP_COMMA expr limits {
+    } indexes CP optional_field OP_COMMA expr limits {
         define_implicit_array_if_needed( _environment, $1 );
-        add_complex_array( _environment, $1, $7, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
+        add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
         parser_array_cleanup( _environment );
     }
     ;

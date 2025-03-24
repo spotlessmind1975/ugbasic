@@ -1497,6 +1497,46 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
     return destination;
 }
 
+Variable * variable_store_type( Environment * _environment, char * _destination, char * _field, unsigned int _value ) {
+    
+    Variable * destination = variable_retrieve( _environment, _destination );
+
+    if ( destination->type != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _destination );
+    }
+    Field * field = field_find( destination->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString,  "%2.2x", field->offset );
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 32:
+            cpu_store_32bit( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_32BIT( field->type, _value ) );
+            break;
+        case 16:
+            cpu_store_16bit( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_16BIT( field->type, _value ) );
+            break;
+        case 8:
+            if ( field->type == VT_CHAR ) {
+                if ( _value >= 20 && _value <= 127 ) {
+                    cpu_store_char( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_8BIT( field->type, _value ) );
+                } else {
+                    cpu_store_8bit( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_8BIT( field->type, _value ) );
+                }
+            } else {
+                cpu_store_8bit( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_8BIT( field->type, _value ) );
+            }
+            break;
+        case 1:
+        case 0:
+            CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
+            break;
+    }
+    return destination;
+}
+
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
                             int c2 = COLOR_##d;\
@@ -3727,6 +3767,42 @@ void variable_add_inplace( Environment * _environment, char * _source, int _dest
     }
 }
 
+void variable_add_inplace_type( Environment * _environment, char * _source, char * _field, int _destination ) {
+
+    if ( _destination ) {
+
+
+        Variable * source = variable_retrieve( _environment, _source );
+
+        if ( source->type != VT_TYPE ) {
+            CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+        }
+        Field * field = field_find( source->typeType, _field );
+        if ( ! field ) {
+            CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+        }
+    
+        char offsetAsString[MAX_TEMPORARY_STORAGE];
+        sprintf( offsetAsString,  "%2.2x", field->offset );
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_math_add_32bit_const( _environment, address_displacement( _environment, source->realName, offsetAsString ), _destination, address_displacement( _environment, source->realName, offsetAsString ) );
+                break;
+            case 16:
+                cpu_math_add_16bit_const( _environment, address_displacement( _environment, source->realName, offsetAsString ), _destination, address_displacement( _environment, source->realName, offsetAsString ) );
+                break;
+            case 8:
+                cpu_math_add_8bit_const( _environment, address_displacement( _environment, source->realName, offsetAsString ), _destination, address_displacement( _environment, source->realName, offsetAsString ) );
+                break;
+            case 1:
+            case 0:
+            default:
+                CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[field->type]);
+        }
+
+    }
+}
+
 /**
  * @brief Add two variable and return the sum of them on the first
  * 
@@ -3801,6 +3877,39 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
                 default:
                     CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }
+    }
+
+}
+
+void variable_add_inplace_type_vars( Environment * _environment, char * _source, char * _field, char * _destination ) {
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    if ( source->type != VT_TYPE ) {
+        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
+    }
+    Field * field = field_find( source->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    Variable * target = variable_retrieve_or_define( _environment, _destination, field->type, 0 );
+
+    char offsetAsString[MAX_TEMPORARY_STORAGE];
+    sprintf( offsetAsString,  "%2.2x", field->offset );
+    switch( VT_BITWIDTH( field->type ) ) {
+        case 32:
+            cpu_math_add_32bit( _environment, address_displacement( _environment, source->realName, offsetAsString ), target->realName, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 16:
+            cpu_math_add_16bit( _environment, address_displacement( _environment, source->realName, offsetAsString ), target->realName, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 8:
+            cpu_math_add_8bit( _environment, address_displacement( _environment, source->realName, offsetAsString ), target->realName, address_displacement( _environment, source->realName, offsetAsString ) );
+            break;
+        case 1:
+        case 0:
+            CRITICAL_ADD_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
     }
 
 }
