@@ -55,7 +55,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     int realAddress = 0xB000 + _address1;
 
     outline0("; bank read sv")
-    outline1("LDB #$%4.4x", _bank );
+    outline1("LDB #$%2.2x", _bank );
     outline1("LDY #$%4.4x", realAddress );
     outline1("LDX #%s", _address2 );
 
@@ -180,7 +180,7 @@ void bank_read_vars_bank_direct_size_vars( Environment * _environment, int _bank
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
 
     outline0("; bank read rvd")
-    outline1("LDB #$%4.4x", _bank );
+    outline1("LDB #$%2.2x", _bank );
     outline1("LDY %s", address1->realName );
     outline0("LEAY $B000,Y" );
     outline1("LDX #%s", _address2 );
@@ -214,7 +214,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     Variable * address2 = variable_retrieve( _environment, _address2 );
 
     outline0("; bank read rvd")
-    outline1("LDB #$%4.4x", _bank );
+    outline1("LDB #$%2.2x", _bank );
     outline1("LDY %s", address1->realName );
     outline0("LEAY $B000,Y" );
     outline1("LDX #%s", address2->realName );
