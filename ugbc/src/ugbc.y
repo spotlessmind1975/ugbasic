@@ -2953,26 +2953,18 @@ fujinet_functions :
         $$ = fujinet_write_type( _environment, $3, $4 )->name;
     };
 
-array_retrieve : 
-    {
-        ((struct _Environment *)_environment)->currentFieldName = NULL;
-    }
-    | OP_PERIOD Identifier {
-        ((struct _Environment *)_environment)->currentFieldName = $2;
-    };
-
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
     }
-      OP indexes CP array_retrieve {
-        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+      OP indexes CP optional_field {
+        if ( $7 ) {
             Variable * array;
             array = variable_retrieve( _environment, $1 );
             if ( array->type != VT_TARRAY ) {
                 CRITICAL_NOT_ARRAY( $1 );
             }
-            $$ = variable_move_from_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName )->name;
+            $$ = variable_move_from_array_type( _environment, $1, $7 )->name;
         } else {
             define_implicit_array_if_needed( _environment, $1 );
             VariableType vt = $2;
@@ -11657,9 +11649,9 @@ let_definition :
     Identifier OP_ASSIGN Identifier {
         parser_array_init( _environment );
     }
-      OP indexes CP array_retrieve {
-        if ( ((struct _Environment *)_environment)->currentFieldName ) {
-            variable_move_from_array_type_inplace( _environment, $3, ((struct _Environment *)_environment)->currentFieldName, $1 );
+      OP indexes CP optional_field {
+        if ( $8 ) {
+            variable_move_from_array_type_inplace( _environment, $3, $8, $1 );
         } else {
             variable_move_from_array_inplace( _environment, $3, $1 );
         }
