@@ -5552,10 +5552,14 @@ Variable *              variable_move( Environment * _environment, char * _sourc
 void                    variable_move_array( Environment * _environment, char * _array, char * _value  );
 void                    variable_move_array_string( Environment * _environment, char * _array, char * _string  );
 void                    variable_move_array_type( Environment * _environment, char * _array, char * _field, char * _value  );
+void                    variable_move_array1_type( Environment * _environment, char * _array, char * _index, char * _field, char * _value  );
+void                    variable_move_array1_type_fields( Environment * _environment, char * _array, char * _index, char * _field1, char * _field2 );
 Variable *              variable_move_from_array( Environment * _environment, char * _array );
 void                    variable_move_from_array_inplace( Environment * _environment, char * _array, char * _value );
 Variable *              variable_move_from_array_type( Environment * _environment, char * _array, char * _field );
+Variable *              variable_move_from_array1_type( Environment * _environment, char * _array, char * _index, char * _field );
 void                    variable_move_from_array_type_inplace( Environment * _environment, char * _array, char * _field, char * _value );
+void                    variable_move_from_array1_type_inplace( Environment * _environment, char * _array, char * _index, char * _field, char * _value );
 Variable *              variable_move_from_mt( Environment * _environment, char * _source, char * _destination );
 Variable *              variable_move_from_type( Environment * _environment, char * _type, char * _field );
 void                    variable_move_from_type_inplace( Environment * _environment, char * _type, char * _field, char * _value );
