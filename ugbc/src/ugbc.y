@@ -2964,7 +2964,11 @@ exponential_less:
             if ( array->type != VT_TARRAY ) {
                 CRITICAL_NOT_ARRAY( $1 );
             }
-            $$ = variable_move_from_array_type( _environment, $1, $7 )->name;
+            if ( array->arrayDimensions == 1 && ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][0] ) {
+                $$ = variable_move_from_array1_type( _environment, $1, ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][0], $7 )->name;
+            } else {
+                $$ = variable_move_from_array_type( _environment, $1, $7 )->name;
+            }
         } else {
             define_implicit_array_if_needed( _environment, $1 );
             VariableType vt = $2;
