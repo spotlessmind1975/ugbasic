@@ -9038,7 +9038,10 @@ audio_source :
     };
 
 define_definition :
-    TRANSPARENCY COARSE  {
+    CLIP option_clip {
+        ((struct _Environment *)_environment)->optionClip = $2;
+    }
+    | TRANSPARENCY COARSE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 1;        
     }
     | TRANSPARENCY PRECISE  {
