@@ -173,6 +173,7 @@
 
 #define BANK_COUNT          1
 #define BANK_SIZE           4096
+#define BANK_BASE_ADDRESS   0
 
 #define JOY_COUNT           2
 

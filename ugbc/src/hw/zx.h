@@ -194,6 +194,7 @@
 
 #define BANK_COUNT          1
 #define BANK_SIZE           4096
+#define BANK_BASE_ADDRESS   0
 
 #define BITMAP_MODE_STANDARD        1           // Standard Bitmap Mode     192 x 256 x 2
 #define TILEMAP_MODE_STANDARD       0           // Standard Character Mode  32 x 25 x 8

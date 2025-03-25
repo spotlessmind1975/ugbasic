@@ -314,6 +314,22 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+	if( po_buf_match( buf[0], " CLRA")
+	&&  po_buf_match( buf[1], " CLRB")
+	&&  po_buf_match( buf[2], " LDA *", v1)
+    ) {
+	    optim( buf[0], RULE "(CLRA,CLRB,LDA)->(CLRB,LDA)", NULL);
+        --_environment->removedAssemblyLines;
+    }
+
+	if( po_buf_match( buf[0], " LDB ")
+	&&  po_buf_match( buf[1], " LDX ")
+	&&  po_buf_match( buf[2], " LDB ")
+    ) {
+	    optim( buf[0], RULE "(LDB,LDX,LDB)->(LDX,LDB)", NULL);
+        --_environment->removedAssemblyLines;
+    }
+
     /* a bunch of rules */
 	if( po_buf_match( buf[0], " STA *", v1)
 	&&  po_buf_match( buf[1], " CLRB")
@@ -322,6 +338,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 	    optim( buf[0], RULE "(STAx,CLRB,LDAx)->(CLRB)", NULL);
 	    optim( buf[1], NULL, NULL);
 		optim( buf[2], NULL, "\tCLRB");
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
     }
 
 	// if( po_buf_match( buf[0], " STB *", v1)

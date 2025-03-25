@@ -2954,26 +2954,22 @@ fujinet_functions :
         $$ = fujinet_write_type( _environment, $3, $4 )->name;
     };
 
-array_retrieve : 
-    {
-        ((struct _Environment *)_environment)->currentFieldName = NULL;
-    }
-    | OP_PERIOD Identifier {
-        ((struct _Environment *)_environment)->currentFieldName = $2;
-    };
-
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
     }
-      OP indexes CP array_retrieve {
-        if ( ((struct _Environment *)_environment)->currentFieldName ) {
+      OP indexes CP optional_field {
+        if ( $7 ) {
             Variable * array;
             array = variable_retrieve( _environment, $1 );
             if ( array->type != VT_TARRAY ) {
                 CRITICAL_NOT_ARRAY( $1 );
             }
-            $$ = variable_move_from_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName )->name;
+            if ( array->arrayDimensions == 1 && ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][0] ) {
+                $$ = variable_move_from_array1_type( _environment, $1, ((struct _Environment *)_environment)->arrayIndexesEach[((struct _Environment *)_environment)->arrayNestedIndex][0], $7 )->name;
+            } else {
+                $$ = variable_move_from_array_type( _environment, $1, $7 )->name;
+            }
         } else {
             define_implicit_array_if_needed( _environment, $1 );
             VariableType vt = $2;
@@ -9041,7 +9037,10 @@ audio_source :
     };
 
 define_definition :
-    TRANSPARENCY COARSE  {
+    CLIP option_clip {
+        ((struct _Environment *)_environment)->optionClip = $2;
+    }
+    | TRANSPARENCY COARSE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 1;        
     }
     | TRANSPARENCY PRECISE  {
@@ -11666,9 +11665,9 @@ let_definition :
     Identifier OP_ASSIGN Identifier {
         parser_array_init( _environment );
     }
-      OP indexes CP array_retrieve {
-        if ( ((struct _Environment *)_environment)->currentFieldName ) {
-            variable_move_from_array_type_inplace( _environment, $3, ((struct _Environment *)_environment)->currentFieldName, $1 );
+      OP indexes CP optional_field {
+        if ( $8 ) {
+            variable_move_from_array_type_inplace( _environment, $3, $8, $1 );
         } else {
             variable_move_from_array_inplace( _environment, $3, $1 );
         }
@@ -11676,6 +11675,50 @@ let_definition :
     }
     | Identifier OP_ASSIGN Identifier OP_PERIOD Identifier {
         variable_move_from_type_inplace( _environment, $3, $5, $1 );
+    }
+    | Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Identifier OP Identifier CP OP_PERIOD Identifier {
+        Variable * variable = variable_retrieve( _environment, $1 );
+        if ( variable->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        if ( variable->arrayType != VT_TYPE ) {
+            CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
+        }
+        Variable * variableIndex = variable_retrieve( _environment, $3 );
+        if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
+            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
+        }
+        Field * variableField = field_find( variable->typeType, $6 );
+        if ( ! variableField ) {
+            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
+        }
+
+        Variable * expr = variable_retrieve( _environment, $8 );
+        if ( expr->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $8 );
+        }
+        if ( expr->arrayType != VT_TYPE ) {
+            CRITICAL_VARIABLE_TYPE_NEEDED( $8 );
+        }
+        Variable * exprIndex = variable_retrieve( _environment, $10 );
+        if ( VT_BITWIDTH( exprIndex->type ) == 0 ) {
+            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $10 );
+        }
+        Field * exprField = field_find( expr->typeType, $13 );
+        if ( ! exprField ) {
+            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $13 );
+        }
+
+        if ( strcmp( variable->name, expr->name ) == 0 ) {
+            if ( strcmp( variableField->name, exprField->name ) == 0 ) {
+                //
+            } else {
+                variable_move_array1_type_fields( _environment, variable->name, variableIndex->name, exprField->name, variableField->name );
+            }
+        } else {
+            variable_move_array1_type( _environment, variable->name, variableIndex->name, variableField->name, variable_move_from_array1_type( _environment, expr->name, exprIndex->name, exprField->name )->name  );
+        }
+
     };
 
 statement2nc:

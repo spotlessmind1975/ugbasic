@@ -122,7 +122,7 @@ extern char DATATYPE_AS_STRING[][16];
                 // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
                 outline1("LDY %s", offset->realName );
-                outline1("LDD #$%4.4x", image->frameSize );
+                outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
                 } else {
@@ -195,7 +195,7 @@ extern char DATATYPE_AS_STRING[][16];
                 // bank_read_vars_bank_direct_size_vars( _environment, image->bankAssigned, offset->name, bankWindowName, image->frameSize );
 
                 outline1("LDY %s", offset->realName );
-                outline1("LDD #$%4.4x", image->frameSize );
+                outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
                 } else {
@@ -344,10 +344,8 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     cpu_label( _environment, labelNoBankCompressed );
 
     outline1("LDB %s+4", image->realName );
-    outline0("CLRA" );
-    outline0("TFR D, U" );
     outline1("LDX %s+6", image->realName );
-    outline1("LDD %s+2", image->realName );
+    outline1("LDU %s+2", image->realName );
     outline0("JSR BANKREAD");
 
     cpu_label( _environment, labelDecompressionDone );

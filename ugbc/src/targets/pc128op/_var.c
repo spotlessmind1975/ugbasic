@@ -738,15 +738,15 @@ void variable_cleanup( Environment * _environment ) {
             outhead1("BANKREADBANK%2.2xXSDR", bank->id );
             outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
             outhead1("BANKREADBANK%2.2xXS", bank->id );
-            outline1("LDU #$%4.4x", bank->id );
-            outline0("LEAY $6000,Y" );
+            outline1("LDB #$%2.2x", bank->id );
+            // outline0("LEAY $6000,Y" );
             outline0("JMP BANKREAD" );
 
             outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
             outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
             outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
-            outline1("LDU #$%4.4x", bank->id );
-            outline0("LEAX $6000,X" );
+            outline1("LDB #$%2.2x", bank->id );
+            // outline0("LEAX $6000,X" );
             outline0("JMP BANKUNCOMPRESS" );
         }
         bank = bank->next;
