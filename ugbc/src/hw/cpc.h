@@ -154,6 +154,7 @@
 
 #define BANK_COUNT          0
 #define BANK_SIZE           0
+#define BANK_BASE_ADDRESS   0
 
 void cpc_wait_key( Environment * _environment, int _release );
 void cpc_wait_fire( Environment * _environment, int _port, int _release );

@@ -52,6 +52,7 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
         bank->type = BT_EXPANSION;
         bank->remains = _allowed_size;
         bank->space = _allowed_size;
+        bank->baseAddress = BANK_BASE_ADDRESS;
         bank->next = _environment->expansionBanks;
         bank->data = malloc( _allowed_size );
         bank->defaultResident = 1;
@@ -74,6 +75,7 @@ void banks_init( Environment * _environment ) {
         bank->type = BT_EXPANSION;
         bank->remains = BANK_SIZE;
         bank->space = BANK_SIZE;
+        bank->baseAddress = BANK_BASE_ADDRESS;
         bank->next = _environment->expansionBanks;
         bank->data = malloc( BANK_SIZE );
         bank->defaultResident = 1;
@@ -177,7 +179,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     }
 
     _variable->bankAssigned = bank->id;
-    _variable->absoluteAddress = bank->address;
+    _variable->absoluteAddress = bank->baseAddress + bank->address;
     _variable->residentAssigned = _resident;
     _variable->variableUniqueId = UNIQUE_RESOURCE_ID;
 

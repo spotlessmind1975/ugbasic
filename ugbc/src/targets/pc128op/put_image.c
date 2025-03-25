@@ -390,7 +390,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline0("CLRA" );
     outline0("TFR D, U" );
     outline0("TFR Y, X" );
-    outline0("LEAX $6000, X" );
+    // outline0("LEAX $6000, X" );
     outline1("LDY %s+6", image->realName );
     outline1("LDD %s+2", image->realName );
     outline0("JSR BANKUNCOMPRESS");
@@ -402,7 +402,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDB %s+4", image->realName );
     outline0("CLRA" );
     outline0("TFR D, U" );
-    outline0("LEAY $6000,Y" );
+    // outline0("LEAY $6000,Y" );
     outline1("LDX %s+6", image->realName );
     outline1("LDD %s+2", image->realName );
     outline0("JSR BANKREAD");

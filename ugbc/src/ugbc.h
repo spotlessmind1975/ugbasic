@@ -170,6 +170,9 @@ typedef struct _Bank {
     /** Bank remaining size (in bytes) */
     int remains;
 
+    /** Offset inside the resident RAM (if applied) */
+    int baseAddress;
+
     /** Data contained in the block */
     char * data;
 

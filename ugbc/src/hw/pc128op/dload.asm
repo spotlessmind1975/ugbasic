@@ -42,7 +42,7 @@ DLOAD
     STA <MATHPTR2
     CMPA #0
     BEQ DLOAD
-    LEAX $6000, X
+    ; LEAX $6000, X
     
 DLOAD2
 

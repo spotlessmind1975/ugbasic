@@ -199,7 +199,7 @@ void bank_read_vars_bank_direct_size_vars(  Environment * _environment, int _ban
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY %s", address1->realName );
-    outline0("LEAY $6000,Y" );
+    // outline0("LEAY $6000,Y" );
     outline1("LDX #%s", _address2 );
     switch( _size ) {
         case 1:
@@ -235,7 +235,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     outline0("; bank read rvd")
     outline1("LDU #$%4.4x", _bank );
     outline1("LDY %s", address1->realName );
-    outline0("LEAY $6000,Y" );
+    // outline0("LEAY $6000,Y" );
     outline1("LDX #%s", address2->realName );
     switch( _size ) {
         case 1:

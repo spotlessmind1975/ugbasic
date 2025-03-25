@@ -41,6 +41,7 @@
 
 #define BANK_COUNT          0   // dynamic
 #define BANK_SIZE           0   // dynamic
+#define BANK_BASE_ADDRESS   0
 
 #define MAX_AUDIO_CHANNELS  3
 
