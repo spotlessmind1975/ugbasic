@@ -39,23 +39,23 @@ BANKSHADOWPREV     fcb     $0
 
 ; Move data from bank to main memory.
 ;
-; U : number of bank 
+; B : number of bank 
 ; Y : address on bank 
-; D : size to read
+; U : size to read
 ; X : address on memory 
 BANKREAD
 
     ORCC #$50
 
     ; Preserve size register.
-    PSHS D
+    ; PSHS D
 
     ; Save actual bank number.
     ; LDA BANKSHADOW
     ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -70,7 +70,9 @@ BANKREAD
     STB $A7CB
 
     ; Restore size register.
-    PULS D
+    ; PULS D
+
+    TFR U, D
 
     ; Copy memory at high speed.
     JSR DUFFDEVICE
@@ -92,7 +94,7 @@ BANKREAD
 
 ; Move data (1 byte) from bank to main memory.
 ;
-; U : number of bank 
+; B : number of bank 
 ; Y : address on bank 
 ; X : address on memory 
 BANKREAD1
@@ -100,7 +102,7 @@ BANKREAD1
     ORCC #$50
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -130,7 +132,7 @@ BANKREAD1
 
 ; Move data (2 bytes) from bank to main memory.
 ;
-; U : number of bank 
+; B : number of bank 
 ; Y : address on bank 
 ; X : address on memory 
 BANKREAD2
@@ -138,7 +140,7 @@ BANKREAD2
     ORCC #$50
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -168,7 +170,7 @@ BANKREAD2
 
 ; Move data (4 bytes) from bank to main memory.
 ;
-; U : number of bank 
+; B : number of bank 
 ; Y : address on bank 
 ; X : address on memory 
 BANKREAD4
@@ -176,7 +178,7 @@ BANKREAD4
     ORCC #$50
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -210,7 +212,7 @@ BANKREAD4
 
 ; Uncompress directly the data from bank.
 ;
-; U : number of bank 
+; B : number of bank 
 ; X : address on bank 
 ; Y : address on memory 
 BANKUNCOMPRESS
@@ -222,7 +224,7 @@ BANKUNCOMPRESS
     ;STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -257,22 +259,22 @@ BANKUNCOMPRESS
 ; Move data to bank from main memory.
 ;
 ; Y : address from memory 
-; D : size to write
-; U : number of bank 
+; U : size to write
+; B : number of bank 
 ; X : address on bank 
 BANKWRITE
 
     ORCC #$50
 
     ; Preserve size register.
-    PSHS D
+    ; PSHS D
 
     ; Save actual bank number.
     ; LDA BANKSHADOW
     ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -287,7 +289,9 @@ BANKWRITE
     STB $A7CB
 
     ; Restore size register.
-    PULS D
+    ; PULS D
+
+    TFR U, D
 
     ; Copy memory at high speed.
     JSR DUFFDEVICE
@@ -305,7 +309,7 @@ BANKWRITE
 ; Move data (1 byte) to bank from main memory.
 ;
 ; Y : address from memory 
-; U : number of bank 
+; B : number of bank 
 ; X : address on bank 
 BANKWRITE1
 
@@ -316,7 +320,7 @@ BANKWRITE1
     ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -346,7 +350,7 @@ BANKWRITE1
 ; Move data (2 bytes) to bank from main memory.
 ;
 ; Y : address from memory 
-; U : number of bank 
+; B : number of bank 
 ; X : address on bank 
 BANKWRITE2
 
@@ -357,7 +361,7 @@ BANKWRITE2
     ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC
@@ -387,7 +391,7 @@ BANKWRITE2
 ; Move data (4 bytes) to bank from main memory.
 ;
 ; Y : address from memory 
-; U : number of bank 
+; B : number of bank 
 ; X : address on bank 
 BANKWRITE4
 
@@ -398,7 +402,7 @@ BANKWRITE4
     ; STA BANKSHADOWPREV
 
     ; Change bank number to the required one.
-    TFR U, D
+    ; TFR U, D
     TFR B, A
     ; STB BANKSHADOW
     ANDA #$FC

@@ -55,7 +55,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     int realAddress = 0xB000 + _address1;
 
     outline0("; bank read sv")
-    outline1("LDU #$%4.4x", _bank );
+    outline1("LDB #$%4.4x", _bank );
     outline1("LDY #$%4.4x", realAddress );
     outline1("LDX #%s", _address2 );
 
@@ -70,7 +70,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
             outline0("JSR BANKREAD4");
             break;
         default:
-            outline1("LDD #$%4.4x", _size );
+            outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
             break;
 
@@ -105,10 +105,10 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     outline0("; bank read rv")
-    outline1("LDU %s", address_displacement( _environment, bank->realName, "-1" ) );
+    outline1("LDB %s", bank->realName );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX %s", address2->realName );
-    outline1("LDD %s", size->realName );
+    outline1("LDU %s", size->realName );
     outline0("JSR BANKREAD");
     outline0("; end bank read");
 
@@ -127,10 +127,10 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     outline0("; bank read rvd")
-    outline1("LDU %s", address_displacement( _environment, bank->realName, "-1" ) );
+    outline1("LDB %s", bank->realName );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX #%s", _address2 );
-    outline1("LDD %s", size->realName );
+    outline1("LDU %s", size->realName );
     outline0("JSR BANKREAD");
     outline0("; end bank read");
 
@@ -148,7 +148,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
     Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
 
     outline0("; bank read rvd")
-    outline1("LDU %s", address_displacement( _environment, bank->realName, "-1" ) );
+    outline1("LDB %s", bank->realName );
     outline1("LDY %s", realAddress->realName );
     outline1("LDX #%s", _address2 );
     switch( _size ) {
@@ -162,7 +162,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
             outline0("JSR BANKREAD4");
             break;
         default:
-            outline1("LDD #$%4.4x", _size );
+            outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
             break;
 
@@ -180,7 +180,7 @@ void bank_read_vars_bank_direct_size_vars( Environment * _environment, int _bank
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
 
     outline0("; bank read rvd")
-    outline1("LDU #$%4.4x", _bank );
+    outline1("LDB #$%4.4x", _bank );
     outline1("LDY %s", address1->realName );
     outline0("LEAY $B000,Y" );
     outline1("LDX #%s", _address2 );
@@ -195,7 +195,7 @@ void bank_read_vars_bank_direct_size_vars( Environment * _environment, int _bank
             outline0("JSR BANKREAD4");
             break;
         default:
-            outline1("LDD #$%4.4x", _size );
+            outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
             break;
 
@@ -214,7 +214,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     Variable * address2 = variable_retrieve( _environment, _address2 );
 
     outline0("; bank read rvd")
-    outline1("LDU #$%4.4x", _bank );
+    outline1("LDB #$%4.4x", _bank );
     outline1("LDY %s", address1->realName );
     outline0("LEAY $B000,Y" );
     outline1("LDX #%s", address2->realName );
@@ -229,7 +229,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
             outline0("JSR BANKREAD4");
             break;
         default:
-            outline1("LDD #$%4.4x", _size );
+            outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
             break;
 
