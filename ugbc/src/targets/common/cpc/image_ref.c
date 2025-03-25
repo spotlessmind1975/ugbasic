@@ -110,7 +110,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
+                // outline1( "LDA #$%2.2x", image->bankAssigned );
                 // outline1( "STA %s+4", imageRef->realName );
 
                 // INFO
@@ -200,7 +200,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
+                // outline1( "LDA #$%2.2x", image->bankAssigned );
                 // outline1( "STA %s+4", imageRef->realName );
 
                 // INFO
@@ -292,7 +292,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // BANK
 
-                // outline1( "LDA #$%4.4x", image->bankAssigned );
+                // outline1( "LDA #$%2.2x", image->bankAssigned );
                 // outline1( "STA %s+4", imageRef->realName );
 
                 // INFO
