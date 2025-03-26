@@ -264,7 +264,7 @@ void z80_pokew( Environment * _environment, char * _address, char * _source ) {
 
 }
 
-void z80_pokew_const( Environment * _environment, char * _address, char * _source ) {
+void z80_pokew_const( Environment * _environment, char * _address, int _source ) {
 
     // inline( cpu_poke )
 

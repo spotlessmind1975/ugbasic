@@ -212,7 +212,7 @@ void z80_addressof_16bit( Environment * _environment, char *_source, char *_dest
 void z80_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
 void z80_peek( Environment * _environment, char * _address, char * _target );
 void z80_poke( Environment * _environment, char * _address, char * _value );
-void z80_poke_cosnt( Environment * _environment, char * _address, int _value );
+void z80_poke_const( Environment * _environment, char * _address, int _value );
 void z80_peekw( Environment * _environment, char * _address, char * _target );
 void z80_pokew( Environment * _environment, char * _address, char * _value );
 void z80_pokew_const( Environment * _environment, char * _address, int _value );
