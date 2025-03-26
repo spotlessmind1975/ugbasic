@@ -322,14 +322,6 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         --_environment->removedAssemblyLines;
     }
 
-	if( po_buf_match( buf[0], " LDB ")
-	&&  po_buf_match( buf[1], " LDX ")
-	&&  po_buf_match( buf[2], " LDB ")
-    ) {
-	    optim( buf[0], RULE "(LDB,LDX,LDB)->(LDX,LDB)", NULL);
-        --_environment->removedAssemblyLines;
-    }
-
     /* a bunch of rules */
 	if( po_buf_match( buf[0], " STA *", v1)
 	&&  po_buf_match( buf[1], " CLRB")
