@@ -379,6 +379,17 @@ void cpu6809_poke( Environment * _environment, char * _address, char * _source )
 
 }
 
+void cpu6809_poke_const( Environment * _environment, char * _address, int _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LDB #$%2.2x", (unsigned char)(_source&0xff) );
+        outline1("STB [%s]", _address);
+
+    // no_embedded( cpu_poke )
+
+}
+
 void cpu6809_peekw( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
@@ -401,6 +412,17 @@ void cpu6809_pokew( Environment * _environment, char * _address, char * _source 
 
 }
 
+void cpu6809_pokew_const( Environment * _environment, char * _address, int _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LDD #$%4.4x", (unsigned int)(_source&0xffff) );
+        outline1("STD [%s]", _address);
+
+    // no_embedded( cpu_poke )
+
+}
+
 void cpu6809_peekd( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
@@ -418,12 +440,25 @@ void cpu6809_poked( Environment * _environment, char * _address, char * _source 
 
     inline( cpu_poke )
 
-        outline1("LDB %s", _source );
-        outline1("STB [%s]", _address);
-        outline1("LDB %s", address_displacement( _environment, _source, "2" ) );
-        outline1("STB [%s]", address_displacement( _environment, _address, "2" ) );
+        outline1("LDD %s", _source );
+        outline1("STD [%s]", _address);
+        outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
+        outline1("STD [%s]", address_displacement( _environment, _address, "2" ) );
 
     no_embedded( cpu_poke )
+
+}
+
+void cpu6809_poked_const( Environment * _environment, char * _address, int _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LDD #$%4.4x", (unsigned int) (( _source >> 16 ) & 0xffff) );
+        outline1("STD [%s]", _address);
+        outline1("LDD #$%4.4x", (unsigned int) (( _source ) & 0xffff) );
+        outline1("STD [%s]", address_displacement( _environment, _address, "2" ) );
+
+    // no_embedded( cpu_poke )
 
 }
 

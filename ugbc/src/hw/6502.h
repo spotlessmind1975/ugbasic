@@ -215,10 +215,13 @@ void cpu6502_move_32bit_unsigned_16bit_unsigned( Environment * _environment, cha
 void cpu6502_move_nbit( Environment * _environment, int _n, char *_source, char *_destination );
 void cpu6502_peek( Environment * _environment, char * _address, char * _target );
 void cpu6502_poke( Environment * _environment, char * _address, char * _value );
+void cpu6502_poke_const( Environment * _environment, char * _address, int _value );
 void cpu6502_peekw( Environment * _environment, char * _address, char * _target );
 void cpu6502_pokew( Environment * _environment, char * _address, char * _value );
+void cpu6502_pokew_const( Environment * _environment, char * _address, int _value );
 void cpu6502_peekd( Environment * _environment, char * _address, char * _target );
 void cpu6502_poked( Environment * _environment, char * _address, char * _value );
+void cpu6502_poked_const( Environment * _environment, char * _address, int _value );
 void cpu6502_random( Environment * _environment, char * _entropy );
 void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _result );
 void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _result );
@@ -532,10 +535,13 @@ void cpu6502_f32sub( char * _x, char * _y, char * _result );
 #define cpu_move_nbit( _environment, _n, _source, _destination  ) cpu6502_move_nbit( _environment, _n, _source, _destination )
 #define cpu_peek( _environment,  _address,  _target  ) cpu6502_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) cpu6502_poke( _environment,  _address,  _value  )
+#define cpu_poke_const( _environment,  _address,  _value  ) cpu6502_poke_const( _environment,  _address,  _value  )
 #define cpu_peekw( _environment,  _address,  _target  ) cpu6502_peekw( _environment,  _address,  _target  )
 #define cpu_pokew( _environment,  _address,  _value  ) cpu6502_pokew( _environment,  _address,  _value  )
+#define cpu_pokew_const( _environment,  _address,  _value  ) cpu6502_pokew_const( _environment,  _address,  _value  )
 #define cpu_peekd( _environment,  _address,  _target  ) cpu6502_peekd( _environment,  _address,  _target  )
 #define cpu_poked( _environment,  _address,  _value  ) cpu6502_poked( _environment,  _address,  _value  )
+#define cpu_poked_const( _environment,  _address,  _value  ) cpu6502_poked_const( _environment,  _address,  _value  )
 #define cpu_random( _environment,  _entropy  ) cpu6502_random( _environment,  _entropy  )
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) cpu6502_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) cpu6502_random_32bit( _environment,  _entropy,  _result  )

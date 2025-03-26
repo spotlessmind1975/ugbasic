@@ -212,10 +212,13 @@ void sm83_addressof_16bit( Environment * _environment, char *_source, char *_des
 void sm83_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char *_destination, int _offset );
 void sm83_peek( Environment * _environment, char * _address, char * _target );
 void sm83_poke( Environment * _environment, char * _address, char * _value );
+void sm83_poke_const( Environment * _environment, char * _address, int _value );
 void sm83_peekw( Environment * _environment, char * _address, char * _target );
 void sm83_pokew( Environment * _environment, char * _address, char * _value );
+void sm83_pokew_const( Environment * _environment, char * _address, int _value );
 void sm83_peekd( Environment * _environment, char * _address, char * _target );
 void sm83_poked( Environment * _environment, char * _address, char * _value );
+void sm83_poked_const( Environment * _environment, char * _address, int _value );
 void sm83_port_out( Environment * _environment, char * _port, char * _value );
 void sm83_random( Environment * _environment, char * _entropy );
 void sm83_random_16bit( Environment * _environment, char * _entropy, char * _result );
@@ -523,10 +526,13 @@ void sm83_float_single_exp( Environment * _environment, char * _value, char * _r
 #define cpu_addressof_16bit( _environment, _source, _destination  ) sm83_addressof_16bit( _environment, _source, _destination  )
 #define cpu_peek( _environment,  _address,  _target  ) sm83_peek( _environment,  _address,  _target  )
 #define cpu_poke( _environment,  _address,  _value  ) sm83_poke( _environment,  _address,  _value  )
+#define cpu_poke_const( _environment,  _address,  _value  ) sm83_poke_const( _environment,  _address,  _value  )
 #define cpu_peekw( _environment,  _address,  _target  ) sm83_peekw( _environment,  _address,  _target  )
 #define cpu_pokew( _environment,  _address,  _value  ) sm83_pokew( _environment,  _address,  _value  )
+#define cpu_pokew_const( _environment,  _address,  _value  ) sm83_pokew_const( _environment,  _address,  _value  )
 #define cpu_peekd( _environment,  _address,  _target  ) sm83_peekd( _environment,  _address,  _target  )
 #define cpu_poked( _environment,  _address,  _value  ) sm83_poked( _environment,  _address,  _value  )
+#define cpu_poked_const( _environment,  _address,  _value  ) sm83_poked_const( _environment,  _address,  _value  )
 #define cpu_random( _environment,  _entropy  ) sm83_random( _environment,  _entropy  )
 #define cpu_random_16bit( _environment,  _entropy,  _result  ) sm83_random_16bit( _environment,  _entropy,  _result  )
 #define cpu_random_32bit( _environment,  _entropy,  _result  ) sm83_random_32bit( _environment,  _entropy,  _result  )

@@ -248,6 +248,18 @@ void sm83_poke( Environment * _environment, char * _address, char * _source ) {
 
 }
 
+void sm83_poke_const( Environment * _environment, char * _address, int _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LD A, $%2.2x", _source);
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+
+    // no_embedded( cpu_poke )
+
+}
+
 void sm83_peekw( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
@@ -267,7 +279,7 @@ void sm83_pokew( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
-        outline1("LD A, (%s)", _source);
+        outline1("LD A, (%s)", (unsigned char)(_source&0xff));
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
@@ -275,6 +287,21 @@ void sm83_pokew( Environment * _environment, char * _address, char * _source ) {
         outline0("LD (HL), A");
 
     no_embedded( cpu_poke )
+
+}
+
+void sm83_pokew_const( Environment * _environment, char * _address, char * _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LD A, (%s)", (unsigned char)(_source&0xff));
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", (unsigned char)((_source>>8)&0xff));
+        outline0("INC HL");
+        outline0("LD (HL), A");
+
+    // no_embedded( cpu_poke )
 
 }
 
@@ -317,6 +344,27 @@ void sm83_poked( Environment * _environment, char * _address, char * _source ) {
         outline0("LD (HL), A");
 
     no_embedded( cpu_poke )
+
+}
+
+void sm83_poked_const( Environment * _environment, char * _address, int _source ) {
+
+    // inline( cpu_poke )
+
+        outline1("LD A, (%s)", (unsigned char)(_source)&0xff));
+        outline1("LD HL, (%s)", _address);
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", (unsigned char)((_source>>8)&0xff));
+        outline0("INC HL");
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", (unsigned char)((_source>>16)&0xff));
+        outline0("INC HL");
+        outline0("LD (HL), A");
+        outline1("LD A, (%s)", (unsigned char)((_source>>24)&0xff));
+        outline0("INC HL");
+        outline0("LD (HL), A");
+
+    // no_embedded( cpu_poke )
 
 }
 
