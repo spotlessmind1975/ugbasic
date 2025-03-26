@@ -133,6 +133,9 @@ CPUMUL16B16T32SB2:
     LD L, A
     
     INC HL
+    LD A, H
+    OR L
+    CP 0
     JR NC, CPUMUL16B16T32SREPOS
     INC BC
 
