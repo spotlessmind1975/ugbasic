@@ -52,7 +52,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-    int realAddress = 0x6000 + _address1;
+    int realAddress = _address1;
 
     outline0("; bank read sv")
     outline1("LDB #$%2.2x", _bank );
@@ -98,9 +98,7 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
@@ -108,7 +106,7 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     
     outline0("; bank read rv")
     outline1("LDB %s", bank->realName );
-    outline1("LDY %s", realAddress->realName );
+    outline1("LDY %s", address1->realName );
     outline1("LDX %s", address2->realName );
     outline1("LDU %s", size->realName );
     outline0("JSR BANKREAD");
@@ -123,9 +121,7 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
     Variable * bank =  variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     if ( variable_exists_by_realname( _environment, _address2 ) ) {
@@ -135,7 +131,7 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
 
     outline0("; bank read rvd")
     outline1("LDB %s", bank->realName );
-    outline1("LDY %s", realAddress->realName );
+    outline1("LDY %s", address1->realName );
     outline1("LDX #%s", _address2 );
     outline1("LDU %s", size->realName );
     outline0("JSR BANKREAD");
@@ -150,9 +146,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
     Variable * bank =  variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
 
     if ( variable_exists_by_realname( _environment, _address2 ) ) {
         Variable * address2 = variable_retrieve_by_realname( _environment, _address2 );
@@ -161,7 +155,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
 
     outline0("; bank read rvd")
     outline1("LDB %s",bank->realName );
-    outline1("LDY %s", realAddress->realName );
+    outline1("LDY %s", address1->realName );
     outline1("LDX #%s", _address2 );
     switch( _size ) {
         case 1:
