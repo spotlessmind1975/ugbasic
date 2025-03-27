@@ -1513,10 +1513,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             if ( _transparent_color & 0x0f0000 ) {
                 if ( rgb.alpha == 0 ) {
                     *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
-                    printf("*");
                 } else {
                     *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
-                    printf(" ");
                 }    
             }
 
@@ -1526,15 +1524,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
         }
 
-        printf("\n");
-
         _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
     }
-
-    printf( "First value for transparency = %2.2x\n", (unsigned char)*( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + 3) );
 
     adilineendbitmap();
 
