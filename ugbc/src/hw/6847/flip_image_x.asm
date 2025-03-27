@@ -304,17 +304,199 @@ FLIPIMAGEXCOMMON
     LDA 1,Y
     STA <IMAGEH
     STA <IMAGEH2
+    LDA 2,Y
+    STA <IMAGET
+
+    LEAY 3,Y
 
     ; Move the image pointer ahead of header.
-
-    LEAY 2,Y
 
     CLRA
     LDB <IMAGEW
     LSRB
     STB <IMAGEW2
 
-    JMP FLIPIMAGEXCOMMONCL0
+;;;;;;;;;;;;;;;;;;;;;;
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    TFR Y, X
+
+    LDB <IMAGEW
+
+    ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
+
+    LEAX B, X
+    LEAX -1, X
+
+    ; Loop in both directions
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
+
+FLIPIMAGEXCOMMONL1
+    CLRA
+    ; Take first left byte and invert it.
+    LDB , Y
+    LDB D, U
+    ; Save it on the stack.
+    PSHS D
+
+    ; Take first right byte and invert it.
+    LDB , X
+    LDB D, U
+    ; Store it on the first left byte.
+    STB , Y
+    ; Store the one stacked on the first right byte.
+    PULS D
+    STB , X
+
+    ; Move back the <TMPPTR2 pointer.
+
+    LEAX -1, X
+
+    ; Move ahead the <TMPPTR pointer.
+
+    LEAY 1, Y
+
+    ; Decrement the number of bytes to flip.
+
+    DEC <IMAGEW2
+
+    ; If not finished, repeat the loop.
+
+    BNE FLIPIMAGEXCOMMONL1
+
+    LDA <IMAGEW
+    LSRA
+    STA <IMAGEW2
+
+    LDB <IMAGEW
+    LSRB
+    BCC FLIPIMAGEXCOMMONNEXTLINE
+
+    CLRA
+    LDB , Y
+    LDB D, U
+    STB , Y
+
+    LEAY 1, Y
+
+    ; Move to the next line.
+FLIPIMAGEXCOMMONNEXTLINE
+    LDB <IMAGEW2
+    LEAY B, Y
+    TFR Y, X
+    LDB <IMAGEW
+    LEAX B, X
+    LEAX -1, X
+ 
+    ; Decrement the number of line flipped.
+
+    DEC <IMAGEH
+
+    ; If there are lines to flip, repeat the loop.
+
+    LDB <IMAGEH
+    LBNE FLIPIMAGEXCOMMONL1
+
+    LDA <IMAGET
+    BEQ FLIPIMAGEXCOMMONNDONE
+
+;; -------------
+
+    LDA <IMAGEH2
+    STA <IMAGEH
+
+    CLRA
+    LDB <IMAGEW
+    LSRB
+    STB <IMAGEW2
+
+    ; Copy the starting line pointer to the ending line pointer.
+
+    TFR Y, X
+
+    LDB <IMAGEW
+
+    ; Move ahead the ending line pointer of 2 x IMAGE WIDTH - 1
+
+    LEAX B, X
+    LEAX -1, X
+
+    ; Loop in both directions
+    ; <TMPPTR ---->
+    ;        <---- <TMPPTR2
+
+FLIPIMAGEXCOMMONL2
+    CLRA
+    ; Take first left byte and invert it.
+    LDB , Y
+    LDB D, U
+    ; Save it on the stack.
+    PSHS D
+
+    ; Take first right byte and invert it.
+    LDB , X
+    LDB D, U
+    ; Store it on the first left byte.
+    STB , Y
+    ; Store the one stacked on the first right byte.
+    PULS D
+    STB , X
+
+    ; Move back the <TMPPTR2 pointer.
+
+    LEAX -1, X
+
+    ; Move ahead the <TMPPTR pointer.
+
+    LEAY 1, Y
+
+    ; Decrement the number of bytes to flip.
+
+    DEC <IMAGEW2
+
+    ; If not finished, repeat the loop.
+
+    BNE FLIPIMAGEXCOMMONL2
+
+    LDA <IMAGEW
+    LSRA
+    STA <IMAGEW2
+
+    LDB <IMAGEW
+    LSRB
+    BCC FLIPIMAGEXCOMMONNEXTLINE2
+
+    CLRA
+    LDB , Y
+    LDB D, U
+    STB , Y
+
+    LEAY 1, Y
+
+    ; Move to the next line.
+FLIPIMAGEXCOMMONNEXTLINE2
+    LDB <IMAGEW2
+    LEAY B, Y
+    TFR Y, X
+    LDB <IMAGEW
+    LEAX B, X
+    LEAX -1, X
+
+    ; Decrement the number of line flipped.
+
+    DEC <IMAGEH
+
+    ; If there are lines to flip, repeat the loop.
+
+    LDB <IMAGEH
+    LBNE FLIPIMAGEXCOMMONL2
+
+FLIPIMAGEXCOMMONNDONE
+    RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 FLIPIMAGEXCOMMONC
 
@@ -411,6 +593,10 @@ FLIPIMAGEXCOMMONCL1
 FLIPIMAGEXCOMMONCNEXTLINE
     LDB <IMAGEW2
     LEAY B, Y
+    TFR Y, X
+    LDB <IMAGEW
+    LEAX B, X
+    LEAX -1, X
 
     ; Decrement the number of line flipped.
 

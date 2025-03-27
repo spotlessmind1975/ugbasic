@@ -1280,7 +1280,7 @@ void c6847_cline( Environment * _environment, char * _characters ) {
 
 }
 
-int c6847_image_size( Environment * _environment, int _width, int _height, int _mode ) {
+int c6847_image_size( Environment * _environment, int _width, int _height, int _mode, int _transparent ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1295,12 +1295,16 @@ int c6847_image_size( Environment * _environment, int _width, int _height, int _
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 2 + ( ( _width >> 2 ) * _height );
+            return 3 + ( ( _width >> 2 ) * _height );
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            return 2 + ( ( _width >> 3 ) * _height );
+            if ( _transparent ) {
+                return 3 + 2*( ( _width >> 3 ) * _height );
+            } else {
+                return 3 + ( ( _width >> 3 ) * _height );
+            }
 
     }
 
@@ -1308,7 +1312,7 @@ int c6847_image_size( Environment * _environment, int _width, int _height, int _
 
 }
 
-static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
+static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode, int _transparent ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1323,12 +1327,16 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            return 3 + ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames;
+            if ( _transparent ) {
+                return 3 + ( 3 + 2* ( ( _width >> 3 ) * _height ) ) * _frames;
+            } else {
+                return 3 + ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames;
+            }
 
     }
 
@@ -1336,7 +1344,7 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
 
 }
 
-static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode, int _transparent ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
@@ -1351,12 +1359,16 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            return 3 + ( ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+            if ( _transparent ) {
+                return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+            } else {
+                return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;                
+            }
 
     }
 
@@ -1390,8 +1402,17 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     
     int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
 
-    if (paletteColorCount > 2) {
+    if (paletteColorCount > 3) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    if ( _transparent_color == 0 ) {
+        for( int i=0; i<3; ++i ) {
+            if ( palette[i].alpha < 255 ) {
+                _transparent_color = 0x0f0000;
+                break;
+            }
+        }    
     }
 
     int i, j, k;
@@ -1409,7 +1430,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
+    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1, (_transparent_color & 0x0f0000 ) ? 1 : 0 );
     // printf("bufferSize = %d\n", bufferSize );
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
@@ -1431,6 +1452,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
+    *(buffer+2) = (_transparent_color & 0x0f0000) ? 0x01 : 0x00;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -1457,9 +1479,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                 rgb.blue = 0;
             }
 
-            if ( ( rgb.alpha < 255 ) || rgbi_equals_rgba( &black, &rgb ) ) {
+            if ( rgbi_equals_rgba( &black, &rgb ) || rgb.alpha < 255 ) {
                 colorIndex = 0;
-            } else if ( ( rgb.alpha == 255 ) && rgbi_equals_rgba( &white, &rgb ) ) {
+            } else if ( rgbi_equals_rgba( &white, &rgb ) ) {
                 colorIndex = 1;
             } else {
                 int minDistance = 9999;
@@ -1471,6 +1493,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                     }
                 }
             }
+            
 
             // printf("%d", i );
 
@@ -1480,11 +1503,21 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             if ( colorIndex > 0) {
-                *( buffer + offset + 2) |= bitmask;
+                *( buffer + offset + 3) |= bitmask;
                 // printf("*");
             } else {
-                *( buffer + offset + 2) &= ~bitmask;
+                *( buffer + offset + 3) &= ~bitmask;
                 // printf(" ");
+            }
+
+            if ( _transparent_color & 0x0f0000 ) {
+                if ( rgb.alpha == 0 ) {
+                    *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
+                    printf("*");
+                } else {
+                    *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
+                    printf(" ");
+                }    
             }
 
             adilinepixel(colorIndex);
@@ -1493,11 +1526,15 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
         }
 
+        printf("\n");
+
         _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
     }
+
+    printf( "First value for transparency = %2.2x\n", (unsigned char)*( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + 3) );
 
     adilineendbitmap();
 
@@ -1553,7 +1590,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     result->originalColors = lastUsedSlotInCommonPalette;
     memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
 
-    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1 );
+    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_COLOR1, 0 );
     
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_RESOLUTION1 );
 
@@ -1840,7 +1877,7 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
 
 Variable * c6847_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    int size = c6847_image_size( _environment, _width, _height, _mode );
+    int size = c6847_image_size( _environment, _width, _height, _mode, 0 );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
@@ -1863,8 +1900,8 @@ Variable * c6847_new_image( Environment * _environment, int _width, int _height,
 
 Variable * c6847_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = c6847_image_size( _environment, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode, 0 );
+    int frameSize = c6847_image_size( _environment, _width, _height, _mode, 0 );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
@@ -1894,9 +1931,9 @@ Variable * c6847_new_images( Environment * _environment, int _frames, int _width
 
 Variable * c6847_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
-    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
-    int frameSize = c6847_image_size( _environment, _width, _height, _mode );
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode, 0 );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode, 0 );
+    int frameSize = c6847_image_size( _environment, _width, _height, _mode, 0 );
 
     if ( ! size ) {
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
