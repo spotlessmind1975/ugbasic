@@ -54,8 +54,8 @@ IRQSVC2
     PULS D
     RTS
     
-OLDISVC
-    fdb $0
+; OLDISVC
+;     fdb $0
 
 OLDISVC2
     fdb $0
@@ -156,7 +156,13 @@ ISVCIRQFAILSAFE
     ; S+8   -> U or S
     ; S+10  -> PC <--- now it points to ISVCIRQ2
 
-    JMP [OLDISVC]
+    ; JMP [OLDISVC]
+
+    LDA $ff03
+    LDA $ff02
+
+    RTI
+    
 ISVCIRQ2
 
     ; Arriving here, we have all registers restored.
