@@ -51,7 +51,7 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-    int realAddress = 0x6000 + _address1;
+    int realAddress = _address1;
 
     // outline0("; bank uncompress (1)")
     // Variable * previous = bank_get( _environment );
@@ -64,7 +64,7 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
     // outline0("; end bank uncompress (1)")
 
     outline0("; bank uncompress")
-    outline1("LDU #$%4.4x", _bank );
+    outline1("LDB #$%2.2x", _bank );
     outline1("LDX #$%4.4x", realAddress );
     outline1("LDY #%s", _address2 );
     outline0("JSR BANKUNCOMPRESS");
@@ -89,9 +89,7 @@ void bank_uncompress_vars( Environment * _environment, char * _bank, char * _add
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
     // outline0("; bank uncompress (2)")
@@ -106,8 +104,8 @@ void bank_uncompress_vars( Environment * _environment, char * _bank, char * _add
     // outline0("; end bank uncompress (2)")
 
     outline0("; bank uncompress")
-    outline1("LDU #$%4.4x", _bank );
-    outline1("LDX %s", realAddress->realName );
+    outline1("LDB #$%2.2x", _bank );
+    outline1("LDX %s", address1->realName );
     outline1("LDY #%s", address2->realName );
     outline0("JSR BANKUNCOMPRESS");
     outline0("; end bank uncompress");

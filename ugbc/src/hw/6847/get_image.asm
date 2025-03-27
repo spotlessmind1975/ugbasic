@@ -370,6 +370,8 @@ GETIMAGE14
     ROLA
     LSLB
     ROLA
+    LSLB
+    ROLA
     LEAX D, X
 
     LDD <IMAGEX
@@ -394,7 +396,7 @@ GETIMAGECOMMON
     STA <IMAGEH
     STA <IMAGEH2
 
-    LEAY 2,Y
+    LEAY 3,Y
 
     LDB <IMAGEW
     DECB

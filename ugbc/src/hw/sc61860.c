@@ -1066,6 +1066,16 @@ void sc61860_poke( Environment * _environment, char * _address, char * _source )
 
 }
 
+void sc61860_poke_const( Environment * _environment, char * _address, int _source ) {
+
+    op_ldy( _environment, _address );
+
+    op_lda_direct( _environment, _source );
+
+    op_sta_y( _environment );
+
+}
+
 void sc61860_peekw( Environment * _environment, char * _address, char * _target ) {
 
     op_ldx( _environment, _address );
@@ -1089,6 +1099,21 @@ void sc61860_pokew( Environment * _environment, char * _address, char * _source 
     op_sta_y( _environment );
 
     op_lda( _environment, address_displacement( _environment, _source, "1" ) );
+
+    op_sta_yn( _environment );
+
+
+}
+
+void sc61860_pokew_const( Environment * _environment, char * _address, int _source ) {
+
+    op_ldy( _environment, _address );
+
+    op_lda_direct( _environment, (unsigned char)(_source & 0xff ) );
+
+    op_sta_y( _environment );
+
+    op_lda_direct( _environment, (unsigned char)((_source>>8) & 0xff ) );
 
     op_sta_yn( _environment );
 
@@ -1138,7 +1163,25 @@ void sc61860_poked( Environment * _environment, char * _address, char * _source 
 
     op_sta_yn( _environment );
 
-    op_lda( _environment, address_displacement( _environment, _source, "4" ) );
+}
+
+void sc61860_poked_const( Environment * _environment, char * _address, int _source ) {
+
+    op_ldy( _environment, _address );
+
+    op_lda_direct( _environment, (unsigned char)(_source&0xff) );
+
+    op_sta_y( _environment );
+
+    op_lda_direct( _environment, (unsigned char)((_source>>8)&0xff) );
+
+    op_sta_yn( _environment );
+
+    op_lda_direct( _environment, (unsigned char)((_source>>16)&0xff) );
+
+    op_sta_yn( _environment );
+
+    op_lda_direct( _environment, (unsigned char)((_source>>24)&0xff) );
 
     op_sta_yn( _environment );
 

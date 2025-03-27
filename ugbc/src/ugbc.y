@@ -11719,6 +11719,26 @@ let_definition :
             variable_move_array1_type( _environment, variable->name, variableIndex->name, variableField->name, variable_move_from_array1_type( _environment, expr->name, exprIndex->name, exprField->name )->name  );
         }
 
+    }
+    | Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Integer {
+        Variable * variable = variable_retrieve( _environment, $1 );
+        if ( variable->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $1 );
+        }
+        if ( variable->arrayType != VT_TYPE ) {
+            CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
+        }
+        Variable * variableIndex = variable_retrieve( _environment, $3 );
+        if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
+            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
+        }
+        Field * variableField = field_find( variable->typeType, $6 );
+        if ( ! variableField ) {
+            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
+        }
+
+        variable_move_array1_type_const( _environment, variable->name, variableIndex->name, variableField->name, $8 );
+
     };
 
 statement2nc:
