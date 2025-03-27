@@ -11616,6 +11616,9 @@ statement2nc:
     if ( variable_exists( _environment, $2 ) ) {
         index = variable_retrieve( _environment, $2 );
     } else {
+        if ( ((struct _Environment *)_environment)->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( $2 );
+        }        
         index = variable_define( _environment, $2, vt, 0 );
     }
     begin_for_prepare( _environment, $2 );
@@ -11645,6 +11648,9 @@ statement2nc:
             }
         }
      } else {
+        if ( ((struct _Environment *)_environment)->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( $3 );
+        }        
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;

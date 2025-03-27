@@ -137,6 +137,9 @@ void begin_for_prepare( Environment * _environment, char * _index ) {
     if ( variable_exists( _environment, _index ) ) {
         index = variable_retrieve( _environment, _index );
     } else {
+        if ( _environment->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( _index );
+        }
         index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
     }
 
@@ -280,6 +283,9 @@ void begin_for_identifier( Environment * _environment, char * _index ) {
     if ( variable_exists( _environment, _index ) ) {
         index = variable_retrieve( _environment, _index );
     } else {
+        if ( _environment->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( _index );
+        }
         index = variable_retrieve_or_define( _environment, _index, _environment->defaultVariableType, 0 );
     }
 
@@ -423,6 +429,9 @@ void begin_for( Environment * _environment, char * _index, char * _from, char * 
     if ( variable_exists( _environment, _index ) ) {
         index = variable_retrieve( _environment, _index );
     } else {
+        if ( _environment->optionExplicit ) {
+            CRITICAL_VARIABLE_UNDEFINED( _index );
+        }
         index = variable_retrieve_or_define( _environment, _index, maxType, 0 );
     }
 
