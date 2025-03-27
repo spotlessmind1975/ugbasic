@@ -29,102 +29,74 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                          STARTUP ROUTINE ON TRS-80 COLOR COMPUTER           *
+;*                        DOUBLE BUFFER ROUTINE ON 6847                        *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-COCOSTARTUP
+DOUBLEBUFFERINIT
 
-    ; LDD OLDISVC
-    ; BNE COCOSTARTUPNOIRQREDEF
-
-    LDD OLDNMIISVC
-    BNE COCOSTARTUPNOIRQREDEF
-
-    ; LDD $010D
-    ; STD OLDISVC
-
-    LDD #ISVCIRQ
-    STD $010D
-
-    LDD $010A
-    STD OLDNMIISVC
-
-    LDD #NMIISVCIRQ
-    STD $010A
-
-COCOSTARTUPNOIRQREDEF
-
-    LDA #0
-    STA $011f
-
-@IF dataSegment
-    LDD #DATAFIRSTSEGMENT
-    STD DATAPTR
-@ENDIF
-
-    LDD #$0
-COCOSTARTUPL1
-    ADDD 1
-    STD <MATHPTR0
-    CMPD #$3100
-    BNE COCOSTARTUPL1
-
-    LDA COCOTIMER+1
-    CMPA #5
-    BGT COCONTSC
-
-COCOPAL
-    LDA #50
-    STA TICKSPERSECOND
-    JMP COCOSTARTUPDONE
-
-COCONTSC
-    LDA #60
-    STA TICKSPERSECOND
-    JMP COCOSTARTUPDONE
-
-COCOSTARTUPDONE
-
-@IF deployed.dcommon
-    JSR COCODCOMMONSETUP
-@ENDIF
-
-@IF deployed.serial && deployed.fujinet
-    JSR FUJINETREADY
-@ENDIF
-
-@IF sysCallUsed
-
-SYSCALLDONE
-
-@ENDIF
-
-    LDA #$01
-    STA $FFDF
-    STA RAMENABLED
+    LDA #1
+    STA DOUBLEBUFFERENABLED
+    JSR SWITCHSCREEN0
+    JSR CLSG
+    JSR SWITCHSCREEN1
+    JSR CLSG
+    JSR SWITCHSCREEN0
     RTS
 
-@IF sysCallUsed
+DOUBLEBUFFERCLEANUP
+    LDD #$0400
+    STD BITMAPADDRESS
+    CLRA
+    STA DOUBLEBUFFERENABLED
+DOUBLEBUFFERCLEANUP2
+    LDA #$0
+    STA SCREENVISIBLE
+    RTS
 
-SYSCALL
-    STA $FFDE
-    CLR RAMENABLED
-SYSCALL0
-    JSR $0000
-    BRA SYSCALLDONE
-    
-@ENDIF
+SWITCHSCREEN
+    LDA SCREENVISIBLE
+    BEQ SWITCHSCREEN1
 
-WAITTIMER
-    LDX COCOTIMER
-WAITTIMERL1
-    CMPX COCOTIMER
-    BEQ WAITTIMERL1
-    SUBD #1
-    CMPD #0
-    BNE WAITTIMER
+SWITCHSCREEN0
+    STA $FFC6
+    STA $FFC8
+    STA $FFCA
+    STA $FFCC
+    STA $FFCE
+    STA $FFD0
+    STA $FFD2
+    STA $FFC9
+    LDD #$1C00
+    STD BITMAPADDRESS
+    LDA #$0
+    STA SCREENVISIBLE
+    LDD #$1800
+    LDY #$0400
+    LDX #$1C00
+    JSR DUFFDEVICE
+    RTS
+
+SWITCHSCREEN1
+    STA $FFC6
+    STA $FFC8
+    STA $FFCA
+    STA $FFCC
+    STA $FFCE
+    STA $FFD0
+    STA $FFD2
+    STA $FFC9
+    STA $FFCB
+    STA $FFCD
+    LDD #$0400
+    STD BITMAPADDRESS
+    LDA #$1
+    STA SCREENVISIBLE
+    LDD #$1800
+    LDY #$1C00
+    LDX #$0400
+    JSR DUFFDEVICE
     RTS
     

@@ -218,7 +218,7 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 #define SET_VIDEOAT_ZERO    SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR;
 
 #define SET_VIDEOAT_0400    SET_VIDEOAT_ZERO; SAM_F1_SET;
-#define SET_VIDEOAT_1C00    SET_VIDEOAT_ZERO; SAM_F2_SET; SAM_F4_SET; 
+#define SET_VIDEOAT_1C00    SET_VIDEOAT_ZERO; SAM_F2_SET; SAM_F3_SET; SAM_F4_SET; 
 
 void console_calculate( Environment * _environment ) {
 

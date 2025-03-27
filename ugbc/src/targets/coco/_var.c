@@ -715,9 +715,10 @@ void variable_cleanup( Environment * _environment ) {
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
         outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 - 3 );
     }
-    outhead0("IRQSTACK rzb 512");
+    outhead0("IRQSTACKBEGIN rzb 510");
+    outhead0("IRQSTACKEND fcb $00, 00");
     outhead0("CODESTART");
-    outline0("LDS #IRQSTACK");
+    outline0("LDS #IRQSTACKEND");
     outline0("STA $FFDF");
     outline0("JMP CODESTART2");
 
