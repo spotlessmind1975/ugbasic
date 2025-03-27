@@ -59,7 +59,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // SIZE
 
-                outline1( "LDD #$%4.4x", image->frameSize );
+                outline1( "LDD #$%4.4x", image->size );
                 outline1( "STD %s+2", imageRef->realName );
 
                 // BANK
@@ -99,7 +99,7 @@ Variable * image_ref( Environment * _environment, char * _image ) {
 
                 // SIZE
 
-                outline1( "LDD #$%4.4x", image->frameSize );
+                outline1( "LDD #$%4.4x", image->size );
                 outline1( "STD %s+2", imageRef->realName );
 
                 // BANK
