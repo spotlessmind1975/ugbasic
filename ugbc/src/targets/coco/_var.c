@@ -705,7 +705,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("ORG $2A00" );
     outline0("JMP CODESTART");
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 - 3 );
     }
     outhead0("IRQSTACK rzb 512");
     outhead0("CODESTART");
