@@ -5055,7 +5055,7 @@ Variable * variable_move_to_mt( Environment * _environment, char * _source, char
 
     return source;
     
-}
+}   
 
 /**
  * @brief Increment a variable by one
@@ -15530,6 +15530,7 @@ static void variable_increment_decrement_array_type( Environment * _environment,
         CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
     }
 
+    outline0("; offset = variable_move_from_array_get_address" );
     Variable * offset = variable_move_from_array_get_address( _environment, _source, _field );
 
     Variable * value = NULL;
@@ -15560,15 +15561,12 @@ static void variable_increment_decrement_array_type( Environment * _environment,
 
         switch( VT_BITWIDTH( field->type ) ) {
             case 32:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 4 );
                 break;
             case 16:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 2 );
                 break;
             case 8:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 1 );
                 break;
             case 1:
@@ -15608,15 +15606,12 @@ static void variable_increment_decrement_array_type( Environment * _environment,
 
         switch( VT_BITWIDTH( field->type ) ) {
             case 32:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 4 );
                 break;
             case 16:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 2 );
                 break;
             case 8:
-                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
                 bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 1 );
                 break;
             case 1:
@@ -15631,9 +15626,11 @@ static void variable_increment_decrement_array_type( Environment * _environment,
 }
 
 void variable_increment_array_type( Environment * _environment, char * _source, char * _field ) {
+    outline0("; variable_increment_array_type ");
     variable_increment_decrement_array_type( _environment, _source, _field, 1 );
 }
 
 void variable_decrement_array_type( Environment * _environment, char * _source, char * _field ) {
+    outline0("; variable_decrement_array_type ");
     variable_increment_decrement_array_type( _environment, _source, _field, -1 );
 }
