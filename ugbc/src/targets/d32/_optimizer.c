@@ -82,7 +82,7 @@
  ****************************************************************************/
 
 #define DIRECT_PAGE     0x2100
-#define LOOK_AHEAD      5
+#define LOOK_AHEAD      6
 #define ALLOW_UNSAFE    0
 #define KEEP_COMMENTS   1
 
@@ -823,6 +823,34 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim(buf[0], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
         optim(buf[1], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", " CLRA" );
         optim(buf[3], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " JSR BANKREAD1")
+    &&  po_buf_match(buf[1], " INC *", v1 )
+    &&  po_buf_match(buf[2], " LDB #$*", v2)
+    &&  po_buf_match(buf[3], " LDY *", v3)
+    &&  po_buf_match(buf[4], " LDX #*", v4)
+    &&  po_buf_match(buf[5], " JSR BANKWRITE1")
+    &&  (po_buf_strcmp(v1, v4) == 0)
+        ) {
+        optim(buf[2], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[3], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[4], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " JSR BANKREAD1")
+    &&  po_buf_match(buf[1], " DEC *", v1 )
+    &&  po_buf_match(buf[2], " LDB #$*", v2)
+    &&  po_buf_match(buf[3], " LDY *", v3)
+    &&  po_buf_match(buf[4], " LDX #*", v4)
+    &&  po_buf_match(buf[5], " JSR BANKWRITE1")
+    &&  (po_buf_strcmp(v1, v4) == 0)
+        ) {
+        optim(buf[2], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[3], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[4], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
