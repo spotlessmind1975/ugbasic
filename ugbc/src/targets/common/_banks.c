@@ -182,6 +182,7 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     _variable->absoluteAddress = bank->baseAddress + bank->address;
     _variable->residentAssigned = _resident;
     _variable->variableUniqueId = UNIQUE_RESOURCE_ID;
+    _variable->bankReadOrWrite = 1;
 
     if ( _variable->valueBuffer ) {
         memcpy( &bank->data[bank->address], _variable->valueBuffer, _variable->size );

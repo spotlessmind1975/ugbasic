@@ -15490,15 +15490,15 @@ void variable_move_array1_type_const( Environment * _environment, char * _array,
         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
         switch( VT_BITWIDTH( field->type ) ) {
             case 32:
-                cpu_poked_const( _environment, array->realName, _value );
+                cpu_store_32bit( _environment, array->realName, _value );
                 bank_write_vars_bank_direct_size( _environment, array->name, array->bankAssigned, offset->name, 4 );
                 break;
             case 16:
-                cpu_pokew_const( _environment, array->realName, _value );
+                cpu_store_16bit( _environment, array->realName, _value );
                 bank_write_vars_bank_direct_size( _environment, array->name, array->bankAssigned, offset->name, 2 );
                 break;
             case 8:
-                cpu_poke_const( _environment, array->realName, _value );
+                cpu_store_8bit( _environment, array->realName, _value );
                 bank_write_vars_bank_direct_size( _environment, array->name, array->bankAssigned, offset->name, 1 );
                 break;
             case 1:
