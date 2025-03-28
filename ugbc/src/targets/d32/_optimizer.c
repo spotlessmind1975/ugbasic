@@ -854,6 +854,13 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " LDB *", v1)
+    &&  po_buf_match(buf[1], " CLRB" )
+        ) {
+        optim(buf[0], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
 }
 
 /* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */
