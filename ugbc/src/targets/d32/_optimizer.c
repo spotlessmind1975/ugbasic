@@ -75,6 +75,7 @@
 #include "../../ugbc.h"
 #include <stdarg.h>
 #include <ctype.h>
+#include <string.h>
 
 /****************************************************************************
  * CODE SECTION 
@@ -802,6 +803,15 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " ADDD #$*", v1)
+    &&  po_buf_match(buf[1], " ADDD #$*", v2)
+        ) {
+        long int vi1 = strtol(v1->str, NULL, 16);
+        long int vi2 = strtol(v2->str, NULL, 16);
+        optim(buf[0], RULE "(ADD#,ADD#)->(ADD#)", " ADDD #$%4.4x", (int)(vi1+vi2) );
+        optim(buf[1], RULE "(ADD#,ADD#)->(ADD#)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
 
 }
 
