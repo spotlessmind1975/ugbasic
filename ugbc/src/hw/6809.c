@@ -1378,10 +1378,23 @@ void cpu6809_math_mul2_const_8bit( Environment * _environment, char *_source, in
     inline( cpu_math_mul2_const_8bit )
 
         outline1("LDB %s", _source );           
-        for(i=0; i<_steps; ++i) {
-            outline0("LSLB" );
+        if ( ! _environment->cpuOptimization.cpu_math_mul2_const_8bit_generated[_steps] ) {
+            
+            _environment->cpuOptimization.cpu_math_mul2_const_8bit_generated[_steps] = 1;
+
+            MAKE_LABEL
+
+            outline1("BRA %s", label);
+            outhead1("cpu6809_math_mul2_const_8bit_%d", _steps);
+                for(i=0; i<_steps; ++i) {
+                    outline0("LSLB" );
+                }
+                outline1("STB %s", _source );
+                outline0("RTS" );
+            outhead1("%s", label);
+
         }
-        outline1("STB %s", _source );
+        outline1("JSR cpu6809_math_mul2_const_8bit_%d", _steps );
 
     no_embedded( cpu_math_mul2_const_8bit );
 
