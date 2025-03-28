@@ -813,6 +813,19 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " LDD #$0000")
+    &&  po_buf_match(buf[1], " STD *", v2)
+    &&  po_buf_match(buf[2], " LDB *", v3)
+    &&  po_buf_match(buf[3], " ADDD *", v4)
+    &&  po_buf_match(buf[4], " STD *", v5)
+    &&  (po_buf_strcmp(v2, v4) == 0) && (po_buf_strcmp(v4, v5) == 0)
+        ) {
+        optim(buf[0], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
+        optim(buf[1], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", " CLRA" );
+        optim(buf[3], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
 }
 
 /* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */
