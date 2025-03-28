@@ -4991,29 +4991,6 @@ void variable_increment_array( Environment * _environment, char * _source ) {
 
 }
 
-void variable_increment_array_type( Environment * _environment, char * _source, char * _field ) {
-
-    if ( _environment->emptyProcedure ) {
-        return;
-    }
-
-    Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( _source );
-    }
-    if ( array->arrayType != VT_TYPE ) {
-        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
-    }
-    Variable * value = variable_move_from_array_type( _environment, array->name, _field );
-
-    variable_increment( _environment, value->name );
-
-    variable_move_array_type( _environment, array->name, _field, value->name );
-
-    return;
-
-}
-
 /**
  * @brief Store a variable's value
  * 
@@ -5252,30 +5229,6 @@ void variable_decrement_array( Environment * _environment, char * _source ) {
     return;
 
 }
-
-void variable_decrement_array_type( Environment * _environment, char * _source, char * _field ) {
-
-    if ( _environment->emptyProcedure ) {
-        return;
-    }
-
-    Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( _source );
-    }
-    if ( array->arrayType != VT_TYPE ) {
-        CRITICAL_VARIABLE_TYPE_NEEDED( _source );
-    }
-    Variable * value = variable_move_from_array_type( _environment, array->name, _field );
-
-    variable_decrement( _environment, value->name );
-
-    variable_move_array_type( _environment, array->name, _field, value->name );
-
-    return;
-
-}
-
 
 /**
  * @brief Decrement a variable by one
@@ -15508,4 +15461,179 @@ void variable_move_array1_type_const( Environment * _environment, char * _array,
 
     }
 
+}
+
+
+static Variable * variable_move_from_array_get_address( Environment * _environment, char * _array, char * _field ) {
+    
+    MAKE_LABEL
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _array );
+    }
+    if ( array->arrayType != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    if ( !array->typeType ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+    }
+    Field * field = field_find( array->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, array->name);
+
+    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(array->typeType->size) );
+
+    variable_add_inplace( _environment, offset->name, field->offset );
+    
+    if ( array->bankAssigned == -1 ) {
+
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+    } else {
+
+        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+
+    }
+
+    return offset;
+
+}
+
+static void variable_increment_decrement_array_type( Environment * _environment, char * _source, char * _field, int _direction ) {
+
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    Variable * source = variable_retrieve( _environment, _source );
+
+    if ( source->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _source );
+    }
+    if ( source->arrayType != VT_TYPE ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _source );
+    }
+    if ( !source->typeType ) {
+        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _source );
+    }
+    Field * field = field_find( source->typeType, _field );
+    if ( ! field ) {
+        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+    }
+
+    Variable * offset = variable_move_from_array_get_address( _environment, _source, _field );
+
+    Variable * value = NULL;
+
+    if ( source->bankAssigned == -1 ) {
+
+        value = variable_temporary( _environment, field->type, "(value)" );
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect2( _environment, offset->realName, value->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect2( _environment, offset->realName, value->realName);
+                break;
+            case 8:
+                cpu_move_8bit_indirect2( _environment, offset->realName, value->realName );
+                break;
+            case 1:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[field->type]);
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[field->type]);
+        }
+
+    } else {
+
+        value = source;
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 4 );
+                break;
+            case 16:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 2 );
+                break;
+            case 8:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 1 );
+                break;
+            case 1:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[field->type]);
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[field->type]);
+        }
+
+        value->type = field->type;
+
+    }
+
+    if ( _direction > 0 ) {
+        variable_increment( _environment, value->name );
+    } else if ( _direction < 0 ) {
+        variable_decrement( _environment, value->name );        
+    }
+
+    if ( source->bankAssigned == -1 ) {
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 8:
+                cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+        }
+
+    } else {
+
+        switch( VT_BITWIDTH( field->type ) ) {
+            case 32:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 4 );
+                break;
+            case 16:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 2 );
+                break;
+            case 8:
+                cpu_math_add_16bit_const( _environment, offset->realName, source->absoluteAddress, offset->realName );
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 1 );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+        }
+
+    }
+
+    value->type = VT_TARRAY;
+
+}
+
+void variable_increment_array_type( Environment * _environment, char * _source, char * _field ) {
+    variable_increment_decrement_array_type( _environment, _source, _field, 1 );
+}
+
+void variable_decrement_array_type( Environment * _environment, char * _source, char * _field ) {
+    variable_increment_decrement_array_type( _environment, _source, _field, -1 );
 }
