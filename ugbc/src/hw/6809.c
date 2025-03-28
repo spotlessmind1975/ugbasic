@@ -2321,12 +2321,24 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
 
     inline( cpu_math_mul2_const_16bit )
 
-
         outline1("LDD %s", _source );           
-        for(i=0; i<_steps; ++i) {
-            outline0("LSLB" );
-            outline0("ROLA" );
+        if ( !_environment->cpuOptimization.cpu_math_mul2_const_16bit_generated[_steps] ) {
+            
+            _environment->cpuOptimization.cpu_math_mul2_const_16bit_generated[_steps] = 1;
+
+            MAKE_LABEL;
+
+            outline1("BRA %s", label);            
+            outhead1("cpu6809_math_mul2_const_16bit_%d", _steps);            
+                for(i=0; i<_steps; ++i) {
+                    outline0("LSLB" );
+                    outline0("ROLA" );
+                }
+            outline0("RTS");
+            outhead1("%s", label);
+
         }
+        outline1("JSR cpu6809_math_mul2_const_16bit_%d", _steps);
         outline1("STD %s", _source );
 
     no_embedded( cpu_math_mul2_const_16bit );
