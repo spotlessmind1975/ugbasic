@@ -93,6 +93,7 @@ BLITR3 fcb $0
 ; BITMAP MODE 16 (MODE #3)
 ; ------------------------------------------------------------------------------
 
+    ALIGN 2
 PLOTVBASE
     fdb $0000, $0028, $0050, $0078, $00A0, $00C8, $00F0, $0118, $0140, $0168
     fdb $0190, $01B8, $01E0, $0208, $0230, $0258, $0280, $02A8, $02D0, $02F8
@@ -138,6 +139,7 @@ CONSOLESA     fdb 0         ; <-- calculated (address)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
+    ALIGN 2
 CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
 CONSOLES2     rzb 4*2        ; <-- storage for memorize / remember on console
 
