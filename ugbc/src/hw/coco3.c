@@ -451,7 +451,7 @@ void coco3_fujinet_set_channel_mode( Environment * _environment, int _mode, char
     deploy( serial, src_hw_coco3_serial_asm);
     deploy( fujinet, src_hw_coco3_fujinet_asm);
 
-    outline1( "LDB #$%2.2x", _mode );
+    outline1( "LDB #$%2.2x", (unsigned char)(_mode&0xff) );
 
     cpu_call( _environment, "FUJINETSETCHANNELMODE" );
 
@@ -701,7 +701,7 @@ void coco3_dojo_serial_put_requestds( Environment * _environment, int _command, 
     }
     outline0( "TFR D, U" );
     outline1( "LDA #$%2.2x", _command );
-    outline1( "LDB #$%2.2x", _size );
+    outline1( "LDB #$%2.2x", (unsigned char)(_size&0xff) );
     outline1( "LDY #%s", _data );
     outline0( "JSR DOJOSERIALPUTREQUEST" );
     if ( _result ) {
@@ -901,7 +901,7 @@ void coco3_dojo_fujinet_put_requestds( Environment * _environment, int _command,
     }
     outline0( "TFR D, U" );
     outline1( "LDA #$%2.2x", _command );
-    outline1( "LDB #$%2.2x", _size );
+    outline1( "LDB #$%2.2x", (unsigned char)(_size&0xff) );
     outline1( "LDY #%s", _data );
     outline0( "JSR DOJOFUJINETPUTREQUEST" );
     if ( _result ) {

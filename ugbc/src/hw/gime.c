@@ -1276,7 +1276,7 @@ void gime_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
     if ( _c ) {
-        outline1("LDB #$%2.2x", ( *_c & 0xff ) );
+        outline1("LDB #$%2.2x", (unsigned char)( *_c & 0xff ) );
     } else {
         Variable * c = variable_retrieve( _environment, "PEN" );
         outline1("LDB %s", c->realName );

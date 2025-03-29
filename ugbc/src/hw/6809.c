@@ -740,7 +740,7 @@ void cpu6809_store_8bit( Environment * _environment, char *_destination, int _va
     inline( cpu_store_8bit )
 
     if(_value) {
-        outline1("LDB #$%2.2x" , _value );
+        outline1("LDB #$%2.2x" , (unsigned char)(_value & 0xff) );
         outline1("STB %s", _destination );
     } else {
         // make A=0 as much as possible
@@ -1328,7 +1328,7 @@ void cpu6809_math_div2_const_8bit( Environment * _environment, char *_source, in
             outhead1("%spos", label);
         }
         outline1("LDA %s", _source);
-        outline1("LDB #$%2.2x", _steps);
+        outline1("LDB #$%2.2x", (unsigned char)(_steps & 0xff));
         outline0("CMPB #0");
         outline1("BEQ %sdone", label);
         outhead1("%sloop", label);
@@ -1411,7 +1411,7 @@ void cpu6809_math_complement_const_8bit( Environment * _environment, char *_sour
 
     inline( cpu_math_complement_const_8bit )
 
-        outline1("LDB #$%2.2x", _value);
+        outline1("LDB #$%2.2x", (unsigned char)(_value & 0xff));
         outline1("SUBB %s", _source);
         outline1("STB %s", _source);
 
@@ -4365,7 +4365,7 @@ void cpu6809_mem_move_size( Environment * _environment, char *_source, char *_de
 
             if ( _size ) {
 
-                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
                 outline0("DECB" );
                 outhead1("%s_2", label );
                 outline0("LDA B,Y" );
@@ -4423,7 +4423,7 @@ void cpu6809_mem_move_direct_size( Environment * _environment, char *_source, ch
 
             if ( _size ) {
 
-                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
                 outline0("DECB" );
                 outhead1("%s_2", label );
                 outline0("LDA B,Y" );
@@ -4481,7 +4481,7 @@ void cpu6809_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
             if ( _size ) {
 
-                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
                 outline0("DECB" );
                 outhead1("%s_2", label );
                 outline0("LDA B,Y" );
@@ -4539,7 +4539,7 @@ void cpu6809_mem_move_indirect_direct_size( Environment * _environment, char *_s
 
             if ( _size ) {
 
-                outline1("LDB #$%2.2x", ( _size & 0xff ) );
+                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
                 outline0("DECB" );
                 outhead1("%s_2", label );
                 outline0("LDA B,Y" );
@@ -5477,7 +5477,7 @@ void cpu6809_bits_to_string( Environment * _environment, char * _number, char * 
             break;
     }
 
-    outline1("LDB #$%2.2x", _bits );
+    outline1("LDB #$%2.2x", (unsigned char)(_bits&0xff) );
     outline0("JSR BINSTR");
 
     cpu6809_mem_move_direct_indirect_size( _environment, "BINSTRBUF", _string, _bits );
@@ -5492,13 +5492,13 @@ void cpu6809_hex_to_string( Environment * _environment, char * _number, char * _
 
     embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
 
-        outline1("LDB #$%2.2x", ( _bits >> 3 ) );
+        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 3 ) );
         outline1("LDX #%s", _number );
         outline1("LDY %s", _string );
         
         outline0("JSR H2STRING" );
 
-        outline1("LDB #$%2.2x", ( _bits >> 2 ) );
+        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 2 ) );
         outline1("STB %s", _string_size );
 
     done()
@@ -5611,7 +5611,7 @@ void cpu6809_dsdescriptor( Environment * _environment, char * _index, char * _ad
 void cpu6809_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
     outline1("LDX %s", _destination);
-    outline1("LDB #$%2.2x", _value);
+    outline1("LDB #$%2.2x", (unsigned char)(_value & 0xff));
     outline1("STB $%2.2x,X", _offset);
 
 }
