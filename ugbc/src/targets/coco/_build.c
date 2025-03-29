@@ -135,7 +135,7 @@ void generate_dsk( Environment * _environment ) {
     (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
     fclose( fh );
 
-    int programExeSize = 0x4d00 - _environment->program.startingAddress;
+    int programExeSize = 0x4d00 - 0x2a00; // _environment->program.startingAddress;
     if ( executableBinaryFileSize < programExeSize ) {
         programExeSize = executableBinaryFileSize;
     }
@@ -186,14 +186,14 @@ void generate_dsk( Environment * _environment ) {
     fputc( 0x00, fh );
     fputc( programExeSize >> 8, fh );
     fputc( programExeSize & 0xff, fh );
-    fputc( _environment->program.startingAddress >> 8, fh );
-    fputc( _environment->program.startingAddress & 0xff, fh );
+    fputc( 0x2a /*_environment->program.startingAddress >> 8*/, fh );
+    fputc( 0x00 /*_environment->program.startingAddress & 0xff*/, fh );
     fwrite( programExe, 1, programExeSize, fh );
     fputc( 0xff, fh );
     fputc( 0x00, fh );
     fputc( 0x00, fh );
-    fputc( _environment->program.startingAddress >> 8, fh );
-    fputc( _environment->program.startingAddress & 0xff, fh );
+    fputc( 0x2a /*_environment->program.startingAddress >> 8*/, fh );
+    fputc( 0x00 /*_environment->program.startingAddress & 0xff*/, fh );
     fclose( fh );
 
     if ( programDataCount ) {
