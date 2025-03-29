@@ -1969,8 +1969,8 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
             outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
             outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
+            outline0("ABX" );
+            outline0("ABX" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
         }
@@ -1980,8 +1980,8 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -1994,8 +1994,8 @@ void c6847_get_image( Environment * _environment, char * _image, char * _x, char
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -2078,8 +2078,8 @@ void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _
             outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
             outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
+            outline0("ABX" );
+            outline0("ABX" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
         }
@@ -2089,8 +2089,8 @@ void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -2103,8 +2103,8 @@ void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }

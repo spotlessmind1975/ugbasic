@@ -574,8 +574,8 @@ void variable_cleanup( Environment * _environment ) {
                 outhead1("fs%4.4xoffsetframe", actual->size );                      
                 outline1("LDX #OFFSETS%4.4x", actual->size );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
                 outline0("RTS");
