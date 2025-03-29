@@ -84,7 +84,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data");
-                        outline1("%s: defs 16", variable->realName);
+                        outline2("%s: defs %d", variable->realName, calculate_path_size( _environment ) );
                         outhead0("section code");
                     }
                     break;

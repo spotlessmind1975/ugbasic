@@ -78,7 +78,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 16", variable->realName);
+                        outhead2("%s: .res %d,0", variable->realName, calculate_path_size( _environment ) );
                     }
                     break;
                 case VT_VECTOR2:

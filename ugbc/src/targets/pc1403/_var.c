@@ -77,7 +77,12 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s .equ 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .db 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0", variable->realName);
+                        int size = calculate_path_size( _environment );
+                        out1("%s: .db ", variable->realName);
+                        for( int i=0; i<size-1; ++i ) {
+                            out0("0, ");
+                        }
+                        out0("0");
                     }
                     break;
                 case VT_VECTOR2:

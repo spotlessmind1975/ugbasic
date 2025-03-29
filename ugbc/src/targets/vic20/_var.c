@@ -83,7 +83,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 16,0", variable->realName);
+                        outhead2("%s: .res %d,0", variable->realName, calculate_path_size( _environment ) );
                     }        
                     break;
                 case VT_VECTOR2:
