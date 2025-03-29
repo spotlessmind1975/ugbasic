@@ -1066,6 +1066,142 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     
 }
 
+// @bit2: ok
+static Variable * calculate_offset_in_array( Environment * _environment, char * _array ) {
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
+    Variable * offset = variable_temporary( _environment, VT_WORD, "(offset in array)");
+
+    variable_store( _environment, offset->name, 0 );
+
+    int i,j;
+
+    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
+        if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
+            if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] >= array->arrayDimensionsEach[0] ) {
+                CRITICAL_ARRAY_OUT_OF_BOUND( _array );
+            }
+            variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
+        } else {
+            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+            variable_add_inplace_vars( _environment, offset->name, index->name );
+        }
+    } else {
+        for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
+            int baseValue = 1;
+            for( j=0; j<(_environment->arrayIndexes[_environment->arrayNestedIndex]-i-1); ++j ) {
+                baseValue *= array->arrayDimensionsEach[j];
+            }
+            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
+                if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] >= array->arrayDimensionsEach[array->arrayDimensions-i-1] ) {
+                    CRITICAL_ARRAY_OUT_OF_BOUND( _array );
+                }
+                variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
+            } else {
+                Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+                if(baseValue!=1) {
+                    variable_store( _environment, base->name, baseValue );
+                    Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
+                    variable_add_inplace_vars( _environment, offset->name, additionalOffset->name );
+                } else {
+                    variable_add_inplace_vars( _environment, offset->name, index->name );
+                }
+            }
+        }
+    }
+
+    return offset;
+
+}
+
+static Variable * variable_move_from_array_get_address( Environment * _environment, char * _array, char * _field ) {
+    
+    MAKE_LABEL
+
+    Variable * array = variable_retrieve( _environment, _array );
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( _array );
+    }
+    Field * field = NULL;
+    if ( _field ) {
+        if ( array->arrayType != VT_TYPE ) {
+            CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+        }
+        if ( !array->typeType ) {
+            CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
+        }
+        field = field_find( array->typeType, _field );
+        if ( ! field ) {
+            CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
+        }
+    }
+
+    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
+        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
+    }
+
+    Variable * offset = calculate_offset_in_array( _environment, array->name);
+
+    switch( array->arrayType ) {
+        case VT_TYPE:
+            offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(array->typeType->size) );
+            break;
+        case VT_PATH:
+            offset = variable_sl_const( _environment, offset->name, 4 );
+            break;
+        case VT_VECTOR2:
+            offset = variable_sl_const( _environment, offset->name, 2 );
+            break;
+        case VT_IMAGEREF:
+            offset = variable_sl_const( _environment, offset->name, 4 );
+            break;
+        case VT_FLOAT:
+            offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( array->arrayPrecision ) );
+            break;
+        case VT_STRING:
+            CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
+            case VT_TILE:
+            case VT_TILESET:
+            case VT_SPRITE:
+            case VT_DSTRING:
+            offset = variable_sl_const( _environment, offset->name, 0 );
+            break;
+            case VT_MSPRITE:
+            offset = variable_sl_const( _environment, offset->name, 1 );
+            break;
+            case VT_TILES:
+            offset = variable_sl_const( _environment, offset->name, 2 );
+            break;
+            default:
+            offset = variable_sl_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
+            break;
+    }
+
+    if ( field ) {
+        variable_add_inplace( _environment, offset->name, field->offset );
+    }
+    
+    if ( array->bankAssigned == -1 ) {
+
+        cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
+
+    } else {
+
+        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+
+    }
+
+    return offset;
+
+}
+
 /**
  * @brief Define a temporary variable
  * 
@@ -4971,21 +5107,103 @@ void variable_increment_type( Environment * _environment, char * _source, char *
  * @param _source Source variable's name
  * @return Variable* The source variable
  */
-void variable_increment_array( Environment * _environment, char * _source ) {
+static void variable_increment_decrement_array( Environment * _environment, char * _source, int _direction ) {
 
     if ( _environment->emptyProcedure ) {
         return;
     }
 
-    Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( _source );
+    Variable * source = variable_retrieve( _environment, _source );
+    Variable * offset = variable_move_from_array_get_address( _environment, _source, NULL );
+
+    Variable * value = NULL;
+
+    if ( source->bankAssigned == -1 ) {
+
+        value = variable_temporary( _environment, source->arrayType, "(temp)" );
+
+        switch( VT_BITWIDTH( value->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect2( _environment, offset->realName, value->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect2( _environment, offset->realName, value->realName);
+                break;
+            case 8:
+                cpu_move_8bit_indirect2( _environment, offset->realName, value->realName );
+                break;
+            case 1:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[value->type]);
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[value->type]);
+                
+        }
+
+    } else {
+
+        value = source;
+        value->type = source->arrayType;
+
+        switch( VT_BITWIDTH( value->type ) ) {
+            case 32:
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 4 );
+                break;
+            case 16:
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 2 );
+                break;
+            case 8:
+                bank_read_vars_bank_direct_size( _environment, source->bankAssigned, offset->name, value->name, 1 );
+                break;
+            case 0:
+            case 1:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[value->type]);
+        }
+
     }
-    Variable * value = variable_move_from_array( _environment, array->name );
 
-    variable_increment( _environment, value->name );
+    if ( _direction > 0 ) {
+        variable_increment( _environment, value->name );
+    } else if ( _direction < 0 ) {
+        variable_decrement( _environment, value->name );        
+    }
 
-    variable_move_array( _environment, array->name, value->name );
+    if ( source->bankAssigned == -1 ) {
+
+        switch( VT_BITWIDTH( value->type ) ) {
+            case 32:
+                cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 16:
+                cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 8:
+                cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[value->type]);
+        }
+
+    } else {
+
+        switch( VT_BITWIDTH( value->type ) ) {
+            case 32:
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 4 );
+                break;
+            case 16:
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 2 );
+                break;
+            case 8:
+                bank_write_vars_bank_direct_size( _environment, value->name, source->bankAssigned, offset->name, 1 );
+                break;
+            case 1:
+            case 0:
+                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[value->type]);
+        }
+        
+        value->type = VT_TARRAY;
+
+    }
 
     return;
 
@@ -5201,33 +5419,6 @@ void variable_decrement_type( Environment * _environment, char * _source, char *
             break;
     }
     return;
-}
-
-/**
- * @brief Decrement a variable by one
- * 
- * @param _environment Current calling environment
- * @param _source Source variable's name
- * @return Variable* The source variable
- */
-void variable_decrement_array( Environment * _environment, char * _source ) {
-
-    if ( _environment->emptyProcedure ) {
-        return;
-    }
-
-    Variable * array = variable_retrieve( _environment, _source );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( _source );
-    }
-    Variable * value = variable_move_from_array( _environment, array->name );
-
-    variable_decrement( _environment, value->name );
-
-    variable_move_array( _environment, array->name, value->name );
-
-    return;
-
 }
 
 /**
@@ -9066,60 +9257,6 @@ Variable * variable_string_len( Environment * _environment, char * _string  ) {
 
     return result;
     
-}
-
-// @bit2: ok
-static Variable * calculate_offset_in_array( Environment * _environment, char * _array ) {
-
-    Variable * array = variable_retrieve( _environment, _array );
-
-    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
-    }
-
-    Variable * base = variable_temporary( _environment, VT_WORD, "(base in array)");
-    Variable * offset = variable_temporary( _environment, VT_WORD, "(offset in array)");
-
-    variable_store( _environment, offset->name, 0 );
-
-    int i,j;
-
-    if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {
-        if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
-            if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] >= array->arrayDimensionsEach[0] ) {
-                CRITICAL_ARRAY_OUT_OF_BOUND( _array );
-            }
-            variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
-        } else {
-            Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
-            variable_add_inplace_vars( _environment, offset->name, index->name );
-        }
-    } else {
-        for( i = 0; i<_environment->arrayIndexes[_environment->arrayNestedIndex]; ++i ) {
-            int baseValue = 1;
-            for( j=0; j<(_environment->arrayIndexes[_environment->arrayNestedIndex]-i-1); ++j ) {
-                baseValue *= array->arrayDimensionsEach[j];
-            }
-            if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] == NULL ) {
-                if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] >= array->arrayDimensionsEach[array->arrayDimensions-i-1] ) {
-                    CRITICAL_ARRAY_OUT_OF_BOUND( _array );
-                }
-                variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
-            } else {
-                Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
-                if(baseValue!=1) {
-                    variable_store( _environment, base->name, baseValue );
-                    Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
-                    variable_add_inplace_vars( _environment, offset->name, additionalOffset->name );
-                } else {
-                    variable_add_inplace_vars( _environment, offset->name, index->name );
-                }
-            }
-        }
-    }
-
-    return offset;
-
 }
 
 // @bit2: ok
@@ -15463,51 +15600,6 @@ void variable_move_array1_type_const( Environment * _environment, char * _array,
 
 }
 
-
-static Variable * variable_move_from_array_get_address( Environment * _environment, char * _array, char * _field ) {
-    
-    MAKE_LABEL
-
-    Variable * array = variable_retrieve( _environment, _array );
-
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( _array );
-    }
-    if ( array->arrayType != VT_TYPE ) {
-        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
-    }
-    if ( !array->typeType ) {
-        CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( _array );
-    }
-    Field * field = field_find( array->typeType, _field );
-    if ( ! field ) {
-        CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
-    }
-
-    if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
-        CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
-    }
-
-    Variable * offset = calculate_offset_in_array( _environment, array->name);
-
-    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT(array->typeType->size) );
-
-    variable_add_inplace( _environment, offset->name, field->offset );
-    
-    if ( array->bankAssigned == -1 ) {
-
-        cpu_math_add_16bit_with_16bit( _environment, offset->realName, array->realName, offset->realName );
-
-    } else {
-
-        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
-
-    }
-
-    return offset;
-
-}
-
 static void variable_increment_decrement_array_type( Environment * _environment, char * _source, char * _field, int _direction ) {
 
     if ( _environment->emptyProcedure ) {
@@ -15530,7 +15622,6 @@ static void variable_increment_decrement_array_type( Environment * _environment,
         CRITICAL_UNKNOWN_FIELD_ON_TYPE( _field );
     }
 
-    outline0("; offset = variable_move_from_array_get_address" );
     Variable * offset = variable_move_from_array_get_address( _environment, _source, _field );
 
     Variable * value = NULL;
@@ -15619,18 +15710,24 @@ static void variable_increment_decrement_array_type( Environment * _environment,
                 CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
         }
 
-    }
+        value->type = VT_TARRAY;
 
-    value->type = VT_TARRAY;
+    }
 
 }
 
 void variable_increment_array_type( Environment * _environment, char * _source, char * _field ) {
-    outline0("; variable_increment_array_type ");
     variable_increment_decrement_array_type( _environment, _source, _field, 1 );
 }
 
 void variable_decrement_array_type( Environment * _environment, char * _source, char * _field ) {
-    outline0("; variable_decrement_array_type ");
     variable_increment_decrement_array_type( _environment, _source, _field, -1 );
+}
+
+void variable_increment_array( Environment * _environment, char * _source ) {
+    variable_increment_decrement_array( _environment, _source, 1 );
+}
+
+void variable_decrement_array( Environment * _environment, char * _source ) {
+    variable_increment_decrement_array( _environment, _source, -1 );
 }
