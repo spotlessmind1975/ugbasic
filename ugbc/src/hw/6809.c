@@ -196,24 +196,24 @@ static void cpu6809_greater_than( Environment * _environment, char *_source, cha
 
     MAKE_LABEL
 
-    outline0("CLRB");
+    outline0("LDB #$FF");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c %s", REG, _destination);
     if ( _signed ) {
         if ( _equal ) {
-            outline1("BLT %s", label);
+            outline1("BGE %s", label);
         } else {
-            outline1("BLE %s", label);
+            outline1("BGT %s", label);
         }
     } else {
         if ( _equal ) {
-            outline1("BLO %s", label);
+            outline1("BHS %s", label);
         } else {
-            outline1("BLS %s", label);
+            outline1("BHI %s", label);
         }
     }
 
-    outline0("DECB");
+    outline0("INCB");
     outhead1("%s", label );
     outline1("STB %s", _other ? _other : _destination );
 }
@@ -223,24 +223,24 @@ static void cpu6809_greater_than_const( Environment * _environment, char *_sourc
 
     MAKE_LABEL
 
-    outline0("CLRB");
+    outline0("LDB #$FF");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c #$%4.4x", REG, _destination);
     if ( _signed ) {
         if ( _equal ) {
-            outline1("BLT %s", label);
+            outline1("BGE %s", label);
         } else {
-            outline1("BLE %s", label);
+            outline1("BGT %s", label);
         }
     } else {
         if ( _equal ) {
-            outline1("BLO %s", label);
+            outline1("BHS %s", label);
         } else {
-            outline1("BLS %s", label);
+            outline1("BHI %s", label);
         }
     }
 
-    outline0("DECB");
+    outline0("INCB");
     outhead1("%s", label );
     outline1("STB %s", _other );
 }
