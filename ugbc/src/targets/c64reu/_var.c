@@ -150,7 +150,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead2("%s: .res %d,0", variable->realName, calculate_path_size( _environment ) );
+                        outhead1("%s: .res 16,0", variable->realName);
                     }
                     break;
                 case VT_VECTOR2:
@@ -391,10 +391,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             outhead1("%s:", _variable->realName );
             outline0(" .res 12, 0" );
             break;
-        case VT_PATH: {
-            outhead2("%s: .res %d,0", variable->realName, calculate_path_size( _environment ) );
+        case VT_PATH:
+            outhead1("%s:", _variable->realName );
+            outline0(" .res 16, 0" );
             break;
-        }
         case VT_VECTOR2:
             outhead1("%s:", _variable->realName );
             outline0(" .res 4, 0" );

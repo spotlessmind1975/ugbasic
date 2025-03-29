@@ -118,86 +118,28 @@ Variable * travel_path( Environment * _environment, char * _p, char * _x, char *
 
         Variable * times = variable_define( _environment, "travelpath__times", VT_BYTE, 0 );
         Variable * limited = variable_define( _environment, "travelpath__limited", VT_SBYTE, 0 );
-        
         Variable * check = variable_temporary( _environment, VT_SBYTE, "(stepx)");
 
         Variable * fraction = variable_temporary( _environment, VT_POSITION, "(fraction)");
-        
+        Variable * x = variable_temporary( _environment, VT_POSITION, "(x)" );
+        Variable * y = variable_temporary( _environment, VT_POSITION, "(y)" );
         Variable * dx2 = variable_temporary( _environment, VT_POSITION, "(dx2)");
         Variable * dy2 = variable_temporary( _environment, VT_POSITION, "(dy2)");
         Variable * stepx = variable_temporary( _environment, VT_SBYTE, "(stepx)");
         Variable * stepy = variable_temporary( _environment, VT_SBYTE, "(stepy)");
+        Variable * x1 = variable_temporary( _environment, VT_POSITION, "(x1)" );
+        Variable * y1 = variable_temporary( _environment, VT_POSITION, "(y1)" );
 
-        Variable * x;
-        Variable * y;
-        Variable * x1;
-        Variable * y1;
+        cpu_move_16bit( _environment, path->realName, x->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "2" ), y->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "4" ), dx2->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "6" ), dy2->realName );
+        cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "8" ), stepx->realName );
+        cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "9" ), stepy->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "10" ), fraction->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "12" ), x1->realName );
+        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "14" ), y1->realName );
 
-        char pathOffsetX0[MAX_TEMPORARY_STORAGE];
-        char pathOffsetY0[MAX_TEMPORARY_STORAGE];
-        char pathOffsetX1[MAX_TEMPORARY_STORAGE];
-        char pathOffsetY1[MAX_TEMPORARY_STORAGE];
-
-        int pathOffset = 8;
-
-        if ( _environment->screenWidth < 256 ) {
-            x = variable_temporary( _environment, VT_BYTE, "(x)" );
-        } else {
-            x = variable_temporary( _environment, VT_POSITION, "(x)" );
-        }
-        sprintf( pathOffsetX0, "%d", pathOffset );
-        pathOffset += (VT_BITWIDTH( x->type )>>3);
-
-        if ( _environment->screenHeight < 256 ) {
-            y = variable_temporary( _environment, VT_BYTE, "(y)" );
-        } else {
-            y = variable_temporary( _environment, VT_POSITION, "(y)" );
-        }
-        sprintf( pathOffsetY0, "%d", pathOffset );
-        pathOffset += (VT_BITWIDTH( y->type )>>3);
-
-        if ( _environment->screenWidth < 256 ) {
-            x1 = variable_temporary( _environment, VT_BYTE, "(x1)" );
-        } else {
-            x1 = variable_temporary( _environment, VT_POSITION, "(x1)" );
-        }
-        sprintf( pathOffsetX1, "%d", pathOffset );
-        pathOffset += (VT_BITWIDTH( x1->type )>>3);
-
-        if ( _environment->screenHeight < 256 ) {
-            y1 = variable_temporary( _environment, VT_BYTE, "(y1)" );
-        } else {
-            y1 = variable_temporary( _environment, VT_POSITION, "(y1)" );
-        }
-        sprintf( pathOffsetY1, "%d", pathOffset );
-        pathOffset += (VT_BITWIDTH( y1->type )>>3);
-
-        cpu_move_16bit( _environment, path->realName, dx2->realName );
-        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "2" ), dy2->realName );
-        cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "4" ), stepx->realName );
-        cpu_move_8bit( _environment, address_displacement( _environment, path->realName, "5" ), stepy->realName );
-        cpu_move_16bit( _environment, address_displacement( _environment, path->realName, "6" ), fraction->realName );
-        if ( _environment->screenWidth < 256 ) {
-            cpu_move_8bit( _environment, address_displacement( _environment, path->realName, pathOffsetX0 ), x->realName );
-        } else {
-            cpu_move_16bit( _environment, address_displacement( _environment, path->realName, pathOffsetX0 ), x->realName );
-        }
-        if ( _environment->screenHeight < 256 ) {
-            cpu_move_8bit( _environment, address_displacement( _environment, path->realName, pathOffsetY0 ), y->realName );
-        } else {
-            cpu_move_16bit( _environment, address_displacement( _environment, path->realName, pathOffsetY0 ), y->realName );
-        }
-        if ( _environment->screenWidth < 256 ) {
-            cpu_move_8bit( _environment, address_displacement( _environment, path->realName, pathOffsetX1 ), x1->realName );
-        } else {
-            cpu_move_16bit( _environment, address_displacement( _environment, path->realName, pathOffsetX1 ), x1->realName );
-        }
-        if ( _environment->screenHeight < 256 ) {
-            cpu_move_8bit( _environment, address_displacement( _environment, path->realName, pathOffsetY1 ), y1->realName );
-        } else {
-            cpu_move_16bit( _environment, address_displacement( _environment, path->realName, pathOffsetY1 ), y1->realName );
-        }
-        
         cpu_store_8bit( _environment, check->realName, 0 );
 
         cpu_label( _environment, loopLabel );
@@ -235,34 +177,18 @@ Variable * travel_path( Environment * _environment, char * _p, char * _x, char *
 
         cpu_label( _environment, doneLabel );
 
-        cpu_move_16bit( _environment, dx2->realName, path->realName );
-        cpu_move_16bit( _environment, dy2->realName, address_displacement( _environment, path->realName, "2" ) );
-        cpu_move_8bit( _environment, stepx->realName, address_displacement( _environment, path->realName, "4" ) );
-        cpu_move_8bit( _environment, stepy->realName, address_displacement( _environment, path->realName, "5" ) );
-        cpu_move_16bit( _environment, fraction->realName, address_displacement( _environment, path->realName, "6" ) );
-        if ( _environment->screenWidth < 256 ) {
-            cpu_move_8bit( _environment, x->realName, address_displacement( _environment, path->realName, pathOffsetX0 ) );
-        } else {
-            cpu_move_16bit( _environment, x->realName, address_displacement( _environment, path->realName, pathOffsetX0 ) );
-        }
-        if ( _environment->screenHeight < 256 ) {
-            cpu_move_8bit( _environment, y->realName, address_displacement( _environment, path->realName, pathOffsetY0 ) );
-        } else {
-            cpu_move_16bit( _environment, y->realName, address_displacement( _environment, path->realName, pathOffsetY0 ) );
-        }
-        if ( _environment->screenWidth < 256 ) {
-            cpu_move_8bit( _environment, x1->realName, address_displacement( _environment, path->realName, pathOffsetX1 ) );
-        } else {
-            cpu_move_16bit( _environment, x1->realName, address_displacement( _environment, path->realName, pathOffsetX1 ) );
-        }
-        if ( _environment->screenHeight < 256 ) {
-            cpu_move_8bit( _environment, y1->realName, address_displacement( _environment, path->realName, pathOffsetY1 ) );
-        } else {
-            cpu_move_16bit( _environment, y1->realName, address_displacement( _environment, path->realName, pathOffsetY1 ) );
-        }
+        cpu_move_16bit( _environment, x->realName, path->realName );
+        cpu_move_16bit( _environment, y->realName, address_displacement( _environment, path->realName, "2" ) );
+        cpu_move_16bit( _environment, dx2->realName, address_displacement( _environment, path->realName, "4" ) );
+        cpu_move_16bit( _environment, dy2->realName, address_displacement( _environment, path->realName, "6" ) );
+        cpu_move_16bit( _environment, stepx->realName, address_displacement( _environment, path->realName, "8" ) );
+        cpu_move_16bit( _environment, stepy->realName, address_displacement( _environment, path->realName, "9" ) );
+        cpu_move_16bit( _environment, fraction->realName, address_displacement( _environment, path->realName, "10" ) );
+        cpu_move_16bit( _environment, x1->realName, address_displacement( _environment, path->realName, "12" ) );
+        cpu_move_16bit( _environment, y1->realName, address_displacement( _environment, path->realName, "14" ) );
 
-        variable_move( _environment, x->name, xout->name );
-        variable_move( _environment, y->name, yout->name );
+        cpu_move_16bit( _environment, x->realName, xout->realName );
+        cpu_move_16bit( _environment, y->realName, yout->realName );
 
         cpu_move_8bit( _environment, check->realName, limited->realName );
 

@@ -1036,7 +1036,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_IMAGEREF ) {
         size *= 16; // real: 12
     } else if ( var->arrayType == VT_PATH ) {
-        size *= 16; // real: 12..16
+        size *= 16; // real: 16
     } else if ( var->arrayType == VT_VECTOR2 ) {
         size *= 4;
     } else if ( var->arrayType == VT_TILE ) {
@@ -1608,7 +1608,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
                     size *= 16; // Real: 12
                 } else if ( destination->arrayType == VT_PATH ) {
-                    size *= 16; // Real: 12...16
+                    size *= 16; // Real: 16
                 } else if ( destination->arrayType == VT_VECTOR2 ) {
                     size *= 4;
                 } else if ( destination->arrayType == VT_TILE ) {
@@ -3180,7 +3180,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_PATH:
                             switch( target->type ) {
                                 case VT_PATH: {
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, calculate_path_size( _environment ) );
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 16 );
                                     break;
                                 }
                                 default:
@@ -3675,9 +3675,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_PATH: {
                     if ( target->size == 0 ) {
-                        target->size = calculate_path_size( _environment );
+                        target->size = 16;
                     }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, calculate_path_size( _environment ) );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 16 );
                     break;
                 }
                 case VT_VECTOR2: {
@@ -9587,10 +9587,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             case VT_TYPE:
                 cpu_move_nbit_indirect( _environment, _array->typeType->size * 8, _value->realName, offset->realName );
                 break;
-            case VT_PATH: {
-                cpu_move_nbit_indirect( _environment, calculate_path_size( _environment ) * 8, _value->realName, offset->realName );
+            case VT_PATH:
+                cpu_move_nbit_indirect( _environment, 16 * 8, _value->realName, offset->realName );
                 break;
-            }
             case VT_VECTOR2:
                 cpu_move_nbit_indirect( _environment, 4 * 8, _value->realName, offset->realName );
                 break;
@@ -9688,11 +9687,10 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                         CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
                     case 0:
                         switch( _array->arrayType ) {
-                            case VT_PATH: {
+                            case VT_PATH:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, calculate_path_size( _environment ) );
+                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 16 );
                                 break;
-                            }
                             case VT_TYPE:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
@@ -9911,7 +9909,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, calculate_path_size( _environment )*8, offset->realName, _result->realName );
+                    cpu_move_nbit_indirect2( _environment, 16*8, offset->realName, _result->realName );
 
                     break;
 
@@ -10154,11 +10152,10 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                         CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[_array->arrayType]);
                     case 0:
                         switch( _array->arrayType ) {
-                            case VT_PATH: {
+                            case VT_PATH:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, calculate_path_size( _environment ) );
+                                bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, 16 );
                                 break;
-                            }
                             case VT_TYPE:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
                                 bank_read_vars_bank_direct_size( _environment, _array->bankAssigned, offset->name, _result->name, _array->typeType->size );
@@ -15733,11 +15730,4 @@ void variable_increment_array( Environment * _environment, char * _source ) {
 
 void variable_decrement_array( Environment * _environment, char * _source ) {
     variable_increment_decrement_array( _environment, _source, -1 );
-}
-
-int calculate_path_size( Environment * _environment ) {
-    int bx = 1 + ( _environment->screenWidth >= 256 );
-    int by = 1 + ( _environment->screenHeight >= 256 );
-    int size = 8 + 2 * bx + 2 * by;
-    return size;
 }
