@@ -279,7 +279,7 @@ void sm83_pokew( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
-        outline1("LD A, (%s)", (unsigned char)(_source&0xff));
+        outline1("LD A, (%s)", _source);
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
         outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
@@ -290,7 +290,7 @@ void sm83_pokew( Environment * _environment, char * _address, char * _source ) {
 
 }
 
-void sm83_pokew_const( Environment * _environment, char * _address, char * _source ) {
+void sm83_pokew_const( Environment * _environment, char * _address, int _source ) {
 
     // inline( cpu_poke )
 
@@ -351,7 +351,7 @@ void sm83_poked_const( Environment * _environment, char * _address, int _source 
 
     // inline( cpu_poke )
 
-        outline1("LD A, (%s)", (unsigned char)(_source)&0xff));
+        outline1("LD A, (%s)", (unsigned char)((_source)&0xff));
         outline1("LD HL, (%s)", _address);
         outline0("LD (HL), A");
         outline1("LD A, (%s)", (unsigned char)((_source>>8)&0xff));

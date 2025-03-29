@@ -45,6 +45,8 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
 
     Variable * variable = _first;
 
+    outline0("ALIGN 2");
+
     while( variable ) {
 
         if ( 
@@ -379,6 +381,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
 
     Variable * variable = _first;
 
+    outline0("ALIGN 2");
     while( variable ) {
 
         if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
@@ -546,6 +549,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
+            outline0("ALIGN 2");
             outhead1("OFFSETS%4.4x", actual->size );
             out0("        fdb " );
             for( i=0; i<actual->count; ++i ) {
@@ -638,6 +642,7 @@ void variable_cleanup( Environment * _environment ) {
     }    
 
     if ( _environment->descriptors ) {
+        outline0("ALIGN 2");
         outhead0("UDCCHAR" );
         int i=0,j=0;
         for(i=0;i<_environment->descriptors->count;++i) {
@@ -764,6 +769,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead2("BANKWINDOWID%2.2x equ $%4.4x", i, page0LastAddressUsed );
                     page0LastAddressUsed += 2;
                 } else {
+                    outline0("ALIGN 2");
                     outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
                 }
             }
@@ -771,10 +777,13 @@ void variable_cleanup( Environment * _environment ) {
                 outhead2("BANKWINDOW%2.2x equ $%4.4x", i, page0LastAddressUsed);
                 page0LastAddressUsed += _environment->maxExpansionBankSize[i];
             } else {
+                outline0("ALIGN 2");
                 outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
             }
         }
     }
+
+    outline0("ALIGN 2");
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];

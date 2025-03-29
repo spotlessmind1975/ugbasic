@@ -253,9 +253,9 @@ BANKWRITE
 
 ; Move data (1 byte) to bank from main memory.
 ;
-; Y : address from memory 
+; X : address from memory 
 ; B : number of bank 
-; X : address on bank 
+; Y : address on bank 
 BANKWRITE1
 
     ORCC #$50
@@ -269,8 +269,8 @@ BANKWRITE1
     ; STB BANKSHADOW
     STB BASE_SEGMENT+$E5
 
-    LDA ,Y
-    STA ,X
+    LDA ,X
+    STA ,Y
 
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
@@ -284,9 +284,9 @@ BANKWRITE1
 
 ; Move data (2 bytes) to bank from main memory.
 ;
-; Y : address from memory 
+; X : address from memory 
 ; B : number of bank 
-; X : address on bank 
+; Y : address on bank 
 BANKWRITE2
 
     ORCC #$50
@@ -300,8 +300,8 @@ BANKWRITE2
     ; STB BANKSHADOW
     STB BASE_SEGMENT+$E5
 
-    LDD ,Y
-    STD ,X
+    LDD ,X
+    STD ,Y
     
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
@@ -315,9 +315,9 @@ BANKWRITE2
 
 ; Move data (4 bytes) to bank from main memory.
 ;
-; Y : address from memory 
+; X : address from memory 
 ; B : number of bank 
-; X : address on bank 
+; Y : address on bank 
 BANKWRITE4
 
     ORCC #$50
@@ -331,10 +331,10 @@ BANKWRITE4
     ; STB BANKSHADOW
     STB BASE_SEGMENT+$E5
 
-    LDD ,Y++
-    STD ,X++
-    LDD ,Y
-    STD ,X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X
+    STD ,Y
     
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV

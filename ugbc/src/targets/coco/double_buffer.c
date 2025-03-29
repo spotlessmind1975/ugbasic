@@ -49,4 +49,22 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
+    deploy( doubleBuffer, src_hw_6847_double_buffer_asm );
+
+    _environment->program.startingAddress = 0x3400 + 512;
+
+    if ( _environment->doubleBufferEnabled != _enabled ) {
+
+        _environment->doubleBufferEnabled = _enabled;
+
+        if ( _enabled ) {
+            outline0("JSR DOUBLEBUFFERINIT")
+        } else {
+            outline0("JSR DOUBLEBUFFERCLEANUP")
+        }
+
+    };
+
 }

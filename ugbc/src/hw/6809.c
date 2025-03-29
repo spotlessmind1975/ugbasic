@@ -196,24 +196,24 @@ static void cpu6809_greater_than( Environment * _environment, char *_source, cha
 
     MAKE_LABEL
 
-    outline0("CLRB");
+    outline0("LDB #$FF");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c %s", REG, _destination);
     if ( _signed ) {
         if ( _equal ) {
-            outline1("BLT %s", label);
+            outline1("BGE %s", label);
         } else {
-            outline1("BLE %s", label);
+            outline1("BGT %s", label);
         }
     } else {
         if ( _equal ) {
-            outline1("BLO %s", label);
+            outline1("BHS %s", label);
         } else {
-            outline1("BLS %s", label);
+            outline1("BHI %s", label);
         }
     }
 
-    outline0("DECB");
+    outline0("INCB");
     outhead1("%s", label );
     outline1("STB %s", _other ? _other : _destination );
 }
@@ -223,24 +223,24 @@ static void cpu6809_greater_than_const( Environment * _environment, char *_sourc
 
     MAKE_LABEL
 
-    outline0("CLRB");
+    outline0("LDB #$FF");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c #$%4.4x", REG, _destination);
     if ( _signed ) {
         if ( _equal ) {
-            outline1("BLT %s", label);
+            outline1("BGE %s", label);
         } else {
-            outline1("BLE %s", label);
+            outline1("BGT %s", label);
         }
     } else {
         if ( _equal ) {
-            outline1("BLO %s", label);
+            outline1("BHS %s", label);
         } else {
-            outline1("BLS %s", label);
+            outline1("BHI %s", label);
         }
     }
 
-    outline0("DECB");
+    outline0("INCB");
     outhead1("%s", label );
     outline1("STB %s", _other );
 }
@@ -1378,10 +1378,23 @@ void cpu6809_math_mul2_const_8bit( Environment * _environment, char *_source, in
     inline( cpu_math_mul2_const_8bit )
 
         outline1("LDB %s", _source );           
-        for(i=0; i<_steps; ++i) {
-            outline0("LSLB" );
+        if ( ! _environment->cpuOptimization.cpu_math_mul2_const_8bit_generated[_steps] ) {
+            
+            _environment->cpuOptimization.cpu_math_mul2_const_8bit_generated[_steps] = 1;
+
+            MAKE_LABEL
+
+            outline1("BRA %s", label);
+            outhead1("cpu6809_math_mul2_const_8bit_%d", _steps);
+                for(i=0; i<_steps; ++i) {
+                    outline0("LSLB" );
+                }
+                outline1("STB %s", _source );
+                outline0("RTS" );
+            outhead1("%s", label);
+
         }
-        outline1("STB %s", _source );
+        outline1("JSR cpu6809_math_mul2_const_8bit_%d", _steps );
 
     no_embedded( cpu_math_mul2_const_8bit );
 
@@ -2182,7 +2195,7 @@ void cpu6809_math_complement_const_16bit( Environment * _environment, char *_sou
 
     inline( cpu_math_complement_const_16bit )
 
-        outline1("LDD #$%2.2x", _value);
+        outline1("LDD #$%4.4x", _value);
         outline1("SUBD %s", _source );
         outline1("STD %s", _source);
 
@@ -2227,7 +2240,7 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
 
             outhead1("%sdone", label );
 
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("ASRA" );
@@ -2263,7 +2276,7 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
                 outline1("STA %s", address_displacement( _environment, _remainder, "1" ) );
             }
             outline1("LDD %s", _source );
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("ASRA" );
@@ -2283,7 +2296,7 @@ void cpu6809_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline1("STA %s", address_displacement( _environment, _remainder, "1" ) );
         }
         outline1("LDD %s", _source );
-        outline1("LDX #$%2.2x", _steps );
+        outline1("LDX #$%4.4x", _steps );
 
         if ( _signed ) {
             outline0("JSR CPUMATHDIV2CONST16BIT_SIGNED");
@@ -2308,12 +2321,24 @@ void cpu6809_math_mul2_const_16bit( Environment * _environment, char *_source, i
 
     inline( cpu_math_mul2_const_16bit )
 
-
         outline1("LDD %s", _source );           
-        for(i=0; i<_steps; ++i) {
-            outline0("LSLB" );
-            outline0("ROLA" );
+        if ( !_environment->cpuOptimization.cpu_math_mul2_const_16bit_generated[_steps] ) {
+            
+            _environment->cpuOptimization.cpu_math_mul2_const_16bit_generated[_steps] = 1;
+
+            MAKE_LABEL;
+
+            outline1("BRA %s", label);            
+            outhead1("cpu6809_math_mul2_const_16bit_%d", _steps);            
+                for(i=0; i<_steps; ++i) {
+                    outline0("LSLB" );
+                    outline0("ROLA" );
+                }
+            outline0("RTS");
+            outhead1("%s", label);
+
         }
+        outline1("JSR cpu6809_math_mul2_const_16bit_%d", _steps);
         outline1("STD %s", _source );
 
     no_embedded( cpu_math_mul2_const_16bit );
@@ -2939,7 +2964,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%sdone", label );
 
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("ASR <MATHPTR0" );
@@ -2999,7 +3024,7 @@ void cpu6809_math_div2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%sdone", label );
 
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("LSR <MATHPTR0" );
@@ -3068,7 +3093,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%sdone", label );
 
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("LSL <MATHPTR3" );
@@ -3123,7 +3148,7 @@ void cpu6809_math_mul2_const_32bit( Environment * _environment, char *_source, i
 
             outhead1("%sdone", label );
 
-            outline1("LDX #$%2.2x", _steps );
+            outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
             outline0("LSL <MATHPTR3" );

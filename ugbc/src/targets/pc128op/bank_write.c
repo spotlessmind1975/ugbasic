@@ -77,20 +77,26 @@ void bank_write_semi_var( Environment * _environment, char * _address2, int _ban
 
     outline0("; bank read sv")
     outline1("LDB #$%2.2x", _bank );
-    outline1("LDY #%s", _address2 );
-    outline1("LDX #$%4.4x", realAddress );
 
     switch( _size ) {
         case 1:
+            outline1("LDY #$%4.4x", realAddress );
+            outline1("LDX #%s", _address2 );
             outline0("JSR BANKWRITE1");
             break;
         case 2:
+            outline1("LDY #$%4.4x", realAddress );
+            outline1("LDX #%s", _address2 );
             outline0("JSR BANKWRITE2");
             break;
         case 4:
+            outline1("LDY #$%4.4x", realAddress );
+            outline1("LDX #%s", _address2 );
             outline0("JSR BANKWRITE4");
             break;
         default:
+            outline1("LDY #%s", _address2 );
+            outline1("LDX #$%4.4x", realAddress );
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKWRITE");
             break;
@@ -130,21 +136,27 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
     outline0("; bank write rv")
-    outline1("LDY #%s", address1->realName );
     outline1("LDB #$%2.2x", _bank );
-    outline1("LDX %s", address2->realName );
 
     switch( _size ) {
         case 1:
+            outline1("LDY %s", address2->realName );
+            outline1("LDX #%s", address1->realName );
             outline0("JSR BANKWRITE1");
             break;
         case 2:
+            outline1("LDY %s", address2->realName );
+            outline1("LDX #%s", address1->realName );
             outline0("JSR BANKWRITE2");
             break;
         case 4:
+            outline1("LDY %s", address2->realName );
+            outline1("LDX #%s", address1->realName );
             outline0("JSR BANKWRITE4");
             break;
         default:
+            outline1("LDX %s", address2->realName );
+            outline1("LDY #%s", address1->realName );
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKWRITE");
             break;

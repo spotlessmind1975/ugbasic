@@ -29,98 +29,74 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      INTERNAL VARIABLES FOR TRS-80 COLOR COMPUTER           *
+;*                        DOUBLE BUFFER ROUTINE ON 6847                        *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-TEXTADDRESS         fdb     $0400
-BITMAPADDRESS       fdb     $0400
-COLORMAPADDRESS     fdb     $a000
-CURRENTMODE         fcb     $2
-CURRENTTILEMODE     fcb     1
-EVERYSTATUS         fcb     0
+DOUBLEBUFFERINIT
 
-TABCOUNT            fcb     4
-XCURS               fcb     0
-YCURS               fcb     0
-EMPTYTILE           fcb     $60
+    LDA #1
+    STA DOUBLEBUFFERENABLED
+    JSR SWITCHSCREEN0
+    JSR CLSG
+    JSR SWITCHSCREEN1
+    JSR CLSG
+    JSR SWITCHSCREEN0
+    RTS
 
-COCOTIMER           fdb     $0
-COCOTIMER2          fdb     $0
-TICKSPERSECOND      fcb     $0
+DOUBLEBUFFERCLEANUP
+    LDD #$0400
+    STD BITMAPADDRESS
+    CLRA
+    STA DOUBLEBUFFERENABLED
+DOUBLEBUFFERCLEANUP2
+    LDA #$0
+    STA SCREENVISIBLE
+    RTS
 
-TMPPTR equ $10    ; $23
-TMPPTR2 equ $12    ; $25
+SWITCHSCREEN
+    LDA SCREENVISIBLE
+    BEQ SWITCHSCREEN1
 
-MATHPTR0 equ $14
-MATHPTR1 equ $15
-MATHPTR2 equ $16
-MATHPTR3 equ $17
-MATHPTR4 equ $18
-MATHPTR5 equ $19
-MATHPTR6 equ $20
-MATHPTR7 equ $21
-MATHPTR8 equ $22
-MATHPTRB0 equ $23
-MATHPTRB1 equ $24
-MATHPTRB2 equ $25
-MATHPTRB3 equ $26
-MATHPTRB4 equ $27
-MATHPTRB5 equ $28
-MATHPTRB6 equ $29
-MATHPTRB7 equ $2a
-MATHPTRB8 equ $2b
+SWITCHSCREEN0
+    STA $FFC6
+    STA $FFC8
+    STA $FFCA
+    STA $FFCC
+    STA $FFCE
+    STA $FFD0
+    STA $FFD2
+    STA $FFC9
+    LDD #$1C00
+    STD BITMAPADDRESS
+    LDA #$0
+    STA SCREENVISIBLE
+    LDD #$1800
+    LDY #$0400
+    LDX #$1C00
+    JSR DUFFDEVICE
+    RTS
 
-DSSTATUS equ $3b
-DSSIZE equ $3c
-DSADDRLO equ $3d
-DSADDRHI equ $3e
-DSBANKLO equ $3f
-DSBANKHI equ $40
-
-COPYOFTEXTADDRESS equ $41
-COPYOFBITMAPADDRESS equ $43
-COPYOFCOLORMAPADDRESS equ $45
-COPYOFTEXTADDRESS2 equ $47
-COPYOFCOLORMAPADDRESS2 equ $49
-
-DIRECTION equ $4a
-PORT equ $4b
-PATTERN equ $4d
-CHARACTERS equ $4a
-CLINEX equ $4b
-CLINEY equ $4c
-
-BITSTOCONVERT equ $4a
-
-XCURSYS equ $D3
-YCURSYS equ $D6
-
-BANKSHADOW fcb  0
-
-DATAPTR fdb  0
-
-COCODCOMMONSAVEDERROR     fcb   $0, $0, $0
-COCODCOMMONDISKOPEN       fcb   $0, $0
-COCODCOMMONERRORHANDLER   fcb   $0, $0
-COCODCOMMONERRORSTACK     fcb   $0, $0
-
-DLOADERROR      fcb  $0
-DSAVEERROR      fcb  $0
-
-RAMENABLED      fcb  $1
-
-JOYSTICK0       fcb  $0
-JOYSTICK1       fcb  $0
-
-PIA0AD     equ   $FF00
-PIA0AC     equ   $FF01
-PIA0BD     equ   $FF02
-PIA0BC     equ   $FF03
-
-PIA1AD     equ   $FF20
-PIA1AC     equ   $FF21
-PIA1BD     equ   $FF22
-PIA1BC     equ   $FF23
+SWITCHSCREEN1
+    STA $FFC6
+    STA $FFC8
+    STA $FFCA
+    STA $FFCC
+    STA $FFCE
+    STA $FFD0
+    STA $FFD2
+    STA $FFC9
+    STA $FFCB
+    STA $FFCD
+    LDD #$0400
+    STD BITMAPADDRESS
+    LDA #$1
+    STA SCREENVISIBLE
+    LDD #$1800
+    LDY #$1C00
+    LDX #$0400
+    JSR DUFFDEVICE
+    RTS
+    

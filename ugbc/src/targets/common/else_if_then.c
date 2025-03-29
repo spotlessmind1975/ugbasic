@@ -99,7 +99,7 @@ void else_if_then( Environment * _environment, char * _expression ) {
     
     if ( ! _expression ) {
 
-        cpu_bvneq( _environment, conditional->expression->realName, endifLabel );
+        // cpu_bvneq( _environment, conditional->expression->realName, endifLabel );
 
     } else {
 

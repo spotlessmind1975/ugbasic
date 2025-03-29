@@ -75,13 +75,14 @@
 #include "../../ugbc.h"
 #include <stdarg.h>
 #include <ctype.h>
+#include <string.h>
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
 #define DIRECT_PAGE     0x2100
-#define LOOK_AHEAD      5
+#define LOOK_AHEAD      10
 #define ALLOW_UNSAFE    0
 #define KEEP_COMMENTS   1
 
@@ -790,6 +791,177 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " STD *", v1)
+    &&  po_buf_match(buf[1], " LDD #$*", v2)
+    &&  po_buf_match(buf[2], " ADDD *", v3)
+    &&  po_buf_match(buf[3], " STD *", v4)
+    &&  (po_buf_strcmp(v1, v3) == 0) && (po_buf_strcmp(v3, v4) == 0)
+        ) {
+        optim(buf[1], RULE "(STD,LDD#,ADD,STD)->(LDD,ADD#,STD)", " LDD %s", v1->str );
+        optim(buf[2], RULE "(STD,LDD#,ADD,STD)->(LDD,ADD#,STD)", " ADDD #$%s", v2->str );
+        optim(buf[3], RULE "(STD,LDD#,ADD,STD)->(LDD,ADD#,STD)", " STD %s", v1->str );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " ADDD #$*", v1)
+    &&  po_buf_match(buf[1], " ADDD #$*", v2)
+        ) {
+        long int vi1 = strtol(v1->str, NULL, 16);
+        long int vi2 = strtol(v2->str, NULL, 16);
+        optim(buf[0], RULE "(ADD#,ADD#)->(ADD#)", " ADDD #$%4.4x", (int)(vi1+vi2) );
+        optim(buf[1], RULE "(ADD#,ADD#)->(ADD#)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDD #$0000")
+    &&  po_buf_match(buf[1], " STD *", v2)
+    &&  po_buf_match(buf[2], " LDB *", v3)
+    &&  po_buf_match(buf[3], " ADDD *", v4)
+    &&  po_buf_match(buf[4], " STD *", v5)
+    &&  (po_buf_strcmp(v2, v4) == 0) && (po_buf_strcmp(v4, v5) == 0)
+        ) {
+        optim(buf[0], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
+        optim(buf[1], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", " CLRA" );
+        optim(buf[3], RULE "(LDD#0,STD,LDB,ADDD,STD)->(CLRA,LDB,STD)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " JSR BANKREAD1")
+    &&  po_buf_match(buf[1], " INC *", v1 )
+    &&  po_buf_match(buf[2], " LDB #$*", v2)
+    &&  po_buf_match(buf[3], " LDY *", v3)
+    &&  po_buf_match(buf[4], " LDX #*", v4)
+    &&  po_buf_match(buf[5], " JSR BANKWRITE1")
+    &&  (po_buf_strcmp(v1, v4) == 0)
+        ) {
+        optim(buf[2], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[3], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[4], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " JSR BANKREAD1")
+    &&  po_buf_match(buf[1], " DEC *", v1 )
+    &&  po_buf_match(buf[2], " LDB #$*", v2)
+    &&  po_buf_match(buf[3], " LDY *", v3)
+    &&  po_buf_match(buf[4], " LDX #*", v4)
+    &&  po_buf_match(buf[5], " JSR BANKWRITE1")
+    &&  (po_buf_strcmp(v1, v4) == 0)
+        ) {
+        optim(buf[2], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[3], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        optim(buf[4], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDB *", v1)
+    &&  po_buf_match(buf[1], " CLRB" )
+        ) {
+        optim(buf[0], RULE "(BANKREAD1,BANWRITE1)->(BANKREADWRITE1)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDB *", v1)
+    &&  po_buf_match(buf[1], " LDB *", v2)
+        ) {
+        optim(buf[0], RULE "(LDB,LDB)->(LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDD #$0000")
+    &&  po_buf_match(buf[1], " STD *", v1)
+    &&  po_buf_match(buf[2], " LDB *", v2)
+    &&  po_buf_match(buf[3], " ADD *", v3)
+        ) {
+        optim(buf[0], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", " CLRA" );
+        optim(buf[1], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " B* *", v1, v2)
+    &&  ( po_buf_match(buf[1], " DECB" ) || po_buf_match(buf[1], " INCB" ) )
+    &&  po_buf_match(buf[3], " *", v5)
+    &&  po_buf_match(buf[4], " IF" )
+    &&  po_buf_match(buf[5], " LBEQ *", v3)
+    &&  po_buf_match(buf[6], " ELSE" )
+    &&  po_buf_match(buf[7], " BEQ *", v4)
+    &&  po_buf_match(buf[8], " ENDIF" )
+        ) {
+        optim(buf[0], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[1], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[2], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[3], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        if ( strcmp(v5->str, "TSTB") == 0 || strstr(buf[1]->str, "INCB") ) {
+            char conditional[4];
+            if ( strcmp( v1->str, "CC") == 0 ) {
+                strcpy( conditional, "CS" );
+            }
+            else if ( strcmp( v1->str, "CS" ) == 0 ) {
+                strcpy( conditional, "CC" );
+            } else if ( strcmp( v1->str, "EQ" ) == 0 ) {
+                strcpy( conditional, "NE" );
+            }
+            else if ( strcmp( v1->str, "GE" ) == 0 ) {
+                strcpy( conditional, "LT" );
+            }
+            else if ( strcmp( v1->str, "GT" ) == 0 ) {
+                strcpy( conditional, "LE" );
+            }
+            else if ( strcmp( v1->str, "HI" ) == 0 )  {
+                strcpy( conditional, "LS" );
+            }
+            else if ( strcmp( v1->str, "HS" ) == 0 ) {
+                strcpy( conditional, "LO" );
+            }
+            else if ( strcmp( v1->str, "LE" ) == 0 ) {
+                strcpy( conditional, "GT" );
+            }
+            else if ( strcmp( v1->str, "LO" ) == 0 ) {
+                strcpy( conditional, "HS" );
+            }
+            else if ( strcmp( v1->str, "LS" ) == 0 ) {
+                strcpy( conditional, "HI" );
+            }
+            else if ( strcmp( v1->str, "LT" ) == 0 ) {
+                strcpy( conditional, "GE" );
+            }
+            else if ( strcmp( v1->str, "MI" ) == 0 ) {
+                strcpy( conditional, "PL" );
+            }
+            else if ( strcmp( v1->str, "NE" ) == 0 ) {
+                strcpy( conditional, "EQ" );
+            }
+            else if ( strcmp( v1->str, "PL" ) == 0 ) {
+                strcpy( conditional, "MI" );
+            }
+            else if ( strcmp( v1->str, "RA" ) == 0 ) {
+                strcpy( conditional, "RA" );
+            }
+            else if ( strcmp( v1->str, "RN" ) == 0 ) {
+                strcpy( conditional, "RN" );
+            }
+            else if ( strcmp( v1->str, "VC" ) == 0 ) {
+                strcpy( conditional, "VS" );
+            }
+            else if ( strcmp( v1->str, "VS" ) == 0 ) {
+                strcpy( conditional, "VC" );
+            } 
+            else {
+                strcpy( conditional, v1->str );
+            }
+
+            optim(buf[5], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", " LB%s %s", conditional, v3->str );
+            optim(buf[7], RULE "(B?,DECB,TSTB/STB,[L]B)->([L]B)", " B%s %s", conditional, v4->str );    
+        } else {
+            optim(buf[5], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", " LB%s %s", v1->str, v3->str );
+            optim(buf[7], RULE "(B?,DECB,TSTB/STB,[L]B)->([L]B)", " B%s %s", v1->str, v4->str );    
+        }
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+    
 }
 
 /* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */

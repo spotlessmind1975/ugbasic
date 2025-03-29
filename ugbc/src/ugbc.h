@@ -1990,6 +1990,13 @@ typedef struct _AudioConfig {
 
 } AudioConfig;
 
+typedef struct _CpuOptimization {
+
+    int cpu_math_mul2_const_8bit_generated[8];
+    int cpu_math_mul2_const_16bit_generated[16];
+
+} CpuOptimization;
+
 typedef struct _Macro {
 
     char * name;
@@ -3095,7 +3102,9 @@ typedef struct _Environment {
     char * currentFieldName;
     Field * currentField;
     Constant * currentFieldsValues;
-    
+
+    CpuOptimization cpuOptimization;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

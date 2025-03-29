@@ -215,9 +215,10 @@ void c6847_bank_select( Environment * _environment, int _bank ) {
 
 }
 
-#define SET_VIDEOAT_400     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET;
-#define SET_VIDEOAT_600     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F0_SET; SAM_F1_SET; 
-#define SET_VIDEOAT_C00     SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR; SAM_F1_SET; SAM_F2_SET; 
+#define SET_VIDEOAT_ZERO    SAM_F0_CLR; SAM_F1_CLR; SAM_F2_CLR; SAM_F3_CLR; SAM_F4_CLR; SAM_F5_CLR; SAM_F6_CLR;
+
+#define SET_VIDEOAT_0400    SET_VIDEOAT_ZERO; SAM_F1_SET;
+#define SET_VIDEOAT_1C00    SET_VIDEOAT_ZERO; SAM_F2_SET; SAM_F3_SET; SAM_F4_SET; 
 
 void console_calculate( Environment * _environment ) {
 
@@ -304,7 +305,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // Internal alphanumeric 0 X X 0 0 0 0 32x16 ( 5x7 pixel ch)
-            SET_VIDEOAT_400;
+            SET_VIDEOAT_0400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -325,7 +326,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // External alphanumeric 0 X X 1 0 0 0 32x16 (8x12 pixel ch)
-            SET_VIDEOAT_400;
+            SET_VIDEOAT_0400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -352,7 +353,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
-            SET_VIDEOAT_400;
+            SET_VIDEOAT_0400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -378,7 +379,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
-            SET_VIDEOAT_400;
+            SET_VIDEOAT_0400;
             VDG_TEXT;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -456,7 +457,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -483,7 +484,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_CLR;
@@ -509,7 +510,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_SET;
@@ -536,7 +537,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_CLR;
             SAM_V1_SET;
@@ -562,7 +563,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_CLR;
@@ -589,7 +590,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_CLR;
@@ -615,7 +616,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_SET;
@@ -642,7 +643,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
-            SET_VIDEOAT_C00;
+            SET_VIDEOAT_0400;
             VDG_GRAPH;
             SAM_V2_SET;
             SAM_V1_SET;
@@ -1513,10 +1514,8 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             if ( _transparent_color & 0x0f0000 ) {
                 if ( rgb.alpha == 0 ) {
                     *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
-                    printf("*");
                 } else {
                     *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
-                    printf(" ");
                 }    
             }
 
@@ -1526,15 +1525,11 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
         }
 
-        printf("\n");
-
         _source += ( _width - _frame_width ) * _depth;
 
         // printf("\n" );
 
     }
-
-    printf( "First value for transparency = %2.2x\n", (unsigned char)*( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + 3) );
 
     adilineendbitmap();
 
