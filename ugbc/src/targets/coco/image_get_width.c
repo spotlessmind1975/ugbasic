@@ -52,11 +52,13 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     outline1("LDY #%s", image->realName );
     switch( image->type ) {
         case VT_IMAGE:
-            outline0("LDD ,Y" );
+            outline0("CLRA" );
+            outline0("LDB ,Y" );
             break;
         case VT_IMAGES:
         case VT_SEQUENCE:
-            outline0("LDD 3,Y" );
+            outline0("CLRA" );
+            outline0("LDB 3,Y" );
             break;
         default:
             CRITICAL_NOT_IMAGE( _image );

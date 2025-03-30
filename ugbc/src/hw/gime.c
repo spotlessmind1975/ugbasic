@@ -1276,7 +1276,7 @@ void gime_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
     outline1("LDD %4.4x", ( _y & 0xffff ) );
     outline0("STD <PLOTY");
     if ( _c ) {
-        outline1("LDB #$%2.2x", ( *_c & 0xff ) );
+        outline1("LDB #$%2.2x", (unsigned char)( *_c & 0xff ) );
     } else {
         Variable * c = variable_retrieve( _environment, "PEN" );
         outline1("LDB %s", c->realName );
@@ -2673,8 +2673,8 @@ static void gime_load_image_address_to_y( Environment * _environment, char * _so
             outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
             outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
+            outline0("ABX" );
+            outline0("ABX" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
         }
@@ -2684,8 +2684,8 @@ static void gime_load_image_address_to_y( Environment * _environment, char * _so
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -2698,8 +2698,8 @@ static void gime_load_image_address_to_y( Environment * _environment, char * _so
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -3016,8 +3016,8 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
             outline1("LDX #OFFSETS%4.4x", _frame_count * _frame_size );
             outline1("LDB %s", _sequence );
             outline0("LDA #0" );
-            outline0("LEAX D, X" );
-            outline0("LEAX D, X" );
+            outline0("ABX" );
+            outline0("ABX" );
             outline0("LDD ,X" );
             outline0("LEAY D, Y" );
         }
@@ -3027,8 +3027,8 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }
@@ -3041,8 +3041,8 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
                 outline1("LDX #OFFSETS%4.4x", _frame_size );
                 outline1("LDB %s", _frame );
                 outline0("LDA #0" );
-                outline0("LEAX D, X" );
-                outline0("LEAX D, X" );
+                outline0("ABX" );
+                outline0("ABX" );
                 outline0("LDD ,X" );
                 outline0("LEAY D, Y" );
             }

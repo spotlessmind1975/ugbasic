@@ -961,7 +961,37 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
         ++_environment->removedAssemblyLines;
     }
-    
+
+    if( po_buf_match(buf[0], " CLRA")
+    &&  po_buf_match(buf[1], " LDB *", v1)
+    &&  po_buf_match(buf[2], " STD *", v2)
+    &&  po_buf_match(buf[3], " LDD *", v3)
+    &&  po_buf_match(buf[4], " ADDD *", v4)
+    &&  po_buf_match(buf[5], " STD *", v5)
+        ) {
+        optim(buf[0], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDX %s", v3->str );
+        optim(buf[1], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDB %s", v1->str );
+        optim(buf[2], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " ABX" );
+        optim(buf[3], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " STX %s", v5->str );
+        optim(buf[4], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", NULL );
+        optim(buf[5], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+
+// 55EF  4F                      CLRA
+// 55F0  F633AA                  LDB _Ttmp477
+// 55F3  FD61AC                  STD _Ttmp553
+// 55F6  FC61AA                  LDD _Ttmp552
+// 55F9  F361AC                  ADDD _Ttmp553
+// 55FC  FD618C                  STD _Ttmp296
+
+
+// 55F6  FC61AA                  LDX _Ttmp552
+// 55F0  F633AA                  LDB _Ttmp477
+// 55F3  FD61AC                  ABX
+// 55FC  FD618C                  STX _Ttmp296
+
 }
 
 /* check if POBuffer matches any of xxyy (used for LDD #$xxyy op) */
