@@ -14777,11 +14777,21 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
 
         char valueString[MAX_TEMPORARY_STORAGE];
         memset( valueString, 0, MAX_TEMPORARY_STORAGE );
-        int p=0, j=0;
+        int p=0, j=0, cmt=0;
 
         while( !feof( handle ) ) {
             char c = fgetc(handle);
+            if ( cmt ) {
+                if ( c == 13 || c == 10  ) {
+                    cmt = 0;
+                }
+                continue;
+            }
             if ( j == 0 ) {
+                if ( c == '\'' && !cmt ) {
+                    cmt = 1;
+                    continue;
+                }
                 if ( (c < '0') || (c > '9') ) {
                     continue;
                 }
@@ -14795,11 +14805,13 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
             ++p;
         }
 
-        current->value = atoi( valueString );
+        if ( ! cmt && p ) {
+            current->value = atoi( valueString );
 
-        current->next = malloc( sizeof( Constant ) );
-        memset( current->next, 0, sizeof( Constant ) );
-        current = current->next;
+            current->next = malloc( sizeof( Constant ) );
+            memset( current->next, 0, sizeof( Constant ) );
+            current = current->next;
+        }
 
     }
 

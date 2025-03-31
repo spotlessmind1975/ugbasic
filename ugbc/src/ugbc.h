@@ -3096,6 +3096,7 @@ typedef struct _Environment {
     char * travelYF;
     ArrayReference * travelYAR;
 
+    int transparencyUsed;
     int transparencyCoarse;
     
     char * currentExpression;

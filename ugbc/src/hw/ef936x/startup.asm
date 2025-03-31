@@ -77,6 +77,8 @@ EF936XSTARTUPL2
 	JSR CLS
 @ENDIF
 
+    CLR <IMAGEF
+
     RTS
 
     ; ===========[ VERTICAL BLANK ]===========

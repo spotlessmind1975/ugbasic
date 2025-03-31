@@ -2020,7 +2020,8 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
             CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
     }
 
-    if( _flags ) {
+    if( _flags && strcmp( _flags, "#PUTIMAGEFLAGS0000" ) != 0 ) {
+        _environment->transparencyUsed = 1;
         outline1("LDD %s", _flags );
         outline0("STD <IMAGET" );
     }
