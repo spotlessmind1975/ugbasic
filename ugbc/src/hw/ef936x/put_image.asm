@@ -267,6 +267,8 @@ PUTIMAGE2YDB
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@IF transparencyUsed
+
 PUTIMAGE2YTRANSDB
     LDA CURRENTMODE
     ; CMPA #2
@@ -829,6 +831,8 @@ PUTIMAGE2YTRANS3DBEVEN4L23
 PUTIMAGE2YTRANS3DBEVEN4L2D
 
     JMP PUTIMAGECOMMONEDB
+
+@ENDIF
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1854,6 +1858,8 @@ PUTIMAGE2Y
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@IF transparencyUsed
+
 PUTIMAGE2YTRANS
     LDA CURRENTMODE
     ; CMPA #2
@@ -2139,6 +2145,8 @@ PUTIMAGE2YTRANS3L12N
     JMP PUTIMAGE2YTRANS3L12000
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+@ENDIF
 
 PUTIMAGE2YDEF
 
