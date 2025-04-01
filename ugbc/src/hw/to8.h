@@ -156,7 +156,7 @@
 
 #define BANK_COUNT                  0
 #define BANK_SIZE                   16128
-#define BANK_BASE_ADDRESS   0
+#define BANK_BASE_ADDRESS   0xa000
 
 #define MAX_AUDIO_CHANNELS  1
 
@@ -189,5 +189,7 @@ void to8_timer_set_status_off( Environment * _environment, char * _timer );
 void to8_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
 void to8_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void to8_timer_set_address( Environment * _environment, char * _timer, char * _address );
+
+void to8_dload( Environment * _environment, char * _address, char * _bank, char * _size );
 
 #endif

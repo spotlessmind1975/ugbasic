@@ -371,7 +371,50 @@ int convertbintok7(Environment * _environment)
         bank = bank->next;
 
     }
-        
+
+    Storage * storage = _environment->storage;
+
+    if ( storage ) {
+
+        FileStorage * fileStorage = storage->files;
+
+        while( fileStorage ) {
+
+            char bankNumber[MAX_TEMPORARY_STORAGE];
+            sprintf( bankNumber, "%8sdat", fileStorage->targetName );
+
+            int size = 0;
+            char * buffer;
+
+            if ( fileStorage->content && fileStorage->size ) {
+                size = fileStorage->size + 2;
+                buffer = malloc( size );
+                memset( buffer, 0, size );
+                memcpy( buffer, fileStorage->content, fileStorage->size );
+            } else {
+                FILE * file = fopen( fileStorage->sourceName, "rb" );
+                if ( !file ) {
+                    CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                }
+                fseek( file, 0, SEEK_END );
+                size = ftell( file );
+                fseek( file, 0, SEEK_SET );
+                buffer = malloc( size + 2 );
+                memset( buffer, 0, size + 2 );
+                (void)!fread( buffer, size, 1, file );
+                fclose( file );
+            }
+
+            addBinaryFile( fw, bankNumber, 0xa000, buffer, size );
+
+            fileStorage = fileStorage->next;
+
+        }
+    
+        storage = storage->next;
+
+    }
+    
     fclose(fw);
 
     remove(temporaryFileName);
