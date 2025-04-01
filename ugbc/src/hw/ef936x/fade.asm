@@ -50,10 +50,16 @@ FADEOUT
     LDX #SHADOWPALETTE
     CLR BASE_SEGMENT+$DB
 FADEOUTL1
+
     ; +---+---+---+---+
     ; | A | A | B | B |
     ; +---+---+---+---+
     LDD , X
+
+@IF TO8
+    ANDA #$0F
+@ENDIF
+
     SUBA #$01
     CMPA #$FF
     BNE FADEOUTL1B
@@ -89,6 +95,9 @@ FADEOUTP
     ; STB BASE_SEGMENT+$DB
     ; PULS D
     STB BASE_SEGMENT+$DA
+@IF TO8
+    ORA #$10
+@ENDIF
     STA BASE_SEGMENT+$DA
     STD ,X
     LEAX 2, X
