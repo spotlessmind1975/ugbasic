@@ -71,7 +71,7 @@ DLOADL1SIZE
     LDA #2
     STA $6029
     JSR $E815
-    LBCS DLOADLOADL2
+    LBCS DLOADL2
 
     ; read bytes
 
@@ -140,13 +140,14 @@ DLOADL2SKIP
     CMPU #0
     BNE DLOADL2SKIP
 
-    LDA #2
+DLOADL2
+
+    LDA #16
     STA $6029
     JSR $E815
 
-    LDA #2
-    STA $6029
-    JSR $E815
+    LDA #$1F
+    STA $E7E5
 
     ANDCC #$AF
 
