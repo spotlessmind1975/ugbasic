@@ -156,7 +156,7 @@
 
 #define BANK_COUNT                  0
 #define BANK_SIZE                   16128
-#define BANK_BASE_ADDRESS   0
+#define BANK_BASE_ADDRESS   0xa000
 
 #define MAX_AUDIO_CHANNELS  1
 
