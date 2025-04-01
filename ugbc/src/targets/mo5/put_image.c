@@ -346,7 +346,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDB %s+4", image->realName );
     outline0("CLRA" );
     outline0("TFR D, U" );
-    outline0("LEAY $B000, Y" );
     outline0("TFR Y, X" );
     outline1("LDY %s+6", image->realName );
     outline0("JSR BANKUNCOMPRESS");
@@ -355,7 +354,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     cpu_label( _environment, labelNoBankCompressed );
 
-    outline0("LEAY $B000, Y" );
     outline1("LDB %s+4", image->realName );
     outline1("LDX %s+6", image->realName );
     outline1("LDU %s+2", image->realName );

@@ -217,27 +217,20 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_TILEMAP:
                 case VT_TARRAY: {
-                    if ( variable->bankAssigned != -1 ) {
-                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        if ( variable->type == VT_TARRAY ) {
-                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
-                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
-                            }
-                            outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
-                        } else {
-                            if (VT_BITWIDTH( variable->type ) == 0 ) {
-                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->type ] );
-                            }
-                            outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
-                        }
-                    } else {
+                    if ( variable->bankAssigned == -1 ) {
+
                         if ( variable->valueBuffer ) {
                             out1("%s fcb ", variable->realName);
                             int i=0;
                             for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                                out1("$%2.2x,", variable->valueBuffer[i]);
                             }
-                            outhead1("%d", variable->valueBuffer[(variable->size-1)]);
+                            // force +1 byte if size is odd
+                            if ( variable->size & 0x01 ) {
+                                outhead1("$%2.2x,$0", variable->valueBuffer[(variable->size-1)]);
+                            } else {
+                                outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                            }
                         } else if ( variable->value ) {
 
                             switch( VT_BITWIDTH( variable->arrayType ) ) {
@@ -260,22 +253,52 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     break;
                                 }
                                 case 8:
-                                    out3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
-                                    outline0("");
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    out3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
-                                    outline0("");
+                                    outhead3("%s rzb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                             
                         } else {
-                            outhead2("%s rzb %d", variable->realName, variable->size);
+                            outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                            // force +1 byte if size is odd
+                            if ( variable->size & 0x01 ) {
+                                outhead2("%s rzb %d", variable->realName, variable->size+1);
+                            } else {
+                                outhead2("%s rzb %d", variable->realName, variable->size);
+                            }
+                        }
+
+                    } else {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                        if ( variable->type == VT_TARRAY ) {
+                            // if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
+                            //     CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
+                            // }
+                            // force +1 byte if size is odd
+                            if ( variable->size & 0x01 ) {
+                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
+                            } else {
+                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
+                            }
+                        } else {
+                            if (VT_BITWIDTH( variable->type ) == 0 ) {
+                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->type ] );
+                            }
+                            // force +1 byte if size is odd
+                            if ( variable->size & 0x01 ) {
+                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3)+1 );
+                            } else {
+                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
+                            }
                         }
                     }
 
                     break;
+
                 }
+                
             }
         }
         
@@ -561,7 +584,6 @@ void variable_cleanup( Environment * _environment ) {
                 outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
                 outhead1("BANKREADBANK%2.2xXS", bank->id );
                 outline1("LDB #$%2.2x", bank->id );
-                outline0("LEAY $B000,Y" );
                 outline0("JMP BANKREAD" );
             }
             bank = bank->next;
