@@ -154,15 +154,16 @@
 ;     RET   
 
 VZ200STARTUP:
-
+	RET
+	
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ;   Waits until Press <SPACE BAR>                
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-DEBUGVZ00:
-	LD A, ($68ef)
-	AND $10
-	JR NZ, DEBUGVZ00
-	RET
+; DEBUGVZ00:
+; 	LD A, ($68ef)
+; 	AND $10
+; 	JR NZ, DEBUGVZ00
+; 	RET
 	
 ; 	LD A, 50
 ; 	LD (TICKSPERSECOND), A

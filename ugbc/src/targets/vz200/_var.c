@@ -460,6 +460,10 @@ void variable_cleanup( Environment * _environment ) {
     }
     outline0("$00");
     outline2("DEFB $f1, $%2.2x, $%2.2x", (unsigned char)(_environment->program.startingAddress&0xff), (unsigned char)(_environment->program.startingAddress>>8) & 0xff); // file type and starting address
+    // outline0("DEBUGVZ00:");
+	// outline0("LD A, ($68ef)");
+	// outline0("AND $10");
+	// outline0("JR NZ, DEBUGVZ00");
     outline0("JP CODESTART");
 
     deploy_inplace_preferred( vScrollTextDown, src_hw_6847z_vscroll_text_asm );

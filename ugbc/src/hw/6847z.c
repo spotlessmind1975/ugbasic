@@ -2106,4 +2106,23 @@ void c6847z_screen( Environment * _environment, char * _x, char * _y, char * _c 
     // outline1("STA %s", _c );
 
 }
+void c6847z_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
+
+    if ( _environment->currentMode < 7 ) {
+
+    } else {
+        // deploy( clsBox, src_hw_6847_cls_box_asm );
+        // outline1("LDD %s", _x1 );
+        // outline0("STD <IMAGEX" );
+        // outline1("LDD %s", _y1 );
+        // outline0("STD <IMAGEY"  );
+        // outline1("LDA %s", _w );
+        // outline0("STA <IMAGEW" );
+        // outline1("LDA %s", _h );
+        // outline0("STA <IMAGEH" );
+        // outline0("JSR CLSBOX");
+    }
+
+}
+
 #endif
