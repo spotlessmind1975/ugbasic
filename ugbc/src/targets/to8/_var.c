@@ -45,6 +45,8 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
 
     Variable * variable = _first;
 
+    outline0("ALIGN 2");
+    
     while( variable ) {
 
         if ( variable->bankReadOrWrite == _bank_read_write &&                
@@ -537,6 +539,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
+            outline0("ALIGN 2");            
             outhead1("OFFSETS%4.4x", actual->size );
             out0("        fdb " );
             for( i=0; i<actual->count; ++i ) {
@@ -741,6 +744,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( bank, src_hw_to8_bank_asm );
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
+            outline0("ALIGN 2");            
             outhead1("BANKWINDOWID%2.2x fcb $FF, $FF", i );
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
         }
