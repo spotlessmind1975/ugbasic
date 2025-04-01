@@ -51,7 +51,7 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_to8_bank_asm );
 
-    int realAddress = 0xa000 + _address1;
+    int realAddress = _address1;
 
     // outline0("; bank uncompress (1)")
     // Variable * previous = bank_get( _environment );

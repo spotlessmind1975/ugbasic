@@ -75,7 +75,7 @@ void bank_write_semi_var( Environment * _environment, char * _address2, int _ban
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_to8_bank_asm );
 
-    int realAddress = 0xa000 + _address1;
+    int realAddress = _address1;
 
     outline0("; bank read sv")
     outline1("LDB #$%2.2x", _bank );

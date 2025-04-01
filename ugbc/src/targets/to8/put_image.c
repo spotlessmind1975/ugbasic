@@ -334,7 +334,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDB %s+4", image->realName );
     outline0("CLRA" );
     outline0("TFR D, U" );
-    outline0("LEAY $A000, Y" );
     outline0("TFR Y, X" );
     outline1("LDY %s+6", image->realName );
     outline0("JSR BANKUNCOMPRESS");

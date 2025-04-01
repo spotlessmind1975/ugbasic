@@ -736,7 +736,6 @@ void variable_cleanup( Environment * _environment ) {
             outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
             outhead1("BANKREADBANK%2.2xXS", bank->id );
             outline1("LDB #$%2.2x", bank->id );
-            outline0("LEAY $A000,Y" );
             outline0("JMP BANKREAD" );
         }
         bank = bank->next;
