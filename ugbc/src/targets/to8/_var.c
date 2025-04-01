@@ -235,6 +235,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             }                             
                             
                         } else {
+                            outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
                                 outhead2("%s rzb %d", variable->realName, variable->size+1);
@@ -244,10 +245,11 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         }
 
                     } else {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         if ( variable->type == VT_TARRAY ) {
-                            if (VT_BITWIDTH( variable->arrayType ) == 0 ) {
-                                CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
-                            }
+                            // if (VT_BITWIDTH( variable->arrayType ) == 0 && variable->arrayType != VT_TYPE ) {
+                            //     CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
+                            // }
                             // force +1 byte if size is odd
                             if ( variable->size & 0x01 ) {
                                 outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
@@ -268,6 +270,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     }
 
                     break;
+
                 }
             }
         }
