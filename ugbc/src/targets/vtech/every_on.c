@@ -52,6 +52,6 @@ void every_on( Environment * _environment, char * _timer ) {
         timerRealName = timer->realName;
     }
 
-    vtech_timer_set_status_on( _environment, timerRealName );
+    vz200_timer_set_status_on( _environment, timerRealName );
 
 }

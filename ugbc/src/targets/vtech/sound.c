@@ -51,7 +51,7 @@
  */
 /* <usermanual>
 @keyword SOUND
-@target vtech
+@target vz200
 </usermanual> */
 void sound( Environment * _environment, int _freq, int _delay, int _channels ) {
 

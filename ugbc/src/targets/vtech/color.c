@@ -47,12 +47,12 @@
 /* <usermanual>
 @keyword COLOR
 
-@target vtech
+@target vz200
 </usermanual> */
 /* <usermanual>
 @keyword COLOUR
 
-@target vtech
+@target vz200
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 

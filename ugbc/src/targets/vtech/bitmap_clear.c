@@ -55,7 +55,7 @@
  */
 /* <usermanual>
 @keyword BITMAP CLEAR
-@target vtech
+@target vz200
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 

@@ -39,24 +39,24 @@
  * CODE SECTION
  ****************************************************************************/
 
-#ifdef __vtech__
+#ifdef __vz200__
 
-void vtech_inkey( Environment * _environment, char * _key ) {
+void vz200_inkey( Environment * _environment, char * _key ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm);
 
     outline0("CALL INKEY");
     outline1("LD (%s), A", _key);
 
 }
 
-void vtech_wait_key( Environment * _environment, int _release ) {
+void vz200_wait_key( Environment * _environment, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     if ( _release ) {
         outline0("CALL WAITKEYRELEASE");
@@ -67,13 +67,13 @@ void vtech_wait_key( Environment * _environment, int _release ) {
 }
 
 
-void vtech_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
+void vz200_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_vtech_joystick_asm );
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
-    deploy( wait_key_or_fire, src_hw_vtech_wait_key_or_fire_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_vz200_wait_key_or_fire_asm );
 
     if ( _port == -1 ) {
         outline0("CALL WAITKEYFIRE");
@@ -84,13 +84,13 @@ void vtech_wait_key_or_fire( Environment * _environment, int _port, int _release
    
 }
 
-void vtech_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
+void vz200_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_vtech_joystick_asm );
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
-    deploy( wait_key_or_fire, src_hw_vtech_wait_key_or_fire_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
+    deploy( wait_key_or_fire, src_hw_vz200_wait_key_or_fire_asm );
 
     if ( ! _port ) {
         outline0("CALL WAITKEYFIRE");
@@ -101,12 +101,12 @@ void vtech_wait_key_or_fire_semivar( Environment * _environment, char * _port, i
    
 }
 
-void vtech_wait_fire( Environment * _environment, int _port, int _release ) {
+void vz200_wait_fire( Environment * _environment, int _port, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_vtech_joystick_asm );
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     switch( _port ) {
         case -1:
@@ -122,11 +122,11 @@ void vtech_wait_fire( Environment * _environment, int _port, int _release ) {
       
 }
 
-void vtech_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
+void vz200_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy( joystick, src_hw_vtech_joystick_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
 
     if ( ! _port ) {
         outline0("CALL WAITFIRE");
@@ -137,13 +137,13 @@ void vtech_wait_fire_semivar( Environment * _environment, char * _port, int _rel
 
 }
 
-void vtech_key_state( Environment * _environment, char *_scancode, char * _result ) {
+void vz200_key_state( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYSTATE");
@@ -152,13 +152,13 @@ void vtech_key_state( Environment * _environment, char *_scancode, char * _resul
 
 }
 
-void vtech_scancode( Environment * _environment, char * _result ) {
+void vz200_scancode( Environment * _environment, char * _result ) {
 
     MAKE_LABEL
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm);
 
     outline0("CALL SCANCODE");
     if ( _environment->vestigialConfig.rchack_falling_balls_1163 ) {
@@ -171,24 +171,24 @@ void vtech_scancode( Environment * _environment, char * _result ) {
    
 }
 
-void vtech_asciicode( Environment * _environment, char * _result ) {
+void vz200_asciicode( Environment * _environment, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm);
 
     outline0("CALL ASCIICODE");
     outline1("LD (%s), A", _result );
    
 }
 
-void vtech_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
+void vz200_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
     _environment->bitmaskNeeded = 1;
 
     MAKE_LABEL
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     outline1("LD A, (%s)", _scancode);
     outline0("CALL KEYPRESSED");
@@ -197,37 +197,37 @@ void vtech_key_pressed( Environment * _environment, char *_scancode, char * _res
 
 }
 
-void vtech_scanshift( Environment * _environment, char * _shifts ) {
+void vz200_scanshift( Environment * _environment, char * _shifts ) {
 
 }
 
-void vtech_keyshift( Environment * _environment, char * _shifts ) {
+void vz200_keyshift( Environment * _environment, char * _shifts ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     outline0("CALL KEYSHIFT" );
     outline1("LD (%s), A", _shifts );
 
 }
 
-void vtech_clear_key( Environment * _environment ) {
+void vz200_clear_key( Environment * _environment ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
 
     outline0("CALL CLEARKEY" );
 
 }
 
-void vtech_joy_vars( Environment * _environment, char * _port, char * _value ) {
+void vz200_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
-    deploy( joystick, src_hw_vtech_joystick_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
 
     MAKE_LABEL
 
@@ -262,12 +262,12 @@ void vtech_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void vtech_joy( Environment * _environment, int _port, char * _value ) {
+void vz200_joy( Environment * _environment, int _port, char * _value ) {
 
     _environment->bitmaskNeeded = 1;
     
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm );
-    deploy( joystick, src_hw_vtech_joystick_asm );
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm );
+    deploy( joystick, src_hw_vz200_joystick_asm );
     if ( _environment->keyboardConfig.sync ) {
         outline0("CALL SCANCODERAW" );
     }
@@ -294,11 +294,11 @@ void vtech_joy( Environment * _environment, int _port, char * _value ) {
 
 }
 
-void vtech_bank_select( Environment * _environment, int _bank ) {
+void vz200_bank_select( Environment * _environment, int _bank ) {
     
 }
 
-void vtech_busy_wait( Environment * _environment, char * _timing ) {
+void vz200_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
@@ -314,12 +314,12 @@ void vtech_busy_wait( Environment * _environment, char * _timing ) {
 
 }
 
-void vtech_initialization( Environment * _environment ) {
+void vz200_initialization( Environment * _environment ) {
 
-    variable_import( _environment, "VTECHTIMER", VT_WORD, 0 );
-    variable_global( _environment, "VTECHTIMER" );
-    variable_import( _environment, "VTECHTIMER2", VT_BYTE, 6 );
-    variable_global( _environment, "VTECHTIMER2" );
+    variable_import( _environment, "VZ200TIMER", VT_WORD, 0 );
+    variable_global( _environment, "VZ200TIMER" );
+    variable_import( _environment, "VZ200TIMER2", VT_BYTE, 6 );
+    variable_global( _environment, "VZ200TIMER2" );
 
     variable_import( _environment, "EVERYCOUNTER", VT_BYTE, 0 );
     variable_global( _environment, "EVERYCOUNTER" );
@@ -331,11 +331,11 @@ void vtech_initialization( Environment * _environment ) {
 
 }
 
-void vtech_finalization( Environment * _environment ) {
+void vz200_finalization( Environment * _environment ) {
 
 }
 
-void vtech_timer_set_status_on( Environment * _environment, char * _timer ) {
+void vz200_timer_set_status_on( Environment * _environment, char * _timer ) {
     
     deploy( timer, src_hw_z80_timer_asm);
 
@@ -351,7 +351,7 @@ void vtech_timer_set_status_on( Environment * _environment, char * _timer ) {
 
 }
 
-void vtech_timer_set_status_off( Environment * _environment, char * _timer ) {
+void vz200_timer_set_status_off( Environment * _environment, char * _timer ) {
 
     deploy( timer, src_hw_z80_timer_asm);
 
@@ -368,7 +368,7 @@ void vtech_timer_set_status_off( Environment * _environment, char * _timer ) {
 
 }
 
-void vtech_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
+void vz200_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
 
     deploy( timer, src_hw_z80_timer_asm);
 
@@ -390,7 +390,7 @@ void vtech_timer_set_counter( Environment * _environment, char * _timer, char * 
 
 }
 
-void vtech_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
+void vz200_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
 
     deploy( timer, src_hw_z80_timer_asm);
 
@@ -412,7 +412,7 @@ void vtech_timer_set_init( Environment * _environment, char * _timer, char * _in
 
 }
 
-void vtech_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
+void vz200_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
 
     deploy( timer, src_hw_z80_timer_asm);
 
@@ -435,9 +435,9 @@ void vtech_timer_set_address( Environment * _environment, char * _timer, char * 
 
 }
 
-void vtech_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+void vz200_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dload, src_hw_vtech_dload_asm );
+    deploy( dload, src_hw_vz200_dload_asm );
 
     MAKE_LABEL
     
@@ -479,13 +479,13 @@ void vtech_dload( Environment * _environment, char * _filename, char * _offset, 
 
     }
 
-    outline0("CALL VTECHDLOAD");
+    outline0("CALL VZ200DLOAD");
 
 }
 
-void vtech_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
+void vz200_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dsave, src_hw_vtech_dsave_asm );
+    deploy( dsave, src_hw_vz200_dsave_asm );
 
     MAKE_LABEL
     
@@ -533,15 +533,15 @@ void vtech_dsave( Environment * _environment, char * _filename, char * _offset, 
 
     }
 
-    outline0("CALL VTECHDSAVE");
+    outline0("CALL VZ200DSAVE");
 
 }
 
-void vtech_put_key(  Environment * _environment, char *_string, char * _size ) {
+void vz200_put_key(  Environment * _environment, char *_string, char * _size ) {
 
     _environment->bitmaskNeeded = 1;
 
-    deploy_deferred( keyboard, src_hw_vtech_keyboard_asm);
+    deploy_deferred( keyboard, src_hw_vz200_keyboard_asm);
 
     outline1("LD HL, (%s)", _string );
     outline1("LD A, (%s)", _size );
@@ -550,7 +550,7 @@ void vtech_put_key(  Environment * _environment, char *_string, char * _size ) {
 
 }
 
-void vtech_sys_call( Environment * _environment, int _destination ) {
+void vz200_sys_call( Environment * _environment, int _destination ) {
 
     _environment->sysCallUsed = 1;
 

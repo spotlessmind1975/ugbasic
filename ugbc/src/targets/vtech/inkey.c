@@ -59,7 +59,7 @@ Variable * inkey( Environment * _environment ) {
     char noKeyPressedLabel[MAX_TEMPORARY_STORAGE]; sprintf(noKeyPressedLabel, "%snokeyPressed", label );
     char finishedLabel[MAX_TEMPORARY_STORAGE]; sprintf(finishedLabel, "%sfinished", label );
 
-    vtech_inkey( _environment, key->realName );
+    vz200_inkey( _environment, key->realName );
 
     cpu_bveq( _environment, key->realName, noKeyPressedLabel );
 

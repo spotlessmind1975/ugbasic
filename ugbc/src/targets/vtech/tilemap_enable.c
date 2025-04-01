@@ -59,7 +59,7 @@ Abilita la modalità a tiles.
 
 @example TILEMAP ENABLE
 
-@target vtech
+@target vz200
 </usermanual> */
 void tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
     

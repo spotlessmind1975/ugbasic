@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword SOUND OFF
-@target vtech
+@target vz200
 </usermanual> */
 void sound_off( Environment * _environment, int _channels ) {
 

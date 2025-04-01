@@ -46,7 +46,7 @@
  */
 /* <usermanual>
 @keyword COLOR BACK
-@target vtech
+@target vz200
 </usermanual> */
 void back( Environment * _environment, char * _color ) {
 

@@ -1,5 +1,5 @@
-#ifndef __UGBC_VTECH__
-#define __UGBC_VTECH__
+#ifndef __UGBC_VZ200__
+#define __UGBC_VZ200__
 
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
@@ -157,33 +157,33 @@
 
 #define MAX_AUDIO_CHANNELS      1
 
-void vtech_wait_key( Environment * _environment, int _release );
-void vtech_wait_fire( Environment * _environment, int _port, int _release );
-void vtech_wait_fire_semivar( Environment * _environment, char * _port, int _release );
-void vtech_wait_key_or_fire( Environment * _environment, int _port, int _release );
-void vtech_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
-void vtech_key_state( Environment * _environment, char *_scancode, char * _result );
-void vtech_scancode( Environment * _environment, char * _scacode );
-void vtech_asciicode( Environment * _environment, char * _asciicode );
-void vtech_inkey( Environment * _environment, char * _key );
-void vtech_key_pressed( Environment * _environment, char *_scancode, char * _result );
+void vz200_wait_key( Environment * _environment, int _release );
+void vz200_wait_fire( Environment * _environment, int _port, int _release );
+void vz200_wait_fire_semivar( Environment * _environment, char * _port, int _release );
+void vz200_wait_key_or_fire( Environment * _environment, int _port, int _release );
+void vz200_wait_key_or_fire_semivar( Environment * _environment, char * _port, int _release );
+void vz200_key_state( Environment * _environment, char *_scancode, char * _result );
+void vz200_scancode( Environment * _environment, char * _scacode );
+void vz200_asciicode( Environment * _environment, char * _asciicode );
+void vz200_inkey( Environment * _environment, char * _key );
+void vz200_key_pressed( Environment * _environment, char *_scancode, char * _result );
 
-void vtech_scanshift( Environment * _environment, char * _shifts );
-void vtech_keyshift( Environment * _environment, char * _shifts );
-void vtech_clear_key( Environment * _environment );
-void vtech_put_key(  Environment * _environment, char *_string, char * _size );
+void vz200_scanshift( Environment * _environment, char * _shifts );
+void vz200_keyshift( Environment * _environment, char * _shifts );
+void vz200_clear_key( Environment * _environment );
+void vz200_put_key(  Environment * _environment, char *_string, char * _size );
 
-void vtech_joy( Environment * _environment, int _port, char * _value );
-void vtech_joy_vars( Environment * _environment, char * _port, char * _value );
+void vz200_joy( Environment * _environment, int _port, char * _value );
+void vz200_joy_vars( Environment * _environment, char * _port, char * _value );
 
-void vtech_timer_set_status_on( Environment * _environment, char * _timer );
-void vtech_timer_set_status_off( Environment * _environment, char * _timer );
-void vtech_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
-void vtech_timer_set_init( Environment * _environment, char * _timer, char * _init );
-void vtech_timer_set_address( Environment * _environment, char * _timer, char * _address );
-void vtech_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void vtech_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void vtech_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
-void vtech_sys_call( Environment * _environment, int _destination );
+void vz200_timer_set_status_on( Environment * _environment, char * _timer );
+void vz200_timer_set_status_off( Environment * _environment, char * _timer );
+void vz200_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
+void vz200_timer_set_init( Environment * _environment, char * _timer, char * _init );
+void vz200_timer_set_address( Environment * _environment, char * _timer, char * _address );
+void vz200_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void vz200_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
+void vz200_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction );
+void vz200_sys_call( Environment * _environment, int _destination );
 
 #endif

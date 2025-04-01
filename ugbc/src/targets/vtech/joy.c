@@ -45,7 +45,7 @@ Variable * joy_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    vtech_joy_vars( _environment, port->realName, result->realName );
+    vz200_joy_vars( _environment, port->realName, result->realName );
 
     return result;
 
@@ -57,7 +57,7 @@ Variable * joy( Environment * _environment, int _port ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of JOY)" );
 
-    vtech_joy( _environment, _port, result->realName );
+    vz200_joy( _environment, _port, result->realName );
 
     return result;
 

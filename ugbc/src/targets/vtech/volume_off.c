@@ -63,7 +63,7 @@ singola voce.
 @example VOLUME OFF
 @example VOLUME OFF ON #%001
 
-@target vtech
+@target vz200
 </usermanual> */
 void volume_off( Environment * _environment, int _channels ) {
 
@@ -86,7 +86,7 @@ void volume_off( Environment * _environment, int _channels ) {
 
 @example VOLUME OFF ON voice1
 
-@target vtech
+@target vz200
 </usermanual> */
 void volume_off_var( Environment * _environment, char * _channels ) {
 

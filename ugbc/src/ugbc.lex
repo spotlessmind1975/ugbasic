@@ -70,8 +70,8 @@ extern char * importPath;
     char targetName[] = "c64reu";
 #elif defined(__pc1403__)
     char targetName[] = "pc1403";
-#elif defined(__vtech__)
-    char targetName[] = "vtech";
+#elif defined(__vz200__)
+    char targetName[] = "vz200";
 #endif
 
 int yyconcatlineno;
@@ -1729,7 +1729,7 @@ VOLUME { RETURN(VOLUME,1); }
 Vo { RETURN(VOLUME,1); }
 VSCROLL { RETURN(VSCROLL,1); }
 Vscl { RETURN(VSCROLL,1); }
-VTECH { RETURN(VTECH,1); }
+VZ200 { RETURN(VZ200,1); }
 
 %{ /* --------------------------------- W --------------------------------- */ %}
 

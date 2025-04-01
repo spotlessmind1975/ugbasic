@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword CLS
 
-@target vtech
+@target vz200
 </usermanual> */
 void cls( Environment * _environment, char * _paper ) {
 

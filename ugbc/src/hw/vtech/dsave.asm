@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             DSAVE ROUTINE ON VTECH                            *
+;*                             DSAVE ROUTINE ON VZ200                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -37,7 +37,7 @@
 
 ; HL: filename, B: filename length
 ; DE: address, IX: size to save
-VTECHDSAVE:
+VZ200DSAVE:
 
     RET
 
@@ -45,7 +45,7 @@ VTECHDSAVE:
 ;     PUSH HL
 ;     PUSH BC
 
-;     CALL VTECHIRQSYSTEM
+;     CALL VZ200IRQSYSTEM
 
 ;     LD DE, $40
 ;     LD HL, $B0FF
@@ -57,7 +57,7 @@ VTECHDSAVE:
 ;     CALL $BC8C
 ;     POP DE
 
-;     JR NC, VTECHDSAVEERROR
+;     JR NC, VZ200DSAVEERROR
 
 ;     ; Write the output file directly from store.
 
@@ -104,14 +104,14 @@ VTECHDSAVE:
     
 ;     CALL $BC8F
 
-;     JP VTECHDSAVEDONE
+;     JP VZ200DSAVEDONE
 
-; VTECHDSAVEERROR:
+; VZ200DSAVEERROR:
 ;     LD (DLOADERROR), A
 
-; VTECHDSAVEDONE:
+; VZ200DSAVEDONE:
 
-;     CALL VTECHIRQUGBASIC
+;     CALL VZ200IRQUGBASIC
     
 ; 	DI
 ; 	LD HL, IRQTIMERVOID

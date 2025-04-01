@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__vtech__)
+#if defined(__vz200__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>

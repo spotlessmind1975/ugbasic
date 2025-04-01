@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                      STARTUP ROUTINE FOR VTECH                             *
+;*                      STARTUP ROUTINE FOR VZ200                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -94,7 +94,7 @@
 ; IRQTIMERVOID:
 ; 	RET
 
-; VTECHISVC:
+; VZ200ISVC:
 ; 	PUSH	AF
 ; 	PUSH	BC
 ; 	PUSH	DE
@@ -107,16 +107,16 @@
 ; 	PUSH	BC
 ; 	PUSH	DE
 ; 	PUSH	HL
-;     LD A, (VTECHTIMER2)
+;     LD A, (VZ200TIMER2)
 ;     DEC A
-;     LD (VTECHTIMER2), A
+;     LD (VZ200TIMER2), A
 ;     CP 0
 ;     JR NZ,IRQVECTORSKIP
 ;     LD A,6
-;     LD (VTECHTIMER2), A
-;     LD HL,(VTECHTIMER)
+;     LD (VZ200TIMER2), A
+;     LD HL,(VZ200TIMER)
 ;     INC HL
-;     LD (VTECHTIMER),HL
+;     LD (VZ200TIMER),HL
 ; @IF deployed.music
 ; 	CALL MUSICPLAYER
 ; @ENDIF
@@ -153,7 +153,7 @@
 ;     EI
 ;     RET   
 
-VTECHSTARTUP:
+VZ200STARTUP:
 	RET
 	
 ; 	LD A, 50
@@ -174,7 +174,7 @@ VTECHSTARTUP:
 ;     ; LD HL, $B0FF
 ;     ; CALL $BCCB
 
-; 	CALL VTECHIRQUGBASIC
+; 	CALL VZ200IRQUGBASIC
 
 ; 	DI
 ; 	LD HL, IRQTIMERVOID
@@ -209,7 +209,7 @@ VTECHSTARTUP:
 ; @IF sysCallUsed
 
 ; SYSCALL:
-; 	CALL VTECHIRQSYSTEM
+; 	CALL VZ200IRQSYSTEM
 ; SYSCALL0:
 ; 	CALL $0000
 ; 	EI
@@ -217,7 +217,7 @@ VTECHSTARTUP:
 
 ; @ENDIF
 
-; VTECHIRQUGBASIC:
+; VZ200IRQUGBASIC:
 ;     DI
 ; 	LD A, ($0038)
 ; 	LD (IRQVECTOR), A
@@ -225,12 +225,12 @@ VTECHSTARTUP:
 ; 	LD (IRQVECTOR+1), HL
 ;     LD A, $C3
 ;     LD ($0038), A
-;     LD HL, VTECHISVC
+;     LD HL, VZ200ISVC
 ;     LD ($0039), HL
 ;     EI
 ; 	RET
 
-; VTECHIRQSYSTEM:
+; VZ200IRQSYSTEM:
 ;     DI
 ;     LD A, (IRQVECTOR)
 ;     LD ($0038), A
@@ -239,11 +239,11 @@ VTECHSTARTUP:
 ;     EI
 ; 	RET
 
-; VTECHVIDEOSTARTUP:
+; VZ200VIDEOSTARTUP:
 ; 	LD HL, PALETTE
 ; 	LD A, 0
 ; 	LD BC, $0F00
-; VTECHVIDEOSTARTUPL1:
+; VZ200VIDEOSTARTUPL1:
 ; 	LD A, C
 ; 	LD IXH, A
 ; 	LD A, (HL)
@@ -252,15 +252,15 @@ VTECHSTARTUP:
 ; 	INC HL
 ; 	INC C
 ; 	DEC B
-; 	JR NZ, VTECHVIDEOSTARTUPL1
+; 	JR NZ, VZ200VIDEOSTARTUPL1
 
 ;     RET
 
 ; WAITTIMER:
-;     LD A, (VTECHTIMER)
+;     LD A, (VZ200TIMER)
 ;     LD B, A
 ; WAITTIMERL1:
-;     LD A, (VTECHTIMER)
+;     LD A, (VZ200TIMER)
 ;     CP B
 ;     JR Z, WAITTIMERL1
 ;     DEC L

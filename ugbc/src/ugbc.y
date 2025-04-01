@@ -1208,7 +1208,7 @@ const_factor:
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
             defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__) || \
-            defined( __vtech__) 
+            defined( __vz200__) 
             $$ = 1;
         #else
             $$ = 0;
@@ -3228,7 +3228,7 @@ exponential_less:
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
     defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
-    defined(__vtech__)
+    defined(__vz200__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -3240,7 +3240,7 @@ exponential_less:
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
     defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
-    defined(__vtech__)
+    defined(__vz200__)
         variable_store_float( _environment, pi->name, M_PI );
 #else
         cpu_move_32bit( _environment, "PI", pi->realName );
@@ -4098,7 +4098,7 @@ exponential_less:
         defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
         defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
         defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__) || defined(__gb__) || defined(__vtech__)
+        defined( __c64reu__) || defined(__gb__) || defined(__vz200__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -9475,7 +9475,7 @@ target :
         #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
             defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
-            defined(__vtech__)
+            defined(__vz200__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9601,8 +9601,8 @@ target :
         #endif
     }
     |
-    VTECH {
-        #ifdef __vtech__
+    VZ200 {
+        #ifdef __vz200__
             $$ = 1;
         #else
             $$ = 0;
@@ -13087,7 +13087,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
 #elif __pc1403__
     char target[MAX_TEMPORARY_STORAGE] = "Sharp PC-1403";
-#elif __vtech__
+#elif __vz200__
     char target[MAX_TEMPORARY_STORAGE] = "VTech Laser200/210/305/310";
 #endif
 
@@ -13225,13 +13225,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __pc1403__
     printf("\t                ram - RAM loadable by debugger\n" );
     #define defaultExtension "ram"
-#elif __vtech__
+#elif __vz200__
     printf("\t                vz - file snapshot\n" );
     #define defaultExtension "vz"
 #endif
     printf("\t-l <name>    Output filename with list of variables defined\n" );
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
-#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__) || defined(__vtech__)
+#if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__) || defined(__vz200__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );

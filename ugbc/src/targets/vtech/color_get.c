@@ -47,7 +47,7 @@
 /* <usermanual>
 @keyword COLOR (function)
 
-@target vtech
+@target vz200
 </usermanual> */
 Variable * color_get_vars( Environment * _environment, char * _index ) {
 

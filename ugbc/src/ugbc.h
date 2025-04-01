@@ -1769,8 +1769,8 @@ typedef struct _Deployed {
     int sn76489startup2;
     int audio1startup;
     int audio1bitnoirq;
-    int vtechvars;
-    int vtechstartup;
+    int vz200vars;
+    int vz200startup;
 
     int draw;
     int bar;
@@ -5831,10 +5831,10 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_gb.h"
     #include "hw/sm83.h"
     #include "hw/gb.h"
-#elif __vtech__
-    #include "../src-generated/modules_vtech.h"
+#elif __vz200__
+    #include "../src-generated/modules_vz200.h"
     #include "hw/z80.h"
-    #include "hw/vtech.h"
+    #include "hw/vz200.h"
     #include "hw/6847z.h"
 #endif
 

@@ -46,7 +46,7 @@
 /* <usermanual>
 @keyword COLOR BORDER
 
-@target vtech
+@target vz200
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
     

@@ -65,13 +65,13 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     switch( VT_BITWIDTH( _type ) ) {
         case 8:
-            z80_random_8bit( _environment, "VTECHTIMER", result->realName );
+            z80_random_8bit( _environment, "VZ200TIMER", result->realName );
             break;
         case 16:
-            z80_random_16bit( _environment, "VTECHTIMER", result->realName );
+            z80_random_16bit( _environment, "VZ200TIMER", result->realName );
             break;
         case 32:
-            z80_random_32bit( _environment, "VTECHTIMER", result->realName );
+            z80_random_32bit( _environment, "VZ200TIMER", result->realName );
             break;
         default:
             CRITICAL_CANNOT_GENERATE_RANDOM( );

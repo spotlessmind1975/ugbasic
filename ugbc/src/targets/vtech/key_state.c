@@ -47,7 +47,7 @@ Variable * key_state( Environment * _environment, int _scancode ) {
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _scancode );
 
-    vtech_key_state( _environment, value, result->realName );
+    vz200_key_state( _environment, value, result->realName );
 
     return result;
     
@@ -58,7 +58,7 @@ Variable * key_state_var( Environment * _environment, char * _scancode ) {
     Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0);
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY STATE)");
 
-    vtech_key_state( _environment, scancode->realName, result->realName );
+    vz200_key_state( _environment, scancode->realName, result->realName );
 
     return result;
     

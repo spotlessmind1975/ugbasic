@@ -463,9 +463,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("JP CODESTART");
 
     deploy_inplace_preferred( vScrollTextDown, src_hw_6847z_vscroll_text_asm );
-    deploy_inplace_preferred( vtechvars, src_hw_6847z_vars_asm);
+    deploy_inplace_preferred( vz200vars, src_hw_6847z_vars_asm);
 
-    deploy( startup, src_hw_vtech_startup_asm);
+    deploy( startup, src_hw_vz200_startup_asm);
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {

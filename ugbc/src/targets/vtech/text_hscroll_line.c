@@ -40,7 +40,7 @@
 
 /* <usermanual>
 @keyword HSCROLL
-@target vtech
+@target vz200
 </usermanual> */
 void text_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 

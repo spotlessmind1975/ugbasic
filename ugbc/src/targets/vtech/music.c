@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword MUSIC
-@target vtech
+@target vz200
 </usermanual> */
 void music_var( Environment * _environment, char * _music, int _loop, int _music_type ) {
 
@@ -73,7 +73,7 @@ void music_var( Environment * _environment, char * _music, int _loop, int _music
 /* <usermanual>
 @keyword MUSIC PAUSE
 
-@target vtech
+@target vz200
 </usermanual> */
 void music_pause( Environment * _environment ) {
 
@@ -87,7 +87,7 @@ void music_pause( Environment * _environment ) {
 /* <usermanual>
 @keyword MUSIC RESUME
 
-@target vtech
+@target vz200
 </usermanual> */
 void music_resume( Environment * _environment ) {
 
@@ -101,7 +101,7 @@ void music_resume( Environment * _environment ) {
 /* <usermanual>
 @keyword MUSIC STOP
 
-@target vtech
+@target vz200
 </usermanual> */
 void music_stop( Environment * _environment ) {
 
@@ -116,7 +116,7 @@ void music_stop( Environment * _environment ) {
 /* <usermanual>
 @keyword MUSIC SEEK
 
-@target vtech
+@target vz200
 </usermanual> */
 void music_seek_var( Environment * _environment, char * _position ) {
 

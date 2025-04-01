@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword PLOT
 
-@target vtech
+@target vz200
  </usermanual> */
 void plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color ) {
 

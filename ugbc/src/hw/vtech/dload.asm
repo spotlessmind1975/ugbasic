@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             DLOAD ROUTINE ON VTECH                            *
+;*                             DLOAD ROUTINE ON VZ200                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -37,14 +37,14 @@
 
 ; HL: filename, B: filename length
 ; DE: address
-VTECHDLOAD:
+VZ200DLOAD:
     RET
 
 ;     PUSH DE
 ;     PUSH HL
 ;     PUSH BC
 
-;     CALL VTECHIRQSYSTEM
+;     CALL VZ200IRQSYSTEM
 
 ;     LD DE, $40
 ;     LD HL, $B0FF
@@ -56,21 +56,21 @@ VTECHDLOAD:
 ;     CALL $BC77
 ;     POP DE
 
-;     JR NC, VTECHDLOADERROR
+;     JR NC, VZ200DLOADERROR
 
 ;     LD HL, DE
 ;     CALL $BC83
     
 ;     CALL $BC7A
 
-;     JP VTECHDLOADDONE
+;     JP VZ200DLOADDONE
 
-; VTECHDLOADERROR:
+; VZ200DLOADERROR:
 ;     LD (DLOADERROR), A
 
-; VTECHDLOADDONE:
+; VZ200DLOADDONE:
 
-;     CALL VTECHIRQUGBASIC
+;     CALL VZ200IRQUGBASIC
     
 ; 	DI
 ; 	LD HL, IRQTIMERVOID

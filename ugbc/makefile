@@ -256,7 +256,7 @@ ifeq ($(target),pc1403)
   audio=
   io=
 endif
-ifeq ($(target),vtech)
+ifeq ($(target),vz200)
   cpu=z80
   video=6847z
   video2=
@@ -949,16 +949,16 @@ src-generated/modules_vg5000.c: $(SOURCES_Z80) $(SOURCES_VG5000) $(SOURCES_EF934
 
 # VTech Laser200, 210, 305 and 310
 
-MODULES_VTECH := $(wildcard src/hw/vtech/*.asm)
-SOURCES_VTECH := $(subst src/hw/vtech/,src-generated/vtech_,$(MODULES_VTECH:.asm=.c))
+MODULES_VZ200 := $(wildcard src/hw/vz200/*.asm)
+SOURCES_VZ200 := $(subst src/hw/vz200/,src-generated/vz200_,$(MODULES_VZ200:.asm=.c))
 
-src-generated/vtech_%.c: $(MODULES_VTECH)
-	@xxd -i $(subst src-generated/vtech_,src/hw/vtech/,$(@:.c=.asm)) >$@
+src-generated/vz200_%.c: $(MODULES_VZ200)
+	@xxd -i $(subst src-generated/vz200_,src/hw/vz200/,$(@:.c=.asm)) >$@
 
-src-generated/modules_vtech.c: $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z)
-	@cat $(SOURCES_Z80) $(SOURCES_VTECH) $(SOURCES_6847Z) >src-generated/modules_vtech.c
-	@grep "src" src-generated/modules_vtech.c | awk -f modules.awk >src-generated/modules_vtech.h
-	@grep "data" src-generated/modules_vtech.c | awk -f modules.awk >>src-generated/modules_vtech.h
+src-generated/modules_vz200.c: $(SOURCES_Z80) $(SOURCES_VZ200) $(SOURCES_6847Z)
+	@cat $(SOURCES_Z80) $(SOURCES_VZ200) $(SOURCES_6847Z) >src-generated/modules_vz200.c
+	@grep "src" src-generated/modules_vz200.c | awk -f modules.awk >src-generated/modules_vz200.h
+	@grep "data" src-generated/modules_vz200.c | awk -f modules.awk >>src-generated/modules_vz200.h
 
 # ZX Spectrum
 

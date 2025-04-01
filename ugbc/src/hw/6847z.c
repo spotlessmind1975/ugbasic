@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__vtech__)
+#if defined(__vz200__)
 
 #include "../ugbc.h"
 #include <math.h>

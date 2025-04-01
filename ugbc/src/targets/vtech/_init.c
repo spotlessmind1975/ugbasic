@@ -83,8 +83,8 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x7000 );
     variable_global( _environment, "COPYOFTILESADDRESS" );    
 
-    variable_import( _environment, "VTECHTIMER", VT_WORD, 0 );
-    variable_global( _environment, "VTECHTIMER" );    
+    variable_import( _environment, "VZ200TIMER", VT_WORD, 0 );
+    variable_global( _environment, "VZ200TIMER" );    
 
     variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
     variable_global( _environment, "IRQVECTOR" );   
@@ -132,7 +132,7 @@ void target_initialization( Environment * _environment ) {
 
     c6847z_initialization( _environment );
     
-    outline0("CALL VTECHSTARTUP");
+    outline0("CALL VZ200STARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );

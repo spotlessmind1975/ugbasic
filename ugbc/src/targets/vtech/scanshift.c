@@ -44,7 +44,7 @@ Variable * scanshift( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of SCANSHIFT)");
 
-    vtech_scanshift( _environment, result->realName );
+    vz200_scanshift( _environment, result->realName );
 
     return result;
 

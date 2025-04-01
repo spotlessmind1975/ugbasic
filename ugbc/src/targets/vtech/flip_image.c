@@ -52,7 +52,7 @@ extern char DATATYPE_AS_STRING[][16];
  */
 /* <usermanual>
 @keyword FLIP IMAGE
-@target vtech
+@target vz200
 </usermanual> */
 void flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction ) {
 

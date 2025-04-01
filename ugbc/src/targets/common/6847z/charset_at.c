@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__vtech__)
+#if defined(__vz200__)
 
 void charset_at( Environment * _environment, int _address ) {
 

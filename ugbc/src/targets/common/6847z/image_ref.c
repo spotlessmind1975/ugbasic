@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__vtech__)
+#if defined(__vz200__)
 
 Variable * image_ref( Environment * _environment, char * _image ) {
 

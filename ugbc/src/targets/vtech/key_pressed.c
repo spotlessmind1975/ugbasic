@@ -46,7 +46,7 @@ Variable * key_pressed( Environment * _environment, int _scancode ) {
 
     char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _scancode );
 
-    vtech_key_pressed( _environment, value, result->realName );
+    vz200_key_pressed( _environment, value, result->realName );
 
     return result;
     
@@ -57,7 +57,7 @@ Variable * key_pressed_var( Environment * _environment, char * _scancode ) {
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of KEY PRESSED)");
     Variable * scancode = variable_retrieve_or_define( _environment, _scancode, VT_BYTE, 0xff);
 
-    vtech_key_pressed( _environment, scancode->realName, result->realName );
+    vz200_key_pressed( _environment, scancode->realName, result->realName );
 
     return result;
     

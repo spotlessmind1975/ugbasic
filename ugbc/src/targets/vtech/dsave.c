@@ -63,6 +63,6 @@ void dsave( Environment * _environment, char * _filename, char * _offset, char *
         CRITICAL_DSAVE_MISSING_SIZE( _filename );
     }
 
-    vtech_dsave( _environment, _filename, _offset, _address, _size );
+    vz200_dsave( _environment, _filename, _offset, _address, _size );
 
 }

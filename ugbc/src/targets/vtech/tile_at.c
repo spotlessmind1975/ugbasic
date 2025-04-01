@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword TILE AT
-@target vtech
+@target vz200
 </usermanual> */
 Variable * tile_at( Environment * _environment, char * _x, char * _y ) {
 

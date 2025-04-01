@@ -55,8 +55,8 @@ void every_ticks_gosub( Environment * _environment, char * _timing, char * _labe
         timerRealName = timer->realName;
     }
 
-    vtech_timer_set_address( _environment, timerRealName, _label );
-    vtech_timer_set_counter( _environment, timerRealName, timing->realName );
-    vtech_timer_set_init( _environment, timerRealName, timing->realName );
+    vz200_timer_set_address( _environment, timerRealName, _label );
+    vz200_timer_set_counter( _environment, timerRealName, timing->realName );
+    vz200_timer_set_init( _environment, timerRealName, timing->realName );
 
 }

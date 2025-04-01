@@ -47,7 +47,7 @@
  */
 /* <usermanual>
 @keyword WAIT VBL
-@target vtech
+@target vz200
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 

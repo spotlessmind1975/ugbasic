@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword POINT (function)
 
-@target vtech
+@target vz200
  </usermanual> */
 Variable * point( Environment * _environment, char * _x, char * _y ) {
 

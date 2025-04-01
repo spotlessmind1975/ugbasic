@@ -41,7 +41,7 @@
 /* <usermanual>
 @keyword TIMER
 
-@target vtech
+@target vz200
 </usermanual> */
 
 Variable * get_timer( Environment * _environment ) {
@@ -49,7 +49,7 @@ Variable * get_timer( Environment * _environment ) {
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
 
     char resultAddress[MAX_TEMPORARY_STORAGE]; 
-    cpu_move_16bit( _environment, "VTECHTIMER", result->realName );
+    cpu_move_16bit( _environment, "VZ200TIMER", result->realName );
     
     return result;
     
@@ -58,7 +58,7 @@ Variable * get_timer( Environment * _environment ) {
 /* <usermanual>
 @keyword TIMER
 
-@target vtech
+@target vz200
 </usermanual> */
 
 void set_timer( Environment * _environment, char * _value ) {
@@ -66,6 +66,6 @@ void set_timer( Environment * _environment, char * _value ) {
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
 
     char valueAddress[MAX_TEMPORARY_STORAGE]; 
-    cpu_move_16bit( _environment, value->realName, "VTECHTIMER" );
+    cpu_move_16bit( _environment, value->realName, "VZ200TIMER" );
         
 }

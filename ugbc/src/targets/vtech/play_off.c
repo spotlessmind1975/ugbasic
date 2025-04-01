@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword PLAY OFF
-@target vtech
+@target vz200
 </usermanual> */
 void play_off( Environment * _environment, int _channels ) {
 

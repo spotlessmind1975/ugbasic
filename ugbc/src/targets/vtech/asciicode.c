@@ -44,7 +44,7 @@ Variable * asciicode( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
 
-    vtech_asciicode( _environment, result->realName );
+    vz200_asciicode( _environment, result->realName );
 
     return result;
 
