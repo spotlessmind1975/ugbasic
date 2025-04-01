@@ -74,10 +74,10 @@
 #define TEXT_COLUMNS_COUNT          32
 #define TEXT_ROWS_COUNT             16
 
-// #define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
+#define TILEMAP_MODE_INTERNAL       0       // Alphanumeric Internal	32 × 16	2	512
 // #define TILEMAP_MODE_EXTERNAL       1       // Alphanumeric External	32 × 16	2	512
 
-#define TILEMAP_MODE_SEMIGRAPHICS4  2       // Semigraphics 4	        64 × 32	8	512
+// #define TILEMAP_MODE_SEMIGRAPHICS4  2       // Semigraphics 4	        64 × 32	8	512
 // #define TILEMAP_MODE_SEMIGRAPHICS6  3       // Semigraphics 6	        64 × 48	4	512
 // #define TILEMAP_MODE_SEMIGRAPHICS8  4       // Semigraphics 8	        64 × 64	2	2048
 // #define TILEMAP_MODE_SEMIGRAPHICS12  5       // Semigraphics 12	        64 × 96	1	3072
