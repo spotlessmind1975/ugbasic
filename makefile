@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 vtech zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 vz200 zx))
 endif
 
 ifdef 10liner
@@ -125,7 +125,7 @@ endif
 ifeq ($(target),pc1403)
   output=ram
 endif
-ifeq ($(target),vtech)
+ifeq ($(target),vz200)
   output=vz
 endif
 endif
@@ -944,25 +944,25 @@ generated/vic20/exeso/%.d64: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.d64
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vic20$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O d64 $(subst generated/vic20/exeso/,,$(@:.d64=.bas))
 
 #------------------------------------------------ 
-# vtech:
-#    VTECH LASER 200/305/310
+# vz200:
+#    vz200 LASER 200/305/310
 #------------------------------------------------ 
 # 
-toolchain.vtech: z88dk
+toolchain.vz200: z88dk
 
-generated/vtech/asm/%.asm:
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vtech$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/vtech/asm/,,$(@:.asm=.bas)) ../$@ 
+generated/vz200/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vz200$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/vz200/asm/,,$(@:.asm=.bas)) ../$@ 
 
-generated/vtech/exe/%.vz:
-	@$(Z80ASM) -D__vtech__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.vz=.asm))
+generated/vz200/exe/%.vz:
+	@$(Z80ASM) -D__vz200__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.vz=.asm))
 	@mv $(subst /exe/,/asm/,$(@:.vz=.sym)) $(subst /exe/,/asm/,$(@:.vz=.osym))
-	@php sym2vtech.php $(subst /exe/,/asm/,$(@:.vz=.osym)) >$(subst /exe/,/asm/,$(@:.vz=.sym))
+	@php sym2vz200.php $(subst /exe/,/asm/,$(@:.vz=.osym)) >$(subst /exe/,/asm/,$(@:.vz=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.vz=.o))
 	@mv $(subst /exe/,/asm/,$(@:.vz=.bin)) $(@:.vz=.)
 	@rm -f $(@:.vz=.bin) $(@:.vz=_*.bin) $(@:.vz=.) $(@:.vz=_*.) $(dir $@)main.
 
-generated/vtech/exeso/%.vz: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.vz=.bas))
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vtech$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.vz=.info) -o ../$@ -O vz $(subst generated/vtech/exeso/,,$(@:.vz=.bas))
+generated/vz200/exeso/%.vz: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.vz=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.vz200$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.vz=.info) -o ../$@ -O vz $(subst generated/vz200/exeso/,,$(@:.vz=.bas))
 
 #------------------------------------------------ 
 # zx:
