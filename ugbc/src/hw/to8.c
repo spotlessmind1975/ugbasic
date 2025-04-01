@@ -357,4 +357,19 @@ void to8_timer_set_address( Environment * _environment, char * _timer, char * _a
 
 }
 
+void to8_dload( Environment * _environment, char * _address, char * _bank, char * _size ) {
+
+    deploy( dload, src_hw_to8_dload_asm);
+
+    if ( _bank ) {
+        outline1("LDA %s", _bank );
+    } else {
+        outline0("CLRA" );
+    }
+    outline1("LDX %s", _address );
+    outline1("LDU %s", _size );
+    outline0("JSR DLOAD" );
+
+}
+
 #endif

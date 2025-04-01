@@ -47,6 +47,12 @@
  */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
 
+    if ( _bank ) {
+        deploy_preferred( duff, src_hw_6809_duff_asm );
+        deploy_preferred( msc1, src_hw_6809_msc1_asm );
+        deploy_preferred( bank, src_hw_pc128op_bank_asm );        
+    }
+
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
     }
@@ -54,5 +60,23 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
     if ( _environment->sandbox ) {
         CRITICAL_SANDBOX_ENFORCED( "DLOAD");
     }
+
+    if ( _filename ) {
+        WARNING_DLOAD_IGNORED_FILENAME( _filename );
+    }
+
+    if ( _offset ) {
+        WARNING_DLOAD_IGNORED_OFFSET( _filename );
+    }
+
+    Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
+    Variable * bank = NULL;
+
+    if ( _bank ) {
+        bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );    
+    }
+
+    to8_dload( _environment, address->realName, _bank?bank->realName:NULL, size->realName );
 
 }

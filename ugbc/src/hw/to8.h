@@ -190,4 +190,6 @@ void to8_timer_set_counter( Environment * _environment, char * _timer, char * _c
 void to8_timer_set_init( Environment * _environment, char * _timer, char * _init );
 void to8_timer_set_address( Environment * _environment, char * _timer, char * _address );
 
+void to8_dload( Environment * _environment, char * _address, char * _bank, char * _size );
+
 #endif
