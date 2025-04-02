@@ -428,108 +428,43 @@ void c6847z_textmap_at( Environment * _environment, char * _address ) {
 
 void c6847z_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    // deploy( c6847vars, src_hw_6847_vars_asm );
-    // deploy_preferred( plot, src_hw_6847_plot_asm );
-
-    // outline1("LDB %2.2x", (_x & 0xff ) );
-    // outline0("STB <PLOTX");
-    // outline1("LDB %2.2x", ( _y & 0xff ) );
-    // outline0("STB <PLOTY");
-    // if ( _c ) {
-    //     outline1("LDA %2.2x", ( *_c & 0Xff ) );
-    // } else {
-    //     Variable * c = variable_retrieve( _environment, "PEN" );
-    //     outline1("LDA %s", c->realName );
-    // }
-    // outline0("STA <PLOTCPE");
-    // outline0("LDA #1");
-    // outline0("STA <PLOTM");
-    // outline0("JSR PLOT");
+    deploy( plot, src_hw_6847z_plot_asm );
     
+    outline1("LD A, 0x%2.2x", ( _y & 0xff ) );
+    outline0("LD D, A");
+    outline1("LD A, 0x%2.2x", ( _x & 0xff ) );
+    outline0("LD E, A");
+    outline1("LD A, 0x%2.2x", ( ( _x >> 8 ) & 0xff ) );
+    outline0("LD (PLOTCPE), A");
+    outline0("LD A, 1");
+    outline0("CALL PLOT");
 
 }
 
-void c6847z_pset_vars( Environment * _environment, char *_x, char *_y, char * _c ) {
+void c6847z_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
 
-    // Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    // Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
-    // Variable * c;
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
     
-    // if ( _c ) {
-    //     c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
-    // } else {
-    //     c = variable_retrieve( _environment, "PEN" );
-    // }
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
 
-    // deploy( c6847vars, src_hw_6847_vars_asm );
-    // deploy_preferred( plot, src_hw_6847_plot_asm );
+    deploy( plot, src_hw_6847z_plot_asm );
     
-    // switch( VT_BITWIDTH( x->type ) ) {
-    //     case 32:
-    //         if ( x->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s+3", x->realName );
-    //         }
-    //         outline0("STB <PLOTX" );
-    //         break;
-    //     case 16:
-    //         if ( x->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s+1", x->realName );
-    //         }
-    //         outline0("STB <PLOTX" );
-    //         break;
-    //     case 8:
-    //         if ( x->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s", x->realName );
-    //         }
-    //         outline0("STB <PLOTX" );
-    //         break;
-    //     default:
-    //         CRITICAL_PLOT_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
-    // }
-
-    // switch( VT_BITWIDTH( y->type ) ) {
-    //     case 32:
-    //         if ( y->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s+3", y->realName );
-    //         }
-    //         outline0("STB <PLOTY" );
-    //         break;
-    //     case 16:
-    //         if ( y->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s+1", y->realName );
-    //         }
-    //         outline0("STB <PLOTY" );
-    //         break;
-    //     case 8:
-    //         if ( y->initializedByConstant ) {
-    //             outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-    //         } else {
-    //             outline1("LDB %s", y->realName );
-    //         }
-    //         outline0("STB <PLOTY" );
-    //         break;
-    //     default:
-    //         CRITICAL_PLOT_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
-    // }
-
-    // outline1("LDB %s", c->realName );
-    // outline0("STB <PLOTCPE");
-    // outline0("LDB #1");
-    // outline0("STB <PLOTM");
-    // outline0("JSR PLOT");
+    outline1("LD A, (%s)", y->realName );
+    outline0("LD D, A");
+    outline1("LD A, (%s)", x->realName );
+    outline0("LD E, A");
+    outline1("LD A, (%s)", c->realName );
+    outline0("LD (PLOTCPE), A");
+    outline0("LD A, 1");
+    outline0("CALL PLOT");
 
 }
-
 void c6847z_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
     // Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -708,13 +643,13 @@ void c6847z_get_height( Environment * _environment, char *_result ) {
 
 void c6847z_cls( Environment * _environment ) {
 
-    // if ( _environment->currentMode < 7 ) {
-    //     deploy( clsText, src_hw_6847_cls_text_asm );
-    //     outline0("JSR CLST");
-    // } else {
-    //     deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-    //     outline0("JSR CLSG");
-    // }
+    if ( _environment->currentMode < 7 ) {
+        // deploy( clsText, src_hw_6847z_cls_text_asm );
+        // outline0("JSR CLST");
+    } else {
+        deploy( clsGraphic, src_hw_6847z_cls_graphic_asm );
+        outline0("CALL CLSG");
+    }
 
 }
 
@@ -799,6 +734,8 @@ void c6847z_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTWIDTH" );
     variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
     variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "CURRENTFRAMESIZE", VT_WORD, 0 );
+    variable_global( _environment, "CURRENTFRAMESIZE" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric Internal");
     SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, 8, 8, "Color Graphics 2" );
@@ -816,8 +753,16 @@ void c6847z_initialization( Environment * _environment ) {
     variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
     variable_global( _environment, "TABSTODRAW" );
 
-    // variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
-    // variable_global( _environment, "PLOTCPE" );
+    variable_import( _environment, "PLOTAMA", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTAMA" );
+    variable_import( _environment, "PLOTOMA", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTOMA" );
+    variable_import( _environment, "PLOTNB", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTNB" );
+    variable_import( _environment, "PLOTND", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTND" );
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );
 
     variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
     variable_global( _environment, "CLIPX1" );
