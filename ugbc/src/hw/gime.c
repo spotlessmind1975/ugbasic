@@ -1188,6 +1188,11 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
+
     console_init( _environment );
 
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );

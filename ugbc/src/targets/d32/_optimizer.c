@@ -891,7 +891,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim(buf[1], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
         optim(buf[2], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
         optim(buf[3], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
-        if ( strcmp(v5->str, "TSTB") == 0 || strstr(buf[1]->str, "INCB") ) {
+        if ( strcmp(v5->str, "TSTB") == 0 || strstr(buf[1]->str, "INCB") || strstr(v5->str, "COMB") ) {
             char conditional[4];
             if ( strcmp( v1->str, "CC") == 0 ) {
                 strcpy( conditional, "CS" );
