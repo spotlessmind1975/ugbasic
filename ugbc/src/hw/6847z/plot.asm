@@ -188,10 +188,10 @@ PLOT9:
     ADD HL, DE
     LD E, B
     LD D, 0
-    SLA E
-    RL D
-    SLA E
-    RL D
+    SRL D
+    RR E
+    SRL D
+    RR E
     ADD HL, DE
     POP DE
 
