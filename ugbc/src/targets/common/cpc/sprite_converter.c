@@ -42,6 +42,11 @@
 
 Variable * sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
 
+    if ( _environment->emptyProcedure ) {
+        Variable * emptyImage = variable_temporary( _environment, VT_IMAGE, "(empty)");
+        return emptyImage;
+    }
+    
     Variable * result = new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC0 );
     
     return result;
