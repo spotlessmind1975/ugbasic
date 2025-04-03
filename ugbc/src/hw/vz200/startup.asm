@@ -35,125 +35,54 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; @IF vestigialConfig.rchack_pick_the_star_1163
+IRQTIMERVOID:
+	RET
 
-; PALETTEB:
-; 	DB      1
-; PALETTE:    
-;     DB      4,  10,  19,  12 
-;     DB     11,  20,  21,  13
-;     DB      6,  30,  31,   7 
-;     DB      18, 25,  10,   0
+VZ200ISVC:
+	PUSH	AF
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+	PUSH	IX
+	PUSH	IY
+	EX	AF,AF'
+	PUSH	AF
+	EXX
+	PUSH	BC
+	PUSH	DE
+	PUSH	HL
+    LD HL,(VZ200TIMER)
+    INC HL
+    LD (VZ200TIMER),HL
+@IF deployed.timer
+	CALL TIMERMANAGER
+@ENDIF
+IRQTIMERADDR:
+	CALL IRQTIMERVOID
+IRQVECTORSKIP:
+	POP	HL
+	POP	DE
+	POP	BC
+	EXX
+	POP	AF
+	EX	AF,AF'
+	POP	IY
+	POP	IX
+	POP	HL
+	POP	DE
+	POP	BC
+	POP	AF
+    EI
+    RET   
 
-; @ELSE
-
-; PALETTEB:
-; 	DB      1
-
-; @ENDIF
-
-; PALETTEUNUSED:
-;     DB $00
-; PALETTEUSED:
-;     DB $01, $00
-
-; SETHWPALETTE:
-; 	PUSH BC
-; 	PUSH AF
-;     LD BC, $7F00
-;     LD A, IXH
-;     LD C, A
-;     OUT (C), C
-;     LD A, IXL
-;     OR A, $40
-;     OUT (C), A
-; 	POP AF
-; 	POP BC
-;     RET
-
-; RESETPALETTE:
-; 	LD B, 0
-; 	LD HL, PALETTE
-; RESETPALETTEL1:
-; 	LD IXH, B
-; 	LD A, (HL)
-; 	LD IXL, A
-; 	CALL SETHWPALETTE
-; 	INC HL
-; 	INC B
-; 	LD A, B
-; 	CP 16
-; 	JR NZ, RESETPALETTEL1
-; 	LD BC, $7F10
-;     OUT (C), C
-;     LD A, (PALETTEB)
-;     OR A, 0x40
-;     OUT (C), A
-; 	RET
-
-; IRQTIMERVOID:
-; 	RET
-
-; VZ200ISVC:
-; 	PUSH	AF
-; 	PUSH	BC
-; 	PUSH	DE
-; 	PUSH	HL
-; 	PUSH	IX
-; 	PUSH	IY
-; 	EX	AF,AF'
-; 	PUSH	AF
-; 	EXX
-; 	PUSH	BC
-; 	PUSH	DE
-; 	PUSH	HL
-;     LD A, (VZ200TIMER2)
-;     DEC A
-;     LD (VZ200TIMER2), A
-;     CP 0
-;     JR NZ,IRQVECTORSKIP
-;     LD A,6
-;     LD (VZ200TIMER2), A
-;     LD HL,(VZ200TIMER)
-;     INC HL
-;     LD (VZ200TIMER),HL
-; @IF deployed.music
-; 	CALL MUSICPLAYER
-; @ENDIF
-; @IF deployed.ay8910startup
-; 	CALL AY8910MANAGER
-; @ENDIF
-; @IF deployed.keyboard && !keyboardConfig.sync
-; 	CALL KEYBOARDMANAGER
-; @ENDIF
-; @IF deployed.joystick && !joystickConfig.sync
-; 	CALL JOYSTICKMANAGER
-; @ENDIF
-; @IF deployed.timer
-; 	CALL TIMERMANAGER
-; @ENDIF
-; @IF deployed.fade
-; 	CALL FADET
-; @ENDIF
-; IRQTIMERADDR:
-; 	CALL IRQTIMERVOID
-; IRQVECTORSKIP:
-; 	POP	HL
-; 	POP	DE
-; 	POP	BC
-; 	EXX
-; 	POP	AF
-; 	EX	AF,AF'
-; 	POP	IY
-; 	POP	IX
-; 	POP	HL
-; 	POP	DE
-; 	POP	BC
-; 	POP	AF
-;     EI
-;     RET   
 
 VZ200STARTUP:
+	DI
+	LD A, $C3
+	LD ($787D), A
+	LD HL, VZ200ISVC
+	LD ($787E), HL
+	EI
 	RET
 	
 ; - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -265,19 +194,19 @@ VZ200STARTUP:
 
 ;     RET
 
-; WAITTIMER:
-;     LD A, (VZ200TIMER)
-;     LD B, A
-; WAITTIMERL1:
-;     LD A, (VZ200TIMER)
-;     CP B
-;     JR Z, WAITTIMERL1
-;     DEC L
-;     LD A, L
-;     CP $FF
-;     JR NZ, WAITTIMER
-;     DEC H
-;     LD A, H
-;     CP $FF
-;     JR NZ, WAITTIMER
-;     RET
+WAITTIMER:
+    LD A, (VZ200TIMER)
+    LD B, A
+WAITTIMERL1:
+    LD A, (VZ200TIMER)
+    CP B
+    JR Z, WAITTIMERL1
+    DEC L
+    LD A, L
+    CP $FF
+    JR NZ, WAITTIMER
+    DEC H
+    LD A, H
+    CP $FF
+    JR NZ, WAITTIMER
+    RET
