@@ -49,6 +49,11 @@
 
 Variable * new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
+    if ( _environment->emptyProcedure ) {
+        Variable * emptyImage = variable_temporary( _environment, VT_IMAGE, "(empty)");
+        return emptyImage;
+    }
+    
     Variable * result = vdcz_new_image( _environment, _width, _height, _mode );
 
     return result;
