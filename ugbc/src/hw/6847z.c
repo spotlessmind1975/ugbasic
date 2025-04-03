@@ -45,15 +45,15 @@ static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
             { 0x88, 0x00, 0x00, 0xff, 3, "RED" }
         },
         {
-            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-            { 0xf0, 0xf0, 0xf0, 0xff, 5, "BUFF" },
-            { 0xaa, 0xff, 0xe6, 0xff, 6, "CYAN" },
-            { 0xcc, 0x44, 0xcc, 0xff, 7, "MAGENTA" } //,
-            // { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" }            
+            // { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
+            { 0xf0, 0xf0, 0xf0, 0xff, 0, "BUFF" },
+            { 0xaa, 0xff, 0xe6, 0xff, 1, "CYAN" },
+            { 0xcc, 0x44, 0xcc, 0xff, 2, "MAGENTA" },
+            { 0xa1, 0x68, 0x3c, 0xff, 3, "ORANGE" }            
         }
 };
 
-static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
+static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[1][0];
 
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
@@ -433,9 +433,11 @@ void c6847z_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
     outline1("LD A, 0x%2.2x", ( _y & 0xff ) );
     outline0("LD D, A");
     outline1("LD A, 0x%2.2x", ( _x & 0xff ) );
-    outline0("LD E, A");
-    outline1("LD A, 0x%2.2x", ( ( _x >> 8 ) & 0xff ) );
-    outline0("LD (PLOTCPE), A");
+    if ( _c ) {
+        outline0("LD E, A");
+        outline1("LD A, 0x%2.2x", ( *_c & 0xff ) );    
+        outline0("LD (PLOTCPE), A");
+    }
     outline0("LD A, 1");
     outline0("CALL PLOT");
 
