@@ -1420,6 +1420,9 @@ void gime_vertical_scroll( Environment * _environment, char * _displacement ) {
 
 void gime_horizontal_scroll( Environment * _environment, char * _displacement ) {
 
+    outline1( "LDA %s", _displacement );
+    outline0( "STA $FF9F" );
+
 }
 
 void gime_get_width( Environment * _environment, char *_result ) {

@@ -82,10 +82,8 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
 </usermanual> */
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
 
-    
+    Variable * displacement = variable_retrieve_or_define( _environment, _displacement, VT_BYTE, 0 );
 
-    Variable * displacement = variable_retrieve( _environment, _displacement );
-
-    gime_horizontal_scroll( _environment, _displacement );
+    gime_horizontal_scroll( _environment, displacement->realName );
 
 }
