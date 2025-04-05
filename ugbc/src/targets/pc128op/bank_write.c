@@ -57,6 +57,8 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
+    address1->bankReadOrWrite = 1;
+    
     outline0("; bank write rv")
     outline1("LDY %s", address1->realName );
     outline1("LDU %s", size->realName );
