@@ -262,8 +262,8 @@ BANKWRITE1
     ; STB BANKSHADOW
     STB $E7E5
 
-    LDA ,Y
-    STA ,X
+    LDA ,X
+    STA ,Y
 
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
@@ -293,8 +293,8 @@ BANKWRITE2
     ; STB BANKSHADOW
     STB $E7E5
 
-    LDD ,Y
-    STD ,X
+    LDD ,X
+    STD ,Y
     
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
@@ -324,10 +324,10 @@ BANKWRITE4
     ; STB BANKSHADOW
     STB $E7E5
 
-    LDD ,Y++
-    STD ,X++
-    LDD ,Y
-    STD ,X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X
+    STD ,Y
     
     ; Restore the bank number to the previous.
     ; LDA BANKSHADOWPREV
