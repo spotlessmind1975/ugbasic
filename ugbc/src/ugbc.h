@@ -3565,6 +3565,7 @@ typedef struct _Environment {
 #define CRITICAL_CANNOT_USE_FIELD_ON_NONTYPE( n ) CRITICAL2("E383 - cannot access to fields of a non TYPE variable", n );  
 #define CRITICAL_UNKNOWN_FIELD_ON_TYPE( n ) CRITICAL2("E384 - unknown TYPE field ", n );  
 #define CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( n ) CRITICAL2("E385 - not enough value on DATA for given TYPE ", n );  
+#define CRITICAL_FILE_CSV_NOT_ENOUGH_DATA( n ) CRITICAL2("E386 - not enough data in CSV to fillup the array ", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
