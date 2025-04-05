@@ -3229,7 +3229,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _source, in
     //         }
     //     }
     //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-    //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    //     strcopy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     //     // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     // }
 

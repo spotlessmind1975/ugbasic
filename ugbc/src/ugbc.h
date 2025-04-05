@@ -4296,6 +4296,7 @@ int embed_scan_string (const char *);
 
 char * strtoupper( char * _string );
 char * basename( char * _path );
+char * strcopy( char * _dest, char * _source );
 
 #define BUILD_CHECK_FILETYPE(_environment, _filetype) \
     if ( _environment->outputFileType != _filetype ) { \
@@ -4332,7 +4333,7 @@ char * basename( char * _path );
     if ( _environment->listingFileName ) { \
         sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
     } else { \
-        strcpy( listingFileName, "" ); \
+        strcopy( listingFileName, "" ); \
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
@@ -4370,7 +4371,7 @@ char * basename( char * _path );
     if ( _environment->listingFileName ) { \
         sprintf( listingFileName, "-l -m -s -g" ); /* -m -s -g */ \
     } else { \
-        strcpy( listingFileName, "-m -s -g" ); \
+        strcopy( listingFileName, "-m -s -g" ); \
     }
 
 #define BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, target, executableName, listingFileName, cpu ) \
@@ -4390,7 +4391,7 @@ char * basename( char * _path );
         char * p = strdup( _environment->asmFileName ); \
         char * q = strchr( p, '.' ); \
         if ( q ) { \
-            strcpy( q, ".lis" ); \
+            strcopy( q, ".lis" ); \
         } \
         BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }
@@ -4432,7 +4433,7 @@ char * basename( char * _path );
     if ( _environment->listingFileName ) { \
         sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
     } else { \
-        strcpy( listingFileName, "" ); \
+        strcopy( listingFileName, "" ); \
     }
 
 #define BUILD_TOOLCHAIN_ASM6809EXEC( _environment, flag, startingAddress, executableName, listingFileName ) \
@@ -4569,7 +4570,7 @@ char * basename( char * _path );
         char * p = strdup( _environment->asmFileName ); \
         char * q = strchr( p, '.' ); \
         if ( q ) { \
-            strcpy( q, ".lst" ); \
+            strcopy( q, ".lst" ); \
         } \
         BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }

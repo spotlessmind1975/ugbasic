@@ -61,7 +61,7 @@ void generate_bin( Environment * _environment ) {
 
     char * p;
 
-    strcpy( relName1, _environment->asmFileName );
+    strcopy( relName1, _environment->asmFileName );
     p = strstr( relName1, ".asm" );
     if ( p ) {
         *(p+1) = 'r';
@@ -70,7 +70,7 @@ void generate_bin( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    strcpy( relName2, _environment->exeFileName );
+    strcopy( relName2, _environment->exeFileName );
     p = strstr( relName2, ".ram" );
     if ( p ) {
         *(p+1) = 'r';
@@ -83,7 +83,7 @@ void generate_bin( Environment * _environment ) {
 
     BUILD_SAFE_MOVE( _environment, relName1, relName2 );
 
-    strcpy( binaryName, _environment->exeFileName );
+    strcopy( binaryName, _environment->exeFileName );
     p = strstr( binaryName, ".ram" );
     if ( p ) {
         *(p+1) = 'b';
@@ -99,9 +99,9 @@ void generate_bin( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
     sprintf( commandLine, "\"%s\" \"-t+%s\" -t \"%s\" %s",
@@ -123,7 +123,7 @@ void generate_ram( Environment * _environment ) {
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
 
-    strcpy( binaryName, _environment->exeFileName );
+    strcopy( binaryName, _environment->exeFileName );
     char * p = strstr( binaryName, ".ram" );
     if ( p ) {
         *(p+1) = 'b';

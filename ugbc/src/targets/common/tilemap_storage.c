@@ -115,7 +115,7 @@ Variable * tilemap_storage( Environment * _environment, char * _source_name, cha
         char * separator = strrchr( tilesetFileName, '/' );
         if ( separator ) {
             *(separator+1) = 0;
-            strcpy( tilesetFileNameWithPath, tilesetFileName );
+            strcopy( tilesetFileNameWithPath, tilesetFileName );
         }
         strcat( tilesetFileNameWithPath, tileset->source );
         lookedFilename = resource_load_asserts( _environment, tilesetFileNameWithPath );

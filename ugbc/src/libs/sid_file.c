@@ -119,22 +119,22 @@ SIDFILE * sid_file_read( char * _filename, int _reloc_address ) {
         memset( relocatedFile, 0, fileSize );
 
         if ( !sidreloc_set_page( ( _reloc_address >> 8 ) ) ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
         if ( !sidreloc_set_force( ) ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
         if ( !sidreloc_set_verbosity( 0 ) ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
         if ( !sidreloc_set_input_data( entireFile, fileSize ) ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
         if ( !sidreloc_set_output_data( relocatedFile ) ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
         if ( !sidreloc_main() ) {
-            strcpy( lastErrorString, sidreloc_get_lasterror_string( ) );
+            strcopy( lastErrorString, sidreloc_get_lasterror_string( ) );
         }
 
         free(entireFile);

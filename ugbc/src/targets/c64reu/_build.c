@@ -55,10 +55,10 @@ void generate_prg( Environment * _environment ) {
     BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, listingFileName, "" );
 
     char objectFileName[MAX_TEMPORARY_STORAGE];
-    strcpy( objectFileName, _environment->asmFileName );
+    strcopy( objectFileName, _environment->asmFileName );
     char * p = strstr(objectFileName, ".asm");
     if ( p ) {
-        strcpy( p, ".o" );
+        strcopy( p, ".o" );
         remove( objectFileName );
     }
 
@@ -160,7 +160,7 @@ void generate_d64( Environment * _environment ) {
 
         char buffer[MAX_TEMPORARY_STORAGE];
         char filemask[MAX_TEMPORARY_STORAGE];
-        strcpy( filemask, exeFileName );
+        strcopy( filemask, exeFileName );
         char * basePath = find_last_path_separator( filemask );
         if ( basePath ) {
             ++basePath;
@@ -172,9 +172,9 @@ void generate_d64( Environment * _environment ) {
             }
         } else {
             if ( storage->fileName ) {
-                strcpy( filemask, storage->fileName );
+                strcopy( filemask, storage->fileName );
             } else {
-                strcpy( filemask, "disk" );
+                strcopy( filemask, "disk" );
             }
         }
 
@@ -221,7 +221,7 @@ void generate_d64( Environment * _environment ) {
 
             ++diskNumber;
 
-            strcpy( filemask, exeFileName );
+            strcopy( filemask, exeFileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -233,9 +233,9 @@ void generate_d64( Environment * _environment ) {
                 }
             } else {
                 if ( storage->fileName ) {
-                    strcpy( filemask, storage->fileName );
+                    strcopy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk" );
+                    strcopy( filemask, "disk" );
                 }
             }
             storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );
@@ -329,7 +329,7 @@ void generate_reu( Environment * _environment ) {
     } else {
         char buffer[MAX_TEMPORARY_STORAGE];
         char filemask[MAX_TEMPORARY_STORAGE];
-        strcpy( filemask, exeFileName );
+        strcopy( filemask, exeFileName );
         char * basePath = find_last_path_separator( filemask );
         if ( basePath ) {
             ++basePath;
@@ -341,9 +341,9 @@ void generate_reu( Environment * _environment ) {
             }
         } else {
             if ( storage->fileName ) {
-                strcpy( filemask, storage->fileName );
+                strcopy( filemask, storage->fileName );
             } else {
-                strcpy( filemask, "disk" );
+                strcopy( filemask, "disk" );
             }
         }
 
@@ -389,7 +389,7 @@ void generate_reu( Environment * _environment ) {
 
             ++diskNumber;
 
-            strcpy( filemask, exeFileName );
+            strcopy( filemask, exeFileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -401,9 +401,9 @@ void generate_reu( Environment * _environment ) {
                 }
             } else {
                 if ( storage->fileName ) {
-                    strcpy( filemask, storage->fileName );
+                    strcopy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk" );
+                    strcopy( filemask, "disk" );
                 }
             }
             storageFileName = generate_storage_filename( _environment, filemask, "d64", diskNumber );

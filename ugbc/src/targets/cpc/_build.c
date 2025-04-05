@@ -74,7 +74,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
     char * p;
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *(p+1) = 'l';
@@ -86,7 +86,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
         BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
@@ -99,12 +99,12 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -113,18 +113,18 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    strcpy( binaryName2, _environment->asmFileName );
+    strcopy( binaryName2, _environment->asmFileName );
     p = strrchr( binaryName2, '/' );
     if ( !p ) {
         p = strrchr( binaryName2, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.bin" );
+        strcopy( p+1, "main.bin" );
     } else {
-        strcpy( binaryName2, "main.bin" );
+        strcopy( binaryName2, "main.bin" );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -139,28 +139,28 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
     
     BUILD_SAFE_MOVE( _environment, binaryName, binaryName2 );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strrchr( binaryName, '/' );
     if ( !p ) {
         p = strrchr( binaryName, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.bin" );
+        strcopy( p+1, "main.bin" );
     } else {
-        strcpy( binaryName, "main.bin" );
+        strcopy( binaryName, "main.bin" );
     }
 
     system_remove_safe( _environment, _environment->exeFileName );
 
-    strcpy( diskName, _environment->exeFileName );
+    strcopy( diskName, _environment->exeFileName );
     p = strrchr( diskName, '/' );
     if ( !p ) {
         p = strrchr( diskName, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main." );
+        strcopy( p+1, "main." );
     } else {
-        strcpy( diskName, "main." );
+        strcopy( diskName, "main." );
     }
 
     TRACE1( "exeFileName = %s", _environment->exeFileName );
@@ -182,25 +182,25 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
 
     system_remove_safe( _environment, diskName );
 
-    strcpy( diskName, _environment->asmFileName );
+    strcopy( diskName, _environment->asmFileName );
     p = strrchr( diskName, '/' );
     if ( !p ) {
         p = strrchr( diskName, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.dsk" );
+        strcopy( p+1, "main.dsk" );
     } else {
-        strcpy( diskName, "main.dsk" );
+        strcopy( diskName, "main.dsk" );
     }
 
     BUILD_SAFE_MOVE( _environment, diskName, _environment->exeFileName );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
-        strcpy( p, ".");
+        strcopy( p, ".");
     } else {
-        strcpy( binaryName, "main." );
+        strcopy( binaryName, "main." );
     }
  
     system_remove_safe( _environment, binaryName );
@@ -212,7 +212,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     Storage * storage = _environment->storage;
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
-    strcpy( temporaryPath, _environment->temporaryPath );
+    strcopy( temporaryPath, _environment->temporaryPath );
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
     strcat( temporaryPath, "dsk" );
@@ -244,7 +244,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     char * p;
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *(p+1) = 'l';
@@ -256,7 +256,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
         BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
@@ -269,12 +269,12 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -283,18 +283,18 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
         *(p+4) = 0;
     }
 
-    strcpy( binaryName2, _environment->asmFileName );
+    strcopy( binaryName2, _environment->asmFileName );
     p = strrchr( binaryName2, '/' );
     if ( !p ) {
         p = strrchr( binaryName2, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.bin" );
+        strcopy( p+1, "main.bin" );
     } else {
-        strcpy( binaryName2, "main.bin" );
+        strcopy( binaryName2, "main.bin" );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -309,15 +309,15 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     
     BUILD_SAFE_MOVE( _environment, binaryName, binaryName2 );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strrchr( binaryName, '/' );
     if ( !p ) {
         p = strrchr( binaryName, '\\' );
     }
     if ( p ) {
-        strcpy( p+1, "main.bin" );
+        strcopy( p+1, "main.bin" );
     } else {
-        strcpy( binaryName, "main.bin" );
+        strcopy( binaryName, "main.bin" );
     }
 
     system_remove_safe( _environment, _environment->exeFileName );
@@ -325,7 +325,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     char buffer[MAX_TEMPORARY_STORAGE];
     if ( storage ) {
         char filemask[MAX_TEMPORARY_STORAGE];
-        strcpy( filemask, _environment->exeFileName );
+        strcopy( filemask, _environment->exeFileName );
         char * basePath = find_last_path_separator( filemask );
         if ( basePath ) {
             ++basePath;
@@ -337,9 +337,9 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             }
         } else {
             if ( storage->fileName ) {
-                strcpy( filemask, storage->fileName );
+                strcopy( filemask, storage->fileName );
             } else {
-                strcpy( filemask, "disk%d.dsk" );
+                strcopy( filemask, "disk%d.dsk" );
             }
         }
         sprintf( diskName, filemask, 0 );
@@ -350,7 +350,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             strcat( diskName, ".dsk" );
         }        
     } else {
-        strcpy( diskName, _environment->exeFileName );
+        strcopy( diskName, _environment->exeFileName );
         if ( !strstr( diskName, ".dsk") ) {
             strcat( diskName, ".dsk" );
         }
@@ -451,7 +451,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
             if ( storage ) {
                 char buffer[MAX_TEMPORARY_STORAGE];
                 char filemask[MAX_TEMPORARY_STORAGE];
-                strcpy( filemask, _environment->exeFileName );
+                strcopy( filemask, _environment->exeFileName );
                 char * basePath = find_last_path_separator( filemask );
                 if ( basePath ) {
                     ++basePath;
@@ -463,9 +463,9 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
                     }
                 } else {
                     if ( storage->fileName ) {
-                        strcpy( filemask, storage->fileName );
+                        strcopy( filemask, storage->fileName );
                     } else {
-                        strcpy( filemask, "disk%d.dsk" );
+                        strcopy( filemask, "disk%d.dsk" );
                     }
                 }
                 sprintf( diskName, filemask, i );
@@ -485,24 +485,24 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
         }
     }
 
-    // strcpy( diskName, _environment->asmFileName );
+    // strcopy( diskName, _environment->asmFileName );
     // p = strrchr( diskName, '/' );
     // if ( !p ) {
     //     p = strrchr( diskName, '\\' );
     // }
     // if ( p ) {
-    //     strcpy( p+1, "main.dsk" );
+    //     strcopy( p+1, "main.dsk" );
     // } else {
-    //     strcpy( diskName, "main.dsk" );
+    //     strcopy( diskName, "main.dsk" );
     // }
 
 
-    // strcpy( binaryName, _environment->asmFileName );
+    // strcopy( binaryName, _environment->asmFileName );
     // p = strstr( binaryName, ".asm" );
     // if ( p ) {
-    //     strcpy( p, ".");
+    //     strcopy( p, ".");
     // } else {
-    //     strcpy( binaryName, "main." );
+    //     strcopy( binaryName, "main." );
     // }
  
     // system_remove_safe( _environment, binaryName );
@@ -519,9 +519,9 @@ void target_linkage( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, "2>nul");
+        strcopy( pipes, "2>nul");
     #else
-        strcpy( pipes, "2>/dev/null");
+        strcopy( pipes, "2>/dev/null");
     #endif
 
     sprintf( commandLine, "\"%s\" +cpc %s", executableName, pipes );
@@ -545,7 +545,7 @@ void target_cleanup( Environment * _environment ) {
     if ( _environment->exeFileName ) {
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcpy( binFileName, _environment->exeFileName );
+        strcopy( binFileName, _environment->exeFileName );
         char * p = strrchr( binFileName, '.' );
         memcpy( p, ".bin", 4 );
 

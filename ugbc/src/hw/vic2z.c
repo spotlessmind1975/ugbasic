@@ -2071,7 +2071,7 @@ static Variable * vic2z_image_converter_tilemap_mode_standard( Environment * _en
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+        strcopy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 
@@ -2359,7 +2359,7 @@ Variable * vic2z_sprite_converter( Environment * _environment, char * _source, i
             }
         }
         palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-        strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+        strcopy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
         // printf("%d) %d %2.2x%2.2x%2.2x\n", i, palette[i].index, palette[i].red, palette[i].green, palette[i].blue);
     }
 

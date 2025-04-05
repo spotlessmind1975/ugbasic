@@ -13470,10 +13470,10 @@ int main( int _argc, char *_argv[] ) {
                     _environment->additionalInfoFileName = strdup(optarg);
                     if ( ! _environment->listingFileName ) {
                         char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
-                        strcpy( p, _environment->additionalInfoFileName );
+                        strcopy( p, _environment->additionalInfoFileName );
                         char * q = strrchr( p, '.' );
                         if ( q ) {
-                            strcpy( q, ".listing" );
+                            strcopy( q, ".listing" );
                         } 
                         _environment->listingFileName = p;
                     }

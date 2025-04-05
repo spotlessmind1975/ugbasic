@@ -143,7 +143,7 @@ TmxMap * tmx_load( char * _filename ) {
                             char * separator = strrchr( filename, '/' );
                             if ( separator ) {
                                 *(separator+1) = 0;
-                                strcpy( filenameWithPath, filename );
+                                strcopy( filenameWithPath, filename );
                             }
                             strcat( filenameWithPath, source );
 

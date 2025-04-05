@@ -50,14 +50,14 @@ void generate_bin( Environment * _environment ) {
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
-    strcpy( exeFileName, _environment->exeFileName );
+    strcopy( exeFileName, _environment->exeFileName );
 
-    strcpy( binaryName, _environment->exeFileName );
+    strcopy( binaryName, _environment->exeFileName );
     char * p = strstr( binaryName, ".dsk" );
     if ( p ) {
-        strcpy( p, ".bin" );
+        strcopy( p, ".bin" );
     }
-    strcpy( _environment->exeFileName, binaryName );
+    strcopy( _environment->exeFileName, binaryName );
 
     BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
 
@@ -93,7 +93,7 @@ void generate_bin( Environment * _environment ) {
     
     }
 
-    strcpy( _environment->exeFileName, exeFileName );
+    strcopy( _environment->exeFileName, exeFileName );
 
 }
 
@@ -103,10 +103,10 @@ void generate_dsk( Environment * _environment ) {
     // The name of the binary is equal to the disk file name,
     // but with a different extension.
     char originalBinaryFile[MAX_TEMPORARY_STORAGE];
-    strcpy( originalBinaryFile, _environment->exeFileName );
+    strcopy( originalBinaryFile, _environment->exeFileName );
     char * p = strstr( originalBinaryFile, ".dsk" );
     if ( p ) {
-        strcpy( p, ".bin" );
+        strcopy( p, ".bin" );
     }
 
     // Calculate the effective size.
@@ -165,7 +165,7 @@ void generate_dsk( Environment * _environment ) {
     }
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
-    strcpy( temporaryPath, _environment->temporaryPath );
+    strcopy( temporaryPath, _environment->temporaryPath );
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
@@ -275,12 +275,12 @@ void generate_dsk( Environment * _environment ) {
     char executableName[MAX_TEMPORARY_STORAGE];
     BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
 
-    strcpy( binaryName, _environment->exeFileName );
+    strcopy( binaryName, _environment->exeFileName );
     Storage * storage = _environment->storage;
     char buffer[MAX_TEMPORARY_STORAGE];
     if ( storage ) {
         char filemask[MAX_TEMPORARY_STORAGE];
-        strcpy( filemask, _environment->exeFileName );
+        strcopy( filemask, _environment->exeFileName );
         char * basePath = find_last_path_separator( filemask );
         if ( basePath ) {
             ++basePath;
@@ -292,9 +292,9 @@ void generate_dsk( Environment * _environment ) {
             }
         } else {
             if ( storage->fileName ) {
-                strcpy( filemask, storage->fileName );
+                strcopy( filemask, storage->fileName );
             } else {
-                strcpy( filemask, "disk%d.dsk" );
+                strcopy( filemask, "disk%d.dsk" );
             }
         }
         sprintf( buffer, filemask, 0 );
@@ -303,10 +303,10 @@ void generate_dsk( Environment * _environment ) {
         }
         _environment->exeFileName = strdup( buffer );
     } else {
-        strcpy( binaryName, _environment->exeFileName );
+        strcopy( binaryName, _environment->exeFileName );
         char * p = strstr( binaryName, ".bin" );
         if ( p ) {
-            strcpy( p, ".dsk" );
+            strcopy( p, ".dsk" );
         }
         _environment->exeFileName = strdup( binaryName );
     }
@@ -366,7 +366,7 @@ void generate_dsk( Environment * _environment ) {
     if ( !storage ) {
 
     } else {
-        strcpy( buffer, _environment->exeFileName );
+        strcopy( buffer, _environment->exeFileName );
         int i=0;
         while( storage ) {
             FileStorage * fileStorage = storage->files;
@@ -419,7 +419,7 @@ void generate_dsk( Environment * _environment ) {
             if ( storage ) {
 
                 char filemask[MAX_TEMPORARY_STORAGE];
-                strcpy( filemask, _environment->exeFileName );
+                strcopy( filemask, _environment->exeFileName );
                 char * basePath = find_last_path_separator( filemask );
                 if ( basePath ) {
                     ++basePath;
@@ -431,9 +431,9 @@ void generate_dsk( Environment * _environment ) {
                     }
                 } else {
                     if ( storage->fileName ) {
-                        strcpy( filemask, storage->fileName );
+                        strcopy( filemask, storage->fileName );
                     } else {
-                        strcpy( filemask, "disk%d.dsk" );
+                        strcopy( filemask, "disk%d.dsk" );
                     }
                 }
                 sprintf( buffer, filemask, i );

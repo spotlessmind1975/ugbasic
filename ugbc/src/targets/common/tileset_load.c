@@ -144,7 +144,7 @@ Variable * tileset_load( Environment * _environment, char * _filename, char * _a
     char * separator = strrchr( filename, '/' );
     if ( separator ) {
         *(separator+1) = 0;
-        strcpy( filenameWithPath, filename );
+        strcopy( filenameWithPath, filename );
     }
     strcat( filenameWithPath, tsxImage->source );
 

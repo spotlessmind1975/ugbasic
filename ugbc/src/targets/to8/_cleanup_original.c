@@ -177,11 +177,11 @@ int to8_convertbintok7_original(Environment * _environment)
 	fr=fopen(temporaryFileName,"rb");
 	// if(argv[3]==NULL)
 	// {
-		strcpy(destin,_environment->exeFileName);
+		strcopy(destin,_environment->exeFileName);
 		// strcat(destin,".K7");
 	// }
 	// else
-	// strcpy(destin,argv[3]);
+	// strcopy(destin,argv[3]);
 	fw=fopen(destin,"wb");
 	fseek(fr, 0L, SEEK_END);
     size = ftell(fr);

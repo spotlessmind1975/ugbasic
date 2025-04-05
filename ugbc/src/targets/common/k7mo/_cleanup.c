@@ -148,7 +148,7 @@ int convertbintok7(Environment * _environment)
 
     fr=fopen(temporaryFileName,"rb");
 
-    strcpy(destin,_environment->exeFileName);
+    strcopy(destin,_environment->exeFileName);
     fw=fopen(destin,"wb");
 
     fseek(fr, 0L, SEEK_END);
@@ -222,7 +222,7 @@ int convertbintok7(Environment * _environment)
         while( fileStorage ) {
 
             char bankNumber[MAX_TEMPORARY_STORAGE];
-            strcpy( bankNumber, fileStorage->targetName );
+            strcopy( bankNumber, fileStorage->targetName );
 
             int size = 0;
             char * buffer;

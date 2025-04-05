@@ -61,7 +61,7 @@ void target_linkage( Environment * _environment ) {
 
     char * p;
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -72,7 +72,7 @@ void target_linkage( Environment * _environment ) {
     TRACE2( "  renaming %s to %s", binaryName, _environment->exeFileName );
     BUILD_SAFE_MOVE( _environment,  binaryName, _environment->exeFileName );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
@@ -87,7 +87,7 @@ void target_cleanup( Environment * _environment ) {
     if ( _environment->exeFileName ) {
         // char binFileName[MAX_TEMPORARY_STORAGE];
 
-        // strcpy( binFileName, _environment->exeFileName );
+        // strcopy( binFileName, _environment->exeFileName );
         // char * p = strrchr( binFileName, '.' );
         // memcpy( p, ".bin", 4 );
 

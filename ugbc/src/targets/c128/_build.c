@@ -55,10 +55,10 @@ void generate_prg( Environment * _environment ) {
     BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c128", executableName, listingFileName, "" );
 
     char objectFileName[MAX_TEMPORARY_STORAGE];
-    strcpy( objectFileName, _environment->asmFileName );
+    strcopy( objectFileName, _environment->asmFileName );
     char * p = strstr(objectFileName, ".asm");
     if ( p ) {
-        strcpy( p, ".o" );
+        strcopy( p, ".o" );
         remove( objectFileName );
     }
 
@@ -147,7 +147,7 @@ void generate_d64( Environment * _environment ) {
             }
             char buffer[MAX_TEMPORARY_STORAGE];
             char filemask[MAX_TEMPORARY_STORAGE];
-            strcpy( filemask, _environment->exeFileName );
+            strcopy( filemask, _environment->exeFileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -159,9 +159,9 @@ void generate_d64( Environment * _environment ) {
                 }
             } else {
                 if ( storage->fileName ) {
-                    strcpy( filemask, storage->fileName );
+                    strcopy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk%d.d64" );
+                    strcopy( filemask, "disk%d.d64" );
                 }
             }
             sprintf( buffer, filemask, i );

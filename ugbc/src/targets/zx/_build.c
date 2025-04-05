@@ -60,7 +60,7 @@ void target_linkage( Environment * _environment ) {
     char * p;
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *(p+1) = 'l';
@@ -72,7 +72,7 @@ void target_linkage( Environment * _environment ) {
         BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'b';
@@ -85,9 +85,9 @@ void target_linkage( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
     sprintf( commandLine, "\"%s\" +zx --org 32768 -b \"%s\"",
@@ -113,7 +113,7 @@ void target_linkage( Environment * _environment ) {
 
     if ( _environment->listingFileName ) {
         TRACE1( "  listing file = %s", _environment->listingFileName );
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         TRACE1( "  binary file = %s", binaryName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
@@ -127,7 +127,7 @@ void target_linkage( Environment * _environment ) {
         if ( _environment->profileFileName && _environment->profileCycles ) {
 
             char binaryName2[MAX_TEMPORARY_STORAGE];
-            strcpy( binaryName2, _environment->asmFileName );
+            strcopy( binaryName2, _environment->asmFileName );
             char * p = strstr( binaryName2, ".asm" );
             if ( p ) {
                 *(p+1) = 'b';
@@ -135,7 +135,7 @@ void target_linkage( Environment * _environment ) {
                 *(p+3) = 'n';
             }
 
-            strcpy( binaryName, _environment->profileFileName );
+            strcopy( binaryName, _environment->profileFileName );
             if ( _environment->executerFileName ) {
                 sprintf(executableName, "%s", _environment->executerFileName );
             } else if( access( "runz80.exe", F_OK ) == 0 ) {
@@ -169,7 +169,7 @@ void target_cleanup( Environment * _environment ) {
 
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcpy( binFileName, _environment->exeFileName );
+        strcopy( binFileName, _environment->exeFileName );
         char * p = strrchr( binFileName, '.' );
         memcpy( p, ".bin", 4 );
 
