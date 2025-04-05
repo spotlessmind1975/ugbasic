@@ -14768,10 +14768,8 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
         CRITICAL_FILE_NOT_FOUND( _filename );
     }
 
-    Constant * constants = malloc( sizeof( Constant ) );
-    memset( constants, 0, sizeof( Constant ) );
-
-    Constant * current = constants;
+    Constant * constants = NULL;
+    Constant * current = NULL;
 
     while( !feof( handle ) ) {
 
@@ -14806,11 +14804,16 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
         }
 
         if ( ! cmt && p ) {
+            if ( ! current ) {
+                current = malloc( sizeof( Constant ) );
+                memset( current, 0, sizeof( Constant ) );
+                constants = current;
+            } else {
+                current->next = malloc( sizeof( Constant ) );
+                memset( current->next, 0, sizeof( Constant ) );
+                current = current->next;
+            }
             current->value = atoi( valueString );
-
-            current->next = malloc( sizeof( Constant ) );
-            memset( current->next, 0, sizeof( Constant ) );
-            current = current->next;
         }
 
     }
@@ -14832,14 +14835,19 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
                 currentField = currentField->next;
                 current = current->next;
             }
-            if ( !current ) {
-                break;
-            }
             *_size += bytes;
             ++*_count;
+            if ( !current ) {
+                if ( currentField ) {
+                    CRITICAL_FILE_CSV_NOT_ENOUGH_DATA( _filename );
+                }
+                break;
+            }
         }
 
-        char * buffer = malloc( *_size ), * ptr = buffer, * lastPtr = buffer;
+        char * buffer = malloc( *_size );
+        char * ptr = buffer;
+        char * lastPtr = buffer;
         int i=0;
         Field * currentField = _environment->currentType->first;
         current = constants;
