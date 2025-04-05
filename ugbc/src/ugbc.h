@@ -3566,6 +3566,7 @@ typedef struct _Environment {
 #define CRITICAL_UNKNOWN_FIELD_ON_TYPE( n ) CRITICAL2("E384 - unknown TYPE field ", n );  
 #define CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( n ) CRITICAL2("E385 - not enough value on DATA for given TYPE ", n );  
 #define CRITICAL_FILE_CSV_NOT_ENOUGH_DATA( n ) CRITICAL2("E386 - not enough data in CSV to fillup the array ", n );  
+#define CRITICAL_UNCLOSED_EMBEDDED_ESCAPE_SEQUENCE( n ) CRITICAL2("E387 - unclosed embedded conditional", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3818,6 +3819,7 @@ int embed_scan_string (const char *);
         memset( tmp, 0, e##_len + 1 ); \
         memcpy( tmp, e, e##_len ); \
         char * line = strtok( tmp, "\x0a" ); \
+        memset( &_environment->embedResult, 0, sizeof ( _environment->embedResult ) ); \
         while( line ) { \
             _environment->embedResult.line = line; \
             _environment->embedResult.conditional = 0; \
@@ -3847,10 +3849,15 @@ int embed_scan_string (const char *);
             } \
             line = strtok( NULL, "\x0a" ); \
         } \
+        if ( _environment->embedResult.current > 0 ) { \
+            CRITICAL_UNCLOSED_EMBEDDED_ESCAPE_SEQUENCE( #e ); \
+        } \
         free( tmp ); \
-        buffered_fwrite( ((Environment *)_environment), parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
+        if ( strlen( parsed ) ) { \
+            buffered_fwrite( ((Environment *)_environment), parsed, strlen( parsed )-1, 1, ((Environment *)_environment)->asmFile ); \
+            buffered_fputs( ((Environment *)_environment), "\n", ((Environment *)_environment)->asmFile ); \
+        } \
         free( parsed ); \
-        buffered_fputs( ((Environment *)_environment), "\n", ((Environment *)_environment)->asmFile ); \
     }
 
 #define outembeddeddef0(e) \
