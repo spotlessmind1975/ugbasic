@@ -153,7 +153,7 @@ void generate_atr( Environment * _environment ) {
     Storage * storage = _environment->storage;
 
     char temporaryPath[MAX_TEMPORARY_STORAGE];
-    strcpy( temporaryPath, _environment->temporaryPath );
+    strcopy( temporaryPath, _environment->temporaryPath );
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
@@ -173,9 +173,9 @@ void generate_atr( Environment * _environment ) {
 
     char pipes[256];
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
@@ -196,7 +196,7 @@ void generate_atr( Environment * _environment ) {
     sprintf( dup25Filename, "%sDUP.SYS", temporaryPath );
 
     char atrFileName[MAX_TEMPORARY_STORAGE];
-    strcpy( atrFileName, _environment->exeFileName );
+    strcopy( atrFileName, _environment->exeFileName );
     char * p = strstr( atrFileName, ".atr" );
     if ( !p ) {
         strcat( atrFileName, ".atr");
@@ -267,7 +267,7 @@ void generate_atr( Environment * _environment ) {
             }
             char buffer[MAX_TEMPORARY_STORAGE];
             char filemask[MAX_TEMPORARY_STORAGE];
-            strcpy( filemask, _environment->exeFileName );
+            strcopy( filemask, _environment->exeFileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -279,9 +279,9 @@ void generate_atr( Environment * _environment ) {
                 }
             } else {
                 if ( storage->fileName ) {
-                    strcpy( filemask, storage->fileName );
+                    strcopy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk%d.atr" );
+                    strcopy( filemask, "disk%d.atr" );
                 }
             }
             sprintf( buffer, filemask, i );

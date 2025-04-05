@@ -43,6 +43,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+char * strcopy( char * _dest, const char * _source );
+
 TmxMap * tmx_load( char * _filename ) {
 
     TmxMap * result = NULL;
@@ -143,7 +145,7 @@ TmxMap * tmx_load( char * _filename ) {
                             char * separator = strrchr( filename, '/' );
                             if ( separator ) {
                                 *(separator+1) = 0;
-                                strcpy( filenameWithPath, filename );
+                                strcopy( filenameWithPath, filename );
                             }
                             strcat( filenameWithPath, source );
 

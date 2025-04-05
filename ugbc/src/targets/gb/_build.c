@@ -169,7 +169,7 @@ void generate_gb( Environment * _environment ) {
     char * p;
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *(p+1) = 'l';
@@ -181,7 +181,7 @@ void generate_gb( Environment * _environment ) {
         BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
@@ -189,7 +189,7 @@ void generate_gb( Environment * _environment ) {
     }
     system_remove_safe( _environment, binaryName );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -205,7 +205,7 @@ void generate_gb( Environment * _environment ) {
     (void)!fread( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -217,7 +217,7 @@ void generate_gb( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -233,7 +233,7 @@ void generate_gb( Environment * _environment ) {
     (void)!fread( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -245,7 +245,7 @@ void generate_gb( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryNameDefinitive, _environment->exeFileName );
+    strcopy( binaryNameDefinitive, _environment->exeFileName );
     p = strstr( binaryNameDefinitive, ".gb" );
     if ( p ) {
         *p = 0;
@@ -259,9 +259,9 @@ void generate_gb( Environment * _environment ) {
     char pipes[256];
 
     #ifdef _WIN32
-        strcpy( pipes, ">nul 2>nul");
+        strcopy( pipes, ">nul 2>nul");
     #else
-        strcpy( pipes, ">/dev/null 2>/dev/null");
+        strcopy( pipes, ">/dev/null 2>/dev/null");
     #endif
 
     sprintf( commandLine, "\"%s\" +gb -b \"%s\" %s",
@@ -276,7 +276,7 @@ void generate_gb( Environment * _environment ) {
     }; 
 
     if ( strstr( _environment->exeFileName, ".gb.gb" ) ) {
-        strcpy( binaryNameDefinitive, _environment->exeFileName );
+        strcopy( binaryNameDefinitive, _environment->exeFileName );
         p = strstr( binaryNameDefinitive, ".gb" );
         if ( p ) {
             *p = 0;
@@ -303,14 +303,14 @@ void generate_gb( Environment * _environment ) {
 
 
 
-//     strcpy( binaryName, _environment->asmFileName );
+//     strcopy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
 //     if ( p ) {
 //         strcat( p, "_data_user.bin");
 //     }
 //     remove(binaryName);
 
-//     strcpy( binaryName, _environment->asmFileName );
+//     strcopy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
 //     if ( p ) {
 //         strcat( p, "_code_user.bin");
@@ -328,7 +328,7 @@ void generate_gb( Environment * _environment ) {
 
 //     char * p;
 
-//     strcpy( binaryName, _environment->asmFileName );
+//     strcopy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
 //     if ( p ) {
 //         *p = 0;
@@ -341,9 +341,9 @@ void generate_gb( Environment * _environment ) {
 //     char pipes[256];
 
 //     #ifdef _WIN32
-//         strcpy( pipes, ">nul 2>nul");
+//         strcopy( pipes, ">nul 2>nul");
 //     #else
-//         strcpy( pipes, ">/dev/null 2>/dev/null");
+//         strcopy( pipes, ">/dev/null 2>/dev/null");
 //     #endif
 
 //     sprintf( commandLine, "\"%s\" +msxrom -b \"%s\" %s",
@@ -369,14 +369,14 @@ void generate_gb( Environment * _environment ) {
 //     BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
 
 //     char symbolName[MAX_TEMPORARY_STORAGE];
-//     strcpy( symbolName, _environment->exeFileName );
+//     strcopy( symbolName, _environment->exeFileName );
 //     p = strstr( symbolName, ".rom" );
 //     if ( p ) {
 //         *p = 0;
 //         --p;
 //         strcat( p, ".sym");
 
-//         strcpy( binaryName, _environment->asmFileName );
+//         strcopy( binaryName, _environment->asmFileName );
 //         p = strstr( binaryName, ".asm" );
 //         if ( p ) {
 //             *p = 0;
@@ -387,7 +387,7 @@ void generate_gb( Environment * _environment ) {
 //     }
 
 //     if ( _environment->listingFileName ) {
-//         strcpy( binaryName, _environment->asmFileName );
+//         strcopy( binaryName, _environment->asmFileName );
 //         p = strstr( binaryName, ".asm" );
 //         if ( p ) {
 //             *p = 0;
@@ -397,7 +397,7 @@ void generate_gb( Environment * _environment ) {
 //         }
 
 //         if ( _environment->profileFileName && _environment->profileCycles ) {
-//             strcpy( binaryName, _environment->profileFileName );
+//             strcopy( binaryName, _environment->profileFileName );
 //             if ( _environment->executerFileName ) {
 //                 sprintf(executableName, "%s", _environment->executerFileName );
 //             } else if( access( "runz80.exe", F_OK ) == 0 ) {
@@ -423,14 +423,14 @@ void generate_gb( Environment * _environment ) {
 
 //     }
 
-//     strcpy( binaryName, _environment->asmFileName );
+//     strcopy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
 //     if ( p ) {
 //         strcat( p, "_data_user.bin");
 //     }
 //     remove(binaryName);
 
-//     strcpy( binaryName, _environment->asmFileName );
+//     strcopy( binaryName, _environment->asmFileName );
 //     p = strstr( binaryName, ".asm" );
 //     if ( p ) {
 //         strcat( p, "_code_user.bin");
@@ -445,7 +445,7 @@ void target_cleanup( Environment * _environment ) {
 
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        // strcpy( binFileName, _environment->exeFileName );
+        // strcopy( binFileName, _environment->exeFileName );
         // char * p = strrchr( binFileName, '.' );
         // memcpy( p, ".bin", 4 );
 

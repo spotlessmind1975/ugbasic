@@ -1951,11 +1951,11 @@ static int optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "[" );
                     if ( c ) {
-                        strcpy( c, c+1 );
+                        strcopy( c, c+1 );
                     }
                     c = strstr( realVarName, "#" );
                     if ( c ) {
-                        strcpy( c, c+1 );
+                        strcopy( c, c+1 );
                     }
                     c = strstr( realVarName, "]" );
                     if ( c ) {

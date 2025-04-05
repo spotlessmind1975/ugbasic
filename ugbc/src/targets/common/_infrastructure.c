@@ -496,13 +496,13 @@ static Variable * variable_define_internal( Environment * _environment, Variable
 
     if ( _procedure_name ) {
         var->realName = malloc( strlen( _name ) + strlen( _procedure_name ) + 3 ); 
-        strcpy( var->realName, "_" ); 
+        strcopy( var->realName, "_" ); 
         strcat( var->realName, _procedure_name );
         strcat( var->realName, "_" );
         strcat( var->realName, var->name );
     } else {
         var->realName = malloc( strlen( _name ) + 2 ); 
-        strcpy( var->realName, "_" ); 
+        strcopy( var->realName, "_" ); 
         strcat( var->realName, var->name );
     }
 
@@ -679,7 +679,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
             strcmp( _name, "YCURSYS" ) == 0
          ) {
             var->realName = malloc( strlen( _name ) + 2 );
-            strcpy( var->realName, "<" ); 
+            strcopy( var->realName, "<" ); 
             strcat( var->realName, var->name );
          } else {
             var->realName = strdup( _name );
@@ -743,7 +743,7 @@ Variable * variable_export( Environment * _environment, char * _name, VariableTy
             strcmp( _name, "YCURSYS" ) == 0
          ) {
             var->realName = malloc( strlen( _name ) + 2 );
-            strcpy( var->realName, "<" ); 
+            strcopy( var->realName, "<" ); 
             strcat( var->realName, var->name );
          } else {
             var->realName = strdup( _name );
@@ -806,7 +806,7 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
         var->bankAssigned = -1;
-        var->realName = malloc( strlen( _name ) + strlen( var->name ) + 2 ); strcpy( var->realName, "_" ); strcat( var->realName, var->name );
+        var->realName = malloc( strlen( _name ) + strlen( var->name ) + 2 ); strcopy( var->realName, "_" ); strcat( var->realName, var->name );
         var->type = _type;
 
         if ( var->type == VT_BIT ) {
@@ -3244,7 +3244,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                             cpu_label( _environment, alreadyLoadedLabel );
                                         }
                                     } else {
-                                        strcpy( bankWindowName, source->realName );
+                                        strcopy( bankWindowName, source->realName );
                                         realSize = source->size;
                                         realAllocationSize = realSize;
                                     }
@@ -10932,7 +10932,7 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
         c = malloc( sizeof( Constant ) );
         memset( c, 0, sizeof( Constant ) );
         c->name = strdup( _name );
-        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcpy( c->realName, "_" ); strcat( c->realName, c->name );
+        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcopy( c->realName, "_" ); strcat( c->realName, c->name );
         c->value = _value;
         c->type = CT_INTEGER;
         Constant * constLast = _environment->constants;
@@ -10971,7 +10971,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
         c = malloc( sizeof( Constant ) );
         memset( c, 0, sizeof( Constant ) );
         c->name = strdup( _name );
-        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcpy( c->realName, "_" ); strcat( c->realName, c->name );
+        c->realName = malloc( strlen( _name ) + strlen( c->name ) + 2 ); strcopy( c->realName, "_" ); strcat( c->realName, c->name );
         c->valueString = string_reserve( _environment, _value );
         c->type = CT_STRING;
         Constant * constLast = _environment->constants;
@@ -11701,14 +11701,14 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
 
     check_if_filename_is_valid( _environment,  _filename );
 
-    strcpy( lookedFilename, _filename );
+    strcopy( lookedFilename, _filename );
     char * c = strrchr( lookedFilename, '/' );
     if ( c ) {
-        strcpy( lookedExtension, c );
+        strcopy( lookedExtension, c );
         *c = 0;
     } else {
-        strcpy( lookedFilename, "." );
-        strcpy( lookedExtension, PATH_SEPARATOR_AS_STRING );
+        strcopy( lookedFilename, "." );
+        strcopy( lookedExtension, PATH_SEPARATOR_AS_STRING );
         strcat( lookedExtension, _filename );
     }
     strcat( lookedFilename, PATH_SEPARATOR_AS_STRING );
@@ -11772,7 +11772,7 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
 
     if ( !file ) {
 
-        strcpy( lookedFilename, _filename );
+        strcopy( lookedFilename, _filename );
 
         file = fopen( lookedFilename, "rb" );
 
@@ -12524,11 +12524,11 @@ char * get_temporary_filename( Environment * _environment ) {
     }
 
     if ( _environment->temporaryPath ) {
-        strcpy( temporaryFilename, _environment->temporaryPath );
+        strcopy( temporaryFilename, _environment->temporaryPath );
         strcat( temporaryFilename, PATH_SEPARATOR_AS_STRING );
         strcat( temporaryFilename, temp );
     } else {
-        strcpy( temporaryFilename, temp );
+        strcopy( temporaryFilename, temp );
     }
 
     return strdup( temporaryFilename );
@@ -12751,16 +12751,16 @@ char * escape_newlines( char * _string ) {
         sprintf( result2, "\"%s", result );
         close_escaped = ! close_escaped;
     } else {
-        strcpy( result2, result );
+        strcopy( result2, result );
     }
-    strcpy( result, result2 );
+    strcopy( result, result2 );
 
     if ( close_escaped ) {
         sprintf( result2, "%s\"", result );
     } else {
-        strcpy( result2, result );
+        strcopy( result2, result );
     }
-    strcpy( result, result2 );
+    strcopy( result, result2 );
 
     free( result2 );
     
@@ -13732,7 +13732,7 @@ DataSegment * data_segment_define( Environment * _environment, char * _name ) {
     memset( data, 0, sizeof( DataSegment ) );
     data->name = strdup( _name );
     data->realName = malloc( strlen( _name ) + 6 ); 
-    strcpy( data->realName, "DATA_" ); 
+    strcopy( data->realName, "DATA_" ); 
     strcat( data->realName, data->name );
 
     if ( ! _environment->dataSegment ) {
@@ -14472,7 +14472,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     if ( !tmp ) {
         tmp = strdup( "/tmp" );
     }
-    strcpy( temporaryPath, tmp );
+    strcopy( temporaryPath, tmp );
     check = strlen(temporaryPath);
 
 #endif
@@ -14493,7 +14493,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
     }
 
     char temporaryFileName[MAX_TEMPORARY_STORAGE];
-    strcpy( temporaryFileName, get_temporary_filename( _environment ) );
+    strcopy( temporaryFileName, get_temporary_filename( _environment ) );
     printf( "[P02] TEMPORARY FILENAME : \"%s\"\n", temporaryFileName );
     check = show_troubleshooting_accessing_path( _environment, temporaryFileName, R_OK | W_OK | F_OK, 1, 1 );
 
@@ -14770,10 +14770,8 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
         CRITICAL_FILE_NOT_FOUND( _filename );
     }
 
-    Constant * constants = malloc( sizeof( Constant ) );
-    memset( constants, 0, sizeof( Constant ) );
-
-    Constant * current = constants;
+    Constant * constants = NULL;
+    Constant * current = NULL;
 
     while( !feof( handle ) ) {
 
@@ -14808,11 +14806,16 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
         }
 
         if ( ! cmt && p ) {
+            if ( ! current ) {
+                current = malloc( sizeof( Constant ) );
+                memset( current, 0, sizeof( Constant ) );
+                constants = current;
+            } else {
+                current->next = malloc( sizeof( Constant ) );
+                memset( current->next, 0, sizeof( Constant ) );
+                current = current->next;
+            }
             current->value = atoi( valueString );
-
-            current->next = malloc( sizeof( Constant ) );
-            memset( current->next, 0, sizeof( Constant ) );
-            current = current->next;
         }
 
     }
@@ -14834,14 +14837,19 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
                 currentField = currentField->next;
                 current = current->next;
             }
-            if ( !current ) {
-                break;
-            }
             *_size += bytes;
             ++*_count;
+            if ( !current ) {
+                if ( currentField ) {
+                    CRITICAL_FILE_CSV_NOT_ENOUGH_DATA( _filename );
+                }
+                break;
+            }
         }
 
-        char * buffer = malloc( *_size ), * ptr = buffer, * lastPtr = buffer;
+        char * buffer = malloc( *_size );
+        char * ptr = buffer;
+        char * lastPtr = buffer;
         int i=0;
         Field * currentField = _environment->currentType->first;
         current = constants;
@@ -15746,4 +15754,16 @@ void variable_increment_array( Environment * _environment, char * _source ) {
 
 void variable_decrement_array( Environment * _environment, char * _source ) {
     variable_increment_decrement_array( _environment, _source, -1 );
+}
+
+char * strcopy( char * _dest, char * _source ) {
+
+    if ( _dest == NULL || _source == NULL) {
+        return NULL;
+    }
+
+    memmove( _dest, _source, strlen(_source) + 1);
+
+    return _dest;
+
 }

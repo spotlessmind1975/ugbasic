@@ -894,60 +894,60 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         if ( strcmp(v5->str, "TSTB") == 0 || strstr(buf[1]->str, "INCB") || strstr(v5->str, "COMB") ) {
             char conditional[4];
             if ( strcmp( v1->str, "CC") == 0 ) {
-                strcpy( conditional, "CS" );
+                strcopy( conditional, "CS" );
             }
             else if ( strcmp( v1->str, "CS" ) == 0 ) {
-                strcpy( conditional, "CC" );
+                strcopy( conditional, "CC" );
             } else if ( strcmp( v1->str, "EQ" ) == 0 ) {
-                strcpy( conditional, "NE" );
+                strcopy( conditional, "NE" );
             }
             else if ( strcmp( v1->str, "GE" ) == 0 ) {
-                strcpy( conditional, "LT" );
+                strcopy( conditional, "LT" );
             }
             else if ( strcmp( v1->str, "GT" ) == 0 ) {
-                strcpy( conditional, "LE" );
+                strcopy( conditional, "LE" );
             }
             else if ( strcmp( v1->str, "HI" ) == 0 )  {
-                strcpy( conditional, "LS" );
+                strcopy( conditional, "LS" );
             }
             else if ( strcmp( v1->str, "HS" ) == 0 ) {
-                strcpy( conditional, "LO" );
+                strcopy( conditional, "LO" );
             }
             else if ( strcmp( v1->str, "LE" ) == 0 ) {
-                strcpy( conditional, "GT" );
+                strcopy( conditional, "GT" );
             }
             else if ( strcmp( v1->str, "LO" ) == 0 ) {
-                strcpy( conditional, "HS" );
+                strcopy( conditional, "HS" );
             }
             else if ( strcmp( v1->str, "LS" ) == 0 ) {
-                strcpy( conditional, "HI" );
+                strcopy( conditional, "HI" );
             }
             else if ( strcmp( v1->str, "LT" ) == 0 ) {
-                strcpy( conditional, "GE" );
+                strcopy( conditional, "GE" );
             }
             else if ( strcmp( v1->str, "MI" ) == 0 ) {
-                strcpy( conditional, "PL" );
+                strcopy( conditional, "PL" );
             }
             else if ( strcmp( v1->str, "NE" ) == 0 ) {
-                strcpy( conditional, "EQ" );
+                strcopy( conditional, "EQ" );
             }
             else if ( strcmp( v1->str, "PL" ) == 0 ) {
-                strcpy( conditional, "MI" );
+                strcopy( conditional, "MI" );
             }
             else if ( strcmp( v1->str, "RA" ) == 0 ) {
-                strcpy( conditional, "RA" );
+                strcopy( conditional, "RA" );
             }
             else if ( strcmp( v1->str, "RN" ) == 0 ) {
-                strcpy( conditional, "RN" );
+                strcopy( conditional, "RN" );
             }
             else if ( strcmp( v1->str, "VC" ) == 0 ) {
-                strcpy( conditional, "VS" );
+                strcopy( conditional, "VS" );
             }
             else if ( strcmp( v1->str, "VS" ) == 0 ) {
-                strcpy( conditional, "VC" );
+                strcopy( conditional, "VC" );
             } 
             else {
-                strcpy( conditional, v1->str );
+                strcopy( conditional, v1->str );
             }
 
             optim(buf[5], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", " LB%s %s", conditional, v3->str );
@@ -1922,11 +1922,11 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "#" );
                     if ( c ) {
-                        strcpy( c, c+1 );
+                        strcopy( c, c+1 );
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2029,7 +2029,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2045,7 +2045,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName2, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName2, ")" );
                     if ( c ) {
@@ -2097,7 +2097,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2138,7 +2138,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2154,7 +2154,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName2, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName2, ")" );
                     if ( c ) {
@@ -2206,7 +2206,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2245,7 +2245,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2279,7 +2279,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2319,7 +2319,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2357,7 +2357,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2397,7 +2397,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2436,7 +2436,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2476,7 +2476,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {
@@ -2516,7 +2516,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "<(" );
                     if ( c ) {
-                        strcpy( c, c+2 );
+                        strcopy( c, c+2 );
                     }
                     c = strstr( realVarName, ")" );
                     if ( c ) {

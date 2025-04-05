@@ -1481,7 +1481,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                     }
                     c = strstr( realVarName, "#" );
                     if ( c ) {
-                        strcpy( c, c+1 );
+                        strcopy( c, c+1 );
                     }
                     UnusedSymbol * tmp = currentlyUnusedSymbols;
                     UnusedSymbol * previous = NULL;
@@ -1801,15 +1801,15 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
 //                     }
 //                     c = strstr( realVarName, "#<" );
 //                     if ( c ) {
-//                         strcpy( c, c+2 );
+//                         strcopy( c, c+2 );
 //                     }
 //                     c = strstr( realVarName, "#>" );
 //                     if ( c ) {
-//                         strcpy( c, c+2 );
+//                         strcopy( c, c+2 );
 //                     }
 //                     c = strstr( realVarName, "#" );
 //                     if ( c ) {
-//                         strcpy( c, c+1 );
+//                         strcopy( c, c+1 );
 //                     }
 //                     UnusedSymbol * tmp = currentlyUnusedSymbols;
 //                     UnusedSymbol * previous = NULL;

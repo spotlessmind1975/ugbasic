@@ -42,6 +42,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+char * strcopy( char * _dest, const char * _source );
+
 TsxTileset * tsx_load( char * _filename ) {
 
     TsxTileset * result = NULL;

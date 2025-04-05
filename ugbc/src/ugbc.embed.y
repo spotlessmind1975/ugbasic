@@ -53,10 +53,10 @@ char *str_replace( char *orig, char *rep, char *with ) {
         ins = strstr(orig, rep);
         len_front = ins - orig;
         tmp = strncpy(tmp, orig, len_front) + len_front;
-        tmp = strcpy(tmp, with) + len_with;
+        tmp = strcopy(tmp, with) + len_with;
         orig += len_front + len_rep; // move to next "end of rep"
     }
-    strcpy(tmp, orig);
+    strcopy(tmp, orig);
     return result;
 }
 

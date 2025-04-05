@@ -60,7 +60,7 @@ void target_linkage( Environment * _environment ) {
     char * p;
 
     if ( _environment->listingFileName ) {
-        strcpy( binaryName, _environment->asmFileName );
+        strcopy( binaryName, _environment->asmFileName );
         p = strstr( binaryName, ".asm" );
         if ( p ) {
             *(p+1) = 'l';
@@ -72,7 +72,7 @@ void target_linkage( Environment * _environment ) {
         BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
     }
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *(p+1) = 'o';
@@ -80,7 +80,7 @@ void target_linkage( Environment * _environment ) {
     }
     remove(binaryName);
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -96,7 +96,7 @@ void target_linkage( Environment * _environment ) {
     (void)!fread( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -108,7 +108,7 @@ void target_linkage( Environment * _environment ) {
     fwrite( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -124,7 +124,7 @@ void target_linkage( Environment * _environment ) {
     (void)!fread( part, size, 1, binaryFile );
     fclose( binaryFile );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         *p = 0;
@@ -138,14 +138,14 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         strcat( p, "_data_user.bin");
     }
     remove(binaryName);
 
-    strcpy( binaryName, _environment->asmFileName );
+    strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
         strcat( p, "_code_user.bin");
@@ -160,7 +160,7 @@ void target_cleanup( Environment * _environment ) {
     if ( _environment->exeFileName ) {
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcpy( binFileName, _environment->exeFileName );
+        strcopy( binFileName, _environment->exeFileName );
         char * p = strrchr( binFileName, '.' );
         memcpy( p, ".bin", 4 );
 

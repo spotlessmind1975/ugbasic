@@ -53,17 +53,17 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     deploy_preferred( bank, src_hw_to8_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    address1->bankReadOrWrite = 1;
 
     outline0("; bank write rv")
     outline1("LDY %s", address1->realName );
     outline1("LDU %s", size->realName );
     outline1("LDB %s", bank->realName );
-    outline1("LDX %s", realAddress->realName );
+    outline1("LDX %s", address2->realName );
     outline0("JSR BANKWRITE");
     outline0("; end bank write");
 
@@ -100,7 +100,6 @@ void bank_write_semi_var( Environment * _environment, char * _address2, int _ban
             outline1("LDY #%s", _address2 );
             outline1("LDX #$%4.4x", realAddress );
             outline1("LDU #$%4.4x", _size );
-            outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKWRITE");
             break;
 
@@ -116,16 +115,14 @@ void bank_write_vars_direct( Environment * _environment, char * _address1, char 
     deploy_preferred( bank, src_hw_to8_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_WORD, 0 );
-    Variable * bankAddress = bank_get_address_var( _environment, _bank );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
     outline0("; bank write rv")
     outline1("LDY #%s", _address1 );
     outline1("LDU %s", size->realName );
     outline1("LDB %s", bank->realName );
-    outline1("LDX %s", realAddress->realName );
+    outline1("LDX %s", address2->realName );
     outline0("JSR BANKWRITE");
     outline0("; end bank write");
 
@@ -139,8 +136,6 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
 
     Variable * address1 = variable_retrieve( _environment, _address1 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-    Variable * bankAddress = bank_get_address( _environment, _bank );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address2->name );
 
     outline0("; bank write rv")
     outline1("LDB #$%4.4x", _bank );

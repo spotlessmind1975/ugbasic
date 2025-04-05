@@ -200,7 +200,7 @@ void ef936x_background_color( Environment * _environment, int _index, int _backg
     // printf("\n" );
 
     SYSTEM_PALETTE[_index].index = _index;
-    strcpy( SYSTEM_PALETTE[_index].description, "custom" );
+    strcopy( SYSTEM_PALETTE[_index].description, "custom" );
     SYSTEM_PALETTE[_index].used = 0;
     SYSTEM_PALETTE[_index].count = 0;
 

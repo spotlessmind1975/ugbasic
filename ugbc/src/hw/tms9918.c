@@ -1965,7 +1965,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     //         }
     //     }
     //     palette[i].index = SYSTEM_PALETTE[colorIndex].index;
-    //     strcpy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
+    //     strcopy( palette[i].description, SYSTEM_PALETTE[colorIndex].description );
     // }
 
     memcpy( result->originalPalette, palette, MAX_PALETTE * sizeof( RGBi ) );

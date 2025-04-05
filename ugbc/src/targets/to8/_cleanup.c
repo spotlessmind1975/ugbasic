@@ -317,7 +317,7 @@ int convertbintok7(Environment * _environment)
 
     unsigned char file_type[]={0x02,0x00,0x00}; /* binary k7 file */
 
-    strcpy(destin,_environment->exeFileName);
+    strcopy(destin,_environment->exeFileName);
     fw=fopen(destin,"wb");
 
     addBinaryFile( fw, "loader  bin", 0xd800, data_to8_loader_bin, data_to8_loader_bin_len );

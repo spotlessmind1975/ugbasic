@@ -95,7 +95,7 @@ void generate_d64( Environment * _environment ) {
     fclose( prgHandle );
 
     char d64FileName[MAX_TEMPORARY_STORAGE];
-    strcpy( d64FileName, _environment->exeFileName );
+    strcopy( d64FileName, _environment->exeFileName );
     char * p = strstr( d64FileName, ".d64" );
     if ( !p ) {
         strcat( d64FileName, ".d64");
@@ -138,7 +138,7 @@ void generate_d64( Environment * _environment ) {
             }
             char buffer[MAX_TEMPORARY_STORAGE];
             char filemask[MAX_TEMPORARY_STORAGE];
-            strcpy( filemask, d64FileName );
+            strcopy( filemask, d64FileName );
             char * basePath = find_last_path_separator( filemask );
             if ( basePath ) {
                 ++basePath;
@@ -150,9 +150,9 @@ void generate_d64( Environment * _environment ) {
                 }
             } else {
                 if ( storage->fileName ) {
-                    strcpy( filemask, storage->fileName );
+                    strcopy( filemask, storage->fileName );
                 } else {
-                    strcpy( filemask, "disk%d.d64" );
+                    strcopy( filemask, "disk%d.d64" );
                 }
             }
             sprintf( buffer, filemask, i );

@@ -972,6 +972,8 @@ CLSBOXCOMMONEDBW128EVENFINAL
     
 	RTS
 
+@ENDIF
+
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
@@ -1275,3 +1277,5 @@ CLSBOXCOMMONE5
 
 CLSBOXCOMMONE
     RTS
+
+@ENDIF

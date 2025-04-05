@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE VZ200
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA VZ200
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -8990,7 +8990,10 @@ poked_definition :
     };
 
 font_schema : 
-    EMBEDDED {
+    ALPHA {
+        $$ = FONT_SCHEMA_ALPHA;
+    }
+    | EMBEDDED {
         $$ = FONT_SCHEMA_EMBEDDED;
     }
     | STANDARD {
@@ -13488,10 +13491,10 @@ int main( int _argc, char *_argv[] ) {
                     _environment->additionalInfoFileName = strdup(optarg);
                     if ( ! _environment->listingFileName ) {
                         char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
-                        strcpy( p, _environment->additionalInfoFileName );
+                        strcopy( p, _environment->additionalInfoFileName );
                         char * q = strrchr( p, '.' );
                         if ( q ) {
-                            strcpy( q, ".listing" );
+                            strcopy( q, ".listing" );
                         } 
                         _environment->listingFileName = p;
                     }

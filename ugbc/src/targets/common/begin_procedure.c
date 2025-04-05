@@ -126,7 +126,7 @@ void begin_procedure( Environment * _environment, char * _name ) {
     procedure->name = strdup( _name );
     procedure->realName = malloc( strlen( _name ) + 6 );
     memset(procedure->realName, 0, strlen( _name ) + 6 );
-    strcpy( procedure->realName, "PROC" );
+    strcopy( procedure->realName, "PROC" );
     strcat( procedure->realName, _name );
     
     int i = 0;

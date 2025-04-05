@@ -84,7 +84,7 @@ POBuffer po_buf_cat(POBuffer buf, char *string) {
     if(buf != NULL) {
         int len = strlen(string);
         _buf_cap(buf, buf->len + len);
-        strcpy(&buf->str[buf->len], string);
+        strcopy(&buf->str[buf->len], string);
         buf->len += len;
     }
     return buf;
