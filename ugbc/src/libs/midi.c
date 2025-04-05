@@ -38,6 +38,8 @@
 #endif
 #include "midi.h"
 
+char * strcopy( char * _dest, const char * _source );
+
 typedef struct _MidiLastNote {
 	BYTE note, chn;
 	BYTE valid, p2;

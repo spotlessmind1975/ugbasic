@@ -43,6 +43,8 @@
 #include <libxml/parser.h>
 #include <libxml/tree.h>
 
+char * strcopy( char * _dest, const char * _source );
+
 TmxMap * tmx_load( char * _filename ) {
 
     TmxMap * result = NULL;
