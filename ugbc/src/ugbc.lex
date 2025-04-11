@@ -93,6 +93,8 @@ static char * translate_spaces( char * _original ) {
 
 }
 
+char * strreplace( const char * _orig, const char * _rep, const char * _with);
+
 %}
 
 %x incl
@@ -156,7 +158,8 @@ static char * translate_spaces( char * _original ) {
 INCLUDE             BEGIN(incl);
 <incl>[ \t]*        /* eat the whitespace */
 <incl>[^ \t\n\r]+     { /* got the include file name */
-    yyin = fopen( yytext, "rt" );
+    char * filename = strreplace(yytext, "\"", "");
+    yyin = fopen( filename, "rt" );
     if ( ! yyin ) {
         if ( stacked == 0 ) {
             fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylineno, (yycolno+1), (yyposno+1));

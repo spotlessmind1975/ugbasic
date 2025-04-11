@@ -4749,6 +4749,12 @@ file. In practice, what happens is that the content of the file, without
 any interpretation, is copied "as is" at the point where the statement 
 was inserted. All variables and scopes will be maintained.
 
+Particular attention should be paid to the fact that all the 
+configurations and values ​​at the time the command is executed will be 
+maintained. This means that, for example, if you include a source that 
+manages graphics, it will work with the graphics mode defined up to 
+that moment.
+
 @italian
 
 Il comando ''INCLUDE'' consente di inserire una sorgente da un file esterno. 
@@ -4756,7 +4762,14 @@ In pratica, ciò che accade è che il contenuto del file, senza alcuna
 interpretazione, viene copiato "così com'è" nel punto in cui è stata inserita 
 l'istruzione. Tutte le variabili e gli ambiti verranno mantenuti.
 
+Particolare attenzione si dovrà porre al fatto che tutte le configurazioni 
+e valori al momento in cui il comando viene eseguito saranno mantenute. 
+Questo significa che, se ad esempio includete un sorgente che gestisce 
+la grafica,  questa lavorerà con la modalità grafica definita fino a 
+quel momento.
+
 @syntax INCLUDE filename
+@syntax INCLUDE "filename"
 
 </usermanual> */
 
