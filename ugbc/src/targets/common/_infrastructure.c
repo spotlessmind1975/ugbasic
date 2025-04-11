@@ -15767,3 +15767,51 @@ char * strcopy( char * _dest, char * _source ) {
     return _dest;
 
 }
+
+char * strreplace( const char * _orig, const char * _rep, const char * _with) {
+
+    char *result; // the return string
+    const char *cins;
+    char *ins;    // the next insert point
+    char *tmp;    // varies
+    int len_rep;  // length of rep (the string to remove)
+    int len_with; // length of _with (the string to replace rep _with)
+    int len_front; // distance between rep and end of last rep
+    int count;    // number of replacements
+
+    // sanity checks and initialization
+    if (!_orig || !_rep)
+        return NULL;
+    len_rep = strlen(_rep);
+    if (len_rep == 0)
+        return NULL; // empty rep causes infinite loop during count
+    if (!_with)
+        _with = "";
+    len_with = strlen(_with);
+
+    // count the number of replacements needed
+    cins = _orig;
+    for (count = 0; (tmp = strstr(cins, _rep)); ++count) {
+        cins = tmp + len_rep;
+    }
+
+    tmp = result = malloc(strlen(_orig) + (len_with - len_rep) * count + 1);
+
+    if (!result)
+        return NULL;
+
+    // first time through the loop, all the variable are set correctly
+    // from here on,
+    //    tmp points to the end of the result string
+    //    ins points to the next occurrence of _rep in _orig
+    //    _orig points to the remainder of _orig after "end of _rep"
+    while (count--) {
+        ins = strstr(_orig, _rep);
+        len_front = ins - _orig;
+        tmp = strncpy(tmp, _orig, len_front) + len_front;
+        tmp = strcpy(tmp, _with) + len_with;
+        _orig += len_front + len_rep; // move to next "end of _rep"
+    }
+    strcpy(tmp, _orig);
+    return result;
+}
