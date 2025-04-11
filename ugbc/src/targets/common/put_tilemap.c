@@ -99,7 +99,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         // Parameters
         Variable * tilemapAddress = variable_define( _environment, "puttilemap__tilemap", VT_ADDRESS, 0 );
-        Variable * tilesetAddress = variable_define( _environment, "puttilemap__tileset", VT_ADDRESS, 0 );
+        Variable * tileset = variable_define( _environment, "puttilemap__tileset", VT_IMAGEREF, 0 );
         Variable * dx = variable_define( _environment, "puttilemap__dx", VT_BYTE, 0 );
         Variable * dy = variable_define( _environment, "puttilemap__dy", VT_BYTE, 0 );
         Variable * layer = variable_define( _environment, "puttilemap__layer", VT_BYTE, 0 );
@@ -112,7 +112,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         Variable * frameHeight = variable_define( _environment, "puttilemap__frameHeight", VT_BYTE, 0 );
         Variable * padFrame = variable_define( _environment, "puttilemap__padFrame", VT_BYTE, 0 );
         Variable * mapLayers = variable_define( _environment, "puttilemap__mapLayers", VT_BYTE, 0 );
-        Variable * offsetFrameRoutine = variable_define( _environment, "puttilemap__offsetFrameRoutine", VT_ADDRESS, 0 );
 
         // Local variables
         Variable * index = variable_temporary( _environment, VT_WORD, "(index)" );
@@ -209,7 +208,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
             // --- DRAW TILE --
 
-            put_image_vars( _environment, tilesetAddress->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->realName );
+            outline1("; put_image_vars, image = %s...", tileset->name );
+            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->realName );
             cpu_jump( _environment, labelDonePutImage );
 
             // --- DRAW PADDING TILE --
@@ -217,7 +217,8 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
             cpu_label( _environment, labelPadding );
             cpu_compare_and_branch_8bit_const(  _environment, padFrame->realName, 0x00, labelDonePutImage, 1 );
 
-            put_image_vars( _environment, tilesetAddress->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->realName );
+            outline1("; put_image_vars, image = %s...", tileset->name );
+            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->realName );
 
             // From here and ahead, we drawed the tile so we must calculate the
             // next conditions and actions to do. We arrive here both if we drawed
@@ -325,12 +326,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
 
         cpu_return( _environment );
 
-        cpu_label( _environment, "_puttilemap__tilesetoffsetframe" );
-
-        cpu_call_indirect( _environment, "_puttilemap__offsetFrameRoutine" );
-
-        cpu_return( _environment );
-
     deploy_end( put_tilemap );
 
     Variable * ptilemap = variable_retrieve( _environment, _tilemap );
@@ -347,18 +342,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     }
 
     Variable * vtileset = variable_retrieve( _environment, "puttilemap__tileset" );
-    if ( ptilemap->onStorage ) {
-        if ( ptilemap->bankAssigned != -1 ) {
-            CRITICAL_STORAGE_BANKED_UNCOMPATIBLE( ptilemap->name );
-        }
-        cpu_addressof_16bit( _environment, ptilemap->realName, vtileset->realName );
-        cpu_peekw( _environment, vtileset->realName, vtileset->realName );
-        cpu_math_add_16bit( _environment, vtilemap->realName, vtileset->realName, vtileset->realName );
-    } else {
-        Variable * ptileset = variable_retrieve( _environment, ptilemap->tileset->name );
-        cpu_addressof_16bit( _environment, ptileset->realName, vtileset->realName );
-        ptileset->usedImage = 1;
-    }
+    variable_move( _environment, image_ref( _environment, ptilemap->tileset->name )->name, vtileset->name );
 
     Variable * vdx = variable_retrieve( _environment, "puttilemap__dx" );
     if ( _dx ) {
@@ -477,20 +461,6 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
         // variable_store( _environment, vmapLayers->name, ptilemap->mapLayers );
     }
 
-    Variable * voffsetFrameRoutine = variable_retrieve( _environment, "puttilemap__offsetFrameRoutine" );
-    if ( ptilemap->onStorage ) {
-        if ( ptilemap->bankAssigned != -1 ) {
-            CRITICAL_STORAGE_BANKED_UNCOMPATIBLE_TILEMAP( ptilemap->name );
-        }
-        cpu_addressof_16bit( _environment, ptilemap->realName, temporaryAddress->realName );
-        cpu_math_add_16bit_const( _environment, temporaryAddress->realName, 13, temporaryAddress->realName );
-        cpu_peekw( _environment, temporaryAddress->realName, temporaryAddress->realName );
-        cpu_address_table_call( _environment, "EXECOFFSETS", temporaryAddress->realName, voffsetFrameRoutine->realName );
-    } else {
-        char labelForTileOffsetFrame[MAX_TEMPORARY_STORAGE]; sprintf( labelForTileOffsetFrame, "%soffsetframe", ptilemap->tileset->realName );
-        cpu_addressof_16bit( _environment, labelForTileOffsetFrame, voffsetFrameRoutine->realName );
-    }
-    
     cpu_call( _environment, "lib_put_tilemap" );
 
 }
