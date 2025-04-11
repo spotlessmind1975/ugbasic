@@ -13357,13 +13357,61 @@ int main( int _argc, char *_argv[] ) {
 
 }
 
-int yyerror (Environment * _ignored, const char *s) /* Called by yyparse on error */
+int yyerror ( Environment * _ignored, const char * _message ) /* Called by yyparse on error */
 {
+
+    char * message = strreplace( _message, "Remark", "remark symbol (REM)" );
+    message = strreplace( message, "NewLine", "new line (CR/LF)" );
+    message = strreplace( message, "OP_SEMICOLON", "semicolon (;)" );
+    message = strreplace( message, "OP_COLON", "colon (:)" );
+    message = strreplace( message, "OP_COMMA", "comma (,)" );
+    message = strreplace( message, "OP_MINUS", "minus sign (-)" );
+    message = strreplace( message, "OP_EQUAL", "equal sign (==)" );
+    message = strreplace( message, "OP_ASSIGN", "equal sign (=)" );
+    message = strreplace( message, "OP_LT", "less than operator (<)" );
+    message = strreplace( message, "OP_LTE", "less than or equal operator (<=)" );
+    message = strreplace( message, "OP_GT", "greater than operator (>)" );
+    message = strreplace( message, "OP_GTE", "greater than operator (>=)" );
+    message = strreplace( message, "OP_DISEQUAL", "other than operator (<>)" );
+    message = strreplace( message, "OP_MULTIPLICATION", "multiplication operator (*)" );
+    message = strreplace( message, "OP_MULTIPLICATION2", "multiplication operator (**)" );
+    message = strreplace( message, "OP_DOLLAR", "dollar symbol ($)" );
+    message = strreplace( message, "OP_DIVISION", "division operator (/)" );
+    message = strreplace( message, "OP_DIVISION2", "division operator (\\)" );
+    message = strreplace( message, "OP_QM", "question mark (?)" );
+    message = strreplace( message, "OP_HASH", "hash operator (#)" );
+    message = strreplace( message, "OP_ASSIGN_DIRECT", "assignment operator (:=)" );
+    message = strreplace( message, "OP_EXCLAMATION", "exclamation point (!)" );
+    message = strreplace( message, "OP_DOLLAR2", "double dollar sing ($$)" );
+    message = strreplace( message, "OP", "open parenthesis" );
+    message = strreplace( message, "CP", "closed parenthesis" );
+    message = strreplace( message, "BEG", "BEGIN" );
+    message = strreplace( message, "OSP", "open square bracket" );
+    message = strreplace( message, "CSP", "closed square bracket" );
+    message = strreplace( message, "OSP", "open curly bracket" );
+    message = strreplace( message, "CSP", "closed curly bracket" );
+    message = strreplace( message, "OP_PERC", "percentage sign (%)" );
+    message = strreplace( message, "OP_PERC2", "double percentage sign (%%)" );
+    message = strreplace( message, "OP_AMPERSAND", "ampersand sign (&)" );
+    message = strreplace( message, "OP_AT", "at sign (@)" );
+    message = strreplace( message, "NULLkw", "NULL" );
+    message = strreplace( message, "Identifier", "identifier (name)" );
+    message = strreplace( message, "IdentifierSpaced", "identifier (name)" );
+    message = strreplace( message, "String", "string" );
+    message = strreplace( message, "Integer", "integer number" );
+    message = strreplace( message, "BufferDefinitionHex", "buffer definition (in hex format)" );
+    message = strreplace( message, "RawString", "string" );
+    message = strreplace( message, "Float", "floating point number" );
+    message = strreplace( message, "Register", "CPU register" );
+    message = strreplace( message, "AsmSnippet", "assembly code" );
+
     if ( stacked == 0 ) {
-      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", s, yylineno, (yycolno+1), (yyposno+1));
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", message, yylineno, (yycolno+1), (yyposno+1));
     } else {
-      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", s, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", message, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
     }
-      exit(EXIT_FAILURE);
+    
+    exit(EXIT_FAILURE);
+
 }
 
