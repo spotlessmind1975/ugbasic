@@ -18,6 +18,8 @@ REM di colori, gli artefatti indotti dallo standard televisivo NTSC.
 REM
 REM @include coco
 
+PROCEDURE demo ON COCO
+
 	SCREEN #14 : COLOR #0,#5
 	
 	CLS			
@@ -59,3 +61,8 @@ REM @include coco
 		ENDIF
 		JMOVE ,x,y,10,200,10,180,8,8
 	LOOP
+
+END PROCEDURE
+
+	demo[] ON COCO
+	
