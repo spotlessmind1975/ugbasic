@@ -2993,40 +2993,6 @@ exponential_less:
         }
         parser_array_cleanup( _environment );
     }
-    | OSP Identifier as_datatype_suffix_optional CSP {
-        if ( !((struct _Environment *)_environment)->procedureName ) {
-            CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
-        }
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $2 );
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * array;
-        if ( ! variable_exists( _environment, $2 ) ) {
-            VariableType vt = $3;
-            if ( vt == 0 ) {
-                vt = ((struct _Environment *)_environment)->defaultVariableType;
-            }
-            if ( ((struct _Environment *)_environment)->optionExplicit ) {
-                CRITICAL_VARIABLE_UNDEFINED( $2 );
-            } else {
-                array = variable_define( _environment, $2, VT_TARRAY, 0 );
-                array->arrayType = vt;
-                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
-            }
-        }        
-        array = variable_retrieve( _environment, $2 );        
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        VariableType vt = $3;
-        if ( vt != 0 ) {
-            if ( array->arrayType != vt ) {
-                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
-            }
-        }
-        $$ = variable_move_from_array( _environment, $2 )->name;
-        parser_array_cleanup( _environment );
-    }
     | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
@@ -4681,6 +4647,44 @@ exponential_less:
     }
     | Identifier OP_PERIOD Identifier {
         $$ = variable_move_from_type( _environment, $1, $3 )->name;
+    }
+    | OSP Identifier as_datatype_suffix_optional CSP optional_field {
+        if ( !((struct _Environment *)_environment)->procedureName ) {
+            CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
+        }
+        parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+        Variable * array;
+        if ( ! variable_exists( _environment, $2 ) ) {
+            VariableType vt = $3;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
+            if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                CRITICAL_VARIABLE_UNDEFINED( $2 );
+            } else {
+                array = variable_define( _environment, $2, VT_TARRAY, 0 );
+                array->arrayType = vt;
+                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+            }
+        }        
+        array = variable_retrieve( _environment, $2 );        
+        if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        VariableType vt = $3;
+        if ( vt != 0 ) {
+            if ( array->arrayType != vt ) {
+                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
+            }
+        }
+        if ( $5 ) {
+            $$ = variable_move_from_array_type( _environment, $2, $5 )->name;
+        } else {
+            $$ = variable_move_from_array( _environment, $2 )->name;
+        }
+        parser_array_cleanup( _environment );
     }
     ;
 
