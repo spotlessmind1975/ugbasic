@@ -2994,40 +2994,6 @@ exponential_less:
         }
         parser_array_cleanup( _environment );
     }
-    | OSP Identifier as_datatype_suffix_optional CSP {
-        if ( !((struct _Environment *)_environment)->procedureName ) {
-            CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
-        }
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $2 );
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * array;
-        if ( ! variable_exists( _environment, $2 ) ) {
-            VariableType vt = $3;
-            if ( vt == 0 ) {
-                vt = ((struct _Environment *)_environment)->defaultVariableType;
-            }
-            if ( ((struct _Environment *)_environment)->optionExplicit ) {
-                CRITICAL_VARIABLE_UNDEFINED( $2 );
-            } else {
-                array = variable_define( _environment, $2, VT_TARRAY, 0 );
-                array->arrayType = vt;
-                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
-            }
-        }        
-        array = variable_retrieve( _environment, $2 );        
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        VariableType vt = $3;
-        if ( vt != 0 ) {
-            if ( array->arrayType != vt ) {
-                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
-            }
-        }
-        $$ = variable_move_from_array( _environment, $2 )->name;
-        parser_array_cleanup( _environment );
-    }
     | Identifier {
         Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
         if ( c ) {
@@ -4684,6 +4650,44 @@ exponential_less:
     }
     | Identifier OP_PERIOD Identifier {
         $$ = variable_move_from_type( _environment, $1, $3 )->name;
+    }
+    | OSP Identifier as_datatype_suffix_optional CSP optional_field {
+        if ( !((struct _Environment *)_environment)->procedureName ) {
+            CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
+        }
+        parser_array_init( _environment );
+        define_implicit_array_if_needed( _environment, $2 );
+        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+        Variable * array;
+        if ( ! variable_exists( _environment, $2 ) ) {
+            VariableType vt = $3;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
+            }
+            if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                CRITICAL_VARIABLE_UNDEFINED( $2 );
+            } else {
+                array = variable_define( _environment, $2, VT_TARRAY, 0 );
+                array->arrayType = vt;
+                array->arrayPrecision = ((struct _Environment *)_environment)->floatType.precision;
+            }
+        }        
+        array = variable_retrieve( _environment, $2 );        
+        if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $2 );
+        }
+        VariableType vt = $3;
+        if ( vt != 0 ) {
+            if ( array->arrayType != vt ) {
+                CRITICAL_ARRAY_DATATYPE_WRONG( $2 );
+            }
+        }
+        if ( $5 ) {
+            $$ = variable_move_from_array_type( _environment, $2, $5 )->name;
+        } else {
+            $$ = variable_move_from_array( _environment, $2 )->name;
+        }
+        parser_array_cleanup( _environment );
     }
     ;
 
@@ -13988,6 +13992,7 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
 
     char * message = strreplace( _message, "Remark", "remark symbol (REM)" );
     message = strreplace( message, "NewLine", "new line (CR/LF)" );
+    message = strreplace( message, "OP_PERIOD", "period (.)" );
     message = strreplace( message, "OP_SEMICOLON", "semicolon (;)" );
     message = strreplace( message, "OP_COLON", "colon (:)" );
     message = strreplace( message, "OP_COMMA", "comma (,)" );
@@ -14009,8 +14014,6 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "OP_ASSIGN_DIRECT", "assignment operator (:=)" );
     message = strreplace( message, "OP_EXCLAMATION", "exclamation point (!)" );
     message = strreplace( message, "OP_DOLLAR2", "double dollar sing ($$)" );
-    message = strreplace( message, "OP", "open parenthesis" );
-    message = strreplace( message, "CP", "closed parenthesis" );
     message = strreplace( message, "BEG", "BEGIN" );
     message = strreplace( message, "OSP", "open square bracket" );
     message = strreplace( message, "CSP", "closed square bracket" );
@@ -14030,6 +14033,8 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "Float", "floating point number" );
     message = strreplace( message, "Register", "CPU register" );
     message = strreplace( message, "AsmSnippet", "assembly code" );
+    message = strreplace( message, "OP", "open parenthesis" );
+    message = strreplace( message, "CP", "closed parenthesis" );
 
     if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", message, yylineno, (yycolno+1), (yyposno+1));
