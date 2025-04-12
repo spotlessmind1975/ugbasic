@@ -13383,8 +13383,6 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "OP_ASSIGN_DIRECT", "assignment operator (:=)" );
     message = strreplace( message, "OP_EXCLAMATION", "exclamation point (!)" );
     message = strreplace( message, "OP_DOLLAR2", "double dollar sing ($$)" );
-    message = strreplace( message, "OP", "open parenthesis" );
-    message = strreplace( message, "CP", "closed parenthesis" );
     message = strreplace( message, "BEG", "BEGIN" );
     message = strreplace( message, "OSP", "open square bracket" );
     message = strreplace( message, "CSP", "closed square bracket" );
@@ -13404,6 +13402,8 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "Float", "floating point number" );
     message = strreplace( message, "Register", "CPU register" );
     message = strreplace( message, "AsmSnippet", "assembly code" );
+    message = strreplace( message, "OP", "open parenthesis" );
+    message = strreplace( message, "CP", "closed parenthesis" );
 
     if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", message, yylineno, (yycolno+1), (yyposno+1));
