@@ -13362,6 +13362,7 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
 
     char * message = strreplace( _message, "Remark", "remark symbol (REM)" );
     message = strreplace( message, "NewLine", "new line (CR/LF)" );
+    message = strreplace( message, "OP_PERIOD", "period (.)" );
     message = strreplace( message, "OP_SEMICOLON", "semicolon (;)" );
     message = strreplace( message, "OP_COLON", "colon (:)" );
     message = strreplace( message, "OP_COMMA", "comma (,)" );
