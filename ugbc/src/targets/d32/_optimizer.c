@@ -887,11 +887,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[7], " BEQ *", v4)
     &&  po_buf_match(buf[8], " ENDIF" )
         ) {
-        optim(buf[0], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
-        optim(buf[1], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
-        optim(buf[2], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
-        optim(buf[3], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+
         int inversed = 0;
+
         if ( strstr(buf[1]->str, "DECB") ) {
             if (strcmp(v5->str, "TSTB") == 0) {
                 inversed = 1;
@@ -905,10 +903,17 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
                 inversed = 1;
             } if (strstr(buf[3]->str, "CMPB #$00")) {
                 inversed = 1;
+            } if (strstr(buf[3]->str, "STB")) {
+                inversed = 1;
             } else if ( strstr(v5->str, "COMB") ) {
 
             }
         }
+    
+        optim(buf[0], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[1], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[2], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
+        optim(buf[3], RULE "(B,DECB,TSTB/STB,[L]B)->([L]B)", NULL );
 
         if ( inversed ) {
             char conditional[4];
