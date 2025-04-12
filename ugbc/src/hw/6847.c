@@ -1886,6 +1886,7 @@ Variable * c6847_new_image( Environment * _environment, int _width, int _height,
 
     *(buffer) = _width;
     *(buffer+1) = _height;
+    *(buffer+2) = 0;
 
     result->valueBuffer = buffer;
     result->size = size;
