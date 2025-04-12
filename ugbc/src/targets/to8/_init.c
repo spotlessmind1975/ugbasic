@@ -99,8 +99,8 @@ void target_initialization( Environment * _environment ) {
     // outhead0("CODESTART");
     // outline0("LDS #$2FFF");
     
-    deploy( vars, src_hw_to8_vars_asm);
-    deploy( startup, src_hw_to8_startup_asm);
+    deploy_preferred( vars, src_hw_pc128op_vars_asm);
+    deploy_preferred( startup, src_hw_pc128op_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 
     outline0( "JSR TO8STARTUP" );
@@ -110,6 +110,7 @@ void target_initialization( Environment * _environment ) {
     ef936x_initialization( _environment );
 
     cpu_call( _environment, "VARINIT" );
+
     if ( _environment->tenLinerRulesEnforced ) {
         outline0("LDS #$2FFF");
         if ( _environment->tenLinerRulesEnforced ) {

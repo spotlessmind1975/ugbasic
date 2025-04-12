@@ -46,11 +46,12 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
     Variable * variable = _first;
 
     outline0("ALIGN 2");
-    
+
     while( variable ) {
 
-        if ( variable->bankReadOrWrite == _bank_read_write &&                
-            ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
+        if ( 
+                variable->bankReadOrWrite == _bank_read_write &&
+             ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
                 fprintf( _environment->debuggerLabelsFile, "%4.4x %s\r\n", variable->absoluteAddress, variable->realName );
@@ -64,7 +65,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        vars_emit_word( _environment, variable->realName, variable->initialValue);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_DWORD:
@@ -72,7 +73,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        vars_emit_dword( _environment, variable->realName, variable->initialValue);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_FLOAT:
@@ -92,27 +93,6 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;                    
                 case VT_BLIT:
                     break;
-                case VT_IMAGEREF:
-                    if ( variable->memoryArea ) {
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead1("%s rzb 12", variable->realName);
-                    }   
-                    break;                    
-                case VT_PATH:
-                    if ( variable->memoryArea ) {
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead1("%s rzb 16", variable->realName);
-                    }   
-                    break;                    
-                case VT_VECTOR2:
-                    if ( variable->memoryArea ) {
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead1("%s rzb 4", variable->realName);
-                    }   
-                    break;                    
                 case VT_MUSIC:
                 case VT_BUFFER:
                 case VT_TYPE:
@@ -188,6 +168,27 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             }
                         }
                     }
+                    break;
+                case VT_IMAGEREF:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 12", variable->realName);
+                    }   
+                    break;
+                case VT_PATH:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 16", variable->realName);
+                    }   
+                    break;
+                case VT_VECTOR2:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 4", variable->realName);
+                    }   
                     break;
                 case VT_TILEMAP:
                 case VT_TARRAY: {
@@ -270,7 +271,6 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     }
 
                     break;
-
                 }
             }
         }
@@ -304,7 +304,7 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        vars_emit_byte( _environment, variable->realName, variable->initialValue);
+                        vars_emit_byte( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
                 case VT_DOJOKA:
@@ -332,12 +332,18 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                         outhead1("%s rzb 1", variable->realName);
                     }   
                     break;
-                case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead1("%s rzb 1", variable->realName);
+                    }   
+                    break;
+                case VT_MSPRITE:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead1("%s rzb 2", variable->realName);
                     }   
                     break;
                 case VT_TILE:
@@ -375,6 +381,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
 
     Variable * variable = _first;
 
+    outline0("ALIGN 2");
     while( variable ) {
 
         if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported ) {
@@ -477,7 +484,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
     while( variable ) {
 
-        if ( variable->bankReadOrWrite == _bank_read_write && 
+        if ( variable->bankReadOrWrite == _bank_read_write &&
             ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) && !variable->imported && !variable->memoryArea ) {
 
             if ( variable->memoryArea && _environment->debuggerLabelsFile ) {
@@ -542,7 +549,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
-            outline0("ALIGN 2");            
+            outline0("ALIGN 2");
             outhead1("OFFSETS%4.4x", actual->size );
             out0("        fdb " );
             for( i=0; i<actual->count; ++i ) {
@@ -635,6 +642,7 @@ void variable_cleanup( Environment * _environment ) {
     }    
 
     if ( _environment->descriptors ) {
+        outline0("ALIGN 2");
         outhead0("UDCCHAR" );
         int i=0,j=0;
         for(i=0;i<_environment->descriptors->count;++i) {
@@ -658,7 +666,7 @@ void variable_cleanup( Environment * _environment ) {
             out1("%s fcb ", dataSegment->realName );
         } else {
             outhead1("%s ", dataSegment->realName );
-        }        
+        }
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
             if ( dataSegment->type ) {
@@ -716,7 +724,7 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
-    outline0("ORG $6400");
+    outline1("ORG $%4.4x", _environment->program.startingAddress );
     outhead0("CODESTART");
     outline0("LDS #STACK");
     outline0("JMP CODESTART2");
@@ -731,12 +739,19 @@ void variable_cleanup( Environment * _environment ) {
             deploy_preferred( duff, src_hw_6809_duff_asm );
             deploy_preferred( msc1, src_hw_6809_msc1_asm );
             deploy_preferred( bank, src_hw_pc128op_bank_asm );
-                        
+
             outhead1("BANKREADBANK%2.2xXSDR", bank->id );
             outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
             outhead1("BANKREADBANK%2.2xXS", bank->id );
             outline1("LDB #$%2.2x", bank->id );
             outline0("JMP BANKREAD" );
+
+            outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
+            outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
+            outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
+            outline1("LDB #$%2.2x", bank->id );
+            // outline0("LEAX $6000,X" );
+            outline0("JMP BANKUNCOMPRESS" );
         }
         bank = bank->next;
     }
@@ -751,6 +766,8 @@ void variable_cleanup( Environment * _environment ) {
             outhead2("BANKWINDOW%2.2x rzb %d", i, _environment->maxExpansionBankSize[i]);
         }
     }
+
+    outline0("ALIGN 2");
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
@@ -769,6 +786,7 @@ void variable_cleanup( Environment * _environment ) {
                     Variable * variable = _environment->tempVariables[j];
                     variable_cleanup_entry_image( _environment, variable );
                     variable_cleanup_entry( _environment, variable, 1 );
+                    variable_cleanup_entry_bit( _environment, variable, 1 );
                 } 
                 
                 Variable * variable = _environment->tempResidentVariables;
@@ -803,6 +821,8 @@ void variable_cleanup( Environment * _environment ) {
 
     outline0("fcb $ff");
 
+    deploy_inplace_preferred( vars, src_hw_to8_vars_asm);
+    deploy_inplace_preferred( startup, src_hw_to8_startup_asm);
     deploy_inplace_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
