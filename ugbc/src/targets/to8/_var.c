@@ -252,10 +252,16 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             //     CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             // }
                             // force +1 byte if size is odd
-                            if ( variable->size & 0x01 ) {
-                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
+                            if ( variable->arrayType == VT_TYPE ) {
+                                int os = VT_OPTIMAL_SHIFT( variable->typeType->size );
+                                int size = (1 << os);
+                                outhead2("%s rzb %d, $00", variable->realName, size );
                             } else {
-                                outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
+                                if ( variable->size & 0x01 ) {
+                                    outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
+                                } else {
+                                    outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
+                                }
                             }
                         } else {
                             if (VT_BITWIDTH( variable->type ) == 0 ) {
