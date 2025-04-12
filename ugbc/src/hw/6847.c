@@ -1606,6 +1606,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
+    *(buffer+2) = 0;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -1653,7 +1654,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + 3 + offset) |= bitmask;
 
             _source += _depth;
 
