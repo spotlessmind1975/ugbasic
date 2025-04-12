@@ -12332,6 +12332,7 @@ statement2nc:
   | EXEC exec_definition
   | SYS sys_definition
   | on_targets AsmSnippet on_targets {
+    if ( !((struct _Environment *)_environment)->emptyProcedure ) {
 #if defined(__to8__)
     if ( !((struct _Environment *)_environment)->vestigialConfig.rchack_ccarrots_1163 ) {
 #endif
@@ -12344,6 +12345,7 @@ statement2nc:
 #if defined(__to8__)
     }
 #endif
+    }
   }
   | CALL Identifier on_targets {
       if ( $3 ) {
