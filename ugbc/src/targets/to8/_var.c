@@ -253,9 +253,21 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                             // }
                             // force +1 byte if size is odd
                             if ( variable->arrayType == VT_TYPE ) {
-                                int os = VT_OPTIMAL_SHIFT( variable->typeType->size );
-                                int size = (1 << os);
-                                outhead2("%s rzb %d, $00", variable->realName, size );
+                                int size = 1;
+                                Field * field = variable->typeType->first;
+                                while( field ) {
+                                    if ( size < ( VT_BITWIDTH( field->type ) >> 3 ) ) {
+                                        size = VT_BITWIDTH( field->type ) >> 3;
+                                    }
+                                    field = field->next;
+                                }
+                                if ( size & 0x01 ) {
+                                    outhead2("%s rzb %d, $00", variable->realName, size+1 );
+                                } else {
+                                    outhead2("%s rzb %d, $00", variable->realName, size );
+                                }
+                            } else if ( variable->arrayType == VT_PATH ) {
+                                outhead1("%s rzb 16, $00", variable->realName );
                             } else {
                                 if ( variable->size & 0x01 ) {
                                     outhead2("%s rzb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3)+1 );
