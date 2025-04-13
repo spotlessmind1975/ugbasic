@@ -646,8 +646,8 @@ void c6847z_get_height( Environment * _environment, char *_result ) {
 void c6847z_cls( Environment * _environment ) {
 
     if ( _environment->currentMode < 7 ) {
-        // deploy( clsText, src_hw_6847z_cls_text_asm );
-        // outline0("JSR CLST");
+        deploy( clsText, src_hw_6847z_cls_text_asm );
+        outline0("CALL CLST");
     } else {
         deploy( clsGraphic, src_hw_6847z_cls_graphic_asm );
         outline0("CALL CLSG");
@@ -698,8 +698,8 @@ void c6847z_text( Environment * _environment, char * _text, char * _text_size, i
         }
     } else {
         if ( _environment->currentMode < 7 ) {
-            // deploy( clsText, src_hw_6847_cls_text_asm );
-            // deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
+            deploy( clsText, src_hw_6847z_cls_text_asm );
+            deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
             deploy( textEncodedAtText, src_hw_6847z_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
         } else {
@@ -810,9 +810,9 @@ void c6847z_initialization( Environment * _environment ) {
 
 void c6847z_finalization( Environment * _environment ) {
 
-    // if (_environment->vestigialConfig.clsImplicit ) {
-    //     deploy( clsText, src_hw_6847_cls_text_asm );
-    // }
+    if (_environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_6847z_cls_text_asm );
+    }
     
 }
 
