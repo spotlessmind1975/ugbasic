@@ -251,7 +251,7 @@ PUTIMAGE3DB
 
     LEAY 3,Y
 
-    LDA <IMAGEW
+    LDA <(IMAGEW+1)
     LDB <IMAGEH
     PSHS X,D
 
