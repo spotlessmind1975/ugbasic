@@ -51,6 +51,8 @@ VZ200ISVC:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
+	LD A, 0
+	LD ($7841), A
     LD HL,(VZ200TIMER)
     INC HL
     LD (VZ200TIMER),HL
@@ -82,6 +84,8 @@ VZ200STARTUP:
 	LD ($787D), A
 	LD HL, VZ200ISVC
 	LD ($787E), HL
+	LD A, 0
+	LD ($7841), A
 	EI
 	RET
 	
@@ -210,3 +214,20 @@ WAITTIMERL1:
     CP $FF
     JR NZ, WAITTIMER
     RET
+
+SUB_HL_DE:
+    PUSH    BC
+    LD      B, A
+
+    LD      A, L
+    SUB     A, E
+    LD      L, A
+
+    LD      A, H
+    SBC     A, D
+    LD      H, A
+
+    LD      A, B
+    POP     BC
+    RET
+	

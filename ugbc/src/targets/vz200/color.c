@@ -56,7 +56,22 @@
 </usermanual> */
 void color( Environment * _environment, int _index, int _shade ) {
 
-    // c6847z_background_color( _environment, _index, _shade );
+    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
+    Variable * shade = variable_temporary( _environment, VT_BYTE, "(shade)" );
+
+    variable_store( _environment, index->name, _index );
+    variable_store( _environment, shade->name, _shade );
+
+    if ( _index == 0 ) {
+        c6847z_border_color( _environment, shade->realName );
+        if ( _shade > 0 ) {
+            _environment->paletteSelected = 1;
+        } else {
+            _environment->paletteSelected = 0;
+        }
+    }
+
+    c6847z_background_color( _environment, index->realName, shade->realName );
 
 }
 
@@ -72,9 +87,17 @@ void color( Environment * _environment, int _index, int _shade ) {
  */
 void color_semivars( Environment * _environment, int _index, char *_shade ) {
 
-    // Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
-    
-    // c6847z_background_color_semivars( _environment, _index, shade->realName );
+    Variable * index = variable_temporary( _environment, VT_BYTE, "(index)" );
+    variable_store( _environment, index->name, _index );
+
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
+
+    if ( _index == 0 ) {
+        c6847z_border_color( _environment, shade->realName );
+    }
+
+    c6847z_background_color( _environment, index->realName, shade->realName );
+
 
 }
 
@@ -90,9 +113,17 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
  */
 void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
-    // Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
-    // Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_WORD, 0 );
-    
-    // c6847z_background_color_vars( _environment, index->realName, shade->realName );
+    MAKE_LABEL
+
+    Variable * index = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * shade = variable_retrieve_or_define( _environment, _shade, VT_COLOR, 0 );
+
+    z80_compare_and_branch_8bit_const( _environment, index->realName, 0, label, 0 );
+
+    c6847z_border_color( _environment, shade->realName );
+
+    cpu_label( _environment, label );
+
+    c6847z_background_color( _environment, index->realName, shade->realName );
 
 }

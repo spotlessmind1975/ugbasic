@@ -105,17 +105,23 @@ void c6847z_hit( Environment * _environment, char * _sprite_mask, char * _result
  */
 void c6847z_border_color( Environment * _environment, char * _border_color ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1( "LDA %s", _border_color );
-    // outline0( "CMPA 4" );
-    // outline1( "BCs %scss0", label );
-    // outhead1( "%scss1", label );
-    // CSS_SET;
-    // outline1( "JMP %sdone", label );
-    // outhead1( "%scss0", label );
-    // CSS_CLR;
-    // outhead1( "%sdone", label );
+    outline1( "LD A, (%s)", _border_color );
+    outline0( "CP 4" );
+    outline1( "JR C, %scss0", label );
+    outhead1( "%scss1:", label );
+    outline0( "LD HL, $6800" );
+    outline0( "LD A, (HL)" );
+    outline0( "OR $10" );
+    outline0( "LD (HL), A" );
+    outline1( "JMP %sdone", label );
+    outhead1( "%scss0:", label );
+    outline0( "LD HL, $6800" );
+    outline0( "LD A, (HL)" );
+    outline0( "AND $EF" );
+    outline0( "LD (HL), A" );
+    outhead1( "%sdone:", label );
 
 }
 
@@ -131,19 +137,25 @@ void c6847z_border_color( Environment * _environment, char * _border_color ) {
  */
 void c6847z_background_color( Environment * _environment, char * _index, char * _background_color ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // (void) _index;
+    (void) _index;
 
-    // outline1( "LDA %s", _background_color );
-    // outline0( "CMPA 4" );
-    // outline1( "BCs %scss0", label );
-    // outhead1( "%scss1", label );
-    // CSS_SET;
-    // outline1( "JMP %sdone", label );
-    // outhead1( "%scss0", label );
-    // CSS_CLR;
-    // outhead1( "%sdone", label );
+    outline1( "LD A, (%s)", _background_color );
+    outline0( "CP 4" );
+    outline1( "JR C, %scss0", label );
+    outhead1( "%scss1:", label );
+    outline0( "LD HL, $6800" );
+    outline0( "LD A, (HL)" );
+    outline0( "OR $10" );
+    outline0( "LD (HL), A" );
+    outline1( "JP %sdone", label );
+    outhead1( "%scss0:", label );
+    outline0( "LD HL, $6800" );
+    outline0( "LD A, (HL)" );
+    outline0( "AND $EF" );
+    outline0( "LD (HL), A" );
+    outhead1( "%sdone:", label );
 
 }
 
@@ -738,6 +750,12 @@ void c6847z_initialization( Environment * _environment ) {
     variable_global( _environment, "FONTHEIGHT" );
     variable_import( _environment, "CURRENTFRAMESIZE", VT_WORD, 0 );
     variable_global( _environment, "CURRENTFRAMESIZE" );
+    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEF" );
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
+    variable_import( _environment, "CURRENTSL", VT_BYTE, 0 );
+    variable_global( _environment, "CURRENTSL" );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_INTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric Internal");
     SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR2, 1, 128, 64, 4, 8, 8, "Color Graphics 2" );
@@ -883,7 +901,7 @@ int c6847z_image_size( Environment * _environment, int _width, int _height, int 
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
             break;
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
-            return 2 + ( ( _width >> 2 ) * _height );
+            return 3 + ( ( _width >> 2 ) * _height );
 
     }
 
@@ -897,7 +915,7 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
             break;
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
-            return 3 + ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
 
     }
 
@@ -911,7 +929,7 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
             break;
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
-            return 3 + ( ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
 
     }
 
@@ -982,6 +1000,7 @@ static Variable * c6847z_image_converter_multicolor_mode_standard( Environment *
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
+    *(buffer+2) = 0;
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -1029,7 +1048,7 @@ static Variable * c6847z_image_converter_multicolor_mode_standard( Environment *
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
 
-            *(buffer + 2 + offset) |= bitmask;
+            *(buffer + 3 + offset) |= bitmask;
 
             _source += _depth;
 
@@ -1177,56 +1196,67 @@ void c6847z_blit_image( Environment * _environment, char * _sources[], int _sour
 
 void c6847z_put_image( Environment * _environment, Resource * _source, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    // deploy( c6847vars, src_hw_6847_vars_asm);
-    // deploy( putimage, src_hw_6847_put_image_asm );
+    deploy( putimage, src_hw_6847z_put_image_asm );
 
-    // if ( _source->isAddress ) {
-    //     outline1("LDY %s", _source->realName );
-    // } else {
-    //     outline1("LDY #%s", _source->realName );
-    // }
+    if ( _source->isAddress ) {
+        outline1("LD HL, (%s)", _source->realName );
+    } else {
+        outline1("LD HL, %s", _source->realName );
+    }
 
-    // if ( _frame_size ) {
-    //     if ( !_sequence && !_frame ) {
-    //     } else {
-    //         if ( _sequence ) {
-    //             outline0("LEAY 3,y" );
-    //             if ( strlen(_sequence) == 0 ) {
-    //             } else {
-    //                 outline1("LDB %s", _sequence );
-    //                 outline1("JSR %soffsetsequence", _source->realName );
-    //             }
-    //             if ( _frame ) {
-    //                 if ( strlen(_frame) == 0 ) {
-    //                 } else {
-    //                     outline1("LDB %s", _frame );
-    //                     outline1("JSR %soffsetframe", _source->realName );
-    //                 }
-    //             }
-    //         } else {
-    //             if ( _frame ) {
-    //                 outline0("LEAY 3,y" );
-    //                 if ( strlen(_frame) == 0 ) {
-    //                 } else {
-    //                     outline1("LDB %s", _frame );
-    //                     outline1("JSR %soffsetframe", _source->realName );
-    //                 }
-    //             }
-    //         }
+    if ( _frame_size ) {
+        if ( !_sequence && !_frame ) {
+        } else {
+            if ( _sequence ) {
+                outline0("LD DE, $0003" );
+                outline0("ADD HL, DE" );
+                if ( strlen(_sequence) == 0 ) {
+                } else {
+                    outline1("LD A, (%s)", _sequence );
+                    outline0("PUSH HL" );
+                    outline0("POP IX" );
+                    outline1("CALL %soffsetsequence", _source->realName );
+                }
+                if ( _frame ) {
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LD A, (%s)", _frame );
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
+            } else {
+                if ( _frame ) {
+                    outline0("LD DE, $0003" );
+                    outline0("ADD HL, DE" );
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LD A, (%s)", _frame );
+                        outline0("PUSH HL" );
+                        outline0("POP IX" );
+                        outline1("CALL %soffsetframe", _source->realName );
+                    }
+                }
+            }
 
-    //     }
-    // }
+        }
+    }
     
-    // outline1("LDD %s", _x );
-    // outline0("STD <IMAGEX" );
-    // outline1("LDD %s", _y );
-    // outline0("STD <IMAGEY" );
+    outline1("LD A, (%s)", _x );
+    outline0("LD E, A" );
+    outline1("LD A, (%s)", _y );
+    outline0("LD D, A" );
 
-    // outline1("LDD %s", _flags );
-    // outline0("STB <IMAGEF" );
-    // outline0("STA <IMAGET" );
-
-    // outline0("JSR PUTIMAGE");
+    outline0("PUSH HL" );
+    outline1("LD HL, %s", _flags );
+    outline0("LD A, L" );
+    outline0("LD (IMAGEF), A" );
+    outline0("LD A, H" );
+    outline0("LD (IMAGET), A" );
+    outline0("POP HL" );
+    
+    outline0("CALL PUTIMAGE");
     
 }
 
@@ -1245,6 +1275,7 @@ Variable * c6847z_new_image( Environment * _environment, int _width, int _height
 
     *(buffer) = _width;
     *(buffer+1) = _height;
+    *(buffer+2) = 0;
 
     result->valueBuffer = buffer;
     result->size = size;
