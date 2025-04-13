@@ -389,22 +389,22 @@ void c6847z_bitmap_disable( Environment * _environment ) {
 
 void c6847z_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
-    // ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
 
-    // if ( mode ) {
+    if ( mode ) {
 
-    //     _environment->currentMode = mode->id;
-    //     _environment->currentTileMode = 1;
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
 
-    //     cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
-    //     cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );    
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
 
-    //     c6847z_screen_mode_enable( _environment, mode );
+        c6847z_screen_mode_enable( _environment, mode );
 
 
-    // } else {
-    //     WARNING_SCREEN_MODE( -1 );
-    // }
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -802,6 +802,8 @@ void c6847z_initialization( Environment * _environment ) {
 
     console_init( _environment );
     
+    c6847z_tilemap_enable( _environment, 32, 16, 1, 8, 8 );
+
     if ( _environment->vestigialConfig.clsImplicit ) {
         c6847z_cls( _environment );
     }
