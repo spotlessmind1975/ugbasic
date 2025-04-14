@@ -35,29 +35,23 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-DCOM_FNAME         = $80    ; $81
-DCOM_FNAME_SIZE    = $84
-DCOM_SIZE          = $88; $89
-DCOM_ADDRESS       = $82    ; $83
-DCOM_FROM          = $8A; $8B
-DCOM_TEMP          = $86; $87
 
 ATARIFILENAME:      .BYTE 'D', ':'
 ATARIFILENAME0:     .RES 13,0
 
 ATARIPREPAREFILENAME:
     LDA #<ATARIFILENAME0
-    STA DCOM_TEMP
+    STA MATHPTR2
     LDA #>ATARIFILENAME0
-    STA DCOM_TEMP+1
+    STA MATHPTR2+1
 
     LDY #0
 ATARIPREPAREFILENAMEL1:
-    LDA (DCOM_FNAME), Y
-    STA (DCOM_TEMP), Y
+    LDA (TMPPTR), Y
+    STA (MATHPTR2), Y
     INY
-    CPY DCOM_FNAME_SIZE
+    CPY MATHPTR0
     BNE ATARIPREPAREFILENAMEL1
     LDA #$9B
-    STA (DCOM_TEMP), Y
+    STA (MATHPTR2), Y
     RTS
