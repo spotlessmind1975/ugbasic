@@ -335,8 +335,8 @@ void atari_timer_set_address( Environment * _environment, char * _timer, char * 
 
 void atari_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dcommon, src_hw_atari_dcommon_asm );
-    deploy( dload, src_hw_atari_dload_asm );
+    deploy_preferred( dcommon, src_hw_atari_dcommon_asm );
+    deploy_preferred( dload, src_hw_atari_dload_asm );
 
     MAKE_LABEL
     
@@ -369,48 +369,48 @@ void atari_dload( Environment * _environment, char * _filename, char * _offset, 
     }
 
     outline1("LDA %s", tnaddress->realName);
-    outline0("STA TMPPTR");
+    outline0("STA DCOM_FNAME");
     outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
-    outline0("STA TMPPTR+1");
+    outline0("STA DCOM_FNAME+1");
     outline1("LDA %s", tnsize->realName);
-    outline0("STA MATHPTR0");
+    outline0("STA DCOM_FNAME_SIZE");
 
     if ( address ) {
 
         outline1("LDA %s", address->realName);
-        outline0("STA TMPPTR2");
+        outline0("STA DCOM_ADDRESS");
         outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
-        outline0("STA TMPPTR2+1");
+        outline0("STA DCOM_ADDRESS+1");
 
     }
 
     if ( size ) {
 
         outline1("LDA %s", size->realName);
-        outline0("STA MATHPTR4");
+        outline0("STA DCOM_SIZE");
         outline1("LDA %s", address_displacement(_environment, size->realName, "1"));
-        outline0("STA MATHPTR5");
+        outline0("STA DCOM_SIZE+1");
 
     } else {
 
         outline0("LDA #$ff");
-        outline0("STA MATHPTR4");
-        outline0("STA MATHPTR5");
+        outline0("STA DCOM_SIZE");
+        outline0("STA DCOM_SIZE+1");
 
     }
 
     if ( offset ) {
 
         outline1("LDA %s", offset->realName);
-        outline0("STA MATHPTR6");
+        outline0("STA DCOM_FROM");
         outline1("LDA %s", address_displacement(_environment, offset->realName, "1"));
-        outline0("STA MATHPTR7");
+        outline0("STA DCOM_FROM+1");
 
     } else {
 
         outline0("LDA #0");
-        outline0("STA MATHPTR6");
-        outline0("STA MATHPTR7");
+        outline0("STA DCOM_FROM");
+        outline0("STA DCOM_FROM+1");
 
     }
 
