@@ -3820,14 +3820,6 @@ int embed_scan_string (const char *);
         memset( tmp, 0, e##_len + 1 ); \
         memcpy( tmp, e, e##_len ); \
         char * line = strtok( tmp, "\x0a" ); \
-        memset( &_environment->embedResult.line, 0, sizeof ( _environment->embedResult.line ) ); \
-        memset( &_environment->embedResult.current, 0, sizeof ( _environment->embedResult.current ) ); \
-        memset( &_environment->embedResult.excluded, 0, sizeof ( _environment->embedResult.excluded ) * sizeof( int ) ); \
-        memset( &_environment->embedResult.conditional, 0, sizeof ( _environment->embedResult.conditional ) ); \
-        memset( &_environment->embedResult.values, 0, sizeof ( _environment->embedResult.values ) * sizeof( char * ) ); \
-        memset( &_environment->embedResult.valueCount, 0, sizeof ( _environment->embedResult.valueCount ) ); \
-        memset( &_environment->embedResult.lines, 0, sizeof ( _environment->embedResult.lines ) * sizeof ( char * ) ); \
-        memset( &_environment->embedResult.lineCount, 0, sizeof ( _environment->embedResult.lineCount ) ); \
         while( line ) { \
             _environment->embedResult.line = line; \
             _environment->embedResult.conditional = 0; \
