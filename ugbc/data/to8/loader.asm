@@ -1,4 +1,4 @@
-	ORG $D800
+	ORG $DEFF
 
 CODESTART
     TFR S, X
