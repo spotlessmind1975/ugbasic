@@ -181,7 +181,7 @@ BANKLOADL1SIZE
 
     ; read bytes
 
-    ; CLRA
+    CLRA
     SUBD #5
     TFR D, U
 
@@ -254,7 +254,7 @@ BANKLOADL2SKIP
     LDA #2
     STA $6029
     JSR $E815
-    ; CLRA
+    CLRA
     TFR D, U
 
     ; read next block
