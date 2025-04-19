@@ -247,7 +247,7 @@ enum ThomsonFileType
 };
 
 static void addBinaryFile( FILE * _handle, char * _filename, int _address, char * _bytes, int _size ) {
-    
+
     addFileEntry( _handle, _filename, ASM_PRG );
 
     unsigned char * fileData = malloc( _size + 10 );
@@ -320,7 +320,7 @@ int convertbintok7(Environment * _environment)
     strcopy(destin,_environment->exeFileName);
     fw=fopen(destin,"wb");
 
-    addBinaryFile( fw, "loader  bin", 0xd800, data_to8_loader_bin, data_to8_loader_bin_len );
+    addBinaryFile( fw, "loader  bin", 0xdeff, data_to8_loader_bin, data_to8_loader_bin_len );
 
     fr=fopen(temporaryFileName,"rb");
     fseek(fr, 0L, SEEK_END);

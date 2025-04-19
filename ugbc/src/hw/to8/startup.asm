@@ -46,7 +46,9 @@ TO8TIMER  set *-2       ; (variable within code)
     STD   TO8TIMER      ; write result to TI variable
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
+@IF deployed.scancode && !keyboardConfig.sync
     JSR   KBDMANAGER
+@ENDIF
 @IF deployed.timer
     JSR   TIMERMANAGER
 @ENDIF

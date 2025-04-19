@@ -3823,7 +3823,6 @@ int embed_scan_string (const char *);
         memset( tmp, 0, e##_len + 1 ); \
         memcpy( tmp, e, e##_len ); \
         char * line = strtok( tmp, "\x0a" ); \
-        memset( &_environment->embedResult, 0, sizeof ( _environment->embedResult ) ); \
         while( line ) { \
             _environment->embedResult.line = line; \
             _environment->embedResult.conditional = 0; \
