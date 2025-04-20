@@ -454,7 +454,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
 
     if ( po_buf_match(buf[0], " ST")
-    && po_buf_strcmp(buf[0], buf[1])==0) {
+    && po_buf_strcmp(buf[0], buf[1])==0
+    && ( (strstr( buf[0]->str, "++" ) == NULL) && (strstr( buf[0]->str, "--" ) == NULL) ) 
+        ) {
         optim(buf[0], RULE "(STORE*,STORE*)->(STORE*)", NULL);
         ++_environment->removedAssemblyLines;        
     }
