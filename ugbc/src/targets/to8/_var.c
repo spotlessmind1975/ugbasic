@@ -845,6 +845,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
+    deploy_inplace_preferred( clsBox, src_hw_ef936x_cls_box_asm )
     deploy_inplace_preferred( scancode, src_hw_to8_scancode_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );
