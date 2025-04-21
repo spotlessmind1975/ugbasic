@@ -676,7 +676,7 @@ void ef936x_cls( Environment * _environment ) {
     
 void ef936x_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 
-    deploy( clsBox, src_hw_ef936x_cls_box_asm );
+    deploy_preferred( clsBox, src_hw_ef936x_cls_box_asm );
     outline1("LDD %s", _x1 );
     outline0("STD <IMAGEX" );
     outline1("LDD %s", _y1 );
