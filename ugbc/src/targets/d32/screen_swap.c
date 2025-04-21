@@ -48,4 +48,8 @@
 </usermanual> */
 void screen_swap( Environment * _environment ) {
 
+    if ( _environment->doubleBufferEnabled ) {
+        outline0("JSR SWITCHSCREEN");
+    }
+
 }
