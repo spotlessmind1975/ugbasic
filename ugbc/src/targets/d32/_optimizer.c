@@ -898,7 +898,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
             } if (strstr(buf[3]->str, "CMPB #$ff")) {
                 inversed = 1;
             } else if ( strstr(v5->str, "COMB") ) {
-
+                inversed = 1;
             }
         } else if ( strstr(buf[1]->str, "INCB") ) {
             if (strcmp(v5->str, "TSTB") == 0) {
