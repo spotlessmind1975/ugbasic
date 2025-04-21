@@ -54,7 +54,7 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
         CRITICAL_STORAGE_NOT_AVAILABLE();
     }
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char diskName[MAX_TEMPORARY_STORAGE];
@@ -224,7 +224,7 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char diskName[MAX_TEMPORARY_STORAGE];
