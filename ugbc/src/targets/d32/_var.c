@@ -546,12 +546,14 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     outline0("ORG $2800");
+    outline0("JMP CODESTART" );
     if ( ( _environment->program.startingAddress - 0x2800 ) > 0 ) {
-        outline0("JMP CODESTART" );
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) - 512 - 3 );
     }
+    outhead0("IRQSTACKBEGIN rzb 510");
+    outhead0("IRQSTACKEND fcb $00, 00");
     outhead0("CODESTART");
-    outline0("LDS #$8000");
+    outline0("LDS #IRQSTACKEND");
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );

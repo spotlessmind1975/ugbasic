@@ -70,13 +70,15 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
     }
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
-    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
+    Variable * size = NULL;
+    if ( _size ) {
+        size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
+    }
     Variable * bank = NULL;
-
     if ( _bank ) {
         bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );    
     }
 
-    pc128op_dload( _environment, address->realName, _bank?bank->realName:NULL, size->realName );
+    pc128op_dload( _environment, address->realName, _bank?bank->realName:NULL, _size?size->realName:NULL );
 
 }

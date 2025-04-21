@@ -3570,6 +3570,7 @@ typedef struct _Environment {
 #define CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( n ) CRITICAL2("E385 - not enough value on DATA for given TYPE ", n );  
 #define CRITICAL_FILE_CSV_NOT_ENOUGH_DATA( n ) CRITICAL2("E386 - not enough data in CSV to fillup the array ", n );  
 #define CRITICAL_UNCLOSED_EMBEDDED_ESCAPE_SEQUENCE( n ) CRITICAL2("E387 - unclosed embedded conditional", n );  
+#define CRITICAL_CANNOT_PUT_TILEMAP_FOR_TILEMAP_ON_STORAGE( n ) CRITICAL2("E388 - cannot use (yet) PUT TILEMAP on tilemap on storage", n );  
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

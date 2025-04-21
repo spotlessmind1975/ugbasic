@@ -9044,7 +9044,10 @@ audio_source :
     };
 
 define_definition :
-    CLIP option_clip {
+    SET LINE {
+        ((struct _Environment *)_environment)->lineNeeded = 1;
+    }
+    | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     }
     | TRANSPARENCY COARSE  {
