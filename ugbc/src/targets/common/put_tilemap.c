@@ -342,7 +342,11 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
     }
 
     Variable * vtileset = variable_retrieve( _environment, "puttilemap__tileset" );
-    variable_move( _environment, image_ref( _environment, ptilemap->tileset->name )->name, vtileset->name );
+    if ( ptilemap->tileset ) {
+        variable_move( _environment, image_ref( _environment, ptilemap->tileset->name )->name, vtileset->name );
+    } else {
+        CRITICAL_CANNOT_PUT_TILEMAP_FOR_TILEMAP_ON_STORAGE( _tilemap );
+    }
 
     Variable * vdx = variable_retrieve( _environment, "puttilemap__dx" );
     if ( _dx ) {
