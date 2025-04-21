@@ -698,10 +698,10 @@ void c6847z_text( Environment * _environment, char * _text, char * _text_size, i
 
     if ( _raw ) {
         if ( _environment->currentMode < 7 ) {
-            // deploy( clsText, src_hw_6847_cls_text_asm );
-            // deploy_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
-            // deploy( textEncodedAtTextRaw, src_hw_6847_text_at_text_raw_asm );
-            // outline0("JSR TEXTATTILEMODERAW");
+            deploy( clsText, src_hw_6847z_cls_text_asm );
+            deploy_preferred( vScrollText, src_hw_6847z_vscroll_text_asm );
+            deploy( textEncodedAtTextRaw, src_hw_6847z_text_at_text_raw_asm );
+            outline0("CALL TEXTATTILEMODERAW");
         } else {
             // deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
             // deploy( vScroll, src_hw_6847_vscroll_graphic_asm );
