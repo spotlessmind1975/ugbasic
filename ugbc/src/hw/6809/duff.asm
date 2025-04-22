@@ -46,7 +46,8 @@ DUFFDEVICE
     ; of the routine.
 
     SUBD #0
-    LBEQ DUFFDEVICEDONE
+    BNE *+5
+    JMP DUFFDEVICEDONE
 
     ; Then, we disable, at startup, the 16 byte copy loop, by assigning
     ; a couple of "NOP" (opcode $12) at the place of the branching.
