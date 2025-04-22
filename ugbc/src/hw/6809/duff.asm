@@ -45,7 +45,7 @@ DUFFDEVICE
     ; to zero. It means that nothing is needed to do, so move to the end
     ; of the routine.
 
-    CMPD #0
+    SUBD #0
     LBEQ DUFFDEVICEDONE
 
     ; Then, we disable, at startup, the 16 byte copy loop, by assigning
