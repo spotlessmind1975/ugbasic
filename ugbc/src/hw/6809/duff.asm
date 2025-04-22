@@ -85,7 +85,7 @@ DUFFDEVICE
     ; to the end of the routine.
 
     CMPD #0
-    LBEQ DUFFDEVICEDONE
+    BEQ DUFFDEVICEDONE
 
     ; We reach this point having the original size halved. So now we
     ; have to "unroll" the copy. Unrolling is a process that try to
