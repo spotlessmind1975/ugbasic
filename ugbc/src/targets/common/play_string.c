@@ -76,6 +76,10 @@ la lettera V.
 </usermanual> */
 void play_string( Environment * _environment, char * _string ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
     deploy_begin( play_string );
 
         MAKE_LABEL
@@ -553,6 +557,8 @@ void play_string( Environment * _environment, char * _string ) {
     variable_move( _environment, string->name, parameter->name );
     cpu_call( _environment, "lib_play_string");
 
-    yield( _environment );
-    
+    if ( _environment->procedureName ) {
+        yield( _environment );
+    }
+
 }
