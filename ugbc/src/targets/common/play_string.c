@@ -223,12 +223,6 @@ void play_string( Environment * _environment, char * _string ) {
         Variable * temp  = variable_temporary( _environment, VT_BYTE, "(temp)" );
         Variable * remainder  = variable_temporary( _environment, VT_BYTE, "(remainder)" );
 
-        // Period and periodEquivalent
-        Variable * period  = variable_temporary( _environment, VT_BYTE, "(period)" );
-        variable_store( _environment, period->name, 0xff );
-        Variable * periodEquivalent  = variable_temporary( _environment, VT_BYTE, "(periodEquivalent)" );
-        variable_store( _environment, periodEquivalent->name, 0x80 );
-        
         // String with the playing commands,
         Variable * string = variable_define( _environment, "playstring__string", VT_DSTRING, 0 );
 
@@ -249,6 +243,12 @@ void play_string( Environment * _environment, char * _string ) {
         // Tempo
         Variable * tempo = variable_retrieve( _environment, "PLAYTEMPO" );
 
+        // Period and periodEquivalent
+        Variable * period  = variable_temporary( _environment, VT_BYTE, "(period)" );
+        variable_store( _environment, period->name, 0xff );
+        Variable * periodEquivalent  = variable_temporary( _environment, VT_BYTE, "(periodEquivalent)" );
+        cpu_math_div_8bit_to_8bit( _environment, period->realName, tempo->realName, periodEquivalent->realName, remainder->realName, 0 );
+        
         // Volume
         Variable * volume = variable_retrieve( _environment, "PLAYVOLUME" );
 
@@ -385,7 +385,7 @@ void play_string( Environment * _environment, char * _string ) {
 
             cpu_label( _environment, tempoCommandLabel );
 
-            cpu_move_8bit( _environment, tempo->realName, parameter->realName );
+            // cpu_move_8bit( _environment, tempo->realName, parameter->realName );
             cpu_call( _environment, readParameterLabel );
             cpu_compare_and_branch_8bit_const( _environment, psize->realName, 0, tempo2DefaultLabel, 1 );
             cpu_move_8bit( _environment, parameter->realName, tempo->realName );
