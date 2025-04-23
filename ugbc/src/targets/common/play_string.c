@@ -342,13 +342,13 @@ void play_string( Environment * _environment, char * _string ) {
 
             cpu_label( _environment, durationCommandLabel );
 
-            cpu_move_8bit( _environment, duration->realName, parameter->realName );
+            // cpu_move_8bit( _environment, duration->realName, parameter->realName );
             cpu_call( _environment, readParameterLabel );
             cpu_compare_and_branch_8bit_const( _environment, psize->realName, 0, duration4DefaultLabel, 1 );
 
             cpu_label( _environment, duration4CommandLabel );
 
-            cpu_math_div_8bit_to_8bit( _environment, period->realName, parameter->realName, duration->realName, remainder->realName, 0 );
+            cpu_math_div_8bit_to_8bit( _environment, periodEquivalent->realName, parameter->realName, duration->realName, remainder->realName, 0 );
 
             // If you read music, you already know about "dotted notes." The dot tells
             // you to increase the length of the note by one half its normal value. For
