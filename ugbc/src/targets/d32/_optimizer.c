@@ -953,6 +953,7 @@ static struct {
         int nb_wr;
         int offset; /* 0=unchanged, >0 offset to page 0; -1 = candidate for inlining, -2 = inlined, -3 = in ram */
         char *init;
+        int bank_read;
     } *tab;
     int capacity;
     int size;
@@ -1046,6 +1047,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(arg);
         v->flags |= NO_REMOVE/*|NO_DP*/;
         v->nb_rd++;
+    }
+
+    if( po_buf_match( buf[0], " LDX #*",  arg)
+    &&  po_buf_match( buf[1], " JSR BANKREAD1" )
+    ) if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->bank_read = 1;
     }
 
     if( po_buf_match( buf[0], " CLR *",  arg)
@@ -1319,7 +1327,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             optim(buf[0], "direct-page1", "\t%s <(%s)", op->str, var->str);
         } else if(v->offset == -1 && chg_reg(buf[0], REG)
             && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
-            if ( strstr( var->str, "+" ) == NULL ) {
+            if ( strstr( var->str, "+" ) == NULL && v->bank_read == 0 ) {
                 v->offset = -2;
                 v->flags |= NO_REMOVE;
                 optim(buf[0], "inlined1", "\t%s #%s%s\n%s equ *-%d", op->str,
@@ -1356,7 +1364,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
         if(v->offset > 0) {
             optim(buf[0], "direct-page4", "%s equ $%02x", var->str, v->offset);
             ++num_dp;
-        } else if(v->offset == -2) {
+        } else if(v->offset == -2 && v->bank_read == 0 ) {
             optim(buf[0], "inlined3", NULL);
             ++_environment->removedAssemblyLines;
             ++num_inlined;
