@@ -93,7 +93,8 @@ Variable * param_procedure( Environment * _environment, char * _name ) {
     if ( variable_exists( _environment, paramName ) ) {
         param = variable_retrieve( _environment, paramName );
     } else {
-        param = variable_retrieve_or_define( _environment, paramName, _environment->defaultVariableType, 0 );
+        param = variable_temporary( _environment, _environment->defaultVariableType, "(temp)" );
+        variable_store( _environment, param->name, 0 );
     }
     
     return param;
