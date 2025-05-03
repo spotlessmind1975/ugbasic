@@ -3635,6 +3635,7 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( getimage, src_hw_gtia_get_image_asm );
 
     gtia_load_image_address_to_other_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
