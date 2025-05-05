@@ -14009,8 +14009,8 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "BEG", "BEGIN" );
     message = strreplace( message, "OSP", "open square bracket" );
     message = strreplace( message, "CSP", "closed square bracket" );
-    message = strreplace( message, "OSP", "open curly bracket" );
-    message = strreplace( message, "CSP", "closed curly bracket" );
+    message = strreplace( message, "OGP", "open curly bracket" );
+    message = strreplace( message, "CGP", "closed curly bracket" );
     message = strreplace( message, "OP_PERC", "percentage sign (%)" );
     message = strreplace( message, "OP_PERC2", "double percentage sign (%%)" );
     message = strreplace( message, "OP_AMPERSAND", "ampersand sign (&)" );
