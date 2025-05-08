@@ -14013,6 +14013,8 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     message = strreplace( message, "CGP", "closed curly bracket" );
     message = strreplace( message, "OP_PERC", "percentage sign (%)" );
     message = strreplace( message, "OP_PERC2", "double percentage sign (%%)" );
+    message = strreplace( message, "OP_PLUS", "plus sign (+)" );
+    message = strreplace( message, "OP_MINUS", "minus sign (-)" );
     message = strreplace( message, "OP_AMPERSAND", "ampersand sign (&)" );
     message = strreplace( message, "OP_AT", "at sign (@)" );
     message = strreplace( message, "NULLkw", "NULL" );
