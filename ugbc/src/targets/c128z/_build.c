@@ -42,7 +42,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_linkage( Environment * _environment ) {
 
-    char commandLine[2*MAX_TEMPORARY_STORAGE];
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
     char diskName[MAX_TEMPORARY_STORAGE];
