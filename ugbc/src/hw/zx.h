@@ -66,8 +66,8 @@
 #define COLOR_LIGHT_WHITE			COLOR_WHITE
 #define COLOR_COUNT                 16
 
-#define DEFAULT_PEN_COLOR           COLOR_BLACK
-#define DEFAULT_PAPER_COLOR         COLOR_WHITE
+#define DEFAULT_PEN_COLOR           COLOR_WHITE
+#define DEFAULT_PAPER_COLOR         COLOR_BLACK
 
 #define PORT_COLOR_BORDER           254
 
