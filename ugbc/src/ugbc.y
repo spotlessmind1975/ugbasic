@@ -13286,6 +13286,8 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->defaultArraySize = 10;
 
+    _environment->vestigialConfig.screenModeUnique = 1;
+
 #if defined(__pc128op__) || defined(__to8__)
     _environment->bankedLoadDefault = 1;
 #endif
