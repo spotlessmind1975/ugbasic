@@ -9309,7 +9309,13 @@ define_definition :
         }
         ((struct _Environment *)_environment)->keyboardConfig.release = release;
     }
+    | SCREEN MODE UNIQUE OFF {
+        ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 0;
+    }    
     | SCREEN MODE UNIQUE {
+        ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
+    }    
+    | SCREEN MODE UNIQUE ON {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
     }    
     | DOUBLE BUFFER ON {
