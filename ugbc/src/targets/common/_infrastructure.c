@@ -10599,6 +10599,33 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
     return result;
 }
 
+int reset_screen_mode_selected( Environment * _environment ) {
+
+    ScreenMode * screenMode = _environment->screenModes;
+
+    while ( screenMode ) {
+        screenMode->selected = 0;
+        screenMode = screenMode->next;
+    }
+
+}
+
+int count_screen_mode_selected( Environment * _environment ) {
+
+    int result = 0;
+    ScreenMode * screenMode = _environment->screenModes;
+
+    while ( screenMode ) {
+        if ( screenMode->selected ) {
+            ++result;
+        }
+        screenMode = screenMode->next;
+    }
+
+    return result;
+
+}
+
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
     ScreenMode * screenMode = _environment->screenModes;

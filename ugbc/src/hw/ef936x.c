@@ -366,6 +366,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm );
 
     _environment->fontWidth = 8;

@@ -584,6 +584,8 @@ void console_calculate_vars( Environment * _environment ) {
 }
 
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
+    _screen_mode->selected = 1;
+
     _environment->screenWidth = 256;
     _environment->screenHeight = 192;
     _environment->fontWidth = 8;

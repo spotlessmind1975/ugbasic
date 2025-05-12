@@ -691,6 +691,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
     cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 

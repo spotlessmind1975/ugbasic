@@ -739,6 +739,8 @@ void console_update_width_in_bytes( Environment * _environment ) {
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     int i;
     int screenMemoryOffset = 0;
     int screenMemoryOffset2 = 0;
@@ -2108,6 +2110,8 @@ void gtia_initialization( Environment * _environment ) {
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
+    reset_screen_mode_selected( _environment );
+    
     if (_environment->vestigialConfig.clsImplicit ) {
         gtia_cls( _environment );
     }
