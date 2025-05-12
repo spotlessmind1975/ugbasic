@@ -871,6 +871,12 @@ int variable_exists( Environment * _environment, char * _name ) {
 
 }
 
+int variable_exists_by_realname( Environment * _environment, char * _name ) {
+
+    return variable_retrieve_by_realname( _environment, _name ) != NULL;
+
+}
+
 int variable_delete( Environment * _environment, char * _name ) {
 
     Variable * var = NULL;
