@@ -7254,58 +7254,64 @@ text_or_csv :
 
 array_assign:
     {
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-        }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-        }
-        int i=0;
-        for( i=0; i<((struct _Environment *)_environment)->arrayDimensions; ++i ) {
-            if ( ((struct _Environment *)_environment)->arrayDimensionsEach[i] <= 0 ) {
-                CRITICAL_ARRAY_MISSING_SIZE( ((struct _Environment *)_environment)->currentArray->name );
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
+            int i=0;
+            for( i=0; i<((struct _Environment *)_environment)->arrayDimensions; ++i ) {
+                if ( ((struct _Environment *)_environment)->arrayDimensionsEach[i] <= 0 ) {
+                    CRITICAL_ARRAY_MISSING_SIZE( ((struct _Environment *)_environment)->currentArray->name );
+                }
             }
         }
     }
     | WITH const_expr {
-        ((struct _Environment *)_environment)->currentArray->value = $2;
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-        }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray->value = $2;
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
         }
     }
     | OP_ASSIGN BufferDefinitionHex {
-        int size = ( strlen( $2 ) ) / 2;
-        if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
-            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
-            }
-        } else {
-            if ( ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] >= 0 ) {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            int size = ( strlen( $2 ) ) / 2;
+            if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
                 if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
                 }
             } else {
-                ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] = size / ( VT_BITWIDTH( ((struct _Environment *)_environment)->currentArray->arrayType ) / 8 );
-                ((struct _Environment *)_environment)->currentArray->size = size;
+                if ( ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] >= 0 ) {
+                    if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                        CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                    }
+                } else {
+                    ((struct _Environment *)_environment)->currentArray->arrayDimensionsEach[0] = size / ( VT_BITWIDTH( ((struct _Environment *)_environment)->currentArray->arrayType ) / 8 );
+                    ((struct _Environment *)_environment)->currentArray->size = size;
+                }
             }
-        }
 
-        char * buffer = malloc( size );
-        char hexdigits[3];
-        int i = 0, c = 0, j = 0;
-        for( i = 0, c = strlen( $2 ); i<c; i += 2 ) {
-            hexdigits[0] = $2[i];
-            hexdigits[1] = $2[i+1];
-            hexdigits[2] = 0;
-            buffer[j] = strtol(hexdigits,0,16);
-            ++j;
+            char * buffer = malloc( size );
+            char hexdigits[3];
+            int i = 0, c = 0, j = 0;
+            for( i = 0, c = strlen( $2 ); i<c; i += 2 ) {
+                hexdigits[0] = $2[i];
+                hexdigits[1] = $2[i+1];
+                hexdigits[2] = 0;
+                buffer[j] = strtol(hexdigits,0,16);
+                ++j;
+            }
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+            ((struct _Environment *)_environment)->currentArray = NULL;
         }
-        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
-        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
-        ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | OP_ASSIGN LOAD String AS text_or_csv {
 
@@ -7348,199 +7354,205 @@ array_assign:
 
     }
     | OP_ASSIGN LOAD String AS BINARY {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        
-        currentArray->arrayInitialization = NULL;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            
+            currentArray->arrayInitialization = NULL;
 
-        FILE * handle = fopen( $3, "rt" );
-        if ( ! handle ) {
-            CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
-        }
-
-        currentArray->arrayInitialization = malloc( sizeof( Constant ) );
-        memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
-
-        Constant * current = currentArray->arrayInitialization;
-
-        while( !feof( handle ) ) {
-
-            switch( VT_BITWIDTH( currentArray->arrayType ) ) {
-                case 8: {
-                    unsigned char value = 0;
-                    (void)!fread( &value, 1, 1, handle );
-                    current->value = value;
-                    break;
-                }
-                case 16: {
-                    int value = 0;
-                    (void)!fread( &value, 1, 2, handle );
-                    current->value = value;
-                    break;
-                }
-                case 32: {
-                    long value = 0;
-                    (void)!fread( &value, 1, 4, handle );
-                    current->value = value;
-                    break;
-                }
-                default:
-                    CRITICAL_ARRAY_DATATYPE_NOT_SUPPORTED( $3 );
+            FILE * handle = fopen( $3, "rt" );
+            if ( ! handle ) {
+                CRITICAL_ARRAY_DEFINITION_FILE_NOT_FOUND( $3 );
             }
 
-            current->next = malloc( sizeof( Constant ) );
-            memset( current->next, 0, sizeof( Constant ) );
-            current = current->next;
+            currentArray->arrayInitialization = malloc( sizeof( Constant ) );
+            memset( currentArray->arrayInitialization, 0, sizeof( Constant ) );
 
-        }
+            Constant * current = currentArray->arrayInitialization;
 
-        fclose( handle );
+            while( !feof( handle ) ) {
 
-        int size = 0;
-        Constant * first = currentArray->arrayInitialization;
-        while( first->next ) {
-            first = first->next;
-            ++size;
-        }
+                switch( VT_BITWIDTH( currentArray->arrayType ) ) {
+                    case 8: {
+                        unsigned char value = 0;
+                        (void)!fread( &value, 1, 1, handle );
+                        current->value = value;
+                        break;
+                    }
+                    case 16: {
+                        int value = 0;
+                        (void)!fread( &value, 1, 2, handle );
+                        current->value = value;
+                        break;
+                    }
+                    case 32: {
+                        long value = 0;
+                        (void)!fread( &value, 1, 4, handle );
+                        current->value = value;
+                        break;
+                    }
+                    default:
+                        CRITICAL_ARRAY_DATATYPE_NOT_SUPPORTED( $3 );
+                }
 
-        if ( currentArray->arrayDimensions == 1 ) {
-            if ( currentArray->size < 0 ) {
-                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
-                currentArray->arrayDimensionsEach[0] = size;
+                current->next = malloc( sizeof( Constant ) );
+                memset( current->next, 0, sizeof( Constant ) );
+                current = current->next;
+
+            }
+
+            fclose( handle );
+
+            int size = 0;
+            Constant * first = currentArray->arrayInitialization;
+            while( first->next ) {
+                first = first->next;
+                ++size;
+            }
+
+            if ( currentArray->arrayDimensions == 1 ) {
+                if ( currentArray->size < 0 ) {
+                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                    currentArray->arrayDimensionsEach[0] = size;
+                } else {
+                    if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
+                        CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
+                    }
+                }
             } else {
                 if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
                     CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
                 }
             }
-        } else {
-            if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
-            }
-        }
 
-        char * buffer = malloc( currentArray->size ), * ptr = buffer;
-        int i=0;
-        Constant * initializationValues = currentArray->arrayInitialization;
-        while(initializationValues->next) {
-            switch( VT_BITWIDTH(currentArray->arrayType) ) {
-                case 8:
-                    *ptr = (initializationValues->value) & 0xff;
-                    ++ptr;
-                    break;
-                case 16:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 2;
-                    break;
-                case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+3) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 4;
-                    break;
+            char * buffer = malloc( currentArray->size ), * ptr = buffer;
+            int i=0;
+            Constant * initializationValues = currentArray->arrayInitialization;
+            while(initializationValues->next) {
+                switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                    case 8:
+                        *ptr = (initializationValues->value) & 0xff;
+                        ++ptr;
+                        break;
+                    case 16:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 2;
+                        break;
+                    case 32:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+3) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 4;
+                        break;
+                }
+                initializationValues = initializationValues->next;
             }
-            initializationValues = initializationValues->next;
+            if ( ( ptr - buffer ) != currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+            }
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+            ((struct _Environment *)_environment)->currentArray = NULL;
         }
-        if ( ( ptr - buffer ) != currentArray->size ) {
-            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
-        }
-        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
-        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
-        ((struct _Environment *)_environment)->currentArray = NULL;
     }
     | OP_ASSIGN {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        currentArray->arrayInitialization = NULL;
-        if ( VT_BITWIDTH( currentArray->arrayType ) == 0 && currentArray->arrayType != VT_FLOAT ) {
-            CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            currentArray->arrayInitialization = NULL;
+            if ( VT_BITWIDTH( currentArray->arrayType ) == 0 && currentArray->arrayType != VT_FLOAT ) {
+                CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
+            }
         }
     } OP_HASH OGP const_array_definitions CGP {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        if ( currentArray->size < 0 ) {
-            int size = 0;
-            Constant * first = currentArray->arrayInitialization;
-            while( first ) {
-                first = first->next;
-                ++size;
-            }
-            if ( currentArray->arrayType == VT_FLOAT ) {
-                currentArray->size = ( size * ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 ) );
-            } else {
-                currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
-            }
-            currentArray->arrayDimensionsEach[0] = size;
-        }
-        char * buffer = malloc( currentArray->size ), * ptr = buffer;
-        int i=0;
-        Constant * initializationValues = currentArray->arrayInitialization;
-        while(initializationValues) {
-            switch( VT_BITWIDTH(currentArray->arrayType) ) {
-                case 8:
-                    *ptr = (initializationValues->value) & 0xff;
-                    ++ptr;
-                    break;
-                case 16:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 2;
-                    break;
-                case 32:
-                    #ifdef CPU_BIG_ENDIAN
-                        *ptr = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
-                        *(ptr+3) = ( initializationValues->value ) & 0xff;
-                    #else
-                        *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
-                        *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
-                        *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                        *ptr = ( initializationValues->value ) & 0xff;
-                    #endif
-                    ptr += 4;
-                    break;
-                default: {
-                    int result[16];
-                    if ( currentArray->arrayType == VT_FLOAT ) {
-                        switch( currentArray->arrayPrecision ) {
-                            case FT_FAST:
-                                cpu_float_fast_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
-                                break;
-                            case FT_SINGLE:
-                                cpu_float_single_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
-                                break;
-                        }
-
-                        memcpy( ptr, &result, VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
-                    }
-                    ptr += ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
-                    break;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            if ( currentArray->size < 0 ) {
+                int size = 0;
+                Constant * first = currentArray->arrayInitialization;
+                while( first ) {
+                    first = first->next;
+                    ++size;
                 }
+                if ( currentArray->arrayType == VT_FLOAT ) {
+                    currentArray->size = ( size * ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 ) );
+                } else {
+                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                }
+                currentArray->arrayDimensionsEach[0] = size;
             }
-            initializationValues = initializationValues->next;
+            char * buffer = malloc( currentArray->size ), * ptr = buffer;
+            int i=0;
+            Constant * initializationValues = currentArray->arrayInitialization;
+            while(initializationValues) {
+                switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                    case 8:
+                        *ptr = (initializationValues->value) & 0xff;
+                        ++ptr;
+                        break;
+                    case 16:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 2;
+                        break;
+                    case 32:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+3) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 4;
+                        break;
+                    default: {
+                        int result[16];
+                        if ( currentArray->arrayType == VT_FLOAT ) {
+                            switch( currentArray->arrayPrecision ) {
+                                case FT_FAST:
+                                    cpu_float_fast_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                    break;
+                                case FT_SINGLE:
+                                    cpu_float_single_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                    break;
+                            }
+
+                            memcpy( ptr, &result, VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                        }
+                        ptr += ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                        break;
+                    }
+                }
+                initializationValues = initializationValues->next;
+            }
+            if ( ( ptr - buffer ) != currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+            }
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+            ((struct _Environment *)_environment)->currentArray = NULL;
         }
-        if ( ( ptr - buffer ) != currentArray->size ) {
-            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
-        }
-        ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
-        ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
-        ((struct _Environment *)_environment)->currentArray = NULL;
     };
 
 array_reassign:
@@ -7628,150 +7640,186 @@ readonly_optional :
 
 dim_definition :
     Identifier datatype {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        if ( $2 == VT_TYPE ) {
-            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
         }
-        variable_array_type( _environment, $1, $2 );
+      } OP dimensions CP {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+            if ( $2 == VT_TYPE ) {
+                variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            }
+            variable_array_type( _environment, $1, $2 );
+        }
     } array_assign readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $9;
-        if ( $10 > 0 ) {
-            if ( ! banks_store( _environment, array, $10 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $10 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $9;
+            if ( $10 > 0 ) {
+                if ( ! banks_store( _environment, array, $10 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $10 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     as_datatype_suffix
     |
     Identifier as_datatype_suffix_optional {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
+        }
       } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+        }
     } as_datatype {
 
-        int followRchackCocon1163 = 0;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            int followRchackCocon1163 = 0;
 
-        /* retrocompatible hacks */
+            /* retrocompatible hacks */
 
-        // If we are compiling "Cocon" game with a recent
-        // version of the compiler, arrays "til", "sts", 
-        // "bkg", "win" and "ugb" will be defined as BYTE, 
-        // to reduce to half the memory occupation.        
-        if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
-            if ( 
-                strcmp( $1, "til" ) == 0 || 
-                strcmp( $1, "sts" ) == 0 || 
-                strcmp( $1, "bkg" ) == 0 ||
-                strcmp( $1, "win" ) == 0 ||
-                strcmp( $1, "ugb" ) == 0
-                 ) {
-                followRchackCocon1163 = 1;
-            }
-        }
-
-        if ( followRchackCocon1163 ) {
-            variable_array_type( _environment, $1, VT_BYTE );
-        } else {
-            if ( $2 ) {
-                if ( $2 == VT_TYPE ) {
-                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            // If we are compiling "Cocon" game with a recent
+            // version of the compiler, arrays "til", "sts", 
+            // "bkg", "win" and "ugb" will be defined as BYTE, 
+            // to reduce to half the memory occupation.        
+            if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+                if ( 
+                    strcmp( $1, "til" ) == 0 || 
+                    strcmp( $1, "sts" ) == 0 || 
+                    strcmp( $1, "bkg" ) == 0 ||
+                    strcmp( $1, "win" ) == 0 ||
+                    strcmp( $1, "ugb" ) == 0
+                    ) {
+                    followRchackCocon1163 = 1;
                 }
-                variable_array_type( _environment, $1, $2 );
+            }
+
+            if ( followRchackCocon1163 ) {
+                variable_array_type( _environment, $1, VT_BYTE );
             } else {
-                if ( $8 == VT_TYPE ) {
-                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                if ( $2 ) {
+                    if ( $2 == VT_TYPE ) {
+                        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                    }
+                    variable_array_type( _environment, $1, $2 );
+                } else {
+                    if ( $8 == VT_TYPE ) {
+                        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                    }
+                    variable_array_type( _environment, $1, $8 );
                 }
-                variable_array_type( _environment, $1, $8 );
             }
         }
-        
+
     } array_assign readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $11;
-        if ( $12 > 0 ) {
-            if ( ! banks_store( _environment, array, $12 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $12 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $11;
+            if ( $12 > 0 ) {
+                if ( ! banks_store( _environment, array, $12 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $12 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     | Identifier WITH const_expr {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
-        ((struct _Environment *)_environment)->currentArray->value = $3;
-        variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+      } OP dimensions CP {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
+            ((struct _Environment *)_environment)->currentArray->value = $3;
+            variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
         }
       } readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $9;
-        if ( $10 > 0 ) {
-            if ( ! banks_store( _environment, array, $10 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $10 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $9;
+            if ( $10 > 0 ) {
+                if ( ! banks_store( _environment, array, $10 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $10 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     | Identifier datatype WITH const_expr {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        ((struct _Environment *)_environment)->currentArray->value = $4;
-        variable_array_type( _environment, $1, $2 );
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+      } OP dimensions CP {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+            ((struct _Environment *)_environment)->currentArray->value = $4;
+            variable_array_type( _environment, $1, $2 );
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
         }
       } readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $10;
-        if ( $11 > 0 ) {
-            if ( ! banks_store( _environment, array, $11 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $11 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $10;
+            if ( $11 > 0 ) {
+                if ( ! banks_store( _environment, array, $11 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $11 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     | Identifier as_datatype_mandatory {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
+        }
       } OP dimensions CP as_datatype {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        
-        /* retrocompatible hacks */
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+            
+            /* retrocompatible hacks */
 
-        // If we are compiling "Cocon" game with a recent
-        // version of the compiler, arrays "til", "sts", 
-        // "bkg", "win" and "ugb" will be defined as BYTE, 
-        // to reduce to half the memory occupation.        
-        if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
-            if ( 
-                strcmp( $1, "til" ) == 0 || 
-                strcmp( $1, "sts" ) == 0 || 
-                strcmp( $1, "bkg" ) == 0 ||
-                strcmp( $1, "win" ) == 0 ||
-                strcmp( $1, "ugb" ) == 0
-                 ) {
-                variable_array_type( _environment, $1, VT_BYTE );
+            // If we are compiling "Cocon" game with a recent
+            // version of the compiler, arrays "til", "sts", 
+            // "bkg", "win" and "ugb" will be defined as BYTE, 
+            // to reduce to half the memory occupation.        
+            if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+                if ( 
+                    strcmp( $1, "til" ) == 0 || 
+                    strcmp( $1, "sts" ) == 0 || 
+                    strcmp( $1, "bkg" ) == 0 ||
+                    strcmp( $1, "win" ) == 0 ||
+                    strcmp( $1, "ugb" ) == 0
+                    ) {
+                    variable_array_type( _environment, $1, VT_BYTE );
+                } else {
+                    int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+                    if ( realType == VT_TYPE ) {
+                        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                    }
+                    variable_array_type( _environment, $1, realType );
+                }
             } else {
                 int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
                 if ( realType == VT_TYPE ) {
@@ -7779,46 +7827,48 @@ dim_definition :
                 }
                 variable_array_type( _environment, $1, realType );
             }
-        } else {
-            int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
-            if ( realType == VT_TYPE ) {
-                variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
-            }
-            variable_array_type( _environment, $1, realType );
         }
     } array_assign readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $10;
-        if ( $11 > 0 ) {
-            if ( ! banks_store( _environment, array, $11 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $11 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $10;
+            if ( $11 > 0 ) {
+                if ( ! banks_store( _environment, array, $11 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $11 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     | Identifier as_datatype_mandatory WITH const_expr {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
           ((struct _Environment *)_environment)->arrayDimensions = 0;
-      } OP dimensions CP {
-        ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        ((struct _Environment *)_environment)->currentArray->value = $4;
-        variable_array_type( _environment, $1, $2 );
-        if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
         }
-        if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-            variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+      } OP dimensions CP {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+            ((struct _Environment *)_environment)->currentArray->value = $4;
+            variable_array_type( _environment, $1, $2 );
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
         }
     } readonly_optional on_bank_explicit {
-        Variable * array = variable_retrieve( _environment, $1 );
-        array->readonly = $10;
-        if ( $11 > 0 ) {
-            if ( ! banks_store( _environment, array, $11 ) ) {
-                CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-            };
-        } else if ( $11 < 0 ) {
-            array->bankReadOrWrite = 1;
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable * array = variable_retrieve( _environment, $1 );
+            array->readonly = $10;
+            if ( $11 > 0 ) {
+                if ( ! banks_store( _environment, array, $11 ) ) {
+                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                };
+            } else if ( $11 < 0 ) {
+                array->bankReadOrWrite = 1;
+            }
         }
     }
     ;
