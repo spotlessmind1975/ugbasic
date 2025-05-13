@@ -7341,15 +7341,6 @@ array_assign:
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
 
-        } else {
-
-            ((struct _Environment *)_environment)->currentArray->arrayInitialization = NULL;
-
-            ((struct _Environment *)_environment)->currentArray->arrayInitialization = malloc( sizeof( Constant ) );
-            memset( ((struct _Environment *)_environment)->currentArray->arrayInitialization, 0, sizeof( Constant ) );
-            ((struct _Environment *)_environment)->currentArray->size = 1;
-            ((struct _Environment *)_environment)->currentArray->valueBuffer = malloc(1);
-
         }
 
     }
