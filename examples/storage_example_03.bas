@@ -25,12 +25,12 @@ ENDSTORAGE
 
     tokenImage := NEW IMAGE(16, 16)
 
-    DLOAD "tokenred" TO VARPTR(tokenImage)
+    DLOAD "tokenred" TO VARPTR(tokenImage) SIZE FSIZE("tokenred")
 
     PUT IMAGE tokenImage AT 0, 0
 
     WAIT KEY
 
-    DLOAD "tokenye" TO VARPTR(tokenImage)
+    DLOAD "tokenye" TO VARPTR(tokenImage) SIZE FSIZE("tokenye")
 
-    PUT IMAGE tokenImage AT 0, 0    
+    PUT IMAGE tokenImage AT 0, 0

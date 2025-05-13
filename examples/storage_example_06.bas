@@ -20,7 +20,7 @@ PROCEDURE example ON ALL BUT COCO, COCO3
 
     track := NEW MUSIC(1024)
 
-    DLOAD "example" TO VARPTR(track)
+    DLOAD "example" TO VARPTR(track) SIZE FSIZE("example")
 
     MUSIC LOOP track 
 

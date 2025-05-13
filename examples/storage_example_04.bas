@@ -20,7 +20,7 @@ ENDSTORAGE
 
     batImages := NEW IMAGES(10, 32, 32)
 
-    DLOAD "bat" TO VARPTR(batImages)
+    DLOAD "bat" TO VARPTR(batImages) SIZE FSIZE("bat")
 
     DO   
         PUT IMAGE batImages FRAME frame AT 0, 0

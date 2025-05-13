@@ -21,7 +21,7 @@ ENDSTORAGE
     sequence := NEW SEQUENCE(2, 10, 16, 16)
     ' sequence := LOAD SEQUENCE("sequence.png") FRAME SIZE(16, 16)
 
-    DLOAD "sequence" TO VARPTR(sequence)
+    DLOAD "sequence" TO VARPTR(sequence) SIZE FSIZE("sequence")
 
     DO   
         PUT IMAGE sequence SEQUENCE 0 FRAME frame AT 0, 0

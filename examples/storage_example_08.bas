@@ -18,6 +18,6 @@ ENDSTORAGE
 
     CLS
 
-    DLOAD "ktt" TO VARPTR(tileset)
+    DLOAD "ktt" TO VARPTR(tileset) SIZE FSIZE("ktt")
 
     PUT IMAGE tileset FRAME 0 AT 0,0
