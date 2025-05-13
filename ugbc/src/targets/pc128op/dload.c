@@ -47,12 +47,10 @@
  */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
 
-    if ( _bank ) {
-        deploy_preferred( duff, src_hw_6809_duff_asm );
-        deploy_preferred( msc1, src_hw_6809_msc1_asm );
-        deploy_preferred( bank, src_hw_pc128op_bank_asm );        
+    if ( _environment->emptyProcedure ) {
+        return;
     }
-
+    
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
     }
@@ -69,12 +67,14 @@ void dload( Environment * _environment, char * _filename, char * _offset, char *
         WARNING_DLOAD_IGNORED_OFFSET( _filename );
     }
 
+    if ( !_size ) {
+        CRITICAL_DLOAD_MISSING_SIZE( _filename );
+    }
+
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
     Variable * size = NULL;
-    if ( _size ) {
-        size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
-    }
     Variable * bank = NULL;
+    size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );    
     if ( _bank ) {
         bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );    
     }

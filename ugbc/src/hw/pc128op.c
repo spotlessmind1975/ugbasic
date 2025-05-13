@@ -411,6 +411,9 @@ void pc128op_put_key(  Environment * _environment, char *_string, char * _size )
 
 void pc128op_dload( Environment * _environment, char * _address, char * _bank, char * _size ) {
 
+    deploy_preferred( duff, src_hw_6809_duff_asm );
+    deploy_preferred( msc1, src_hw_6809_msc1_asm );
+    deploy_preferred( bank, src_hw_pc128op_bank_asm );        
     deploy( dload, src_hw_pc128op_dload_asm);
 
     if ( _bank ) {
