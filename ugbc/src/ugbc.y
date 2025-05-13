@@ -10936,9 +10936,9 @@ optional_clamp :
         $$ = NULL;
     }
     | CLAMP {
-        Variable * true = variable_temporary( _environment, VT_SBYTE, "(true)");
-        variable_store( _environment, true->name, 0xff );
-        $$ = true->name;
+        Variable * trueValue = variable_temporary( _environment, VT_SBYTE, "(true)");
+        variable_store( _environment, trueValue->name, 0xff );
+        $$ = trueValue->name;
     };
 
 travel_definition_array_first :
