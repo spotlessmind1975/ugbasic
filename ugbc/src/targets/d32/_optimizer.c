@@ -268,6 +268,31 @@ static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
+static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "^_Tstr"))   return 0;
+    if(po_buf_match(name, "_^_Tstr"))   return 0;
+    if(po_buf_match(name, "^_TRtmp"))   return 0;
+    if(po_buf_match(name, "_label"))  return 0;
+    if(po_buf_match(name, "_SHELL"))  return 0;
+    if(po_buf_match(name, "DUFFDEVICE"))  return 0;
+    if(po_buf_match(name, "_TAB"))  return 0;
+    if(po_buf_match(name, "ISV"))  return 0;
+    
+    if(name->str[0]=='_')      return 1;
+    if(po_buf_match(name, "CLIP"))    return 1;
+    if(po_buf_match(name, "XCUR"))    return 1;
+    if(po_buf_match(name, "YCUR"))    return 1;
+    if(po_buf_match(name, "CURRENT")) return 1;
+    if(po_buf_match(name, "FONT"))    return 1;
+    if(po_buf_match(name, "TEXT"))    return 1;
+    if(po_buf_match(name, "LAST"))    return 1;
+    if(po_buf_match(name, "XGR"))     return 1;
+    if(po_buf_match(name, "YGR"))     return 1;
+    if(po_buf_match(name, "FREE_"))   return 1;
+
+    return 0;
+}
+
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
@@ -576,8 +601,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if ( po_buf_match(buf[0], " LDD #*", v1)
     &&   po_buf_match(buf[1], " ADDD #*", v2) 
-    &&  !po_buf_match(buf[2], "* equ ", NULL)) {
-        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", v1->str, v2->str);
+    &&  !po_buf_match(buf[2], "* equ ", NULL)
+    &&  !vars_ok(v2) &&  !vars_ok(v1)  ) {
+        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #(%s+%s)", v1->str, v2->str);
         optim(buf[1], NULL, NULL);
         ++_environment->removedAssemblyLines;
     }
@@ -1247,31 +1273,6 @@ struct var *vars_get(POBuffer _name) {
     if(s) *s='+';
 
     return ret;
-}
-
-static int vars_ok(POBuffer name) {
-    if(po_buf_match(name, "^_Tstr"))   return 0;
-    if(po_buf_match(name, "_^_Tstr"))   return 0;
-    if(po_buf_match(name, "^_TRtmp"))   return 0;
-    if(po_buf_match(name, "_label"))  return 0;
-    if(po_buf_match(name, "_SHELL"))  return 0;
-    if(po_buf_match(name, "DUFFDEVICE"))  return 0;
-    if(po_buf_match(name, "_TAB"))  return 0;
-    if(po_buf_match(name, "ISV"))  return 0;
-    
-    if(name->str[0]=='_')      return 1;
-    if(po_buf_match(name, "CLIP"))    return 1;
-    if(po_buf_match(name, "XCUR"))    return 1;
-    if(po_buf_match(name, "YCUR"))    return 1;
-    if(po_buf_match(name, "CURRENT")) return 1;
-    if(po_buf_match(name, "FONT"))    return 1;
-    if(po_buf_match(name, "TEXT"))    return 1;
-    if(po_buf_match(name, "LAST"))    return 1;
-    if(po_buf_match(name, "XGR"))     return 1;
-    if(po_buf_match(name, "YGR"))     return 1;
-    if(po_buf_match(name, "FREE_"))   return 1;
-
-    return 0;
 }
 
 /* look for variable uses and collect data about he variables */
@@ -2668,7 +2669,7 @@ void target_peephole_optimizer( Environment * _environment ) {
     // printf("FIRST 1)\n");
     optim_remove_unused_temporary( _environment );
 
-    // _environment->peepholeOptimizationLimit = 0;
+    // _environment->peepholeOptimizationLimit = 4;
 
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
