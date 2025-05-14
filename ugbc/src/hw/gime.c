@@ -387,6 +387,8 @@ void console_calculate_vars( Environment * _environment ) {
 
 int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     // deploy_preferred( gimevars, src_hw_gime_vars_asm );
 
     GIME_128K( );

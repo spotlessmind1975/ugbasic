@@ -96,12 +96,25 @@ Variable * sign( Environment * _environment, char * _value ) {
 
     switch( VT_BITWIDTH( value->type ) ) {
         case 32:
+            cpu_compare_and_branch_32bit_const( _environment, value->realName, 0, zeroLabel, 1 );
+            break;
+        case 16:
+            cpu_compare_and_branch_16bit_const( _environment, value->realName, 0, zeroLabel, 1 );
+            break;
+        case 8:
+            cpu_compare_and_branch_8bit_const( _environment, value->realName, 0, zeroLabel, 1 );
+            break;
+        case 0:
+            CRITICAL_SGN_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
+            break;
+    }
+
+    switch( VT_BITWIDTH( value->type ) ) {
+        case 32:
         case 16:
         case 8:
             if ( VT_SIGNED( value->type ) ) {
                 
-                cpu_bveq( _environment, value->realName, zeroLabel );
-
                 cpu_bit_check( _environment, value->realName, VT_BITWIDTH( value->type ) - 1, result->realName, VT_BITWIDTH( value->type ) );
                 cpu_bveq( _environment, result->realName, positiveLabel );
 
@@ -109,14 +122,10 @@ Variable * sign( Environment * _environment, char * _value ) {
                 variable_store( _environment, result->name, VT_SIGN_8BIT(-1) );
                 cpu_jump( _environment, endLabel );
 
-                cpu_label( _environment, zeroLabel );
-                variable_store( _environment, result->name, 0 );
-                cpu_jump( _environment, endLabel );
-
                 cpu_label( _environment, positiveLabel );
                 variable_store( _environment, result->name, 1 );   
-                
-                cpu_label( _environment, endLabel );
+                cpu_jump( _environment, endLabel );
+
             } else {
                 variable_store( _environment, result->name, 1 );
             }
@@ -125,6 +134,10 @@ Variable * sign( Environment * _environment, char * _value ) {
             CRITICAL_SGN_UNSUPPORTED( _value, DATATYPE_AS_STRING[value->type] );
             break;
     }
+
+    cpu_label( _environment, zeroLabel );
+    variable_store( _environment, result->name, 0 );
+    cpu_label( _environment, endLabel );
 
     return result;
 }

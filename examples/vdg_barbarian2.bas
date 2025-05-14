@@ -71,4 +71,5 @@ PROCEDURE demo ON COCO
 	
 END PROCEDURE
 
-	demo[] ON COCO
+demo[] ON COCO
+

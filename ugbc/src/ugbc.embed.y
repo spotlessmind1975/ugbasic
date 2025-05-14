@@ -433,8 +433,8 @@ const_factor:
       }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {
-            if ( strcmp( $3, "screenModeUnique" ) == 0 ) {
-                $$ = ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique;
+            if ( strcmp( $3, "screenModeUnique" ) == 0 ) {                
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique && ( count_screen_mode_selected( _environment ) < 2 );
             } else if ( strcmp( $3, "doubleBufferSelected" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected;
             } else if ( strcmp( $3, "doubleBuffer" ) == 0 ) {

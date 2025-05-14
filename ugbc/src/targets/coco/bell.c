@@ -100,6 +100,14 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         outline0( "ROLA" );
         outline0( "ASLB" );
         outline0( "ROLA" );
+        if ( !_environment->vestigialConfig.rchack_ostra_1172 ) {
+            outline0( "ASLB" );
+            outline0( "ROLA" );
+            outline0( "ASLB" );
+            outline0( "ROLA" );
+            outline0( "ASLB" );
+            outline0( "ROLA" );
+        }
         outline0( "TFR D, Y" );
 
     } else {

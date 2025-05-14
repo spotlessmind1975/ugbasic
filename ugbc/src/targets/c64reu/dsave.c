@@ -56,6 +56,10 @@
 
 void dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+    
     if ( _environment->tenLinerRulesEnforced ) {
         CRITICAL_10_LINE_RULES_ENFORCED( "DLOAD");
     }

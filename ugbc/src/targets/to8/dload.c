@@ -47,6 +47,10 @@
  */
 void dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+    
     if ( _bank ) {
         deploy_preferred( duff, src_hw_6809_duff_asm );
         deploy_preferred( msc1, src_hw_6809_msc1_asm );

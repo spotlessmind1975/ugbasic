@@ -1646,7 +1646,7 @@ Variable * variable_store_type( Environment * _environment, char * _destination,
     }
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString,  "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
     switch( VT_BITWIDTH( field->type ) ) {
         case 32:
             cpu_store_32bit( _environment, address_displacement( _environment, destination->realName, offsetAsString), VT_ESIGN_32BIT( field->type, _value ) );
@@ -3919,7 +3919,7 @@ void variable_add_inplace_type( Environment * _environment, char * _source, char
         }
     
         char offsetAsString[MAX_TEMPORARY_STORAGE];
-        sprintf( offsetAsString,  "%2.2x", field->offset );
+        sprintf( offsetAsString, "%d", field->offset );
         switch( VT_BITWIDTH( field->type ) ) {
             case 32:
                 cpu_math_add_32bit_const( _environment, address_displacement( _environment, source->realName, offsetAsString ), _destination, address_displacement( _environment, source->realName, offsetAsString ) );
@@ -4032,7 +4032,7 @@ void variable_add_inplace_type_vars( Environment * _environment, char * _source,
     Variable * target = variable_retrieve_or_define( _environment, _destination, field->type, 0 );
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString,  "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
     switch( VT_BITWIDTH( field->type ) ) {
         case 32:
             cpu_math_add_32bit( _environment, address_displacement( _environment, source->realName, offsetAsString ), target->realName, address_displacement( _environment, source->realName, offsetAsString ) );
@@ -5082,7 +5082,7 @@ void variable_increment_type( Environment * _environment, char * _source, char *
     }
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString,  "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
     switch( VT_BITWIDTH( field->type ) ) {
         case 32:
         case 1:
@@ -5400,7 +5400,7 @@ void variable_decrement_type( Environment * _environment, char * _source, char *
     }
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString,  "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
 
     switch( VT_BITWIDTH( field->type ) ) {
         case 1:
@@ -10599,6 +10599,33 @@ Variable * variable_bit( Environment * _environment, char * _value, char * _posi
     return result;
 }
 
+int reset_screen_mode_selected( Environment * _environment ) {
+
+    ScreenMode * screenMode = _environment->screenModes;
+
+    while ( screenMode ) {
+        screenMode->selected = 0;
+        screenMode = screenMode->next;
+    }
+
+}
+
+int count_screen_mode_selected( Environment * _environment ) {
+
+    int result = 0;
+    ScreenMode * screenMode = _environment->screenModes;
+
+    while ( screenMode ) {
+        if ( screenMode->selected ) {
+            ++result;
+        }
+        screenMode = screenMode->next;
+    }
+
+    return result;
+
+}
+
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
 
     ScreenMode * screenMode = _environment->screenModes;
@@ -15033,7 +15060,7 @@ void variable_move_from_type_inplace( Environment * _environment, char * _type, 
     Variable * result = variable_retrieve_or_define( _environment, _value, field->type, 0 );
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString, "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
     switch( VT_BITWIDTH( field->type ) ) {
         case 32:
             cpu_move_32bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
@@ -15065,7 +15092,7 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
     Variable * value = variable_cast( _environment, _value, field->type );
 
     char offsetAsString[MAX_TEMPORARY_STORAGE];
-    sprintf( offsetAsString, "%2.2x", field->offset );
+    sprintf( offsetAsString, "%d", field->offset );
     switch( VT_BITWIDTH( field->type ) ) {
         case 32:
             cpu_move_32bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );

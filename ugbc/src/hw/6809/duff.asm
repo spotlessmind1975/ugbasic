@@ -45,8 +45,9 @@ DUFFDEVICE
     ; to zero. It means that nothing is needed to do, so move to the end
     ; of the routine.
 
-    CMPD #0
-    LBEQ DUFFDEVICEDONE
+    SUBD #0
+    BNE *+5
+    JMP DUFFDEVICEDONE
 
     ; Then, we disable, at startup, the 16 byte copy loop, by assigning
     ; a couple of "NOP" (opcode $12) at the place of the branching.
@@ -85,7 +86,7 @@ DUFFDEVICE
     ; to the end of the routine.
 
     CMPD #0
-    LBEQ DUFFDEVICEDONE
+    BEQ DUFFDEVICEDONE
 
     ; We reach this point having the original size halved. So now we
     ; have to "unroll" the copy. Unrolling is a process that try to

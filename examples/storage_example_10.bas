@@ -20,7 +20,7 @@ textDest = " "
 textDest = textDest + "                "
 
 DSAVE "test.dat" FROM STRPTR(textSource) SIZE 16
-DLOAD "test.dat" TO STRPTR(textDest)
+DLOAD "test.dat" TO STRPTR(textDest) SIZE 16
 
 INK WHITE
 PRINT "SOURCE:"

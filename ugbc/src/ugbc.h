@@ -1460,6 +1460,8 @@ typedef struct _ScreenMode {
 
     int         score;
 
+    int         selected;
+
     struct _ScreenMode  * next;
 
 } ScreenMode;
@@ -1931,6 +1933,11 @@ typedef struct _VestigialConfig {
     char clsImplicit;
     
     /* retrocompatible hacks */
+
+    // If 1 we are compiling "5 Tides at the Purple Oyster Beach" game with
+    // a recent version of the compiler.
+    
+    char rchack_ostra_1172;
 
     // If 1 we are compiling "Beyond the Door" game with
     // a recent version of the compiler.
@@ -4626,6 +4633,8 @@ void setup_text_variables( Environment * _environment );
 void finalize_text_variables( Environment * _environment );
 ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bitmap, int _width, int _height, int _colors, int _tile_width, int _tile_height );
 ScreenMode * find_screen_mode_by_id( Environment * _environment, int _id );
+int count_screen_mode_selected( Environment * _environment );
+int reset_screen_mode_selected( Environment * _environment );
 Bank * bank_find( Bank * _first, char * _name );
 
 Type * type_find( Type * _first, char * _name );

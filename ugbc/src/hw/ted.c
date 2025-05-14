@@ -743,6 +743,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 
     _environment->screenTiles = 255;

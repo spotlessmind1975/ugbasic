@@ -311,6 +311,8 @@ static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
 int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     // deploy( bitmap, src_hw_vic1_bitmap_asm );
     Variable * colormapAddress = variable_retrieve( _environment, "COLORMAPADDRESS" );
 

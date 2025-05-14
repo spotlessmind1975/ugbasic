@@ -739,6 +739,8 @@ void console_update_width_in_bytes( Environment * _environment ) {
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
     int i;
     int screenMemoryOffset = 0;
     int screenMemoryOffset2 = 0;
@@ -2108,6 +2110,8 @@ void gtia_initialization( Environment * _environment ) {
 
     gtia_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
+    reset_screen_mode_selected( _environment );
+    
     if (_environment->vestigialConfig.clsImplicit ) {
         gtia_cls( _environment );
     }
@@ -3655,6 +3659,7 @@ void gtia_get_image( Environment * _environment, char * _image, char * _x, char 
 
     deploy( gtiavars, src_hw_gtia_vars_asm);
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
+    deploy( gtiapreproc, src_hw_gtia__preproc_asm );
     deploy( getimage, src_hw_gtia_get_image_asm );
 
     gtia_load_image_address_to_other_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );

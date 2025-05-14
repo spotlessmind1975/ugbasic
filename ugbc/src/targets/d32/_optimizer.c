@@ -268,6 +268,31 @@ static int _isZero(POBuffer buf) {
     return buf!=NULL && isZero(buf->str);
 }
 
+static int vars_ok(POBuffer name) {
+    if(po_buf_match(name, "^_Tstr"))   return 0;
+    if(po_buf_match(name, "_^_Tstr"))   return 0;
+    if(po_buf_match(name, "^_TRtmp"))   return 0;
+    if(po_buf_match(name, "_label"))  return 0;
+    if(po_buf_match(name, "_SHELL"))  return 0;
+    if(po_buf_match(name, "DUFFDEVICE"))  return 0;
+    if(po_buf_match(name, "_TAB"))  return 0;
+    if(po_buf_match(name, "ISV"))  return 0;
+    
+    if(name->str[0]=='_')      return 1;
+    if(po_buf_match(name, "CLIP"))    return 1;
+    if(po_buf_match(name, "XCUR"))    return 1;
+    if(po_buf_match(name, "YCUR"))    return 1;
+    if(po_buf_match(name, "CURRENT")) return 1;
+    if(po_buf_match(name, "FONT"))    return 1;
+    if(po_buf_match(name, "TEXT"))    return 1;
+    if(po_buf_match(name, "LAST"))    return 1;
+    if(po_buf_match(name, "XGR"))     return 1;
+    if(po_buf_match(name, "YGR"))     return 1;
+    if(po_buf_match(name, "FREE_"))   return 1;
+
+    return 0;
+}
+
 /* perform basic peephole optimization with a length-4 look-ahead */
 static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     /* allows presumably safe operations */
@@ -576,8 +601,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if ( po_buf_match(buf[0], " LDD #*", v1)
     &&   po_buf_match(buf[1], " ADDD #*", v2) 
-    &&  !po_buf_match(buf[2], "* equ ", NULL)) {
-        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #%s+%s", v1->str, v2->str);
+    &&  !po_buf_match(buf[2], "* equ ", NULL)
+    &&  !vars_ok(v2) &&  !vars_ok(v1)  ) {
+        optim(buf[0], RULE "(LDD#,ADD#)->(LDD#)", "\tLDD #(%s+%s)", v1->str, v2->str);
         optim(buf[1], NULL, NULL);
         ++_environment->removedAssemblyLines;
     }
@@ -1197,6 +1223,7 @@ static struct {
         int nb_wr;
         int offset; /* 0=unchanged, >0 offset to page 0; -1 = candidate for inlining, -2 = inlined, -3 = in ram */
         char *init;
+        int bank_read;
     } *tab;
     int capacity;
     int size;
@@ -1248,31 +1275,6 @@ struct var *vars_get(POBuffer _name) {
     return ret;
 }
 
-static int vars_ok(POBuffer name) {
-    if(po_buf_match(name, "^_Tstr"))   return 0;
-    if(po_buf_match(name, "_^_Tstr"))   return 0;
-    if(po_buf_match(name, "^_TRtmp"))   return 0;
-    if(po_buf_match(name, "_label"))  return 0;
-    if(po_buf_match(name, "_SHELL"))  return 0;
-    if(po_buf_match(name, "DUFFDEVICE"))  return 0;
-    if(po_buf_match(name, "_TAB"))  return 0;
-    if(po_buf_match(name, "ISV"))  return 0;
-    
-    if(name->str[0]=='_')      return 1;
-    if(po_buf_match(name, "CLIP"))    return 1;
-    if(po_buf_match(name, "XCUR"))    return 1;
-    if(po_buf_match(name, "YCUR"))    return 1;
-    if(po_buf_match(name, "CURRENT")) return 1;
-    if(po_buf_match(name, "FONT"))    return 1;
-    if(po_buf_match(name, "TEXT"))    return 1;
-    if(po_buf_match(name, "LAST"))    return 1;
-    if(po_buf_match(name, "XGR"))     return 1;
-    if(po_buf_match(name, "YGR"))     return 1;
-    if(po_buf_match(name, "FREE_"))   return 1;
-
-    return 0;
-}
-
 /* look for variable uses and collect data about he variables */
 static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     POBuffer tmp = TMP_BUF;
@@ -1290,6 +1292,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(arg);
         v->flags |= NO_REMOVE/*|NO_DP*/;
         v->nb_rd++;
+    }
+
+    if( po_buf_match( buf[0], " LDX #*",  arg)
+    &&  po_buf_match( buf[1], " JSR BANKREAD1" )
+    ) if(vars_ok(arg)) {
+        struct var *v = vars_get(arg);
+        v->bank_read = 1;
     }
 
     if( po_buf_match( buf[0], " CLR *",  arg)
@@ -1563,7 +1572,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
             optim(buf[0], "direct-page1", "\t%s <(%s)", op->str, var->str);
         } else if(v->offset == -1 && chg_reg(buf[0], REG)
             && ((strchr("DXYU", *REG->str)!=NULL  && v->size==2) || v->size==1) ) {
-            if ( strstr( var->str, "+" ) == NULL ) {
+            if ( strstr( var->str, "+" ) == NULL && v->bank_read == 0 ) {
                 v->offset = -2;
                 v->flags |= NO_REMOVE;
                 optim(buf[0], "inlined1", "\t%s #%s%s\n%s equ *-%d", op->str,
@@ -1600,7 +1609,7 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
         if(v->offset > 0) {
             optim(buf[0], "direct-page4", "%s equ $%02x", var->str, v->offset);
             ++num_dp;
-        } else if(v->offset == -2) {
+        } else if(v->offset == -2 && v->bank_read == 0 ) {
             optim(buf[0], "inlined3", NULL);
             ++_environment->removedAssemblyLines;
             ++num_inlined;
@@ -2660,7 +2669,7 @@ void target_peephole_optimizer( Environment * _environment ) {
     // printf("FIRST 1)\n");
     optim_remove_unused_temporary( _environment );
 
-    // _environment->peepholeOptimizationLimit = 0;
+    // _environment->peepholeOptimizationLimit = 4;
 
     if ( _environment->peepholeOptimizationLimit > 0 ) {
         POBuffer buf[LOOK_AHEAD];
