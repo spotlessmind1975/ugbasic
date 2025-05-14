@@ -1931,6 +1931,11 @@ typedef struct _VestigialConfig {
     
     /* retrocompatible hacks */
 
+    // If 1 we are compiling "ACME" game with
+    // a recent version of the compiler.
+    
+    char rchack_acme_1172;
+
     // If 1 we are compiling "5 Tides at the Purple Oyster Beach" game with
     // a recent version of the compiler.
     

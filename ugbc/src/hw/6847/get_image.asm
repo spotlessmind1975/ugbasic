@@ -396,7 +396,11 @@ GETIMAGECOMMON
     STA <IMAGEH
     STA <IMAGEH2
 
+@IF vestigialConfig.rchack_acme_1172
+    LEAY 2,Y
+@ELSE
     LEAY 3,Y
+@ENDIF
 
     LDB <IMAGEW
     DECB
@@ -435,7 +439,11 @@ GETIMAGECOMMONC
     STA <IMAGEH
     STA <IMAGEH2
 
+@IF vestigialConfig.rchack_acme_1172
+    LEAY 2,Y
+@ELSE
     LEAY 3,Y
+@ENDIF
 
     LDB <IMAGEW
     DECB

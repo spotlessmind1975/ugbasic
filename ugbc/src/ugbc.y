@@ -13747,7 +13747,11 @@ int main( int _argc, char *_argv[] ) {
 
     /* retrocompatible hacks */
 
-
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "ACME-INC") != NULL ) {
+        _environment->vestigialConfig.rchack_acme_1172 = 1;
+    }
 
     // If we are compiling "Beyond The Door" game with a recent
     // version of the compiler (>1.17), we must enable the hack.
