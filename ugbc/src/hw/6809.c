@@ -1389,12 +1389,12 @@ void cpu6809_math_mul2_const_8bit( Environment * _environment, char *_source, in
                 for(i=0; i<_steps; ++i) {
                     outline0("LSLB" );
                 }
-                outline1("STB %s", _source );
                 outline0("RTS" );
             outhead1("%s", label);
 
         }
         outline1("JSR cpu6809_math_mul2_const_8bit_%d", _steps );
+        outline1("STB %s", _source );
 
     no_embedded( cpu_math_mul2_const_8bit );
 
