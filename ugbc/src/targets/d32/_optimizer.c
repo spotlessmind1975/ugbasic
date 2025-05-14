@@ -914,6 +914,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[6], " ELSE" )
     &&  po_buf_match(buf[7], " BEQ *", v4)
     &&  po_buf_match(buf[8], " ENDIF" )
+    &&  strcmp(v5->str, "ANDB" ) != 0
         ) {
 
         int inversed = 0;
