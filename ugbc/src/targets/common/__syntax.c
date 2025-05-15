@@ -4750,7 +4750,7 @@ any interpretation, is copied "as is" at the point where the statement
 was inserted. All variables and scopes will be maintained.
 
 Particular attention should be paid to the fact that all the 
-configurations and values ​​at the time the command is executed will be 
+configurations and values at the time the command is executed will be 
 maintained. This means that, for example, if you include a source that 
 manages graphics, it will work with the graphics mode defined up to 
 that moment.
