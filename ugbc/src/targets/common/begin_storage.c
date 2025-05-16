@@ -131,7 +131,17 @@ utilizzata direttamente.
 
 @alias BEGIN STORAGE...END STORAGE
 
-@target atari c128 c64 c64reu coco coco3 cpc msx1 vic20 
+@target atari 
+@target c128
+@target c64
+@target c64reu
+@target coco
+@target coco3
+@target cpc
+@target msx1
+@target pc128op
+@target to8
+@target vic20 
 </usermanual> */
 
 void begin_storage( Environment * _environment, char * _name, char * _file_name ) {

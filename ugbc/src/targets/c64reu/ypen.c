@@ -48,21 +48,6 @@
  * @param _environment Current calling environment
  * @return Variable* Variable with the result of the reading
  */
-/* <usermanual>
-@keyword YPEN
-
-@english
-Read the Y (vertical) position of the electronic pen connected to the hardware.
-
-@italian
-Legge la posizione Y (verticale) della penna elettronica collegata all'hardware.
-
-@syntax = YPEN( )
-
-@example y = YPEN( )
-
-@target c64
-</usermanual> */
 Variable * ypen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );

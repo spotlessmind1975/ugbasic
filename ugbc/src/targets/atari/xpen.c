@@ -48,10 +48,6 @@
  * @param _environment Current calling environment
  * @return Variable* Variable with the result of the reading
  */
-/* <usermanual>
-@keyword XPEN
-@target atari
-</usermanual> */
 Variable * xpen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );
