@@ -50,14 +50,7 @@
  * @param _environment Current calling environment
  * @param _displacement Horizontal offset in pixels (0-7)
  */
-/* <usermanual>
-@keyword SCREEN HORIZONTAL SCROLL
-
-@target coco3
-</usermanual> */
 void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
-
-    
 
     char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
@@ -77,9 +70,6 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
  * @param _environment Current calling environment
  * @param _displacement Horizontal offset in pixels (0-7)
  */
-/* <usermanual>
-@keyword SCREEN HORIZONTAL SCROLL
-</usermanual> */
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
 
     Variable * displacement = variable_retrieve_or_define( _environment, _displacement, VT_BYTE, 0 );
