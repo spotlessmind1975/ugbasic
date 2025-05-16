@@ -61,7 +61,7 @@ inserted into the media. If you do not want to use the same name, you can
 indicate an alias (''AS target'').
 
 The addition of the ''CSV OF type'' statement is a powerful feature that 
-allows you to include Comma Separated Values ​​(CSV) files and specify the 
+allows you to include Comma Separated Values (CSV) files and specify the 
 data type of each column. Instead of treating the CSV file as a simple 
 block of bytes (as the ''FILE'' statement alone would), the compiler will 
 parse the contents of the CSV file and convert it into a more structured 

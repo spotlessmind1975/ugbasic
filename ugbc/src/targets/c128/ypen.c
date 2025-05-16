@@ -76,7 +76,7 @@ usually also ''XPEN'' for the horizontal coordinate) in a continuous loop within
 the program.
 
 The value returned by ''YPEN'' represents the horizontal coordinate. The range of 
-these values ​​will depend on the horizontal resolution of the screen or touch 
+these values will depend on the horizontal resolution of the screen or touch 
 surface supported by the pen.
 
 @italian

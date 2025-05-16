@@ -62,9 +62,9 @@ running. This peculiarity makes it essential to understand the specifics of each
 system to correctly use this command and achieve the desired effect.
 
 On Commodore computers, the numeric parameter supplied to the 
-''SCREEN HORIZONTAL SCROLL'' command takes integer values ​​between 0 and 7. 
+''SCREEN HORIZONTAL SCROLL'' command takes integer values between 0 and 7. 
 In this range, the value 4 represents the center position of the scroll. 
-Values ​​less than 4 move the screen content to the left, while values ​​greater 
+Values less than 4 move the screen content to the left, while values greater 
 than 4 move it to the right. The amount of scrolling is proportional to the 
 distance from the center value of 4. For example, a value of 0 or 7 will 
 produce maximum scrolling to the left or right, respectively, while a value 
@@ -86,7 +86,7 @@ software such as ugBASIC. The developer must be aware of the target machine in
 order to properly use this command and achieve the desired horizontal scrolling 
 effect. Often, in ugBASIC programs that aim for cross-platform compatibility, 
 conditional procedures (''PROCEDURE ... ON target'') are used to apply different 
-parameter values ​​to the ''SCREEN HORIZONTAL SCROLL'' command, adapting the behavior 
+parameter values to the ''SCREEN HORIZONTAL SCROLL'' command, adapting the behavior 
 to the specifics of each system and thus ensuring a consistent user experience 
 or desired visual effect on each machine.
 
