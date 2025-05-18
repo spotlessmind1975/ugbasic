@@ -11871,7 +11871,7 @@ statement2nc:
   | INKB inkb_definition
   | VAR var_definition
   | TEXTADDRESS OP_ASSIGN expr {
-      variable_move( _environment, $3, "ADDRESS" );
+      variable_move( _environment, $3, "TEXTADDRESS" );
   }
   | EMPTY TILE OP_ASSIGN expr {
       variable_move( _environment, $4, "EMPTYTILE" );
