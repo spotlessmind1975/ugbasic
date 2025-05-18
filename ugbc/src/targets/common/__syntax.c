@@ -6614,3 +6614,23 @@ memorizzare un valore (numerico o di testo) in una posizione di memoria rapprese
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BITMAPADDRESS
+
+@english
+This is a variable (16 bit) that contains the actual address of the bitmap,
+the video memory containing the bitmap data of the screen
+in bitmap mode. It could refer to a certain position in RAM memory or in a separate
+video memory. It depends on the computer you are programming. 
+
+@italian
+Questa è una variabile (16 bit) che contiene l'indirizzo effettivo della bitmap, 
+la memoria video contenente i vari pixel che compongono un disegno sullo schermo 
+in modalità bitmap. Potrebbe fare riferimento a una determinata posizione nella memoria 
+RAM o in una memoria video separata. Dipende dal computer che stai programmando.
+
+@syntax = BITMAPADDRESS
+
+@example actual = BITMAPADDRESS
+</usermanual> */
