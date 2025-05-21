@@ -902,6 +902,13 @@ int variable_delete( Environment * _environment, char * _name ) {
             return 1;
         }
     }
+    if ( ! var ) {
+        var = variable_find( _environment->variables, _name );
+        if ( var ) {
+            variable_remove( _environment->variables, _name );
+            return 1;
+        }
+    }
     return 0;
 
 }
