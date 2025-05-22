@@ -44,6 +44,8 @@ void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x3000;
 
+    _environment->joystickConfig.notEmulated = 1;
+
     cpu6809_init( _environment );
 
     int allowed[] = { 6, 5, 4 };

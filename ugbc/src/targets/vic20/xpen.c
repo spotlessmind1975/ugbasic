@@ -48,21 +48,6 @@
  * @param _environment Current calling environment
  * @return Variable* Variable with the result of the reading
  */
-/* <usermanual>
-@keyword XPEN
-
-@english
-Read the X (horizontal) position of the electronic pen connected to the hardware.
-
-@italian
-Legge la posizione X (orizzontale) della penna elettronica collegata all'hardware.
-
-@syntax = XPEN( )
-
-@example x = XPEN( )
-
-@target vic20
-</usermanual> */
 Variable * xpen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );

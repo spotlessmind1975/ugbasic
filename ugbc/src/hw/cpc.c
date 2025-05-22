@@ -1110,9 +1110,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
 
-    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
-    variable_global( _environment, "SPRITEXY" );
-
     variable_import( _environment, "TILEX", VT_BYTE, 0 );
     variable_global( _environment, "TILEX" );
     variable_import( _environment, "TILEY", VT_BYTE, 0 );
@@ -1171,9 +1168,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "EVERYCOUNTER" );
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
     variable_global( _environment, "EVERYTIMING" );
-
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
 
     variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEY" );

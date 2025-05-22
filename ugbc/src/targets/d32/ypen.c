@@ -48,9 +48,6 @@
  * @param _environment Current calling environment
  * @return Variable* Variable with the result of the reading
  */
-/* <usermanual>
-@keyword YPEN
-</usermanual> */
 Variable * ypen( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_POSITION, "(result)" );

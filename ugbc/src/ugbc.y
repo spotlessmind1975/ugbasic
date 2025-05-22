@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA VZ200
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS VZ200
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4360,6 +4360,9 @@ exponential_less:
     | TEXTADDRESS {
         $$ = strdup( "TEXTADDRESS" );
     }
+    | BITMAPADDRESS {
+        $$ = strdup( "BITMAPADDRESS" );
+    }
     | JOY OP OP_HASH const_expr CP {
         $$ = joy( _environment, $4 )->name;
     }
@@ -7343,15 +7346,6 @@ array_assign:
             ((struct _Environment *)_environment)->currentArray->valueBuffer = valueBuffer;
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
-
-        } else {
-
-            ((struct _Environment *)_environment)->currentArray->arrayInitialization = NULL;
-
-            ((struct _Environment *)_environment)->currentArray->arrayInitialization = malloc( sizeof( Constant ) );
-            memset( ((struct _Environment *)_environment)->currentArray->arrayInitialization, 0, sizeof( Constant ) );
-            ((struct _Environment *)_environment)->currentArray->size = 1;
-            ((struct _Environment *)_environment)->currentArray->valueBuffer = malloc(1);
 
         }
 
@@ -11889,7 +11883,7 @@ statement2nc:
   | INKB inkb_definition
   | VAR var_definition
   | TEXTADDRESS OP_ASSIGN expr {
-      variable_move( _environment, $3, "ADDRESS" );
+      variable_move( _environment, $3, "TEXTADDRESS" );
   }
   | EMPTY TILE OP_ASSIGN expr {
       variable_move( _environment, $4, "EMPTYTILE" );
@@ -13777,7 +13771,11 @@ int main( int _argc, char *_argv[] ) {
 
     /* retrocompatible hacks */
 
-
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "ACME-INC") != NULL ) {
+        _environment->vestigialConfig.rchack_acme_1172 = 1;
+    }
 
     // If we are compiling "Beyond The Door" game with a recent
     // version of the compiler (>1.17), we must enable the hack.

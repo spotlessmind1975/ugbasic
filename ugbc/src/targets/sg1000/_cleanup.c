@@ -40,6 +40,37 @@
 
 void target_prepare_finalization( Environment * _environment ) {
 
+    if ( _environment->deployed.tiles ) {
+
+    } else {
+        variable_delete( _environment, "TILEX" );
+        variable_delete( _environment, "TILEY" );
+        variable_delete( _environment, "TILEX2" );
+        variable_delete( _environment, "TILET" );
+        variable_delete( _environment, "TILEW" );
+        variable_delete( _environment, "TILEH" );
+        variable_delete( _environment, "TILEW2" );
+        variable_delete( _environment, "TILEH2" );
+        variable_delete( _environment, "TILEA" );
+        variable_delete( _environment, "TILEO" );
+    }
+
+    if ( _environment->deployed.blitimage ) {
+
+    } else {
+        variable_delete( _environment, "BLITIMAGEBLITTINGADDR" );
+        variable_delete( _environment, "BLITTMPPTR" );
+        variable_delete( _environment, "BLITTMPPTR2" );
+    }
+        
+    if ( _environment->deployed.sliceimageextract ) {
+
+    } else {
+        variable_delete( _environment, "SLICEX" );
+        variable_delete( _environment, "SLICEY" );
+        variable_delete( _environment, "SLICEDTARGET" );
+    }
+
 }
 
 void target_finalization( Environment * _environment ) {

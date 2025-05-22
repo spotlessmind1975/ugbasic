@@ -52,15 +52,31 @@
 
 @english
 
-This command allows you to generate a ''PATH'' element that calculates the shortest (linear) 
-path between two given points. The points can be purely geometric or referable to the user 
-screen. The path can then be "navigated" using the ''TRAVEL'' command.
+The ''CREATE PATH'' command is designed to define a straight path between two specified points. 
+Instead of immediately drawing the line, this command is intended to prepare an internal 
+"data structure" that contains the information needed to "travel" this path, point by point, 
+later, using the ''TRAVEL'' command. It therefore separates the logic of "where to go" from the 
+logic of "how to get there", making the code more modular and readable.
+
+The main goal is to separate the definition of the path from its actual graphical 
+implementation. This approach can be useful in several situations: you can define paths 
+once, and then have an object move along that path in an animated way, you can update the 
+position of an object at regular intervals using ''TRAVEL''.
 
 @italian
 
-Questo comando consente di generare un elemento di tipo ''PATH'' che calcoli il percorso più 
-breve (lineare) tra i due punti dati. I punti possono essere puramente geometrici o riferibili allo 
-schermo utente. Il percorso potrà poi essere "navigato" usando il comando ''TRAVEL''.
+Il comando ''CREATE PATH'' è progettato per definire un percorso rettilineo tra due punti 
+specificati. Invece di disegnare immediatamente la linea, questo comando ha lo scopo di 
+preparare una "struttura dati" interna che contiene le informazioni necessarie per 
+"percorrere" questo tragitto, punto per punto, in un secondo momento, utilizzando il 
+comando ''TRAVEL''. Separa quindi la logica del "dove andare" dalla logica del "come 
+arrivare", rendendo il codice più modulare e leggibile.
+
+L'obiettivo principale è scindere la definizione del percorso dalla sua effettiva 
+realizzazione grafica. Questo approccio può essere utile in diverse situazioni: si 
+possono definire percorsi una sola volta, e poi far muovere un oggetto lungo quel 
+percorso in modo animato, si può aggiornare la posizione di un oggetto a intervalli 
+regolari utilizzando ''TRAVEL''.
 
 @syntax = CREATE PATH( x0, y0 TO x1, y1 )
 @syntax = CREATE PATH( x0, y0,  x1, y1 )

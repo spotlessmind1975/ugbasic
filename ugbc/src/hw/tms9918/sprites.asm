@@ -232,15 +232,6 @@ SPRITEATNMI2SINGLE:
     INC DE
     LD A, H
     CALL VDPOUTCHAR
-    ; LD DE, HL
-    ; LD HL, SPRITEXY
-    ; LD D, 0
-    ; LD E, B
-    ; SLA E
-    ; ADD HL, DE
-    ; LD (HL), D
-    ; INC HL
-    ; LD (HL), E
     JP SPRITEATADONE
 
 SPRITEATADONE:

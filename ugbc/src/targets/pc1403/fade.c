@@ -43,12 +43,6 @@
 /**
  * @brief Emit code for <strong>FADE</strong>
  */
- 
-/* <usermanual>
-@keyword FADE
-
-@target cpc
-</usermanual> */
 
 void fade_ticks_var( Environment * _environment, char * _ticks ) {
 

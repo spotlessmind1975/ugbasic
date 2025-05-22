@@ -60,7 +60,7 @@
  * DECLARATIONS AND DEFINITIONS SECTION 
  ****************************************************************************/
 
-#define UGBASIC_VERSION                 "1.17.1"
+#define UGBASIC_VERSION                 "1.17.2"
 
 #ifdef _WIN32
     #define PATH_SEPARATOR              '\\'
@@ -1933,6 +1933,11 @@ typedef struct _VestigialConfig {
     char clsImplicit;
     
     /* retrocompatible hacks */
+
+    // If 1 we are compiling "ACME" game with
+    // a recent version of the compiler.
+    
+    char rchack_acme_1172;
 
     // If 1 we are compiling "5 Tides at the Purple Oyster Beach" game with
     // a recent version of the compiler.

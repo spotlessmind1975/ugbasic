@@ -50,30 +50,7 @@
  * @param _environment Current calling environment
  * @param _displacement Horizontal offset in pixels (0-7)
  */
-/* <usermanual>
-@keyword SCREEN HORIZONTAL SCROLL
-
-@english
-Performs an hardware scroll of the screen. The scroll is always in 
-the direction from right to left, so with a displacement of 0 the 
-screen is exactly as it would be without scrolling while with the 
-value 7 you would have a scroll of 7 pixels to the left.
-
-@italian
-Esegue uno scorrimento hardware dello schermo. Lo scorrimento è sempre
-a destra a sinistra, quindi con uno spostamento di 0 lo schermo è 
-esattamente come sarebbe senza scrolling, mentre con il valore 7 
-si avrebbe uno scroll di 7 pixel verso sinistra.
-
-@syntax SCREEN HORIZONTAL SCROLL [integer]
-
-@example SCREEN HORIZONTAL SCROLL 3
-
-@target vic20
-</usermanual> */
 void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
-
-    
 
     char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
 
@@ -93,16 +70,7 @@ void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
  * @param _environment Current calling environment
  * @param _displacement Horizontal offset in pixels (0-7)
  */
-/* <usermanual>
-@keyword SCREEN HORIZONTAL SCROLL
-
-@syntax SCREEN HORIZONTAL SCROLL [expression]
-
-@example SCREEN HORIZONTAL SCROLL newDisplacement
-</usermanual> */
 void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
-
-    
 
     Variable * displacement = variable_retrieve( _environment, _displacement );
 

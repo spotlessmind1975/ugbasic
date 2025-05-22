@@ -1517,8 +1517,9 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "COLORMAPADDRESS" );    
     variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "PATTERNADDRESS" );    
-    variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
+    Variable * palette = variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
     variable_global( _environment, "PALETTE" ); 
+    palette->readonly = 1;
 
     char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
@@ -1580,9 +1581,6 @@ void tms9918_initialization( Environment * _environment ) {
 
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
-
-    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
-    variable_global( _environment, "SPRITEXY" );
 
     variable_import( _environment, "TILEX", VT_BYTE, 0 );
     variable_global( _environment, "TILEX" );

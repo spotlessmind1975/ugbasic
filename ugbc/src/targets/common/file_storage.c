@@ -49,23 +49,57 @@
 
 @english
 
-The ''FILE'' command, inserted inside a ''BEGIN STORAGE'' - ''ENDSTORAGE'' block, 
-allows you to define the content of the mass storage element. The basic syntax requires 
-indicating the name of the ''source'' file that will be inserted into the medium. 
-If you don't want to use the same name, you can indicate an alias (''AS target'').
+Inside a ''BEGIN STORAGE...END STORAGE'' block, the ''FILE'' command plays 
+a crucial role in the process of embedding external data directly into the 
+storage medium you are defining while compiling your program. Imagine you 
+want to include a set of configuration data or any other static file 
+directly into your program's storage medium, the ''FILE'' command allows 
+you to do just that.
+
+The basic syntax is to indicate the name of the source file that will be 
+inserted into the media. If you do not want to use the same name, you can 
+indicate an alias (''AS target'').
+
+The addition of the ''CSV OF type'' statement is a powerful feature that 
+allows you to include Comma Separated Values (CSV) files and specify the 
+data type of each column. Instead of treating the CSV file as a simple 
+block of bytes (as the ''FILE'' statement alone would), the compiler will 
+parse the contents of the CSV file and convert it into a more structured 
+internal representation that is ready for use by your program. The kind
+of structure will be described by the datatype ''type''.
 
 @italian
-Il comando ''FILE'', inserite all'interno di un blocco ''BEGIN STORAGE'' - 
-''ENDSTORAGE'', permette di definire il contenuto dell'elemento di memorizzazione
-di massa. La sintassi di base prevede di indicare il nome del file sorgente che 
-sarà inserito nel supporto. Se non si vuole utilizzare lo stesso nome, è possibile 
-indicare un alias (''AS target'').
+All'interno di un blocco ''BEGIN STORAGE...END STORAGE'', il comando 
+''FILE'' svolge un ruolo cruciale nel processo di inserimento di dati 
+esterni direttamente nel supporto di memorizzazione che si sta definendo 
+durante la compilazione del programma. Immaginate di voler includere un set
+di dati di configurazione o qualsiasi altro file statico direttamente nel 
+supporto di memorizzazione del programma: il comando ''FILE'' vi permette 
+di fare proprio questo.
+
+La sintassi di base consiste nell'indicare il nome del file sorgente che 
+verrà inserito nel supporto. Se non si desidera utilizzare lo stesso nome, 
+è possibile indicare un alias (''AS target'').
+
+L'aggiunta dell'istruzione ''CSV OF type'' è una potente funzionalità che 
+consente di includere file con valori separati da virgola (CSV) e di 
+specificare il tipo di dati di ciascuna colonna. Invece di trattare il 
+file CSV come un semplice blocco di byte (come farebbe la sola istruzione 
+''FILE''), il compilatore analizzerà il contenuto del file CSV e lo 
+convertirà in una rappresentazione interna più strutturata, pronta per l'uso 
+da parte del programma. Il tipo di struttura sarà descritto dal tipo 
+di dati ''type''.
 
 @syntax FILE source [AS target] [CSV OF type]
 
 @example FILE "examples/data.dat"
 @example FILE "sprites.png" AS "sprites.dat"
 @example FILE "examples/data.csv" CSV OF BYTE
+@example BEGIN TYPE point
+@example     x AS POSITION
+@example     x AS POSITION
+@example END TYPE point
+@example FILE "examples/structure.csv" CSV OF point
 
 @usedInExample storage_example_01.bas
 

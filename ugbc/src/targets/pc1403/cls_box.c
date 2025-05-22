@@ -38,42 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>SCREEN HORIZONTAL SCROLL [int]x</b>
- * 
- * This function outputs an assembly code capable of performing a 
- * hardware scroll of the screen. The scroll is always in the direction 
- * from right to left, so with a _displacement of 0 the screen is exactly as 
- * it would be without scrolling while with the value 7 you would have a scroll
- * of 7 pixels to left. This version is used when a direct integer is used.
- * 
- * @param _environment Current calling environment
- * @param _displacement Horizontal offset in pixels (0-7)
- */
-void screen_horizontal_scroll( Environment * _environment, int _displacement ) {
-
-    char displacementString[MAX_TEMPORARY_STORAGE]; sprintf( displacementString, "#$%2.2x", _displacement );
-
-    ted_horizontal_scroll( _environment, displacementString );
-
-}
-
-/**
- * @brief Emit ASM code for <b>SCREEN HORIZONTAL SCROLL [expression[</b>
- * 
- * This function outputs an assembly code capable of performing a 
- * hardware scroll of the screen. The scroll is always in the direction 
- * from right to left, so with a _displacement of 0 the screen is exactly as 
- * it would be without scrolling while with the value 7 you would have a scroll
- * of 7 pixels to left. This version is used when an expression is used.
- * 
- * @param _environment Current calling environment
- * @param _displacement Horizontal offset in pixels (0-7)
- */
-void screen_horizontal_scroll_var( Environment * _environment, char * _displacement ) {
-
-    Variable * displacement = variable_retrieve( _environment, _displacement );
-
-    ted_horizontal_scroll( _environment, displacement->realName );
+void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 
 }

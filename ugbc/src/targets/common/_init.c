@@ -161,6 +161,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "CONSOLES2", VT_BUFFER, MAX_CONSOLES * 2 );
     variable_global( _environment, "CONSOLES2" );
 
+    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    variable_global( _environment, "FPSCRAP" );
+
 }
 
 void finalize_text_variables( Environment * _environment ) {
@@ -188,6 +191,30 @@ void finalize_text_variables( Environment * _environment ) {
 
         variable_export( _environment, "DRAWSCALE", VT_BYTE, 4 );
         variable_export( _environment, "DRAWANGLE", VT_BYTE, 0 );
+
+    } else {
+        variable_delete( _environment, "DRAWSCALE" );
+        variable_delete( _environment, "DRAWANGLE" );
+        variable_delete( _environment, "DRAWUCOMMAND" );
+        variable_delete( _environment, "DRAWDCOMMAND" );
+        variable_delete( _environment, "DRAWLCOMMAND" );
+        variable_delete( _environment, "DRAWRCOMMAND" );
+        variable_delete( _environment, "DRAWECOMMAND" );
+        variable_delete( _environment, "DRAWFCOMMAND" );
+        variable_delete( _environment, "DRAWGCOMMAND" );
+        variable_delete( _environment, "DRAWHCOMMAND" );
+
+        variable_delete( _environment, "DRAWUDCOMMAND" );
+        variable_delete( _environment, "DRAWDDCOMMAND" );
+        variable_delete( _environment, "DRAWLDCOMMAND" );
+        variable_delete( _environment, "DRAWRDCOMMAND" );
+        variable_delete( _environment, "DRAWEDCOMMAND" );
+        variable_delete( _environment, "DRAWFDCOMMAND" );
+        variable_delete( _environment, "DRAWGDCOMMAND" );
+        variable_delete( _environment, "DRAWHDCOMMAND" );
+
+        variable_delete( _environment, "DRAWSCALE" );
+        variable_delete( _environment, "DRAWANGLE" );
 
     }
 
@@ -233,6 +260,30 @@ void finalize_text_variables( Environment * _environment ) {
         variable_export( _environment, "DRAWANGLE", VT_BYTE, 0 );
         variable_store( _environment, "DRAWANGLE", 0 );
 
+    } else {
+        variable_delete( _environment, "DRAWSCALE" );
+        variable_delete( _environment, "DRAWANGLE" );
+        variable_delete( _environment, "DRAWUCOMMAND" );
+        variable_delete( _environment, "DRAWDCOMMAND" );
+        variable_delete( _environment, "DRAWLCOMMAND" );
+        variable_delete( _environment, "DRAWRCOMMAND" );
+        variable_delete( _environment, "DRAWECOMMAND" );
+        variable_delete( _environment, "DRAWFCOMMAND" );
+        variable_delete( _environment, "DRAWGCOMMAND" );
+        variable_delete( _environment, "DRAWHCOMMAND" );
+
+        variable_delete( _environment, "DRAWUDCOMMAND" );
+        variable_delete( _environment, "DRAWDDCOMMAND" );
+        variable_delete( _environment, "DRAWLDCOMMAND" );
+        variable_delete( _environment, "DRAWRDCOMMAND" );
+        variable_delete( _environment, "DRAWEDCOMMAND" );
+        variable_delete( _environment, "DRAWFDCOMMAND" );
+        variable_delete( _environment, "DRAWGDCOMMAND" );
+        variable_delete( _environment, "DRAWHDCOMMAND" );
+
+        variable_delete( _environment, "DRAWSCALE" );
+        variable_delete( _environment, "DRAWANGLE" );
+
     }
 
     if ( _environment->deployed.play_string ) {
@@ -240,6 +291,23 @@ void finalize_text_variables( Environment * _environment ) {
         variable_export( _environment, "PLAYOCTAVE", VT_BYTE, 6 );
         variable_export( _environment, "PLAYTEMPO", VT_BYTE, 2 );
         variable_export( _environment, "PLAYVOLUME", VT_BYTE, 15 );
+    } else {
+        variable_delete( _environment, "PLAYDURATION" );
+        variable_delete( _environment, "PLAYOCTAVE" );
+        variable_delete( _environment, "PLAYTEMPO" );
+        variable_delete( _environment, "PLAYVOLUME" );
+    }
+
+    if ( _environment->deployed.fp_vars ) {
+        variable_export( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    } else {
+        variable_delete( _environment, "FPSCRAP" );
+    }
+
+    if ( _environment->deployed.protothread ) {
+
+    } else {
+        variable_delete( _environment, "PROTOTHREADCT" );
     }
 
 }
