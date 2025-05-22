@@ -68,6 +68,14 @@ void target_prepare_finalization( Environment * _environment ) {
         variable_delete( _environment, "TILEO" );
     }
 
+    if ( _environment->deployed.blitimage ) {
+
+    } else {
+        variable_delete( _environment, "BLITIMAGEBLITTINGADDR" );
+        variable_delete( _environment, "BLITTMPPTR" );
+        variable_delete( _environment, "BLITTMPPTR2" );
+    }
+
 }
 
 void target_finalization( Environment * _environment ) {
