@@ -63,6 +63,14 @@ void target_prepare_finalization( Environment * _environment ) {
         variable_delete( _environment, "BLITTMPPTR2" );
     }
 
+    if ( _environment->deployed.sliceimageextract ) {
+
+    } else {
+        variable_delete( _environment, "SLICEX" );
+        variable_delete( _environment, "SLICEY" );
+        variable_delete( _environment, "SLICEDTARGET" );
+    }
+
 }
 
 void target_finalization( Environment * _environment ) {
