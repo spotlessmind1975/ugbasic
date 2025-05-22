@@ -304,4 +304,10 @@ void finalize_text_variables( Environment * _environment ) {
         variable_delete( _environment, "FPSCRAP" );
     }
 
+    if ( _environment->deployed.protothread ) {
+
+    } else {
+        variable_delete( _environment, "PROTOTHREADCT" );
+    }
+
 }
