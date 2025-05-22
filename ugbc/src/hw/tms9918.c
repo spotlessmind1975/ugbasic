@@ -1582,9 +1582,6 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
     variable_global( _environment, "SPRITECOUNT" );
 
-    variable_import( _environment, "SPRITEXY", VT_BUFFER, SPRITE_COUNT * 2 );
-    variable_global( _environment, "SPRITEXY" );
-
     variable_import( _environment, "TILEX", VT_BYTE, 0 );
     variable_global( _environment, "TILEX" );
     variable_import( _environment, "TILEY", VT_BYTE, 0 );
