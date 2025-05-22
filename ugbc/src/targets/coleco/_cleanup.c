@@ -53,6 +53,21 @@ void target_prepare_finalization( Environment * _environment ) {
         variable_global( _environment, "TIMERADDRESS" );
     }
 
+    if ( _environment->deployed.tiles ) {
+
+    } else {
+        variable_delete( _environment, "TILEX" );
+        variable_delete( _environment, "TILEY" );
+        variable_delete( _environment, "TILEX2" );
+        variable_delete( _environment, "TILET" );
+        variable_delete( _environment, "TILEW" );
+        variable_delete( _environment, "TILEH" );
+        variable_delete( _environment, "TILEW2" );
+        variable_delete( _environment, "TILEH2" );
+        variable_delete( _environment, "TILEA" );
+        variable_delete( _environment, "TILEO" );
+    }
+
 }
 
 void target_finalization( Environment * _environment ) {
