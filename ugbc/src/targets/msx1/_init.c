@@ -98,9 +98,6 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
 
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
-
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );   
 

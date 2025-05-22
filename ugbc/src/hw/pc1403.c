@@ -358,9 +358,6 @@ void pc1403_initialization( Environment * _environment ) {
     // variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
     // variable_global( _environment, "BLITTMPPTR2" );
 
-    // variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    // variable_global( _environment, "FPSCRAP" );
-
     // variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0 );
     // variable_global( _environment, "TEXTADDRESS" );
 

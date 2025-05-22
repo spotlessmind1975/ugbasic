@@ -1172,9 +1172,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_import( _environment, "EVERYTIMING", VT_BYTE, 0 );
     variable_global( _environment, "EVERYTIMING" );
 
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
-
     variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
     variable_global( _environment, "IMAGEY" );
 

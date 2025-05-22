@@ -110,9 +110,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "SG1000TIMER", VT_WORD, 0 );
     variable_global( _environment, "SG1000TIMER" );   
 
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
-
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 

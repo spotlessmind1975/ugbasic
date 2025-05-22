@@ -161,6 +161,9 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "CONSOLES2", VT_BUFFER, MAX_CONSOLES * 2 );
     variable_global( _environment, "CONSOLES2" );
 
+    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    variable_global( _environment, "FPSCRAP" );
+
 }
 
 void finalize_text_variables( Environment * _environment ) {
@@ -293,6 +296,12 @@ void finalize_text_variables( Environment * _environment ) {
         variable_delete( _environment, "PLAYOCTAVE" );
         variable_delete( _environment, "PLAYTEMPO" );
         variable_delete( _environment, "PLAYVOLUME" );
+    }
+
+    if ( _environment->deployed.fp_vars ) {
+        variable_export( _environment, "FPSCRAP", VT_BUFFER, 16 );
+    } else {
+        variable_delete( _environment, "FPSCRAP" );
     }
 
 }

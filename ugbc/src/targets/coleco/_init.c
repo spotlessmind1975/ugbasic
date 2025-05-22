@@ -103,9 +103,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
     variable_global( _environment, "JOYSTICK1" );   
 
-    variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
-    variable_global( _environment, "FPSCRAP" );
-
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
