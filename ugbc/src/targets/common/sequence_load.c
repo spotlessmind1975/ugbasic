@@ -321,6 +321,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     memcpy( final->originalPalette, atlasDescriptor->image->colors, MAX_PALETTE * sizeof( RGBi ) );
     final->frameSize = firstImage->size;
     final->frameCount = atlasDescriptor->horizontal;
+    final->frameWidth = atlasDescriptor->frames->width;
+    final->frameHeight = atlasDescriptor->frames->height;
 
     lastImage = firstImage;
     for(int i=0; i<atlasDescriptor->count; ++i ) {
