@@ -331,7 +331,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
             outline1("LDA %s", image->realName );
             outline1("STA %s", address->realName );
             outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
-            outline0("STA TMPPTR+1" );
             outline1("STA %s", address_displacement(_environment, address->realName, "1") );
 
         }
@@ -342,7 +341,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    gtia_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    gtia_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
 
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip:", label );

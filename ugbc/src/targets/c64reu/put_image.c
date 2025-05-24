@@ -301,7 +301,6 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
             outline1("LDA %s", image->realName );
             outline1("STA %s", address->realName );
             outline1("LDA %s", address_displacement( _environment, image->realName, "1") );
-            outline0("STA TMPPTR+1" );
             outline1("STA %s", address_displacement(_environment, address->realName, "1") );
 
         }
@@ -341,7 +340,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
 
     cpu_label( _environment, labelDone );
 
