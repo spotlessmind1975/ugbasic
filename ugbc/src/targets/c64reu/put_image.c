@@ -232,6 +232,13 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 
+    if ( !_environment->putImageRefUnsafe ) {
+        outline1("LDA %s", address_displacement( _environment, image->realName, "5") );
+        outline1("BNE %sskipx", label );
+        outline1("JMP %sskip", label );
+        outhead1("%sskipx:", label );
+    }
+
     // Y = OFFSET
 
     outline0("LDA #0" );
@@ -338,6 +345,10 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     cpu_label( _environment, labelDone );
 
+    if ( !_environment->putImageRefUnsafe ) {
+        outhead1("%sskip:", label );
+    }
+    
 }
 
 void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {

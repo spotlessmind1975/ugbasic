@@ -9091,6 +9091,12 @@ define_definition :
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     }
+    | IMAGEREF FAST {
+        ((struct _Environment *)_environment)->putImageRefUnsafe = 1;
+    }
+    | IMAGEREF SAFE {
+        ((struct _Environment *)_environment)->putImageRefUnsafe = 0;
+    }
     | TRANSPARENCY COARSE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 1;        
     }

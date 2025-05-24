@@ -253,6 +253,11 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
     }
 
+    if ( !_environment->putImageRefUnsafe ) {
+        outline1("LDA %s", address_displacement( _environment, image->realName, "5") );
+        outline1("LBEQ %sskip", label );
+    }
+
     // Y = OFFSET
 
     if ( _sequence ) {
@@ -349,6 +354,10 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
     cpu_label( _environment, labelDone );
+
+    if ( !_environment->putImageRefUnsafe ) {
+        outhead1("%sskip", label );
+    }
 
 }
 

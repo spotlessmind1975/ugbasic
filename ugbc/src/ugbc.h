@@ -3115,6 +3115,8 @@ typedef struct _Environment {
 
     CpuOptimization cpuOptimization;
 
+    int putImageRefUnsafe;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

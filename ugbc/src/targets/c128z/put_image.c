@@ -235,7 +235,6 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
 void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
-
     MAKE_LABEL
 
     Variable * image = variable_retrieve( _environment, _image );
@@ -253,6 +252,12 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 
+    if ( !_environment->putImageRefUnsafe ) {
+        outline1("LD A, (%s)", address_displacement( _environment, image->realName, "5") );
+        outline0("CP 0");
+        outline1("JP Z, %sskip", label );
+    }
+    
     // Y = OFFSET
 
     if ( !_sequence && !_frame ) {
@@ -307,6 +312,10 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.isAddress = 1;
 
     vdcz_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+
+    if ( !_environment->putImageRefUnsafe ) {
+        outhead1("%sskip:", label );
+    }
 
 }
 
