@@ -366,11 +366,34 @@ GETIMAGE3L1FINAL:
     BNE GETIMAGE3L1
 
     TXA
-    BEQ GETIMAGE3L1F
+    BNE GETIMAGE3L1FX
+    JMP GETIMAGE3L1F
+
+GETIMAGE3L1FX:
+    LDA IMAGEW
+    ASL
+    CLC
+    ADC PLOTDEST
+    STA PLOTDEST
+    LDA #0
+    ADC PLOTDEST+1
+    STA PLOTDEST+1
+
+    ; Take the width of the image, double it (carry will be lost)
+    ; and add to the graphical data source address.
+
+    LDA IMAGEW
+    ASL
+    CLC
+    ADC TMPPTR
+    STA TMPPTR
+    LDA #0
+    ADC TMPPTR+1
+    STA TMPPTR+1
 
     LDA #$FF
     TAY
-    DEY
+    ; DEY
 GETIMAGE3L1X:
 GETIMAGE3L1DEFX:
     LDA (PLOTDEST),Y
@@ -380,6 +403,31 @@ GETIMAGE3L1FINALX:
     CPY #255
     BNE GETIMAGE3L1X
     
+    LDA IMAGEW
+    ASL
+    STA MATHPTR5
+    SEC
+    LDA PLOTDEST
+    SBC MATHPTR5
+    STA PLOTDEST
+    LDA PLOTDEST+1
+    SBC #0
+    STA PLOTDEST+1
+
+    ; Take the width of the image, double it (carry will be lost)
+    ; and add to the graphical data source address.
+
+    LDA IMAGEW
+    ASL
+    STA MATHPTR5
+    SEC
+    LDA TMPPTR
+    SBC MATHPTR5
+    STA TMPPTR
+    LDA TMPPTR+1
+    SBC #0
+    STA TMPPTR+1
+
 GETIMAGE3L1F:
     CLC
     LDA TMPPTR
@@ -411,7 +459,7 @@ GETIMAGE3L1F:
     LDA IMAGEW
     ASL
     TAY
-    DEY
+    ; DEY
     JMP GETIMAGE3L1
 
 GETIMAGE3C:
