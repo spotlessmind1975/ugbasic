@@ -544,6 +544,14 @@ CLSBOX3:
         ; of precomputed size, since the width (in bytes)
         ; of a line is fixed.
 
+        SEC
+        LDA PLOTDEST
+        SBC MATHPTR5
+        STA PLOTDEST
+        LDA PLOTDEST+1
+        SBC #0
+        STA PLOTDEST+1
+        
         CLC
         LDA PLOTDEST
         ADC #$40
