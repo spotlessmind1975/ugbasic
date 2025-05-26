@@ -254,6 +254,12 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(stub)" );
 
+    if ( !_environment->putImageRefUnsafe ) {
+        outline1("LD A, (%s)", address_displacement( _environment, image->realName, "5") );
+        outline0("CP 0");
+        outline1("JP Z, %sskip", label );
+    }
+
     // Y = OFFSET
 
     if ( !_sequence && !_frame ) {
@@ -308,6 +314,10 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.isAddress = 1;
 
     gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+
+    if ( !_environment->putImageRefUnsafe ) {
+        outhead1("%sskip:", label );
+    }
 
 }
 

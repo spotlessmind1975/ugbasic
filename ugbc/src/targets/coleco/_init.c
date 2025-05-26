@@ -47,8 +47,8 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
-    _environment->dstring.count = 16;
-    _environment->dstring.space = 64;
+    _environment->dstring.count = 32;
+    _environment->dstring.space = 128;
 
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );

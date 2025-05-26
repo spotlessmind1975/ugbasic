@@ -563,7 +563,7 @@ generated/c64reu/exe/%.d64:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.d64=.lst) -o ../$@ -O d64 $(subst generated/c64reu/exe/,,$(@:.d64=.bas))
 
 generated/c64reu/exe/%.reu:
-	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O reu $(subst generated/c64reu/exe/,,$(@:.reu=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.reu=.lst) -o ../$@ -O reu $(subst generated/c64reu/exe/,,$(@:.reu=.bas))
 
 generated/c64reu/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c64reu$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c64reu/exeso/,,$(@:.prg=.bas))

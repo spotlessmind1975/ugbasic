@@ -47,7 +47,8 @@
  according to the detected position of the joystick. In addition to indicating the 
  variables that will be updated, it is possible to indicate the minimum and maximum 
  movement limits. If the variables are already beyond the limits, no updates will 
- be made.
+ be made. Note that, to support a range that starts from zero (0), you need to use 
+ a signed data type to represent the coordinates.
  
  @italian
  
@@ -55,7 +56,8 @@ Il comando JMOVE permette di aggiornare due variabili (ascissa e ordinata) secon
 la posizione rilevata del joystick. Oltre ad indicare le variabili che saranno 
 oggetto di aggiornamento, è possibile indicare i limiti minimo e massimo di 
 movimento. Se le variabili sono già oltre i limiti, non saranno effettuati 
-aggiornamenti.
+aggiornamenti. Si noti che, per supportare un intervallo che parte da zero (0), è 
+necessario utilizzare un tipo di dati con segno per rappresentare le coordinate.
  
 @syntax JMOVE [port,]x,y,minx,maxx,miny,maxy[,stepx,stepy]
 @syntax JMOVE [port,]x,y,min,max
