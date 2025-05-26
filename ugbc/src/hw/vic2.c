@@ -2059,10 +2059,10 @@ void vic2_get_height( Environment * _environment, char *_result ) {
 void vic2_cls( Environment * _environment ) {
     
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
-        deploy( clsGraphic, src_hw_vic2_cls_graphic_asm );
+        deploy_deferred( clsGraphic, src_hw_vic2_cls_graphic_asm );
         outline0("JSR CLSG");
     } else {
-        deploy( clsText, src_hw_vic2_cls_text_asm );
+        deploy_deferred( clsText, src_hw_vic2_cls_text_asm );
         outline0("JSR CLST");
     }
 
@@ -2125,7 +2125,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
     
     if ( _raw ) {
         if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
-            deploy( clsGraphic, src_hw_vic2_cls_graphic_asm );
+            deploy_deferred( clsGraphic, src_hw_vic2_cls_graphic_asm );
             deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
             deploy( textEncodedAtGraphicRaw, src_hw_vic2_text_at_graphic_raw_asm );
             outline0("JSR TEXTATBITMAPMODERAW");
@@ -2136,7 +2136,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
         }
     } else {
         if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
-            deploy( clsGraphic, src_hw_vic2_cls_graphic_asm );
+            deploy_deferred( clsGraphic, src_hw_vic2_cls_graphic_asm );
             deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
             deploy( textEncodedAtGraphic, src_hw_vic2_text_at_graphic_asm );
             outline0("JSR TEXTATBITMAPMODE");
@@ -2242,7 +2242,9 @@ void vic2_initialization( Environment * _environment ) {
     outline0("JSR VIC2FINALIZATION");
 
     vic2_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
-    
+
+    reset_screen_mode_selected( _environment );
+
 }
 
 static RGBi * multicolorSpritePalette[2];
