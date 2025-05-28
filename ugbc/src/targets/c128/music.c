@@ -217,8 +217,8 @@ void music_stop( Environment * _environment ) {
 
     deploy( music, src_hw_sid_music_asm );
 
-    variable_store( _environment, "SIDMUSICLOOP", 0x0 );
-    variable_store( _environment, "SIDMUSICREADY", 0x0 );
+    cpu_store_8bit( _environment, "SIDMUSICLOOP", 0x0 );
+    cpu_store_8bit( _environment, "SIDMUSICREADY", 0x0 );
     volume( _environment, 0, 0x7 );
 
 }
