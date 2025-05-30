@@ -67,6 +67,9 @@ PUTIMAGERLE1X:
     BNE PUTIMAGERLE4X
     JMP PUTIMAGERLE4
 PUTIMAGERLE4X:
+
+    CLI
+
     RTS
 
 @ENDIF
@@ -430,6 +433,9 @@ PUTIMAGERLE0:
 
     PUTIMAGERLE0E:
     PUTIMAGERLE0EA:
+
+        CLI
+
         RTS
 
 
@@ -697,6 +703,9 @@ PUTIMAGERLE1:
 
     PUTIMAGERLE1E:
     PUTIMAGERLE1EA:
+
+        CLI
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,6 +721,9 @@ PUTIMAGERLE1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGERLE4:
+
+    CLI
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1347,6 +1359,9 @@ PUTIMAGERLE2:
 
     PUTIMAGERLE2EA:
     PUTIMAGERLE2E:
+
+        CLI
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1874,6 +1889,9 @@ PUTIMAGERLE3:
         STA $D021
 
     PUTIMAGERLE3EFINAL:
+
+        CLI
+        
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

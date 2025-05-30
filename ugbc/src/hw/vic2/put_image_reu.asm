@@ -95,6 +95,9 @@ PUTIMAGEREU1X:
     BNE PUTIMAGEREU4X
     JMP PUTIMAGEREU4
 PUTIMAGEREU4X:
+
+    CLI
+
     RTS
 
 @ENDIF
@@ -624,6 +627,9 @@ PUTIMAGEREU0:
 
     PUTIMAGEREU0E:
     PUTIMAGEREU0EA:
+
+        CLI
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -991,6 +997,9 @@ PUTIMAGEREU1:
 
     PUTIMAGEREU1E:
     PUTIMAGEREU1EA:
+
+        CLI
+
         RTS
 
 @ENDIF
@@ -998,6 +1007,9 @@ PUTIMAGEREU1:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 PUTIMAGEREU4:
+
+    CLI
+
     RTS
 
 @ENDIF
@@ -1693,6 +1705,9 @@ PUTIMAGEREU2:
 
     PUTIMAGEREU2EA:
     PUTIMAGEREU2E:
+
+        CLI
+
         RTS
 
 @ENDIF
@@ -2556,6 +2571,9 @@ PUTIMAGEREU3:
         STA $D021
 
     PUTIMAGEREU3EFINAL:
+
+        CLI
+        
         RTS
 
 @ENDIF
