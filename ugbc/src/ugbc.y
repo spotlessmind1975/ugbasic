@@ -4282,6 +4282,9 @@ exponential_less:
     | TIMER {
         $$ = get_timer( _environment )->name;
     }
+    | PEN {
+        $$ = strdup( "_PEN" );
+    }
     | PEN OP expr CP {
         $$ = get_pen( _environment, $3 )->name;
     }
