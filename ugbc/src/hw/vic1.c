@@ -708,10 +708,10 @@ void vic1_text( Environment * _environment, char * _text, char * _text_size, int
     outline0("STA TEXTSIZE" );
 
     if ( _raw ) {
-        deploy( textEncodedAtTextRaw, src_hw_vic1_text_at_raw_asm );
+        deploy_deferred( textEncodedAtTextRaw, src_hw_vic1_text_at_raw_asm );
         outline0("JSR TEXTATRAW");
     } else {
-        deploy( textEncodedAtText, src_hw_vic1_text_at_asm );
+        deploy_deferred( textEncodedAtText, src_hw_vic1_text_at_asm );
         outline0("JSR TEXTAT");
     }
 

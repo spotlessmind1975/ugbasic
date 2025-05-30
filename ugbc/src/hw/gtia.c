@@ -1996,21 +1996,21 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, int
     if ( _raw ) {
         if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
             deploy( gtiapreproc, src_hw_gtia__preproc_asm );
-            deploy( textEncodedAtTextRaw, src_hw_gtia_text_at_text_raw_asm );
+            deploy_deferred( textEncodedAtTextRaw, src_hw_gtia_text_at_text_raw_asm );
             outline0("JSR TEXTATTILEMODERAW");
         } else {
             deploy( gtiapreproc, src_hw_gtia__preproc_asm );
-            deploy( textEncodedAtGraphicRaw, src_hw_gtia_text_at_graphic_raw_asm );
+            deploy_deferred( textEncodedAtGraphicRaw, src_hw_gtia_text_at_graphic_raw_asm );
             outline0("JSR TEXTATBITMAPMODERAW");
         }
     } else {
         if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
             deploy( gtiapreproc, src_hw_gtia__preproc_asm );
-            deploy( textEncodedAtText, src_hw_gtia_text_at_text_asm );
+            deploy_deferred( textEncodedAtText, src_hw_gtia_text_at_text_asm );
             outline0("JSR TEXTATTILEMODE");
         } else {
             deploy( gtiapreproc, src_hw_gtia__preproc_asm );
-            deploy( textEncodedAtGraphic, src_hw_gtia_text_at_graphic_asm );
+            deploy_deferred( textEncodedAtGraphic, src_hw_gtia_text_at_graphic_asm );
             outline0("JSR TEXTATBITMAPMODE");
         }
     }
