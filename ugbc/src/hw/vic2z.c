@@ -1527,11 +1527,11 @@ void vic2z_text( Environment * _environment, char * _text, char * _text_size, in
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
         deploy( clsGraphic, src_hw_vic2z_cls_graphic_asm );
         deploy( vic2zvarsGraphic, src_hw_vic2z_vars_graphic_asm );
-        deploy( textEncodedAtGraphic, src_hw_vic2z_text_at_graphic_asm );
+        deploy_deferred( textEncodedAtGraphic, src_hw_vic2z_text_at_graphic_asm );
         outline0("JSR TEXTATBITMAPMODE");
     } else {
         deploy( clsText, src_hw_vic2z_cls_text_asm );
-        deploy( textEncodedAtText, src_hw_vic2z_text_at_text_asm );
+        deploy_deferred( textEncodedAtText, src_hw_vic2z_text_at_text_asm );
         outline0("JSR TEXTATTILEMODE");
     }
 

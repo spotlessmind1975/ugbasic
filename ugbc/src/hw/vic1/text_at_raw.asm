@@ -95,7 +95,10 @@ TEXTATRAWGO:
     LDA COLORMAPADDRESS+1
     STA COPYOFCOLORMAPADDRESS+1
 
+@IF printSafe
     SEI
+@ENDIF
+
     LDA CURRENTMODE
     CMP #0
     BNE TEXTATRAWGO0X
@@ -115,7 +118,9 @@ TEXTATRAWGO3X:
     BNE TEXTATRAWGO4X
     JMP TEXTATTILEMODERAW
 TEXTATRAWGO4X:
+@IF printSafe
     CLI
+@ENDIF
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -258,5 +263,7 @@ TEXTATRAWXLOOP2:
     JMP TEXTATRAWLOOP2
 TEXTATRAWEND2:
 TEXTATRAWEND:
+@IF printSafe
     CLI
+@ENDIF
     RTS
