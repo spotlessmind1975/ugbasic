@@ -3948,6 +3948,7 @@ void vic2_wait_vbl( Environment * _environment, char * _raster_line ) {
     if ( ! _raster_line ) {
         outline0("JSR VBL");
     } else {
+        outline1("LDA %s", _raster_line);
         outline0("JSR VBLLINE");
     }
 

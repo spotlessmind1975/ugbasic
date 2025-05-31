@@ -51,6 +51,8 @@
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    vic2_wait_vbl( _environment, _raster_line );
+    Variable * rasterLine = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 0 );
+
+    vic2_wait_vbl( _environment, rasterLine->realName );
 
 }
