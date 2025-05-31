@@ -40,6 +40,11 @@
 ; ----------------------------------------------------------------------------
 
 GETIMAGE:
+
+@IF getImageSafe
+    SEI
+@ENDIF
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -66,11 +71,21 @@ GETIMAGE1X:
     BNE GETIMAGE4X
     JMP GETIMAGE4
 GETIMAGE4X:
+
+@IF getImageSafe
+    CLI
+@ENDIF
+
     RTS
 
 GETIMAGE0:
 GETIMAGE1:
 GETIMAGE4:
+
+@IF getImageSafe
+    CLI
+@ENDIF
+
     RTS
 
 GETIMAGE2:
@@ -266,6 +281,11 @@ GETIMAGE2L2:
     JMP GETIMAGE2L2
 
 GETIMAGE2E:
+
+@IF getImageSafe
+    CLI
+@ENDIF
+
     RTS
 
 ;;;;;;;;;;;;;;;;;
@@ -548,5 +568,9 @@ GETIMAGE3E:
     LDA $D021
     AND #$0F
     STA (TMPPTR),Y
+
+@IF getImageSafe
+    CLI
+@ENDIF
 
     RTS

@@ -3119,6 +3119,7 @@ typedef struct _Environment {
 
     int printSafe;
     int putImageSafe;
+    int getImageSafe;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

@@ -9102,6 +9102,12 @@ define_definition :
     | PUT IMAGE SAFE {
         ((struct _Environment *)_environment)->putImageSafe = 1;
     }
+    | GET IMAGE FAST {
+        ((struct _Environment *)_environment)->getImageSafe = 0;
+    }
+    | GET IMAGE SAFE {
+        ((struct _Environment *)_environment)->getImageSafe = 1;
+    }
     | PRINT FAST {
         ((struct _Environment *)_environment)->printSafe = 0;
     }
