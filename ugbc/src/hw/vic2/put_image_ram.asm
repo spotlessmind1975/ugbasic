@@ -68,7 +68,9 @@ PUTIMAGE1X:
     JMP PUTIMAGE4
 PUTIMAGE4X:
 
+@IF putImageSafe
     CLI
+@ENDIF
 
     RTS
 
@@ -434,7 +436,9 @@ PUTIMAGE0:
     PUTIMAGE0E:
     PUTIMAGE0EA:
 
+@IF putImageSafe
         CLI
+@ENDIF
 
         RTS
 
@@ -704,8 +708,9 @@ PUTIMAGE1:
     PUTIMAGE1E:
     PUTIMAGE1EA:
 
+@IF putImageSafe
         CLI
-
+@ENDIF
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -721,8 +726,10 @@ PUTIMAGE1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGE4:
+@IF putImageSafe
     CLI
-    
+@ENDIF
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

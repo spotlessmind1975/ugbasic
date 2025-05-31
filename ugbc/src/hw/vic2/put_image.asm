@@ -43,8 +43,10 @@ RLEUSE: .BYTE $0
 
 PUTIMAGE:
 
+@IF putImageSafe
     SEI
-    
+@ENDIF
+
 @IF C64REU
     LDA BANKUSE
     BEQ PUTIMAGEREUX

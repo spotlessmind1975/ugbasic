@@ -9091,6 +9091,12 @@ define_definition :
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     }
+    | PUT IMAGE FAST {
+        ((struct _Environment *)_environment)->putImageSafe = 0;
+    }
+    | PUT IMAGE SAFE {
+        ((struct _Environment *)_environment)->putImageSafe = 1;
+    }
     | PRINT FAST {
         ((struct _Environment *)_environment)->printSafe = 0;
     }
@@ -13334,6 +13340,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
 
     _environment->printSafe = 1;
+    _environment->putImageSafe = 1;
 
     _environment->keyboardConfig.latency = 700 / 20;
     _environment->keyboardConfig.delay = 150 / 20;

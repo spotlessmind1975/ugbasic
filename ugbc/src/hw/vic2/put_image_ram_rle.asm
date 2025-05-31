@@ -68,7 +68,9 @@ PUTIMAGERLE1X:
     JMP PUTIMAGERLE4
 PUTIMAGERLE4X:
 
+@IF putImageSafe
     CLI
+@ENDIF
 
     RTS
 
@@ -434,7 +436,9 @@ PUTIMAGERLE0:
     PUTIMAGERLE0E:
     PUTIMAGERLE0EA:
 
+@IF putImageSafe
         CLI
+@ENDIF
 
         RTS
 
@@ -704,7 +708,9 @@ PUTIMAGERLE1:
     PUTIMAGERLE1E:
     PUTIMAGERLE1EA:
 
+@IF putImageSafe
         CLI
+@ENDIF
 
         RTS
 
@@ -722,7 +728,9 @@ PUTIMAGERLE1:
 
 PUTIMAGERLE4:
 
+@IF putImageSafe
     CLI
+@ENDIF
 
     RTS
 
@@ -1360,7 +1368,9 @@ PUTIMAGERLE2:
     PUTIMAGERLE2EA:
     PUTIMAGERLE2E:
 
+@IF putImageSafe
         CLI
+@ENDIF
 
         RTS
 
@@ -1890,8 +1900,10 @@ PUTIMAGERLE3:
 
     PUTIMAGERLE3EFINAL:
 
+@IF putImageSafe
         CLI
-        
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
