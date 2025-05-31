@@ -54,6 +54,10 @@ GETIMAGE:
 @ENDIF
 @ENDIF
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -94,8 +98,48 @@ GETIMAGE4X:
 
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
 GETIMAGE0:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) )
+
 GETIMAGE1:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 4 ) )
+
 GETIMAGE4:
 
 @IF getImageSafe
@@ -110,6 +154,10 @@ GETIMAGE4:
 @ENDIF
 
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 GETIMAGE2:
     LDY #0
@@ -317,6 +365,10 @@ GETIMAGE2E:
 @ENDIF
 
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 ;;;;;;;;;;;;;;;;;
 
@@ -611,3 +663,6 @@ GETIMAGE3E:
 @ENDIF
 
     RTS
+
+@ENDIF
+
