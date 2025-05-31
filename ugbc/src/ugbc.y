@@ -4282,6 +4282,11 @@ exponential_less:
     | TIMER {
         $$ = get_timer( _environment )->name;
     }
+    | PEN {
+        Variable * pen = variable_temporary( _environment, VT_COLOR, "(pen)" );
+        cpu_move_8bit( _environment, "_PEN", pen->realName );
+        $$ = pen->name;
+    }
     | PEN OP expr CP {
         $$ = get_pen( _environment, $3 )->name;
     }
