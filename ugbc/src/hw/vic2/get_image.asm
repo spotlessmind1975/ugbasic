@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 ; ----------------------------------------------------------------------------
 ; - Get image from bitmap
 ; ----------------------------------------------------------------------------
@@ -42,7 +44,14 @@
 GETIMAGE:
 
 @IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     LDA CURRENTMODE
@@ -73,7 +82,14 @@ GETIMAGE1X:
 GETIMAGE4X:
 
 @IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -83,7 +99,14 @@ GETIMAGE1:
 GETIMAGE4:
 
 @IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -283,7 +306,14 @@ GETIMAGE2L2:
 GETIMAGE2E:
 
 @IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -570,7 +600,14 @@ GETIMAGE3E:
     STA (TMPPTR),Y
 
 @IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
