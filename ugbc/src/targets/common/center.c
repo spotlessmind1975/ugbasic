@@ -131,7 +131,7 @@ void center( Environment * _environment, char * _string, int _newline, char * _w
         Variable * currentWidth = variable_define( _environment, "center__currentWidth", VT_BYTE, 0 );
         Variable * newLine = variable_define( _environment, "center__newLine", VT_BYTE, 0 );
         
-        Variable * len = variable_string_len( _environment, _string);
+        Variable * len = variable_string_len( _environment, string->name );
         Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
 
