@@ -812,7 +812,11 @@ void sid_stop_vars( Environment * _environment, char * _channels ) {
     deploy( sidvars, src_hw_sid_vars_asm );
     deploy( sidstartup, src_hw_sid_startup_asm );
 
-    outline1("LDA %s", _channels );
+    if ( _channels ) {
+        outline1("LDA %s", _channels );
+    } else {
+        outline0("LDA #$7" );
+    }
     outline0("JSR SIDSTOP");
 
 }
