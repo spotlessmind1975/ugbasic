@@ -123,47 +123,69 @@ di calcolare manualmente le posizioni dei caratteri.
 
 void center( Environment * _environment, char * _string, int _newline, char * _width ) {
 
-    MAKE_LABEL
-    
-    Variable * string = variable_retrieve( _environment, _string );
-    Variable * currentWidth;
-    
-    if ( _width ) {
-         currentWidth = variable_retrieve( _environment, _width);
-    } else {
-         currentWidth = variable_retrieve( _environment, "CONSOLEW");
-    }
-    
-    Variable * len = variable_string_len( _environment, _string);
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
-    Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
+    deploy_begin( center );
 
-    cpu_store_8bit( _environment, zero->realName, 0 );
+        MAKE_LABEL
+        
+        Variable * string = variable_define( _environment, "center__string", VT_DSTRING, 0 );
+        Variable * currentWidth = variable_define( _environment, "center__currentWidth", VT_BYTE, 0 );
+        Variable * newLine = variable_define( _environment, "center__newLine", VT_BYTE, 0 );
+        
+        Variable * len = variable_string_len( _environment, _string);
+        Variable * result = variable_temporary( _environment, VT_BYTE, "(compare)");
+        Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
 
-    cpu_greater_than_8bit( _environment, len->realName, currentWidth->realName, result->realName, 1, 0 );
+        cpu_store_8bit( _environment, zero->realName, 0 );
 
-    char nothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( nothingLabel, "%snothing", label );
-    char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
+        cpu_greater_than_8bit( _environment, len->realName, currentWidth->realName, result->realName, 1, 0 );
 
-    cpu_bvneq( _environment, result->realName, nothingLabel );
+        char nothingLabel[MAX_TEMPORARY_STORAGE]; sprintf( nothingLabel, "%snothing", label );
+        char newLineLabel[MAX_TEMPORARY_STORAGE]; sprintf( newLineLabel, "%snewline", label );
+        char doneLabel[MAX_TEMPORARY_STORAGE]; sprintf( doneLabel, "%sdone", label );
 
-    Variable * w = variable_sub( _environment, currentWidth->name, len->name );
-    w = variable_sr_const( _environment, w->name, 1 );
+        cpu_bvneq( _environment, result->realName, nothingLabel );
 
-    locate( _environment, w->name, NULL );
+        Variable * w = variable_sub( _environment, currentWidth->name, len->name );
+        w = variable_sr_const( _environment, w->name, 1 );
 
-    cpu_jump( _environment, doneLabel );
+        locate( _environment, w->name, NULL );
 
-    cpu_label( _environment, nothingLabel );
+        cpu_jump( _environment, doneLabel );
 
-    locate( _environment, zero->name, NULL );
+        cpu_label( _environment, nothingLabel );
 
-    cpu_label( _environment, doneLabel );
+        locate( _environment, zero->name, NULL );
 
-    print( _environment, string->name, 0, 0 );
+        cpu_label( _environment, doneLabel );
 
-    if ( _newline && ( _environment->centerWithoutNewLine == 0 ) ) {
+        print( _environment, string->name, 0, 0 );
+
+        cpu_bveq( _environment, newLine->realName, newLineLabel );
+
         text_newline( _environment );
-    }
 
+        cpu_label( _environment, newLineLabel );
+
+        cpu_return( _environment );
+        
+    deploy_end( center );
+
+    Variable * string = variable_retrieve( _environment, "center__string" );
+    Variable * stringParameter = variable_retrieve( _environment, _string );
+    Variable * currentWidthParameter;
+    if ( _width ) {
+        currentWidthParameter = variable_retrieve( _environment, _width);
+    } else {
+        currentWidthParameter = variable_retrieve( _environment, "CONSOLEW");
+    }
+    Variable * currentWidth = variable_retrieve( _environment, "center__currentWidth" );
+    Variable * newLine = variable_retrieve( _environment, "center__newLine" );
+
+    variable_move( _environment, stringParameter->name, string->name );
+    variable_move( _environment, currentWidthParameter->name, currentWidth->name );
+    variable_store( _environment, newLine->name, ( _newline && ( _environment->centerWithoutNewLine == 0 ) ) ? 1 : 0 );
+
+    cpu_call( _environment, "lib_center");
+
+    
 }

@@ -1883,6 +1883,7 @@ typedef struct _Deployed {
     int dojo_fujinet;
     int screen;
     int dojo_fujinet_init;
+    int center;
     
 } Deployed;
 
