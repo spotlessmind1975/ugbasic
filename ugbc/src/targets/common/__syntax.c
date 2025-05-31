@@ -6634,3 +6634,25 @@ RAM o in una memoria video separata. Dipende dal computer che stai programmando.
 
 @example actual = BITMAPADDRESS
 </usermanual> */
+
+/* <usermanual>
+@keyword PEN (variable)
+
+@english
+
+The ''PEN'' variable contains the current color used to draw 
+graphics or text.
+
+@italian
+
+La variable ''PEN'' contiene il colore attuale utilizzato 
+per disegnare gli elementi grafici o i testi.
+
+@syntax = PEN
+
+@example x = PEN
+
+@seeAlso PEN (instruction)
+
+@target all
+</usermanual> */
