@@ -13352,6 +13352,7 @@ int main( int _argc, char *_argv[] ) {
 
     _environment->printSafe = 1;
     _environment->putImageSafe = 1;
+    _environment->getImageSafe = 1;
 
     _environment->keyboardConfig.latency = 700 / 20;
     _environment->keyboardConfig.delay = 150 / 20;
