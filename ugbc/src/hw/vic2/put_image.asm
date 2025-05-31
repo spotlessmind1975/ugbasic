@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 ; ----------------------------------------------------------------------------
 ; - Put image on bitmap
 ; ----------------------------------------------------------------------------
@@ -44,7 +46,14 @@ RLEUSE: .BYTE $0
 PUTIMAGE:
 
 @IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
 @IF C64REU

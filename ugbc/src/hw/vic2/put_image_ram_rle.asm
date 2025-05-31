@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 PUTIMAGERAMRLE:
 
 @IF vestigialConfig.screenModeUnique
@@ -69,7 +71,14 @@ PUTIMAGERLE1X:
 PUTIMAGERLE4X:
 
 @IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -437,7 +446,14 @@ PUTIMAGERLE0:
     PUTIMAGERLE0EA:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -709,7 +725,14 @@ PUTIMAGERLE1:
     PUTIMAGERLE1EA:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -729,7 +752,14 @@ PUTIMAGERLE1:
 PUTIMAGERLE4:
 
 @IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -1369,7 +1399,14 @@ PUTIMAGERLE2:
     PUTIMAGERLE2E:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -1901,7 +1938,14 @@ PUTIMAGERLE3:
     PUTIMAGERLE3EFINAL:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS

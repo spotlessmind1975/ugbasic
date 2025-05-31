@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 PUTIMAGEHEADER:
     .BYTE $00, $00, $00
 
@@ -97,7 +99,14 @@ PUTIMAGEREU1X:
 PUTIMAGEREU4X:
 
 @IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -631,7 +640,14 @@ PUTIMAGEREU0:
     PUTIMAGEREU0EA:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -1003,7 +1019,14 @@ PUTIMAGEREU1:
     PUTIMAGEREU1EA:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -1015,7 +1038,14 @@ PUTIMAGEREU1:
 PUTIMAGEREU4:
 
 @IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS
@@ -1715,7 +1745,14 @@ PUTIMAGEREU2:
     PUTIMAGEREU2E:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
@@ -2583,7 +2620,14 @@ PUTIMAGEREU3:
     PUTIMAGEREU3EFINAL:
 
 @IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
         CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
         RTS
