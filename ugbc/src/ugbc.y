@@ -12020,12 +12020,15 @@ statement2nc:
   }
   | CLS expr {
       cls( _environment, $2 );
+      home( _environment );
   }
   | PCLS {
       cls( _environment, NULL );
+      home( _environment );
   }
   | PCLS expr {
       cls( _environment, $2 );
+      home( _environment );
   }
   | HOME {
       home( _environment );
