@@ -14128,7 +14128,7 @@ int yyerror ( Environment * _ignored, const char * _message ) /* Called by yypar
     if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", message, yylineno, (yycolno+1), (yyposno+1));
     } else {
-      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", message, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", message, yylineno-stacked, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
     }
     
     exit(EXIT_FAILURE);
