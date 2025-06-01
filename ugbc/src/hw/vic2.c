@@ -692,6 +692,7 @@ void vic2_background_color_vars( Environment * _environment, char * _index, char
     outline1("LDA %s", _background_color );
     outline0("STA _PAPER");
     outhead1("%s:", label);    
+    outline1("LDA %s", _index);
     outline0("TAX");
     outline1("LDA %s", _background_color );
     outline0("AND #$0f" );
