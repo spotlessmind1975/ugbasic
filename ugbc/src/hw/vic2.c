@@ -3949,7 +3949,8 @@ void vic2_wait_vbl( Environment * _environment, char * _raster_line ) {
     if ( ! _raster_line ) {
         outline0("JSR VBL");
     } else {
-        outline1("LDA %s", _raster_line);
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
+        outline1("LDA %s", raster_line->realName);
         outline0("JSR VBLLINE");
     }
 
