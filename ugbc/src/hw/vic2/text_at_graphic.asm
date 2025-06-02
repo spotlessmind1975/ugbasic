@@ -194,7 +194,17 @@ TEXTATBMGO8HIB:
    
 TEXTATBMGOMI0:
 
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 2 )
+
     BEQ TEXTATBMGOMI1
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && ( currentMode == 3 )
+
+    BNE TEXTATBMGOMI1
+    
+@ENDIF
 
     CLC
 
@@ -361,7 +371,17 @@ TEXTATBMPRINTDOPIPPO:
 
 TEXTATBMSP0LOLOA:    
 
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 2 )
+
+    BEQ TEXTATBMSP0LOLOB
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && ( currentMode == 3 )
+
     BNE TEXTATBMSP0LOLOB
+
+@ENDIF
 
     CLC
 
@@ -419,7 +439,17 @@ TEXTATBMSP0MIMI1:
 
 TEXTATBMSP0MIMI20:
 
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 2 )
+
     BEQ TEXTATBMSP0MIMI21
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && ( currentMode == 3 )
+
+    BNE TEXTATBMSP0MIMI21
+
+@ENDIF
 
     CLC
 
@@ -480,7 +510,7 @@ TEXTATBMSP0L1:
 
 @IF vestigialConfig.screenModeUnique && (currentMode==3)
 
-    JMP TEXTATBMSP0L1B3
+   JMP TEXTATBMSP0L1B3
 
 @ELSE
 
@@ -581,7 +611,7 @@ TEXTATBMSP0L1X:
 
 @IF vestigialConfig.screenModeUnique && (currentMode==3)
 
-    JMP TEXTATBMC3
+   JMP TEXTATBMC3
 
 @ELSE
 
