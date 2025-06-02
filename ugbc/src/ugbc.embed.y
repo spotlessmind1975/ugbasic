@@ -566,6 +566,10 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->transparencyCoarse;
         } else if ( strcmp( $1, "printSafe" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->printSafe;
+        } else if ( strcmp( $1, "putImageSafe" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->putImageSafe;
+        } else if ( strcmp( $1, "getImageSafe" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->getImageSafe;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;

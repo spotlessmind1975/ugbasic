@@ -351,6 +351,11 @@ KEYBOARDINKEY:          DB $FF
 
     ASCIICODE:
         CALL SCANCODE
+        CP $ff
+        JR Z, ASCIICODEDIR
+        LD A, 0
+        RET
+    ASCIICODEDIR:
         LD HL, KEYBOARDMAP 
         LD E, A
         LD A, 0
@@ -1222,6 +1227,10 @@ KEYBOARDTEMP:           DB $00
 
     ASCIICODE:
         CALL SCANCODE
+        CP $ff
+        JR Z, ASCIICODEDIR
+        LD A, 0
+        RET
     ASCIICODEDIR:
         LD HL, KEYBOARDMAP 
         LD E, A

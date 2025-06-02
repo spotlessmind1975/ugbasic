@@ -151,7 +151,7 @@ void target_initialization( Environment * _environment ) {
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
     variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );
-    print( _environment, outOfMemoryMessage->name, 1, 0 );
+    print( _environment, outOfMemoryMessage->name, 1, _environment->printRaw );
 
     cpu_halt( _environment );
 

@@ -35,11 +35,29 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 ; ----------------------------------------------------------------------------
 ; - Get image from bitmap
 ; ----------------------------------------------------------------------------
 
 GETIMAGE:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LDA CURRENTMODE
     ; BITMAP_MODE_STANDARD
     CMP #2
@@ -66,12 +84,80 @@ GETIMAGE1X:
     BNE GETIMAGE4X
     JMP GETIMAGE4
 GETIMAGE4X:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) )
+
 GETIMAGE0:
-GETIMAGE1:
-GETIMAGE4:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) )
+
+GETIMAGE1:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 4 ) )
+
+GETIMAGE4:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+    RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) )
 
 GETIMAGE2:
     LDY #0
@@ -266,7 +352,23 @@ GETIMAGE2L2:
     JMP GETIMAGE2L2
 
 GETIMAGE2E:
+
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 ;;;;;;;;;;;;;;;;;
 
@@ -549,4 +651,18 @@ GETIMAGE3E:
     AND #$0F
     STA (TMPPTR),Y
 
+@IF getImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
+
+@ENDIF
+

@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 TEXTATBITMAPMODE:
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
@@ -51,7 +53,14 @@ TEXTATBITMAPMODE:
     STA COPYOFCOLORMAPADDRESS+1
     
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     LDX XCURSYS
@@ -338,8 +347,16 @@ TEXTATBMEND2:
 TEXTATBMEND:
 
 @IF printSafe
-    CLI
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
 @ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
 
 @ENDIF
 

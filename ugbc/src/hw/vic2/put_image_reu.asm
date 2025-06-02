@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 PUTIMAGEHEADER:
     .BYTE $00, $00, $00
 
@@ -95,6 +97,18 @@ PUTIMAGEREU1X:
     BNE PUTIMAGEREU4X
     JMP PUTIMAGEREU4
 PUTIMAGEREU4X:
+
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 @ENDIF
@@ -624,6 +638,18 @@ PUTIMAGEREU0:
 
     PUTIMAGEREU0E:
     PUTIMAGEREU0EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -991,6 +1017,18 @@ PUTIMAGEREU1:
 
     PUTIMAGEREU1E:
     PUTIMAGEREU1EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 @ENDIF
@@ -998,6 +1036,18 @@ PUTIMAGEREU1:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 PUTIMAGEREU4:
+
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 @ENDIF
@@ -1693,6 +1743,18 @@ PUTIMAGEREU2:
 
     PUTIMAGEREU2EA:
     PUTIMAGEREU2E:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 @ENDIF
@@ -2556,6 +2618,18 @@ PUTIMAGEREU3:
         STA $D021
 
     PUTIMAGEREU3EFINAL:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 @ENDIF

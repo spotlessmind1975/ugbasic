@@ -277,6 +277,11 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+	if( po_buf_match( buf[0], " LDA #$*", v1 ) && po_buf_match( buf[1], " LDA #$*", v2 ) ) {
+		optim( buf[0], RULE "(LDA #, LDA #)->(LDA #)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
     // // ;Instead of
 	// // ld b,$20
 	// // ld c,$30

@@ -1886,6 +1886,7 @@ typedef struct _Deployed {
     int dojo_fujinet;
     int screen;
     int dojo_fujinet_init;
+    int center;
     
 } Deployed;
 
@@ -3121,6 +3122,9 @@ typedef struct _Environment {
     int putImageRefUnsafe;
 
     int printSafe;
+    int printRaw;
+    int putImageSafe;
+    int getImageSafe;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -3173,20 +3177,82 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
+int yyerror ( Environment * _ignored, const char * _message );
+
 #if defined(_DEBUG)
-    #define CRITICAL( s ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL2( s, v ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL2i( s, v ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "FILE: %s LINE: %d\nCRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", __FILE__,__LINE__, ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL( s ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s FILE: %s LINE: %d", s, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL2( s, v ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s) FILE: %s LINE: %d", s, v, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL2i( s, v ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%d) FILE: %s LINE: %d", s, v, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %s) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3i( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %d) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL4si( s, v, d1, d2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %d, %d) FILE: %s LINE: %d", s, v, d1, d2, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
 #else
-    #define CRITICAL( s ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL2( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL2i( s, v ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL3( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %s) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL3i( s, v1, v2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
-    #define CRITICAL4si( s, v, d1, d2 ) fprintf(stderr, "CRITICAL ERROR during compilation of %s:\n\t%s (%s, %d, %d) at %d column %d (%d)\n", ((struct _Environment *)_environment)->sourceFileName, s, v, d1, d2, ((struct _Environment *)_environment)->yylineno, (yycolno+1), (yyposno+1) ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
+    #define CRITICAL( s ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s", s ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL2( s, v ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s)", s, v ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL2i( s, v ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%d)", s, v ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %s)", s, v1, v2 ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3i( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %d)", s, v1, v2 ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL4si( s, v, d1, d2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        sprintf(errorMessage, "%s (%s, %d, %d)", s, v, d1, d2 ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
 #endif
 
 #define CRITICAL_INTERNAL_ERROR( v ) CRITICAL2("E000 - Internal error", v );

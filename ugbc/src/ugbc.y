@@ -4285,6 +4285,11 @@ exponential_less:
     | TIMER {
         $$ = get_timer( _environment )->name;
     }
+    | PEN {
+        Variable * pen = variable_temporary( _environment, VT_COLOR, "(pen)" );
+        cpu_move_8bit( _environment, "_PEN", pen->realName );
+        $$ = pen->name;
+    }
     | PEN OP expr CP {
         $$ = get_pen( _environment, $3 )->name;
     }
@@ -8933,11 +8938,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
@@ -8950,11 +8955,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }
@@ -8965,11 +8970,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -8979,11 +8984,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
         print_newline( _environment );
@@ -8996,11 +9001,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }
@@ -9012,11 +9017,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -9093,6 +9098,24 @@ define_definition :
     }
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
+    }
+    | PUT IMAGE FAST {
+        ((struct _Environment *)_environment)->putImageSafe = 0;
+    }
+    | PUT IMAGE SAFE {
+        ((struct _Environment *)_environment)->putImageSafe = 1;
+    }
+    | GET IMAGE FAST {
+        ((struct _Environment *)_environment)->getImageSafe = 0;
+    }
+    | GET IMAGE SAFE {
+        ((struct _Environment *)_environment)->getImageSafe = 1;
+    }
+    | PRINT RAW {
+        ((struct _Environment *)_environment)->printRaw = 1;
+    }
+    | PRINT NORMAL {
+        ((struct _Environment *)_environment)->printRaw = 0;
     }
     | PRINT FAST {
         ((struct _Environment *)_environment)->printSafe = 0;
@@ -10935,7 +10958,7 @@ fujinet_definition :
 
 raw_optional : 
     {
-        $$ = 0;
+        $$ = ((struct _Environment *)_environment)->printRaw;
     }
     | RAW {
         $$ = 1;
@@ -12015,12 +12038,15 @@ statement2nc:
   }
   | CLS expr {
       cls( _environment, $2 );
+      home( _environment );
   }
   | PCLS {
       cls( _environment, NULL );
+      home( _environment );
   }
   | PCLS expr {
       cls( _environment, $2 );
+      home( _environment );
   }
   | HOME {
       home( _environment );
@@ -13351,6 +13377,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
 
     _environment->printSafe = 1;
+    _environment->putImageSafe = 1;
+    _environment->getImageSafe = 1;
 
     _environment->keyboardConfig.latency = 700 / 20;
     _environment->keyboardConfig.delay = 150 / 20;
@@ -14072,59 +14100,62 @@ int main( int _argc, char *_argv[] ) {
 
 int yyerror ( Environment * _ignored, const char * _message ) /* Called by yyparse on error */
 {
+    char * message = strdup(_message);
 
-    char * message = strreplace( _message, "Remark", "remark symbol (REM)" );
-    message = strreplace( message, "NewLine", "new line (CR/LF)" );
-    message = strreplace( message, "OP_PERIOD", "period (.)" );
-    message = strreplace( message, "OP_SEMICOLON", "semicolon (;)" );
-    message = strreplace( message, "OP_COLON", "colon (:)" );
-    message = strreplace( message, "OP_COMMA", "comma (,)" );
-    message = strreplace( message, "OP_MINUS", "minus sign (-)" );
-    message = strreplace( message, "OP_EQUAL", "equal sign (==)" );
-    message = strreplace( message, "OP_ASSIGN", "equal sign (=)" );
-    message = strreplace( message, "OP_LT", "less than operator (<)" );
-    message = strreplace( message, "OP_LTE", "less than or equal operator (<=)" );
-    message = strreplace( message, "OP_GT", "greater than operator (>)" );
-    message = strreplace( message, "OP_GTE", "greater than operator (>=)" );
-    message = strreplace( message, "OP_DISEQUAL", "other than operator (<>)" );
-    message = strreplace( message, "OP_MULTIPLICATION", "multiplication operator (*)" );
-    message = strreplace( message, "OP_MULTIPLICATION2", "multiplication operator (**)" );
-    message = strreplace( message, "OP_DOLLAR", "dollar symbol ($)" );
-    message = strreplace( message, "OP_DIVISION", "division operator (/)" );
-    message = strreplace( message, "OP_DIVISION2", "division operator (\\)" );
-    message = strreplace( message, "OP_QM", "question mark (?)" );
-    message = strreplace( message, "OP_HASH", "hash operator (#)" );
-    message = strreplace( message, "OP_ASSIGN_DIRECT", "assignment operator (:=)" );
-    message = strreplace( message, "OP_EXCLAMATION", "exclamation point (!)" );
-    message = strreplace( message, "OP_DOLLAR2", "double dollar sing ($$)" );
-    message = strreplace( message, "BEG", "BEGIN" );
-    message = strreplace( message, "OSP", "open square bracket" );
-    message = strreplace( message, "CSP", "closed square bracket" );
-    message = strreplace( message, "OGP", "open curly bracket" );
-    message = strreplace( message, "CGP", "closed curly bracket" );
-    message = strreplace( message, "OP_PERC", "percentage sign (%)" );
-    message = strreplace( message, "OP_PERC2", "double percentage sign (%%)" );
-    message = strreplace( message, "OP_PLUS", "plus sign (+)" );
-    message = strreplace( message, "OP_MINUS", "minus sign (-)" );
-    message = strreplace( message, "OP_AMPERSAND", "ampersand sign (&)" );
-    message = strreplace( message, "OP_AT", "at sign (@)" );
-    message = strreplace( message, "NULLkw", "NULL" );
-    message = strreplace( message, "Identifier", "identifier (name)" );
-    message = strreplace( message, "IdentifierSpaced", "identifier (name)" );
-    message = strreplace( message, "String", "string" );
-    message = strreplace( message, "Integer", "integer number" );
-    message = strreplace( message, "BufferDefinitionHex", "buffer definition (in hex format)" );
-    message = strreplace( message, "RawString", "string" );
-    message = strreplace( message, "Float", "floating point number" );
-    message = strreplace( message, "Register", "CPU register" );
-    message = strreplace( message, "AsmSnippet", "assembly code" );
-    message = strreplace( message, "OP", "open parenthesis" );
-    message = strreplace( message, "CP", "closed parenthesis" );
+    if ( _ignored ) {
+        message = strreplace( message, "Remark", "remark symbol (REM)" );
+        message = strreplace( message, "NewLine", "new line (CR/LF)" );
+        message = strreplace( message, "OP_PERIOD", "period (.)" );
+        message = strreplace( message, "OP_SEMICOLON", "semicolon (;)" );
+        message = strreplace( message, "OP_COLON", "colon (:)" );
+        message = strreplace( message, "OP_COMMA", "comma (,)" );
+        message = strreplace( message, "OP_MINUS", "minus sign (-)" );
+        message = strreplace( message, "OP_EQUAL", "equal sign (==)" );
+        message = strreplace( message, "OP_ASSIGN", "equal sign (=)" );
+        message = strreplace( message, "OP_LT", "less than operator (<)" );
+        message = strreplace( message, "OP_LTE", "less than or equal operator (<=)" );
+        message = strreplace( message, "OP_GT", "greater than operator (>)" );
+        message = strreplace( message, "OP_GTE", "greater than operator (>=)" );
+        message = strreplace( message, "OP_DISEQUAL", "other than operator (<>)" );
+        message = strreplace( message, "OP_MULTIPLICATION", "multiplication operator (*)" );
+        message = strreplace( message, "OP_MULTIPLICATION2", "multiplication operator (**)" );
+        message = strreplace( message, "OP_DOLLAR", "dollar symbol ($)" );
+        message = strreplace( message, "OP_DIVISION", "division operator (/)" );
+        message = strreplace( message, "OP_DIVISION2", "division operator (\\)" );
+        message = strreplace( message, "OP_QM", "question mark (?)" );
+        message = strreplace( message, "OP_HASH", "hash operator (#)" );
+        message = strreplace( message, "OP_ASSIGN_DIRECT", "assignment operator (:=)" );
+        message = strreplace( message, "OP_EXCLAMATION", "exclamation point (!)" );
+        message = strreplace( message, "OP_DOLLAR2", "double dollar sing ($$)" );
+        message = strreplace( message, "BEG", "BEGIN" );
+        message = strreplace( message, "OSP", "open square bracket" );
+        message = strreplace( message, "CSP", "closed square bracket" );
+        message = strreplace( message, "OGP", "open curly bracket" );
+        message = strreplace( message, "CGP", "closed curly bracket" );
+        message = strreplace( message, "OP_PERC", "percentage sign (%)" );
+        message = strreplace( message, "OP_PERC2", "double percentage sign (%%)" );
+        message = strreplace( message, "OP_PLUS", "plus sign (+)" );
+        message = strreplace( message, "OP_MINUS", "minus sign (-)" );
+        message = strreplace( message, "OP_AMPERSAND", "ampersand sign (&)" );
+        message = strreplace( message, "OP_AT", "at sign (@)" );
+        message = strreplace( message, "NULLkw", "NULL" );
+        message = strreplace( message, "Identifier", "identifier (name)" );
+        message = strreplace( message, "IdentifierSpaced", "identifier (name)" );
+        message = strreplace( message, "String", "string" );
+        message = strreplace( message, "Integer", "integer number" );
+        message = strreplace( message, "BufferDefinitionHex", "buffer definition (in hex format)" );
+        message = strreplace( message, "RawString", "string" );
+        message = strreplace( message, "Float", "floating point number" );
+        message = strreplace( message, "Register", "CPU register" );
+        message = strreplace( message, "AsmSnippet", "assembly code" );
+        message = strreplace( message, "OP", "open parenthesis" );
+        message = strreplace( message, "CP", "closed parenthesis" );
+    }
 
     if ( stacked == 0 ) {
       fprintf(stderr,  "*** ERROR: %s at %d column %d (%d)\n", message, yylineno, (yycolno+1), (yyposno+1));
     } else {
-      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", message, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+      fprintf(stderr,  "*** ERROR: %s at %d column %d (%d, %s)\n", message, yylineno-stacked, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
     }
     
     exit(EXIT_FAILURE);
