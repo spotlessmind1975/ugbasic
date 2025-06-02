@@ -235,6 +235,10 @@ OLDSVC0208:
 
     ASCIICODE:
         JSR SCANCODE
+        CMP #$FF
+        BNE ASCIICODEDIR
+        LDA #0
+        RTS        
     ASCIICODEDIR:
         TAY
         LDA #<KEYBOARDMAP
@@ -1070,6 +1074,10 @@ OLDSVC0208:
 
     ASCIICODE:
         JSR SCANCODE
+        CMP #$FF
+        BNE ASCIICODEDIR
+        LDA #0
+        RTS
     ASCIICODEDIR:
         TAY
         LDA #<KEYBOARDMAP

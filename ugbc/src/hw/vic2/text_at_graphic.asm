@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 ; ******************************************************************************
 ; ENTRY POINT
 ; ******************************************************************************
@@ -57,6 +59,8 @@ TEXTATBMGO:
     ASL
     ASL
     STA MATHPTR6
+
+@IF !vestigialConfig.screenModeUnique
 
     LDA CURRENTMODE
     CMP #3
@@ -124,6 +128,8 @@ TEXTATBMGOFORCE2:
 
 TEXTATBMGOFORCEGO:
 
+@ENDIF
+
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
     LDA #0
@@ -134,7 +140,14 @@ TEXTATBMGOFORCEGO:
     STA COPYOFCOLORMAPADDRESS+1
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     LDX XCURSYS
@@ -143,15 +156,26 @@ TEXTATBMGOFORCEGO:
     CLC
 
     LDA PLOTVBASELO,Y          ;table of $A000 row base addresses
+
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
+
 TEXTATBMGO8LOA:
     ADC PLOT8LO,X              ;+ (8 * Xcell)
+@ENDIF
+
 TEXTATBMGO8LOB:
     ADC PLOT8LO,X              ;+ (8 * Xcell)
     STA PLOTDEST               ;= cell address
 
     LDA PLOTVBASEHI,Y          ;do the high byte
+
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
+
 TEXTATBMGO8HIA:
     ADC PLOT8HI,X
+
+@ENDIF
+
 TEXTATBMGO8HIB:
     ADC PLOT8HI,X
     STA PLOTDEST+1
@@ -443,9 +467,24 @@ TEXTATBMSP0MIMI21:
     ADC TMPPTR+1
     STA TMPPTR+1
 TEXTATBMSP0L1:
+
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMP #3
     BEQ TEXTATBMSP0L1B3
+
+@ELSE
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && (currentMode==3)
+
+    JMP TEXTATBMSP0L1B3
+
+@ELSE
+
+@ENDIF
 
 TEXTATBMSP0L1B2:
     LDA (TMPPTR),Y
@@ -530,9 +569,23 @@ TEXTATBMSP0L1X:
     CPY #8
     BNE TEXTATBMSP0L1
 
+@IF !vestigialConfig.screenModeUnique
+
     LDA CURRENTMODE
     CMP #3
     BEQ TEXTATBMC3
+
+@ELSE
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && (currentMode==3)
+
+    JMP TEXTATBMC3
+
+@ELSE
+
+@ENDIF
 
     LDY #0
     LDA (PLOTCDEST),Y
@@ -663,7 +716,14 @@ TEXTATBMXLOOP2:
 TEXTATBMDONE:
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
 @ENDIF

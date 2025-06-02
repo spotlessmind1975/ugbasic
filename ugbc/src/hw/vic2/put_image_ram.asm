@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 PUTIMAGERAM:
 
 @IF vestigialConfig.screenModeUnique
@@ -67,6 +69,18 @@ PUTIMAGE1X:
     BNE PUTIMAGE4X
     JMP PUTIMAGE4
 PUTIMAGE4X:
+
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 @ENDIF
@@ -430,6 +444,18 @@ PUTIMAGE0:
 
     PUTIMAGE0E:
     PUTIMAGE0EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 
@@ -697,6 +723,17 @@ PUTIMAGE1:
 
     PUTIMAGE1E:
     PUTIMAGE1EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,6 +749,17 @@ PUTIMAGE1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGE4:
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1347,6 +1395,18 @@ PUTIMAGE2:
 
     PUTIMAGE2EA:
     PUTIMAGE2E:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -2326,6 +2386,18 @@ PUTIMAGE3:
         STA $D021
 
     PUTIMAGE3EFINAL:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

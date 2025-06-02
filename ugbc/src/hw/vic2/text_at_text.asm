@@ -34,6 +34,9 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+.localchar      '?'
+
 ; ******************************************************************************
 ; COMMON FUNCTIONS
 ; ******************************************************************************
@@ -149,7 +152,14 @@ TEXTATTMGO:
     STA COPYOFCOLORMAPADDRESS+1
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     ; LDA #23
@@ -355,7 +365,14 @@ TEXTATTMXLOOP2:
 TEXTATTMDONE:
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
 @ENDIF

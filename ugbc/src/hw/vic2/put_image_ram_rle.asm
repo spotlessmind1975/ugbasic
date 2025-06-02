@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 PUTIMAGERAMRLE:
 
 @IF vestigialConfig.screenModeUnique
@@ -67,6 +69,18 @@ PUTIMAGERLE1X:
     BNE PUTIMAGERLE4X
     JMP PUTIMAGERLE4
 PUTIMAGERLE4X:
+
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 @ENDIF
@@ -430,6 +444,18 @@ PUTIMAGERLE0:
 
     PUTIMAGERLE0E:
     PUTIMAGERLE0EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 
@@ -697,6 +723,18 @@ PUTIMAGERLE1:
 
     PUTIMAGERLE1E:
     PUTIMAGERLE1EA:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -712,6 +750,18 @@ PUTIMAGERLE1:
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGERLE4:
+
+@IF putImageSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1347,6 +1397,18 @@ PUTIMAGERLE2:
 
     PUTIMAGERLE2EA:
     PUTIMAGERLE2E:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1874,6 +1936,18 @@ PUTIMAGERLE3:
         STA $D021
 
     PUTIMAGERLE3EFINAL:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
         RTS
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

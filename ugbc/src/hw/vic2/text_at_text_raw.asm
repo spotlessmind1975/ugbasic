@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 TEXTATTILEMODERAW:
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
@@ -54,7 +56,14 @@ TEXTATRAWTILEMODEGO:
     STA COPYOFCOLORMAPADDRESS+1
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
 TEXTATRAWPRECHKCONSOLE:
@@ -191,7 +200,14 @@ TEXTATRAWEND2:
 TEXTATRAWEND:
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
 @ENDIF

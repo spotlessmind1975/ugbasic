@@ -692,6 +692,7 @@ void vic2_background_color_vars( Environment * _environment, char * _index, char
     outline1("LDA %s", _background_color );
     outline0("STA _PAPER");
     outhead1("%s:", label);    
+    outline1("LDA %s", _index);
     outline0("TAX");
     outline1("LDA %s", _background_color );
     outline0("AND #$0f" );
@@ -2122,7 +2123,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    
+
     if ( _raw ) {
         if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
             deploy_deferred( clsGraphic, src_hw_vic2_cls_graphic_asm );
@@ -3948,6 +3949,8 @@ void vic2_wait_vbl( Environment * _environment, char * _raster_line ) {
     if ( ! _raster_line ) {
         outline0("JSR VBL");
     } else {
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
+        outline1("LDA %s", raster_line->realName);
         outline0("JSR VBLLINE");
     }
 

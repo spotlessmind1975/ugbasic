@@ -758,13 +758,13 @@ void cpu6502_compare_8bit_const( Environment * _environment, char *_source, int 
     inline( cpu_compare_8bit )
 
         outline1("LDA %s", _source);
-        outline1("CMP #$%2.2x", _destination);
+        outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
         outline1("BNE %s", label);
-        outline1("LDA #$%2.2x", 0xff*_positive );
+        outline1("LDA #$%2.2x", (unsigned char)( (0xff*_positive) & 0xff ) );
         outline1("STA %s", _other);
         outline1("JMP %s_2", label);
         outhead1("%s:", label);
-        outline1("LDA #$%2.2x", 0xff*(1-_positive) );
+        outline1("LDA #$%2.2x", (unsigned char)( (0xff*(1-_positive)) & 0xff )  );
         outline1("STA %s", _other);
         outhead1("%s_2:", label);
 
@@ -820,7 +820,7 @@ void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_s
     inline( cpu_compare_and_branch_8bit_const )
 
         outline1("LDA %s", _source);
-        outline1("CMP #$%2.2x", _destination);
+        outline1("CMP #$%2.2x", (unsigned char)(_destination&0xff));
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
@@ -848,7 +848,7 @@ void cpu6502_execute_compare_and_branch_8bit_const( Environment * _environment, 
 
     inline( cpu_compare_and_branch_8bit_const )
 
-        outline1("CMP #$%2.2x", _destination);
+        outline1("CMP #$%2.2x", (unsigned char)(_destination & 0xff));
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
@@ -877,7 +877,7 @@ void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_s
     inline( cpu_compare_and_branch_char_const )
 
         outline1("LDA %s", _source);
-        outline1("CMP #'%c'", _destination);
+        outline1("CMP #'%c'", (unsigned char)(_destination&0xff));
         if ( _positive ) {
             outline1("BNE %s", label);
         } else {
@@ -987,7 +987,7 @@ void cpu6502_less_than_8bit_const( Environment * _environment, char *_source, in
             outhead1("%sen:", label);
         } else {
             outline1("LDA %s", _source);
-            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
             outline1("BCC %s", label);
             if ( _equal ) {
                 outline1("BEQ %s", label);
@@ -1029,7 +1029,7 @@ void cpu6502_less_than_and_branch_8bit_const( Environment * _environment, char *
             outhead1("%sen:", label);
         } else {
             outline1("LDA %s", _source);
-            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
             outline1("BCC %s", label);
             if ( _equal ) {
                 outline1("BEQ %s", label);
@@ -1851,10 +1851,10 @@ void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_
     inline( cpu_compare_and_branch_16bit_const )
 
         outline1("LDA %s", address_displacement(_environment, _source, "1"));
-        outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
+        outline1("CMP #$%2.2x", (unsigned char)(( _destination >> 8 ) & 0xff ));
         outline1("BNE %s", label);
         outline1("LDA %s", _source);
-        outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
         outline1("BNE %s", label);
         if ( _positive ) {
             outline1("JMP %s", _label);
@@ -1990,13 +1990,13 @@ void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, i
             outhead1("%sen:", label);
         } else {
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
-            outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1:", label);
             outline1("LDA %s", _source);
-            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
             if ( _equal ) {
                 outline1("BEQ %s", label);
             }
@@ -3328,16 +3328,16 @@ void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_
     inline( cpu_compare_and_branch_32bit_const )
 
         outline1("LDA %s", address_displacement(_environment, _source, "3"));
-        outline1("CMP #$%2.2x", ( _destination >> 24 ) & 0xff );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination >> 24 ) & 0xff );
         outline1("BNE %s", label);
         outline1("LDA %s", address_displacement(_environment, _source, "2"));
-        outline1("CMP #$%2.2x", ( _destination >> 16 ) & 0xff );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination >> 16 ) & 0xff );
         outline1("BNE %s", label);
         outline1("LDA %s", address_displacement(_environment, _source, "1"));
-        outline1("CMP #$%2.2x", ( _destination >> 8 ) & 0xff );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination >> 8 ) & 0xff );
         outline1("BNE %s", label);
         outline1("LDA %s", _source);
-        outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+        outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
         outline1("BNE %s", label);
         if ( _positive ) {
             outline1("JMP %s", _label);
@@ -3490,13 +3490,13 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
             }
     
             outline1("LDA %s", _source);
-            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
-            outline1("SBC #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("SBC #$%2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
             outline1("LDA %s", address_displacement(_environment, _source, "2"));
-            outline1("SBC #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
+            outline1("SBC #$%2.2x", (unsigned char)( ( _destination >> 16 ) & 0xff ) );
             outline1("LDA %s", address_displacement(_environment, _source, "3"));
-            outline1("SBC #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
+            outline1("SBC #$%2.2x", (unsigned char)( ( _destination >> 24 ) & 0xff ) );
             outline1("BVC %sv0", label );
             outline0("EOR #$80" );
             outhead1("%sv0:", label );
@@ -3518,25 +3518,25 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
 
         } else {
             outline1("LDA %s", address_displacement(_environment, _source, "3"));
-            outline1("CMP #$%2.2x", ( ( _destination >> 24 ) & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> 24 ) & 0xff ) );
             outline1("BEQ %s_1a", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1a:", label);
             outline1("LDA %s", address_displacement(_environment, _source, "2"));
-            outline1("CMP #$%2.2x", ( ( _destination >> 16 ) & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> 16 ) & 0xff ) );
             outline1("BEQ %s_1", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1:", label);
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
-            outline1("CMP #$%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
             outline1("BEQ %s_1b", label);
             outline1("BCC %s", label);
             outline1("BCS %s_0", label);
             outhead1("%s_1b:", label);
             outline1("LDA %s", _source);
-            outline1("CMP #$%2.2x", ( _destination & 0xff ) );
+            outline1("CMP #$%2.2x", (unsigned char)( _destination & 0xff ) );
             if ( _equal ) {
                 outline1("BEQ %s", label);
             }
@@ -4576,9 +4576,9 @@ void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _val
         outline0( "LDA #$0" );
         outline1( "STA %s", address_displacement(_environment, _variable, "1") );
         outline1( "LDA %s", _variable );
-        outline1( "CMP #$%2.2x", _value );
+        outline1( "CMP #$%2.2x", (unsigned char)(_value & 0xff ) );
         outline1( "BCC %s", label );
-        outline1( "SBC #$%2.2x", _value );
+        outline1( "SBC #$%2.2x", (unsigned char)(_value & 0xff ) );
         outline1( "STA %s", _variable );
         outhead1( "%s:", label );
 

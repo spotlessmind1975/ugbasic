@@ -484,27 +484,36 @@ SIDSTOP2X:
 SIDSTOP0:
     PHA
     LDA SIDSHADOW
-    AND #$FE
+    AND #$F6
     STA SIDSHADOW
     STA $D404
+    LDA #0
+    STA $D400
+    STA $D401
     PLA
     RTS
 
 SIDSTOP1:
     PHA
     LDA SIDSHADOW+1
-    AND #$FE
+    AND #$F6
     STA SIDSHADOW+1
     STA $D40B
+    LDA #0
+    STA $D407
+    STA $D408
     PLA
     RTS
 
 SIDSTOP2:
     PHA
     LDA SIDSHADOW+2
-    AND #$FE
+    AND #$F6
     STA SIDSHADOW+2
     STA $D412
+    LDA #0
+    STA $D40E
+    STA $D40F
     PLA
     RTS
 

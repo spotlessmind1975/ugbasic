@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 TEXTATTMREADCHAR:
     TYA
     PHA
@@ -111,7 +113,14 @@ TEXTATGO:
     STA COPYOFCOLORMAPADDRESS+1
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     LDA CURRENTMODE
@@ -136,7 +145,14 @@ TEXTATGO3X:
     JMP TEXTATTILEMODE
 TEXTATGO4X:
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
     RTS
 
@@ -540,7 +556,14 @@ TEXTATEND2:
 TEXTATEND:
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     RTS

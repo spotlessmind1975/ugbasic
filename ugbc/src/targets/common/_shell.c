@@ -61,7 +61,7 @@ void shell_injection( Environment * _environment ) {
     
     cpu_label( _environment, "SHELL" );
 
-    print( _environment, presentationLine->name, 1, 0 );
+    print( _environment, presentationLine->name, 1, _environment->printRaw );
 
     begin_do_loop( _environment );
 
@@ -69,7 +69,7 @@ void shell_injection( Environment * _environment ) {
 
         print_newline( _environment );
 
-        print( _environment, prompt->name, 1, 0 );
+        print( _environment, prompt->name, 1, _environment->printRaw );
 
         input( _environment, command->name, VT_DSTRING );
 
@@ -88,7 +88,7 @@ void shell_injection( Environment * _environment ) {
         outline0("; compare and branch2");
         cpu_compare_and_branch_8bit_const( _environment, result->realName, 0xff, "PROGLIST", 1 );
 
-        print( _environment, syntaxError->name, 1, 0 );
+        print( _environment, syntaxError->name, 1, _environment->printRaw );
 
         cpu_dsfree( _environment, loweredCommand->realName );
         cpu_dsfree( _environment, command->realName );

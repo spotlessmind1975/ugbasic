@@ -87,10 +87,10 @@ void fill( Environment * _environment, char * _x, char * _y, char * _w, char * _
         locate( _environment, x->name, NULL );
         variable_move( _environment, w->name, i->name );
         cpu_label( _environment, edgeLabel );
-            print( _environment, ch->name, 0, 0 );
+            print( _environment, ch->name, 0, _environment->printRaw );
             variable_decrement( _environment, i->name );
             variable_compare_and_branch_const( _environment, i->name, 0, edgeLabel, 0 );
-            print( _environment, NULL, 1, 0 );
+            print( _environment, NULL, 1, _environment->printRaw );
         variable_decrement( _environment, j->name );
         variable_compare_and_branch_const( _environment, j->name, 0, lineLabel, 0 );
 

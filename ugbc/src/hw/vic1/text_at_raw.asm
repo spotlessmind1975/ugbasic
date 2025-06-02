@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+.localchar      '?'
+
 TEXTATRAWDECODE:
     CMP #32
     BCS TEXTATRAWXSP128
@@ -96,7 +98,14 @@ TEXTATRAWGO:
     STA COPYOFCOLORMAPADDRESS+1
 
 @IF printSafe
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
+@ENDIF
     SEI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
 @ENDIF
 
     LDA CURRENTMODE
@@ -119,8 +128,16 @@ TEXTATRAWGO3X:
     JMP TEXTATTILEMODERAW
 TEXTATRAWGO4X:
 @IF printSafe
-    CLI
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
 @ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
     
 ;-----------------------------------------------------------------------------
@@ -264,6 +281,14 @@ TEXTATRAWXLOOP2:
 TEXTATRAWEND2:
 TEXTATRAWEND:
 @IF printSafe
-    CLI
+@IF deployed.timer
+    LDA TIMERRUNNING
+    BNE ?skipsafe
 @ENDIF
+    CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
     RTS
