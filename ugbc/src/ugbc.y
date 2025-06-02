@@ -8935,11 +8935,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
@@ -8952,11 +8952,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }
@@ -8967,11 +8967,11 @@ input_definition :
         }
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -8981,11 +8981,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
         print_newline( _environment );
@@ -8998,11 +8998,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }
@@ -9014,11 +9014,11 @@ input_definition :
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
         string->printable = 1;
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, ((struct _Environment *)_environment)->printRaw );
         if ( $2 == 1 ) {
             Variable * qm = variable_temporary( _environment, VT_STRING, "(string value)" );
             variable_store_string( _environment, qm->name, "?" );
-            print( _environment, qm->name, 0, 0 );
+            print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
     }  input_definition2
@@ -9107,6 +9107,12 @@ define_definition :
     }
     | GET IMAGE SAFE {
         ((struct _Environment *)_environment)->getImageSafe = 1;
+    }
+    | PRINT RAW {
+        ((struct _Environment *)_environment)->printRaw = 1;
+    }
+    | PRINT NORMAL {
+        ((struct _Environment *)_environment)->printRaw = 0;
     }
     | PRINT FAST {
         ((struct _Environment *)_environment)->printSafe = 0;
@@ -10940,7 +10946,7 @@ fujinet_definition :
 
 raw_optional : 
     {
-        $$ = 0;
+        $$ = ((struct _Environment *)_environment)->printRaw;
     }
     | RAW {
         $$ = 1;

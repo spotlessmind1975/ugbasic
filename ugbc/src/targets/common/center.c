@@ -158,7 +158,7 @@ void center( Environment * _environment, char * _string, int _newline, char * _w
 
         cpu_label( _environment, doneLabel );
 
-        print( _environment, string->name, 0, 0 );
+        print( _environment, string->name, 0, _environment->printRaw );
 
         cpu_bveq( _environment, newLine->realName, newLineLabel );
 

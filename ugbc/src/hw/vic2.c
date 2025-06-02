@@ -2123,7 +2123,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
     outline0("STA TEXTPTR+1" );
     outline1("LDA %s", _text_size);
     outline0("STA TEXTSIZE" );
-    
+
     if ( _raw ) {
         if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
             deploy_deferred( clsGraphic, src_hw_vic2_cls_graphic_asm );
