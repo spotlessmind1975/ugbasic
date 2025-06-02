@@ -411,7 +411,17 @@ TEXTATBMSP0LOLOB:
 
 TEXTATBMSP0MIMI0:
 
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 2 )
+
     BEQ TEXTATBMSP0MIMI1
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique && ( currentMode == 3 )
+
+    BNE TEXTATBMSP0MIMI1
+
+@ENDIF
 
     CLC
 
