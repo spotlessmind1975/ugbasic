@@ -5290,6 +5290,7 @@ void                    memload( Environment * _environment );
 void                    memorize( Environment * _environment );
 void                    memor( Environment * _environment, char * _address, char * _eaddress, char * _bank );
 void                    memory_area_assign( MemoryArea * _first, Variable * _variable );
+void                    memory_area_unassign( MemoryArea * _first, Variable * _variable );
 void                    mempos( Environment * _environment, char * _address, char * _bank );
 void                    memrestore( Environment * _environment, char * _param );
 void                    memsave( Environment * _environment );
