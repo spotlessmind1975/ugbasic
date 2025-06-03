@@ -10190,6 +10190,9 @@ data_definition_single :
     }
     | const_expr_string {
         data_string( _environment, $1 );
+    }
+    | OSP const_expr_string_const CSP {
+        data_string( _environment, $2 );
     };
 
 data_definition_data :
