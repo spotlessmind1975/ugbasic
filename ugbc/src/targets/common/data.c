@@ -188,6 +188,8 @@ void data_numeric( Environment * _environment, int _value ) {
     dataDataSegment->size = bytes;
     dataDataSegment->data = malloc( bytes );
     dataDataSegment->type = type;
+    dataDataSegment->absoluteAddress = _environment->dataLastAbsoluteAddress;
+    _environment->dataLastAbsoluteAddress += bytes;
 #if defined(CPU_BIG_ENDIAN)
     char * value = (char *)&_value;
     for( int i=0; i<bytes; ++i ) {
@@ -247,6 +249,8 @@ void data_floating( Environment * _environment, double _value ) {
     dataDataSegment->data = malloc( bytes );
     dataDataSegment->type = type;
     dataDataSegment->precision = _environment->floatType.precision;
+    dataDataSegment->absoluteAddress = _environment->dataLastAbsoluteAddress;
+    _environment->dataLastAbsoluteAddress += bytes;
     for( int i=0; i<bytes; ++i ) {
         dataDataSegment->data[i] = (char)(result[i] & 0xff );
     }
@@ -301,6 +305,8 @@ void data_string( Environment * _environment, char * _value ) {
     memset( dataDataSegment->data, 0, bytes + 1 );
     dataDataSegment->type = type;
     memcpy( dataDataSegment->data, value, bytes );
+    dataDataSegment->absoluteAddress = _environment->dataLastAbsoluteAddress;
+    _environment->dataLastAbsoluteAddress += bytes;
 
     if (  _environment->dataDataType ) {
         data->type = _environment->dataDataType;
@@ -344,6 +350,8 @@ void data_type( Environment * _environment ) {
     dataDataSegment->data = malloc( bytes );
     memset( dataDataSegment->data, 0, bytes );
     dataDataSegment->type = VT_TYPE;
+    dataDataSegment->absoluteAddress = _environment->dataLastAbsoluteAddress;
+    _environment->dataLastAbsoluteAddress += bytes;    
     Constant * current = _environment->currentFieldsValues;
     Field * currentField = _environment->currentType->first;
     int offset = 0;

@@ -51,35 +51,26 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
         variable = variable_define( _environment, _variable, _environment->defaultVariableType, 0 );
     }
 
+    Variable * databank = variable_retrieve( _environment, "DATABANK" );
+    Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
+
     if ( VT_BITWIDTH( variable->type ) > 1 ) {
-        outline0( "LDY DATAPTRY" );
         switch( VT_BITWIDTH( variable->type ) ) {
             case 32:
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", variable->realName );
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", address_displacement( _environment, variable->realName, "1" ) );
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", address_displacement( _environment, variable->realName, "2" ) );
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", address_displacement( _environment, variable->realName, "3" ) );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 4 );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
                 break;
             case 16:
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", variable->realName );
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", address_displacement( _environment, variable->realName, "1" ) );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 2 );
+                cpu_inc_16bit( _environment, dataptr->realName );
+                cpu_inc_16bit( _environment, dataptr->realName );
                 break;
             case 8:
-                outline0( "LDA (DATAPTR), Y" );
-                outline0( "INY" );
-                outline1( "STA %s", variable->realName );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 1 );
+                cpu_inc_16bit( _environment, dataptr->realName );
                 break;
         }
 
@@ -95,7 +86,7 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
         switch( VT_BITWIDTH( variable->type ) ) {
             case 32:
                 cpu_inc_16bit( _environment, dataptr->realName );
-                cpu_move_32bit_indirect2( _environment, dataptr->realName, variable->realName );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 4 );
                 cpu_inc_16bit( _environment, dataptr->realName );
                 cpu_inc_16bit( _environment, dataptr->realName );
                 cpu_inc_16bit( _environment, dataptr->realName );
@@ -103,13 +94,13 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                 break;
             case 16:
                 cpu_inc_16bit( _environment, dataptr->realName );
-                cpu_move_16bit_indirect2( _environment, dataptr->realName, variable->realName );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 2 );
                 cpu_inc_16bit( _environment, dataptr->realName );
                 cpu_inc_16bit( _environment, dataptr->realName );
                 break;
             case 8:
                 cpu_inc_16bit( _environment, dataptr->realName );
-                cpu_move_8bit_indirect2( _environment, dataptr->realName, variable->realName );
+                bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 4 );
                 cpu_inc_16bit( _environment, dataptr->realName );
                 break;
             case 1:
@@ -120,12 +111,12 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                     case VT_DSTRING: {
                         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
                         Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
-                        cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
+                        bank_read_vars_direct_size( _environment, databank->name, dataptr->name, size->name, 1 );
                         cpu_inc_16bit( _environment, dataptr->realName );
                         cpu_dsfree( _environment, variable->realName );
                         cpu_dsalloc( _environment, size->realName, variable->realName );
                         cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
-                        cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
+                        bank_read_vars( _environment, databank->name, dataptr->name, address->name, size->name );
                         cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
                         break;
                     }
@@ -133,8 +124,11 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
                         int os = VT_OPTIMAL_SHIFT( variable->typeType->size );
                         int bytes = 1 << os;
                         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
+                        Variable * size = variable_temporary( _environment, VT_WORD, "(size)" );
+                        variable_store( _environment, size->realName, bytes );
                         cpu_addressof_16bit( _environment, variable->realName, address->realName );
                         cpu_mem_move_size( _environment, dataptr->realName, address->realName, bytes );
+                        bank_read_vars( _environment, databank->name, dataptr->name, address->name, size->name );
                         cpu_math_add_16bit_const( _environment, dataptr->realName, bytes, dataptr->realName );
                         break;
                     }                    

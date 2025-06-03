@@ -13794,6 +13794,7 @@ DataSegment * data_segment_define( Environment * _environment, char * _name ) {
     memset( data, 0, sizeof( DataSegment ) );
     data->name = strdup( _name );
     data->realName = malloc( strlen( _name ) + 6 ); 
+    data->absoluteAddress = _environment->dataLastAbsoluteAddress;
     strcopy( data->realName, "DATA_" ); 
     strcat( data->realName, data->name );
 
@@ -13817,6 +13818,7 @@ DataSegment * data_segment_define_numeric( Environment * _environment, int _numb
     memset( data, 0, sizeof( DataSegment ) );
     data->lineNumber = _number;
     data->isNumeric = 1;
+    data->absoluteAddress = _environment->dataLastAbsoluteAddress;
     data->realName = malloc( MAX_TEMPORARY_STORAGE );
     sprintf( data->realName, "DATA_%4.4x", _number );
 

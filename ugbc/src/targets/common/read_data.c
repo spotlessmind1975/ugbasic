@@ -61,6 +61,10 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
     } else {
         variable = variable_define( _environment, _variable, _environment->defaultVariableType, 0 );
     }
+
+#if defined(__c64reu__)
+    Variable * databank = variable_retrieve( _environment, "DATABANK" );
+#endif
     Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
     Variable * dataptre = NULL;
     Variable * datatype = variable_temporary( _environment, VT_BYTE, "(type)" );
@@ -71,19 +75,31 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         type = VT_STRING;
     }
 
+#if defined(__c64reu__)
+    dataptre = variable_retrieve( _environment, "DATAPTRE" );
+#else
     dataptre = variable_temporary( _environment, VT_ADDRESS, "(dataptre)" );
     cpu_addressof_16bit( _environment, "DATAPTRE", dataptre->realName );
+#endif
     cpu_compare_16bit( _environment, dataptr->realName, dataptre->realName, datatype->realName, 1 );
     cpu_compare_and_branch_8bit_const( _environment, datatype->realName, 0xff, doneReadLabel, 1 );
 
+#if defined(__c64reu__)
+    bank_read_vars_direct_size( _environment, databank->name, dataptr->name, datatype->name, 1 );
+#else
     cpu_move_8bit_indirect2( _environment, dataptr->realName, datatype->realName );
+#endif
 
     cpu_compare_and_branch_8bit_const( _environment, datatype->realName, type, typeMismatchDuringReadLabel, 0 );
 
     switch( VT_BITWIDTH( variable->type ) ) {
         case 32:
             cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+            bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 4 );
+#else
             cpu_move_32bit_indirect2( _environment, dataptr->realName, variable->realName );
+#endif
             cpu_inc_16bit( _environment, dataptr->realName );
             cpu_inc_16bit( _environment, dataptr->realName );
             cpu_inc_16bit( _environment, dataptr->realName );
@@ -91,13 +107,21 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
             break;
         case 16:
             cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+            bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 2 );
+#else
             cpu_move_16bit_indirect2( _environment, dataptr->realName, variable->realName );
+#endif
             cpu_inc_16bit( _environment, dataptr->realName );
             cpu_inc_16bit( _environment, dataptr->realName );
             break;
         case 8:
             cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+            bank_read_vars_direct_size( _environment, databank->name, dataptr->name, variable->name, 1 );
+#else
             cpu_move_8bit_indirect2( _environment, dataptr->realName, variable->realName );
+#endif
             cpu_inc_16bit( _environment, dataptr->realName );
             break;
         case 1:
@@ -109,12 +133,20 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
                     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
                     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
                     cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+                    bank_read_vars_direct_size( _environment, databank->name, dataptr->name, size->name, 1 );
+#else
                     cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
+#endif
                     cpu_inc_16bit( _environment, dataptr->realName );
                     cpu_dsfree( _environment, variable->realName );
                     cpu_dsalloc( _environment, size->realName, variable->realName );
                     cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
+#if defined(__c64reu__)
+                    bank_read_vars( _environment, databank->name, dataptr->name, address->name, size->name );
+#else
                     cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
+#endif
                     cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
                     break;
                 }
@@ -158,7 +190,11 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         Variable * data32 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SDWORD : VT_DWORD, "(data)" );
 
         cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+        bank_read_vars_direct_size( _environment, databank->name, dataptr->name, data32->name, 4 );
+#else
         cpu_move_32bit_indirect2( _environment, dataptr->realName, data32->realName );
+#endif
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
@@ -173,7 +209,11 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         Variable * data16 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SWORD : VT_WORD, "(data)" );
 
         cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+        bank_read_vars_direct_size( _environment, databank->name, dataptr->name, data16->name, 2 );
+#else
         cpu_move_16bit_indirect2( _environment, dataptr->realName, data16->realName );
+#endif
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_inc_16bit( _environment, dataptr->realName );
 
@@ -186,7 +226,11 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         Variable * data8 = variable_temporary( _environment, VT_SIGNED( variable->type ) ? VT_SBYTE : VT_BYTE, "(data)" );
 
         cpu_inc_16bit( _environment, dataptr->realName );
-        cpu_move_8bit_indirect2( _environment, dataptr->realName, data8->realName );
+#if defined(__c64reu__)
+        bank_read_vars_direct_size( _environment, databank->name, dataptr->name, data8->name, 1 );
+#else
+        cpu_move_8bit_indirect2( _environment, dataptr->name, data8->name );
+#endif
         cpu_inc_16bit( _environment, dataptr->realName );
 
         variable_move( _environment, data8->name, variable->name );
@@ -197,12 +241,20 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
         Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
         cpu_inc_16bit( _environment, dataptr->realName );
+#if defined(__c64reu__)
+        bank_read_vars_direct_size( _environment, databank->name, dataptr->name, size->name, 1 );
+#else
         cpu_move_8bit_indirect2( _environment, dataptr->realName, size->realName );
+#endif
         cpu_inc_16bit( _environment, dataptr->realName );
         cpu_dsfree( _environment, variable->realName );
         cpu_dsalloc( _environment, size->realName, variable->realName );
         cpu_dsdescriptor( _environment, variable->realName, address->realName, size->realName );
+#if defined(__c64reu__)
+        bank_read_vars( _environment, databank->name, dataptr->name, address->name, size->name );
+#else
         cpu_mem_move( _environment, dataptr->realName, address->realName, size->realName );
+#endif
         cpu_math_add_16bit_with_8bit( _environment, dataptr->realName, size->realName, dataptr->realName );
         cpu_jump( _environment, doneReadLabel );
 
