@@ -1614,6 +1614,44 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         po_buf_match( buf[0], " LDA *", v1 ) && 
                         po_buf_match( buf[1], " STA *", v2 ) && 
                         po_buf_match( buf[2], " LDA *", v3 ) && 
+                        po_buf_match( buf[3], " STA *", v4 ) &&
+                        po_buf_cmp( v2, v3 ) == 0
+                ) {
+
+                    // printf("2: %s\n", buf[2]->str );
+                    // printf("3: %s\n", buf[3]->str );
+                    // printf("4: %s\n", buf[4]->str );
+                    
+                    // printf(" RULE #2\n");
+
+                    char * realVarName = strdup( v2->str );
+                    char * c = strstr( realVarName, "+" );
+                    if ( c ) {
+                        *c = 0;
+                    }
+
+                    UnusedSymbol * tmp = currentlySymbolsQ;
+                    while( tmp ) {
+                        if ( strcmp( realVarName, tmp->realName ) == 0 ) {
+                            break;
+                        }
+                        tmp = tmp->next;
+                    }
+                    if ( tmp ) {
+                        // printf( "found!\n\n" );
+                        // printf(" APPLIED #1\n");
+                        // optim( buf[0], RULE "unused temporary", NULL );
+                        // optim( buf[2], RULE "unused temporary", NULL );
+                        optim( buf[1], RULE "unused temporary", NULL );
+                        optim( buf[2], RULE "unused temporary", NULL );
+                        ++_environment->removedAssemblyLines;
+                        ++_environment->removedAssemblyLines;
+                    }
+
+                } else if ( 
+                        po_buf_match( buf[0], " LDA *", v1 ) && 
+                        po_buf_match( buf[1], " STA *", v2 ) && 
+                        po_buf_match( buf[2], " LDA *", v3 ) && 
                         po_buf_cmp( v2, v3 ) == 0
                     ) {
 
@@ -1638,7 +1676,6 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         // optim( buf[0], RULE "unused temporary", NULL );
                         //optim( buf[1], RULE "unused temporary", NULL );
                         optim( buf[2], RULE "unused temporary", NULL );
-                        ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
                     }
 
@@ -1676,7 +1713,6 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         // optim( buf[0], RULE "unused temporary", NULL );
                         // optim( buf[2], RULE "unused temporary", NULL );
                         optim( buf[3], RULE "unused temporary", NULL );
-                        ++_environment->removedAssemblyLines;
                         ++_environment->removedAssemblyLines;
                     }
 

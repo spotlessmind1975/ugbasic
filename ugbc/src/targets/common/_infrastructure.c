@@ -128,6 +128,8 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
         neededSpace = _variable->size;
     } else if ( _variable->type == VT_DSTRING ) {
         neededSpace = 1;
+    } else if ( _variable->type == VT_IMAGEREF ) {
+        neededSpace = 12;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -152,6 +154,32 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
         actual = actual->next;
     }
 
+}
+
+void memory_area_unassign( MemoryArea * _first, Variable * _variable ) {
+
+    int neededSpace = 0;
+
+    if ( _variable->type == VT_TARRAY ) {
+        neededSpace = _variable->size;
+    } else if ( _variable->type == VT_DSTRING ) {
+        neededSpace = 1;
+    } else {
+        neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
+    }
+
+    if ( neededSpace == 0 ) return;
+
+    MemoryArea * actual = _variable->memoryArea;
+
+    if ( actual ) {
+        if ( ( actual->current - neededSpace ) == _variable->absoluteAddress ) {
+            actual->size += neededSpace;
+            _variable->memoryArea = NULL;
+            _variable->absoluteAddress = 0;
+            actual->current -= neededSpace;
+        }
+    }
 }
 
 Bank * bank_find( Bank * _first, char * _name ) {

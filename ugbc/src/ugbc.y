@@ -10086,7 +10086,7 @@ option_definitions :
     }
     | READ option_read {
         ((struct _Environment *)_environment)->optionReadSafe = $2;
-    };
+    }
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     };
@@ -10202,6 +10202,9 @@ data_definition_single :
     }
     | const_expr_string {
         data_string( _environment, $1 );
+    }
+    | OSP const_expr_string_const CSP {
+        data_string( _environment, $2 );
     };
 
 data_definition_data :
