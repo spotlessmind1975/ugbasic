@@ -627,17 +627,17 @@ void variable_cleanup( Environment * _environment ) {
     vars_emit_constants( _environment );
 
     if ( _environment->dataSegment ) {
-        outhead1("DATAFIRSTSEGMENT = %s", _environment->dataSegment->realName );
+        outhead0("DATAFIRSTSEGMENT = $0000" );
         if ( _environment->readDataUsed && _environment->restoreDynamic ) {
             outhead0("DATASEGMENTNUMERIC:" );
             DataSegment * actual = _environment->dataSegment;
             while( actual ) {
                 if ( actual->isNumeric ) {
-                    outline2( ".word $%4.4x, %s", actual->lineNumber, actual->realName );
+                    outline2( ".word $%4.4x, $%4.4x", actual->lineNumber, actual->absoluteAddress );
                 }
                 actual = actual->next;
             }
-            outline0( ".word $ffff, DATAPTRE" );
+            outline1( ".word $ffff, $%4.4x", _environment->dataLastAbsoluteAddress );
         }
     }
     
@@ -871,50 +871,66 @@ void variable_cleanup( Environment * _environment ) {
         outline0("RTS" );
     }
 
-    DataSegment * dataSegment = _environment->dataSegment;
-    while( dataSegment ) {
-        int i=0;
-        if ( dataSegment->data ) {
-            out1("%s: .BYTE ", dataSegment->realName );
-        } else {
-            outhead1("%s: ", dataSegment->realName );
-        }
-        DataDataSegment * dataDataSegment = dataSegment->data;
-        while( dataDataSegment ) {
-            if ( dataSegment->type ) {
-                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                    out1("\"%s\"", dataDataSegment->data );
-                } else {
-                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
-                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+    if ( _environment->dataSegment ) {
+        char * data = malloc( 0x10000 );
+        memset( data, 0, 0x10000 );
+        DataSegment * dataSegment = _environment->dataSegment;
+        int dataOffset=0;
+        while( dataSegment ) {
+            DataDataSegment * dataDataSegment = dataSegment->data;
+            while( dataDataSegment ) {
+                if ( dataSegment->type ) {
+                    if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                        data[dataOffset] = (unsigned char)(dataDataSegment->size);
+                        for( i=0; i<(dataDataSegment->size); ++i ) {
+                            unsigned char letter = (unsigned char)(dataDataSegment->data[i]&0xff);
+                            if ( letter >= 'a' && letter <= 'z' ) {
+                                letter = letter - 'a' + 'A';
+                            } else if ( letter >= 'a' && letter <= 'z' ) {
+                                letter = letter - 'A' + 'a';
+                            }
+                            data[dataOffset+i+1] = letter;
+                        }
+                        dataOffset += ( dataDataSegment->size + 1 );
+                    } else {
+                        for( i=0; i<(dataDataSegment->size); ++i ) {
+                            data[dataOffset+i] = (unsigned char)(dataDataSegment->data[i]&0xff);
+                        }
+                        dataOffset += ( dataDataSegment->size );
                     }
-                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
-                }
-            } else {
-                if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
-                    out1("\"%s\"", dataDataSegment->data );
                 } else {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-                    for( i=0; i<(dataDataSegment->size-1); ++i ) {
-                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
+                        data[dataOffset] = (unsigned char)(dataDataSegment->type);
+                        data[dataOffset+1] = (unsigned char)(dataDataSegment->size);
+                        for( i=0; i<(dataDataSegment->size); ++i ) {
+                            unsigned char letter = (unsigned char)(dataDataSegment->data[i]&0xff);
+                            if ( letter >= 'a' && letter <= 'z' ) {
+                                letter = letter - 'a' + 'A';
+                            } else if ( letter >= 'a' && letter <= 'z' ) {
+                                letter = letter - 'A' + 'a';
+                            }
+                            data[dataOffset+i+2] = letter;
+                        }
+                        dataOffset += ( dataDataSegment->size + 2 );
+                    } else {
+                        data[dataOffset] = (unsigned char)(dataDataSegment->type);
+                        for( i=0; i<(dataDataSegment->size); ++i ) {
+                            data[dataOffset+i+1] = (unsigned char)(dataDataSegment->data[i]&0xff);
+                        }
+                        dataOffset += ( dataDataSegment->size + 1 );
                     }
-                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
+                dataDataSegment = dataDataSegment->next;
             }
-            dataDataSegment = dataDataSegment->next;
-            if ( dataDataSegment ) {
-                out0(",");
-            }
+            dataSegment = dataSegment->next;
         }
-        outline0("");
-        dataSegment = dataSegment->next;
+        int dataBank = banks_store_data( _environment, data, _environment->dataLastAbsoluteAddress + 1 );
+        outhead1("DATABANKC = $%2.2x", dataBank );
+        outhead0("DATABANK: .byte DATABANKC");
     }
 
     if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
-        outhead0("DATAPTRE:");
+        outhead1("DATAPTRE: .word $%4.4x", _environment->dataLastAbsoluteAddress );
     }
     
     StaticString * staticStrings = _environment->strings;

@@ -110,7 +110,11 @@ void restore_label( Environment * _environment, char * _label ) {
 
         Variable * dataptr = variable_retrieve( _environment, "DATAPTR" );
 
+#if defined(__c64reu__)
+        cpu_store_16bit( _environment, dataptr->realName, data->absoluteAddress );
+#else
         cpu_addressof_16bit( _environment, data->realName, dataptr->realName );
+#endif
 
         restore_label_unsafe( _environment, _label );
 

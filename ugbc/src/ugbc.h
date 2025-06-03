@@ -2079,6 +2079,7 @@ typedef struct _DataDataSegment {
     
     VariableType type;
     FloatTypePrecision precision;
+    int absoluteAddress;
     char * data;
     int size;
 
@@ -2095,6 +2096,7 @@ typedef struct _DataSegment {
     char * name;
     char * realName;
     int lineNumber;
+    int absoluteAddress;
 
     DataDataSegment * data;
 
@@ -3122,6 +3124,8 @@ typedef struct _Environment {
     int printRaw;
     int putImageSafe;
     int getImageSafe;
+
+    int dataLastAbsoluteAddress;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
@@ -4727,6 +4731,7 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
 char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
 int banks_store( Environment * _environment, Variable * _variable, int _resident );
+int banks_store_data( Environment * _environment, char * _data, int _size );
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );
 int banks_get_default_resident( Environment * _environment, int _bank );

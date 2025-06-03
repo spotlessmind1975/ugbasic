@@ -115,6 +115,10 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
+    variable_import( _environment, "DATABANK", VT_BYTE, 0 );
+    variable_global( _environment, "DATABANK" );
+    variable_import( _environment, "DATAPTRE", VT_BYTE, 0 );
+    variable_global( _environment, "DATAPTRE" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
