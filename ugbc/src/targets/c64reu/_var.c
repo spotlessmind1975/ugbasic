@@ -626,21 +626,6 @@ void variable_cleanup( Environment * _environment ) {
 
     vars_emit_constants( _environment );
 
-    if ( _environment->dataSegment ) {
-        outhead0("DATAFIRSTSEGMENT = $0000" );
-        if ( _environment->readDataUsed && _environment->restoreDynamic ) {
-            outhead0("DATASEGMENTNUMERIC:" );
-            DataSegment * actual = _environment->dataSegment;
-            while( actual ) {
-                if ( actual->isNumeric ) {
-                    outline2( ".word $%4.4x, $%4.4x", actual->lineNumber, actual->absoluteAddress );
-                }
-                actual = actual->next;
-            }
-            outline1( ".word $ffff, $%4.4x", _environment->dataLastAbsoluteAddress );
-        }
-    }
-    
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
@@ -877,6 +862,7 @@ void variable_cleanup( Environment * _environment ) {
         DataSegment * dataSegment = _environment->dataSegment;
         int dataOffset=0;
         while( dataSegment ) {
+            dataSegment->absoluteAddress = dataOffset;
             DataDataSegment * dataDataSegment = dataSegment->data;
             while( dataDataSegment ) {
                 if ( dataSegment->type ) {
@@ -927,6 +913,20 @@ void variable_cleanup( Environment * _environment ) {
         int dataBank = banks_store_data( _environment, data, _environment->dataLastAbsoluteAddress + 1 );
         outhead1("DATABANKC = $%2.2x", dataBank );
         outhead0("DATABANK: .byte DATABANKC");
+
+        outhead0("DATAFIRSTSEGMENT = $0000" );
+        if ( _environment->readDataUsed && _environment->restoreDynamic ) {
+            outhead0("DATASEGMENTNUMERIC:" );
+            DataSegment * actual = _environment->dataSegment;
+            while( actual ) {
+                if ( actual->isNumeric ) {
+                    outline2( ".word $%4.4x, $%4.4x", actual->lineNumber, actual->absoluteAddress );
+                }
+                actual = actual->next;
+            }
+            outline1( ".word $ffff, $%4.4x", _environment->dataLastAbsoluteAddress );
+        }
+
     }
 
     if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
