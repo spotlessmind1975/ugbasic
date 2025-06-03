@@ -302,3 +302,29 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     return 1;
 
 }
+
+////////////////////////////////////////////////////////////////////////////////////
+
+int banks_store_data( Environment * _environment, char * _data, int _size ) {
+
+    Bank * bank = _environment->expansionBanks;
+
+    while( bank ) {
+        if ( bank->remains == bank->space ) {
+            break;
+        }
+        bank = bank->next;
+    } 
+
+    if ( ! bank ) {
+        return -1;
+    }
+
+    memcpy( &bank->data[0], _data, _size );
+
+    bank->address += _size;
+    bank->remains -= _size;
+
+    return bank->id;
+
+}

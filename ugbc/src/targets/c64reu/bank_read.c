@@ -166,7 +166,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve( _environment, _address2 );
 
     outline1("LDA %s", address1->realName );
     outline0("STA TMPPTR");

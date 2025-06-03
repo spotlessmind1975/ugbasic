@@ -40,8 +40,8 @@
 
 void restore_label_unsafe( Environment * _environment, char * _label ) {
 
-    outline0( "LDY #$0" );
-    outline0( "STY DATAPTRY" );
+    // outline0( "LDY #$0" );
+    // outline0( "STY DATAPTRY" );
 
 }
 
