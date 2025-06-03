@@ -2541,6 +2541,8 @@ typedef struct _Environment {
      */
     MemoryArea * memoryAreas;
 
+    int disableMemoryAreas;
+    
     /**
      * Current graphical mode
      */

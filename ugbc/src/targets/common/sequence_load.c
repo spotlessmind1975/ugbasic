@@ -271,6 +271,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;
 
+    _environment->disableMemoryAreas = 1;
+
     ImageDescriptor * frame = atlasDescriptor->frames;
     for(int i=0; i<atlasDescriptor->count; ++i) {
         Variable * partial = image_converter( _environment, frame->data, frame->width, frame->height, frame->depth, 0, 0, frame->width, frame->height, _mode, _transparent_color, _flags );
@@ -329,6 +331,8 @@ Variable * sequence_load( Environment * _environment, char * _filename, char * _
         variable_temporary_remove( _environment, lastImage->name );
         lastImage = lastImage->next;
     }
+
+    _environment->disableMemoryAreas = 0;
 
     // stbi_image_free(source);
 
