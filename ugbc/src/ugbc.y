@@ -10074,7 +10074,7 @@ option_definitions :
     }
     | READ option_read {
         ((struct _Environment *)_environment)->optionReadSafe = $2;
-    };
+    }
     | CLIP option_clip {
         ((struct _Environment *)_environment)->optionClip = $2;
     };
