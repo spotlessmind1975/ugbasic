@@ -178,6 +178,8 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
         return 0;
     }
 
+    memory_area_unassign( _environment->memoryAreas, _variable );
+
     _variable->bankAssigned = bank->id;
     _variable->absoluteAddress = bank->baseAddress + bank->address;
     _variable->residentAssigned = _resident;
