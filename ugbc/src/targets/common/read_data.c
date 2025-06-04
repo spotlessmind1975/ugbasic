@@ -229,7 +229,7 @@ static void read_data_safe( Environment * _environment, char * _variable ) {
 #if defined(__c64reu__)
         bank_read_vars_direct_size( _environment, databank->name, dataptr->name, data8->name, 1 );
 #else
-        cpu_move_8bit_indirect2( _environment, dataptr->name, data8->name );
+        cpu_move_8bit_indirect2( _environment, dataptr->realName, data8->realName );
 #endif
         cpu_inc_16bit( _environment, dataptr->realName );
 
