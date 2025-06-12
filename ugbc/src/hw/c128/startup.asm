@@ -192,8 +192,8 @@ C128STARTUPDONE:
 @IF deployed.msprites
 
     ; msprites
-    LDA #$7f                    ;CIA interrupt off
-    STA $DC0D
+    ; LDA #$7f                    ;CIA interrupt off
+    ; STA $DC0D
     LDA #$01                    ;Raster interrupt on
     STA $D01A
     LDA #$30
