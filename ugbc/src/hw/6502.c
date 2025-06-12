@@ -1537,6 +1537,8 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
 
     inline( cpu_math_div2_const_8bit )
 
+        MAKE_LABEL
+
         if ( _signed ) {
             if ( _remainder ) {
                 outline1("LDA %s", _source);
@@ -1546,14 +1548,18 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
             outline1("LDA %s", _source);
             outline0("AND #$80" );
             outline0("TAX");
+            outline1("BEQ %snocomplement", label );
+            cpu6502_complement2_16bit( _environment, _source, _source );
+            outhead1("%snocomplement:", label );
             while( _steps ) {
                 outline0("CLC");
                 outline1("ROR %s", _source);
                 --_steps;
             }
             outline0("TXA");
-            outline1("ORA %s", _source);
-            outline1("STA %s", _source);
+            outline1("BEQ %snocomplement", label );
+            cpu6502_complement2_16bit( _environment, _source, _source );
+            outhead1("%snocomplement:", label );
         } else {
             if ( _remainder ) {
                 outline1("LDA %s", _source);
@@ -2880,6 +2886,8 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
 
     inline( cpu_math_div2_const_16bit )
 
+        MAKE_LABEL
+
         if ( _signed ) {
             if ( _remainder ) {
                 outline1("LDA %s", _source);
@@ -2889,6 +2897,12 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline0("AND #$80" );
             outline0("TAX")
+            outline1("BEQ %snocomplement", label );
+            cpu6502_complement2_16bit( _environment, _source, _source );
+            outhead1("%snocomplement:", label );
+            outline1("LDA %s", address_displacement(_environment, _source, "1"));
+            outline0("AND #$7F");
+            outline1("STA %s", address_displacement(_environment, _source, "1"));
             while( _steps ) {
                 outline0("CLC");
                 outline1("LSR %s", address_displacement(_environment, _source, "1"));
@@ -2896,6 +2910,9 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
                 --_steps;
             }
             outline0("TXA")
+            outline1("BEQ %snocomplement2", label );
+            cpu6502_complement2_16bit( _environment, _source, _source );
+            outhead1("%snocomplement2:", label );
             outline1("ORA %s", address_displacement(_environment, _source, "1"));
             outline1("STA %s", address_displacement(_environment, _source, "1"));
         } else {
@@ -3101,6 +3118,12 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
     embedded( cpu_math_div_32bit_to_16bit, src_hw_6502_cpu_math_div_32bit_to_16bit_asm )
 
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline0("AND #$80");
+        outline0("PHA");
+        outline1("BEQ %snocomplement", label );
+        cpu6502_complement2_32bit( _environment, _source, _source );
+        outhead1("%snocomplement:", label );
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
         outline1("LDA %s", address_displacement(_environment, _source, "1") );
@@ -3122,6 +3145,12 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         outline1("STA %s", _other_remainder );
         outline0("LDA MATHPTR3");
         outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+
+        outline0("PLA");
+        outline1("BEQ %snocomplement2", label );
+        cpu6502_complement2_32bit( _environment, _source, _source );
+        cpu6502_complement2_32bit( _environment, _other, _other );
+        outhead1("%snocomplement2:", label );
 
     done()
 
@@ -3200,6 +3229,12 @@ void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
 
     embedded( cpu_math_div_32bit_to_16bit, src_hw_6502_cpu_math_div_32bit_to_16bit_asm )
 
+        outline1("LDA %s", address_displacement(_environment, _source, "3"));
+        outline0("AND #$80");
+        outline0("PHA");
+        outline1("BEQ %snocomplement", label );
+        cpu6502_complement2_32bit( _environment, _source, _source );
+        outhead1("%snocomplement:", label );
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
         outline1("LDA %s", address_displacement(_environment, _source, "1") );
@@ -3221,6 +3256,11 @@ void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
         outline1("STA %s", _other_remainder );
         outline0("LDA MATHPTR3");
         outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
+        outline0("PLA");
+        outline1("BEQ %snocomplement2", label );
+        cpu6502_complement2_32bit( _environment, _source, _source );
+        cpu6502_complement2_32bit( _environment, _other, _other );
+        outhead1("%snocomplement2:", label );
 
     done()
 
@@ -3788,6 +3828,8 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
 
     inline( cpu_math_div2_const_32bit )
 
+        MAKE_LABEL
+
         if ( _signed ) {
             if ( _remainder ) {
                 outline1("LDA %s", _source);
@@ -3797,6 +3839,9 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline1("LDA %s", address_displacement(_environment, _source, "3"));
             outline0("AND #$80");
             outline0("TAX");
+            outline1("BEQ %snocomplement", label );
+            cpu6502_complement2_32bit( _environment, _source, _source );
+            outhead1("%snocomplement:", label );
             while( _steps ) {
                 outline0("CLC");
                 outline1("LSR %s", address_displacement(_environment, _source, "3"));
@@ -3806,8 +3851,9 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
                 --_steps;
             }
             outline0("TXA");
-            outline1("ORA %s", address_displacement(_environment, _source, "3"));
-            outline1("STA %s", address_displacement(_environment, _source, "3"));
+            outline1("BEQ %snocomplement2", label );
+            cpu6502_complement2_32bit( _environment, _source, _source );
+            outhead1("%snocomplement2:", label );
         } else {
             if ( _remainder ) {
                 outline1("LDA %s", _source);
