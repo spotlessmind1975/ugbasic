@@ -910,7 +910,7 @@ void variable_cleanup( Environment * _environment ) {
             }
             dataSegment = dataSegment->next;
         }
-        int dataBank = banks_store_data( _environment, data, _environment->dataLastAbsoluteAddress + 1 );
+        int dataBank = banks_store_data( _environment, data, 0xffff );
         outhead1("DATABANKC = $%2.2x", dataBank );
         outhead0("DATABANK: .byte DATABANKC");
 

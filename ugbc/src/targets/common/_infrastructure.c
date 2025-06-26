@@ -566,7 +566,9 @@ static Variable * variable_define_internal( Environment * _environment, Variable
         memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
         var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
     }
-    memory_area_assign( _environment->memoryAreas, var );
+    if ( !_environment->disableMemoryAreas ) {
+        memory_area_assign( _environment->memoryAreas, var );
+    }
 
     return var;
 
@@ -861,7 +863,9 @@ Variable * variable_define_no_init( Environment * _environment, char * _name, Va
             memcpy( var->arrayDimensionsEach, ((struct _Environment *)_environment)->arrayDimensionsEach, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
             var->arrayDimensions = ((struct _Environment *)_environment)->arrayDimensions;
         }
-        memory_area_assign( _environment->memoryAreas, var );
+        if ( !_environment->disableMemoryAreas ) {
+            memory_area_assign( _environment->memoryAreas, var );
+        }
     }
     var->used = 1;
     var->locked = 0;
@@ -1385,7 +1389,9 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
 
         // Assign the correct memory ara.
 
-        memory_area_assign( _environment->memoryAreas, var );
+        if ( !_environment->disableMemoryAreas ) {
+            memory_area_assign( _environment->memoryAreas, var );
+        }
 
     }
 
@@ -1484,7 +1490,9 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
 
     // Assign the correct memory ara.
 
-    memory_area_assign( _environment->memoryAreas, var );
+    if ( !_environment->disableMemoryAreas ) {
+        memory_area_assign( _environment->memoryAreas, var );
+    }
 
     // Mark this variable as used and temporary.
 
@@ -2042,7 +2050,9 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                     char bufferCopy[MAX_TEMPORARY_STORAGE]; sprintf( bufferCopy, "%scopy", destination->realName );
                     cpu_mem_move_direct_size( _environment, bufferCopy, destination->realName, _size );
                 } else {
-                    memory_area_assign( _environment->memoryAreas, destination );
+                    if ( !_environment->disableMemoryAreas ) {
+                        memory_area_assign( _environment->memoryAreas, destination );
+                    }
                 }
             } else {
                 Variable * temporary = variable_temporary( _environment, destination->type, "(copy of buffer/image)");
@@ -2050,12 +2060,16 @@ Variable * variable_store_buffer( Environment * _environment, char * _destinatio
                 temporary->valueBuffer = malloc( _size );
                 memcpy( temporary->valueBuffer, _buffer, _size );
                 temporary->size = _size;
-                memory_area_assign( _environment->memoryAreas, temporary );
+                if ( !_environment->disableMemoryAreas ) {
+                    memory_area_assign( _environment->memoryAreas, temporary );
+                }
                 if ( destination->size < _size ) {
                     destination->valueBuffer = realloc( destination->valueBuffer, _size );
                     memset( destination->valueBuffer + destination->size, 0, ( _size - destination->size ) );
                     destination->size = _size;
-                    memory_area_assign( _environment->memoryAreas, destination );
+                    if ( !_environment->disableMemoryAreas ) {
+                        memory_area_assign( _environment->memoryAreas, destination );
+                    }
                 }
                 variable_move_naked( _environment, temporary->name, destination->name );                
             }

@@ -289,6 +289,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
 
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
+    _environment->disableMemoryAreas = 1;
+
     int bufferSize = 0;
     Variable * firstImage = NULL;
     Variable * lastImage = NULL;
@@ -351,6 +353,8 @@ Variable * images_load( Environment * _environment, char * _filename, char * _al
         lastImage = lastImage->next;
     }
 
+    _environment->disableMemoryAreas = 0;
+    
     // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {

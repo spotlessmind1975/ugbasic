@@ -116,11 +116,16 @@ BANKREAD4:
 BANKREAD:
     STA BANKREADGB+1
     LDA MATHPTR0
+    ORA MATHPTR1
+    BEQ BANKREADX
+    LDA MATHPTR0
     STA BANKREADG0+1
     LDA MATHPTR1
     STA BANKREADG1+1
     JMP BANKREADG
-
+BANKREADX:
+    RTS
+    
 ; General write data to REU from memory
 ; TMPPTR: source memory address
 ; A : bank
