@@ -690,8 +690,8 @@ void vic2z_raster_at( Environment * _environment, char * _label, char * _positio
 
     MAKE_LABEL
 
-    outline0("LDA #%01111111"); // switch off CIA-1
-    outline0("STA $DC0D");
+    // outline0("LDA #%01111111"); // switch off CIA-1
+    // outline0("STA $DC0D");
     outline0("AND $D011");
     outline0("STA $D011");
     outline0("LDA $DC0D"); // acknowledge CIA-1

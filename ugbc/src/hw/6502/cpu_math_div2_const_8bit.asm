@@ -33,8 +33,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-CPUMATHDIV2CONST8BITD:      .byte   $80
-
 CPUMATHDIV2CONST8BIT:
     CPX #0
     BEQ CPUMATHDIV2CONST8BIT2
@@ -46,8 +44,26 @@ CPUMATHDIV2CONST8BIT2:
     RTS
 
 CPUMATHDIV2CONST8BIT_SIGNED:
-    BIT CPUMATHDIV2CONST8BITD
-    BEQ CPUMATHDIV2CONST8BIT
+    PHA
+    AND #$80
+    TAY
+    BEQ CPUMATHDIV2CONST8BIT_SIGNEDNC
+    PLA
+    EOR #$FF
+    CLC
+    ADC #$01
+    PHA
+CPUMATHDIV2CONST8BIT_SIGNEDNC:
+    PLA
     JSR CPUMATHDIV2CONST8BIT
-    ORA #$80
+    TAX
+    TYA
+    BEQ CPUMATHDIV2CONST8BIT_SIGNEDNC2
+    TXA
+    EOR #$FF
+    CLC
+    ADC #$01
+    TAX
+CPUMATHDIV2CONST8BIT_SIGNEDNC2:
+    TXA
     RTS
