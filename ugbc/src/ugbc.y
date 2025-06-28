@@ -12828,16 +12828,17 @@ statement2nc:
                 if (variable->typeType) {
                     variable->size = expr->size;
                 }
-#if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
-                if ( variable->type == VT_IMAGE || variable->type == VT_IMAGES || variable->type == VT_IMAGE ) {
-                    expr->usedImage = 1;
-                    variable->usedImage = 1;
-                }
-#endif
             } else {
                 CRITICAL_VARIABLE_UNDEFINED( $1 );
             }
         }
+
+#if defined(__c64__) || defined(__c64reu__) || defined(__c128__)
+        if ( expr->type == VT_IMAGE || expr->type == VT_IMAGES || expr->type == VT_SEQUENCE ) {
+            expr->usedImage = 1;
+            variable->usedImage = 1;
+        }
+#endif
 
         if ( expr->initializedByConstant ) {
             if ( variable->type == VT_FLOAT ) {
