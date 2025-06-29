@@ -60,9 +60,9 @@
 #define COLOR_DARK_WHITE			0x08
 #define COLOR_WHITE					0x0d
 #define COLOR_LIGHT_WHITE			0x0f
-#define COLOR_DARK_RED      		0x40
-#define COLOR_RED					0x44
-#define COLOR_LIGHT_RED				0x48
+#define COLOR_DARK_RED      		0x20
+#define COLOR_RED					0x24
+#define COLOR_LIGHT_RED				0x28
 #define COLOR_VIOLET				0x64
 #define COLOR_DARK_GREEN			0xb0
 #define COLOR_GREEN					0xb6
