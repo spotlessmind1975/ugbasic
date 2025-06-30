@@ -13002,6 +13002,13 @@ statement2nc:
         parser_array_cleanup( _environment );
   }
   | OSP Identifier CSP {
+        if ( ! ((struct _Environment *)_environment)->procedureName ) {
+            CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
+        }
+        if ( ! ((struct _Environment *)_environment)->protothread ) {
+            CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
+        }
+
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $2 );
     }
