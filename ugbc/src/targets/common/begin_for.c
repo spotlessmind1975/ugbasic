@@ -65,6 +65,17 @@ Normally, the index counter is increased by 1 unit at every turn of a
 number specified, the loop is terminated. ''STEP'' is used to 
 change the size of increase in the index value.
 
+It should be noted, however, that none of the terms of the loop
+must be considered constant. The loop, in fact, continues
+as long as the condition for which the index is
+included within the indicated limits is true. If these limits are expressed by
+variables or, more generally, expressions, these values ​​are recalculated
+at each turn, to ensure compliance with the limits. The variable
+index itself can be updated within the loop, and therefore
+it is possible to interrupt a cycle or continue it definitively,
+by operating on this variable. Finally, one can jump in and out
+of the loop, without problems.
+
 The ''FOR...NEXT'' loop is ideal for performing the same operation 
 a specific number of times. It can be used to create tables of 
 values, such as a multiplication table. It is often used in 
@@ -89,6 +100,17 @@ a ogni giro di un ciclo ''FOR...NEXT''. Quando il valore corrente
 supera quello dell'ultimo numero specificato, il ciclo viene terminato. 
 ''STEP'' viene utilizzato per modificare la dimensione dell'aumento 
 del valore dell'indice.
+
+Si deve ad ogni modo notare che nessuno dei termini del ciclo
+deve essere considerato costante. Il loop, infatti, continua 
+fintanto che è vera la condizione per cui l'indice si trova 
+ricompreso nei limiti indicati. Se tali limiti sono espressi da
+variabili o, più in generale, espressioni, tali valori sono ricalcolati
+ad ogni giro, per garantire il rispetto dei limiti. La variabile 
+indice stessa può essere aggiornata all'interno del loop, e quindi
+è possibile interrompere un ciclo o continuarlo in via definitiva,
+operando su tale variabile. Infine, si può saltare dentro e fuori 
+il loop, senza problemi.
 
 Il ciclo ''FOR...NEXT'' è ideale per eseguire la stessa operazione
 un numero di volte specifico. Può essere utilizzato per creare 
