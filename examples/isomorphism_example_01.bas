@@ -1,0 +1,8 @@
+﻿
+	BITMAP ENABLE
+	
+	CLS
+	
+	BAR 10,10 TO 20,20,LIGHT RED
+	
+	
