@@ -2594,8 +2594,6 @@ static Variable * gime_image_converter_multicolor_mode_lores( Environment * _env
 
 Variable * gime_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
-
     switch( _mode ) {
 
         case BITMAP_MODE_128x192x2:

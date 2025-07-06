@@ -3516,7 +3516,7 @@ This method is generally faster than copying element by element,
  especially for large arrays. It provides a concise way to initialize an entire 
  array with a constant value.
 
-If you want to initialize an array to a single byte, memset is more efficient.
+If you want to initialize an array to a single byte, ''FILL' is more efficient.
 For small arrays or when initializing elements with different values, direct 
 assignment can be more readable.
 
@@ -3532,7 +3532,7 @@ Questo metodo è generalmente più veloce della copia elemento per elemento,
 soprattutto per array di grandi dimensioni. Fornisce un modo conciso per 
 inizializzare un intero array con un valore costante.
 
-Se si desidera inizializzare un array a un singolo byte, memset 
+Se si desidera inizializzare un array a un singolo byte, ''FILL'' 
 è più efficiente. Per array di piccole dimensioni o quando si inizializzano 
 elementi con valori diversi, l'assegnazione diretta può essere più 
 leggibile.

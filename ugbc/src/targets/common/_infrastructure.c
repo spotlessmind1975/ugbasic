@@ -1917,7 +1917,7 @@ Variable * variable_store_float( Environment * _environment, char * _destination
             }
 
 #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
-    defined(__c64reu__) || defined(__c128__)
+    defined(__c64reu__) || defined(__c128__) || defined(__vic20__)
             double integral;
             double fractional = modf( _value, &integral);
             if ( fractional == 0.0 ) {
