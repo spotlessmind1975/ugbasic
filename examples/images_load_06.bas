@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM STATIC IMAGES DISPLAY ANIMATIONS
 REM
 REM This small example will show how to load and animate images from
@@ -15,12 +15,12 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
     BITMAP ENABLE (16)
     CLS
 
-    bat := LOAD IMAGES("bat.png" ) FRAME SIZE (32,32)
+    boy := LOAD ATLAS("boy.png" ) FRAME SIZE (32,32)
 
-    frame = (BYTE) 0
+    frame = 0
 
     DO
-        PUT IMAGE bat FRAME frame AT 0,0
-        ADD frame,1,0 TO FRAMES(bat)-1
+        PUT IMAGE boy FRAME frame AT 0,0
+        ADD frame,1,0 TO FRAMES(boy)-1
     LOOP
 

@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM SPRITE MANAGEMENT CREATE A (SIMPLE) SPRITE
 REM
 REM This example shows how to create a simple "sprite", a monocolor
@@ -12,6 +12,8 @@ REM monocolore che può essere mosso liberamente sullo schermo.
 
 BITMAP ENABLE (16)
 
+CLS
+
 spriteImage = LOAD IMAGE("sprite.png")
 
 sprite = SPRITE(spriteImage)
@@ -19,6 +21,6 @@ sprite = SPRITE(spriteImage)
 SPRITE sprite ENABLE
 
 FOR x=0 TO 100
-    SPRITE sprite AT x,100 COLOR RED
+    SPRITE sprite AT SCREEN BORDER X + x,100 COLOR RED
     WAIT KEY
 NEXT
