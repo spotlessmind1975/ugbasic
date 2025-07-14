@@ -403,7 +403,8 @@ SN76489STARTVOL0:
     LD C, A
     LD A, $80
     OR CSG_A1
-    OUT (C), B
+    OR B
+    OUT (C), A
 
     LD A, CSG_IN
     LD C, A
@@ -417,8 +418,9 @@ SN76489STARTVOL1:
     LD A, CSG_OUT
     LD C, A
     LD A, $80
+    OR B
     OR CSG_A2
-    OUT (C), B
+    OUT (C), A
 
     LD A, CSG_IN
     LD C, A
@@ -434,7 +436,8 @@ SN76489STARTVOL2:
     LD C, A
     LD A, $80
     OR CSG_F3
-    OUT (C), B
+    OR B
+    OUT (C), A
 
     LD A, CSG_IN
     LD C, A
