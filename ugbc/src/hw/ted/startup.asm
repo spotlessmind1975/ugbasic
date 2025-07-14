@@ -569,7 +569,9 @@ MUSICPLAYERL1X:
 MUSICPLAYERL1X0:
     ASL
     BCS MUSICPLAYERL1X3
+    PHA
     JSR MUSICREADNEXTBYTE
+    PLA
     RTS 
 MUSICPLAYERL1X3:
     ASL
@@ -610,7 +612,9 @@ MUSICNOTEON:
     TAY
     PLA
     JSR TEDPROGFREQ
+    PHA
     JSR MUSICREADNEXTBYTE
+    PLA
     RTS
 
 ; This routine has been added in order to read the
