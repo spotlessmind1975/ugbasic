@@ -553,7 +553,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&   po_buf_match(buf[2], " CLRB")
     &&   po_buf_match(buf[3], " LDX *", v3)
     &&   po_buf_match(buf[4], " CMPX _Ttmp*", v4)
-    &&  po_buf_strcmp(v2, v4)==0) {
+    &&  po_buf_strcmp(v2, v4)==0 
+    && strstr( v1->str, "X" ) == NULL) {
         if(unsafe) {
             optim(buf[0], RULE "(LDD+,STD*,LDX,CMPX*)->(LDX,CMP+)", NULL);
             ++_environment->removedAssemblyLines;
