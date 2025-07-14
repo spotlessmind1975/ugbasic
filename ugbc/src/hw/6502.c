@@ -3580,6 +3580,8 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
             if ( _equal ) {
                 outline1("BEQ %s", label);
             }
+            outline1("BCC %s", label);
+            outline1("BCS %s_0", label);
             outhead1("%s_0:", label);
             outline0("LDA #0" );
             outline1("STA %s", _other);
