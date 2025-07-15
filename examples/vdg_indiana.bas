@@ -22,7 +22,7 @@ REM portarli da una piattaforma all'altra. Lo scopo, come sempre, è
 REM garantire una esperienza visiva e di gioco paragonabile tra i sistemi,
 REM senza rinunciare alle specificità di ognuno.
 REM
-REM @include atari atarixl c64 c64reu coleco coco
+REM @include atari c64 c64reu coleco coco zx
 
 	' We suggest the use the most coloured
 	' resolution (up to 16 colors).
@@ -47,13 +47,7 @@ REM @include atari atarixl c64 c64reu coleco coco
 	'	atari / atarixl : 160x96 pixel, 4 colors
 	'	c64 			: 160x200 pixel, 16 colors
 	'	coco 			: 128x192 pixel, 4 colors[edited]
-	'	coco3 			: 320x200 pixel, 16 colors
 	'	coleco          : 256x160 pixel, 16 colors
-	'	d32 			: 128x192 pixel, 4 colors[edited]
-	'	d64 			: 128x192 pixel, 4 colors[edited]
-	'	msx1			: 256x160 pixel, 16 colors
-	'	sc3000			: 256x160 pixel, 16 colors
-	'	sg1000			: 256x160 pixel, 16 colors
 	'	zx				: 256x192 pixel, 8 colors
 
 	titles := LOAD IMAGE("indiana_titles.png")
@@ -86,7 +80,7 @@ PARALLEL PROCEDURE animateIndiana
 	' Start from the first frame.
 	
 	frame = 0
-	PUT IMAGE indiana FRAME frame AT 0, SCREEN HEIGHT - IMAGE HEIGHT(indiana)
+	PUT IMAGE indiana FRAME frame AT 0, SCREEN HEIGHT - IMAGE HEIGHT(indiana) - FONT HEIGHT
 	
 	' Wait a random time to animate.
 	
@@ -101,7 +95,7 @@ PARALLEL PROCEDURE animateIndiana
 		' of the screen and of the image are calculated at
 		' compile time.
 		
-		PUT IMAGE indiana FRAME frame AT 0, SCREEN HEIGHT - IMAGE HEIGHT(indiana)
+		PUT IMAGE indiana FRAME frame AT 0, SCREEN HEIGHT - IMAGE HEIGHT(indiana) - FONT HEIGHT
 		
 		' Wait some time, to avoid a too fast animation.
 		
@@ -129,6 +123,41 @@ PARALLEL PROCEDURE animateIndiana
 	
 END PROCEDURE
 
+PARALLEL PROCEDURE showTitles
+
+	title = 0
+	
+	DO
+	
+		LOCATE 0 , ROWS - 1
+		CLINE
+		
+		SELECT CASE title
+			CASE 0
+				CENTER "PROGRAMMED BY"
+			CASE 1
+				CENTER "M.Spedaletti"
+			CASE 2
+				CENTER "MUSIC BY"
+			CASE 3
+				CENTER "J.Williams"
+			CASE 4
+				CENTER "3 RUNNING THREADS"
+		ENDSELECT
+		
+		WAIT 2000 MS
+		
+		INC title
+		
+		IF title = 6 THEN 
+			title = 0
+			WAIT 4000 MS
+		ENDIF
+	
+	LOOP
+
+END PROCEDURE
+
 	' Let start the music!
 	
 	MUSIC music
@@ -140,7 +169,12 @@ END PROCEDURE
 	' Start animation!
 	
 	SPAWN animateIndiana
+
+	' Start titles!
+	
+	SPAWN showTitles
 	
 	' The program finishes here, and it does
 	' nothing, but it could do anything else,
 	' as long as RUN PARALLEL is called.
+	
