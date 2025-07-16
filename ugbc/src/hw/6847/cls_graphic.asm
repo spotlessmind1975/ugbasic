@@ -95,9 +95,12 @@ CLS12
 
 CLS14
     LDA _PAPER
-    ANDA #$03
-    LDX #CLSPATTERNS
-    LDA A, X
+    ANDA #$01
+    BNE CLS14W
+    LDA #0
+    JMP CLSG2
+CLS14W
+    LDA #$FF
     JMP CLSG2
 CLSG0    
     LDA #$0

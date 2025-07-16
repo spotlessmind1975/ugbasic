@@ -3187,74 +3187,74 @@ int yyerror ( Environment * _ignored, const char * _message );
 
 #if defined(_DEBUG)
     #define CRITICAL( s ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s FILE: %s LINE: %d", s, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL2( s, v ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s) FILE: %s LINE: %d", s, v, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL2i( s, v ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%d) FILE: %s LINE: %d", s, v, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL3( s, v1, v2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %s) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL3i( s, v1, v2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL4si( s, v, d1, d2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d, %d) FILE: %s LINE: %d", s, v, d1, d2, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
 #else
     #define CRITICAL( s ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s", s ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL2( s, v ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s)", s, v ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL2i( s, v ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%d)", s, v ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL3( s, v1, v2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %s)", s, v1, v2 ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL3i( s, v1, v2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d)", s, v1, v2 ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
     #define CRITICAL4si( s, v, d1, d2 ) { \
-        char errorMessage[MAX_TEMPORARY_STORAGE]; \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d, %d)", s, v, d1, d2 ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
