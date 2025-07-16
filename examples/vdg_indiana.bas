@@ -11,7 +11,7 @@ REM guarantee a comparable visual and gaming experience between systems,
 REM without giving up the specificities of each.
 REM
 REM @italian
-REM ISPIRATI AI VIDEOGIOCHI TITOLI DI BLADE RUNNER
+REM ISPIRATI AI VIDEOGIOCHI TITOLI DI INDIANA JONES
 REM 
 REM Questo codice disegnerà il titolo di apertura di un videogioco
 REM di esplorazione, ispirato a Indiana Jones.
@@ -33,6 +33,8 @@ REM @include atari atarixl c64 c64reu coleco coco
 
 	CLS
 	
+WAIT KEY
+
 	' Put the color border to BLACK (if border is present)
 	
 	COLOR BORDER BLACK	
@@ -131,7 +133,7 @@ END PROCEDURE
 
 	' Let start the music!
 	
-	MUSIC music
+	'MUSIC music
 
 	' Put the titles on the screen!
 	
