@@ -184,6 +184,7 @@ MUSICNOTEON:
     RL B
     LD DE, BC
     LD HL, (AY8910TMPPTR2)
+    ADD HL, 40
     ADD HL, DE
     LD A, (HL)
     LD E, A

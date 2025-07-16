@@ -44,7 +44,7 @@ SN76489MUSICLOOP        fcb $0
 
 SN76489TMPPTR           fdb $0
 SN76489TMPOFS           fdb $0
-SN76489TMPLEN           fdb $0
+SN76489TMPLEN           fdb $7F
 SN76489JIFFIES          fdb $0
 SN76489BANK             fdb $0
 
@@ -71,7 +71,7 @@ MUSICPLAYERRESET
     STA SN76489BLOCKS_BACKUP
     CMPA #0
     BEQ MUSICPLAYERRESET3
-    LDA #$FF
+    LDA #$7F
     JMP MUSICPLAYERRESET2
 MUSICPLAYERRESET3
     TFR B, A
@@ -287,10 +287,10 @@ MUSICREADNEXTBYTELE
     CLRA
     STA SN76489TMPOFS
 
-    ; Increment the base address by 256
-    LDA SN76489TMPPTR
-    INCA
-    STA SN76489TMPPTR
+    ; Increment the address by 128
+    LDD SN76489TMPPTR
+    ADDD #$7F
+    STD SN76489TMPPTR
 
     ; Decrement the number of remaining blocks
     DEC SN76489BLOCKS
@@ -299,8 +299,8 @@ MUSICREADNEXTBYTELE
     ; length is different from 256 bytes.
     BEQ MUSICPLAYERLE2
 
-    ; Remaining block is 256 bytes lenght.
-    LDA #$FF
+    ; Remaining block is 128 bytes lenght.
+    LDA #$7F
     STA SN76489TMPLEN
     JMP MUSICREADNEXTBYTE2
 
