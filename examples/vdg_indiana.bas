@@ -33,8 +33,6 @@ REM @include atari atarixl c64 c64reu coleco coco
 
 	CLS
 	
-WAIT KEY
-
 	' Put the color border to BLACK (if border is present)
 	
 	COLOR BORDER BLACK	
