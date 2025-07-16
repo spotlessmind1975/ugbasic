@@ -131,7 +131,7 @@ END PROCEDURE
 
 	' Let start the music!
 	
-	'MUSIC music
+	MUSIC music
 
 	' Put the titles on the screen!
 	
