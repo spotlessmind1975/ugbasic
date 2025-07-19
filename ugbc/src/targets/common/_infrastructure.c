@@ -15153,8 +15153,18 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
             cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
             break;
         case 1:
-        case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+        case 0: {
+            switch( field->type ) {
+                case VT_SPRITE:
+                    cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
+                case VT_MSPRITE:
+                    cpu_move_16bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
+                default:
+                CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            }
+        }
     }
 
 }

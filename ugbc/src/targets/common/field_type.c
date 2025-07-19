@@ -44,8 +44,22 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
         CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE(_name);
     }
 
-    if ( VT_BITWIDTH( _datatype ) == 0 ) {
-        CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
+    switch( VT_BITWIDTH( _datatype ) ) {
+        case 32:
+        case 16:
+        case 8:
+            break;
+        case 1:
+        case 0: {
+            switch( _datatype ) {
+                case VT_SPRITE:
+                    break;
+                case VT_MSPRITE:
+                    break;
+                default:
+                    CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
+            }
+        }
     }
 
     Field * field = malloc( sizeof( Field ) );
