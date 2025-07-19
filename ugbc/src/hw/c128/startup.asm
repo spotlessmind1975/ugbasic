@@ -124,6 +124,14 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.msprites
 
 IRQSVCXX:
+
+@IF deployed.joystick && !joystickConfig.sync
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+
     PLA
     RTI
 
