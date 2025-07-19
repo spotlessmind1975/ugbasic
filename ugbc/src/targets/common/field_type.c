@@ -44,17 +44,25 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
         CRITICAL_CANNOT_DEFINE_OUTSIDE_TYPE(_name);
     }
 
+    int fieldOffset = 0;
     switch( VT_BITWIDTH( _datatype ) ) {
         case 32:
+            fieldOffset = 4;
+            break;
         case 16:
+            fieldOffset = 2;
+            break;
         case 8:
+            fieldOffset = 1;
             break;
         case 1:
         case 0: {
             switch( _datatype ) {
                 case VT_SPRITE:
+                    fieldOffset = 2;
                     break;
                 case VT_MSPRITE:
+                    fieldOffset = 1;
                     break;
                 default:
                     CRITICAL_CANNOT_USE_DATATYPE_IN_TYPE(_name);
@@ -70,7 +78,7 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
     Field * last = NULL;
     if ( current ) {
         while( current ) {
-            currentOffset = current->offset + (VT_BITWIDTH( current->type ) >> 3);
+            currentOffset = current->offset + fieldOffset;
             last = current;
             current = current->next;
         }
@@ -80,7 +88,7 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
     field->type = _datatype;
     field->offset = currentOffset;
 
-    _environment->currentType->size = currentOffset +  (VT_BITWIDTH( field->type ) >> 3);
+    _environment->currentType->size = currentOffset + fieldOffset;
 
     if ( last ) {
         last->next = field;
