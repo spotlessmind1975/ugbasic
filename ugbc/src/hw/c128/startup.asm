@@ -118,7 +118,6 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.msprites
 
 IRQSVCXX:
-    JSR JIFFYUPDATE
     PLA
     RTI
 
