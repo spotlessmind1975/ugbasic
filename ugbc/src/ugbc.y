@@ -5026,7 +5026,7 @@ fade_in_palette:
 optional_period : {
     $$ = NULL;
     }
-    | PERIOD expr {
+    | PERIOD Identifier {
         $$ = $2;
     };
 
@@ -12112,11 +12112,53 @@ statement2nc:
         }
         parser_array_cleanup( _environment );
   }
-  | INC OSP Identifier CSP {
-        variable_increment_mt( _environment, $3 );
+  | INC OSP Identifier CSP optional_field {
+        if ( $5 ) {
+            Variable * array;
+            if ( ! variable_exists( _environment, $3 ) ) {
+                CRITICAL_NOT_ARRAY( $3 );
+            }        
+            array = variable_retrieve( _environment, $3 );        
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $3 );
+            }
+            parser_array_init( _environment );
+            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+            Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
+            variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
+            parser_array_cleanup( _environment );
+            variable_increment( _environment, temporary->name );
+            parser_array_init( _environment );
+            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+            variable_move_array_type( _environment, $3, $5, temporary->name );
+            parser_array_cleanup( _environment );
+        } else {
+            variable_increment_mt( _environment, $3 );
+        }
   }
-  | DEC OSP Identifier CSP {
-        variable_decrement_mt( _environment, $3 );
+  | DEC OSP Identifier CSP optional_field {
+        if ( $5 ) {
+            Variable * array;
+            if ( ! variable_exists( _environment, $3 ) ) {
+                CRITICAL_NOT_ARRAY( $3 );
+            }        
+            array = variable_retrieve( _environment, $3 );        
+            if ( array->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $3 );
+            }
+            parser_array_init( _environment );
+            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+            Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
+            variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
+            parser_array_cleanup( _environment );
+            variable_decrement( _environment, temporary->name );
+            parser_array_init( _environment );
+            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+            variable_move_array_type( _environment, $3, $5, temporary->name );
+            parser_array_cleanup( _environment );
+        } else {
+            variable_decrement_mt( _environment, $3 );
+        }
   }
   | RANDOMIZE {
       randomize( _environment, NULL );
@@ -13011,15 +13053,20 @@ statement2nc:
 
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $2 );
-    }
+    } optional_field
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve( _environment, $2 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $2 );
         }
-        Variable * expr = variable_retrieve_or_define( _environment, $6, array->arrayType, 0 );
-        variable_move_array( _environment, $2, expr->name );
+        if ( $5 ) {
+            Variable * expr = variable_retrieve( _environment, $7 );
+            variable_move_array_type( _environment, $2, $5, expr->name );
+        } else {
+            Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
+            variable_move_array( _environment, $2, expr->name );
+        }
         parser_array_cleanup( _environment );
   }
   | OSP Identifier OP_DOLLAR CSP {
@@ -13039,25 +13086,6 @@ statement2nc:
             CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
         }
         variable_move_array_string( _environment, $2, x->name );
-        parser_array_cleanup( _environment );
-  }
-  | OSP Identifier CSP {
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $2 );
-    } datatype OP_ASSIGN expr {
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * x = variable_retrieve( _environment, $7 );
-        Variable * a = variable_retrieve( _environment, $2 );
-        if ( x->type != $5 ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$5] );
-        }
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        if ( a->arrayType != $5 ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$5] );
-        }
-        variable_move_array( _environment, $2, x->name );
         parser_array_cleanup( _environment );
   }
   | FADE fade_definition

@@ -15155,8 +15155,18 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
             cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
             break;
         case 1:
-        case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+        case 0: {
+            switch( field->type ) {
+                case VT_SPRITE:
+                    cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
+                case VT_MSPRITE:
+                    cpu_move_16bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
+                default:
+                CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            }
+        }
     }
 
 }
@@ -15209,7 +15219,16 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    case VT_SPRITE:
+                        cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    default:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                }
         }
 
     } else {
@@ -15229,7 +15248,18 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
+                        break;
+                    case VT_SPRITE:
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                }
         }
 
     }
@@ -15315,9 +15345,17 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
                 cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                 break;
             case 1:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                        break;
+                    case VT_SPRITE:
+                        cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                }
         }
 
     } else {
@@ -15336,9 +15374,19 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
                     bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
                     break;
                 case 1:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
                 case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                    switch( field->type ) {
+                        case VT_MSPRITE:
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
+                            break;
+                        case VT_SPRITE:
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
+                            break;
+                        default:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                    }
             }
 
     }
@@ -15393,9 +15441,17 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
                 cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
                 break;
             case 1:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
+                        break;
+                    case VT_SPRITE:
+                        cpu_move_8bit_indirect2( _environment, offset->realName, result->realName );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                }
         }
 
     } else {
@@ -15414,9 +15470,19 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
                     bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
                     break;
                 case 1:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
                 case 0:
-                    CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                    switch( field->type ) {
+                        case VT_MSPRITE:
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
+                            break;
+                        case VT_SPRITE:
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 1 );
+                            break;
+                        default:
+                            CRITICAL_DATATYPE_UNSUPPORTED("array(4b)", DATATYPE_AS_STRING[array->arrayType]);
+                    }
             }
 
     }
@@ -15504,7 +15570,16 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    case VT_SPRITE:
+                        cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                }
         }
 
     } else {
@@ -15524,7 +15599,18 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                switch( field->type ) {
+                    case VT_MSPRITE:
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
+                        break;
+                    case VT_SPRITE:
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field->type]);
+                }
         }
 
     }
@@ -15590,7 +15676,18 @@ void variable_move_array1_type_fields( Environment * _environment, char * _array
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field1->type]);
+                switch( field1->type ) {
+                    case VT_MSPRITE:
+                        cpu_move_16bit_indirect2( _environment, offset1->realName, value->realName );
+                        cpu_move_16bit_indirect( _environment, value->realName, offset2->realName );
+                        break;
+                    case VT_SPRITE:
+                        cpu_move_8bit_indirect2( _environment, offset1->realName, value->realName );
+                        cpu_move_8bit_indirect( _environment, value->realName, offset2->realName );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field1->type]);
+                }
         }
 
     } else {
@@ -15620,7 +15717,18 @@ void variable_move_array1_type_fields( Environment * _environment, char * _array
                 break;
             case 1:
             case 0:
-                CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field1->type]);
+                switch( field1->type ) {
+                    case VT_MSPRITE:
+                        bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset1->name, value->name, 2 );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset2->name, 2 );
+                        break;
+                    case VT_SPRITE:
+                        bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset1->name, value->name, 1 );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset2->name, 1 );
+                        break;
+                    default:
+                        CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[field1->type]);
+                }
         }
 
     }
