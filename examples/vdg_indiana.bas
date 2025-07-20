@@ -22,7 +22,7 @@ REM portarli da una piattaforma all'altra. Lo scopo, come sempre, è
 REM garantire una esperienza visiva e di gioco paragonabile tra i sistemi,
 REM senza rinunciare alle specificità di ognuno.
 REM
-REM @include atari atarixl c64 c64reu coleco coco
+REM @include atari,c64,c64reu,coleco
 
 	' We suggest the use the most coloured
 	' resolution (up to 16 colors).
@@ -33,8 +33,6 @@ REM @include atari atarixl c64 c64reu coleco coco
 
 	CLS
 	
-WAIT KEY
-
 	' Put the color border to BLACK (if border is present)
 	
 	COLOR BORDER BLACK	
@@ -48,15 +46,7 @@ WAIT KEY
 	'
 	'	atari / atarixl : 160x96 pixel, 4 colors
 	'	c64 			: 160x200 pixel, 16 colors
-	'	coco 			: 128x192 pixel, 4 colors[edited]
-	'	coco3 			: 320x200 pixel, 16 colors
 	'	coleco          : 256x160 pixel, 16 colors
-	'	d32 			: 128x192 pixel, 4 colors[edited]
-	'	d64 			: 128x192 pixel, 4 colors[edited]
-	'	msx1			: 256x160 pixel, 16 colors
-	'	sc3000			: 256x160 pixel, 16 colors
-	'	sg1000			: 256x160 pixel, 16 colors
-	'	zx				: 256x192 pixel, 8 colors
 
 	titles := LOAD IMAGE("indiana_titles.png")
 	
@@ -133,7 +123,7 @@ END PROCEDURE
 
 	' Let start the music!
 	
-	'MUSIC music
+	MUSIC music
 
 	' Put the titles on the screen!
 	

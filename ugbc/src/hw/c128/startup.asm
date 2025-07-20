@@ -94,6 +94,12 @@ IRQSVC:
 MSPRITESMANAGERADDRESS:
     JSR MSPRITESMANAGER
 
+    LDA $D012
+    CMP #IRQ1LINE
+    BNE IRQSVCXX
+
+    JSR JIFFYUPDATE
+
 @IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
 @ENDIF
@@ -118,6 +124,14 @@ MSPRITESMANAGERADDRESS:
 @IF deployed.msprites
 
 IRQSVCXX:
+
+@IF deployed.joystick && !joystickConfig.sync
+    JSR JOYSTICKMANAGER
+@ENDIF
+@IF deployed.keyboard
+    JSR KEYBOARDMANAGER
+@ENDIF
+
     PLA
     RTI
 
