@@ -1,5 +1,5 @@
 ﻿REM @english
-REM VIDEOGAME ISPIRED INDIANA JONES
+REM VIDEOGAME INSPIRED INDIANA JONES
 REM
 REM This code will draw the opening title of an exploring videogame,
 REM inspired by Indiana Jones. 

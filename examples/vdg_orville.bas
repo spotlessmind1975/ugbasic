@@ -1,5 +1,5 @@
 ﻿REM @english
-REM VIDEOGAME ISPIRED ORVILLE
+REM VIDEOGAME INSPIRED ORVILLE
 REM
 REM This code will draw the opening title of an fictious videogame,
 REM about "The Orville", an American science fiction comedy drama.

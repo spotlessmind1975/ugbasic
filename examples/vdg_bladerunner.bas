@@ -1,5 +1,5 @@
 ﻿REM @english
-REM VIDEOGAME ISPIRED BLADE RUNNER OPENING
+REM VIDEOGAME INSPIRED BLADE RUNNER OPENING
 REM
 REM This code will draw the opening title of the "Blade Runner" videogame,
 REM developed by Westwood Studios and published by Virgin Interactive 
