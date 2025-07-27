@@ -158,11 +158,13 @@ IRQSVCX:
     JMP ($0314)    
     
 IRQSVC2:
+@IF !deployed.msprites
     PHA
     LDA $DC0D
     LDA #$1
     STA $D019
     PLA
+@ENDIF
     RTI
 
 C64STARTUP:
