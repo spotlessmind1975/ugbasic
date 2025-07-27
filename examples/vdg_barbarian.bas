@@ -1,5 +1,5 @@
 ﻿REM @english
-REM VIDEOGAME ISPIRED BARBARIAN
+REM VIDEOGAME INSPIRED BARBARIAN
 REM
 REM This example offers the possibility of illustrating how you can manage 
 REM elements, even large ones, without the need for hardware sprites. 
