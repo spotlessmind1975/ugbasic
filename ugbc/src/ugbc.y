@@ -12698,8 +12698,8 @@ statement2nc:
   | COPPER STORE const_expr OP_COMMA const_expr as_datatype {
         copper_store( _environment, $3, $5, $6 );
   }
-  | STORE const_expr OP_COMMA const_expr as_datatype {
-        copper_store( _environment, $2, $4, $5 );
+  | STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype {
+        copper_store( _environment, $3, $6, $7 );
   }
   | COPPER POKE const_expr OP_COMMA const_expr {
         copper_store( _environment, $3, $5, VT_BYTE );

@@ -64,6 +64,10 @@ approximately 65.5 seconds.
 
 The ''PARALLEL'' keyword can only be used with waits related to ''CYCLES''.
 
+Note that there is a variant of this command that only works within copper lists. 
+This command, called ''WAIT'', allows you to wait for a specific video brush 
+position to arrive.
+
 @italian
 
 Interrompe l'esecuzione per un certo periodo di tempo. L'istruzione ''WAIT'' può 
@@ -78,6 +82,10 @@ to run. Note that the maximum duration you can expect is 65535 milliseconds, or
 approximately 65.5 seconds.
 
 La parola chiave ''PARALLEL'' può essere usata solo con attese legate ai ''CYCLES''.
+
+Notare che esiste una variante di questo comando, che funziona solo all'interno 
+delle copper list. Il comando è ''WAIT'' e permette di attendere l'arrivo di una 
+specifica posizione del pennello video.
 
 @syntax WAIT cycles [CYCLES] [PARALLEL]
 @syntax WAIT ticks TICK

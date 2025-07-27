@@ -67,6 +67,8 @@ Improper use of ''POKE'' can cause your computer to freeze or corrupt data.
 Randomly modifying memory can have unpredictable consequences. Valid memory 
 addresses and their meanings vary from system to system.
 
+There is also a version of this command that works within a copper list.
+
 @italian
 
 ''POKE'' è l'equivalente in scrittura del comando ''PEEK'', il che significa 
@@ -88,6 +90,8 @@ di un computer.
 L'uso improprio di ''POKE'' può causare il blocco o la corruzione dei dati 
 del computer. La modifica casuale della memoria può avere conseguenze imprevedibili. 
 Gli indirizzi di memoria validi e il loro significato variano da sistema a sistema.
+
+Esiste anche una versione di questo comando che funziona all'interno di una copper list.
 
 @syntax POKE address, value
 
@@ -141,6 +145,8 @@ Improper use of ''POKEW'' can cause your computer to freeze or corrupt data.
 Randomly modifying memory can have unpredictable consequences. Valid memory 
 addresses and their meanings vary from system to system.
 
+There is also a version of this command that works within a copper list.
+
 @italian
 
 ''POKEW'' è l'equivalente in scrittura del comando ''PEEKW'', il che significa 
@@ -161,6 +167,8 @@ di un computer.
 L'uso improprio di ''POKEW'' può causare il blocco o la corruzione dei dati 
 del computer. La modifica casuale della memoria può avere conseguenze imprevedibili. 
 Gli indirizzi di memoria validi e il loro significato variano da sistema a sistema.
+
+Esiste anche una versione di questo comando che funziona all'interno di una copper list.
 
 @syntax POKEW address, value
 
@@ -219,6 +227,8 @@ Improper use of ''POKED'' can cause your computer to freeze or corrupt data.
 Randomly modifying memory can have unpredictable consequences. Valid memory 
 addresses and their meanings vary from system to system.
 
+There is also a version of this command that works within a copper list.
+
 @italian
 
 ''POKED'' è l'equivalente in scrittura del comando ''PEEKD'', il che significa 
@@ -239,6 +249,8 @@ di un computer.
 L'uso improprio di ''POKED'' può causare il blocco o la corruzione dei dati 
 del computer. La modifica casuale della memoria può avere conseguenze imprevedibili. 
 Gli indirizzi di memoria validi e il loro significato variano da sistema a sistema.
+
+Esiste anche una versione di questo comando che funziona all'interno di una copper list.
 
 @syntax POKED address, value
 

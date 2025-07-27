@@ -122,7 +122,7 @@ ottenere risultati visivi di alta qualità.
 @syntax    MOVE #$D014, RED
 @syntax    WAIT #30
 @syntax    MOVE #$D014, GREEN
-@syntax END TYPE
+@syntax END COPPER
 
 @alias BEGIN COPPER...ENDCOPPER
 @alias COPPER...ENDCOPPER

@@ -43,6 +43,44 @@
  * 
  * @param _environment Current calling environment
  */
+ /* <usermanual>
+@keyword COPPER NOP
+
+@english
+
+The primary purpose of the ''COPPER NOP'' instruction is to wait some time
+doing nothing during copper list execution, and synchronized with the television's 
+video display.
+
+A copper list is a sequence of special instructions that the processor executes 
+independently of the main execution. These instructions are programmed to execute 
+in sync with the video signal, typically when the television's video display 
+reaches a specific horizontal and vertical position on the screen.
+
+@italian
+
+Lo scopo principale dell'istruzione "COPPER NOP" è di attendere un certo tempo
+senza fare nulla durante l'esecuzione della Copper List, sincronizzandosi con il display
+video del televisore.
+
+Una Copper List è una sequenza di istruzioni speciali che il processore esegue
+indipendentemente dall'esecuzione principale. Queste istruzioni sono programmate per essere eseguite
+in sincronia con il segnale video, in genere quando il display
+video del televisore raggiunge una specifica posizione orizzontale e verticale sullo schermo.
+
+@syntax COPPER NOP
+
+@example BEGIN COPPER
+@example    COPPER WAIT 10
+@example    COPPER MOVE &H2c8, &H2c7 AS BYTE
+@example    COPPER NOP
+@example    COPPER MOVE &H2c8, &H2c7 AS BYTE
+@example END COPPER
+
+@alias NOP
+@seeAlso BEGIN COPPER...END COPPER
+
+</usermanual> */
 void copper_nop( Environment * _environment ) {
 
     if ( !_environment->insideCopperList ) {
