@@ -619,6 +619,8 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->offsetX;
         } else if ( strcmp( $1, "offsetY" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->offsetY;
+        } else if ( strcmp( $1, "copperList" ) == 0 ) {
+            $$ = ( ((struct _Environment *)_environment)->copperList != NULL ) ? 1 : 0;
         } else {
             $$ = 0;
         }

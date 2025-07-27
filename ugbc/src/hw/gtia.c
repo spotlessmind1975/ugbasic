@@ -767,6 +767,25 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenTiles = 255;
     _environment->currentMode = _screen_mode->id;
 
+    int copperUsedLines[312];
+    memset(copperUsedLines, 0, 312 * sizeof(int));
+
+    if ( _environment->copperList ) {
+        CopperInstruction * actual = _environment->copperList->first;
+        while( actual ) {
+            switch( actual->operation ) {
+                case COP_NOP:
+                    break;
+                case COP_WAIT:
+                    copperUsedLines[actual->param1] = 1;
+                    break;
+                case COP_MOVE:
+                    break;
+            }
+            actual = actual->next;
+        }
+    }
+
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
         // This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 
@@ -799,13 +818,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 8, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 8, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 8, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 8, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<23; ++i ) {
                 // 8	\Display ANTIC mode 8 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 8 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 8 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 8 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 8 );
@@ -852,13 +879,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 9, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 9, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 9, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 9, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 9 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 9 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 9 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 9 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 9 );
@@ -902,13 +937,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 10, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 10, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 10, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 10, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 10 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 10 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 10 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 10 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 10 );
@@ -952,13 +995,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 11, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 11, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 11, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 11, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 11 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 11 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 11 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 11 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 11 );
@@ -1004,13 +1055,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 13, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 13, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 13, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 13, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<96; ++i ) {
                 // 8	\Display ANTIC mode 13 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 13 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 13 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 13 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 13 );
@@ -1063,13 +1122,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 15, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<96; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+                if ( _environment->copperList && copperUsedLines[0] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+                }
             }
 
             screenMemoryAddress2 = _environment->frameBufferStart + 4096;
@@ -1082,7 +1149,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=0; i<94; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+                }
             }
 
             DLI_IRQ( dliListCurrent, 15 );
@@ -1130,13 +1201,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 12, 0xA000 );
-            DLI_LMS( dliListCurrent, 12, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
+            } else {
+                DLI_LMS( dliListCurrent, 12, _environment->frameBufferStart );                
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 12 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_IRQ( dliListCurrent, 12 );
+                } else {
+                    DLI_MODE( dliListCurrent, 12 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 12 );
@@ -1181,13 +1260,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 14, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 14, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+               DLI_LMS_VHSCROLL( dliListCurrent, 14, _environment->frameBufferStart );
+            } else {
+
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 14 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 14 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 14 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 14 );
@@ -1236,13 +1323,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 2, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 2, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 2, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 2, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<24; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 2 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 2 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 2 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 2 );
@@ -1291,13 +1386,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 6, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 6, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 6, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 6, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 6 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 6 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 6 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 6 );
@@ -1339,13 +1442,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 7, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 7, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 7, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 7, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<11; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 7 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 7 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 7 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 7 );
@@ -1389,13 +1500,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 3, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 3, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 3, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 3, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 3 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 3 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 3 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 3 );
@@ -1442,13 +1561,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 4, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 4, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 4, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 4, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 4 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 4 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 4 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 4 );
@@ -1490,13 +1617,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 5, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 5, _environment->frameBufferStart );
+            if ( _environment->copperList && copperUsedLines[0] ) {
+                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 5, _environment->frameBufferStart );
+            } else {
+                DLI_LMS_VHSCROLL( dliListCurrent, 5, _environment->frameBufferStart );
+            }
 
             screenMemoryOffset = dliListCurrent - dliListStart - 2;
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 5 );
+                if ( _environment->copperList && copperUsedLines[i] ) {
+                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 5 );
+                } else {
+                    DLI_MODE_VHSCROLL( dliListCurrent, 5 );
+                }
             }
 
             DLI_IRQ( dliListCurrent, 5 );
@@ -2124,6 +2259,45 @@ void gtia_finalization( Environment * _environment ) {
         deploy( cls, src_hw_gtia_cls_asm );
     }
 
+    if ( _environment->copperList ) {
+        outhead0("COPPERLISTNOP:");
+        outline0("RTS");
+        CopperInstruction * actual = _environment->copperList->first;
+        int currentLine = 0;
+        outhead0("COPPERLIST0000:" );
+        while( actual ) {
+            switch( actual->operation ) {
+                case COP_NOP:
+                    outline0("NOP");
+                    break;
+                case COP_WAIT:
+                    if ( actual->param1 > 0  ) {
+                        if ( actual->param1 > currentLine ) {
+                            if ( currentLine ) {
+                                outline1("LDA #<COPPERLIST%4.4x", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+1" );
+                                outline1("LDA #>COPPERLIST%4.4x", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+2" );                            
+                                outline0("RTS");
+                            }
+                            outhead1("COPPERLIST%4.4x:", actual->param1 );
+                            currentLine = actual->param1;
+                        }
+                    }
+                    break;
+                case COP_MOVE:
+                    outline1( "LDA #$%2.2x", (unsigned char)( actual->param2 & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+            }
+            actual = actual->next;
+        }
+        outline0("LDA #<GTIAVBLIRQNOCOPPER" );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline0("LDA #>GTIAVBLIRQNOCOPPER" );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+    }    
 }
 
 void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap ) {

@@ -77,6 +77,7 @@ GTIAVBLIRQ:
 @IF deployed.keyboard && !keyboardConfig.sync
     JSR KEYBOARDMANAGER
 @ENDIF
+
     JMP (GTIAVBLIRQPREV)
 
 GTIASTARTUP:

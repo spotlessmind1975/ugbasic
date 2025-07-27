@@ -710,6 +710,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "FADE^"))   return 0;
     if(po_buf_match(name, "TIMER^"))   return 0;
     if(po_buf_match(name, "ANTIC^"))   return 0;
+    if(po_buf_match(name, "COPPER^"))   return 0;
     if(po_buf_match(name, "^_Tstr"))   return 0;
     if(po_buf_match(name, "_^_Tstr"))   return 0;
     if(po_buf_match(name, "_label"))  return 0;

@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -4920,14 +4920,20 @@ release :
     ;
 
 wait_definition_simple:
-      direct_integer CYCLES parallel_optional {
+    | direct_integer CYCLES parallel_optional {
       wait_cycles( _environment, $1, $3 );
     }
     | direct_integer ticks {
       wait_ticks( _environment, $1 );
     }
     | direct_integer parallel_optional {
-      wait_cycles( _environment, $1, $2 );
+      if ( !((struct _Environment *)_environment)->insideCopperList ) {
+        wait_cycles( _environment, $1, $2 );
+      } else if ( $2 ) {
+        CRITICAL_WAIT_PARALLEL_CANNOT_BE_CALLED_OUTSIDE_PROCEDURE( );
+      } else {
+        copper_wait( _environment, $1 );
+      }
     }
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
@@ -4956,7 +4962,7 @@ wait_definition_simple:
     ;
 
 wait_definition_expression:
-      expr CYCLES parallel_optional {
+    expr CYCLES parallel_optional {
       wait_cycles_var( _environment, $1, $3 );
     }
     | expr ticks {
@@ -6359,6 +6365,12 @@ move_definition_expression:
     }
     | Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier {
         move( _environment, $1, $7, $3, $5, $9 );
+    }    
+    | const_expr OP_COMMA const_expr {
+        if ( !((struct _Environment *)_environment)->insideCopperList ) {
+            CRITICAL_COPPER_LIST_NOT_OPENED( );
+        }
+        copper_move( _environment, $1, $3 );
     }    
     ;
 
@@ -12639,6 +12651,21 @@ statement2nc:
   }
   | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
+  }
+  | BEG COPPER {
+        begin_copper( _environment );
+  }
+  | COPPER NOP {
+        copper_nop( _environment );
+  }
+  | COPPER WAIT const_expr {
+        copper_wait( _environment, $3 );
+  }
+  | COPPER MOVE const_expr OP_COMMA const_expr {
+        copper_move( _environment, $3, $5 );
+  }
+  | END COPPER {
+        end_copper( _environment );
   }
   | BEG TYPE Identifier {
         begin_type( _environment, $3 );

@@ -129,13 +129,26 @@ load memory scan (LMS)
 #define     DLI_MODE_VHSCROLL( _list, _n )      \
                                     *_list++ = ((unsigned char)( 0x20 | _n ));
 
+#define     DLI_MODE_VHSCROLL_IRQ( _list, _n )      \
+                                    *_list++ = ((unsigned char)( 0x20 | 0x80 | _n ));
+
 #define     DLI_LMS( _list, _n, _addr )      \
                                     *_list++ = ((unsigned char)( /*0x30 |*/ 0x40 | ( _n ) )); \
                                     *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
                                     *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
 
+#define     DLI_LMS_IRQ( _list, _n, _addr )      \
+                                    *_list++ = ((unsigned char)( /*0x30 |*/ 0x40 | 0x80 | ( _n ) )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
+
 #define     DLI_LMS_VHSCROLL( _list, _n, _addr )      \
                                     *_list++ = ((unsigned char)( 0x20 | 0x40 | ( _n ) )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
+                                    *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
+
+#define     DLI_LMS_VHSCROLL_IRQ( _list, _n, _addr )      \
+                                    *_list++ = ((unsigned char)( 0x20 | 0x40 | 0x80 | ( _n ) )); \
                                     *_list++ = ((unsigned char)( ( _addr ) & 0xff )); \
                                     *_list++ = ((unsigned char)( ( _addr ) >> 8 ));
 

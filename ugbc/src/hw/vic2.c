@@ -2276,6 +2276,59 @@ void vic2_finalization( Environment * _environment ) {
 
     outline0("RTS");
 
+    if ( _environment->copperList ) {
+        outhead0("COPPERLISTNOP:");
+        outline0("RTS");
+        CopperInstruction * actual = _environment->copperList->first;
+        int currentLine = 0;
+        outhead0("COPPERLIST0000:" );
+        while( actual ) {
+            switch( actual->operation ) {
+                case COP_NOP:
+                    outline0("NOP");
+                    break;
+                case COP_WAIT:
+                    if ( actual->param1 > 0  ) {
+                        if ( actual->param1 > currentLine ) {
+                            outline1("LDA #$%2.2x", (unsigned char)( actual->param1 & 0xff ) );
+                            outline0("STA $D012" );
+                            if ( ( actual->param1 >> 8 ) & 0x01 ) {
+                                outline0("LDA $D011" );
+                                outline0("ORA #$80" );
+                            } else {
+                                outline0("LDA $D011" );
+                                outline0("AND #$7F" );
+                            }
+                            outline0("STA $D011" );
+                            outline1("LDA #<COPPERLIST%4.4x", actual->param1 );
+                            outline0("STA COPPERLISTJUMP+1" );
+                            outline1("LDA #>COPPERLIST%4.4x", actual->param1 );
+                            outline0("STA COPPERLISTJUMP+2" );                            
+                            outline0("RTS");
+                            outhead1("COPPERLIST%4.4x:", actual->param1 );
+                            currentLine = actual->param1;
+                        }
+                    }
+                    break;
+                case COP_MOVE:
+                    outline1( "LDA #$%2.2x", (unsigned char)( actual->param2 & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+            }
+            actual = actual->next;
+        }
+        outline0("LDA #$0" );
+        outline0("STA $D012" );
+        outline0("LDA $D011" );
+        outline0("AND #$7F" );
+        outline0("STA $D011" );
+        outline0("LDA #<COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline0("LDA #>COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+    }
+
 }
 
 void vic2_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
