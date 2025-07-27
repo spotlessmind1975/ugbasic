@@ -2127,7 +2127,12 @@ typedef enum _CopperOperation {
 
     COP_NOP = 0,
     COP_WAIT = 1,
-    COP_MOVE = 2
+    COP_STORE_BYTE = 2,
+    COP_STORE_WORD = 3,
+    COP_STORE_DWORD = 4,
+    COP_MOVE_BYTE = 5,
+    COP_MOVE_WORD = 6,
+    COP_MOVE_DWORD = 7
 
 } CopperOperation;
 
@@ -3688,6 +3693,9 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_NESTED_COPPER_LIST_NOT_ALLOWED( ) CRITICAL("E390 - cannot define nested COPPER list" );   
 #define CRITICAL_COPPER_LIST_NOT_OPENED( ) CRITICAL("E391 - COPPER list is not opened" );   
 #define CRITICAL_COPPER_LIST_ALREADY_DEFINED( ) CRITICAL("E392 - COPPER list already defined" );   
+#define CRITICAL_MOVE_WITH_NOT_ALLOWED_TYPE( t ) CRITICAL2("E393 - cannot MOVE this data type inside a COPPER list", t );   
+#define CRITICAL_STORE_WITH_NOT_ALLOWED_TYPE( t ) CRITICAL2("E394 - cannot STORE this data type inside a COPPER list", t );   
+#define CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E395 - cannot STORE using not const in a COPPER list", t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5015,7 +5023,8 @@ void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 void                    copper_nop( Environment * _environment );
 void                    copper_wait( Environment * _environment, int _line );
-void                    copper_move( Environment * _environment, int _address, int _value );
+void                    copper_move( Environment * _environment, int _address1, int _address2, VariableType _VariableType );
+void                    copper_store( Environment * _environment, int _address, int _value, VariableType _VariableType );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
 Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );

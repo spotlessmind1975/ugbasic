@@ -43,12 +43,12 @@
  * 
  * @param _environment Current calling environment
  */
-/* <usermanual>
-@keyword BEGIN COPPER...END COPPER
+ /* <usermanual>
+@keyword COPPER MOVE
 
 @english
 
-The ''BEGIN COPPER'' and the ''END COPPER'' instructions are fundamental commands 
+The ''[COPPER] MOVE''  and the ''END COPPER'' instructions are fundamental commands 
 used in programming hardware that interacts directly with a TV's video signal. 
 Their primary purpose is to isolate and delimit a block of instructions (called a
 "Copper list") that must be executed in close synchronization with the TV's video 
@@ -128,50 +128,43 @@ ottenere risultati visivi di alta qualità.
 @alias COPPER...ENDCOPPER
 
 </usermanual> */
-/* <usermanual>
-@keyword COPPER...END COPPER
 
-@english
+extern char DATATYPE_AS_STRING[][16];
 
-@italian
+void copper_store( Environment * _environment, int _address, int _value, VariableType _variableType ) {
 
-@alias BEGIN COPPER...END COPPER
-
-</usermanual> */
-/* <usermanual>
-@keyword BEGIN COPPER...ENDCOPPER
-
-@english
-
-@italian
-
-@alias BEGIN COPPER...END COPPER
-
-</usermanual> */
-/* <usermanual>
-@keyword COPPER...END COPPER
-
-@english
-
-@italian
-
-@alias BEGIN COPPER...END COPPER
-
-</usermanual> */
-
-void begin_copper( Environment * _environment ) {
-
-    if ( _environment->insideCopperList ) {
-        CRITICAL_NESTED_COPPER_LIST_NOT_ALLOWED();
+    if ( !_environment->insideCopperList ) {
+        CRITICAL_COPPER_LIST_NOT_OPENED();
     }
 
-    if ( _environment->copperList ) {
-        CRITICAL_COPPER_LIST_ALREADY_DEFINED();
+    CopperInstruction * move = malloc( sizeof( CopperInstruction ) );
+    memset( move, 0, sizeof( CopperInstruction ) );
+
+    switch( _variableType ) {
+        case VT_BYTE:
+            move->operation = COP_STORE_BYTE;
+            break;
+        case VT_WORD:
+            move->operation = COP_STORE_WORD;
+            break;
+        case VT_DWORD:
+            move->operation = COP_STORE_DWORD;
+            break;
+        default:
+            CRITICAL_STORE_WITH_NOT_ALLOWED_TYPE(DATATYPE_AS_STRING[_variableType]);
     }
-
-    _environment->insideCopperList = 1;
-
-    _environment->copperList = malloc( sizeof( CopperList ) );
-    memset( _environment->copperList, 0, sizeof( CopperList ) );
     
+    move->param1 = _address;
+    move->param2 = _value;
+
+    if ( _environment->copperList->first ) {
+        CopperInstruction * actual = _environment->copperList->first;
+        while( actual->next ) {
+            actual = actual->next;
+        }
+        actual->next = move;
+    } else {
+        _environment->copperList->first = move;
+    }
+
 }

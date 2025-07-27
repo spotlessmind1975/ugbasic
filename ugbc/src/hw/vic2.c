@@ -2310,8 +2310,28 @@ void vic2_finalization( Environment * _environment ) {
                         }
                     }
                     break;
-                case COP_MOVE:
-                    outline1( "LDA #$%2.2x", (unsigned char)( actual->param2 & 0xff ) );
+                case COP_MOVE_DWORD:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                case COP_MOVE_WORD:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                case COP_MOVE_BYTE:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+                case COP_STORE_DWORD:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                case COP_STORE_WORD:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                case COP_STORE_BYTE:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
                     outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
                     break;
             }

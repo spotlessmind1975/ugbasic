@@ -108,7 +108,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token INCREMENTAL SHUFFLE ROUNDS JOYDIR SCALE EMULATION SLEEP SERIAL STATUS
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
-%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER
+%token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6366,11 +6366,11 @@ move_definition_expression:
     | Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier {
         move( _environment, $1, $7, $3, $5, $9 );
     }    
-    | const_expr OP_COMMA const_expr {
+    | const_expr OP_COMMA const_expr as_datatype {
         if ( !((struct _Environment *)_environment)->insideCopperList ) {
             CRITICAL_COPPER_LIST_NOT_OPENED( );
         }
-        copper_move( _environment, $1, $3 );
+        copper_move( _environment, $1, $3, $4 );
     }    
     ;
 
@@ -9037,18 +9037,49 @@ input_definition :
   ;
 
 poke_definition : 
-      expr OP_COMMA expr {
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+      if ( !((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_COPPER_LIST_NOT_OPENED( )
+      } else {
+        copper_store( _environment, $2, $5, VT_BYTE );
+      }
+    }
+    | expr OP_COMMA expr {
+      if ( ((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+      }
         poke_var( _environment, $1, $3 );
     };
 
 pokew_definition : 
-      expr OP_COMMA expr {
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+      if ( !((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_COPPER_LIST_NOT_OPENED( )
+      } else {
+        copper_store( _environment, $2, $5, VT_WORD );
+      }
+    }
+    | expr OP_COMMA expr {
+      if ( ((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+      }
         pokew_var( _environment, $1, $3 );
     };
 
 poked_definition : 
-      expr OP_COMMA expr {
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
+      if ( !((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_COPPER_LIST_NOT_OPENED( )
+      } else {
+        copper_store( _environment, $2, $5, VT_DWORD );
+      }
+    }
+    | expr OP_COMMA expr {
+      if ( ((struct _Environment *)_environment)->insideCopperList ) {
+        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+      }
         poked_var( _environment, $1, $3 );
+    
     };
 
 font_schema : 
@@ -12661,8 +12692,26 @@ statement2nc:
   | COPPER WAIT const_expr {
         copper_wait( _environment, $3 );
   }
-  | COPPER MOVE const_expr OP_COMMA const_expr {
-        copper_move( _environment, $3, $5 );
+  | COPPER MOVE const_expr OP_COMMA const_expr as_datatype {
+        copper_move( _environment, $3, $5, $6 );
+  }
+  | COPPER STORE const_expr OP_COMMA const_expr as_datatype {
+        copper_store( _environment, $3, $5, $6 );
+  }
+  | STORE const_expr OP_COMMA const_expr as_datatype {
+        copper_store( _environment, $2, $4, $5 );
+  }
+  | COPPER POKE const_expr OP_COMMA const_expr {
+        copper_store( _environment, $3, $5, VT_BYTE );
+  }
+  | COPPER POKEW const_expr OP_COMMA const_expr {
+        copper_store( _environment, $3, $5, VT_WORD );
+  }
+  | COPPER POKED const_expr OP_COMMA const_expr {
+        copper_store( _environment, $3, $5, VT_DWORD );
+  }
+  | ENDCOPPER {
+        end_copper( _environment );
   }
   | END COPPER {
         end_copper( _environment );
