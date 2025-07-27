@@ -120,6 +120,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample graphics_plot_02.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -152,6 +154,8 @@ Qui di seguito si forniscono le componenti cromatiche per ogni target e chipset:
 @usedInExample graphics_plot_02.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -182,6 +186,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample graphics_plot_03.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -207,6 +213,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN CYAN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -232,6 +240,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN VIOLET
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -261,6 +271,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample screens_cls_03.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -289,6 +301,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample texts_options_06.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -319,6 +333,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample graphics_color_01.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -349,6 +365,8 @@ immagini per individuare il colore da utilizzare.
 @usedInExample graphics_color_01.bas
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -374,6 +392,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN BROWN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -399,6 +419,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN LIGHT RED
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -426,6 +448,8 @@ immagini per individuare il colore da utilizzare.
 @alias DARK GRAY (constant)
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -441,6 +465,7 @@ immagini per individuare il colore da utilizzare.
 
 @alias DARK GREY (constant)
 
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -468,6 +493,8 @@ immagini per individuare il colore da utilizzare.
 @alias GRAY (constant)
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -484,6 +511,8 @@ immagini per individuare il colore da utilizzare.
 @alias GREY (constant)
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -509,6 +538,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN LIGHT GREEN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -534,6 +565,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN LIGHT BLUE
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -559,6 +592,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN LIGHT GREY
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -584,6 +619,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN DARK BLUE
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -609,6 +646,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN MAGENTA
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -634,6 +673,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN PURPLE
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -659,6 +700,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN LAVENDER
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -684,6 +727,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN GOLD
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -709,6 +754,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN TURQUOISE
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -734,6 +781,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN TAN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -759,6 +808,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN YELLOW GREEN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -784,6 +835,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN OLIVE GREEN
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -809,6 +862,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN PINK
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
@@ -834,6 +889,8 @@ immagini per individuare il colore da utilizzare.
 @example PEN PEACH
 
 @target all
+
+@color
 </usermanual> */
 
 /* <usermanual>
