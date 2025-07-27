@@ -44,89 +44,238 @@
  * @param _environment Current calling environment
  */
  /* <usermanual>
-@keyword COPPER MOVE
+@keyword COPPER STORE
 
 @english
 
-The ''[COPPER] MOVE''  and the ''END COPPER'' instructions are fundamental commands 
-used in programming hardware that interacts directly with a TV's video signal. 
-Their primary purpose is to isolate and delimit a block of instructions (called a
-"Copper list") that must be executed in close synchronization with the TV's video 
-brush.
+The primary purpose of the ''COPPER STORE'' instruction is to modify the 
+value of a specific memory location or hardware register at a specific time, 
+synchronized with the television's video display.
 
-Think of the TV screen as a canvas on which a painter is drawing. This "painter" is 
-the video brush, a beam of electrons that slides across the screen's surface to paint 
-the image. This process occurs very quickly, line by line, from top to bottom and from 
-left to right.
+A copper list is a sequence of special instructions that the processor executes 
+independently of the main execution. These instructions are programmed to execute 
+in sync with the video signal, typically when the television's video display 
+reaches a specific horizontal and vertical position on the screen.
 
-The ''BEGIN COPPER'' and ''END COPPER'' instructions allow you to delimit a list of 
-operations that will be performed while the video brush is drawing a specific portion 
-of the screen. When the program executes a list of instructions between ''BEGIN COPPER''
-and ''END COPPER'', it waits for the video brush to reach a specific position (specified 
-within the list) before executing the next instruction. This allows you to "paint" graphic 
-effects exactly at the desired time and location on the screen, avoiding flickering or 
-visual artifacts.
+The instruction acts as a "real-time controller" for various aspects of the 
+hardware system, particularly those related to graphics. Essentially, it takes a 
+value (immediate ''data'') and writes it to a specific ''destination''.
 
-Operations in a copper list can include doing nothing (''COPPER NOP''), waiting for a 
-specific position (''COPPER WAIT''), or modifying a specific memory location 
-(''COPPER MOVE'').
-
-The main advantage of this synchronization is the ability to create complex and fluid 
-graphic effects that would be difficult or impossible to achieve with normal CPU 
-programming, which is less precise in controlling video timing.
-
-In summary, ''BEGIN COPPER'' and ''END COPPER'' are essential to fully exploit the 
-capabilities of dedicated graphics hardware systems, enabling granular and timed 
-control of the video generation process to achieve high-quality visual results.
+The versatility of ''COPPER STORE'' lies in its ability to manipulate the hardware 
+registers that control critical aspects of the display.
 
 @italian
 
-Le istruzioni ''BEGIN COPPER'' ed ''END COPPER'' sono comandi fondamentali, 
-utilizzati nell'ambito della programmazione per hardware che interagisce 
-direttamente con il segnale video di una TV. Il loro scopo principale è 
-quello di isolare e delimitare un blocco di istruzioni (chiamato 
-"lista copper" o "copper list") che devono essere eseguite in stretta 
-sincronizzazione con il pennello video della TV.
+Lo scopo principale dell'istruzione ''COPPER STORE'' è quello di modificare il 
+valore di una specifica posizione di memoria o di un registro hardware in un momento 
+specifico, sincronizzato con il display del televisore.
 
-Immagina lo schermo della TV come una tela su cui un pittore sta disegnando. 
-Questo "pittore" è il pennello video, un fascio di elettroni che scorre 
-sulla superficie dello schermo per disegnare l'immagine. Questo processo 
-avviene molto rapidamente, riga per riga, dall'alto verso il basso e da 
-sinistra a destra.
+Una copper list è una sequenza di istruzioni speciali che il processore esegue indipendentemente 
+dall'esecuzione principale. Queste istruzioni sono programmate per essere eseguite 
+in sincronia con il segnale video, in genere quando il display del televisore raggiunge 
+una specifica posizione orizzontale e verticale sullo schermo.
 
-Con le istruzioni ''BEGIN COPPER'' ed ''END COPPER'' è possibile delimitare 
-un elenco di operazioni che saranno eseguite mentre il pennello video sta 
-disegnando una specifica parte dello schermo. Quando il programma esegue una 
-lista di istruzioni tra ''BEGIN COPPER'' ed ''END COPPER'', questo attende 
-che il pennello video raggiunga una determinata posizione (specificata 
-all'interno della lista stessa) prima di eseguire l'istruzione successiva. 
-Questo permette di "dipingere" effetti grafici esattamente nel momento e nel 
-punto desiderato sullo schermo, evitando sfarfallii o artefatti visivi.
+L'istruzione funge da "controller in tempo reale" per vari aspetti del sistema hardware, in 
+particolare quelli relativi alla grafica. In sostanza, accetta un valore (un dato immediato) 
+e lo scrive in una specifica destinazione.
 
-Le operazioni previste in una lista copper possono includere il non fare nulla 
-(''COPPER NOP''), l'attesa di una specifica posizione (''COPPER WAIT'') o la 
-modifca di una specifica locazione di memoria (''COPPER MOVE'').
+La versatilità di ''COPPER STORE'' risiede nella sua capacità di manipolare i registri hardware 
+che controllano gli aspetti critici del display.
 
-Il vantaggio principale di questa sincronizzazione è la possibilità di creare 
-effetti grafici complessi e fluidi che sarebbero difficili o impossibili da 
-realizzare con una normale programmazione della CPU, che è meno precisa nel 
-controllo dei tempi video.
+@syntax COPPER STORE address, value AS datatype
 
-In sintesi, ''BEGIN COPPER'' ed ''END COPPER'' sono essenziali per sfruttare 
-appieno le capacità di sistemi hardware dedicati alla grafica, consentendo 
-un controllo granulare e temporizzato del processo di generazione video per 
-ottenere risultati visivi di alta qualità.
+@example BEGIN COPPER
+@example    COPPER WAIT 10
+@example    COPPER STORE &H2c8, RED AS BYTE
+@example    COPPER WAIT 30
+@example    COPPER MOVE &H2c8, BLUE AS BYTE
+@example END COPPER
+
+@alias STORE
+@seeAlso BEGIN COPPER...END COPPER
+@seeAlso COPPER POKE
+@seeAlso COPPER POKEW
+@seeAlso COPPER POKED
+
+</usermanual> */
+/* <usermanual>
+@keyword STORE
+
+@english
+
+@italian
 
 @syntax BEGIN COPPER
 @syntax    WAIT #10
-@syntax    MOVE #$D014, RED
+@syntax    STORE #&H2c8, #RED AS BYTE
 @syntax    WAIT #30
-@syntax    MOVE #$D014, GREEN
-@syntax END TYPE
+@syntax    STORE #&H2c8, #BLUE AS BYTE
+@syntax END COPPER
 
-@alias BEGIN COPPER...ENDCOPPER
-@alias COPPER...ENDCOPPER
+@alias COPPER STORE
+</usermanual> */
+ /* <usermanual>
+@keyword COPPER POKE
 
+@english
+
+The primary purpose of the ''COPPER POKE'' instruction is to modify the 
+value of a specific memory location or hardware register at a specific time, 
+synchronized with the television's video display, and having the size of a single
+byte.
+
+A copper list is a sequence of special instructions that the processor executes 
+independently of the main execution. These instructions are programmed to execute 
+in sync with the video signal, typically when the television's video display 
+reaches a specific horizontal and vertical position on the screen.
+
+The instruction acts as a "real-time controller" for various aspects of the 
+hardware system, particularly those related to graphics. Essentially, it takes a 
+8 bit unsigned value (immediate ''data'') and writes it to a specific ''destination''.
+
+The versatility of ''COPPER POKE'' lies in its ability to manipulate the hardware 
+registers that control critical aspects of the display.
+
+@italian
+
+Lo scopo principale dell'istruzione ''COPPER POKE'' è quello di modificare il valore 
+di una specifica posizione di memoria o di un registro hardware in un momento 
+specifico, sincronizzato con il display del televisore e avente la dimensione di un 
+singolo byte.
+
+Una lista copper è una sequenza di istruzioni speciali che il processore esegue 
+indipendentemente dall'esecuzione principale. Queste istruzioni sono programmate 
+per essere eseguite in sincronia con il segnale video, in genere quando il display 
+del televisore raggiunge una specifica posizione orizzontale e verticale sullo schermo.
+
+L'istruzione funge da "controller in tempo reale" per vari aspetti del sistema hardware, 
+in particolare quelli relativi alla grafica. In sostanza, accetta un valore senza segno 
+a 8 bit (''dati'' immediati) e lo scrive in una specifica ''destinazione''.
+
+La versatilità di ''COPPER POKE'' risiede nella sua capacità di manipolare i registri 
+hardware che controllano aspetti critici del display.
+
+@syntax COPPER STORE address, value
+
+@example BEGIN COPPER
+@example    COPPER WAIT 10
+@example    COPPER POKE &H2c8, RED
+@example    COPPER WAIT 30
+@example    COPPER MOVE &H2c8, BLUE AS BYTE
+@example END COPPER
+
+@seeAlso BEGIN COPPER...END COPPER
+@seeAlso COPPER STORE
+@seeAlso COPPER POKEW
+@seeAlso COPPER POKED
+
+</usermanual> */
+/* <usermanual>
+@keyword COPPER POKEW
+
+@english
+
+The primary purpose of the ''COPPER POKEW'' instruction is to modify the 
+value of a specific memory location or hardware register at a specific time, 
+synchronized with the television's video display, and having the size of two
+bytes.
+
+A copper list is a sequence of special instructions that the processor executes 
+independently of the main execution. These instructions are programmed to execute 
+in sync with the video signal, typically when the television's video display 
+reaches a specific horizontal and vertical position on the screen.
+
+The instruction acts as a "real-time controller" for various aspects of the 
+hardware system, particularly those related to graphics. Essentially, it takes a 
+16 bit unsigned value (immediate ''data'') and writes it to a specific ''destination''.
+
+The versatility of ''COPPER POKEW'' lies in its ability to manipulate the hardware 
+registers that control critical aspects of the display.
+
+@italian
+
+Lo scopo principale dell'istruzione ''COPPER POKEW'' è quello di modificare il valore 
+di una specifica posizione di memoria o di un registro hardware in un momento 
+specifico, sincronizzato con il display del televisore e avente la dimensione di due 
+bytes.
+
+Una lista copper è una sequenza di istruzioni speciali che il processore esegue 
+indipendentemente dall'esecuzione principale. Queste istruzioni sono programmate 
+per essere eseguite in sincronia con il segnale video, in genere quando il display 
+del televisore raggiunge una specifica posizione orizzontale e verticale sullo schermo.
+
+L'istruzione funge da "controller in tempo reale" per vari aspetti del sistema hardware, 
+in particolare quelli relativi alla grafica. In sostanza, accetta un valore senza segno 
+a 16 bit (''dati'' immediati) e lo scrive in una specifica ''destinazione''.
+
+La versatilità di ''COPPER POKEW'' risiede nella sua capacità di manipolare i registri 
+hardware che controllano aspetti critici del display.
+
+@syntax COPPER POKEW address, value
+
+@example BEGIN COPPER
+@example    COPPER WAIT 10
+@example    COPPER POKEW &H2c8, RED
+@example END COPPER
+
+@seeAlso BEGIN COPPER...END COPPER
+@seeAlso COPPER STORE
+@seeAlso COPPER POKE
+@seeAlso COPPER POKED
+
+</usermanual> */
+/* <usermanual>
+@keyword COPPER POKED
+
+@english
+
+The primary purpose of the ''COPPER POKED'' instruction is to modify the 
+value of a specific memory location or hardware register at a specific time, 
+synchronized with the television's video display, and having the size of four
+bytes.
+
+A copper list is a sequence of special instructions that the processor executes 
+independently of the main execution. These instructions are programmed to execute 
+in sync with the video signal, typically when the television's video display 
+reaches a specific horizontal and vertical position on the screen.
+
+The instruction acts as a "real-time controller" for various aspects of the 
+hardware system, particularly those related to graphics. Essentially, it takes a 
+32 bit unsigned value (immediate ''data'') and writes it to a specific ''destination''.
+
+The versatility of ''COPPER POKED'' lies in its ability to manipulate the hardware 
+registers that control critical aspects of the display.
+
+@italian
+
+Lo scopo principale dell'istruzione ''COPPER POKED'' è quello di modificare il valore 
+di una specifica posizione di memoria o di un registro hardware in un momento 
+specifico, sincronizzato con il display del televisore e avente la dimensione di quattro 
+bytes.
+
+Una lista copper è una sequenza di istruzioni speciali che il processore esegue 
+indipendentemente dall'esecuzione principale. Queste istruzioni sono programmate 
+per essere eseguite in sincronia con il segnale video, in genere quando il display 
+del televisore raggiunge una specifica posizione orizzontale e verticale sullo schermo.
+
+L'istruzione funge da "controller in tempo reale" per vari aspetti del sistema hardware, 
+in particolare quelli relativi alla grafica. In sostanza, accetta un valore senza segno 
+a 32 bit (''dati'' immediati) e lo scrive in una specifica ''destinazione''.
+
+La versatilità di ''COPPER POKED'' risiede nella sua capacità di manipolare i registri 
+hardware che controllano aspetti critici del display.
+
+@syntax COPPER POKED address, value
+
+@example BEGIN COPPER
+@example    COPPER WAIT 10
+@example    COPPER POKED &H2c8, RED
+@example END COPPER
+
+@seeAlso BEGIN COPPER...END COPPER
+@seeAlso COPPER STORE
+@seeAlso COPPER POKEB
+@seeAlso COPPER POKEW
 </usermanual> */
 
 extern char DATATYPE_AS_STRING[][16];
