@@ -634,6 +634,13 @@ void vic2_hit( Environment * _environment, char * _sprite_mask, char * _result )
 
 }
 
+void vic2_border_color( Environment * _environment, int _border_color ) {
+
+    outline1("LDA #$%2.2x", _border_color );
+    outline0("STA $D020");
+
+}
+
 /**
  * @brief <i>VIC-II</i>: emit code to change border color
  * 
@@ -643,7 +650,7 @@ void vic2_hit( Environment * _environment, char * _sprite_mask, char * _result )
  * @param _environment Current calling environment
  * @param _border_color Border color to use
  */
-void vic2_border_color( Environment * _environment, char * _border_color ) {
+void vic2_border_color_vars( Environment * _environment, char * _border_color ) {
 
     outline1("LDA %s", _border_color );
     outline0("AND #$0f" );
@@ -2350,6 +2357,15 @@ void vic2_finalization( Environment * _environment ) {
                 case COP_STORE_BYTE:
                     outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
                     outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+                case COP_COLOR:
+                    vic2_background_color( _environment, actual->param1, actual->param2 );
+                    break;
+                case COP_COLOR_BACKGROUND:
+                    vic2_background_color( _environment, 0, actual->param1 );
+                    break;
+                case COP_COLOR_BORDER:
+                    vic2_border_color( _environment, actual->param1 );
                     break;
             }
             actual = actual->next;

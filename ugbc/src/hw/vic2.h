@@ -142,7 +142,8 @@ void vic2_background_color( Environment * _environment, int _index, int _backgro
 void vic2_background_color_vars( Environment * _environment, char * _index, char * _background_color );
 void vic2_background_color_semivars( Environment * _environment, int _index, char * _background_color );
 void vic2_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
-void vic2_border_color( Environment * _environment, char * _border_color );
+void vic2_border_color( Environment * _environment, int _border_color );
+void vic2_border_color_vars( Environment * _environment, char * _border_color );
 Variable * vic2_collision( Environment * _environment, char * _sprite );
 void vic2_hit( Environment * _environment, char * _sprite_mask, char * _result );
 void vic2_next_raster( Environment * _environment );
