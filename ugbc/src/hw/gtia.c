@@ -1383,6 +1383,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     variable_store_buffer( _environment, dli->name, dliListStart, dliSize, dli->absoluteAddress );
 
+    MAKE_LABEL
+
+    char dliLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( dliLabel, "GTIAINITDLI%d", _screen_mode->id );
+    cpu_jump(_environment, label );
+    cpu_label(_environment, dliLabel);
     if ( _screen_mode->bitmap ) {
         outline0("LDA BITMAPADDRESS" );
         outline2("STA %s+$%4.4x", dli->realName, screenMemoryOffset );
@@ -1413,6 +1419,10 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0("LDA #>DLI" );
     outline0("STA $231" );
     outline0("CLI" );
+
+    cpu_return(_environment);
+    cpu_label(_environment, label );
+    cpu_call(_environment, dliLabel);
 
     if ( _environment->vestigialConfig.palettePreserve ) {
         outline0("LDA #$0");
