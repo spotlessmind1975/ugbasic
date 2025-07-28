@@ -169,92 +169,102 @@ void gtia_background_color( Environment * _environment, int _index, int _backgro
         case BITMAP_MODE_ANTIC10:
         case BITMAP_MODE_ANTIC13:
             outline1("LDA #$%2.2x", (unsigned char)(_background_color) );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
                 case 3:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 1:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
 
         case TILEMAP_MODE_ANTIC4:
         case TILEMAP_MODE_ANTIC5:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 3:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC14:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 3:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
@@ -293,36 +303,39 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -330,13 +343,14 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$01");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -346,30 +360,33 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01a" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA %s", _index);
-            outline0("AND #$0f" );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -377,23 +394,26 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -430,36 +450,39 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -467,13 +490,14 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$01");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -483,30 +507,33 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -514,23 +541,26 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -570,28 +600,34 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -601,9 +637,11 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -615,24 +653,29 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline0("LDA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -642,19 +685,23 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
