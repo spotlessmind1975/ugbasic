@@ -895,6 +895,67 @@ static unsigned char * dli_build( Environment * _environment,
     return dliListStart; 
 }
 
+static unsigned char * dli_build_antic15( Environment * _environment, 
+        CopperList * _copper_list,
+        int * _screen_memory_offset, int * _dlilist_start_offset,
+        int * _screen_memory_offset2, int * _dli_size ) {
+
+    int * copperUsedLines = NULL;
+    if ( _copper_list ) {
+        copperUsedLines = calculate_scanlines_for_copper_list( _copper_list );
+    }
+
+    unsigned char * dliListStart = malloc( DLI_COUNT );
+    unsigned char * dliListCurrent = dliListStart;
+
+    memset( dliListStart, 0, DLI_COUNT );
+
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+
+    if ( _copper_list && copperUsedLines[0] ) {
+        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+    }
+
+    *_screen_memory_offset = dliListCurrent - dliListStart - 2;
+
+    for( int i=1; i<96; ++i ) {
+        // 8	\Display ANTIC mode 15 for second mode line
+        if ( _copper_list && copperUsedLines[i] ) {
+            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        } else {
+            DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+        }
+    }
+
+    int screenMemoryAddress2 = _environment->frameBufferStart + 4096;
+
+    _environment->frameBufferStart2 = screenMemoryAddress2;
+    
+    DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+
+    *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
+
+    for( int i=0; i<94; ++i ) {
+        if ( _copper_list && copperUsedLines[96+i] ) {
+            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        } else {
+            DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+        }
+    }
+
+    DLI_IRQ( dliListCurrent, 15 );
+
+    DLI_JVB( dliListCurrent, 0 );
+    *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
+
+    return dliListStart;
+
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
@@ -1096,57 +1157,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 81	\Display ANTIC mode 15 (BASIC 7) 64+15
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 15, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
-                DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
-            } else {
-                DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
-            }
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<96; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[0] ) {
-                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
-                } else {
-                    DLI_MODE_VHSCROLL( dliListCurrent, 15 );
-                }
-            }
+            dliListStart = dli_build_antic15( _environment, 
+                _environment->copperList,
+                &screenMemoryOffset, &dliListStartOffset,
+                &screenMemoryOffset2, &dliSize );
 
             screenMemoryAddress2 = _environment->frameBufferStart + 4096;
-
-            _environment->frameBufferStart2 = screenMemoryAddress2;
-            
-            DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
-
-            screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
-
-            for( i=0; i<94; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
-                    DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
-                } else {
-                    DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
-                }
-            }
-
-            DLI_IRQ( dliListCurrent, 15 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
