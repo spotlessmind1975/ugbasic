@@ -16006,3 +16006,26 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with) {
     strcpy(tmp, _orig);
     return result;
 }
+
+CopperList * find_copper_list( Environment * _environment, char * _name ) {
+
+    CopperList * actual = _environment->copperList;
+
+    while( actual ) {
+        if ( !_name  ) {
+            if ( !actual->name ) {
+                return actual;
+            }
+        } else {
+            if ( actual->name ) {
+                if ( strcmp( actual->name, _name ) == 0 ) {
+                    return actual;
+                }
+            }
+        }
+        actual = actual->next;
+    }
+
+    return NULL;
+
+}

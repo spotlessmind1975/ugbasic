@@ -11831,6 +11831,9 @@ copper_definition:
   }
   | COLOR const_expr OP_COMMA const_expr {
         copper_color( _environment, $2, $4 );
+  }
+  | USE const_expr_string {
+        copper_use( _environment, $2 );
   };
 
 statement2nc:
@@ -12647,7 +12650,10 @@ statement2nc:
         variable_string_mid_assign( _environment, $3, $5, $7, $10 );
   }
   | BEG COPPER {
-        begin_copper( _environment );
+        begin_copper( _environment, NULL );
+  }
+  | BEG COPPER const_expr_string {
+        begin_copper( _environment, $3 );
   }
   | COPPER copper_definition
   | STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype {

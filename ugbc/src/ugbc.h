@@ -2156,6 +2156,7 @@ typedef struct _CopperList {
 
     char * name;
     struct _CopperInstruction * first;
+    struct _CopperList * next;
 
 } CopperList;
 
@@ -3703,8 +3704,9 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_MOVE_WITH_NOT_ALLOWED_TYPE( t ) CRITICAL2("E393 - cannot MOVE this data type inside a COPPER list", t );   
 #define CRITICAL_STORE_WITH_NOT_ALLOWED_TYPE( t ) CRITICAL2("E394 - cannot STORE this data type inside a COPPER list", t );   
 #define CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E395 - cannot STORE using not const in a COPPER list", t );
-#define CRITICAL_COLOR_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E395 - cannot COLOR using not const in a COPPER list", t );
-#define CRITICAL_WAIT_INVALID_VALUE( t ) CRITICAL2i("E395 - invalid value for WAIT LINE inside the COPPER list", t );
+#define CRITICAL_COLOR_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E396 - cannot COLOR using not const in a COPPER list", t );
+#define CRITICAL_WAIT_INVALID_VALUE( t ) CRITICAL2i("E397 - invalid value for WAIT LINE inside the COPPER list", t );
+#define CRITICAL_COPPER_LIST_UNKNOWN( n ) CRITICAL2("E398 - unknown COPPER list using COPPER USE", n );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -4767,6 +4769,8 @@ Bank * bank_find( Bank * _first, char * _name );
 Type * type_find( Type * _first, char * _name );
 Field * field_find( Type * _type, char * _name );
 
+CopperList * find_copper_list( Environment * _environment, char * _name );
+
 int check_datatype_limits( VariableType _type, int _value );
 
 void define_implicit_array_if_needed( Environment * _Environment, char * _name );
@@ -4904,7 +4908,7 @@ void                    bank_write_semi_var( Environment * _environment, char * 
 void                    bank_write_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size );
 void                    bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size );
 void                    bar( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1, char * _c, int _preserve_color );
-void                    begin_copper( Environment * _environment );  
+void                    begin_copper( Environment * _environment, char * _name );  
 void                    begin_for_prepare( Environment * _environment, char * _index );  
 void                    begin_for_from_prepare( Environment * _environment );  
 void                    begin_for_from_assign( Environment * _environment, char * _from );
@@ -5038,6 +5042,7 @@ void                    copper_nop( Environment * _environment );
 void                    copper_wait( Environment * _environment, int _line );
 void                    copper_move( Environment * _environment, int _address1, int _address2, VariableType _VariableType );
 void                    copper_store( Environment * _environment, int _address, int _value, VariableType _VariableType );
+void                    copper_use( Environment * _environment, char * _name );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
 Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );

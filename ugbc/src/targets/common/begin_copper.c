@@ -117,11 +117,8 @@ appieno le capacità di sistemi hardware dedicati alla grafica, consentendo
 un controllo granulare e temporizzato del processo di generazione video per 
 ottenere risultati visivi di alta qualità.
 
-@syntax BEGIN COPPER
-@syntax    WAIT #10
-@syntax    MOVE #$D014, RED
-@syntax    WAIT #30
-@syntax    MOVE #$D014, GREEN
+@syntax BEGIN COPPER [name]
+@syntax    ...
 @syntax END COPPER
 
 @alias BEGIN COPPER...ENDCOPPER
@@ -159,13 +156,15 @@ ottenere risultati visivi di alta qualità.
 
 </usermanual> */
 
-void begin_copper( Environment * _environment ) {
+void begin_copper( Environment * _environment, char * _name ) {
 
     if ( _environment->insideCopperList ) {
         CRITICAL_NESTED_COPPER_LIST_NOT_ALLOWED();
     }
 
-    if ( _environment->copperList ) {
+    CopperList * existing = find_copper_list( _environment, _name );
+
+    if ( existing ) {
         CRITICAL_COPPER_LIST_ALREADY_DEFINED();
     }
 
@@ -174,4 +173,8 @@ void begin_copper( Environment * _environment ) {
     _environment->copperList = malloc( sizeof( CopperList ) );
     memset( _environment->copperList, 0, sizeof( CopperList ) );
     
+    if ( _name ) {
+        _environment->copperList->name = strdup( _name );
+    }
+
 }
