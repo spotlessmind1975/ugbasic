@@ -976,8 +976,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
-    outline1( "; enabling mode %d", _screen_mode->id );
-
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
     Variable * dli = variable_retrieve_or_define( _environment, "DLI", VT_BUFFER, 0 );
