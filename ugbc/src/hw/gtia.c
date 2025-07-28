@@ -823,6 +823,32 @@ static void calculate_frame_buffer( Environment * _environment, int _size_requir
 }
 
 //////////////////////////////////////////////////////////////////////////////
+// CALCULATE USED LINES FOR THE GIVEN COPPER LIST
+//////////////////////////////////////////////////////////////////////////////
+
+static int * calculate_used_lines_for_copper_list( Environment * _environment, CopperList * _copper_list ) {
+
+    int * copperUsedLines = malloc( 312 * sizeof( int ) );
+    memset(copperUsedLines, 0, 312 * sizeof(int));
+
+    CopperInstruction * actual = _environment->copperList->first;
+    while( actual ) {
+        switch( actual->operation ) {
+            case COP_NOP:
+                break;
+            case COP_WAIT:
+                copperUsedLines[actual->param1] = 1;
+                break;
+                break;
+        }
+        actual = actual->next;
+    }
+
+    return copperUsedLines;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
@@ -841,8 +867,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
-    outline1( "; enabling mode %d", _screen_mode->id );
-
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
     Variable * dli = variable_retrieve_or_define( _environment, "DLI", VT_BUFFER, 0 );
@@ -854,30 +878,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenTiles = 255;
     _environment->currentMode = _screen_mode->id;
 
-    int copperUsedLines[312];
-    memset(copperUsedLines, 0, 312 * sizeof(int));
-
+    int * copperUsedLines = NULL;
     if ( _environment->copperList ) {
-        CopperInstruction * actual = _environment->copperList->first;
-        while( actual ) {
-            switch( actual->operation ) {
-                case COP_NOP:
-                    break;
-                case COP_WAIT:
-                    copperUsedLines[actual->param1] = 1;
-                    break;
-                case COP_MOVE_BYTE:
-                case COP_MOVE_WORD:
-                case COP_MOVE_DWORD:
-                case COP_STORE_BYTE:
-                case COP_STORE_WORD:
-                case COP_STORE_DWORD:
-                    break;
-            }
-            actual = actual->next;
-        }
+        copperUsedLines = calculate_used_lines_for_copper_list( _environment, _environment->copperList );
     }
-
+    
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
         // This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 
@@ -906,7 +911,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 8, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 8, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 8, _environment->frameBufferStart );
@@ -916,7 +921,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<23; ++i ) {
                 // 8	\Display ANTIC mode 8 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 8 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 8 );
@@ -963,7 +968,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 9, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 9, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 9, _environment->frameBufferStart );
@@ -973,7 +978,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 9 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 9 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 9 );
@@ -1017,7 +1022,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 10, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 10, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 10, _environment->frameBufferStart );
@@ -1027,7 +1032,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<47; ++i ) {
                 // 8	\Display ANTIC mode 10 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 10 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 10 );
@@ -1071,7 +1076,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 11, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 11, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 11, _environment->frameBufferStart );
@@ -1081,7 +1086,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<95; ++i ) {
                 // 8	\Display ANTIC mode 11 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 11 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 11 );
@@ -1127,7 +1132,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 13, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 13, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 13, _environment->frameBufferStart );
@@ -1137,7 +1142,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<96; ++i ) {
                 // 8	\Display ANTIC mode 13 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 13 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 13 );
@@ -1190,7 +1195,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 15, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
@@ -1200,7 +1205,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<96; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[0] ) {
+                if ( copperUsedLines && copperUsedLines[0] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 15 );
@@ -1217,7 +1222,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=0; i<94; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
@@ -1265,7 +1270,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 12, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
             } else {
                 DLI_LMS( dliListCurrent, 12, _environment->frameBufferStart );                
@@ -1275,7 +1280,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_IRQ( dliListCurrent, 12 );
                 } else {
                     DLI_MODE( dliListCurrent, 12 );
@@ -1320,7 +1325,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 14, 0xA000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                DLI_LMS_VHSCROLL( dliListCurrent, 14, _environment->frameBufferStart );
             } else {
 
@@ -1330,7 +1335,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for( i=1; i<191; ++i ) {
                 // 8	\Display ANTIC mode 15 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 14 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 14 );
@@ -1379,7 +1384,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 2, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 2, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 2, _environment->frameBufferStart );
@@ -1389,7 +1394,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<24; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 2 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 2 );
@@ -1438,7 +1443,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 6, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 6, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 6, _environment->frameBufferStart );
@@ -1448,7 +1453,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 6 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 6 );
@@ -1490,7 +1495,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 7, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 7, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 7, _environment->frameBufferStart );
@@ -1500,7 +1505,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<11; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 7 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 7 );
@@ -1544,7 +1549,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 3, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 3, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 3, _environment->frameBufferStart );
@@ -1554,7 +1559,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 3 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 3 );
@@ -1601,7 +1606,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 4, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 4, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 4, _environment->frameBufferStart );
@@ -1611,7 +1616,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 4 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 4 );
@@ -1653,7 +1658,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             // 64	|Screen memory starts at
             // 156	/64+156*256 =40000
             // DLI_LMS( dliListCurrent, 5, 40000 );
-            if ( _environment->copperList && copperUsedLines[0] ) {
+            if ( copperUsedLines && copperUsedLines[0] ) {
                 DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 5, _environment->frameBufferStart );
             } else {
                 DLI_LMS_VHSCROLL( dliListCurrent, 5, _environment->frameBufferStart );
@@ -1663,7 +1668,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             for(i=1; i<23; ++i ) {
                 // 2	\Display ANTIC mode 2 for second mode line
-                if ( _environment->copperList && copperUsedLines[i] ) {
+                if ( copperUsedLines && copperUsedLines[i] ) {
                     DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 5 );
                 } else {
                     DLI_MODE_VHSCROLL( dliListCurrent, 5 );
