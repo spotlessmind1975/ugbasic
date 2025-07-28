@@ -112,6 +112,10 @@ void copper_wait( Environment * _environment, int _line ) {
         CRITICAL_COPPER_LIST_NOT_OPENED();
     }
 
+    if ( _line <= 0 ) {
+        CRITICAL_WAIT_INVALID_VALUE(_line);
+    }
+    
     CopperInstruction * wait = malloc( sizeof( CopperInstruction ) );
     memset( wait, 0, sizeof( CopperInstruction ) );
 
