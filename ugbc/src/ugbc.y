@@ -11794,6 +11794,15 @@ copper_definition:
   }
   | POKED const_expr OP_COMMA const_expr {
         copper_store( _environment, $2, $4, VT_DWORD );
+  }
+  | COLOR BORDER const_expr {
+        copper_color_border( _environment, $3 );
+  }
+  | COLOR BACKGROUND const_expr {
+        copper_color_background( _environment, $3 );
+  }
+  | COLOR const_expr OP_COMMA const_expr {
+        copper_color( _environment, $2, $4 );
   };
 
 statement2nc:

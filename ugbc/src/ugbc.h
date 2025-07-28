@@ -2126,13 +2126,20 @@ typedef struct _Program {
 typedef enum _CopperOperation {
 
     COP_NOP = 0,
+
     COP_WAIT = 1,
+
     COP_STORE_BYTE = 2,
     COP_STORE_WORD = 3,
     COP_STORE_DWORD = 4,
+
     COP_MOVE_BYTE = 5,
     COP_MOVE_WORD = 6,
-    COP_MOVE_DWORD = 7
+    COP_MOVE_DWORD = 7,
+
+    COP_COLOR_BORDER = 8,
+    COP_COLOR_BACKGROUND = 9,
+    COP_COLOR = 10
 
 } CopperOperation;
 
@@ -5022,6 +5029,9 @@ void                    const_define_string( Environment * _environment, char * 
 void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
+void                    copper_color( Environment * _environment, int _index, int _color );
+void                    copper_color_background( Environment * _environment, int _color );
+void                    copper_color_border( Environment * _environment, int _color );
 void                    copper_nop( Environment * _environment );
 void                    copper_wait( Environment * _environment, int _line );
 void                    copper_move( Environment * _environment, int _address1, int _address2, VariableType _VariableType );

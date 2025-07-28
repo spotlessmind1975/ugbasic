@@ -91,7 +91,35 @@ void gtia_hit( Environment * _environment, char * _sprite_mask, char * _result )
  * @param _environment Current calling environment
  * @param _border_color Border color to use
  */
-void gtia_border_color( Environment * _environment, char * _border_color ) {
+void gtia_border_color( Environment * _environment, int _border_color ) {
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+                outline1("LDA #$%2.2x", _border_color );
+                outline0("STA $02c8");
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC11:
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            break;
+    }
+
+}
+
+void gtia_border_color_vars( Environment * _environment, char * _border_color ) {
 
     switch( _environment->currentMode ) {
         case TILEMAP_MODE_ANTIC2:
@@ -2314,6 +2342,16 @@ void gtia_finalization( Environment * _environment ) {
                     outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
                     outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
                     break;
+                case COP_COLOR:
+                    gtia_background_color( _environment, actual->param1, actual->param2 );
+                    break;
+                case COP_COLOR_BACKGROUND:
+                    gtia_background_color( _environment, 0, actual->param1 );
+                    break;
+                case COP_COLOR_BORDER:
+                    gtia_border_color( _environment, actual->param1 );
+                    break;
+
             }
             actual = actual->next;
         }
