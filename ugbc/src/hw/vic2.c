@@ -754,7 +754,24 @@ void vic2_background_color_get_vars( Environment * _environment, char * _index, 
  * @param _index Index of the background color
  * @param _common_color Index of the color to use
  */
-void vic2_sprite_common_color( Environment * _environment, char * _index, char * _common_color ) {
+void vic2_sprite_common_color( Environment * _environment, int _index, int _common_color ) {
+ 
+    outline1("LDA #$%2.2x", ( _common_color & 0x0f ) );
+    outline1("STA $,X", 0xd025 + ( _index & 0x03 ) );
+
+}
+
+/**
+ * @brief <i>VIC-II</i>: emit code to change common sprite's color 
+ * 
+ * This function can be used to issue code aimed at changing the
+ * common color of the sprites.
+
+ * @param _environment Current calling environment
+ * @param _index Index of the background color
+ * @param _common_color Index of the color to use
+ */
+void vic2_sprite_common_color_vars( Environment * _environment, char * _index, char * _common_color ) {
  
     outline1("LDA %s", _index);
     outline0("AND #$03");

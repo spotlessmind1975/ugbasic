@@ -148,7 +148,8 @@ void vic2_hit( Environment * _environment, char * _sprite_mask, char * _result )
 void vic2_next_raster( Environment * _environment );
 void vic2_next_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
 void vic2_raster_at( Environment * _environment, char * _label, char * _positionlo, char * _positionhi );
-void vic2_sprite_common_color( Environment * _environment, char * _index, char * _common_color );
+void vic2_sprite_common_color( Environment * _environment, int _index, int _common_color );
+void vic2_sprite_common_color_vars( Environment * _environment, char * _index, char * _common_color );
 void vic2_bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void vic2_bitmap_disable( Environment * _environment );
 void vic2_bitmap_at( Environment * _environment, char * _address );

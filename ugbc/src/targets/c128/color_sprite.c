@@ -87,14 +87,16 @@ di calcolare la tonalità a partire dalle componenti del colore (rosso, verde e 
 </usermanual> */
 void color_sprite( Environment * _environment, int _index, int _common_color ) {
 
-    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index);
-    char common_color[MAX_TEMPORARY_STORAGE]; sprintf(common_color, "#$%2.2x", _common_color);
-
-    vic2_sprite_common_color( _environment, index, common_color );
+    vic2_sprite_common_color( _environment, _index, _common_color );
 
 }
 
 void color_sprite_semi_vars( Environment * _environment, int _index, char * _common_color ) {
+
+    char index[MAX_TEMPORARY_STORAGE]; sprintf(index, "#$%2.2x", _index);
+    Variable * common_color = variable_retrieve( _environment, _common_color );
+
+    vic2_sprite_common_color_vars( _environment, index, common_color->realName );
 
 }
 
@@ -113,6 +115,6 @@ void color_sprite_vars( Environment * _environment, char * _index, char * _commo
     Variable * index = variable_retrieve( _environment, _index );
     Variable * common_color = variable_retrieve( _environment, _common_color );
 
-    vic2_sprite_common_color( _environment, index->realName, common_color->realName );
+    vic2_sprite_common_color_vars( _environment, index->realName, common_color->realName );
 
 }
