@@ -68,7 +68,7 @@ effects exactly at the desired time and location on the screen, avoiding flicker
 visual artifacts.
 
 Operations in a copper list can include doing nothing (''COPPER NOP''), waiting for a 
-specific position (''COPPER WAIT''), or modifying a specific memory location 
+specific position (''COPPER WAIT LINE''), or modifying a specific memory location 
 (''COPPER MOVE'').
 
 The main advantage of this synchronization is the ability to create complex and fluid 
@@ -104,7 +104,7 @@ Questo permette di "dipingere" effetti grafici esattamente nel momento e nel
 punto desiderato sullo schermo, evitando sfarfallii o artefatti visivi.
 
 Le operazioni previste in una lista copper possono includere il non fare nulla 
-(''COPPER NOP''), l'attesa di una specifica posizione (''COPPER WAIT'') o la 
+(''COPPER NOP''), l'attesa di una specifica posizione (''COPPER WAIT LINE'') o la 
 modifca di una specifica locazione di memoria (''COPPER MOVE'').
 
 Il vantaggio principale di questa sincronizzazione è la possibilità di creare 

@@ -4843,6 +4843,7 @@ ArrayReference * parser_array_retrieve( Environment * _environment );
 
 Variable * parser_adapted_numeric( Environment * _environment, int _number );
 Variable * parser_casted_numeric( Environment * _environment, VariableType _type, int _number );
+Variable * variable_by_constant( Environment * _environment, VariableType _type, int _value );
 
 //----------------------------------------------------------------------------
 // Common accessibile functions used by language and parser

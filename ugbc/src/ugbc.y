@@ -2092,140 +2092,106 @@ random_definition:
 
 color_enumeration:
       BLACK {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color BLACK)" )->name;
-          variable_store( _environment, $$, COLOR_BLACK );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLACK)->name;
       }
       | WHITE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color WHITE)" )->name;
-          variable_store( _environment, $$, COLOR_WHITE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_WHITE )->name;
       }
       | DARK WHITE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK WHITE)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_WHITE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_WHITE )->name;
       }
       | LIGHT WHITE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT WHITE)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_WHITE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_WHITE )->name;
       }
       | RED {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color BLACK)" )->name;
-          variable_store( _environment, $$, COLOR_RED );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_RED )->name;
       }
       | CYAN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color CYAN)" )->name;
-          variable_store( _environment, $$, COLOR_CYAN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_CYAN )->name;
       }
       | VIOLET {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color VIOLET)" )->name;
-          variable_store( _environment, $$, COLOR_VIOLET );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_VIOLET )->name;
       }
       | GREEN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color GREEN)" )->name;
-          variable_store( _environment, $$, COLOR_GREEN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREEN )->name;
       }
       | BLUE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color BLUE)" )->name;
-          variable_store( _environment, $$, COLOR_BLUE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLUE )->name;
       }
       | YELLOW {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color YELLOW)" )->name;
-          variable_store( _environment, $$, COLOR_YELLOW );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW )->name;
       }
       | ORANGE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color ORANGE)" )->name;
-          variable_store( _environment, $$, COLOR_ORANGE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_ORANGE )->name;
       }
       | BROWN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color BROWN)" )->name;
-          variable_store( _environment, $$, COLOR_BROWN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BROWN )->name;
       }
       | DARK RED {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK RED)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_RED );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_RED )->name;
       }
       | LIGHT RED {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT RED)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_RED );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_RED )->name;
       }
       | DARK GREY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREY)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name;
       }
       | GREY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
-          variable_store( _environment, $$, COLOR_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name;
       }
       | DARK GRAY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREY)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name;
       }
       | GRAY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color GREY)" )->name;
-          variable_store( _environment, $$, COLOR_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name;
       }
       | DARK GREEN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK GREEN)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_GREEN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREEN )->name;
       }
       | LIGHT GREEN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREEN)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_GREEN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREEN )->name;
       }
       | LIGHT BLUE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT BLUE)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_BLUE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_BLUE )->name;
       }
       | LIGHT GREY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name;
       }
       | LIGHT GRAY {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LIGHT GREY)" )->name;
-          variable_store( _environment, $$, COLOR_LIGHT_GREY );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name;
       }
       | DARK BLUE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color DARK BLUE)" )->name;
-          variable_store( _environment, $$, COLOR_DARK_BLUE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_BLUE )->name;
       }
       | MAGENTA {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color MAGENTA)" )->name;
-          variable_store( _environment, $$, COLOR_MAGENTA );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_MAGENTA )->name;
       }
       | PURPLE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color PURPLE)" )->name;
-          variable_store( _environment, $$, COLOR_PURPLE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PURPLE )->name;
       }
       | LAVENDER {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color LAVENDER)" )->name;
-          variable_store( _environment, $$, COLOR_LAVENDER );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LAVENDER )->name;
       }
       | GOLD {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color GOLD)" )->name;
-          variable_store( _environment, $$, COLOR_GOLD );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GOLD )->name;
       }
       | TURQUOISE {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color TURQUOISE)" )->name;
-          variable_store( _environment, $$, COLOR_TURQUOISE );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TURQUOISE )->name;
       }
       | TAN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color TAN)" )->name;
-          variable_store( _environment, $$, COLOR_TAN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TAN )->name;
       }
       | YELLOW GREEN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color YELLOW GREEN)" )->name;
-          variable_store( _environment, $$, COLOR_YELLOW_GREEN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW_GREEN )->name;
       }
       | OLIVE GREEN {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color OLIVE)" )->name;
-          variable_store( _environment, $$, COLOR_OLIVE_GREEN );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_OLIVE_GREEN )->name;
       }
       | PINK {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color PINK)" )->name;
-          variable_store( _environment, $$, COLOR_PINK );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PINK )->name;
       }
       | PEACH {
-          $$ = variable_temporary( _environment, VT_COLOR, "(color PEACH)" )->name;
-          variable_store( _environment, $$, COLOR_PEACH );
+        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PEACH )->name;
       };
 
 key_scancode_alphadigit :
@@ -4920,8 +4886,11 @@ release :
     ;
 
 wait_definition_simple:
-    | direct_integer CYCLES parallel_optional {
+    direct_integer CYCLES parallel_optional {
       wait_cycles( _environment, $1, $3 );
+    }
+    | LINE const_expr {
+      copper_wait( _environment, $2 );
     }
     | direct_integer ticks {
       wait_ticks( _environment, $1 );
@@ -9037,49 +9006,51 @@ input_definition :
   ;
 
 poke_definition : 
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-      if ( !((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_COPPER_LIST_NOT_OPENED( )
-      } else {
-        copper_store( _environment, $2, $5, VT_BYTE );
-      }
-    }
-    | expr OP_COMMA expr {
+    expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        Variable * address = variable_retrieve( _environment, $1 );
+        if ( !address->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        }
+        Variable * value = variable_retrieve( _environment, $3 );
+        if ( !value->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
+        }
+        copper_store( _environment, address->value, value->value, VT_BYTE );
       }
-        poke_var( _environment, $1, $3 );
+      poke_var( _environment, $1, $3 );
     };
 
 pokew_definition : 
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-      if ( !((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_COPPER_LIST_NOT_OPENED( )
-      } else {
-        copper_store( _environment, $2, $5, VT_WORD );
-      }
-    }
-    | expr OP_COMMA expr {
+    expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        Variable * address = variable_retrieve( _environment, $1 );
+        if ( !address->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        }
+        Variable * value = variable_retrieve( _environment, $3 );
+        if ( !value->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
+        }
+        copper_store( _environment, address->value, value->value, VT_WORD );
       }
-        pokew_var( _environment, $1, $3 );
+      pokew_var( _environment, $1, $3 );
     };
 
 poked_definition : 
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-      if ( !((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_COPPER_LIST_NOT_OPENED( )
-      } else {
-        copper_store( _environment, $2, $5, VT_DWORD );
-      }
-    }
-    | expr OP_COMMA expr {
+    expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
-        CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        Variable * address = variable_retrieve( _environment, $1 );
+        if ( !address->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        }
+        Variable * value = variable_retrieve( _environment, $3 );
+        if ( !value->initializedByConstant ) {
+            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
+        }
+        copper_store( _environment, address->value, value->value, VT_DWORD );
       }
-        poked_var( _environment, $1, $3 );
-    
+      poked_var( _environment, $1, $3 );
     };
 
 font_schema : 
@@ -11870,6 +11841,29 @@ let_definition :
 
     };
 
+copper_definition:
+  NOP {
+        copper_nop( _environment );
+  }
+  | WAIT LINE const_expr {
+        copper_wait( _environment, $3 );
+  }
+  | MOVE const_expr OP_COMMA const_expr as_datatype {
+        copper_move( _environment, $2, $4, $5 );
+  }
+  | STORE const_expr OP_COMMA const_expr as_datatype {
+        copper_store( _environment, $2, $4, $5 );
+  }
+  | POKE const_expr OP_COMMA const_expr {
+        copper_store( _environment, $2, $4, VT_BYTE );
+  }
+  | POKEW const_expr OP_COMMA const_expr {
+        copper_store( _environment, $2, $4, VT_WORD );
+  }
+  | POKED const_expr OP_COMMA const_expr {
+        copper_store( _environment, $2, $4, VT_DWORD );
+  };
+
 statement2nc:
     BANK bank_definition
   | RASTER raster_definition
@@ -12686,29 +12680,9 @@ statement2nc:
   | BEG COPPER {
         begin_copper( _environment );
   }
-  | COPPER NOP {
-        copper_nop( _environment );
-  }
-  | COPPER WAIT const_expr {
-        copper_wait( _environment, $3 );
-  }
-  | COPPER MOVE const_expr OP_COMMA const_expr as_datatype {
-        copper_move( _environment, $3, $5, $6 );
-  }
-  | COPPER STORE const_expr OP_COMMA const_expr as_datatype {
-        copper_store( _environment, $3, $5, $6 );
-  }
+  | COPPER copper_definition
   | STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype {
         copper_store( _environment, $3, $6, $7 );
-  }
-  | COPPER POKE const_expr OP_COMMA const_expr {
-        copper_store( _environment, $3, $5, VT_BYTE );
-  }
-  | COPPER POKEW const_expr OP_COMMA const_expr {
-        copper_store( _environment, $3, $5, VT_WORD );
-  }
-  | COPPER POKED const_expr OP_COMMA const_expr {
-        copper_store( _environment, $3, $5, VT_DWORD );
   }
   | ENDCOPPER {
         end_copper( _environment );

@@ -1716,6 +1716,13 @@ Variable * variable_store_type( Environment * _environment, char * _destination,
     return destination;
 }
 
+Variable * variable_by_constant( Environment * _environment, VariableType _type, int _value ) {
+    Variable * result = variable_temporary( _environment, _type, "()" );
+    variable_store( _environment, result->name, _value );
+    result->initializedByConstant = 1;
+    return result;
+}
+
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
                             int c2 = COLOR_##d;\

@@ -71,7 +71,7 @@ video del televisore raggiunge una specifica posizione orizzontale e verticale s
 @syntax COPPER NOP
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER MOVE &H2c8, &H2c7 AS BYTE
 @example    COPPER NOP
 @example    COPPER MOVE &H2c8, &H2c7 AS BYTE

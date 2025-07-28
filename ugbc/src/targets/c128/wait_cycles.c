@@ -64,10 +64,6 @@ approximately 65.5 seconds.
 
 The ''PARALLEL'' keyword can only be used with waits related to ''CYCLES''.
 
-Note that there is a variant of this command that only works within copper lists. 
-This command, called ''WAIT'', allows you to wait for a specific video brush 
-position to arrive.
-
 @italian
 
 Interrompe l'esecuzione per un certo periodo di tempo. L'istruzione ''WAIT'' può 

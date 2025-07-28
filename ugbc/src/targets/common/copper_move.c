@@ -86,9 +86,9 @@ che controllano gli aspetti critici del display.
 @syntax COPPER MOVE source, destination AS datatype
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER MOVE &H2c8, &H2c7 AS BYTE
-@example    COPPER WAIT 30
+@example    COPPER WAIT LINE 30
 @example    COPPER MOVE &H2c8, &H2c7 AS BYTE
 @example END COPPER
 

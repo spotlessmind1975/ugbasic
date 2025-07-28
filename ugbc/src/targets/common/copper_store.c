@@ -85,9 +85,9 @@ che controllano gli aspetti critici del display.
 @syntax COPPER STORE address, value AS datatype
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER STORE &H2c8, RED AS BYTE
-@example    COPPER WAIT 30
+@example    COPPER WAIT LINE 30
 @example    COPPER MOVE &H2c8, BLUE AS BYTE
 @example END COPPER
 
@@ -158,9 +158,9 @@ hardware che controllano aspetti critici del display.
 @syntax COPPER STORE address, value
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER POKE &H2c8, RED
-@example    COPPER WAIT 30
+@example    COPPER WAIT LINE 30
 @example    COPPER MOVE &H2c8, BLUE AS BYTE
 @example END COPPER
 
@@ -214,7 +214,7 @@ hardware che controllano aspetti critici del display.
 @syntax COPPER POKEW address, value
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER POKEW &H2c8, RED
 @example END COPPER
 
@@ -268,7 +268,7 @@ hardware che controllano aspetti critici del display.
 @syntax COPPER POKED address, value
 
 @example BEGIN COPPER
-@example    COPPER WAIT 10
+@example    COPPER WAIT LINE 10
 @example    COPPER POKED &H2c8, RED
 @example END COPPER
 
