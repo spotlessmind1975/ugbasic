@@ -3704,6 +3704,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_STORE_WITH_NOT_ALLOWED_TYPE( t ) CRITICAL2("E394 - cannot STORE this data type inside a COPPER list", t );   
 #define CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E395 - cannot STORE using not const in a COPPER list", t );
 #define CRITICAL_COLOR_WITH_NOT_CONST_NOT_ALLOWED( t ) CRITICAL2("E395 - cannot COLOR using not const in a COPPER list", t );
+#define CRITICAL_WAIT_INVALID_VALUE( t ) CRITICAL2i("E395 - invalid value for WAIT LINE inside the COPPER list", t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
