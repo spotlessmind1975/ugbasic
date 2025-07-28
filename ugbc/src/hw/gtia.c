@@ -989,30 +989,6 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     _environment->screenTiles = 255;
     _environment->currentMode = _screen_mode->id;
 
-    int copperUsedLines[312];
-    memset(copperUsedLines, 0, 312 * sizeof(int));
-
-    if ( _environment->copperList ) {
-        CopperInstruction * actual = _environment->copperList->first;
-        while( actual ) {
-            switch( actual->operation ) {
-                case COP_NOP:
-                    break;
-                case COP_WAIT:
-                    copperUsedLines[actual->param1] = 1;
-                    break;
-                case COP_MOVE_BYTE:
-                case COP_MOVE_WORD:
-                case COP_MOVE_DWORD:
-                case COP_STORE_BYTE:
-                case COP_STORE_WORD:
-                case COP_STORE_DWORD:
-                    break;
-            }
-            actual = actual->next;
-        }
-    }
-
     switch( _screen_mode->id ) {
         // Graphics 3 (ANTIC 8)
         // This four-color graphics mode turns a split screen into 20 rows of 40 graphics cells or pixels. 
