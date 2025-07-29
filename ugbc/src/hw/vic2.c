@@ -670,8 +670,7 @@ void vic2_border_color_vars( Environment * _environment, char * _border_color ) 
  */
 void vic2_background_color( Environment * _environment, int _index, int _background_color ) {
  
-    outline1("LDA #$%2.2x", _background_color );
-    outline0("AND #$0f" );
+    outline1("LDA #$%2.2x", ( _background_color & 0x0f ) );
     outline1("STA $d021+%d", ( _index & 0x03 ) );
 
     if ( _index == 0 ) {

@@ -113,9 +113,20 @@ MSPRITESMANAGERADDRESS:
     BEQ IRQSVCX 
     STA $D019
 @IF copperList
-
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
 COPPERLISTJUMP:
     JSR COPPERLIST0000
+    PLA
+    RTI
 
 @ENDIF
 
