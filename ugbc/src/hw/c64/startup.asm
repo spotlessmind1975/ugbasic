@@ -106,8 +106,18 @@ MSPRITESMANAGERADDRESS:
 @ENDIF
 
 @ELSE
-    LDA #1
+    LDA $D019
+    AND #1
+    BEQ IRQSVCX 
     STA $D019
+@IF copperList
+
+COPPERLISTJUMP:
+    JSR COPPERLIST0000
+
+@ENDIF
+
+IRQSVCX:
 
 @IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
@@ -161,16 +171,6 @@ IRQSVC2:
 @IF !deployed.msprites
     PHA
     LDA $DC0D
-    LDA #$1
-    STA $D019
-
-@IF copperList
-
-COPPERLISTJUMP:
-    JSR COPPERLIST0000
-
-@ENDIF
-
     PLA
 @ENDIF
     RTI
