@@ -1395,33 +1395,72 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     MAKE_LABEL
 
-    char dliLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( dliLabel, "GTIAINITDLI%d", _screen_mode->id );
     cpu_jump(_environment, label );
-    cpu_label(_environment, dliLabel);
+
+    CopperList * actual = _environment->copperList;
+    while(actual) {
+        actual->mode = _screen_mode->id;
+        if ( actual->name ) {
+            char dliCopperName[MAX_TEMPORARY_STORAGE];
+            sprintf( dliCopperName, "DLI%s", actual->name );
+            Variable * dliCopper = variable_define( _environment, dliCopperName, VT_BUFFER, 0 );
+            if ( _screen_mode->id == BITMAP_MODE_ANTIC15 ) {
+                dliListStart = dli_build_antic15( _environment, 
+                    actual,
+                    &screenMemoryOffset, &dliListStartOffset,
+                    &screenMemoryOffset2, &dliSize );
+            } else {
+                dliListStart = dli_build( _environment, 
+                        _screen_mode->id /*mode*/, 
+                        rows-1 /*rows*/, 
+                        actual,
+                        &screenMemoryOffset, 
+                        &dliListStartOffset, 
+                        &dliSize );
+            }
+            variable_store_buffer( _environment, dliCopper->name, dliListStart, dliSize, dliCopper->absoluteAddress );
+        }
+        actual = actual->next;
+    }
+
+    char dliCommonLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( dliCommonLabel, "GTIAINITDLICOMMON%d", _screen_mode->id );
+
+    cpu_label(_environment, dliCommonLabel);
     if ( _screen_mode->bitmap ) {
         outline0("LDA BITMAPADDRESS" );
-        outline2("STA %s+$%4.4x", dli->realName, screenMemoryOffset );
+        outline1("STA DLI+$%4.4x", screenMemoryOffset );
         outline0("LDA BITMAPADDRESS+1" );
-        outline2("STA %s+$%4.4x+1", dli->realName, screenMemoryOffset );
+        outline1("STA DLI+$%4.4x+1", screenMemoryOffset );
         if ( screenMemoryOffset2 ) {
             outline1("LDA #$%2.2x", ( screenMemoryAddress2 & 0xff ) );
-            outline2("STA %s+$%4.4x", dli->realName, screenMemoryOffset2 );
+            outline1("STA DLI+$%4.4x", screenMemoryOffset2 );
             outline1("LDA #$%2.2x", ( screenMemoryAddress2 >> 8 ) & 0xff );
-            outline2("STA %s+$%4.4x+1", dli->realName, screenMemoryOffset2 );
+            outline1("STA DLI+$%4.4x+1", screenMemoryOffset2 );
         }
     } else {
         outline0("LDA TEXTADDRESS" );
-        outline2("STA %s+$%4.4x", dli->realName, screenMemoryOffset );
+        outline1("STA DLI+$%4.4x", screenMemoryOffset );
         outline0("LDA TEXTADDRESS+1" );
-        outline2("STA %s+$%4.4x+1", dli->realName, screenMemoryOffset );
+        outline1("STA DLI+$%4.4x+1", screenMemoryOffset );
     }
     outline0("LDA #<DLI" );
-    outline2("STA %s+$%4.4x", dli->realName, dliListStartOffset );
+    outline1("STA DLI+$%4.4x", dliListStartOffset );
     outline0("LDA #>DLI" );
-    outline2("STA %s+$%4.4x+1", dli->realName, dliListStartOffset );
+    outline1("STA DLI+$%4.4x+1", dliListStartOffset );
+    cpu_return(_environment);
 
+    char dliLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( dliLabel, "GTIAINITDLI%d", _screen_mode->id );
+
+    cpu_label(_environment, dliLabel);
     cpu_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
+    
+    char dliLabel2[MAX_TEMPORARY_STORAGE];
+    sprintf( dliLabel2, "GTIAINITDLIB%d", _screen_mode->id );
+    cpu_label(_environment, dliLabel2);
+
+    cpu_call( _environment, dliCommonLabel);
 
     outline0("SEI" );
     outline0("LDA #<DLI" );
@@ -1431,6 +1470,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0("CLI" );
 
     cpu_return(_environment);
+
     cpu_label(_environment, label );
     cpu_call(_environment, dliLabel);
 
@@ -1926,21 +1966,35 @@ void gtia_finalization( Environment * _environment ) {
         deploy( cls, src_hw_gtia_cls_asm );
     }
 
-    CopperList * copperList = find_copper_list( _environment, NULL );
+    CopperList * copperList = _environment->copperList;
 
-    if ( copperList ) {
+    int anon = 0;
+
+    while(copperList) {
+        if ( !copperList->name ) {
+            anon = 1;
+        }
         char copperlist0Named[MAX_TEMPORARY_STORAGE];
         sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
         char dliLabel[MAX_TEMPORARY_STORAGE];
         sprintf( dliLabel, "GTIAINITDLI%d", copperList->mode );
+        char dliLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( dliLabel2, "GTIAINITDLIB%d", copperList->mode );
+        char dliCopperName[MAX_TEMPORARY_STORAGE];
+        sprintf( dliCopperName, "DLI%s", copperList->name );
+
+        Variable * dliCopper = variable_retrieve( _environment, dliCopperName );
 
         outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+        cpu_mem_move_direct_size( _environment, dliCopper->realName, "DLI", dliCopper->size );
+        outline1("JSR %s", dliLabel2 );
+        outhead1("GTIAVBLIRQNOCOPPER%s:", copperList->name ? copperList->name : "" );
         outline1("LDA #<%s", copperlist0Named );
         outline0("STA COPPERLISTJUMP+1" );
         outline1("LDA #>%s", copperlist0Named );
         outline0("STA COPPERLISTJUMP+2" );                            
-        outline1("JSR %s", dliLabel );                            
         outline0("RTS");
+
         outhead0("COPPERLISTNOP:");
         outline0("RTS");
         CopperInstruction * actual = copperList->first;
@@ -1955,9 +2009,9 @@ void gtia_finalization( Environment * _environment ) {
                     if ( actual->param1 > 0  ) {
                         if ( actual->param1 > currentLine ) {
                             if ( currentLine ) {
-                                outline1("LDA #<COPPERLIST%4.4x", actual->param1 );
+                                outline2("LDA #<COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
                                 outline0("STA COPPERLISTJUMP+1" );
-                                outline1("LDA #>COPPERLIST%4.4x", actual->param1 );
+                                outline2("LDA #>COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
                                 outline0("STA COPPERLISTJUMP+2" );                            
                                 outline0("RTS");
                             }
@@ -2003,19 +2057,28 @@ void gtia_finalization( Environment * _environment ) {
             }
             actual = actual->next;
         }
-        outline0("LDA #<GTIAVBLIRQNOCOPPER" );
+        outline1("LDA #<GTIAVBLIRQNOCOPPER%s", copperList->name );
         outline0("STA COPPERLISTJUMP+1" );
-        outline0("LDA #>GTIAVBLIRQNOCOPPER" );
+        outline1("LDA #>GTIAVBLIRQNOCOPPER%s", copperList->name );
         outline0("STA COPPERLISTJUMP+2" );                            
         outline0("RTS");
-    } else {
+        copperList = copperList->next;
+    }    
+    if ( !anon ) {
         outhead0("COPPERLIST0000:" );
         outline0("LDA #<GTIAVBLIRQNOCOPPER" );
         outline0("STA COPPERLISTJUMP+1" );
         outline0("LDA #>GTIAVBLIRQNOCOPPER" );
         outline0("STA COPPERLISTJUMP+2" );                            
         outline0("RTS");
-    }    
+        outhead0("GTIAVBLIRQNOCOPPER:");
+        outline0("LDA #<COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline0("LDA #>COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+    }
+
 }
 
 void gtia_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
