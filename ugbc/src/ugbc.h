@@ -2155,6 +2155,7 @@ typedef struct _CopperInstruction {
 typedef struct _CopperList {
 
     char * name;
+    int mode;
     struct _CopperInstruction * first;
     struct _CopperList * next;
 

@@ -976,6 +976,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
+    CopperList * copperList = find_copper_list( _environment, NULL );
+    
+    if (copperList) {
+        copperList->mode = _screen_mode->id;
+    }
+
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
     Variable * dli = variable_retrieve_or_define( _environment, "DLI", VT_BUFFER, 0 );
@@ -1006,7 +1012,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
 
-            dliListStart = dli_build( _environment, 8 /*mode*/, 23 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 8 /*mode*/, 23 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
@@ -1032,7 +1038,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 9 /*mode*/, 47 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 9 /*mode*/, 47 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
@@ -1050,7 +1056,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 960 );
 
-            dliListStart = dli_build( _environment, 10 /*mode*/, 47 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 10 /*mode*/, 47 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 48;
@@ -1074,7 +1080,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 1;
 
 
-            dliListStart = dli_build( _environment, 11 /*mode*/, 95 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 11 /*mode*/, 95 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 96;
@@ -1099,7 +1105,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
 
-            dliListStart = dli_build( _environment, 13 /*mode*/, 96 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 13 /*mode*/, 96 /*rows*/, copperList,
                         &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 96;
@@ -1132,7 +1138,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 1;
 
             dliListStart = dli_build_antic15( _environment, 
-                find_copper_list( _environment, NULL ),
+                copperList,
                 &screenMemoryOffset, &dliListStartOffset,
                 &screenMemoryOffset2, &dliSize );
 
@@ -1162,7 +1168,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 12 /*mode*/, 191 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 12 /*mode*/, 191 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 20;
@@ -1186,7 +1192,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
 
-            dliListStart = dli_build( _environment, 14 /*mode*/, 191 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 14 /*mode*/, 191 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
@@ -1214,7 +1220,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 2 /*mode*/, 24 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 2 /*mode*/, 24 /*rows*/, copperList,
                 &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -1242,7 +1248,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 6 /*mode*/, 23 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 6 /*mode*/, 23 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -1263,7 +1269,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 7 /*mode*/, 11 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 7 /*mode*/, 11 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
@@ -1286,7 +1292,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
 
-            dliListStart = dli_build( _environment, 3 /*mode*/, 23 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 3 /*mode*/, 23 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -1312,7 +1318,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
 
-            dliListStart = dli_build( _environment, 4 /*mode*/, 23 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 4 /*mode*/, 23 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -1333,7 +1339,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
 
-            dliListStart = dli_build( _environment, 5 /*mode*/, 23 /*rows*/, find_copper_list( _environment, NULL ),
+            dliListStart = dli_build( _environment, 5 /*mode*/, 23 /*rows*/, copperList,
                     &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
@@ -1919,6 +1925,18 @@ void gtia_finalization( Environment * _environment ) {
     CopperList * copperList = find_copper_list( _environment, NULL );
 
     if ( copperList ) {
+        char copperlist0Named[MAX_TEMPORARY_STORAGE];
+        sprintf( copperlist0Named, "COPPERLIST0000%s:", copperList->name ? copperList->name : "" );
+        char dliLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( dliLabel, "GTIAINITDLI%d", copperList->mode );
+
+        outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+        outline1("LDA #<%s", copperlist0Named );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline1("LDA #>%s", copperlist0Named );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline1("JSR %s", dliLabel );                            
+        outline0("RTS");
         outhead0("COPPERLISTNOP:");
         outline0("RTS");
         CopperInstruction * actual = copperList->first;
