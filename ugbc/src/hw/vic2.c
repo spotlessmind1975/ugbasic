@@ -2301,85 +2301,96 @@ void vic2_finalization( Environment * _environment ) {
     outline0("RTS");
 
     if ( _environment->copperList ) {
-        outhead0("COPPERLISTNOP:");
-        outline0("RTS");
-        CopperInstruction * actual = _environment->copperList->first;
-        int currentLine = 0;
-        outhead0("COPPERLIST0000:" );
-        while( actual ) {
-            switch( actual->operation ) {
-                case COP_NOP:
-                    outline0("NOP");
-                    break;
-                case COP_WAIT:
-                    if ( actual->param1 > 0  ) {
-                        if ( actual->param1 > currentLine ) {
-                            outline1("LDA #$%2.2x", (unsigned char)( actual->param1 & 0xff ) );
-                            outline0("STA $D012" );
-                            if ( ( actual->param1 >> 8 ) & 0x01 ) {
-                                outline0("LDA $D011" );
-                                outline0("ORA #$80" );
-                            } else {
-                                outline0("LDA $D011" );
-                                outline0("AND #$7F" );
-                            }
-                            outline0("STA $D011" );
-                            outline1("LDA #<COPPERLIST%4.4x", actual->param1 );
-                            outline0("STA COPPERLISTJUMP+1" );
-                            outline1("LDA #>COPPERLIST%4.4x", actual->param1 );
-                            outline0("STA COPPERLISTJUMP+2" );                            
-                            outline0("RTS");
-                            outhead1("COPPERLIST%4.4x:", actual->param1 );
-                            currentLine = actual->param1;
-                        }
-                    }
-                    break;
-                case COP_MOVE_DWORD:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
-                case COP_MOVE_WORD:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
-                case COP_MOVE_BYTE:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
-                    break;
-                case COP_STORE_DWORD:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
-                case COP_STORE_WORD:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
-                case COP_STORE_BYTE:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
-                    break;
-                case COP_COLOR:
-                    vic2_background_color( _environment, actual->param1, actual->param2 );
-                    break;
-                case COP_COLOR_BACKGROUND:
-                    vic2_background_color( _environment, 0, actual->param1 );
-                    break;
-                case COP_COLOR_BORDER:
-                    vic2_border_color( _environment, actual->param1 );
-                    break;
+        int anon = 0;
+        CopperList * copperList = _environment->copperList;
+        while( copperList ) {
+            if ( !copperList->name ) {
+                anon = 1;
             }
-            actual = actual->next;
+            CopperInstruction * actual = copperList->first;
+            int currentLine = 0;
+            outhead1("COPPERLIST%s0000:", copperList->name ? copperList->name : "" );
+            while( actual ) {
+                switch( actual->operation ) {
+                    case COP_NOP:
+                        outline0("NOP");
+                        break;
+                    case COP_WAIT:
+                        if ( actual->param1 > 0  ) {
+                            if ( actual->param1 > currentLine ) {
+                                outline1("LDA #$%2.2x", (unsigned char)( actual->param1 & 0xff ) );
+                                outline0("STA $D012" );
+                                if ( ( actual->param1 >> 8 ) & 0x01 ) {
+                                    outline0("LDA $D011" );
+                                    outline0("ORA #$80" );
+                                } else {
+                                    outline0("LDA $D011" );
+                                    outline0("AND #$7F" );
+                                }
+                                outline0("STA $D011" );
+                                outline2("LDA #<COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+1" );
+                                outline2("LDA #>COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+2" );                            
+                                outline0("RTS");
+                                outhead2("COPPERLIST%s%4.4x:", copperList->name ? copperList->name : "", actual->param1 );
+                                currentLine = actual->param1;
+                            }
+                        }
+                        break;
+                    case COP_MOVE_DWORD:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                    case COP_MOVE_WORD:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                    case COP_MOVE_BYTE:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                        break;
+                    case COP_STORE_DWORD:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                    case COP_STORE_WORD:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                    case COP_STORE_BYTE:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                        break;
+                    case COP_COLOR:
+                        vic2_background_color( _environment, actual->param1, actual->param2 );
+                        break;
+                    case COP_COLOR_BACKGROUND:
+                        vic2_background_color( _environment, 0, actual->param1 );
+                        break;
+                    case COP_COLOR_BORDER:
+                        vic2_border_color( _environment, actual->param1 );
+                        break;
+                }
+                actual = actual->next;
+            }
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("LDA #$0" );
+            outline0("STA $D012" );
+            outline0("LDA $D011" );
+            outline0("AND #$7F" );
+            outline0("STA $D011" );
+            outline1("LDA #<COPPERLIST%s0000", copperList->name ? copperList->name : "" );
+            outline0("STA COPPERLISTJUMP+1" );
+            outline1("LDA #>COPPERLIST%s0000", copperList->name ? copperList->name : "" );
+            outline0("STA COPPERLISTJUMP+2" );                            
+            outline0("RTS");
+            copperList = copperList->next;
         }
-        outline0("LDA #$0" );
-        outline0("STA $D012" );
-        outline0("LDA $D011" );
-        outline0("AND #$7F" );
-        outline0("STA $D011" );
-        outline0("LDA #<COPPERLIST0000" );
-        outline0("STA COPPERLISTJUMP+1" );
-        outline0("LDA #>COPPERLIST0000" );
-        outline0("STA COPPERLISTJUMP+2" );                            
-        outline0("RTS");
+        if ( ! anon ) {
+            outhead0("COPPERLIST0000:" );
+            outline0("RTS");
+        }
     }
 
 }
