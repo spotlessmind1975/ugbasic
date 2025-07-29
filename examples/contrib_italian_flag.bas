@@ -20,7 +20,7 @@ REM computer supportati da ugBASIC.
 REM
 REM @url https://www.facebook.com/groups/vintagecomputerclubitalia.it/posts/31346776444920826/
 REM 
-REM @include c64reu
+REM @include cpc,coleco,msx,pc182op,sg1000,sc3000,mo5,to8,coco3,zx
 
 	' Enable colorfull bitmap graphic (up to 16 colors)
 	
