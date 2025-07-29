@@ -970,6 +970,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int dliListStartOffset;
     int dliSize;
     int screenMemoryAddress2 = 0;
+    int rows = 0;
 
     cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
     cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
@@ -1007,13 +1008,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 240 );
 
+            rows = 24;
+
             _environment->screenWidth = 40;
-            _environment->screenHeight = 24;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1033,13 +1033,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 480 );
 
+            rows = 48;
+
             _environment->screenWidth = 80;
-            _environment->screenHeight = 48;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1056,13 +1055,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 960 );
 
+            rows = 48;
+
             _environment->screenWidth = 80;
-            _environment->screenHeight = 48;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 48;
             scanline = 20;
@@ -1079,13 +1077,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 1920 );
 
+            rows = 96;
+
             _environment->screenWidth = 160;
-            _environment->screenHeight = 96;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 96;
             scanline = 20;
@@ -1104,13 +1101,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 3840 );
 
+            rows = 96;
+
             _environment->screenWidth = 160;
-            _environment->screenHeight = 96;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             currentHeight = 96;
             scanline = 40;
@@ -1136,15 +1132,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 7680 );
 
+            rows = 192;
+
             _environment->screenWidth = 320;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build_antic15( _environment, 
-                copperList,
-                &screenMemoryOffset, &dliListStartOffset,
-                &screenMemoryOffset2, &dliSize );
 
             screenMemoryAddress2 = _environment->frameBufferStart + 4096;
 
@@ -1167,13 +1160,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 3840 );
 
+            rows = 192;
+
             _environment->screenWidth = 160;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1191,13 +1183,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 7680 );
 
+            rows = 192;
+
             _environment->screenWidth = 160;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, _environment->screenHeight-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1219,13 +1210,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 960 );
 
+            rows = 24;
+
             _environment->screenWidth = 40 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1247,13 +1237,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 480 );
 
+            rows = 24;
+
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
@@ -1268,13 +1257,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 240 );
 
+            rows = 12;
+
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 12 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
@@ -1291,13 +1279,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 760 );
 
+            rows = 24;
+
             _environment->screenWidth = 40 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1317,13 +1304,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 960 );
 
+            rows = 24;
+
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1338,13 +1324,12 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             calculate_frame_buffer( _environment, 480 );
 
+            rows = 24;
+
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-
-            dliListStart = dli_build( _environment, _screen_mode->id /*mode*/, (_environment->screenHeight/_environment->fontHeight)-1 /*rows*/, copperList,
-                    &screenMemoryOffset, &dliListStartOffset, &dliSize );
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1390,6 +1375,21 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "BITMAPADDRESS", _environment->frameBufferStart );
 
     // dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
+
+    if ( _screen_mode->id == BITMAP_MODE_ANTIC15 ) {
+        dliListStart = dli_build_antic15( _environment, 
+            copperList,
+            &screenMemoryOffset, &dliListStartOffset,
+            &screenMemoryOffset2, &dliSize );
+    } else {
+        dliListStart = dli_build( _environment, 
+                _screen_mode->id /*mode*/, 
+                rows-1 /*rows*/, 
+                copperList,
+                &screenMemoryOffset, 
+                &dliListStartOffset, 
+                &dliSize );
+    }
 
     variable_store_buffer( _environment, dli->name, dliListStart, dliSize, dli->absoluteAddress );
 
