@@ -1995,8 +1995,6 @@ void gtia_finalization( Environment * _environment ) {
         outline0("STA COPPERLISTJUMP+2" );                            
         outline0("RTS");
 
-        outhead0("COPPERLISTNOP:");
-        outline0("RTS");
         CopperInstruction * actual = copperList->first;
         int currentLine = 0;
         cpu_label(_environment, copperlist0Named);

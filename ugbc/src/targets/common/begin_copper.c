@@ -170,11 +170,14 @@ void begin_copper( Environment * _environment, char * _name ) {
 
     _environment->insideCopperList = 1;
 
-    _environment->copperList = malloc( sizeof( CopperList ) );
-    memset( _environment->copperList, 0, sizeof( CopperList ) );
+    CopperList * newCopperList = malloc( sizeof( CopperList ) );
+    memset( newCopperList, 0, sizeof( CopperList ) );
     
     if ( _name ) {
-        _environment->copperList->name = strdup( _name );
+        newCopperList->name = strdup( _name );
     }
+
+    newCopperList->next = _environment->copperList;
+    _environment->copperList = newCopperList;
 
 }
