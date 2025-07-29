@@ -52,7 +52,6 @@ REM @include cpc,coleco,msx,pc128op,sg1000,sc3000,mo5,to8,coco3,zx
 	' of each point to draw, in a 2D reference system.
 	
 	DIM stx AS FLOAT, sty AS FLOAT
-	DIM stx2 AS FLOAT, sty2 AS FLOAT
 
 	' Calculate the "center" of the flag using
 	' a proportional calculation with the original
@@ -61,31 +60,41 @@ REM @include cpc,coleco,msx,pc128op,sg1000,sc3000,mo5,to8,coco3,zx
 	cx=(SCREEN WIDTH / 2.0)
 	cy=(SCREEN HEIGHT / 12.0)
 	
+	' Do nested loops.
 	FOR ix=120 TO -19 STEP -4
+	
 		FOR iy=100 TO 1 STEP -4
 	
+		' Calculate the 3D coordinates.
+		
 		x = ix
 		y = iy
-		z=30+((10*SIN(x/11.0))*COS(y/52.0))
+		z = 30 + ( (10*SIN(x/11.0)) * COS(y/52.0) )
+		
+		' Transform them in a 2D projection.
 		
 		stx = cx+x-y: 
-		sty = cy+x/2+y/2+z+1
-		stx2 = cx+x-y
-		sty2 = cy+x/2+y/2+z
+		sty = cy+x/2+y/2+z
 		
+		' Draw the point on the screen.
 		PLOT stx, sty
-		PLOT stx2, sty2
-		
+		PLOT stx, sty+1
+
+		' Change the color on the flag based 
+		' on the abscissa of the 2D point.
+		' (and avoid to draw the "star" if outside range).
 		INK LIGHT RED
 		IF x<(SCREEN WIDTH / 3.41) THEN INK LIGHT WHITE
 		IF x<(SCREEN WIDTH / 16.0) THEN INK LIGHT GREEN
 		IF x<(SCREEN WIDTH / 3.12) AND x>(SCREEN WIDTH / 3.76) THEN GOTO skip
 		IF x<(SCREEN WIDTH / 10.66) AND x>(SCREEN WIDTH / 32.0) THEN GOTO skip
 		
-		PLOT stx2+1, sty2+1
-		PLOT stx2-1, sty2+1
-		PLOT stx2-1, sty2-1
-		PLOT stx2+1, sty2-1
+		' Draw the star around the point.
+		
+		PLOT stx+1, sty+1
+		PLOT stx-1, sty+1
+		PLOT stx-1, sty-1
+		PLOT stx+1, sty-1
 		
 skip:
 	
