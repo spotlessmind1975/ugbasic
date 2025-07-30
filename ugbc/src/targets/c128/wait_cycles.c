@@ -79,6 +79,10 @@ approximately 65.5 seconds.
 
 La parola chiave ''PARALLEL'' può essere usata solo con attese legate ai ''CYCLES''.
 
+Notare che esiste una variante di questo comando, che funziona solo all'interno 
+delle copper list. Il comando è ''WAIT'' e permette di attendere l'arrivo di una 
+specifica posizione del pennello video.
+
 @syntax WAIT cycles [CYCLES] [PARALLEL]
 @syntax WAIT ticks TICK
 @syntax WAIT ticks TICKS

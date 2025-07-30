@@ -106,8 +106,29 @@ MSPRITESMANAGERADDRESS:
 @ENDIF
 
 @ELSE
-    LDA #1
+    LDA $D019
+    AND #1
+    BEQ IRQSVCX 
     STA $D019
+@IF copperList
+
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+    NOP
+COPPERLISTJUMP:
+    JSR COPPERLIST0000
+    PLA
+    RTI
+@ENDIF
+
+IRQSVCX:
 
 @IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER
@@ -161,8 +182,6 @@ IRQSVC2:
 @IF !deployed.msprites
     PHA
     LDA $DC0D
-    LDA #$1
-    STA $D019
     PLA
 @ENDIF
     RTI
@@ -217,13 +236,15 @@ C64STARTUPDONE:
     LDA #>IRQSVC2
     STA $0315
 
-@IF deployed.msprites
+@IF deployed.msprites || copperList
 
-    ; msprites
-    ; LDA #$7f                    ;CIA interrupt off
-    ; STA $DC0D
     LDA #$01                    ;Raster interrupt on
     STA $D01A
+    
+@ENDIF
+
+@IF deployed.msprites
+
     LDA #$30
     STA $D011
     LDA #IRQ1LINE               ;Line where next IRQ happens

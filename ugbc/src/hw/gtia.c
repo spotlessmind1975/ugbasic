@@ -91,7 +91,35 @@ void gtia_hit( Environment * _environment, char * _sprite_mask, char * _result )
  * @param _environment Current calling environment
  * @param _border_color Border color to use
  */
-void gtia_border_color( Environment * _environment, char * _border_color ) {
+void gtia_border_color( Environment * _environment, int _border_color ) {
+
+    switch( _environment->currentMode ) {
+        case TILEMAP_MODE_ANTIC2:
+        case TILEMAP_MODE_ANTIC6:
+        case TILEMAP_MODE_ANTIC7:
+                outline1("LDA #$%2.2x", _border_color );
+                outline0("STA $02c8");
+            break;
+
+        case BITMAP_MODE_ANTIC8:
+        case BITMAP_MODE_ANTIC10:
+        case BITMAP_MODE_ANTIC13:
+            break;
+
+        case BITMAP_MODE_ANTIC9:
+        case BITMAP_MODE_ANTIC11:
+        case BITMAP_MODE_ANTIC15:
+        case BITMAP_MODE_ANTIC12:
+        case BITMAP_MODE_ANTIC14:
+        case TILEMAP_MODE_ANTIC3:
+        case TILEMAP_MODE_ANTIC4:
+        case TILEMAP_MODE_ANTIC5:
+            break;
+    }
+
+}
+
+void gtia_border_color_vars( Environment * _environment, char * _border_color ) {
 
     switch( _environment->currentMode ) {
         case TILEMAP_MODE_ANTIC2:
@@ -141,92 +169,102 @@ void gtia_background_color( Environment * _environment, int _index, int _backgro
         case BITMAP_MODE_ANTIC10:
         case BITMAP_MODE_ANTIC13:
             outline1("LDA #$%2.2x", (unsigned char)(_background_color) );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
                 case 3:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 1:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
 
         case TILEMAP_MODE_ANTIC4:
         case TILEMAP_MODE_ANTIC5:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 3:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
 
         case BITMAP_MODE_ANTIC14:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             switch( _index ) {
                 case 0:
                     outline0("STA $02C8" )
+                    outline0("STA $D01A" )
                     break;
                 case 1:
                     outline0("STA $02C4" )
+                    outline0("STA $D016" )
                     break;
                 case 2:
                     outline0("STA $02C5" )
+                    outline0("STA $D017" )
                     break;
                 case 3:
                     outline0("STA $02C6" )
+                    outline0("STA $D018" )
                     break;
             }
             break;
@@ -265,36 +303,39 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA #$%2.2x", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -302,13 +343,14 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$01");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -318,30 +360,33 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01a" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA %s", _index);
-            outline0("AND #$0f" );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -349,23 +394,26 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -402,36 +450,39 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -439,13 +490,14 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$01");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -455,30 +507,33 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("STA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -486,23 +541,26 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline0("AND #$03");
             outline0("TAX");
             outline1("LDA %s", _background_color );
-            outline0("AND #$0f" );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("STA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("STA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("STA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("STA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -542,28 +600,34 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C6" )
+            outline0("STA $D018" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C5")
+            outline0("STA $D017" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC9:
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             break;
 
         case BITMAP_MODE_ANTIC11:
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             break;
 
         case BITMAP_MODE_ANTIC15:
@@ -573,9 +637,11 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -587,24 +653,29 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
         case BITMAP_MODE_ANTIC12:
             outline0("LDA $02C6" )
+            outline0("STA $D018" )
             break;
 
         case BITMAP_MODE_ANTIC14:
@@ -614,19 +685,23 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
             outline0("LDA $02C8" )
+            outline0("STA $D01A" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
             outline0("CPX #1" );
             outline1("BNE %snc1", label );
             outline0("LDA $02C4" )
+            outline0("STA $D016" )
             outline1("JMP %scdone", label )
             outhead1("%snc1:", label);
             outline0("CPX #2" );
             outline1("BNE %snc2", label );
             outline0("LDA $02C5" )
+            outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc2:", label);
             outline0("LDA $02C6")
+            outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
 
@@ -736,6 +811,152 @@ void console_update_width_in_bytes( Environment * _environment ) {
 
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// FRAME BUFFER CALCULATION
+//////////////////////////////////////////////////////////////////////////////
+
+static void calculate_frame_buffer( Environment * _environment, int _size_required ) {
+    if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - _size_required ) ) {
+        _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - _size_required );
+    }
+    _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// BUILD A LIST OF USED SCANLINES FOR A COPPER LIST
+//////////////////////////////////////////////////////////////////////////////
+
+static int * calculate_scanlines_for_copper_list( CopperList * _copper_list ) {
+
+    int * copperUsedLines = malloc( 312 * sizeof(int) );
+    memset(copperUsedLines, 0, 312 * sizeof(int));
+
+    CopperInstruction * actual = _copper_list->first;
+    while( actual ) {
+        switch( actual->operation ) {
+            case COP_WAIT:
+                copperUsedLines[actual->param1] = 1;
+                break;
+                break;
+        }
+        actual = actual->next;
+    }
+
+    return copperUsedLines;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// BUILD A DLI FOR A SINGLE SEGMENT SCREEN
+//////////////////////////////////////////////////////////////////////////////
+
+static unsigned char * dli_build( Environment * _environment, 
+        int _mode, int _rows, CopperList * _copper_list,
+        int * _screen_memory_offset, int * _dlilist_start_offset,
+        int * _dli_size ) {
+
+    int * copperUsedLines = NULL;
+    if ( _copper_list ) {
+        copperUsedLines = calculate_scanlines_for_copper_list( _copper_list );
+    }
+
+    unsigned char * dliListStart = malloc( DLI_COUNT );
+    unsigned char * dliListCurrent = dliListStart;
+
+    memset( dliListStart, 0, DLI_COUNT );
+
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    if ( _copper_list && copperUsedLines[0] ) {
+        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+    }
+
+    *_screen_memory_offset = dliListCurrent - dliListStart - 2;
+
+    for( int i=1; i<_rows; ++i ) {
+        if ( _copper_list && copperUsedLines[i] ) {
+            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, _mode );
+        } else {
+            DLI_MODE_VHSCROLL( dliListCurrent, _mode );
+        }
+    }
+
+    DLI_IRQ( dliListCurrent, _mode );
+
+    DLI_JVB( dliListCurrent, 0 );
+
+    *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
+
+    *_dli_size = ( dliListCurrent - dliListStart );
+
+    return dliListStart; 
+}
+
+static unsigned char * dli_build_antic15( Environment * _environment, 
+        CopperList * _copper_list,
+        int * _screen_memory_offset, int * _dlilist_start_offset,
+        int * _screen_memory_offset2, int * _dli_size ) {
+
+    int * copperUsedLines = NULL;
+    if ( _copper_list ) {
+        copperUsedLines = calculate_scanlines_for_copper_list( _copper_list );
+    }
+
+    unsigned char * dliListStart = malloc( DLI_COUNT );
+    unsigned char * dliListCurrent = dliListStart;
+
+    memset( dliListStart, 0, DLI_COUNT );
+
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+
+    if ( _copper_list && copperUsedLines[0] ) {
+        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+    }
+
+    *_screen_memory_offset = dliListCurrent - dliListStart - 2;
+
+    for( int i=1; i<96; ++i ) {
+        // 8	\Display ANTIC mode 15 for second mode line
+        if ( _copper_list && copperUsedLines[i] ) {
+            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        } else {
+            DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+        }
+    }
+
+    int screenMemoryAddress2 = _environment->frameBufferStart + 4096;
+
+    _environment->frameBufferStart2 = screenMemoryAddress2;
+    
+    DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+
+    *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
+
+    for( int i=0; i<94; ++i ) {
+        if ( _copper_list && copperUsedLines[96+i] ) {
+            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        } else {
+            DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+        }
+    }
+
+    DLI_IRQ( dliListCurrent, 15 );
+
+    DLI_JVB( dliListCurrent, 0 );
+    *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
+
+    return dliListStart;
+
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
@@ -747,14 +968,20 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int currentHeight = 0;
     int scanline = 0;
     int dliListStartOffset;
+    int dliSize;
     int screenMemoryAddress2 = 0;
+    int rows = 0;
 
     cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
     cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     deploy( gtiavars, src_hw_gtia_vars_asm );
     
-    outline1( "; enabling mode %d", _screen_mode->id );
+    CopperList * copperList = find_copper_list( _environment, NULL );
+    
+    if (copperList) {
+        copperList->mode = _screen_mode->id;
+    }
 
     unsigned char * dliListStart = malloc( DLI_COUNT ), * dliListCurrent = dliListStart;
     
@@ -779,42 +1006,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
         case BITMAP_MODE_ANTIC8:
 
-            // 8	3	4	8	40	10	240
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 240 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 240 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 240 );
+
+            rows = 24;
 
             _environment->screenWidth = 40;
-            _environment->screenHeight = 24;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 72	\Display ANTIC mode 8 (BASIC 3) 64+8
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 8, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 8, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<23; ++i ) {
-                // 8	\Display ANTIC mode 8 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 8 );
-            }
-
-            DLI_IRQ( dliListCurrent, 8 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -832,42 +1031,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
 
-            // 9	4	2	4	80	10	480
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 480 );
+
+            rows = 48;
 
             _environment->screenWidth = 80;
-            _environment->screenHeight = 48;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 72	\Display ANTIC mode 9 (BASIC 3) 64+9
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 9, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 9, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<47; ++i ) {
-                // 8	\Display ANTIC mode 9 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 9 );
-            }
-
-            DLI_IRQ( dliListCurrent, 9 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -882,42 +1053,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 80x48, 4 colors
         case BITMAP_MODE_ANTIC10:
 
-            // A	5	4	4	80	20	960
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 960 );
+
+            rows = 48;
 
             _environment->screenWidth = 80;
-            _environment->screenHeight = 48;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
-             _environment->currentModeBW = 2;
-           // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 74	\Display ANTIC mode 10 (BASIC 5) 64+10
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 10, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 10, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<47; ++i ) {
-                // 8	\Display ANTIC mode 10 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 10 );
-            }
-
-            DLI_IRQ( dliListCurrent, 10 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, _environment->frameBufferStart - (dliListCurrent - dliListStart) - 16 );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
+            _environment->currentModeBW = 1;
 
             currentHeight = 48;
             scanline = 20;
@@ -932,42 +1075,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
 
-            // B	6	2	2	160	20	1920
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 1920 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 1920 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 1920 );
+
+            rows = 96;
 
             _environment->screenWidth = 160;
-            _environment->screenHeight = 96;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 75	\Display ANTIC mode 11 (BASIC 8) 64+11
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 11, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 11, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<95; ++i ) {
-                // 8	\Display ANTIC mode 11 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 11 );
-            }
-
-            DLI_IRQ( dliListCurrent, 11 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
             scanline = 20;
@@ -984,42 +1099,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
 
-            // D	7	4	2	160	40	3840
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 3840 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 3840 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 3840 );
+
+            rows = 96;
 
             _environment->screenWidth = 160;
-            _environment->screenHeight = 96;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 77	\Display ANTIC mode 13 (BASIC 7) 64+13
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 13, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 13, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<96; ++i ) {
-                // 8	\Display ANTIC mode 13 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 13 );
-            }
-
-            DLI_IRQ( dliListCurrent, 13 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, _environment->frameBufferStart - (dliListCurrent - dliListStart) );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             currentHeight = 96;
             scanline = 40;
@@ -1043,55 +1130,16 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 320x192, 3 colors
         case BITMAP_MODE_ANTIC15:
 
-            // F	8	2	1	320	40	7680
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 7680 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 7680 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 7680 );
+
+            rows = 192;
 
             _environment->screenWidth = 320;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 81	\Display ANTIC mode 15 (BASIC 7) 64+15
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 15, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<96; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
-            }
 
             screenMemoryAddress2 = _environment->frameBufferStart + 4096;
-
-            _environment->frameBufferStart2 = screenMemoryAddress2;
-            
-            DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
-
-            screenMemoryOffset2 = dliListCurrent - dliListStart - 2;
-
-            for( i=0; i<94; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
-            }
-
-            DLI_IRQ( dliListCurrent, 15 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 40;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1110,42 +1158,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x192, 2 colors
         case BITMAP_MODE_ANTIC12:
 
-            // C	none	2	1	160	20	3840
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 3840 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 3840 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 3840 );
+
+            rows = 192;
 
             _environment->screenWidth = 160;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 76	\Display ANTIC mode 12 64+12
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 12, 0xA000 );
-            DLI_LMS( dliListCurrent, 12, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<191; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE( dliListCurrent, 12 );
-            }
-
-            DLI_IRQ( dliListCurrent, 12 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1161,42 +1181,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x192, 4 colors
         case BITMAP_MODE_ANTIC14:
 
-            // E	none	4	1	160	40	7680
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 7680 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 7680 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 7680 );
+
+            rows = 192;
 
             _environment->screenWidth = 160;
-            _environment->screenHeight = 192;
+            _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 76	\Display ANTIC mode 12 64+14
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 14, 0xA000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 14, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for( i=1; i<191; ++i ) {
-                // 8	\Display ANTIC mode 15 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 14 );
-            }
-
-            DLI_IRQ( dliListCurrent, 14 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
@@ -1216,42 +1208,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 40x24, 1 color
         case TILEMAP_MODE_ANTIC2:
 
-            // 2	0	2	8	40	40	960
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 960 );
+
+            rows = 24;
 
             _environment->screenWidth = 40 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 2, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 2, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<24; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 2 );
-            }
-
-            DLI_IRQ( dliListCurrent, 2 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1271,42 +1235,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC6:
 
-            // 6	1	5	8	20	20	480
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 480 );
+
+            rows = 24;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 6, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 6, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<23; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 6 );
-            }
-
-            DLI_IRQ( dliListCurrent, 6 );
-            
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
@@ -1319,42 +1255,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 20x12, 4 color
         case TILEMAP_MODE_ANTIC7:
 
-            // 7	2	5	16	20	20	240
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 240 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 240 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 240 );
+
+            rows = 12;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 12 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 71	\Display ANTIC mode 2 (BASIC 0) 64+7
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 7, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 7, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<11; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 7 );
-            }
-
-            DLI_IRQ( dliListCurrent, 7 );
-            
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
@@ -1369,42 +1277,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 40x24, 4 color
         case TILEMAP_MODE_ANTIC3:
 
-            // 3	none	2	10	40	40	760
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 760 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 760 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 760 );
+
+            rows = 24;
 
             _environment->screenWidth = 40 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 3, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 3, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<23; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 3 );
-            }
-
-            DLI_IRQ( dliListCurrent, 3 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1422,42 +1302,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 20x24, 4 color
         case TILEMAP_MODE_ANTIC4:
 
-            // 4	none	4	8	40	40	960
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 960 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 960 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 960 );
+
+            rows = 24;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 4, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 4, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<23; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 4 );
-            }
-
-            DLI_IRQ( dliListCurrent, 4 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1470,42 +1322,14 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 20x24, 4 color  
         case TILEMAP_MODE_ANTIC5:
 
-            // 5	none	4	16	40	40	480
-            if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - 480 ) ) {
-                _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - 480 );
-            }
-            _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+            calculate_frame_buffer( _environment, 480 );
+
+            rows = 24;
 
             _environment->screenWidth = 20 * _environment->fontWidth;
-            _environment->screenHeight = 24 * _environment->fontHeight;
+            _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
-            // 112	Blank 8 scan lines to provide for overscan
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 112
-            DLI_BLANK( dliListCurrent, 8 );
-            // 66	\Display ANTIC mode 2 (BASIC 0) 64+2
-            // 64	|Screen memory starts at
-            // 156	/64+156*256 =40000
-            // DLI_LMS( dliListCurrent, 5, 40000 );
-            DLI_LMS_VHSCROLL( dliListCurrent, 5, _environment->frameBufferStart );
-
-            screenMemoryOffset = dliListCurrent - dliListStart - 2;
-
-            for(i=1; i<23; ++i ) {
-                // 2	\Display ANTIC mode 2 for second mode line
-                DLI_MODE_VHSCROLL( dliListCurrent, 5 );
-            }
-
-            DLI_IRQ( dliListCurrent, 5 );
-
-            // 65	\JVB-Jump and wait for Vertical Blank
-            // 32	|to display list address which starts
-            // 156	/at 32+256*156=0xA000 - (dliListCurrent - dliListStart) - 16
-            DLI_JVB( dliListCurrent, dli->absoluteAddress );
-            dliListStartOffset = dliListCurrent - dliListStart - 2;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
@@ -1552,78 +1376,91 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     // dli->absoluteAddress = 0xA000 - (dliListCurrent - dliListStart) - 16;
 
-    variable_store_buffer( _environment, dli->name, dliListStart, ( dliListCurrent - dliListStart ), dli->absoluteAddress );
-
-    if ( _screen_mode->bitmap ) {
-        outline0("CLC" );
-        outline1("LDA #<%s", dli->realName );
-        outline1("ADC #$%2.2x", ( screenMemoryOffset & 0xff ) );
-        outline0("STA TMPPTR" );
-        outline1("LDA #>%s", dli->realName );
-        outline1("ADC #$%2.2x", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
-        outline0("STA TMPPTR+1" );
-        outline0("LDY #0" );
-
-        outline0("LDA BITMAPADDRESS" );
-        outline0("STA (TMPPTR),Y" );
-        outline0("INY" );
-        outline0("LDA BITMAPADDRESS+1" );
-        outline0("STA (TMPPTR),Y" );
-
-        if ( screenMemoryOffset2 ) {
-            outline0("CLC" );
-            outline1("LDA #<%s", dli->realName );
-            outline1("ADC #$%2.2x", ( screenMemoryOffset2 & 0xff ) );
-            outline0("STA TMPPTR" );
-            outline1("LDA #>%s", dli->realName );
-            outline1("ADC #$%2.2x", ( ( screenMemoryOffset2 >> 8 ) & 0xff ) );
-            outline0("STA TMPPTR+1" );
-            outline0("LDY #0" );
-
-            outline0("CLC" );
-            outline1("LDA #$%2.2x", ( screenMemoryAddress2 & 0xff ) );
-            outline0("STA (TMPPTR),Y" );
-            outline0("INY" );
-            outline1("LDA #$%2.2x", ( screenMemoryAddress2 >> 8 ) & 0xff );
-            outline0("STA (TMPPTR),Y" );
-
-        }
+    if ( _screen_mode->id == BITMAP_MODE_ANTIC15 ) {
+        dliListStart = dli_build_antic15( _environment, 
+            copperList,
+            &screenMemoryOffset, &dliListStartOffset,
+            &screenMemoryOffset2, &dliSize );
     } else {
-        outline0("CLC" );
-        outline1("LDA #<%s", dli->realName );
-        outline1("ADC #$%2.2x", ( screenMemoryOffset & 0xff ) );
-        outline0("STA TMPPTR" );
-        outline1("LDA #>%s", dli->realName );
-        outline1("ADC #$%2.2x", ( ( screenMemoryOffset >> 8 ) & 0xff ) );
-        outline0("STA TMPPTR+1" );
-        outline0("LDY #0" );
-
-        outline0("LDA TEXTADDRESS" );
-        outline0("STA (TMPPTR),Y" );
-        outline0("INY" );
-        outline0("LDA TEXTADDRESS+1" );
-        outline0("STA (TMPPTR),Y" );
-
+        dliListStart = dli_build( _environment, 
+                _screen_mode->id /*mode*/, 
+                rows-1 /*rows*/, 
+                copperList,
+                &screenMemoryOffset, 
+                &dliListStartOffset, 
+                &dliSize );
     }
 
-    outline0("CLC" );
-    outline1("LDA #<%s", dli->realName );
-    outline1("ADC #$%2.2x", ( dliListStartOffset & 0xff ) );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", dli->realName );
-    outline1("ADC #$%2.2x", ( ( dliListStartOffset >> 8 ) & 0xff ) );
-    outline0("STA TMPPTR+1" );
-    outline0("LDY #0" );
+    variable_store_buffer( _environment, dli->name, dliListStart, dliSize, dli->absoluteAddress );
 
-    // outline1("LDA #<%s", dli->realName );
+    MAKE_LABEL
+
+    cpu_jump(_environment, label );
+
+    CopperList * actual = _environment->copperList;
+    while(actual) {
+        actual->mode = _screen_mode->id;
+        if ( actual->name ) {
+            char dliCopperName[MAX_TEMPORARY_STORAGE];
+            sprintf( dliCopperName, "DLI%s", actual->name );
+            Variable * dliCopper = variable_define( _environment, dliCopperName, VT_BUFFER, 0 );
+            if ( _screen_mode->id == BITMAP_MODE_ANTIC15 ) {
+                dliListStart = dli_build_antic15( _environment, 
+                    actual,
+                    &screenMemoryOffset, &dliListStartOffset,
+                    &screenMemoryOffset2, &dliSize );
+            } else {
+                dliListStart = dli_build( _environment, 
+                        _screen_mode->id /*mode*/, 
+                        rows-1 /*rows*/, 
+                        actual,
+                        &screenMemoryOffset, 
+                        &dliListStartOffset, 
+                        &dliSize );
+            }
+            variable_store_buffer( _environment, dliCopper->name, dliListStart, dliSize, dliCopper->absoluteAddress );
+        }
+        actual = actual->next;
+    }
+
+    char dliCommonLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( dliCommonLabel, "GTIAINITDLICOMMON%d", _screen_mode->id );
+
+    cpu_label(_environment, dliCommonLabel);
+    if ( _screen_mode->bitmap ) {
+        outline0("LDA BITMAPADDRESS" );
+        outline1("STA DLI+$%4.4x", screenMemoryOffset );
+        outline0("LDA BITMAPADDRESS+1" );
+        outline1("STA DLI+$%4.4x+1", screenMemoryOffset );
+        if ( screenMemoryOffset2 ) {
+            outline1("LDA #$%2.2x", ( screenMemoryAddress2 & 0xff ) );
+            outline1("STA DLI+$%4.4x", screenMemoryOffset2 );
+            outline1("LDA #$%2.2x", ( screenMemoryAddress2 >> 8 ) & 0xff );
+            outline1("STA DLI+$%4.4x+1", screenMemoryOffset2 );
+        }
+    } else {
+        outline0("LDA TEXTADDRESS" );
+        outline1("STA DLI+$%4.4x", screenMemoryOffset );
+        outline0("LDA TEXTADDRESS+1" );
+        outline1("STA DLI+$%4.4x+1", screenMemoryOffset );
+    }
     outline0("LDA #<DLI" );
-    outline0("STA (TMPPTR),Y" );
-    outline0("INY" );
-    // outline1("LDA #>%s", dli->realName );
+    outline1("STA DLI+$%4.4x", dliListStartOffset );
     outline0("LDA #>DLI" );
-    outline0("STA (TMPPTR),Y" );
+    outline1("STA DLI+$%4.4x+1", dliListStartOffset );
+    cpu_return(_environment);
 
+    char dliLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( dliLabel, "GTIAINITDLI%d", _screen_mode->id );
+
+    cpu_label(_environment, dliLabel);
     cpu_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
+    
+    char dliLabel2[MAX_TEMPORARY_STORAGE];
+    sprintf( dliLabel2, "GTIAINITDLIB%d", _screen_mode->id );
+    cpu_label(_environment, dliLabel2);
+
+    cpu_call( _environment, dliCommonLabel);
 
     outline0("SEI" );
     outline0("LDA #<DLI" );
@@ -1631,6 +1468,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     outline0("LDA #>DLI" );
     outline0("STA $231" );
     outline0("CLI" );
+
+    cpu_return(_environment);
+
+    cpu_label(_environment, label );
+    cpu_call(_environment, dliLabel);
 
     if ( _environment->vestigialConfig.palettePreserve ) {
         outline0("LDA #$0");
@@ -2122,6 +1964,117 @@ void gtia_finalization( Environment * _environment ) {
 
     if (_environment->vestigialConfig.clsImplicit ) {
         deploy( cls, src_hw_gtia_cls_asm );
+    }
+
+    CopperList * copperList = _environment->copperList;
+
+    int anon = 0;
+
+    while(copperList) {
+        if ( !copperList->name ) {
+            anon = 1;
+        }
+        char copperlist0Named[MAX_TEMPORARY_STORAGE];
+        sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
+        char dliLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( dliLabel, "GTIAINITDLI%d", copperList->mode );
+        char dliLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( dliLabel2, "GTIAINITDLIB%d", copperList->mode );
+        char dliCopperName[MAX_TEMPORARY_STORAGE];
+        sprintf( dliCopperName, "DLI%s", copperList->name );
+
+        Variable * dliCopper = variable_retrieve( _environment, dliCopperName );
+
+        outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+        cpu_mem_move_direct_size( _environment, dliCopper->realName, "DLI", dliCopper->size );
+        outline1("JSR %s", dliLabel2 );
+        outhead1("GTIAVBLIRQNOCOPPER%s:", copperList->name ? copperList->name : "" );
+        outline1("LDA #<%s", copperlist0Named );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline1("LDA #>%s", copperlist0Named );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+
+        CopperInstruction * actual = copperList->first;
+        int currentLine = 0;
+        cpu_label(_environment, copperlist0Named);
+        while( actual ) {
+            switch( actual->operation ) {
+                case COP_NOP:
+                    outline0("NOP");
+                    break;
+                case COP_WAIT:
+                    if ( actual->param1 > 0  ) {
+                        if ( actual->param1 > currentLine ) {
+                            if ( currentLine ) {
+                                outline2("LDA #<COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+1" );
+                                outline2("LDA #>COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                outline0("STA COPPERLISTJUMP+2" );                            
+                                outline0("RTS");
+                            }
+                            outhead2("COPPERLIST%s%4.4x:", copperList->name ? copperList->name : "", actual->param1 );
+                            currentLine = actual->param1;
+                        }
+                    }
+                    break;
+                case COP_MOVE_DWORD:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                case COP_MOVE_WORD:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                case COP_MOVE_BYTE:
+                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+                case COP_STORE_DWORD:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                case COP_STORE_WORD:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                case COP_STORE_BYTE:
+                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
+                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                    break;
+                case COP_COLOR:
+                    gtia_background_color( _environment, actual->param1, actual->param2 );
+                    break;
+                case COP_COLOR_BACKGROUND:
+                    gtia_background_color( _environment, 0, actual->param1 );
+                    break;
+                case COP_COLOR_BORDER:
+                    gtia_border_color( _environment, actual->param1 );
+                    break;
+
+            }
+            actual = actual->next;
+        }
+        outline1("LDA #<GTIAVBLIRQNOCOPPER%s", copperList->name );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline1("LDA #>GTIAVBLIRQNOCOPPER%s", copperList->name );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+        copperList = copperList->next;
+    }    
+    if ( !anon ) {
+        outhead0("COPPERLIST0000:" );
+        outline0("LDA #<GTIAVBLIRQNOCOPPER" );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline0("LDA #>GTIAVBLIRQNOCOPPER" );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
+        outhead0("GTIAVBLIRQNOCOPPER:");
+        outline0("LDA #<COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+1" );
+        outline0("LDA #>COPPERLIST0000" );
+        outline0("STA COPPERLISTJUMP+2" );                            
+        outline0("RTS");
     }
 
 }

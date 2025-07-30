@@ -1716,6 +1716,13 @@ Variable * variable_store_type( Environment * _environment, char * _destination,
     return destination;
 }
 
+Variable * variable_by_constant( Environment * _environment, VariableType _type, int _value ) {
+    Variable * result = variable_temporary( _environment, _type, "()" );
+    variable_store( _environment, result->name, _value );
+    result->initializedByConstant = 1;
+    return result;
+}
+
 #define UNESCAPE_COLOR( c, d ) \
             else if ( strcmp_nocase( word, c ) == 0 ) { \
                             int c2 = COLOR_##d;\
@@ -16000,4 +16007,27 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with) {
     }
     strcpy(tmp, _orig);
     return result;
+}
+
+CopperList * find_copper_list( Environment * _environment, char * _name ) {
+
+    CopperList * actual = _environment->copperList;
+
+    while( actual ) {
+        if ( !_name  ) {
+            if ( !actual->name ) {
+                return actual;
+            }
+        } else {
+            if ( actual->name ) {
+                if ( strcmp( actual->name, _name ) == 0 ) {
+                    return actual;
+                }
+            }
+        }
+        actual = actual->next;
+    }
+
+    return NULL;
+
 }

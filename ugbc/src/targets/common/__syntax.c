@@ -5328,6 +5328,8 @@ It is important to note that excessive use of NOP instructions can slow
 down the execution of the program, so it is advisable to use them sparingly 
 and only when absolutely necessary.
 
+This instruction can also be used within a copper list.
+
 @italian
 
 ''NOP'' è l'abbreviazione di "No OPeration" ed è un'istruzione molto speciale:
@@ -5347,6 +5349,8 @@ il contatore del programma (PC) all'istruzione successiva, senza eseguire alcuna
 È importante notare che un uso eccessivo di istruzioni NOP può rallentare
 l'esecuzione del programma, quindi è consigliabile usarle con parsimonia
 e solo quando assolutamente necessario.
+
+Questa istruzione si può utilizzare anche all'interno di una copper list.
 
 @syntax NOP
 

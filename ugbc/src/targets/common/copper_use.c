@@ -34,39 +34,61 @@
 
 #include "../../ugbc.h"
 
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
+
 /**
- * @brief Emit ASM code for instruction <b>COLOR BORDER [int]x</b>
- * 
- * This function outputs the ASM code to change the border color, where 
- * the command is invoked with a direct integer value.
+ * @brief Emit code for <strong>BEGIN COPPER</strong>
  * 
  * @param _environment Current calling environment
- * @param _color Index color to use.
  */
-/* <usermanual>
-@keyword COLOR BORDER
-@target atari
+ /* <usermanual>
+@keyword COPPER USE
+
+@english
+
+The ''COPPER USE'' command is used to select and activate a specific copper list, 
+replacing the currently running one. This command comes into play when you create 
+multiple copper lists and want to switch between them.
+
+@italian
+
+Il comando ''COPPER USE'' serve a selezionare e attivare una specifica copper list, 
+sostituendo quella che è attualmente in esecuzione. Il comando entra in gioco quando 
+si creano diverse copper list, e si vuol passare da una all'altra. 
+
+@syntax COPPER USE name
+
+@example BEGIN COPPER first
+@example    COPPER WAIT LINE 10
+@example    COPPER COLOR BACKGROUND RED
+@example    COPPER WAIT LINE 30
+@example    COPPER COLOR BACKGROUND BLUE
+@example END COPPER
+@example BEGIN COPPER second
+@example    COPPER WAIT LINE 20
+@example    COPPER COLOR BACKGROUND RED
+@example    COPPER WAIT LINE 40
+@example    COPPER COLOR BACKGROUND BLUE
+@example END COPPER
+@example COPPER USE first: WAIT KEY: COPPER USE second
+
 </usermanual> */
-void color_border( Environment * _environment, int _color ) {
-    
-    gtia_border_color( _environment, _color );
 
-}
+extern char DATATYPE_AS_STRING[][16];
 
-/**
- * @brief Emit ASM code for instruction <b>COLOR BORDER [expression]</b>
- * 
- * This function outputs the ASM code to change the border color, where 
- * the command is invoked with an expression.
- * 
- * @param _environment Current calling environment
- * @param _color Variable with the expression.
- */
-void color_border_var( Environment * _environment, char * _color ) {
+void copper_use( Environment * _environment, char * _name ) {
 
-    // Safety check -- expression must exists (it should be always true)
-    Variable * color = variable_retrieve( _environment, _color );
+    CopperList * copperList = find_copper_list( _environment, _name );
 
-    gtia_border_color_vars( _environment, color->realName );
+    if ( !copperList ) {
+        CRITICAL_COPPER_LIST_UNKNOWN( _name );
+    }
+
+    char copperListActivationRoutine[MAX_TEMPORARY_STORAGE];
+    sprintf(copperListActivationRoutine, "COPPERACTIVATE%s", _name );
+
+    cpu_call(_environment, copperListActivationRoutine);
 
 }

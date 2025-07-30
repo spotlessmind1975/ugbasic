@@ -34,39 +34,21 @@
 
 #include "../../ugbc.h"
 
-/**
- * @brief Emit ASM code for instruction <b>COLOR BORDER [int]x</b>
- * 
- * This function outputs the ASM code to change the border color, where 
- * the command is invoked with a direct integer value.
- * 
- * @param _environment Current calling environment
- * @param _color Index color to use.
- */
-/* <usermanual>
-@keyword COLOR BORDER
-@target atari
-</usermanual> */
-void color_border( Environment * _environment, int _color ) {
-    
-    gtia_border_color( _environment, _color );
-
-}
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
 
 /**
- * @brief Emit ASM code for instruction <b>COLOR BORDER [expression]</b>
- * 
- * This function outputs the ASM code to change the border color, where 
- * the command is invoked with an expression.
+ * @brief Emit code for <strong>BEGIN COPPER</strong>
  * 
  * @param _environment Current calling environment
- * @param _color Variable with the expression.
  */
-void color_border_var( Environment * _environment, char * _color ) {
+void end_copper( Environment * _environment ) {
 
-    // Safety check -- expression must exists (it should be always true)
-    Variable * color = variable_retrieve( _environment, _color );
+    if ( !_environment->insideCopperList ) {
+        CRITICAL_COPPER_LIST_NOT_OPENED();
+    }
 
-    gtia_border_color_vars( _environment, color->realName );
+    _environment->insideCopperList = 0;
 
 }

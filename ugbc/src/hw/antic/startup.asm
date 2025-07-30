@@ -39,6 +39,15 @@ ANTICVBL:   .BYTE       0
 
 IRQLISTENER:
     PHA
+    STA $D40A
+
+@IF copperList
+
+COPPERLISTJUMP:
+    JSR COPPERLIST0000
+
+@ENDIF
+
     LDA #1
     STA ANTICVBL
     PLA
