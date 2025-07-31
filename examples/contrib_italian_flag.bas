@@ -92,10 +92,10 @@ REM @include cpc,coleco,msx,pc128op,sg1000,sc3000,mo5,to8,coco3,zx
 		' Draw the star around the point.
 		
 		PLOT stx+1, sty+1
+		PLOT stx, sty+2
 		PLOT stx-1, sty+1
-		PLOT stx-1, sty-1
-		PLOT stx+1, sty-1
-		
+		PLOT stx, sty
+				
 skip:
 	
 		NEXT iy
