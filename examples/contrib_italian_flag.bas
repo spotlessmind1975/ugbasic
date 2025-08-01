@@ -90,8 +90,6 @@ REM @include cpc,coleco,msx,pc128op,sg1000,sc3000,mo5,to8,coco3,zx
 		IF x<(SCREEN WIDTH / 10.66) AND x>(SCREEN WIDTH / 32.0) THEN GOTO skip
 		
 		' Draw the star around the point.
-		' Fixed by Francesco Sblendorio here:
-		' https://www.facebook.com/groups/2057165187928233/posts/4023940781250654/?comment_id=4025561614421904 
 		
 		PLOT stx+1, sty+1
 		PLOT stx, sty+2
