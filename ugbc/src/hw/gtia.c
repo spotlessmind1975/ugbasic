@@ -1970,111 +1970,132 @@ void gtia_finalization( Environment * _environment ) {
 
     int anon = 0;
 
-    while(copperList) {
+    cpu_label( _environment, "GTIAFINALIZE" );
+
+    if ( copperList ) {
+
         if ( !copperList->name ) {
-            anon = 1;
-        }
-        char copperlist0Named[MAX_TEMPORARY_STORAGE];
-        sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
-        char dliLabel[MAX_TEMPORARY_STORAGE];
-        sprintf( dliLabel, "GTIAINITDLI%d", copperList->mode );
-        char dliLabel2[MAX_TEMPORARY_STORAGE];
-        sprintf( dliLabel2, "GTIAINITDLIB%d", copperList->mode );
-        char dliCopperName[MAX_TEMPORARY_STORAGE];
-        sprintf( dliCopperName, "DLI%s", copperList->name );
-
-        Variable * dliCopper = variable_retrieve( _environment, dliCopperName );
-
-        outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
-        cpu_mem_move_direct_size( _environment, dliCopper->realName, "DLI", dliCopper->size );
-        outline1("JSR %s", dliLabel2 );
-        outhead1("GTIAVBLIRQNOCOPPER%s:", copperList->name ? copperList->name : "" );
-        outline1("LDA #<%s", copperlist0Named );
-        outline0("STA COPPERLISTJUMP+1" );
-        outline1("LDA #>%s", copperlist0Named );
-        outline0("STA COPPERLISTJUMP+2" );                            
-        outline0("RTS");
-
-        CopperInstruction * actual = copperList->first;
-        int currentLine = 0;
-        cpu_label(_environment, copperlist0Named);
-        while( actual ) {
-            switch( actual->operation ) {
-                case COP_NOP:
-                    outline0("NOP");
-                    break;
-                case COP_WAIT:
-                    if ( actual->param1 > 0  ) {
-                        if ( actual->param1 > currentLine ) {
-                            if ( currentLine ) {
-                                outline2("LDA #<COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
-                                outline0("STA COPPERLISTJUMP+1" );
-                                outline2("LDA #>COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
-                                outline0("STA COPPERLISTJUMP+2" );                            
-                                outline0("RTS");
-                            }
-                            outhead2("COPPERLIST%s%4.4x:", copperList->name ? copperList->name : "", actual->param1 );
-                            currentLine = actual->param1;
-                        }
-                    }
-                    break;
-                case COP_MOVE_DWORD:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
-                case COP_MOVE_WORD:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
-                case COP_MOVE_BYTE:
-                    outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
-                    break;
-                case COP_STORE_DWORD:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
-                case COP_STORE_WORD:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
-                case COP_STORE_BYTE:
-                    outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
-                    outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
-                    break;
-                case COP_COLOR:
-                    gtia_background_color( _environment, actual->param1, actual->param2 );
-                    break;
-                case COP_COLOR_BACKGROUND:
-                    gtia_background_color( _environment, 0, actual->param1 );
-                    break;
-                case COP_COLOR_BORDER:
-                    gtia_border_color( _environment, actual->param1 );
-                    break;
-
+            if ( copperList->mode == 0 ) {
+                copperList->mode = _environment->currentMode;
+                outline0( "JSR COPPERACTIVATE");
             }
-            actual = actual->next;
         }
-        outline1("LDA #<GTIAVBLIRQNOCOPPER%s", copperList->name );
-        outline0("STA COPPERLISTJUMP+1" );
-        outline1("LDA #>GTIAVBLIRQNOCOPPER%s", copperList->name );
-        outline0("STA COPPERLISTJUMP+2" );                            
-        outline0("RTS");
-        copperList = copperList->next;
-    }    
-    if ( !anon ) {
-        outhead0("COPPERLIST0000:" );
-        outline0("LDA #<GTIAVBLIRQNOCOPPER" );
-        outline0("STA COPPERLISTJUMP+1" );
-        outline0("LDA #>GTIAVBLIRQNOCOPPER" );
-        outline0("STA COPPERLISTJUMP+2" );                            
-        outline0("RTS");
-        outhead0("GTIAVBLIRQNOCOPPER:");
-        outline0("LDA #<COPPERLIST0000" );
-        outline0("STA COPPERLISTJUMP+1" );
-        outline0("LDA #>COPPERLIST0000" );
-        outline0("STA COPPERLISTJUMP+2" );                            
-        outline0("RTS");
+        outline0( "RTS");
+
+        while(copperList) {
+            if ( !copperList->name ) {
+                anon = 1;
+                if ( copperList->mode == 0 ) {
+                    copperList->mode = _environment->currentMode;
+                    outline( "JSR COPPERACTIVATE");
+                }
+            }
+            outline( "JSR COPPERACTIVATE");
+            char copperlist0Named[MAX_TEMPORARY_STORAGE];
+            sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
+            char dliLabel[MAX_TEMPORARY_STORAGE];
+            sprintf( dliLabel, "GTIAINITDLI%d", copperList->mode );
+            char dliLabel2[MAX_TEMPORARY_STORAGE];
+            sprintf( dliLabel2, "GTIAINITDLIB%d", copperList->mode );
+            char dliCopperName[MAX_TEMPORARY_STORAGE];
+            sprintf( dliCopperName, "DLI%s", copperList->name ? copperList->name : "" );
+
+            Variable * dliCopper = variable_retrieve( _environment, dliCopperName );
+
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            cpu_mem_move_direct_size( _environment, dliCopper->realName, "DLI", dliCopper->size );
+            outline1("JSR %s", dliLabel2 );
+            outhead1("GTIAVBLIRQNOCOPPER%s:", copperList->name ? copperList->name : "" );
+            outline1("LDA #<%s", copperlist0Named );
+            outline0("STA COPPERLISTJUMP+1" );
+            outline1("LDA #>%s", copperlist0Named );
+            outline0("STA COPPERLISTJUMP+2" );                            
+            outline0("RTS");
+
+            CopperInstruction * actual = copperList->first;
+            int currentLine = 0;
+            cpu_label(_environment, copperlist0Named);
+            while( actual ) {
+                switch( actual->operation ) {
+                    case COP_NOP:
+                        outline0("NOP");
+                        break;
+                    case COP_WAIT:
+                        if ( actual->param1 > 0  ) {
+                            if ( actual->param1 > currentLine ) {
+                                if ( currentLine ) {
+                                    outline2("LDA #<COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                    outline0("STA COPPERLISTJUMP+1" );
+                                    outline2("LDA #>COPPERLIST%s%4.4x", copperList->name ? copperList->name : "", actual->param1 );
+                                    outline0("STA COPPERLISTJUMP+2" );                            
+                                    outline0("RTS");
+                                }
+                                outhead2("COPPERLIST%s%4.4x:", copperList->name ? copperList->name : "", actual->param1 );
+                                currentLine = actual->param1;
+                            }
+                        }
+                        break;
+                    case COP_MOVE_DWORD:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+3 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+2 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                    case COP_MOVE_WORD:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff )+1 );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                    case COP_MOVE_BYTE:
+                        outline1( "LDA $%4.4x", (unsigned short)( actual->param2 & 0xffff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                        break;
+                    case COP_STORE_DWORD:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 24 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+3 );
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 16 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+2 );
+                    case COP_STORE_WORD:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 >> 8 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff )+1 );
+                    case COP_STORE_BYTE:
+                        outline1( "LDA #$%2.2x", (unsigned char)( ( actual->param2 ) & 0xff ) );
+                        outline1( "STA $%4.4x", (unsigned short)( actual->param1 & 0xffff ) );
+                        break;
+                    case COP_COLOR:
+                        gtia_background_color( _environment, actual->param1, actual->param2 );
+                        break;
+                    case COP_COLOR_BACKGROUND:
+                        gtia_background_color( _environment, 0, actual->param1 );
+                        break;
+                    case COP_COLOR_BORDER:
+                        gtia_border_color( _environment, actual->param1 );
+                        break;
+
+                }
+                actual = actual->next;
+            }
+            outline1("LDA #<GTIAVBLIRQNOCOPPER%s", copperList->name ? copperList->name : "" );
+            outline0("STA COPPERLISTJUMP+1" );
+            outline1("LDA #>GTIAVBLIRQNOCOPPER%s", copperList->name ? copperList->name : "" );
+            outline0("STA COPPERLISTJUMP+2" );                            
+            outline0("RTS");
+            copperList = copperList->next;
+        }    
+        if ( !anon ) {
+            outhead0("COPPERLIST0000:" );
+            outline0("LDA #<GTIAVBLIRQNOCOPPER" );
+            outline0("STA COPPERLISTJUMP+1" );
+            outline0("LDA #>GTIAVBLIRQNOCOPPER" );
+            outline0("STA COPPERLISTJUMP+2" );                            
+            outline0("RTS");
+            outhead0("GTIAVBLIRQNOCOPPER:");
+            outline0("LDA #<COPPERLIST0000" );
+            outline0("STA COPPERLISTJUMP+1" );
+            outline0("LDA #>COPPERLIST0000" );
+            outline0("STA COPPERLISTJUMP+2" );                            
+            outline0("RTS");
+        }
+
+    } else {
+        outline0( "RTS");
     }
 
 }
