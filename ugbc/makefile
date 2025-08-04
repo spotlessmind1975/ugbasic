@@ -201,9 +201,9 @@ ifeq ($(target),pc128op)
   audio=sn76489m
   io=
 endif
-ifeq ($(target),to8)
-  cpu=6809
-  video=ef936x
+ifeq ($(target),pc1403)
+  cpu=sc61860
+  video=
   video2=
   audio=
   io=
@@ -229,6 +229,13 @@ ifeq ($(target),sg1000)
   audio=sn76489z
   io=
 endif
+ifeq ($(target),to8)
+  cpu=6809
+  video=ef936x
+  video2=
+  audio=
+  io=
+endif
 ifeq ($(target),vg5000)
   cpu=z80
   video=ef9345
@@ -248,13 +255,6 @@ ifeq ($(target),zx)
   video=
   video2=
   audio=
-endif
-ifeq ($(target),pc1403)
-  cpu=sc61860
-  video=
-  video2=
-  audio=
-  io=
 endif
 
 #------------------------------------------------ 
