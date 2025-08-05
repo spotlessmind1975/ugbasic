@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token FCIRCLE
+%token FCIRCLE FELLIPSE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5741,6 +5741,19 @@ ellipse_definition_expression:
 
 ellipse_definition:
     ellipse_definition_expression;
+
+fellipse_definition_expression:
+      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+        fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
+        fellipse( _environment, $1, $3, $5, $7, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    };
+
+fellipse_definition:
+    fellipse_definition_expression;
 
 get_message_definition_params : {
         ((struct _Environment *)_environment)->dojoChannelName = NULL;
@@ -11907,6 +11920,7 @@ statement2nc:
   | CIRCLE circle_definition
   | FCIRCLE fcircle_definition
   | ELLIPSE ellipse_definition
+  | FELLIPSE fellipse_definition
   | DRAW draw_definition
   | ROT rot_definition
   | DTILE draw_tile_definition

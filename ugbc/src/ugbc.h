@@ -1774,6 +1774,7 @@ typedef struct _Deployed {
     int draw;
     int bar;
     int ellipse;
+    int fellipse;
     int create_path;
     int create_vector;
     int rotate_vector;
@@ -5179,6 +5180,7 @@ void                    fade_ticks_var( Environment * _environment, char * _tick
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 void                    fade_out( Environment * _environment, char * _period  );
 void                    fcircle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
+void                    fellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
