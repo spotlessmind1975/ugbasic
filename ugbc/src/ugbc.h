@@ -4952,9 +4952,6 @@ void                    bell( Environment * _environment, int _note, int _durati
 void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
-void                    bitmap_clear( Environment * _environment );
-void                    bitmap_clear_with( Environment * _environment, int _value );
-void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void                    blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top );

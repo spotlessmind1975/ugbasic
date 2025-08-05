@@ -6717,3 +6717,33 @@ per disegnare gli elementi grafici o i testi.
 
 @target all
 </usermanual> */
+
+/* <usermanual>
+@keyword BITMAP CLEAR
+
+@english
+
+This command is currently and alias for ''CLS''. Previously, when it
+was not deprecated, it fills the bitmap with a certain pattern (by default is ZERO, used to indicate
+the blank screen). The filled part is exclusively that linked to the bitmap, 
+so the color information is kept unchanged. Note that bitmap must be 
+enabled at least once with instruction ''BITMAP ENABLE''.
+
+@italian
+Questo comando è un alias per ''CLS''. In precedenza, quando non era
+ancora stato deprecato, riempiva la bitmap con un determinato motivo (per impostazione predefinita è
+ZERO, utilizzato per indicare lo schermo vuoto). La parte riempita è 
+esclusivamente quella legata alla bitmap, quindi le informazioni sul 
+colore vengono mantenute invariate. Notare che la bitmap doveva essere 
+abilitata almeno una volta con l'istruzione ''BITMAP ENABLE''.
+
+@syntax BITMAP CLEAR [ WITH value ]
+
+@example BITMAP CLEAR
+@example BITMAP CLEAR WITH #$42
+
+@seeAlso BITMAP ENABLE
+@seeAlso CLS
+
+@deprecated
+</usermanual> */

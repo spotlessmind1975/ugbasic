@@ -5266,10 +5266,12 @@ bitmap_definition_simple:
       bitmap_disable( _environment );
   }
   | CLEAR {
-      bitmap_clear( _environment );
+      cls( _environment, NULL );
   }
   | CLEAR WITH direct_integer {
-      bitmap_clear_with( _environment, $3 );
+      Variable * parameter = variable_temporary( _environment, VT_COLOR, "()" );
+      variable_store( _environment, parameter->name, $3 );
+      cls( _environment, parameter->name );
   }
   ;
 
@@ -5278,7 +5280,7 @@ bitmap_definition_expression:
       bitmap_at_var( _environment, $2 );
   }
   | CLEAR WITH expr {
-      bitmap_clear_with_vars( _environment, $3 );
+      cls( _environment, $3 );
   }
   ;
 
