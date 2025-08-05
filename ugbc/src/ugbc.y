@@ -5729,7 +5729,8 @@ circle_definition_expression:
     | optional_x OP_COMMA optional_y OP_COMMA expr {
         circle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    };
+    }
+    | FILL fcircle_definition_expression;
 
 circle_definition:
     circle_definition_expression;
@@ -5742,7 +5743,8 @@ ellipse_definition_expression:
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
         ellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    };
+    }
+    | FILL fellipse_definition_expression;
 
 ellipse_definition:
     ellipse_definition_expression;
