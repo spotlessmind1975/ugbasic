@@ -14,7 +14,7 @@ REM La formica di Langton è un automa a stati finiti bidimensionale con un
 REM insieme di regole molto semplice ma in grado di creare figure molto 
 REM complicate. È stato inventato nel 1986 da Chris Langton. 
 REM
-REM @include atari,cpc,coleco,c128,c64,c64reu,msx,sg1000,sc3000,coco3,
+REM @include atari,cpc,coleco,c128,c64,c64reu,msx,sg1000,sc3000,coco3,zx
 
 	' Enable BITMAP mode with a black background.
 	
