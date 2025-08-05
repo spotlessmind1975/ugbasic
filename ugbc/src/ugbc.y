@@ -109,6 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
+%token FCIRCLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5697,6 +5698,19 @@ plotr_definition_expression:
 
 plotr_definition:
     plotr_definition_expression;
+
+fcircle_definition_expression:
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
+        fcircle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y OP_COMMA expr {
+        fcircle( _environment, $1, $3, $5, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    };
+
+fcircle_definition:
+    fcircle_definition_expression;
 
 circle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
@@ -11891,6 +11905,7 @@ statement2nc:
   | PLOT plot_definition
   | PLOTR plotr_definition
   | CIRCLE circle_definition
+  | FCIRCLE fcircle_definition
   | ELLIPSE ellipse_definition
   | DRAW draw_definition
   | ROT rot_definition

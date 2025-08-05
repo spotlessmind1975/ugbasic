@@ -5178,6 +5178,7 @@ void                    fade_in_color_vars( Environment * _environment, char * _
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 void                    fade_out( Environment * _environment, char * _period  );
+void                    fcircle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );
