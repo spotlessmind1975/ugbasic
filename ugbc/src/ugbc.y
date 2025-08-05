@@ -5700,6 +5700,11 @@ plotr_definition:
     plotr_definition_expression;
 
 fcircle_definition_expression:
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+        fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | 
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
         fcircle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
