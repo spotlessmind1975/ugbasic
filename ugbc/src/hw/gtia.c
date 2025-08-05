@@ -1987,10 +1987,10 @@ void gtia_finalization( Environment * _environment ) {
                 anon = 1;
                 if ( copperList->mode == 0 ) {
                     copperList->mode = _environment->currentMode;
-                    outline( "JSR COPPERACTIVATE");
+                    outline0( "JSR COPPERACTIVATE");
                 }
             }
-            outline( "JSR COPPERACTIVATE");
+            outline0( "JSR COPPERACTIVATE");
             char copperlist0Named[MAX_TEMPORARY_STORAGE];
             sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
             char dliLabel[MAX_TEMPORARY_STORAGE];
