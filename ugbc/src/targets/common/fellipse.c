@@ -76,6 +76,20 @@ l'ultimo colore impostato con il comando ''PEN'' o ''INK''.
 @seeAlso ELLIPSE
 
 </usermanual> */
+
+/* <usermanual>
+@keyword ELLIPSE FILL
+
+@english
+
+@italian
+
+@syntax ELLIPSE FILL [x],[y],[rx],[ry][, c] 
+
+@alias FELLIPSE
+
+@target all
+</usermanual> */
 void fellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color ) {
 
     deploy_begin( fellipse );

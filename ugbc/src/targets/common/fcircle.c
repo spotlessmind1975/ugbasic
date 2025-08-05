@@ -97,10 +97,27 @@ bassa risoluzione potrebbero visualizzare cerchi meno nitidi.
 @example FCIRCLE 100,100,21,42
 @example FCIRCLE ,,21,RED
 
+@alias CIRCLE FILL
+
 @seeAlso CIRCLE
 
 @target all
 </usermanual> */
+/* <usermanual>
+@keyword CIRCLE FILL
+
+@english
+
+@italian
+
+@syntax CIRCLE FILL [x], [y], r[, c]
+@syntax CIRCLE FILL x, y, rx, ry[, c]
+
+@alias FCIRCLE
+
+@target all
+</usermanual> */
+
 void fcircle( Environment * _environment, char * _x, char * _y, char * _r, char * _c, int _preserve_color ) {
 
     Variable * xCentre = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
