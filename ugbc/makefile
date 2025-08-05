@@ -43,7 +43,7 @@ endif
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
-BISON_OPTIONS=--locations -d -Wcounterexamples
+BISON_OPTIONS=--locations -d
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
 LIBS=-lm $(LIBXML2)
@@ -201,9 +201,9 @@ ifeq ($(target),pc128op)
   audio=sn76489m
   io=
 endif
-ifeq ($(target),to8)
-  cpu=6809
-  video=ef936x
+ifeq ($(target),pc1403)
+  cpu=sc61860
+  video=
   video2=
   audio=
   io=
@@ -229,6 +229,13 @@ ifeq ($(target),sg1000)
   audio=sn76489z
   io=
 endif
+ifeq ($(target),to8)
+  cpu=6809
+  video=ef936x
+  video2=
+  audio=
+  io=
+endif
 ifeq ($(target),vg5000)
   cpu=z80
   video=ef9345
@@ -243,25 +250,18 @@ ifeq ($(target),vic20)
   audio=vic1
   io=
 endif
-ifeq ($(target),zx)
-  cpu=z80
-  video=
-  video2=
-  audio=
-endif
-ifeq ($(target),pc1403)
-  cpu=sc61860
-  video=
-  video2=
-  audio=
-  io=
-endif
 ifeq ($(target),vz200)
   cpu=z80
   video=6847z
   video2=
   audio=
   io=
+endif
+ifeq ($(target),zx)
+  cpu=z80
+  video=
+  video2=
+  audio=
 endif
 
 #------------------------------------------------ 
