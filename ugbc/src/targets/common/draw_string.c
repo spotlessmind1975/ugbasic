@@ -362,6 +362,8 @@ void draw_string( Environment * _environment, char * _string ) {
 
             cpu_move_16bit( _environment, parameter->realName, x->realName );
 
+            cpu_inc_16bit( _environment, address->realName );
+
             cpu_call( _environment, readParameterLabel );
 
             cpu_move_16bit( _environment, parameter->realName, y->realName );

@@ -228,11 +228,11 @@ void draw( Environment * _environment, char * _x0, char * _y0, char * _x1, char 
                         plot( _environment, x->name, y->name, c->name, _preserve_color );
                 if ( _environment->lineNeeded ) {
                     end_if_then( _environment );
+                    variable_increment( _environment, bit->name );
+                    if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
+                        variable_store( _environment, bit->name, 0 );
+                    end_if_then( _environment );
                 }
-                variable_increment( _environment, bit->name );
-                if_then( _environment, variable_compare_const( _environment, bit->name, 16 )->name );
-                    variable_store( _environment, bit->name, 0 );
-                end_if_then( _environment );
             end_while( _environment );
         else_if_then_label( _environment );
         else_if_then( _environment, NULL );
