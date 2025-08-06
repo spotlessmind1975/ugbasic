@@ -2519,6 +2519,18 @@ sarà ritagliato
 @usedInExample tsb_block_rec_01.bas
 
 @alias BOX
+@alias RECT
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RECT
+
+@english
+
+@italian
+
+@alias REC
 
 </usermanual> */
 
@@ -6716,4 +6728,53 @@ per disegnare gli elementi grafici o i testi.
 @seeAlso PEN (instruction)
 
 @target all
+</usermanual> */
+
+/* <usermanual>
+@keyword BITMAP CLEAR
+
+@english
+
+This command is currently and alias for ''CLS''. Previously, when it
+was not deprecated, it fills the bitmap with a certain pattern (by default is ZERO, used to indicate
+the blank screen). The filled part is exclusively that linked to the bitmap, 
+so the color information is kept unchanged. Note that bitmap must be 
+enabled at least once with instruction ''BITMAP ENABLE''.
+
+@italian
+Questo comando è un alias per ''CLS''. In precedenza, quando non era
+ancora stato deprecato, riempiva la bitmap con un determinato motivo (per impostazione predefinita è
+ZERO, utilizzato per indicare lo schermo vuoto). La parte riempita è 
+esclusivamente quella legata alla bitmap, quindi le informazioni sul 
+colore vengono mantenute invariate. Notare che la bitmap doveva essere 
+abilitata almeno una volta con l'istruzione ''BITMAP ENABLE''.
+
+@syntax BITMAP CLEAR [ WITH value ]
+
+@example BITMAP CLEAR
+@example BITMAP CLEAR WITH #$42
+
+@seeAlso BITMAP ENABLE
+@seeAlso CLS
+
+@deprecated
+</usermanual> */
+
+/* <usermanual>
+@keyword TRIANGLE
+
+@english
+
+The ''TRIANGLE'' command allows you to draw a triangle,
+or a polygon with three vertices.
+
+@italian
+
+Il comando ''POLYLINE'' permette di disegnare un triangolo,
+ovvero un poligono con tre vertici.
+
+@syntax TRIANGLE [x1],[y1] TO x2,y2 TO x3,y3
+
+@example TRIANGLE 10,10 TO 20,10 TO 20,20
+
 </usermanual> */

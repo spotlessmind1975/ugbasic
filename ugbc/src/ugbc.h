@@ -1777,6 +1777,7 @@ typedef struct _Deployed {
     int draw;
     int bar;
     int ellipse;
+    int fellipse;
     int create_path;
     int create_vector;
     int rotate_vector;
@@ -4955,9 +4956,6 @@ void                    bell( Environment * _environment, int _note, int _durati
 void                    bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync );
 void                    bitmap_at( Environment * _environment, int _address );
 void                    bitmap_at_var( Environment * _environment, char * _address );
-void                    bitmap_clear( Environment * _environment );
-void                    bitmap_clear_with( Environment * _environment, int _value );
-void                    bitmap_clear_with_vars( Environment * _environment, char * _value );
 void                    bitmap_disable( Environment * _environment );
 void                    bitmap_enable( Environment * _environment, int _width, int _height, int _colors );
 void                    blit_define( Environment * _environment, char * _name, int _sop, int _mop, int _smop, int _iop, int _dop, int _idop, int _top );
@@ -5184,6 +5182,8 @@ void                    fade_in_color_vars( Environment * _environment, char * _
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 void                    fade_out( Environment * _environment, char * _period  );
+void                    fcircle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
+void                    fellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
 int                     file_size( Environment * _environment, char * _target_name );
 void                    file_storage( Environment * _environment, char * _source_name, char * _target_name, FileStorageFormat _format, VariableType _type );

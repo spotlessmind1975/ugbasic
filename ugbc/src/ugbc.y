@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token VZ200
+%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -5270,10 +5270,12 @@ bitmap_definition_simple:
       bitmap_disable( _environment );
   }
   | CLEAR {
-      bitmap_clear( _environment );
+      cls( _environment, NULL );
   }
   | CLEAR WITH direct_integer {
-      bitmap_clear_with( _environment, $3 );
+      Variable * parameter = variable_temporary( _environment, VT_COLOR, "()" );
+      variable_store( _environment, parameter->name, $3 );
+      cls( _environment, parameter->name );
   }
   ;
 
@@ -5282,7 +5284,7 @@ bitmap_definition_expression:
       bitmap_at_var( _environment, $2 );
   }
   | CLEAR WITH expr {
-      bitmap_clear_with_vars( _environment, $3 );
+      cls( _environment, $3 );
   }
   ;
 
@@ -5700,6 +5702,24 @@ plotr_definition_expression:
 plotr_definition:
     plotr_definition_expression;
 
+fcircle_definition_expression:
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+        fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | 
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
+        fcircle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y OP_COMMA expr {
+        fcircle( _environment, $1, $3, $5, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    };
+
+fcircle_definition:
+    fcircle_definition_expression;
+
 circle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
@@ -5712,7 +5732,8 @@ circle_definition_expression:
     | optional_x OP_COMMA optional_y OP_COMMA expr {
         circle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    };
+    }
+    | FILL fcircle_definition_expression;
 
 circle_definition:
     circle_definition_expression;
@@ -5725,10 +5746,24 @@ ellipse_definition_expression:
     | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
         ellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    };
+    }
+    | FILL fellipse_definition_expression;
 
 ellipse_definition:
     ellipse_definition_expression;
+
+fellipse_definition_expression:
+      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+        fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
+        fellipse( _environment, $1, $3, $5, $7, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    };
+
+fellipse_definition:
+    fellipse_definition_expression;
 
 get_message_definition_params : {
         ((struct _Environment *)_environment)->dojoChannelName = NULL;
@@ -6549,6 +6584,30 @@ rec_definition_expression:
         variable_decrement( _environment, y2p->name );
         box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x2->name, y2p->name );
+    }
+    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );        
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, NULL ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
+    }
+    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );        
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
     };
 
 rec_definition:
@@ -6700,6 +6759,20 @@ polyline_definition_expression:
 
 polyline_definition:
     polyline_definition_expression;
+
+triangle_definition:
+    optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y {
+        draw( _environment, $1, $3, $5, $7, NULL, 0 );
+        draw( _environment, $5, $7, $9, $11, NULL, 0 );
+        draw( _environment, $9, $11, $1, $3, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y OP_COMMA expr {
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $13), 0 );
+        draw( _environment, $5, $7, $9, $11, resolve_color( _environment, $13), 0 );
+        draw( _environment, $9, $11, $1, $3, resolve_color( _environment, $13), 0 );
+        gr_locate( _environment, $1, $3 );
+    };
 
 ink_definition:
     expr {
@@ -11902,7 +11975,9 @@ statement2nc:
   | PLOT plot_definition
   | PLOTR plotr_definition
   | CIRCLE circle_definition
+  | FCIRCLE fcircle_definition
   | ELLIPSE ellipse_definition
+  | FELLIPSE fellipse_definition
   | DRAW draw_definition
   | ROT rot_definition
   | DTILE draw_tile_definition
@@ -11917,10 +11992,12 @@ statement2nc:
   | SLICE slice_definition
   | BOX box_definition
   | REC rec_definition
+  | RECT rec_definition
   | CONSOLE console_definition
   | BAR bar_definition
   | BLOCK block_definition
   | POLYLINE polyline_definition
+  | TRIANGLE triangle_definition
   | CLIP clip_definition
   | USE use_definition
   | SET LINE expr {

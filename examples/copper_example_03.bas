@@ -14,9 +14,5 @@ REM @include c64
 	
 	BITMAP ENABLE(16)
 	
-	background := LOAD IMAGE("fall.png") EXACT
-	
-	PUT IMAGE background AT 0, 0
-	
 	COLOR 0, RED
 	
