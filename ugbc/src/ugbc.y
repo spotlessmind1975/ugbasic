@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token FCIRCLE FELLIPSE
+%token FCIRCLE FELLIPSE RECT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6581,6 +6581,30 @@ rec_definition_expression:
         variable_decrement( _environment, y2p->name );
         box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x2->name, y2p->name );
+    }
+    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );        
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, NULL ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
+    }
+    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );        
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
     };
 
 rec_definition:
@@ -11942,6 +11966,7 @@ statement2nc:
   | SLICE slice_definition
   | BOX box_definition
   | REC rec_definition
+  | RECT rec_definition
   | CONSOLE console_definition
   | BAR bar_definition
   | BLOCK block_definition

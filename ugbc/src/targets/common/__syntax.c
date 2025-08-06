@@ -2519,6 +2519,18 @@ sarà ritagliato
 @usedInExample tsb_block_rec_01.bas
 
 @alias BOX
+@alias RECT
+
+</usermanual> */
+
+/* <usermanual>
+@keyword RECT
+
+@english
+
+@italian
+
+@alias REC
 
 </usermanual> */
 
