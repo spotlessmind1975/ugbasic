@@ -634,9 +634,6 @@ PLOTC3C3:
 PLOTCE:
     JMP PLOTP            
 
-PLOTP:
-    RTS
-
 ;----------------------------------------------------------------
 
 
@@ -693,3 +690,6 @@ PLOTANDBIT4:
     .byte %11111100
 
 @ENDIF
+
+PLOTP:
+    RTS
