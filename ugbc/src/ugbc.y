@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token FCIRCLE FELLIPSE RECT
+%token FCIRCLE FELLIPSE RECT TRIANGLE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -6757,6 +6757,20 @@ polyline_definition_expression:
 polyline_definition:
     polyline_definition_expression;
 
+triangle_definition:
+    optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y {
+        draw( _environment, $1, $3, $5, $7, NULL, 0 );
+        draw( _environment, $5, $7, $9, $11, NULL, 0 );
+        draw( _environment, $9, $11, $1, $3, NULL, 0 );
+        gr_locate( _environment, $1, $3 );
+    }
+    | optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y OP_COMMA expr {
+        draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $13), 0 );
+        draw( _environment, $5, $7, $9, $11, resolve_color( _environment, $13), 0 );
+        draw( _environment, $9, $11, $1, $3, resolve_color( _environment, $13), 0 );
+        gr_locate( _environment, $1, $3 );
+    };
+
 ink_definition:
     expr {
         ink( _environment, $1 );
@@ -11971,6 +11985,7 @@ statement2nc:
   | BAR bar_definition
   | BLOCK block_definition
   | POLYLINE polyline_definition
+  | TRIANGLE triangle_definition
   | CLIP clip_definition
   | USE use_definition
   | SET LINE expr {

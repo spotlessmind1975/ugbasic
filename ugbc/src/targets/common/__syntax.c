@@ -6759,3 +6759,22 @@ abilitata almeno una volta con l'istruzione ''BITMAP ENABLE''.
 
 @deprecated
 </usermanual> */
+
+/* <usermanual>
+@keyword TRIANGLE
+
+@english
+
+The ''TRIANGLE'' command allows you to draw a triangle,
+or a polygon with three vertices.
+
+@italian
+
+Il comando ''POLYLINE'' permette di disegnare un triangolo,
+ovvero un poligono con tre vertici.
+
+@syntax TRIANGLE [x1],[y1] TO x2,y2 TO x3,y3
+
+@example TRIANGLE 10,10 TO 20,10 TO 20,20
+
+</usermanual> */
