@@ -58,6 +58,8 @@ extern char * importPath;
     char targetName[] = "msx1";
 #elif defined(__coleco__)
     char targetName[] = "coleco";
+#elif defined(__pccga__)
+    char targetName[] = "pccga";
 #elif defined(__sc3000__)
     char targetName[] = "sc3000";
 #elif defined(__sg1000__)

@@ -128,6 +128,9 @@ endif
 ifeq ($(target),pc1403)
   output=ram
 endif
+ifeq ($(target),pccga)
+  output=com
+endif
 endif
 
 ifndef threads
@@ -192,6 +195,11 @@ COCO3DECB = ./coco3_decb.sh
 AS61860 = ./modules/asxv5pxx/asxmak/linux/exe/as61860$(EXESUFFIX)
 ASLINK = ./modules/asxv5pxx/asxmak/linux/exe/aslink$(EXESUFFIX)
 COCOBIN2RAM = ./modules/cocobin2ram/cocobin2ram$(EXESUFFIX)
+
+#------------------------------------------------ 
+# CPU INTEL 8086
+#------------------------------------------------ 
+NASM = ./modules/nasm/nasm$(EXESUFFIX)
 
 #------------------------------------------------ 
 # Examples
@@ -275,6 +283,7 @@ paths:
 	@mkdir -p $(dir $(Z80ASM))
 	@mkdir -p $(dir $(Z80APPMAKE))
 	@mkdir -p $(dir $(ASM6809))
+	@mkdir -p $(dir $(NASM))
 
 #------------------------------------------------ 
 # toolchain: 
@@ -435,6 +444,21 @@ $(DIR2ATR): $(dir $(DIR2ATR))./*.o
 	cd $(dir $(DIR2ATR)) && make dir2atr
 
 dir2atr: paths $(DIR2ATR)
+
+#------------------------------------------------ 
+# nasm:
+#    NANO ASSEMBLER
+#------------------------------------------------ 
+# 
+# Netwide Assembler (NASM), an assembler for the 
+# x86 CPU architecture portable to nearly every 
+# modern platform, and with code generation for 
+# many platforms old and new.
+#
+$(NASM): 
+	cd $(dir $(NASM)) && make
+
+nasm: paths $(NASM)
 
 #------------------------------------------------ 
 # atari:
@@ -817,6 +841,22 @@ generated/pc1403/exe/%.ram:
 
 generated/pc1403/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ram=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.ram=.info) -o ../$@ -O ram $(subst generated/pc1403/exeso/,,$(@:.ram=.bas))
+
+#------------------------------------------------ 
+# pccga:
+#    PC CGA (8086)
+#------------------------------------------------ 
+# 
+toolchain.pccga: nasm
+
+generated/pccga/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/pccga/asm/,,$(@:.asm=.bas)) ../$@ 
+
+generated/pccga/exe/%.com:
+	@$(NASM) -f bin $(subst /exe/,/asm/,$(@:.com=.asm)) -o $@
+
+generated/pccga/exeso/%.com: $(subst /generated/pccga/exeso/,/$(EXAMPLESDIR)/,$(@:.com=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O com $(subst generated/pccga/exeso/,,$(@:.com=.bas))
 
 #------------------------------------------------ 
 # plus4:

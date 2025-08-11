@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token FCIRCLE FELLIPSE RECT TRIANGLE C16
+%token FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1208,7 +1208,8 @@ const_factor:
             defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__) || defined(__pc1403__) || defined(__gb__) || defined(__c16__)
+            defined( __c64reu__) || defined(__pc1403__) || defined(__gb__) || defined(__c16__) || \
+            defined(__pccga__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9732,6 +9733,14 @@ target :
         #endif
     }
     |
+    PCCGA {
+        #ifdef __pccga__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     CPC {
         #ifdef __cpc__
             $$ = 1;
@@ -13311,6 +13320,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "MSX 1";
 #elif __coleco__
     char target[MAX_TEMPORARY_STORAGE] = "ColecoVision";
+#elif __pccga__
+    char target[MAX_TEMPORARY_STORAGE] = "PC IBM (CGA)";
 #elif __sc3000__
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SC-3000";
 #elif __sg1000__
@@ -13447,6 +13458,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
+#elif __pccga__
+    printf("\t                com - binary executable\n" );
+    #define defaultExtension "com"
 #elif __sc3000__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
@@ -13567,6 +13581,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
 #elif __coleco__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __pccga__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
 #elif __sc3000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sg1000__
