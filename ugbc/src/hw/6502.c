@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../ugbc.h"
+#include "../cpu.h"
 
 #include <math.h>
 #include <stddef.h>
@@ -44,11 +44,11 @@
 
 #if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__) || defined(__c128__) || defined(__c64reu__)
 
-void cpu6502_init( Environment * _environment ) {
+void cpu_init( Environment * _environment ) {
 
 }
 
-void cpu6502_nop( Environment * _environment ) {
+void cpu_nop( Environment * _environment ) {
     
     outline0("NOP");
 
@@ -87,7 +87,7 @@ void cpu_ctoa( Environment * _environment ) {
 
 }
 
-void cpu6502_beq( Environment * _environment, char * _label ) {
+void cpu_beq( Environment * _environment, char * _label ) {
 
      MAKE_LABEL
 
@@ -107,7 +107,7 @@ void cpu6502_beq( Environment * _environment, char * _label ) {
  * @param _environment Current calling environment
  * @param _label Destination of the conditional jump.
  */
-void cpu6502_bneq( Environment * _environment, char * _label ) {
+void cpu_bneq( Environment * _environment, char * _label ) {
     
     MAKE_LABEL
 
@@ -121,29 +121,29 @@ void cpu6502_bneq( Environment * _environment, char * _label ) {
 
 }
 
-void cpu6502_bveq( Environment * _environment, char * _value, char * _label ) {
+void cpu_bveq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bveq )
 
         outline1("LDA %s", _value);
-        cpu6502_beq( _environment,  _label );
+        cpu_beq( _environment,  _label );
 
     no_embedded( cpu_bveq );
 
 }
 
-void cpu6502_bvneq( Environment * _environment, char * _value, char * _label ) {
+void cpu_bvneq( Environment * _environment, char * _value, char * _label ) {
 
     inline( cpu_bvneq )
 
         outline1("LDA %s", _value);
-        cpu6502_bneq( _environment,  _label );
+        cpu_bneq( _environment,  _label );
 
     no_embedded( cpu_bvneq );
 
 }
 
-void cpu6502_label( Environment * _environment, char * _label ) {
+void cpu_label( Environment * _environment, char * _label ) {
 
     inline( cpu_label )
 
@@ -153,7 +153,7 @@ void cpu6502_label( Environment * _environment, char * _label ) {
 
 }
 
-void cpu6502_peek( Environment * _environment, char * _address, char * _target ) {
+void cpu_peek( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -169,7 +169,7 @@ void cpu6502_peek( Environment * _environment, char * _address, char * _target )
 
 }
 
-void cpu6502_poke( Environment * _environment, char * _address, char * _source ) {
+void cpu_poke( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -185,7 +185,7 @@ void cpu6502_poke( Environment * _environment, char * _address, char * _source )
 
 }
 
-void cpu6502_poke_const( Environment * _environment, char * _address, int _source ) {
+void cpu_poke_const( Environment * _environment, char * _address, int _source ) {
 
     // inline( cpu_poke )
 
@@ -201,7 +201,7 @@ void cpu6502_poke_const( Environment * _environment, char * _address, int _sourc
 
 }
 
-void cpu6502_peekw( Environment * _environment, char * _address, char * _target ) {
+void cpu_peekw( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -220,7 +220,7 @@ void cpu6502_peekw( Environment * _environment, char * _address, char * _target 
 
 }
 
-void cpu6502_pokew( Environment * _environment, char * _address, char * _source ) {
+void cpu_pokew( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -239,7 +239,7 @@ void cpu6502_pokew( Environment * _environment, char * _address, char * _source 
 
 }
 
-void cpu6502_pokew_const( Environment * _environment, char * _address, int _source ) {
+void cpu_pokew_const( Environment * _environment, char * _address, int _source ) {
 
     // inline( cpu_poke )
 
@@ -258,7 +258,7 @@ void cpu6502_pokew_const( Environment * _environment, char * _address, int _sour
 
 }
 
-void cpu6502_peekd( Environment * _environment, char * _address, char * _target ) {
+void cpu_peekd( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
@@ -283,7 +283,7 @@ void cpu6502_peekd( Environment * _environment, char * _address, char * _target 
 
 }
 
-void cpu6502_poked( Environment * _environment, char * _address, char * _source ) {
+void cpu_poked( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
@@ -308,7 +308,7 @@ void cpu6502_poked( Environment * _environment, char * _address, char * _source 
 
 }
 
-void cpu6502_poked_const( Environment * _environment, char * _address, int _source ) {
+void cpu_poked_const( Environment * _environment, char * _address, int _source ) {
 
     // inline( cpu_poke )
 
@@ -346,7 +346,7 @@ void cpu6502_poked_const( Environment * _environment, char * _address, int _sour
  * @param _blocks Number of 256 bytes blocks to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
+void cpu_fill_blocks( Environment * _environment, char * _address, char * _blocks, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -399,7 +399,7 @@ void cpu6502_fill_blocks( Environment * _environment, char * _address, char * _b
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
+void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -447,7 +447,7 @@ void cpu6502_fill( Environment * _environment, char * _address, char * _bytes, i
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+void cpu_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -489,7 +489,7 @@ void cpu6502_fill_size( Environment * _environment, char * _address, int _bytes,
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+void cpu_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
 
@@ -532,7 +532,7 @@ void cpu6502_fill_size_value( Environment * _environment, char * _address, int _
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
+void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -568,7 +568,7 @@ void cpu6502_fill_direct( Environment * _environment, char * _address, char * _b
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
+void cpu_fill_direct_size( Environment * _environment, char * _address, int _bytes, char * _pattern ) {
 
     MAKE_LABEL
 
@@ -611,7 +611,7 @@ void cpu6502_fill_direct_size( Environment * _environment, char * _address, int 
  * @param _bytes Number of bytes to fill
  * @param _pattern Pattern to use
  */
-void cpu6502_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
+void cpu_fill_direct_size_value( Environment * _environment, char * _address, int _bytes, int _pattern ) {
 
     MAKE_LABEL
 
@@ -653,7 +653,7 @@ void cpu6502_fill_direct_size_value( Environment * _environment, char * _address
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destination ) {
+void cpu_move_8bit( Environment * _environment, char *_source, char *_destination ) {
 
     inline( cpu_move_8bit )
 
@@ -671,7 +671,7 @@ void cpu6502_move_8bit( Environment * _environment, char *_source, char *_destin
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void cpu6502_store_8bit( Environment * _environment, char *_destination, int _value ) {
+void cpu_store_8bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_8bit )
 
@@ -689,7 +689,7 @@ void cpu6502_store_8bit( Environment * _environment, char *_destination, int _va
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void cpu6502_store_char( Environment * _environment, char *_destination, int _value ) {
+void cpu_store_char( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_char )
 
@@ -713,7 +713,7 @@ void cpu6502_store_char( Environment * _environment, char *_destination, int _va
  * @param _other Destination address for result
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void cpu_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -751,7 +751,7 @@ void cpu6502_compare_8bit( Environment * _environment, char *_source, char *_des
  * @param _other Destination address for result
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void cpu_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -772,7 +772,7 @@ void cpu6502_compare_8bit_const( Environment * _environment, char *_source, int 
 
 }
 
-void cpu6502_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
+void cpu_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source ) {
 
     MAKE_LABEL
 
@@ -784,7 +784,7 @@ void cpu6502_prepare_for_compare_and_branch_8bit( Environment * _environment, ch
 
 }
 
-void cpu6502_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_8bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -813,7 +813,7 @@ void cpu6502_compare_and_branch_8bit( Environment * _environment, char *_source,
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -842,7 +842,7 @@ void cpu6502_compare_and_branch_8bit_const( Environment * _environment, char *_s
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
+void cpu_execute_compare_and_branch_8bit_const( Environment * _environment, int _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -870,7 +870,7 @@ void cpu6502_execute_compare_and_branch_8bit_const( Environment * _environment, 
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_char_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -899,7 +899,7 @@ void cpu6502_compare_and_branch_char_const( Environment * _environment, char *_s
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -956,11 +956,11 @@ void cpu6502_less_than_8bit( Environment * _environment, char *_source, char *_d
             outhead1("%s_2:", label);
         }
 
-    no_embedded( cpu6502_less_than_8bit )
+    no_embedded( cpu_less_than_8bit )
 
 }
 
-void cpu6502_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1001,11 +1001,11 @@ void cpu6502_less_than_8bit_const( Environment * _environment, char *_source, in
             outhead1("%s_2:", label);
         }
 
-    no_embedded( cpu6502_less_than_8bit_const )
+    no_embedded( cpu_less_than_8bit_const )
 
 }
 
-void cpu6502_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
+void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1040,7 +1040,7 @@ void cpu6502_less_than_and_branch_8bit_const( Environment * _environment, char *
             outhead1("%s_2:", label);
         }
 
-    no_embedded( cpu6502_less_than_8bit_const )
+    no_embedded( cpu_less_than_8bit_const )
 
 }
 
@@ -1053,27 +1053,27 @@ void cpu6502_less_than_and_branch_8bit_const( Environment * _environment, char *
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_8bit )
 
-        cpu6502_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_less_than_8bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_not_8bit( _environment, _other, _other );
+            cpu_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_not_8bit( _environment, _destination, _destination );
+            cpu_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_8bit )
 
 }
 
-void cpu6502_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_8bit )
 
-        cpu6502_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-        cpu6502_not_8bit( _environment, _other, _other );
+        cpu_less_than_8bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_not_8bit( _environment, _other, _other );
 
     no_embedded( cpu_greater_than_8bit )
 
@@ -1087,7 +1087,7 @@ void cpu6502_greater_than_8bit_const( Environment * _environment, char *_source,
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_add_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_8bit )
 
@@ -1112,7 +1112,7 @@ void cpu6502_math_add_8bit( Environment * _environment, char *_source, char *_de
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void cpu_math_add_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_8bit_const )
 
@@ -1133,7 +1133,7 @@ void cpu6502_math_add_8bit_const( Environment * _environment, char *_source, int
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_sub_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
  
     inline( cpu_math_add_8bit )
 
@@ -1157,7 +1157,7 @@ void cpu6502_math_sub_8bit( Environment * _environment, char *_source, char *_de
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void cpu_math_double_8bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     inline( cpu_math_double_8bit )
 
@@ -1200,7 +1200,7 @@ void cpu6502_math_double_8bit( Environment * _environment, char *_source, char *
  * @param _destination Second value to multipy (8 bit)
  * @param _other Destination address for result (16 bit)
  */
-void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
+void cpu_math_mul_8bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -1306,7 +1306,7 @@ void cpu6502_math_mul_8bit_to_16bit( Environment * _environment, char *_source, 
     
 }
 
-void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -1416,7 +1416,7 @@ void cpu6502_math_div_8bit_to_8bit( Environment * _environment, char *_source, c
 
 }
 
-void cpu6502_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -1533,7 +1533,7 @@ void cpu6502_math_div_8bit_to_8bit_const( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char *_remainder ) {
+void cpu_math_div2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed, char *_remainder ) {
 
     inline( cpu_math_div2_const_8bit )
 
@@ -1549,7 +1549,7 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
             outline0("AND #$80" );
             outline0("TAX");
             outline1("BEQ %snocomplement", label );
-            cpu6502_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_16bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
             while( _steps ) {
                 outline0("CLC");
@@ -1558,7 +1558,7 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
             }
             outline0("TXA");
             outline1("BEQ %snocomplement", label );
-            cpu6502_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_16bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
         } else {
             if ( _remainder ) {
@@ -1603,7 +1603,7 @@ void cpu6502_math_div2_const_8bit( Environment * _environment, char *_source, in
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu_math_mul2_const_8bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_8bit )
 
@@ -1652,7 +1652,7 @@ void cpu6502_math_mul2_const_8bit( Environment * _environment, char *_source, in
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void cpu6502_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
+void cpu_math_complement_const_8bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_8bit )
 
@@ -1672,7 +1672,7 @@ void cpu6502_math_complement_const_8bit( Environment * _environment, char *_sour
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
  */
-void cpu6502_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
+void cpu_math_and_const_8bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_8bit )
 
@@ -1695,7 +1695,7 @@ void cpu6502_math_and_const_8bit( Environment * _environment, char *_source, int
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void cpu6502_move_16bit( Environment * _environment, char *_source, char *_destination ) {
+void cpu_move_16bit( Environment * _environment, char *_source, char *_destination ) {
 
     inline( cpu_move_16bit )
 
@@ -1708,7 +1708,7 @@ void cpu6502_move_16bit( Environment * _environment, char *_source, char *_desti
 
 }
 
-void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
+void cpu_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
 
     inline( cpu_move_16bit )
 
@@ -1728,7 +1728,7 @@ void cpu6502_addressof_16bit( Environment * _environment, char *_source, char *_
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void cpu6502_store_16bit( Environment * _environment, char *_destination, int _value ) {
+void cpu_store_16bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_16bit )
 
@@ -1750,7 +1750,7 @@ void cpu6502_store_16bit( Environment * _environment, char *_destination, int _v
  * @param _other Destination address for result
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void cpu_compare_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -1791,7 +1791,7 @@ void cpu6502_compare_16bit( Environment * _environment, char *_source, char *_de
  * @param _other Destination address for result
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void cpu_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -1815,7 +1815,7 @@ void cpu6502_compare_16bit_const( Environment * _environment, char *_source, int
 
 }
 
-void cpu6502_compare_and_branch_16bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_16bit( Environment * _environment, char *_source, char * _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -1850,7 +1850,7 @@ void cpu6502_compare_and_branch_16bit( Environment * _environment, char *_source
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_16bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -1885,7 +1885,7 @@ void cpu6502_compare_and_branch_16bit_const( Environment * _environment, char *_
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -1961,7 +1961,7 @@ void cpu6502_less_than_16bit( Environment * _environment, char *_source, char *_
 
 }
 
-void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -2030,27 +2030,27 @@ void cpu6502_less_than_16bit_const( Environment * _environment, char *_source, i
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_16bit )
 
-        cpu6502_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_less_than_16bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_not_8bit( _environment, _other, _other );
+            cpu_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_not_8bit( _environment, _destination, _destination );
+            cpu_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_16bit )
 
 }
 
-void cpu6502_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_16bit )
 
-        cpu6502_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-        cpu6502_not_8bit( _environment, _other, _other );
+        cpu_less_than_16bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_not_8bit( _environment, _other, _other );
 
     no_embedded( cpu_greater_than_16bit )
 
@@ -2064,7 +2064,7 @@ void cpu6502_greater_than_16bit_const( Environment * _environment, char *_source
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_16bit )
 
@@ -2096,7 +2096,7 @@ void cpu6502_math_add_16bit( Environment * _environment, char *_source, char *_d
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void cpu_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_16bit_const )
 
@@ -2120,7 +2120,7 @@ void cpu6502_math_add_16bit_const( Environment * _environment, char *_source, in
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_16bit_with_16bit )
 
@@ -2136,7 +2136,7 @@ void cpu6502_math_add_16bit_with_16bit( Environment * _environment, char *_sourc
     
 }
 
-void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_16bit_with_8bit )
 
@@ -2167,7 +2167,7 @@ void cpu6502_math_add_16bit_with_8bit( Environment * _environment, char *_source
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void cpu_math_double_16bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     inline( cpu_math_double_16bit )
 
@@ -2199,7 +2199,7 @@ void cpu6502_math_double_16bit( Environment * _environment, char *_source, char 
  * @param _destination Second value to multipy (16 bit)
  * @param _other Destination address for result (32 bit)
  */
-void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
+void cpu_math_mul_16bit_to_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _signed ) {
 
     MAKE_LABEL
 
@@ -2424,7 +2424,7 @@ void cpu6502_math_mul_16bit_to_32bit( Environment * _environment, char *_source,
 
 }
 
-void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -2610,7 +2610,7 @@ void cpu6502_math_div_16bit_to_16bit( Environment * _environment, char *_source,
 
 }
 
-void cpu6502_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -2804,7 +2804,7 @@ void cpu6502_math_div_16bit_to_16bit_const( Environment * _environment, char *_s
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_sub_16bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_16bit )
 
@@ -2828,7 +2828,7 @@ void cpu6502_math_sub_16bit( Environment * _environment, char *_source, char *_d
 
 }
 
-void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_16bit_with_8bit )
 
@@ -2848,7 +2848,7 @@ void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source
             outline1("STA %s", address_displacement(_environment, _destination, "1"));
         }
 
-    no_embedded( cpu6502_math_sub_16bit_with_8bit )
+    no_embedded( cpu_math_sub_16bit_with_8bit )
 
 }
 
@@ -2859,7 +2859,7 @@ void cpu6502_math_sub_16bit_with_8bit( Environment * _environment, char *_source
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void cpu6502_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
+void cpu_math_complement_const_16bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_16bit )
 
@@ -2882,7 +2882,7 @@ void cpu6502_math_complement_const_16bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
+void cpu_math_div2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_16bit )
 
@@ -2898,7 +2898,7 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
             outline0("AND #$80" );
             outline0("TAX")
             outline1("BEQ %snocomplement", label );
-            cpu6502_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_16bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
             outline1("LDA %s", address_displacement(_environment, _source, "1"));
             outline0("AND #$7F");
@@ -2911,7 +2911,7 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
             }
             outline0("TXA")
             outline1("BEQ %snocomplement2", label );
-            cpu6502_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_16bit( _environment, _source, _source );
             outhead1("%snocomplement2:", label );
             outline1("ORA %s", address_displacement(_environment, _source, "1"));
             outline1("STA %s", address_displacement(_environment, _source, "1"));
@@ -2941,7 +2941,7 @@ void cpu6502_math_div2_const_16bit( Environment * _environment, char *_source, i
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu_math_mul2_const_16bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_16bit )
 
@@ -2978,7 +2978,7 @@ void cpu6502_math_mul2_const_16bit( Environment * _environment, char *_source, i
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
  */
-void cpu6502_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
+void cpu_math_and_const_16bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_16bit )
 
@@ -3004,7 +3004,7 @@ void cpu6502_math_and_const_16bit( Environment * _environment, char *_source, in
  * @param _source Source of movement
  * @param _destination Destination of movement
  */
-void cpu6502_move_32bit( Environment * _environment, char *_source, char *_destination ) {
+void cpu_move_32bit( Environment * _environment, char *_source, char *_destination ) {
 
     inline( cpu_move_32bit )
 
@@ -3028,7 +3028,7 @@ void cpu6502_move_32bit( Environment * _environment, char *_source, char *_desti
  * @param _destination Destination of store
  * @param _value Value to store
  */
-void cpu6502_store_32bit( Environment * _environment, char *_destination, int _value ) {
+void cpu_store_32bit( Environment * _environment, char *_destination, int _value ) {
 
     inline( cpu_store_32bit )
 
@@ -3045,7 +3045,7 @@ void cpu6502_store_32bit( Environment * _environment, char *_destination, int _v
 
 }
 
-void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -3122,7 +3122,7 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
         outline0("AND #$80");
         outline0("PHA");
         outline1("BEQ %snocomplement", label );
-        cpu6502_complement2_32bit( _environment, _source, _source );
+        cpu_complement2_32bit( _environment, _source, _source );
         outhead1("%snocomplement:", label );
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
@@ -3148,15 +3148,15 @@ void cpu6502_math_div_32bit_to_16bit( Environment * _environment, char *_source,
 
         outline0("PLA");
         outline1("BEQ %snocomplement2", label );
-        cpu6502_complement2_32bit( _environment, _source, _source );
-        cpu6502_complement2_32bit( _environment, _other, _other );
+        cpu_complement2_32bit( _environment, _source, _source );
+        cpu_complement2_32bit( _environment, _other, _other );
         outhead1("%snocomplement2:", label );
 
     done()
 
 }
 
-void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
+void cpu_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
 
@@ -3233,7 +3233,7 @@ void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
         outline0("AND #$80");
         outline0("PHA");
         outline1("BEQ %snocomplement", label );
-        cpu6502_complement2_32bit( _environment, _source, _source );
+        cpu_complement2_32bit( _environment, _source, _source );
         outhead1("%snocomplement:", label );
         outline1("LDA %s", _source );
         outline0("STA MATHPTR4");
@@ -3258,8 +3258,8 @@ void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
         outline1("STA %s", address_displacement(_environment, _other_remainder, "1") );
         outline0("PLA");
         outline1("BEQ %snocomplement2", label );
-        cpu6502_complement2_32bit( _environment, _source, _source );
-        cpu6502_complement2_32bit( _environment, _other, _other );
+        cpu_complement2_32bit( _environment, _source, _source );
+        cpu_complement2_32bit( _environment, _other, _other );
         outhead1("%snocomplement2:", label );
 
     done()
@@ -3275,7 +3275,7 @@ void cpu6502_math_div_32bit_to_16bit_const( Environment * _environment, char *_s
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
+void cpu_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -3322,7 +3322,7 @@ void cpu6502_compare_32bit( Environment * _environment, char *_source, char *_de
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
-void cpu6502_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
+void cpu_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
 
@@ -3361,7 +3361,7 @@ void cpu6502_compare_32bit_const( Environment * _environment, char *_source, int
  * @param _label Where to jump
  * @param _positive Invert meaning of comparison
  */
-void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
+void cpu_compare_and_branch_32bit_const( Environment * _environment, char *_source, int _destination,  char *_label, int _positive ) {
 
     MAKE_LABEL
 
@@ -3402,7 +3402,7 @@ void cpu6502_compare_and_branch_32bit_const( Environment * _environment, char *_
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -3410,7 +3410,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
 
         if ( _equal ) {
 
-            cpu6502_compare_32bit( _environment, _source, _destination, _other,  1 );
+            cpu_compare_32bit( _environment, _source, _destination, _other,  1 );
 
             if ( _other ) {
                 outline1("LDA %s", _other);
@@ -3505,7 +3505,7 @@ void cpu6502_less_than_32bit( Environment * _environment, char *_source, char *_
 
 }
 
-void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     MAKE_LABEL
 
@@ -3515,7 +3515,7 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
 
             if ( _equal ) {
 
-                cpu6502_compare_32bit_const( _environment, _source, _destination, _other,  1 );
+                cpu_compare_32bit_const( _environment, _source, _destination, _other,  1 );
     
                 if ( _other ) {
                     outline1("LDA %s", _other);
@@ -3605,27 +3605,27 @@ void cpu6502_less_than_32bit_const( Environment * _environment, char *_source, i
  * @param _other Destination address for result
  * @param _equal True if equal
  */
-void cpu6502_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_32bit )
 
-        cpu6502_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_less_than_32bit( _environment, _source, _destination, _other, !_equal, _signed );
         if ( _other ) {
-            cpu6502_not_8bit( _environment, _other, _other );
+            cpu_not_8bit( _environment, _other, _other );
         } else {
-            cpu6502_not_8bit( _environment, _destination, _destination );
+            cpu_not_8bit( _environment, _destination, _destination );
         }
 
     no_embedded( cpu_greater_than_32bit )
 
 }
 
-void cpu6502_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
+void cpu_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _signed ) {
 
     inline( cpu_greater_than_32bit )
 
-        cpu6502_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
-        cpu6502_not_8bit( _environment, _other, _other );
+        cpu_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
+        cpu_not_8bit( _environment, _other, _other );
 
     no_embedded( cpu_greater_than_32bit )
 
@@ -3639,7 +3639,7 @@ void cpu6502_greater_than_32bit_const( Environment * _environment, char *_source
  * @param _destination Second value to add and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_add_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_add_32bit )
 
@@ -3677,7 +3677,7 @@ void cpu6502_math_add_32bit( Environment * _environment, char *_source, char *_d
 
 }
 
-void cpu6502_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
+void cpu_math_add_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other ) {
 
     inline( cpu_math_add_32bit_const )
 
@@ -3707,7 +3707,7 @@ void cpu6502_math_add_32bit_const( Environment * _environment, char *_source, in
  * @param _source Value to double and destination for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
+void cpu_math_double_32bit( Environment * _environment, char *_source, char *_other, int _signed ) {
 
     inline( cpu_math_double_32bit )
 
@@ -3752,7 +3752,7 @@ void cpu6502_math_double_32bit( Environment * _environment, char *_source, char 
  * @param _destination Second value to subtract and destination address for result (if _other is NULL)
  * @param _other Destination address for result
  */
-void cpu6502_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
+void cpu_math_sub_32bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
     inline( cpu_math_sub_32bit )
 
@@ -3797,7 +3797,7 @@ void cpu6502_math_sub_32bit( Environment * _environment, char *_source, char *_d
  * @param _source Value to complement
  * @param _value Valure to use as base for complement
  */
-void cpu6502_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
+void cpu_math_complement_const_32bit( Environment * _environment, char *_source, int _value ) {
 
     inline( cpu_math_complement_const_32bit )
 
@@ -3826,7 +3826,7 @@ void cpu6502_math_complement_const_32bit( Environment * _environment, char *_sou
  * @param _source Value to halves and destination for result
  * @param _steps Times to halves
  */
-void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
+void cpu_math_div2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed, char * _remainder ) {
 
     inline( cpu_math_div2_const_32bit )
 
@@ -3842,7 +3842,7 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
             outline0("AND #$80");
             outline0("TAX");
             outline1("BEQ %snocomplement", label );
-            cpu6502_complement2_32bit( _environment, _source, _source );
+            cpu_complement2_32bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
             while( _steps ) {
                 outline0("CLC");
@@ -3854,7 +3854,7 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
             }
             outline0("TXA");
             outline1("BEQ %snocomplement2", label );
-            cpu6502_complement2_32bit( _environment, _source, _source );
+            cpu_complement2_32bit( _environment, _source, _source );
             outhead1("%snocomplement2:", label );
         } else {
             if ( _remainder ) {
@@ -3883,7 +3883,7 @@ void cpu6502_math_div2_const_32bit( Environment * _environment, char *_source, i
  * @param _source Value to double and destination for result
  * @param _steps Times to double
  */
-void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
+void cpu_math_mul2_const_32bit( Environment * _environment, char *_source, int _steps, int _signed ) {
 
     inline( cpu_math_mul2_const_32bit )
 
@@ -3924,7 +3924,7 @@ void cpu6502_math_mul2_const_32bit( Environment * _environment, char *_source, i
  * @param _source Value to mask (and destination of mask operation)
  * @param _mask Mask to use
  */
-void cpu6502_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
+void cpu_math_and_const_32bit( Environment * _environment, char *_source, int _mask ) {
 
     inline( cpu_math_and_const_32bit )
 
@@ -3945,7 +3945,7 @@ void cpu6502_math_and_const_32bit( Environment * _environment, char *_source, in
 
 }
 
-void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
+void cpu_combine_nibbles( Environment * _environment, char * _low_nibble, char * _hi_nibble, char * _byte ) {
 
     inline( cpu_combine_nibbles )
 
@@ -3969,7 +3969,7 @@ void cpu6502_combine_nibbles( Environment * _environment, char * _low_nibble, ch
  * @param _n bits to store (>32)
  * @param _value[] Value to store (segmented in 32 bit each)
  */
-void cpu6502_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
+void cpu_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
 
     int i = 0;
     while( _n ) {
@@ -3979,52 +3979,52 @@ void cpu6502_move_nbit( Environment * _environment, int _n, char * _source, char
             switch( _n ) {
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
                 default:
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-                    cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
                     break;
             }
             _n = 0;
         } else {
-            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
             sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            cpu6502_move_8bit( _environment, sourceAddress, destinationAddress );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
             _n -= 32;
         }
         ++i;
@@ -4033,7 +4033,7 @@ void cpu6502_move_nbit( Environment * _environment, int _n, char * _source, char
 }
 
 
-void cpu6502_jump( Environment * _environment, char * _label ) {
+void cpu_jump( Environment * _environment, char * _label ) {
 
     inline( cpu_jump )
 
@@ -4043,13 +4043,13 @@ void cpu6502_jump( Environment * _environment, char * _label ) {
 
 }
 
-void cpu6502_call_addr( Environment * _environment, int _address ) {
+void cpu_call_addr( Environment * _environment, int _address ) {
 
     outline1("JSR $%4.4x", _address );
 
 }
 
-void cpu6502_call( Environment * _environment, char * _label ) {
+void cpu_call( Environment * _environment, char * _label ) {
 
     inline( cpu_call )
 
@@ -4059,7 +4059,7 @@ void cpu6502_call( Environment * _environment, char * _label ) {
 
 }
 
-void cpu6502_call_indirect( Environment * _environment, char * _value ) {
+void cpu_call_indirect( Environment * _environment, char * _value ) {
 
 
     inline( cpu_call_indirect )
@@ -4068,25 +4068,25 @@ void cpu6502_call_indirect( Environment * _environment, char * _value ) {
 
         char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
-        cpu6502_jump( _environment, label );
-        cpu6502_label( _environment, indirectLabel );
+        cpu_jump( _environment, label );
+        cpu_label( _environment, indirectLabel );
         // We must use self-modifying code in order to avoid
         // a 6502/6510 bug when using indirect addressing.
         outline0( "JMP $0000" );
-        cpu6502_label( _environment, label );
+        cpu_label( _environment, label );
         outline0( "PHA" );
         outline1( "LDA %s", _value );
         outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
         outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
         outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
         outline0( "PLA" );
-        cpu6502_call( _environment, indirectLabel );
+        cpu_call( _environment, indirectLabel );
 
     no_embedded( cpu_call_indirect )
 
 }
 
-void cpu6502_jump_indirect( Environment * _environment, char * _value ) {
+void cpu_jump_indirect( Environment * _environment, char * _value ) {
 
 
     inline( cpu_jump_indirect )
@@ -4095,25 +4095,25 @@ void cpu6502_jump_indirect( Environment * _environment, char * _value ) {
 
         char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
-        cpu6502_jump( _environment, label );
-        cpu6502_label( _environment, indirectLabel );
+        cpu_jump( _environment, label );
+        cpu_label( _environment, indirectLabel );
         // We must use self-modifying code in order to avoid
         // a 6502/6510 bug when using indirect addressing.
         outline0( "JMP $0000" );
-        cpu6502_label( _environment, label );
+        cpu_label( _environment, label );
         outline0( "PHA" );
         outline1( "LDA %s", _value );
         outline1( "STA %s", address_displacement( _environment, indirectLabel, "1" ) );
         outline1( "LDA %s", address_displacement( _environment, _value, "1" ) );
         outline1( "STA %s", address_displacement( _environment, indirectLabel, "2" ) );
         outline0( "PLA" );
-        cpu6502_jump( _environment, indirectLabel );
+        cpu_jump( _environment, indirectLabel );
 
     no_embedded( cpu_jump_indirect )
 
 }
 
-int cpu6502_register_decode( Environment * _environment, char * _register ) {
+int cpu_register_decode( Environment * _environment, char * _register ) {
 
     CPU6502Register result = REGISTER_NONE;
 
@@ -4170,7 +4170,7 @@ int cpu6502_register_decode( Environment * _environment, char * _register ) {
 
 }
 
-void cpu6502_set_asmio( Environment * _environment, int _asmio, int _value ) {
+void cpu_set_asmio( Environment * _environment, int _asmio, int _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -4266,7 +4266,7 @@ void cpu6502_set_asmio( Environment * _environment, int _asmio, int _value ) {
 
 }
 
-void cpu6502_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+void cpu_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -4364,7 +4364,7 @@ void cpu6502_set_asmio_indirect( Environment * _environment, int _asmio, char * 
 
 }
 
-void cpu6502_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
+void cpu_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
     if ( IS_REGISTER( _asmio ) ) {
 
@@ -4473,7 +4473,7 @@ void cpu6502_get_asmio_indirect( Environment * _environment, int _asmio, char * 
 }
 
 
-void cpu6502_return( Environment * _environment ) {
+void cpu_return( Environment * _environment ) {
 
     inline( cpu_return )
 
@@ -4483,7 +4483,7 @@ void cpu6502_return( Environment * _environment ) {
 
 }
 
-void cpu6502_pop( Environment * _environment ) {
+void cpu_pop( Environment * _environment ) {
 
     inline( cpu_pop )
 
@@ -4494,7 +4494,7 @@ void cpu6502_pop( Environment * _environment ) {
 
 }
 
-void cpu6502_halt( Environment * _environment ) {
+void cpu_halt( Environment * _environment ) {
 
     MAKE_LABEL
 
@@ -4507,18 +4507,18 @@ void cpu6502_halt( Environment * _environment ) {
 
 }
 
-void cpu6502_end( Environment * _environment ) {
+void cpu_end( Environment * _environment ) {
 
     inline( cpu_end )
 
         outline0("SEI");
-        cpu6502_halt( _environment );
+        cpu_halt( _environment );
 
     no_embedded( cpu_end )
 
 }
 
-void cpu6502_random( Environment * _environment, char * _entropy ) {
+void cpu_random( Environment * _environment, char * _entropy ) {
 
     MAKE_LABEL
 
@@ -4553,11 +4553,11 @@ void cpu6502_random( Environment * _environment, char * _entropy ) {
 
 }
 
-void cpu6502_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
+void cpu_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
 
     inline( cpu_random_8bit )
 
-        cpu6502_random( _environment, _entropy );
+        cpu_random( _environment, _entropy );
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
@@ -4571,11 +4571,11 @@ void cpu6502_random_8bit( Environment * _environment, char * _entropy, char * _r
 
 }
 
-void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
+void cpu_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
 
     inline( cpu_random_16bit )
 
-        cpu6502_random( _environment, _entropy );
+        cpu_random( _environment, _entropy );
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
@@ -4591,11 +4591,11 @@ void cpu6502_random_16bit( Environment * _environment, char * _entropy, char * _
 
 }
 
-void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
+void cpu_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
 
     inline( cpu_random_32bit )
 
-        cpu6502_random( _environment, _entropy );
+        cpu_random( _environment, _entropy );
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
@@ -4615,7 +4615,7 @@ void cpu6502_random_32bit( Environment * _environment, char * _entropy, char * _
 
 }
 
-void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _value ) {
+void cpu_limit_16bit( Environment * _environment, char * _variable, int _value ) {
 
     MAKE_LABEL
 
@@ -4630,11 +4630,11 @@ void cpu6502_limit_16bit( Environment * _environment, char * _variable, int _val
         outline1( "STA %s", _variable );
         outhead1( "%s:", label );
 
-    no_embedded( cpu6502_limit_16bit )
+    no_embedded( cpu_limit_16bit )
 
 }
 
-void cpu6502_busy_wait( Environment * _environment, char * _timing ) {
+void cpu_busy_wait( Environment * _environment, char * _timing ) {
 
     MAKE_LABEL
 
@@ -4649,7 +4649,7 @@ void cpu6502_busy_wait( Environment * _environment, char * _timing ) {
 
 }
 
-void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4671,7 +4671,7 @@ void cpu6502_logical_and_8bit( Environment * _environment, char * _left, char * 
 
 }
 
-void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4685,7 +4685,7 @@ void cpu6502_and_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
-void cpu6502_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void cpu_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4700,7 +4700,7 @@ void cpu6502_and_8bit_const( Environment * _environment, char * _left, int _righ
 }
 
 
-void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4717,7 +4717,7 @@ void cpu6502_and_16bit( Environment * _environment, char * _left, char * _right,
 
 }
 
-void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4740,7 +4740,7 @@ void cpu6502_and_32bit( Environment * _environment, char * _left, char * _right,
 
 }
 
-void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4764,7 +4764,7 @@ void cpu6502_logical_or_8bit( Environment * _environment, char * _left, char * _
 
 }
 
-void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4778,7 +4778,7 @@ void cpu6502_or_8bit( Environment * _environment, char * _left, char * _right, c
 
 }
 
-void cpu6502_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void cpu_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4792,7 +4792,7 @@ void cpu6502_or_8bit_const( Environment * _environment, char * _left, int _right
 
 }
 
-void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4809,7 +4809,7 @@ void cpu6502_or_16bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
-void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4832,7 +4832,7 @@ void cpu6502_or_32bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
-void cpu6502_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4846,7 +4846,7 @@ void cpu6502_xor_8bit( Environment * _environment, char * _left, char * _right, 
 
 }
 
-void cpu6502_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void cpu_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4860,7 +4860,7 @@ void cpu6502_xor_8bit_const( Environment * _environment, char * _left, int _righ
 
 }
 
-void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4877,7 +4877,7 @@ void cpu6502_xor_16bit( Environment * _environment, char * _left, char * _right,
 
 }
 
-void cpu6502_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void cpu_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4894,7 +4894,7 @@ void cpu6502_xor_16bit_const( Environment * _environment, char * _left, int _rig
 
 }
 
-void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
+void cpu_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4917,7 +4917,7 @@ void cpu6502_xor_32bit( Environment * _environment, char * _left, char * _right,
 
 }
 
-void cpu6502_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
+void cpu_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
     MAKE_LABEL
 
@@ -4940,7 +4940,7 @@ void cpu6502_xor_32bit_const( Environment * _environment, char * _left, int _rig
 
 }
 
-void cpu6502_swap_8bit( Environment * _environment, char * _left, char * _right ) {
+void cpu_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
     MAKE_LABEL
 
@@ -4957,7 +4957,7 @@ void cpu6502_swap_8bit( Environment * _environment, char * _left, char * _right 
 
 }
 
-void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right ) {
+void cpu_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
     MAKE_LABEL
 
@@ -4980,7 +4980,7 @@ void cpu6502_swap_16bit( Environment * _environment, char * _left, char * _right
 
 }
 
-void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right ) {
+void cpu_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
     MAKE_LABEL
 
@@ -5003,7 +5003,7 @@ void cpu6502_swap_32bit( Environment * _environment, char * _left, char * _right
 
 }
 
-void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
+void cpu_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
@@ -5017,7 +5017,7 @@ void cpu6502_logical_not_8bit( Environment * _environment, char * _value, char *
 
 }
 
-void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result ) {
+void cpu_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
@@ -5031,7 +5031,7 @@ void cpu6502_not_8bit( Environment * _environment, char * _value, char * _result
 
 }
 
-void cpu6502_not_16bit( Environment * _environment, char * _value, char * _result ) {
+void cpu_not_16bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
@@ -5048,7 +5048,7 @@ void cpu6502_not_16bit( Environment * _environment, char * _value, char * _resul
 
 }
 
-void cpu6502_not_32bit( Environment * _environment, char * _value, char * _result ) {
+void cpu_not_32bit( Environment * _environment, char * _value, char * _result ) {
 
     MAKE_LABEL
 
@@ -5071,7 +5071,7 @@ void cpu6502_not_32bit( Environment * _environment, char * _value, char * _resul
 
 }
 
-void cpu6502_di( Environment * _environment ) {
+void cpu_di( Environment * _environment ) {
 
     inline( cpu_di )
 
@@ -5081,7 +5081,7 @@ void cpu6502_di( Environment * _environment ) {
 
 }
 
-void cpu6502_ei( Environment * _environment ) {
+void cpu_ei( Environment * _environment ) {
 
     inline( cpu_ei )
 
@@ -5091,7 +5091,7 @@ void cpu6502_ei( Environment * _environment ) {
 
 }
 
-void cpu6502_inc( Environment * _environment, char * _variable ) {
+void cpu_inc( Environment * _environment, char * _variable ) {
 
     inline( cpu_inc )
 
@@ -5101,7 +5101,7 @@ void cpu6502_inc( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_inc_16bit( Environment * _environment, char * _variable ) {
+void cpu_inc_16bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -5116,7 +5116,7 @@ void cpu6502_inc_16bit( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_inc_32bit( Environment * _environment, char * _variable ) {
+void cpu_inc_32bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -5135,7 +5135,7 @@ void cpu6502_inc_32bit( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_dec( Environment * _environment, char * _variable ) {
+void cpu_dec( Environment * _environment, char * _variable ) {
 
     inline( cpu_dec )
 
@@ -5145,7 +5145,7 @@ void cpu6502_dec( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
+void cpu_dec_16bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -5162,7 +5162,7 @@ void cpu6502_dec_16bit( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_dec_32bit( Environment * _environment, char * _variable ) {
+void cpu_dec_32bit( Environment * _environment, char * _variable ) {
 
     MAKE_LABEL
 
@@ -5188,7 +5188,7 @@ void cpu6502_dec_32bit( Environment * _environment, char * _variable ) {
 
 }
 
-void cpu6502_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void cpu_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
 
@@ -5235,7 +5235,7 @@ void cpu6502_mem_move( Environment * _environment, char *_source, char *_destina
 
 }
 
-void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void cpu_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
 
@@ -5263,7 +5263,7 @@ void cpu6502_mem_move_16bit( Environment * _environment, char *_source, char *_d
 
 }
 
-void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void cpu_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
 
@@ -5310,7 +5310,7 @@ void cpu6502_mem_move_direct( Environment * _environment, char *_source, char *_
 
 }
 
-void cpu6502_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void cpu_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     MAKE_LABEL
 
@@ -5373,7 +5373,7 @@ void cpu6502_mem_move_direct2_size( Environment * _environment, char *_source, c
 
 }
 
-void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
+void cpu_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
     MAKE_LABEL
 
@@ -5436,7 +5436,7 @@ void cpu6502_mem_move_direct2( Environment * _environment, char *_source, char *
 
 }
 
-void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void cpu_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
@@ -5483,7 +5483,7 @@ void cpu6502_mem_move_size( Environment * _environment, char *_source, char *_de
 
 }
 
-void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void cpu_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
@@ -5580,7 +5580,7 @@ void cpu6502_mem_move_direct_size( Environment * _environment, char *_source, ch
 
 }
 
-void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void cpu_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
@@ -5677,7 +5677,7 @@ void cpu6502_mem_move_direct_indirect_size( Environment * _environment, char *_s
 
 }
 
-void cpu6502_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
+void cpu_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
     if ( _size ) {
 
@@ -5709,7 +5709,7 @@ void cpu6502_mem_move_indirect_direct_size( Environment * _environment, char *_s
 
 }
 
-void cpu6502_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void cpu_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5746,7 +5746,7 @@ void cpu6502_compare_memory( Environment * _environment, char *_source, char *_d
     
 }
 
-void cpu6502_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void cpu_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5780,7 +5780,7 @@ void cpu6502_compare_memory_size( Environment * _environment, char *_source, cha
 
 }
 
-void cpu6502_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void cpu_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5818,7 +5818,7 @@ void cpu6502_less_than_memory( Environment * _environment, char *_source, char *
 
 }
 
-void cpu6502_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void cpu_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5856,7 +5856,7 @@ void cpu6502_less_than_memory_size( Environment * _environment, char *_source, c
 
 }
 
-void cpu6502_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
+void cpu_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5894,7 +5894,7 @@ void cpu6502_greater_than_memory( Environment * _environment, char *_source, cha
 
 }
 
-void cpu6502_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
+void cpu_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
     
     MAKE_LABEL
 
@@ -5932,7 +5932,7 @@ void cpu6502_greater_than_memory_size( Environment * _environment, char *_source
 
 }
 
-void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void cpu_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     inline( cpu_move_8bit_indirect )
 
@@ -5948,7 +5948,7 @@ void cpu6502_move_8bit_indirect( Environment * _environment, char *_source, char
 
 }
 
-void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
+void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
     inline( cpu_move_8bit_with_offset )
 
@@ -5964,7 +5964,7 @@ void cpu6502_move_8bit_indirect_with_offset( Environment * _environment, char *_
 
 }
 
-void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     inline( cpu_move_8bit_indirect_with_offset2 )
 
@@ -5980,7 +5980,7 @@ void cpu6502_move_8bit_indirect_with_offset2( Environment * _environment, char *
 
 }
 
-void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
+void cpu_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     inline( cpu_move_8bit_with_offset2 )
 
@@ -5996,7 +5996,7 @@ void cpu6502_move_8bit_with_offset2( Environment * _environment, char *_source, 
 
 }
 
-void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void cpu_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     inline( cpu_move_8bit_indirect2 )
 
@@ -6012,7 +6012,7 @@ void cpu6502_move_8bit_indirect2( Environment * _environment, char * _value, cha
 
 }
 
-void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void cpu_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     inline( cpu_move_16bit_indirect )
 
@@ -6031,7 +6031,7 @@ void cpu6502_move_16bit_indirect( Environment * _environment, char *_source, cha
 
 }
 
-void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void cpu_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     inline( cpu_move_16bit_indirect2 )
 
@@ -6050,7 +6050,7 @@ void cpu6502_move_16bit_indirect2( Environment * _environment, char * _value, ch
 
 }
 
-void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _index, char *_source ) {
+void cpu_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _index, char *_source ) {
 
     inline( cpu_move_16bit_indirect2_8bit )
 
@@ -6071,7 +6071,7 @@ void cpu6502_move_16bit_indirect2_8bit( Environment * _environment, char * _valu
 
 }
 
-void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
+void cpu_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
     inline( cpu_move_32bit_indirect )
 
@@ -6096,7 +6096,7 @@ void cpu6502_move_32bit_indirect( Environment * _environment, char *_source, cha
 
 }
 
-void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
+void cpu_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
     inline( cpu_move_32bit_indirect2 )
 
@@ -6121,7 +6121,7 @@ void cpu6502_move_32bit_indirect2( Environment * _environment, char * _value, ch
 
 }
 
-void cpu6502_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
+void cpu_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
 
     outline1("LDA %s", _value);
     outline0("STA TMPPTR");
@@ -6204,7 +6204,7 @@ void cpu6502_move_nbit_indirect( Environment * _environment, int _n, char *_sour
     }
 }
 
-void cpu6502_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
+void cpu_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
    
     outline1("LDA %s", _value);
     outline0("STA TMPPTR");
@@ -6289,7 +6289,7 @@ void cpu6502_move_nbit_indirect2( Environment * _environment, int _n, char * _va
 }
 
 
-void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+void cpu_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
     inline( cpu_move_8bit_indirect2_8bit )
 
@@ -6305,7 +6305,7 @@ void cpu6502_move_8bit_indirect2_8bit( Environment * _environment, char * _value
 
 }
 
-void cpu6502_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
+void cpu_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
     inline( cpu_move_8bit_indirect2_16bit )
 
@@ -6324,7 +6324,7 @@ void cpu6502_move_8bit_indirect2_16bit( Environment * _environment, char * _valu
 
 }
 
-void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+void cpu_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
 
@@ -6387,7 +6387,7 @@ void cpu6502_uppercase( Environment * _environment, char *_source, char *_size, 
     done()
 }
 
-void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
+void cpu_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
     MAKE_LABEL
 
@@ -6451,7 +6451,7 @@ void cpu6502_lowercase( Environment * _environment, char *_source, char *_size, 
 
 }
 
-void cpu6502_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+void cpu_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL
 
@@ -6472,7 +6472,7 @@ void cpu6502_convert_string_into_8bit( Environment * _environment, char * _strin
 
 }
 
-void cpu6502_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
+void cpu_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
     MAKE_LABEL
 
@@ -6552,7 +6552,7 @@ void cpu6502_convert_string_into_16bit( Environment * _environment, char * _stri
     done()
 }
 
-void cpu6502_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
+void cpu_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
     MAKE_LABEL
 
@@ -6590,7 +6590,7 @@ void cpu6502_fill_indirect( Environment * _environment, char * _address, char * 
 
 }
 
-void cpu6502_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
+void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )
 
@@ -6613,7 +6613,7 @@ void cpu6502_flip( Environment * _environment, char * _source, char * _size, cha
 
 }
 
-void cpu6502_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
+void cpu_bit_check( Environment * _environment, char * _value, int _position, char *_result, int _bitwidth ) {
 
     no_inline( cpu_bit_check_extended )
 
@@ -6634,7 +6634,7 @@ void cpu6502_bit_check( Environment * _environment, char * _value, int _position
 
 }
 
-void cpu6502_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
+void cpu_bit_check_extended( Environment * _environment, char * _value, char * _position, char *_result, int _bitwidth ) {
 
     MAKE_LABEL
 
@@ -6657,7 +6657,7 @@ void cpu6502_bit_check_extended( Environment * _environment, char * _value, char
 
 }
 
-void cpu6502_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
+void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -6691,7 +6691,7 @@ void cpu6502_bit_inplace_8bit( Environment * _environment, char * _value, int _p
 
 }
 
-void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
+void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
     _environment->bitmaskNeeded = 1;
 
@@ -6723,7 +6723,7 @@ void cpu6502_bit_inplace_8bit_extended_indirect( Environment * _environment, cha
 
 }
 
-void cpu6502_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
+void cpu_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
     MAKE_LABEL
 
@@ -6817,7 +6817,7 @@ void cpu6502_number_to_string( Environment * _environment, char * _number, char 
 
 }
 
-void cpu6502_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     MAKE_LABEL
 
@@ -6838,7 +6838,7 @@ void cpu6502_bits_to_string( Environment * _environment, char * _number, char * 
 
 }
 
-void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     MAKE_LABEL
 
@@ -6864,7 +6864,7 @@ void cpu6502_hex_to_string( Environment * _environment, char * _number, char * _
     done()
 }
 
-void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index ) {
+void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6877,7 +6877,7 @@ void cpu6502_dsdefine( Environment * _environment, char * _string, char * _index
     
 }
 
-void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) {
+void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6888,7 +6888,7 @@ void cpu6502_dsalloc( Environment * _environment, char * _size, char * _index ) 
 
 }
 
-void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index ) {
+void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6899,7 +6899,7 @@ void cpu6502_dsalloc_size( Environment * _environment, int _size, char * _index 
 
 }
 
-void cpu6502_dsfree( Environment * _environment, char * _index ) {
+void cpu_dsfree( Environment * _environment, char * _index ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6908,7 +6908,7 @@ void cpu6502_dsfree( Environment * _environment, char * _index ) {
 
 }
 
-void cpu6502_dswrite( Environment * _environment, char * _index ) {
+void cpu_dswrite( Environment * _environment, char * _index ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6917,7 +6917,7 @@ void cpu6502_dswrite( Environment * _environment, char * _index ) {
 
 }
 
-void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize ) {
+void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
     deploy( dstring, src_hw_6502_dstring_asm );
 
@@ -6928,7 +6928,7 @@ void cpu6502_dsresize( Environment * _environment, char * _index, char * _resize
 
 }
 
-void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resize ) {
+void cpu_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
     deploy( dstring,src_hw_6502_dstring_asm );
 
@@ -6939,7 +6939,7 @@ void cpu6502_dsresize_size( Environment * _environment, char * _index, int _resi
 
 }
 
-void cpu6502_dsgc( Environment * _environment ) {
+void cpu_dsgc( Environment * _environment ) {
 
     deploy( dstring,src_hw_6502_dstring_asm );
 
@@ -6947,7 +6947,7 @@ void cpu6502_dsgc( Environment * _environment ) {
 
 }
 
-void cpu6502_dsinit( Environment * _environment ) {
+void cpu_dsinit( Environment * _environment ) {
 
     deploy( dstring,src_hw_6502_dstring_asm );
 
@@ -6955,7 +6955,7 @@ void cpu6502_dsinit( Environment * _environment ) {
 
 }
 
-void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
+void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
     deploy( dstring,src_hw_6502_dstring_asm );
 
@@ -6976,7 +6976,7 @@ void cpu6502_dsdescriptor( Environment * _environment, char * _index, char * _ad
 
 }
 
-void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
+void cpu_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
     outline1("LDY #$%2.2x", _offset);
     outline1("LDA #<%s", _destination);
@@ -6988,7 +6988,7 @@ void cpu6502_store_8bit_with_offset( Environment * _environment, char *_destinat
 
 }
 
-void cpu6502_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
+void cpu_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value ) {
 
     outline1("LDY %s", _offset);
     outline1("LDA #<%s", _destination);
@@ -7000,7 +7000,7 @@ void cpu6502_store_8bit_with_offset2( Environment * _environment, char *_destina
 
 }
 
-void cpu6502_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
+void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
     outline0( "EOR #$FF" );
     if ( _destination ) {
@@ -7009,13 +7009,13 @@ void cpu6502_complement2_8bit( Environment * _environment, char * _source, char 
         outline1( "STA %s", _source );
     }
     if ( _destination ) {
-        cpu6502_inc( _environment, _destination );
+        cpu_inc( _environment, _destination );
     } else {
-        cpu6502_inc( _environment, _source );
+        cpu_inc( _environment, _source );
     }
 }
 
-void cpu6502_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
+void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
     outline0( "EOR #$FF" );
     if ( _destination ) {
@@ -7031,13 +7031,13 @@ void cpu6502_complement2_16bit( Environment * _environment, char * _source, char
         outline1( "STA %s", address_displacement(_environment, _source, "1") );
     }
     if ( _destination ) {
-        cpu6502_inc_16bit( _environment, _destination );
+        cpu_inc_16bit( _environment, _destination );
     } else {
-        cpu6502_inc_16bit( _environment, _source );
+        cpu_inc_16bit( _environment, _source );
     }
 }
 
-void cpu6502_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
+void cpu_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "LDA %s", _source );
     outline0( "EOR #$FF" );
     if ( _destination ) {
@@ -7067,14 +7067,14 @@ void cpu6502_complement2_32bit( Environment * _environment, char * _source, char
         outline1( "STA %s", address_displacement(_environment, _source, "3") );
     }
     if ( _destination ) {
-        cpu6502_inc_32bit( _environment, _destination );
+        cpu_inc_32bit( _environment, _destination );
     } else {
-        cpu6502_inc_32bit( _environment, _source );
+        cpu_inc_32bit( _environment, _source );
     }
 
 }
 
-void cpu6502_sqroot( Environment * _environment, char * _number, char * _result ) {
+void cpu_sqroot( Environment * _environment, char * _number, char * _result ) {
 
     deploy( sqr, src_hw_6502_sqr_asm );
 
@@ -7104,7 +7104,7 @@ void emit_segment_if_enough_space( Environment * _environment, int _space ) {
     }
 }
 
-void cpu6502_dstring_vars( Environment * _environment ) {
+void cpu_dstring_vars( Environment * _environment ) {
 
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
@@ -7146,7 +7146,7 @@ void cpu6502_dstring_vars( Environment * _environment ) {
 
 }
 
-void cpu6502_protothread_vars( Environment * _environment ) {
+void cpu_protothread_vars( Environment * _environment ) {
 
     int count = _environment->protothreadConfig.count;
 
@@ -7165,7 +7165,7 @@ void cpu6502_protothread_vars( Environment * _environment ) {
     
 }
 
-void cpu6502_protothread_loop( Environment * _environment ) {
+void cpu_protothread_loop( Environment * _environment ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7173,7 +7173,7 @@ void cpu6502_protothread_loop( Environment * _environment ) {
 
 }
 
-void cpu6502_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
+void cpu_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7187,7 +7187,7 @@ void cpu6502_protothread_register_at( Environment * _environment, char * _index,
 
 }
 
-void cpu6502_protothread_register( Environment * _environment, char * _label, char * _index ) {
+void cpu_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7202,7 +7202,7 @@ void cpu6502_protothread_register( Environment * _environment, char * _label, ch
 
 }
 
-void cpu6502_protothread_unregister( Environment * _environment, char * _index ) {
+void cpu_protothread_unregister( Environment * _environment, char * _index ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7212,7 +7212,7 @@ void cpu6502_protothread_unregister( Environment * _environment, char * _index )
 
 }
 
-void cpu6502_protothread_save( Environment * _environment, char * _index, int _step ) {
+void cpu_protothread_save( Environment * _environment, char * _index, int _step ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7223,7 +7223,7 @@ void cpu6502_protothread_save( Environment * _environment, char * _index, int _s
 
 }
 
-void cpu6502_protothread_restore( Environment * _environment, char * _index, char * _step ) {
+void cpu_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7235,7 +7235,7 @@ void cpu6502_protothread_restore( Environment * _environment, char * _index, cha
     
 }
 
-void cpu6502_protothread_set_state( Environment * _environment, char * _index, int _state ) {
+void cpu_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7246,7 +7246,7 @@ void cpu6502_protothread_set_state( Environment * _environment, char * _index, i
 
 }
 
-void cpu6502_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
+void cpu_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7258,7 +7258,7 @@ void cpu6502_protothread_get_state( Environment * _environment, char * _index, c
 
 }
 
-void cpu6502_protothread_current( Environment * _environment, char * _current ) {
+void cpu_protothread_current( Environment * _environment, char * _current ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7267,7 +7267,7 @@ void cpu6502_protothread_current( Environment * _environment, char * _current ) 
 
 }
 
-void cpu6502_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
+void cpu_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
 
     deploy_with_vars( protothread, src_hw_6502_protothread_asm, cpu_protothread_vars );
 
@@ -7282,7 +7282,7 @@ void cpu6502_protothread_get_address( Environment * _environment, char * _index,
 
 }
 
-void cpu6502_set_callback( Environment * _environment, char * _callback, char * _label ) {
+void cpu_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
         outline1("LDA #<(%s)", address_displacement(_environment, _callback, "1"));
         outline0("STA TMPPTR");
@@ -7297,7 +7297,7 @@ void cpu6502_set_callback( Environment * _environment, char * _callback, char * 
 
 }
 
-void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
+void cpu_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
@@ -7320,7 +7320,7 @@ void cpu6502_msc1_uncompress_direct_direct( Environment * _environment, char * _
 
 }
 
-void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
+void cpu_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
@@ -7343,7 +7343,7 @@ void cpu6502_msc1_uncompress_direct_indirect( Environment * _environment, char *
 
 }
 
-void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
+void cpu_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
@@ -7366,7 +7366,7 @@ void cpu6502_msc1_uncompress_indirect_direct( Environment * _environment, char *
 
 }
 
-void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
+void cpu_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
 
     MAKE_LABEL
 
@@ -7389,23 +7389,23 @@ void cpu6502_msc1_uncompress_indirect_indirect( Environment * _environment, char
 
 }
 
-void cpu6502_out( Environment * _environment, char * _port, char * _value ) {
+void cpu_out( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void cpu6502_in( Environment * _environment, char * _port, char * _value ) {
+void cpu_in( Environment * _environment, char * _port, char * _value ) {
     
 }
 
-void cpu6502_out_direct( Environment * _environment, char * _port, char * _value ) {
+void cpu_out_direct( Environment * _environment, char * _port, char * _value ) {
 
 }
 
-void cpu6502_in_direct( Environment * _environment, char * _port, char * _value ) {
+void cpu_in_direct( Environment * _environment, char * _port, char * _value ) {
     
 }
 
-void cpu6502_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
+void cpu_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
     MAKE_LABEL
 
@@ -7438,48 +7438,48 @@ void cpu6502_string_sub( Environment * _environment, char * _source, char * _sou
     done()
 }
 
-static char CPU6502_BLIT_REGISTER[][9] = {
+static char cpu_BLIT_REGISTER[][9] = {
     "BLITR0",
     "BLITR1",
     "BLITR2",
     "BLITR3"
 };
 
-#define CPU6502_BLIT_REGISTER_COUNT ( sizeof( CPU6502_BLIT_REGISTER ) / 9 )
+#define cpu_BLIT_REGISTER_COUNT ( sizeof( cpu_BLIT_REGISTER ) / 9 )
 
-void cpu6502_blit_initialize( Environment * _environment ) {
-
-    _environment->blit.freeRegisters = 0;
-    _environment->blit.usedMemory = 0;
-
-}
-
-void cpu6502_blit_finalize( Environment * _environment ) {
+void cpu_blit_initialize( Environment * _environment ) {
 
     _environment->blit.freeRegisters = 0;
     _environment->blit.usedMemory = 0;
 
 }
 
-char * cpu6502_blit_register_name(  Environment * _environment, int _register ) {
+void cpu_blit_finalize( Environment * _environment ) {
+
+    _environment->blit.freeRegisters = 0;
+    _environment->blit.usedMemory = 0;
+
+}
+
+char * cpu_blit_register_name(  Environment * _environment, int _register ) {
     
-    if ( _register < CPU6502_BLIT_REGISTER_COUNT ) {
-        return &CPU6502_BLIT_REGISTER[_register][0];
+    if ( _register < cpu_BLIT_REGISTER_COUNT ) {
+        return &cpu_BLIT_REGISTER[_register][0];
     } else {
-        return &CPU6502_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
+        return &cpu_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
     }
 }
 
-int cpu6502_blit_alloc_register(  Environment * _environment ) {
+int cpu_blit_alloc_register(  Environment * _environment ) {
 
     int reg = 0;
 
-    for( reg = 0; reg < CPU6502_BLIT_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < cpu_BLIT_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x01 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "cpu6502_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
+            // printf( "cpu_blit_alloc_register() %4.4x -> $%4.4x\n", _environment->blit.freeRegisters, reg );
             return reg;
         }
     }
@@ -7490,14 +7490,14 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
         CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
     }
 
-    for( reg = 0; reg < CPU6502_BLIT_REGISTER_COUNT; ++reg ) {
+    for( reg = 0; reg < cpu_BLIT_REGISTER_COUNT; ++reg ) {
         int registerMask = ( 0x10 << reg );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( ! isRegisterUsed ) {
-            outline1( "LDA %s", &CPU6502_BLIT_REGISTER[reg][0] );
+            outline1( "LDA %s", &cpu_BLIT_REGISTER[reg][0] );
             outline2( "STA %sbs+$%2.2x",  _environment->blit.realName, location );
             _environment->blit.freeRegisters |= registerMask;
-            // printf( "cpu6502_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
+            // printf( "cpu_blit_alloc_register() -> %4.4x $%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
             return ( ( (reg+1) << 8 ) | location );
         }
     }
@@ -7506,14 +7506,14 @@ int cpu6502_blit_alloc_register(  Environment * _environment ) {
 
 }
 
-void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
+void cpu_blit_free_register(  Environment * _environment, int _register ) {
 
-    // printf( "cpu6502_blit_free_register($%4.4x)\n", _register );
+    // printf( "cpu_blit_free_register($%4.4x)\n", _register );
 
     int location = _register & 0xff;
     int reg;
 
-    if ( _register < CPU6502_BLIT_REGISTER_COUNT ) {
+    if ( _register < cpu_BLIT_REGISTER_COUNT ) {
         int registerMask = ( 0x01 << _register );
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
@@ -7527,7 +7527,7 @@ void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
         int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
         if ( isRegisterUsed ) {
             outline2( "LDA (%sbs+$%2.2x)",  _environment->blit.realName, location );
-            outline1( "LDA %s", &CPU6502_BLIT_REGISTER[reg][0] );
+            outline1( "LDA %s", &cpu_BLIT_REGISTER[reg][0] );
             _environment->blit.freeRegisters &= ~registerMask;
             return;
         }
@@ -7545,7 +7545,7 @@ void cpu6502_blit_free_register(  Environment * _environment, int _register ) {
  * @param _n bits to store (>32)
  * @param _value[] Value to store (segmented in 32 bit each)
  */
-void cpu6502_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
+void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
 
     int i = 0;
     while( _n ) {
@@ -7554,43 +7554,43 @@ void cpu6502_store_nbit( Environment * _environment, char *_destination, int _n,
             switch( _n ) {
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
                 default:
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-                    cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
                     break;
             }
             _n = 0;
         } else {
-            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            cpu6502_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
             _n -= 32;
         }
         ++i;
@@ -7604,13 +7604,13 @@ void cpu6502_store_nbit( Environment * _environment, char *_destination, int _n,
 // SINGLE	(32)  	seeeeeee emmmmmmm mmmmmmmm mmmmmmmm
 //
 
-void cpu6502_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
-    cpu6502_float_single_from_double_to_int_array( _environment, _value, _result );
+void cpu_float_fast_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+    cpu_float_single_from_double_to_int_array( _environment, _value, _result );
 }
 
 // const double sonda = 1.0;
 
-void cpu6502_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
+void cpu_float_single_from_double_to_int_array( Environment * _environment, double _value, int _result[] ) {
     
     double value = 0.0;
     double integral = 0.0;
@@ -7950,11 +7950,11 @@ void cpu6502_float_single_from_double_to_int_array( Environment * _environment, 
     // }
     
 }
-void cpu6502_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
-    cpu6502_float_single_from_int_array_to_double( _environment,  _value, _result );
+void cpu_float_fast_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
+    cpu_float_single_from_int_array_to_double( _environment,  _value, _result );
 }
 
-void cpu6502_float_single_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
+void cpu_float_single_from_int_array_to_double( Environment * _environment, int _value[], double * _result ) {
     
     // printf( "  value = %2.2x%2.2x%2.2x%2.2x\n", _value[0], _value[1], _value[2], _value[3] );
 
@@ -8019,11 +8019,11 @@ void cpu6502_float_single_from_int_array_to_double( Environment * _environment, 
     
 }
 
-void cpu6502_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
-    cpu6502_float_single_to_string( _environment, _x, _string, _string_size );
+void cpu_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+    cpu_float_single_to_string( _environment, _x, _string, _string_size );
 }
 
-void cpu6502_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
+void cpu_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
     MAKE_LABEL
 
@@ -8058,15 +8058,15 @@ void cpu6502_float_single_to_string( Environment * _environment, char * _x, char
     // outline0( "LDA M1+1" );
     // outline1( "STA %s", address_displacement( _environment, number->realName, "0") );
 
-    // cpu6502_number_to_string( _environment, number->realName, _string, _string_size, 16, 1 );
+    // cpu_number_to_string( _environment, number->realName, _string, _string_size, 16, 1 );
 
 }
 
-void cpu6502_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
-    cpu6502_float_single_from_8( _environment, _value, _result, _signed );
+void cpu_float_fast_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu_float_single_from_8( _environment, _value, _result, _signed );
 }
 
-void cpu6502_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void cpu_float_single_from_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
     MAKE_LABEL
 
@@ -8100,11 +8100,11 @@ void cpu6502_float_single_from_8( Environment * _environment, char * _value, cha
 
 }
 
-void cpu6502_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
-    cpu6502_float_single_from_16( _environment, _value, _result, _signed );
+void cpu_float_fast_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu_float_single_from_16( _environment, _value, _result, _signed );
 }
 
-void cpu6502_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void cpu_float_single_from_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
@@ -8124,11 +8124,11 @@ void cpu6502_float_single_from_16( Environment * _environment, char * _value, ch
 
 }
 
-void cpu6502_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
-    cpu6502_float_single_to_8( _environment, _value, _result, _signed );
+void cpu_float_fast_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu_float_single_to_8( _environment, _value, _result, _signed );
 }
 
-void cpu6502_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
+void cpu_float_single_to_8( Environment * _environment, char * _value, char * _result, int _signed ) {
     
     (int)_signed;
 
@@ -8148,11 +8148,11 @@ void cpu6502_float_single_to_8( Environment * _environment, char * _value, char 
 
 }
 
-void cpu6502_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
-    cpu6502_float_single_to_16( _environment, _value, _result, _signed );
+void cpu_float_fast_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+    cpu_float_single_to_16( _environment, _value, _result, _signed );
 }
 
-void cpu6502_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
+void cpu_float_single_to_16( Environment * _environment, char * _value, char * _result, int _signed ) {
     
     (int)_signed;
 
@@ -8174,11 +8174,11 @@ void cpu6502_float_single_to_16( Environment * _environment, char * _value, char
 
 }
 
-void cpu6502_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
-    cpu6502_float_single_sub( _environment, _x, _y, _result );
+void cpu_float_fast_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu_float_single_sub( _environment, _x, _y, _result );
 }
 
-void cpu6502_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
+void cpu_float_single_sub( Environment * _environment, char * _x, char * _y, char * _result ) {
     
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
@@ -8213,11 +8213,11 @@ void cpu6502_float_single_sub( Environment * _environment, char * _x, char * _y,
 
 }
 
-void cpu6502_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
-    cpu6502_float_single_add( _environment, _x, _y, _result );
+void cpu_float_fast_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu_float_single_add( _environment, _x, _y, _result );
 }
 
-void cpu6502_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
+void cpu_float_single_add( Environment * _environment, char * _x, char * _y, char * _result ) {
     
     deploy( fp_vars, src_hw_6502_fp_routines_asm );
 
@@ -8252,11 +8252,11 @@ void cpu6502_float_single_add( Environment * _environment, char * _x, char * _y,
 
 }
 
-void cpu6502_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
-    cpu6502_float_single_cmp( _environment, _x, _y, _result );
+void cpu_float_fast_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu_float_single_cmp( _environment, _x, _y, _result );
 }
 
-void cpu6502_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
+void cpu_float_single_cmp( Environment * _environment, char * _x, char * _y, char * _result ) {
     
     MAKE_LABEL
 
@@ -8286,11 +8286,11 @@ void cpu6502_float_single_cmp( Environment * _environment, char * _x, char * _y,
 
 }
 
-void cpu6502_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
-    cpu6502_float_single_mul( _environment, _x, _y, _result );
+void cpu_float_fast_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu_float_single_mul( _environment, _x, _y, _result );
 }
 
-void cpu6502_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
+void cpu_float_single_mul( Environment * _environment, char * _x, char * _y, char * _result ) {
     
     MAKE_LABEL
     
@@ -8327,11 +8327,11 @@ void cpu6502_float_single_mul( Environment * _environment, char * _x, char * _y,
 
 }
 
-void cpu6502_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
-    cpu6502_float_single_div( _environment, _x, _y, _result );
+void cpu_float_fast_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+    cpu_float_single_div( _environment, _x, _y, _result );
 }
 
-void cpu6502_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
+void cpu_float_single_div( Environment * _environment, char * _x, char * _y, char * _result ) {
     
     MAKE_LABEL
     
@@ -8368,11 +8368,11 @@ void cpu6502_float_single_div( Environment * _environment, char * _x, char * _y,
 
 }
 
-void cpu6502_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
-    cpu6502_float_single_sin( _environment, _angle, _result );
+void cpu_float_fast_sin( Environment * _environment, char * _angle, char * _result ) {
+    cpu_float_single_sin( _environment, _angle, _result );
 }
 
-void cpu6502_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
+void cpu_float_single_sin( Environment * _environment, char * _angle, char * _result ) {
     
     MAKE_LABEL
     
@@ -8400,11 +8400,11 @@ void cpu6502_float_single_sin( Environment * _environment, char * _angle, char *
 
 }
 
-void cpu6502_float_fast_log( Environment * _environment, char * _value, char * _result ) {
-    cpu6502_float_single_log( _environment, _value, _result );
+void cpu_float_fast_log( Environment * _environment, char * _value, char * _result ) {
+    cpu_float_single_log( _environment, _value, _result );
 }
 
-void cpu6502_float_single_log( Environment * _environment, char * _value, char * _result ) {
+void cpu_float_single_log( Environment * _environment, char * _value, char * _result ) {
     
     MAKE_LABEL
     
@@ -8432,11 +8432,11 @@ void cpu6502_float_single_log( Environment * _environment, char * _value, char *
 
 }
 
-void cpu6502_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
-    cpu6502_float_single_exp( _environment, _value, _result );
+void cpu_float_fast_exp( Environment * _environment, char * _value, char * _result ) {
+    cpu_float_single_exp( _environment, _value, _result );
 }
 
-void cpu6502_float_single_exp( Environment * _environment, char * _value, char * _result ) {
+void cpu_float_single_exp( Environment * _environment, char * _value, char * _result ) {
     
     MAKE_LABEL
     
@@ -8464,11 +8464,11 @@ void cpu6502_float_single_exp( Environment * _environment, char * _value, char *
 
 }
 
-void cpu6502_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
-    cpu6502_float_single_cos( _environment, _angle, _result );
+void cpu_float_fast_cos( Environment * _environment, char * _angle, char * _result ) {
+    cpu_float_single_cos( _environment, _angle, _result );
 }
 
-void cpu6502_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
+void cpu_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
     
     MAKE_LABEL
     
@@ -8496,11 +8496,11 @@ void cpu6502_float_single_cos( Environment * _environment, char * _angle, char *
 
 }
 
-void cpu6502_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
-    cpu6502_float_single_tan( _environment, _angle, _result );
+void cpu_float_fast_tan( Environment * _environment, char * _angle, char * _result ) {
+    cpu_float_single_tan( _environment, _angle, _result );
 }
 
-void cpu6502_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
+void cpu_float_single_tan( Environment * _environment, char * _angle, char * _result ) {
     
     MAKE_LABEL
     
@@ -8528,7 +8528,7 @@ void cpu6502_float_single_tan( Environment * _environment, char * _angle, char *
 
 }
 
-void cpu6502_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
+void cpu_address_table_build( Environment * _environment, char * _table, int * _values, char *_address[], int _count ) {
 
     outhead1("%s:", _table );
     for( int i=0; i<_count; ++i ) {
@@ -8537,7 +8537,7 @@ void cpu6502_address_table_build( Environment * _environment, char * _table, int
 
 }
 
-void cpu6502_address_table_lookup( Environment * _environment, char * _table, int _count ) {
+void cpu_address_table_lookup( Environment * _environment, char * _table, int _count ) {
 
     outhead1("LOOKFOR%s:", _table );
     if ( _count ) {
@@ -8573,7 +8573,7 @@ void cpu6502_address_table_lookup( Environment * _environment, char * _table, in
 
 }
 
-void cpu6502_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
+void cpu_address_table_call( Environment * _environment, char * _table, char * _value, char * _address ) {
 
     outline1("LDA %s", _value );
     outline0("STA MATHPTR0" );
@@ -8587,7 +8587,7 @@ void cpu6502_address_table_call( Environment * _environment, char * _table, char
 
 }
 
-void cpu6502_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
+void cpu_move_8bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ) {
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8598,7 +8598,7 @@ void cpu6502_move_8bit_signed_16bit_signed( Environment * _environment, char *_s
 
 }
 
-void cpu6502_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8609,7 +8609,7 @@ void cpu6502_move_8bit_signed_16bit_unsigned( Environment * _environment, char *
 
 }
 
-void cpu6502_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8618,7 +8618,7 @@ void cpu6502_move_8bit_unsigned_16bit_signed( Environment * _environment, char *
 
 }
 
-void cpu6502_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8627,7 +8627,7 @@ void cpu6502_move_8bit_unsigned_16bit_unsigned( Environment * _environment, char
 
 }
 
-void cpu6502_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8640,7 +8640,7 @@ void cpu6502_move_8bit_signed_32bit_signed( Environment * _environment, char *_s
 
 }
 
-void cpu6502_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8653,7 +8653,7 @@ void cpu6502_move_8bit_signed_32bit_unsigned( Environment * _environment, char *
 
 }
 
-void cpu6502_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8663,7 +8663,7 @@ void cpu6502_move_8bit_unsigned_32bit_signed( Environment * _environment, char *
     outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
 
 }
-void cpu6502_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
     
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8674,47 +8674,32 @@ void cpu6502_move_8bit_unsigned_32bit_unsigned( Environment * _environment, char
 
 }
 
-void cpu6502_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
-void cpu6502_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
-void cpu6502_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
-void cpu6502_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
 
-void cpu6502_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
-
-    outline1("LDA %s", _source );
-    outline1("STA %s", _destination );
-    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
-    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
-    outline0("LDA #$7F" );
-    outline1("CMP %s", address_displacement( _environment, _destination, "1" ) );
-    outline0("SBC #$7F" );
-    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
-    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
-
-}
-
-void cpu6502_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
-
+void cpu_move_16bit_signed_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8728,7 +8713,22 @@ void cpu6502_move_16bit_signed_32bit_unsigned( Environment * _environment, char 
 
 }
 
-void cpu6502_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("LDA #$7F" );
+    outline1("CMP %s", address_displacement( _environment, _destination, "1" ) );
+    outline0("SBC #$7F" );
+    outline1("STA %s", address_displacement( _environment, _destination, "2" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
+
+}
+
+void cpu_move_16bit_unsigned_32bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8739,7 +8739,7 @@ void cpu6502_move_16bit_unsigned_32bit_signed( Environment * _environment, char 
     outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
 
 }
-void cpu6502_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_16bit_unsigned_32bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8751,7 +8751,7 @@ void cpu6502_move_16bit_unsigned_32bit_unsigned( Environment * _environment, cha
 
 }
 
-void cpu6502_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_signed_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8761,35 +8761,26 @@ void cpu6502_move_32bit_signed_8bit_signed( Environment * _environment, char *_s
     outline1("STA %s", address_displacement( _environment, _destination, "3" ) );
 
 }
-void cpu6502_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_signed_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
-void cpu6502_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_unsigned_8bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
-void cpu6502_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_unsigned_8bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
 
 }
 
-void cpu6502_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
-
-    outline1("LDA %s", _source );
-    outline1("STA %s", _destination );
-    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
-    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
-
-}
-
-void cpu6502_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_signed_16bit_signed( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8798,7 +8789,7 @@ void cpu6502_move_32bit_signed_16bit_unsigned( Environment * _environment, char 
 
 }
 
-void cpu6502_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_signed_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
 
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );
@@ -8807,7 +8798,16 @@ void cpu6502_move_32bit_unsigned_16bit_signed( Environment * _environment, char 
 
 }
 
-void cpu6502_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
+void cpu_move_32bit_unsigned_16bit_signed( Environment * _environment, char *_source, char *_destination ){
+
+    outline1("LDA %s", _source );
+    outline1("STA %s", _destination );
+    outline1("LDA %s", address_displacement( _environment, _source, "1" ) );
+    outline1("STA %s", address_displacement( _environment, _destination, "1" ) );
+
+}
+
+void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_source, char *_destination ){
     
     outline1("LDA %s", _source );
     outline1("STA %s", _destination );

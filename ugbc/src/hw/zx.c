@@ -128,7 +128,7 @@ void zx_color_border( Environment * _environment, char * _color ) {
 
     char port[MAX_TEMPORARY_STORAGE]; sprintf(port, "$%2.2x", PORT_COLOR_BORDER);
 
-    z80_port_out( _environment, port, _color );
+   cpu_port_out( _environment, port, _color );
 
 }
 
@@ -151,7 +151,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
     deploy( textEncodedAt, src_hw_zx_text_at_asm );
     deploy( cls, src_hw_zx_cls_asm );
 
-    // z80_move_8bit( _environment, _tab, "TABCOUNT");
+    //cpu_move_8bit( _environment, _tab, "TABCOUNT");
 
     outline1("LD A, (%s)", _text_size );
     outline0("LD C, A");
@@ -174,10 +174,10 @@ void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
     deploy( cls, src_hw_zx_cls_asm );
 
     if ( _pen ) {
-        z80_move_8bit( _environment, _pen, "_PEN");
+       cpu_move_8bit( _environment, _pen, "_PEN");
     }
     if ( _paper ) {
-        z80_move_8bit( _environment, _paper, "_PAPER");
+       cpu_move_8bit( _environment, _paper, "_PAPER");
     }
 
     outline0("CALL CLS");

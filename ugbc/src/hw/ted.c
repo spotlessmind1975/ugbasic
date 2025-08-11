@@ -651,7 +651,7 @@ void ted_raster_at( Environment * _environment, char * _label, char * _positionl
     outline0("STA $FF0B");
     outline1("LDA %s", _positionhi );
     outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
     outline0("LDA $FF0A" );
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );
@@ -699,7 +699,7 @@ void ted_next_raster_at( Environment * _environment, char * _label, char * _posi
     outline0("STA $FF0B");
     outline1("LDA %s", _positionhi );
     outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
     outline0("LDA $FF0A" );
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );

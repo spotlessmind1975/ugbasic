@@ -403,7 +403,7 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
 
     MAKE_LABEL
 
-    z80_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
+   cpu_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
 
     tms9918_border_color( _environment, _background_color );
 

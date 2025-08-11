@@ -93,7 +93,7 @@ void colormap_clear_with_vars( Environment * _environment, char * _foreground, c
 
     Variable * background = variable_retrieve( _environment, _background );
 
-    cpu6502_combine_nibbles( _environment, background->realName, foreground->realName, "$24" );
+    cpu_combine_nibbles( _environment, background->realName, foreground->realName, "$24" );
 
     cpu_fill_blocks( _environment, colormapAddress->realName, "#$04", "$24" );
 

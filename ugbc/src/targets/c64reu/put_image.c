@@ -260,7 +260,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
         } else {
             outline1("LDA %s", sequence->realName );
             outline0("STA MATHPTR0" );
-            cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
+            cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
         }
         if ( _frame ) {
             if ( strlen(_frame) == 0 ) {
@@ -268,7 +268,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
             } else {
                 outline1("LDA %s", frame->realName );
                 outline0("STA MATHPTR0" );
-                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
+                cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
             }
         }
 
@@ -288,7 +288,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
             } else {
                 outline1("LDA %s", frame->realName );
                 outline0("STA MATHPTR0" );
-                cpu6502_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
+                cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
             }
 
             outline0("LDA TMPPTR" );

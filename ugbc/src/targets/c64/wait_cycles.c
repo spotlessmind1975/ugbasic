@@ -92,7 +92,7 @@ void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
         char timingString[MAX_TEMPORARY_STORAGE]; sprintf(timingString, "#$%2.2x", _timing );
 
-        cpu6502_busy_wait( _environment, timingString );
+        cpu_busy_wait( _environment, timingString );
 
     }
 
@@ -149,7 +149,7 @@ void wait_cycles_var( Environment * _environment, char * _timing, int _parallel 
 
     } else {
 
-        cpu6502_busy_wait( _environment, timing->realName );
+        cpu_busy_wait( _environment, timing->realName );
 
     }
 

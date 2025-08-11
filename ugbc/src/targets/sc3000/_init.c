@@ -150,7 +150,7 @@ void target_initialization( Environment * _environment ) {
 
     outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
-    z80_init( _environment );
+   cpu_init( _environment );
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SC3000STARTUP");
     outline0("CALL SC3000STARTUP2" );
@@ -163,7 +163,7 @@ void target_initialization( Environment * _environment ) {
     // outline0("call	CheckIf60Hz");
     // outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
 
-    z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
+   cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
     variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );
