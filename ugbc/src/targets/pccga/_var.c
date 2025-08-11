@@ -64,28 +64,28 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 4", variable->realName);
+                        outline1("%s: resb 4", variable->realName);
                     }
                     break;
                 case VT_IMAGEREF:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 12", variable->realName);
+                        outline1("%s: resb 12", variable->realName);
                     }
                     break;
                 case VT_PATH:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 16", variable->realName);
+                        outline1("%s: resb 16", variable->realName);
                     }
                     break;
                 case VT_VECTOR2:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 4", variable->realName);
+                        outline1("%s: resb 4", variable->realName);
                     }
                     break;
                 case VT_WORD:
@@ -110,7 +110,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline2("%s: defs %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outline2("%s: resb %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
                     }
                     break;
                 case VT_STRING:
@@ -174,7 +174,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                             }
                         } else {
-                            outline2("%s: defs %d", variable->realName, variable->size);
+                            outline2("%s: resb %d", variable->realName, variable->size);
                         }
                         if ( variable->readonly ) {
 
@@ -210,13 +210,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
                             // force +1 byte if size is odd
-                            outhead2("%s: defs %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
+                            outhead2("%s: resb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
                         } else {
                             if (VT_BITWIDTH( variable->type ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->type ] );
                             }
                             // force +1 byte if size is odd
-                            outhead2("%s: defs %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
+                            outhead2("%s: resb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
                         }
 
                     } else {
@@ -255,14 +255,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     break;
                                 }
                                 case 8:
-                                    outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    outline3("%s: resb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    outline3("%s: resb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                         } else {
-                            outline2("%s: defs %d", variable->realName, variable->size);
+                            outline2("%s: resb %d", variable->realName, variable->size);
                         }
                         if ( variable->readonly ) {
 
@@ -304,7 +304,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
-                        outline0("   defs 1");
+                        outline0("   resb 1");
                     }        
                     break;
             }
@@ -316,7 +316,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     }
 
     if ( bitCount > 0 ) {
-        outline0("   defs 1");
+        outline0("   resb 1");
     }
 
 }

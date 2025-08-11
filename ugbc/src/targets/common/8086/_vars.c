@@ -44,13 +44,13 @@ extern char DATATYPE_AS_STRING[][16];
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
 
-    outhead2("%s = $%4.4x", _name, _value );
+    outhead2("%s = 0x%4.4x", _name, _value );
 
 }
 
 void vars_emit_constant_integer_relative( Environment * _environment, char * _name, char * _relative, int _value ) {
 
-    outhead3("%s = %s+$%4.4x", _name, _relative, _value );
+    outhead3("%s = %s+0x%4.4x", _name, _relative, _value );
 
 }
 
@@ -82,25 +82,25 @@ void vars_emit_constants( Environment * _environment ) {
 
 void vars_emit_byte( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline2("%s: defb $%2.2x", _name, (unsigned char)( _value & 0xff ) );
+        outhead2("%s: db 0x%2.2x", _name, (unsigned char)( _value & 0xff ) );
     } else {
-        outline1(" defb $%2.2x", (unsigned char)( _value & 0xff ) );
+        outline1(" db 0x%2.2x", (unsigned char)( _value & 0xff ) );
     }
 }
 
 void vars_emit_word( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline2("%s:  defw $%4.4x", _name, (unsigned int)( _value & 0xffff ) );
+        outline2("%s:  dw 0x%4.4x", _name, (unsigned int)( _value & 0xffff ) );
     } else {
-        outline1(" defw $%4.4x", (unsigned int)( _value & 0xffff ) );
+        outline1(" dw 0x%4.4x", (unsigned int)( _value & 0xffff ) );
     }
 }
 
 void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline3("%s:  dw 0x%4.4x,0x%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
     } else {
-        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline2(" dw 0x%4.4x,0x%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
     }
 }
 

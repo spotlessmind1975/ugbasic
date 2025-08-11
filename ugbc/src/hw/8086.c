@@ -44,89 +44,45 @@
 
 void cpu_init( Environment * _environment ) {
 
-    // char duffDevice[38] = {
-    //     // +00
-    //     0x18, 0x00, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-    //     // +08
-    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-    //     // +16
-    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-    //     // +24
-    //     0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,
-    //     // +32
-    //     0xED, 0xA0, 0xEA, 0x00, 0x00, 0xC9
-    // };
-
-    // variable_import( _environment, "DUFFDEVICEL0", VT_BUFFER, 36 );
-    // variable_global( _environment, "DUFFDEVICEL0" );
-    // variable_import( _environment, "DUFFDEVICEL1", VT_ADDRESS, 0 );
-    // variable_global( _environment, "DUFFDEVICEL1" );
-
-    // variable_retrieve( _environment, "DUFFDEVICEL0" )->readonly = 0;
-
-    // variable_store_buffer( _environment, "DUFFDEVICEL0", duffDevice, sizeof( duffDevice ), 0 );
-
-    // outline0( "LD HL, DUFFDEVICEL0");
-    // outline0( "LD DE, 35");
-    // outline0( "ADD HL, DE");
-    // outline0( "LD DE, DUFFDEVICEL0");
-    // outline0( "INC DE");
-    // outline0( "INC DE");
-    // outline0( "LD (HL), DE");
-
-    // variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
-    // variable_global( _environment, "CALLINDIRECTSAVEHL" );
-
-    // char callIndirect[3] = {
-    //     // +00
-    //     0xc3, 0x00, 0x00
-    // };
-
-    // variable_import( _environment, "CALLINDIRECT", VT_BUFFER, 3 );
-    // variable_global( _environment, "CALLINDIRECT" );
-
-    // variable_store_buffer( _environment, "CALLINDIRECT", callIndirect, sizeof( callIndirect ), 0 );
-    // variable_retrieve( _environment, "CALLINDIRECT" )->readonly = 0;
-
 }
 
 void cpu_nop( Environment * _environment ) {
 
-    // outline0("NOP");
+    outline0("NOP");
 
 }
 
 void cpu_ztoa( Environment * _environment ) {
 
-    // inline( cpu_ztoa )
+    inline( cpu_ztoa )
 
-    //     MAKE_LABEL
+        MAKE_LABEL
 
-    //     outline1("JR Z, %syes", label );
-    //     outline0("LD A, 0");
-    //     outline1("JP %s", label );
-    //     outhead1("%syes:", label );
-    //     outline0("LD A, $ff");
-    //     outhead1("%s:", label );
+        outline1("JE %syes", label );
+        outline0("MOV AL, 0");
+        outline1("JP %s", label );
+        outhead1("%syes:", label );
+        outline0("MOV AL, 0xff");
+        outhead1("%s:", label );
 
-    // no_embedded( cpu_ztoa )
+    no_embedded( cpu_ztoa )
 
 }
 
 void cpu_ctoa( Environment * _environment ) {
 
-    // inline( cpu_ctoa )
+    inline( cpu_ctoa )
 
-    //     MAKE_LABEL
+        MAKE_LABEL
 
-    //     outline1("JR C, %syes", label );
-    //     outline0("LD A, 0");
-    //     outline1("JP %s", label );
-    //     outhead1("%syes:", label );
-    //     outline0("LD A, $ff");
-    //     outhead1("%s:", label );
+        outline1("JC %syes", label );
+        outline0("MOV AL, 0");
+        outline1("JP %s", label );
+        outhead1("%syes:", label );
+        outline0("MOV AL, 0xff");
+        outhead1("%s:", label );
 
-    // no_embedded( cpu_ctoa )
+    no_embedded( cpu_ctoa )
 
 }
 
@@ -146,11 +102,11 @@ void cpu_ctoa( Environment * _environment ) {
  */
 void cpu_beq( Environment * _environment, char * _label ) {
 
-    // inline( cpu_beq )
+    inline( cpu_beq )
 
-    //     outline1("JP Z, %s", _label);
+        outline1("JZ %s", _label);
 
-    // no_embedded( cpu_beq )
+    no_embedded( cpu_beq )
 
 }
 
@@ -162,183 +118,159 @@ void cpu_beq( Environment * _environment, char * _label ) {
  */
 void cpu_bneq( Environment * _environment, char * _label ) {
 
-    // inline( cpu_bneq )
+    inline( cpu_bneq )
 
-    //     outline1("JP NZ, %s", _label);
+        outline1("JNZ %s", _label);
 
-    // no_embedded( cpu_bneq )
+    no_embedded( cpu_bneq )
 
 }
 
 void cpu_bveq( Environment * _environment, char * _value, char * _label ) {
 
-    // inline( cpu_bveq )
+    inline( cpu_bveq )
 
-    //     outline1("LD A, (%s)", _value);
-    //     outline0("CP 0");
-    //     cpu_beq( _environment, _label );
+        outline1("MOV AL, [%s]", _value);
+        outline0("CMP AL, 0");
+        cpu_beq( _environment, _label );
 
-    // no_embedded( cpu_bneq )
+    no_embedded( cpu_bneq )
 
 }
 
 void cpu_bvneq( Environment * _environment, char * _value, char * _label ) {
 
-    // inline( cpu_bvneq )
+    inline( cpu_bvneq )
 
-    //     outline1("LD A, (%s)", _value);
-    //     outline0("CP 0");
-    //     cpu_bneq( _environment, _label );
+        outline1("MOV AL, [%s]", _value);
+        outline0("CMP AL, 0");
+        cpu_bneq( _environment, _label );
 
-    // no_embedded( cpu_bvneq )
+    no_embedded( cpu_bvneq )
 
 }
 
 void cpu_label( Environment * _environment, char * _label ) {
-    // outhead1("%s:", _label);
+    outhead1("%s:", _label);
 }
 
 void cpu_peek( Environment * _environment, char * _address, char * _target ) {
 
-    // inline( cpu_peek )
+    inline( cpu_peek )
 
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", _target);
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV AL, [BX]");
+        outline1("MOV [%s], AL", _target);
 
-    // no_embedded( cpu_peek )
+    no_embedded( cpu_peek )
 
 }
 
 void cpu_poke( Environment * _environment, char * _address, char * _source ) {
 
-    // inline( cpu_poke )
+    inline( cpu_poke )
 
-    //     outline1("LD A, (%s)", _source);
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
+        outline1("MOV AL, [%s]", _source);
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AL");
 
-    // no_embedded( cpu_poke )
+    no_embedded( cpu_poke )
 
 }
 
 void cpu_poke_const( Environment * _environment, char * _address, int _source ) {
 
-    // // inline( cpu_poke )
+    // inline( cpu_poke )
 
-    //     outline1("LD A, $%2.2x", (unsigned char)(_source&0xff));
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
+        outline1("MOV AL, 0x%2.2x", (unsigned char)(_source&0xff));
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AL");
 
-    // // no_embedded( cpu_poke )
+    // no_embedded( cpu_poke )
 
 }
 
 void cpu_peekw( Environment * _environment, char * _address, char * _target ) {
 
-    // inline( cpu_peek )
+    inline( cpu_peek )
 
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", _target);
-    //     outline0("INC HL");
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV AX, [BX]");
+        outline1("MOV [%s], AX", _target);
 
-    // no_embedded( cpu_peek )
+    no_embedded( cpu_peek )
 
 }
 
 void cpu_pokew( Environment * _environment, char * _address, char * _source ) {
 
-    // inline( cpu_poke )
+    inline( cpu_poke )
 
-    //     outline1("LD A, (%s)", _source);
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
+        outline1("MOV AX, [%s]", _source);
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AX");
 
-    // no_embedded( cpu_poke )
+    no_embedded( cpu_poke )
 
 }
 
 void cpu_pokew_const( Environment * _environment, char * _address, int _source ) {
 
-    // // inline( cpu_poke )
-
-    //     outline1("LD A, $%2.2x", (unsigned char)(_source&0xff));
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, $%2.2x", (unsigned char)((_source>>8)&0xff));
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
-
-    // // no_embedded( cpu_poke )
-
-}
-
-void cpu_peekd( Environment * _environment, char * _address, char * _target ) {
-
-    // inline( cpu_peek )
-
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", _target);
-    //     outline0("INC HL");
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", address_displacement( _environment, _target, "1" ) );
-    //     outline0("INC HL");
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", address_displacement( _environment, _target, "2" ) );
-    //     outline0("INC HL");
-    //     outline0("LD A, (HL)");
-    //     outline1("LD (%s), A", address_displacement( _environment, _target, "3" ) );
-
-    // no_embedded( cpu_peek )
-
-}
-
-void cpu_poked( Environment * _environment, char * _address, char * _source ) {
-
     // inline( cpu_poke )
 
-    //     outline1("LD A, (%s)", _source);
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, (%s)", address_displacement( _environment, _source, "1" ) );
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, (%s)", address_displacement( _environment, _source, "2" ) );
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, (%s)", address_displacement( _environment, _source, "3" ) );
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
+        outline1("MOV AX, 0x%4.4x", (unsigned short)(_source&0xffFF));
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AX");
 
     // no_embedded( cpu_poke )
 
 }
 
+void cpu_peekd( Environment * _environment, char * _address, char * _target ) {
+
+    inline( cpu_peek )
+
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV AX, [BX]");
+        outline1("MOV [%s], AX", _target);
+        outline0("INC BX" );
+        outline0("INC BX" );
+        outline0("MOV AX, [BX]");
+        outline1("MOV [%s], AX", address_displacement( _environment, _target, "+2" ));
+
+    no_embedded( cpu_peek )
+
+}
+
+void cpu_poked( Environment * _environment, char * _address, char * _source ) {
+
+    inline( cpu_poke )
+
+        outline1("MOV AX, [%s]", _source);
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AX");
+        outline0("INC BX");
+        outline0("INC BX");
+        outline1("MOV AX, [%s]", address_displacement( _environment, _source, "+2") );
+        outline0("MOV [BX], AX");
+
+    no_embedded( cpu_poke )
+
+}
+
 void cpu_poked_const( Environment * _environment, char * _address, int _source ) {
 
-    // // inline( cpu_poke )
+    // inline( cpu_poke )
 
-    //     outline1("LD A, $%2.2x", (unsigned char)(_source&0xff));
-    //     outline1("LD HL, (%s)", _address);
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, $%2.2x", (unsigned char)((_source>>8)&0xff));
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, $%2.2x", (unsigned char)((_source>>16)&0xff));
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
-    //     outline1("LD A, $%2.2x", (unsigned char)((_source>>24)&0xff));
-    //     outline0("INC HL");
-    //     outline0("LD (HL), A");
+        outline1("MOV AX, 0x%4.4x", (unsigned short)(_source&0xffff));
+        outline1("MOV BX, [%s]", _address);
+        outline0("MOV [BX], AX");
+        outline0("INC BX");
+        outline0("INC BX");
+        outline1("MOV AX, 0x%4.4x", (unsigned short)((_source>>16)&0xffff));
+        outline0("MOV [BX], AX");
 
-    // // no_embedded( cpu_poke )
+    // no_embedded( cpu_poke )
 
 }
 
@@ -1648,12 +1580,12 @@ void cpu_move_16bit( Environment * _environment, char *_source, char *_destinati
 
 void cpu_addressof_16bit( Environment * _environment, char *_source, char *_destination ) {
     
-    // inline( cpu_addressof_16bit )
+    inline( cpu_addressof_16bit )
 
-    //     outline1("LD HL, %s", _source );
-    //     outline1("LD (%s), HL", _destination );
+        outline1("MOV AX, %s", _source );
+        outline1("MOV [%s], AX", _destination );
 
-    // no_embedded( cpu_addressof_16bit )
+    no_embedded( cpu_addressof_16bit )
 
 }
 

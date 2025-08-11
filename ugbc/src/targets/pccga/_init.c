@@ -112,7 +112,6 @@ void target_initialization( Environment * _environment ) {
     // deploy_preferred( startup2, src_hw_pccga_startup2_asm);
 
     outhead0("CODESTART:")
-    outline0("LD SP, $73b8");
 
     outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
@@ -124,20 +123,9 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    outline0("CALL $1f7f");
-
     // tms9918_initialization( _environment );
     // sn76489z_initialization( _environment );
 
-   cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
-
-    Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
-    variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );
-    print( _environment, outOfMemoryMessage->name, 1, _environment->printRaw );
-
-    cpu_halt( _environment );
-
-    outhead0("CODESTARTRUN:")
     outline0("CALL PCCGASTARTUP");
 
     if ( _environment->tenLinerRulesEnforced ) {
