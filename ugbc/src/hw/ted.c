@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#ifdef __plus4__
+#if defined(__plus4__) || defined(__c16__)
 
 #include "../ugbc.h"
 #include <math.h>

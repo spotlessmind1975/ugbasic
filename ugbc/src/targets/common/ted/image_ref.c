@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__plus4__)
+#if defined(__plus4__) || defined(__c16__)
 
 Variable * image_ref( Environment * _environment, char * _image ) {
 

@@ -32,6 +32,8 @@ extern char * importPath;
     char targetName[] = "c64";
 #elif defined(__plus4__)
     char targetName[] = "plus4";
+#elif defined(__c16__)
+    char targetName[] = "c16";
 #elif defined(__zx__)
     char targetName[] = "zx";
 #elif defined(__coco__)
@@ -444,6 +446,7 @@ Bf { RETURN(BUFFER,1); }
 C { RETURN(C,1); }
 C128 { RETURN(C128,1); }
 C128Z { RETURN(C128Z,1); }
+C16 { RETURN(C16,1); }
 C64 { RETURN(C64,1); }
 C64REU { RETURN(C64REU,1); }
 CALL { RETURN(CALL,1); }

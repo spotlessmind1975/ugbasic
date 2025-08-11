@@ -42,7 +42,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__) || defined(__c128__) || defined(__c64reu__)
+#if defined(__c64__) || defined(__plus4__) || defined(__atari__) || defined(__atarixl__) || defined(__vic20__) || defined(__c128__) || defined(__c64reu__) || defined(__c16__)
 
 void cpu_init( Environment * _environment ) {
 

@@ -103,6 +103,13 @@ ifeq ($(target),atarixl)
   audio=pokey
   io=pokey
 endif
+ifeq ($(target),c16)
+  cpu=6502
+  video=ted
+  video2=
+  audio=ted
+  io=ted
+endif
 ifeq ($(target),c128)
   cpu=6502
   video=vic2
@@ -753,6 +760,20 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
+
+# Commodore C16
+
+MODULES_C16 := $(wildcard src/hw/c16/*.asm)
+SOURCES_C16 := $(subst src/hw/c16/,src-generated/c16_,$(MODULES_C16:.asm=.c))
+
+src-generated/c16_%.c: $(MODULES_C16)
+	@xxd -i $(subst src-generated/c16_,src/hw/c16/,$(@:.c=.asm)) >$@
+
+src-generated/modules_c16.c: $(SOURCES_6502) $(SOURCES_C16) $(SOURCES_TED)
+	@cat $(SOURCES_6502) $(SOURCES_C16) $(SOURCES_TED) >src-generated/modules_c16.c
+	@grep "src" src-generated/modules_c16.c | awk -f modules.awk >src-generated/modules_c16.h
+	@grep "data" src-generated/modules_c16.c | awk -f modules.awk >>src-generated/modules_c16.h
+
 
 # Gameboy 
 

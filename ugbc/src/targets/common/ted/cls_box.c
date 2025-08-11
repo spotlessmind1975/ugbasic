@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__plus4__)
+#if defined(__plus4__) || defined(__c16__)
 
 void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 

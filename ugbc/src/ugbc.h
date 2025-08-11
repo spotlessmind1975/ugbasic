@@ -5995,6 +5995,11 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "../src-generated/modules_gb.h"
     #include "hw/sm83.h"
     #include "hw/gb.h"
+#elif __c16__
+    #include "../src-generated/modules_c16.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/c16.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

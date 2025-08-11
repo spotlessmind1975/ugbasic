@@ -6554,6 +6554,7 @@ predefinito è quello impostato con l'ultimo comando ''INK'' / ''PEN''.
 @target atarixl
 @target c128
 @target c128z
+@target c16
 @target c64
 @target c64reu
 @target coco

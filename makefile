@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c16 c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 zx))
 endif
 
 ifdef 10liner
@@ -63,6 +63,9 @@ ifeq ($(target),c128)
   output=prg
 endif
 ifeq ($(target),c128z)
+  output=prg
+endif
+ifeq ($(target),c16)
   output=prg
 endif
 ifeq ($(target),c64)
@@ -831,6 +834,23 @@ generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 
 generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.plus4$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/plus4/exeso/,,$(@:.prg=.bas))
+
+#------------------------------------------------ 
+# c16:
+#    COMMODORE C16 (7501/8501)
+#------------------------------------------------ 
+# 
+toolchain.c16: cc65
+
+generated/c16/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c16$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c16/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/c16/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c16 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
+
+generated/c16/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c16$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c16/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # sc3000:
