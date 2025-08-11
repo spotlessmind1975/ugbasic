@@ -31,7 +31,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#include "ugbc.h"
+#include "../ugbc.h"
 
 void cpu_init( Environment * _environment );
 

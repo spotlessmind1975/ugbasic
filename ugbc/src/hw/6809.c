@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../cpu.h"
+#include "cpu.h"
 #include <time.h>
 #include <math.h>
 

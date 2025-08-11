@@ -32,7 +32,7 @@
  ****************************************************************************/
 
 #include "../ugbc.h"
-#include "../cpu.h"
+#include "cpu.h"
 
 #define VT_FLOAT_BITWIDTH( p ) \
         ( \

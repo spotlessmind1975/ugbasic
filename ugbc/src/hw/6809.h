@@ -33,7 +33,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#include "../cpu.h"
+#include "cpu.h"
 
 #define VT_FLOAT_BITWIDTH( p ) \
         ( \
