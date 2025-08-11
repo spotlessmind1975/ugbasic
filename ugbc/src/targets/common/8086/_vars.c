@@ -90,17 +90,17 @@ void vars_emit_byte( Environment * _environment, char * _name, int _value ) {
 
 void vars_emit_word( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline2("%s:  dw 0x%4.4x", _name, (unsigned int)( _value & 0xffff ) );
+        outline2("%s:  dw 0x%4.4x", _name, (unsigned short)( _value & 0xffff ) );
     } else {
-        outline1(" dw 0x%4.4x", (unsigned int)( _value & 0xffff ) );
+        outline1(" dw 0x%4.4x", (unsigned short)( _value & 0xffff ) );
     }
 }
 
 void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline3("%s:  dw 0x%4.4x,0x%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline3("%s:  dw 0x%4.4x,0x%4.4x", _name, (unsigned short)( _value & 0xffff ), (unsigned short)( (_value>>16) & 0xffffffff ) );
     } else {
-        outline2(" dw 0x%4.4x,0x%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline2(" dw 0x%4.4x,0x%4.4x", (unsigned short)( _value & 0xffff ), (unsigned short)( (_value>>16) & 0xffffffff ) );
     }
 }
 

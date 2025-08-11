@@ -55,37 +55,37 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_COLOR:
                 case VT_THREAD:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_byte( _environment, variable->realName, variable->initialValue );
                     }
                     break;
                 case VT_DOJOKA:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: resb 4", variable->realName);
+                        outhead1("%s: times 4 db 0", variable->realName);
                     }
                     break;
                 case VT_IMAGEREF:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: resb 12", variable->realName);
+                        outhead1("%s: times 12 db 0", variable->realName);
                     }
                     break;
                 case VT_PATH:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: resb 16", variable->realName);
+                        outhead1("%s: times 16 db 0", variable->realName);
                     }
                     break;
                 case VT_VECTOR2:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: resb 4", variable->realName);
+                        outhead1("%s: times 4 db 0", variable->realName);
                     }
                     break;
                 case VT_WORD:
@@ -93,7 +93,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_POSITION:
                 case VT_ADDRESS:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_word( _environment, variable->realName, variable->initialValue );
                     }
@@ -101,26 +101,26 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_DWORD:
                 case VT_SDWORD:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }
                     break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline2("%s: resb %d", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outhead2("%s: times %d db 0", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
                     }
                     break;
                 case VT_STRING:
-                    outline2("%s: EQU cstring%d", variable->realName, variable->valueString->id );
+                    outhead2("%s: EQU cstring%d", variable->realName, variable->valueString->id );
                     break;
                 case VT_DSTRING:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: db 0", variable->realName);
+                        outhead1("%s: db 0", variable->realName);
                     }
                     break;
                 case VT_TILE:
@@ -128,16 +128,16 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_MSPRITE:
                 case VT_SPRITE:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: db 0", variable->realName);
+                        outhead1("%s: db 0", variable->realName);
                     }
                     break;
                 case VT_TILES:
                     if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                        outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: db 0,0,0,0", variable->realName);
+                        outhead1("%s: db 0,0,0,0", variable->realName);
                     }
                     break;
                 case VT_BLIT:
@@ -159,22 +159,22 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 char * string = malloc( variable->size + 1 );
                                 memset( string, 0, variable->size + 1 );
                                 memcpy( string, variable->valueBuffer, variable->size );
-                                outline2("%s: db %s", variable->realName, escape_newlines( string ) );
+                                outhead2("%s: db %s", variable->realName, escape_newlines( string ) );
                             } else {
                                 out1("%s: db ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
                                     if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                        outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                        outline1("0x%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                         out0("  db ");
                                     } else {
-                                        out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                        out1("0x%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                     }
                                 }
-                                outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                outline1("0x%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                             }
                         } else {
-                            outline2("%s: resb %d", variable->realName, variable->size);
+                            outhead2("%s: times %d db 0", variable->realName, variable->size);
                         }
                         if ( variable->readonly ) {
 
@@ -182,7 +182,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
                         }
                     } else {
-                        outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        outline2("%s = 0x%4.4x", variable->realName, variable->absoluteAddress);
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -193,9 +193,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("%scopy: db ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                    out1("0x%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                 }
-                                outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                outline1("0x%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                             }
                         }
                     }
@@ -210,13 +210,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->arrayType ] );
                             }
                             // force +1 byte if size is odd
-                            outhead2("%s: resb %d, $00", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
+                            outhead2("%s: times %d db 0", variable->realName, (VT_BITWIDTH( variable->arrayType )>>3) );
                         } else {
                             if (VT_BITWIDTH( variable->type ) == 0 ) {
                                 CRITICAL_DATATYPE_UNSUPPORTED( "BANKED", DATATYPE_AS_STRING[ variable->type ] );
                             }
                             // force +1 byte if size is odd
-                            outhead2("%s: resb %d, $00", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
+                            outhead2("%s: times %d db 0", variable->realName, (VT_BITWIDTH( variable->type )>>3) );
                         }
 
                     } else {
@@ -230,39 +230,39 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             out1("%s: db ", variable->realName);
                             int i=0;
                             for (i=0; i<(variable->size-1); ++i ) {
-                                out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                out1("0x%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                             }
-                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                            outline1("0x%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                         } else if ( variable->value ) {
 
                             switch( VT_BITWIDTH( variable->arrayType ) ) {
                                 case 32: {
                                     out1("%s: db ", variable->realName );
                                     for( int i=0; i<(variable->size/4)-1; ++i ) {
-                                        out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x, ", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
+                                        out4("0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x, ", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
                                     }
-                                    out4("$%2.2x, $%2.2x, $%2.2x, $%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
+                                    out4("0x%2.2x, 0x%2.2x, 0x%2.2x, 0x%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ), (unsigned int)( ( variable->value >> 16 ) & 0xff ), (unsigned int)( ( variable->value >> 24 ) & 0xff ) );
                                     outline0("");
                                     break;
                                 }
                                 case 16: {
                                     out1("%s: db ", variable->realName );
                                     for( int i=0; i<(variable->size/2)-1; ++i ) {
-                                        out2("$%2.2x, $%2.2x,", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
+                                        out2("0x%2.2x, 0x%2.2x,", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
                                     }
-                                    out2("$%2.2x, $%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
+                                    out2("0x%2.2x, 0x%2.2x", (unsigned int)( variable->value & 0xff ), (unsigned int)( ( variable->value >> 8 ) & 0xff ) );
                                     outline0("");
                                     break;
                                 }
                                 case 8:
-                                    outline3("%s: resb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
+                                    outline3("%s: times %d db 0x%2.2x", variable->realName, variable->size, (unsigned char)(variable->value&0xff) );
                                     break;
                                 case 1:
-                                    outline3("%s: resb %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
+                                    outline3("%s: times %d db 0x%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
                         } else {
-                            outline2("%s: resb %d", variable->realName, variable->size);
+                            outhead2("%s: times %d db 0", variable->realName, variable->size);
                         }
                         if ( variable->readonly ) {
 
@@ -298,13 +298,13 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
             switch( variable->type ) {
                 case VT_BIT:
                     if ( variable->memoryArea ) {
-                        // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                        // outline2("%s = 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s:", variable->realName);
+                        outhead1("%s:", variable->realName);
                     }
                     ++bitCount;
                     if ( bitCount == 8 ) {
-                        outline0("   resb 1");
+                        outline0("   db 1");
                     }        
                     break;
             }
@@ -316,7 +316,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
     }
 
     if ( bitCount > 0 ) {
-        outline0("   resb 1");
+        outline0("   db 1");
     }
 
 }
@@ -344,11 +344,11 @@ void variable_cleanup( Environment * _environment ) {
             DataSegment * actual = _environment->dataSegment;
             while( actual ) {
                 if ( actual->isNumeric ) {
-                    outline2( "dw $%4.4x, %s", actual->lineNumber, actual->realName );
+                    outline2( "dw 0x%4.4x, %s", actual->lineNumber, actual->realName );
                 }
                 actual = actual->next;
             }
-            outline0( "dw $ffff, DATAPTRE" );
+            outline0( "dw 0xffff, DATAPTRE" );
         }
     }   
 
@@ -357,7 +357,7 @@ void variable_cleanup( Environment * _environment ) {
         while( actual ) {
             out1("OFFSETS%4.4x: dw ", actual->size );
             for( i=0; i<actual->count; ++i ) {
-                out1("$%4.4x", i * actual->size );
+                out1("0x%4.4x", i * actual->size );
                 if ( i < ( actual->count - 1 ) ) {
                     out0(",");
                 } else {
@@ -421,9 +421,9 @@ void variable_cleanup( Environment * _environment ) {
             out2("%s: db %d,", c->realName, len);
             int i=0;
             for (i=0; i<(len-1); ++i ) {
-                out1("$%2.2x,", (unsigned char)c->valueString->value[i]);
+                out1("0x%2.2x,", (unsigned char)c->valueString->value[i]);
             }
-            outline1("$%2.2x", (unsigned char)c->valueString->value[(len-1)]);
+            outline1("0x%2.2x", (unsigned char)c->valueString->value[(len-1)]);
         }
         c = c->next;
     }
@@ -437,11 +437,11 @@ void variable_cleanup( Environment * _environment ) {
                 variable_cleanup_entry_bit( _environment, variable );
             } else if ( actual->type == BT_TEMPORARY ) {
                 if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK: defm $01,$02,$04,$08,$10,$20,$40,$80");
-                    outhead0("BITMASKN: defm $fe,$fd,$fb,$f7,$ef,$df,$bf,$7f");
+                    outhead0("BITMASK: defm 0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80");
+                    outhead0("BITMASKN: defm 0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f");
                 }
                 if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
+                    outhead1("max_free_string = 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
                 }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
@@ -469,21 +469,21 @@ void variable_cleanup( Environment * _environment ) {
     buffered_push_output( _environment );
 
     // outhead0("SECTION code_user");
-    // outhead0("ORG $8000");
+    // outhead0("ORG 0x8000");
     // outhead0("SECTION data_user");
-    // outhead0("ORG $7030");
+    // outhead0("ORG 0x7030");
     // outhead0("SECTION code_user");
 
     // // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
-    // // outline0("DEFB $aa, $55");
+    // // outline0("DEFB 0xaa, 0x55");
     // // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
-    // outline0("DEFB $55, $aa");
+    // outline0("DEFB 0x55, 0xaa");
     // // DW       0000           ;Pointer to the sprite name table
-    // outline0("DEFW $0000");
+    // outline0("DEFW 0x0000");
     // // DW       0000           ;Pointer to the sprite order table
-    // outline0("DEFW $0000");
+    // outline0("DEFW 0x0000");
     // // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
-    // outline0("DEFW $0000");
+    // outline0("DEFW 0x0000");
     // // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
     // outline0("DEFW CONTROLLER_BUFFER");
     // // DW       START      ;Entry point to the user program
@@ -508,25 +508,25 @@ void variable_cleanup( Environment * _environment ) {
         while( dataDataSegment ) {
             if ( dataSegment->type ) {
                 if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("0x%2.2x,", (unsigned char)(dataDataSegment->size) );
                     out1("\"%s\"", dataDataSegment->data );
                 } else {
                     for( i=0; i<(dataDataSegment->size-1); ++i ) {
-                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                        out1("0x%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
                     }
-                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    out1("0x%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
             } else {
                 if ( dataDataSegment->type == VT_STRING || dataDataSegment->type == VT_DSTRING ) {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->size) );
+                    out1("0x%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    out1("0x%2.2x,", (unsigned char)(dataDataSegment->size) );
                     out1("\"%s\"", dataDataSegment->data );
                 } else {
-                    out1("$%2.2x,", (unsigned char)(dataDataSegment->type) );
+                    out1("0x%2.2x,", (unsigned char)(dataDataSegment->type) );
                     for( i=0; i<(dataDataSegment->size-1); ++i ) {
-                        out1("$%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                        out1("0x%2.2x,", (unsigned char)(dataDataSegment->data[i]&0xff) );
                     }
-                    out1("$%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
+                    out1("0x%2.2x", (unsigned char)(dataDataSegment->data[i]&0xff) );
                 }
             }
             dataDataSegment = dataDataSegment->next;
@@ -552,31 +552,31 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("UDCCHAR:" );
         int i=0,j=0;
         for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
-            outline1("; $%2.2x ", i);
+            outline1("; 0x%2.2x ", i);
             out0("DEFB " );
             for(j=0;j<7;++j) {
-                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+                out1("0x%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
-            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            outline1("0x%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
         outhead0("TMS9918AUDCCHAR01:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
         outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+        outline1("LD DE, 0x%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
         outhead0("TMS9918AUDCCHAR23:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
         outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+        outline1("LD DE, 0x%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
         outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
+        outline1("LD DE, 0x800+0x%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
         outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
+        outline1("LD DE, 0x1000+0x%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
     } else {
