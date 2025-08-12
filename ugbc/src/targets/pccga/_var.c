@@ -468,6 +468,9 @@ void variable_cleanup( Environment * _environment ) {
 
     buffered_push_output( _environment );
 
+    outline0("ORG 0x100");
+    outline0("JMP CODESTART");
+
     // outhead0("SECTION code_user");
     // outhead0("ORG 0x8000");
     // outhead0("SECTION data_user");

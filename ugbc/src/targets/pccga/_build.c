@@ -51,6 +51,8 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
+    BUILD_TOOLCHAIN_NASM_GET_LISTING_FILE( _environment, listingFileName );
+    
     BUILD_TOOLCHAIN_NASM_GET_EXECUTABLE( _environment, executableName );
 
     BUILD_TOOLCHAIN_NASM_EXEC( _environment, "pccga", executableName, listingFileName, "z80" );

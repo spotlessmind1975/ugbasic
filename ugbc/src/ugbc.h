@@ -4760,11 +4760,20 @@ char * strcopy( char * _dest, char * _source );
         sprintf(executableName, "%s", "nasm" ); \
     }
 
+#define BUILD_TOOLCHAIN_NASM_GET_LISTING_FILE( _environment, listingFileName ) \
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE ); \
+    if ( _environment->listingFileName ) { \
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
+    } else { \
+        strcopy( listingFileName, "" ); \
+    }
+
 #define BUILD_TOOLCHAIN_NASM_EXEC( _environment, target, executableName, listingFileName, cpu ) \
-    sprintf( commandLine, "\"%s\" -f bin %s -o %s", \
+    sprintf( commandLine, "\"%s\" -f bin %s -o %s \"%s\"", \
         executableName, \
         _environment->asmFileName, \
-        _environment->exeFileName ); \
+        _environment->exeFileName, \
+        listingFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please check if %s is correctly installed.\n\n", executableName); \

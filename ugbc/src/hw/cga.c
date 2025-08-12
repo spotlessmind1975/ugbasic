@@ -630,6 +630,8 @@ void cga_initialization( Environment * _environment ) {
 
     // deploy( cgavars, src_hw_cga_vars_asm );
     deploy_preferred( cgastartup, src_hw_cga_startup_asm );
+    
+    cpu_call( _environment, "CGASTARTUP" );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
     variable_global( _environment, "CURRENTWIDTH" );
