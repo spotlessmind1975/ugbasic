@@ -47,7 +47,7 @@ void target_linkage( Environment * _environment ) {
     char binaryName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
     
-    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_ROM)
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_COM)
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 

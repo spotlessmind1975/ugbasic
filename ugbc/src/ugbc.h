@@ -4758,10 +4758,10 @@ char * strcopy( char * _dest, char * _source );
     }
 
 #define BUILD_TOOLCHAIN_NASM_EXEC( _environment, target, executableName, listingFileName, cpu ) \
-    sprintf( commandLine, "\"%s\"-f bin %s -o %s", \
+    sprintf( commandLine, "\"%s\" -f bin %s -o %s", \
         executableName, \
         _environment->asmFileName, \
-        executableName ); \
+        _environment->exeFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
         printf("The compilation of assembly program failed.\n\n"); \
         printf("Please check if %s is correctly installed.\n\n", executableName); \

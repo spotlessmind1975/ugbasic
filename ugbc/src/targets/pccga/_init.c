@@ -108,7 +108,7 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    // deploy_preferred( startup, src_hw_pccga_startup_asm);
+    deploy_preferred( startup, src_hw_pccga_startup_asm);
     // deploy_preferred( startup2, src_hw_pccga_startup2_asm);
 
     outhead0("CODESTART:")

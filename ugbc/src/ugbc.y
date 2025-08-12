@@ -13726,6 +13726,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
                     } else if ( strcmp( optarg, "rom") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "com") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     } else if ( strcmp( optarg, "gb") == 0 ) {

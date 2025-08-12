@@ -46,6 +46,11 @@ void target_finalization( Environment * _environment ) {
 
     cga_finalization( _environment );
 
+    if ( ! _environment->anyProtothread ) {
+        outhead0("PROTOTHREADINIT:" );
+        outline0("RET");
+    }
+    
 }
 
 void target_analysis( Environment * _environment ) {

@@ -489,7 +489,7 @@ void variable_cleanup( Environment * _environment ) {
     // // DW       START      ;Entry point to the user program
     // outline0("DEFW CODESTART");
 
-    // deploy_inplace_preferred( startup, src_hw_pccga_startup_asm);
+    deploy_inplace_preferred( startup, src_hw_pccga_startup_asm);
     // deploy_inplace_preferred( startup2, src_hw_pccga_startup2_asm);
     // deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
     // deploy_inplace_preferred( cgastartup, src_hw_cga_startup_asm);

@@ -29,52 +29,59 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            lESS THAN (8 BIT) Z80                            *
+;*                        SET/UNSET A BIT INSIDE A BYTE                        *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is AL < BL ? (signed)
-;   AL : 0xff if true, 0x00 if false
-CPULT8S:
-    CMP AL, BL
-    JL CPULT8ST
-    MOV AL, 0x00
-    RET
-CPULT8ST:
-    MOV AL, 0xff
+; Set/reset bit A of byte DE
+;  - DE = byte to operate
+;  - A = position
+;  - set to 1 if carry flag is set
+CPUBITINPLACE:
+    JNC, CPUBITINPLACE0
+
+; Set bit A of byte DE to 1
+;  - DE = byte to operate
+;  - A = position
+CPUBITINPLACE1:
+    ; PUSH DE
+    ; LD D, 0
+    ; LD E, A
+    ; LD HL, BITMASK
+    MOV SI, BITMASK
+    ; ADD HL, DE
+    MOV AH, 0
+    ADD SI, AX
+    ; POP DE
+    MOV AL, [DI]
+    ; LD A, (DE)
+    OR AL, [SI]
+    ; OR (HL)
+    MOV [DI], AL
+    ; LD (DE), A
     RET
 
-; Is AL < BL ? (unsigned)
-;   AL : 0xff if true, 0x00 if false
-CPULT8U:
-    CMP AL, BL
-    JB CPULT8UST
-    MOV AL, 0x00
-    RET
-CPULT8UST:
-    MOV AL, 0xff
-    RET
+; Set bit A of byte DE to 0
+;  - DE = byte to operate
+;  - A = position
+CPUBITINPLACE0:
+    ; PUSH DE
+    ; LD D, 0
+    ; LD E, A
+    ; LD HL, BITMASKN
+    ; ADD HL, DE
+    ; POP DE
+    ; LD A, (DE)
+    ; AND (HL)
+    ; LD (DE), A
 
-; Is AL <= BL ? (signed)
-;   AL : 0xff if true, 0x00 if false
-CPULTE8S:
-    CMP AL, BL
-    JLE CPULTE8ST
-    MOV AL, 0x00
-    RET
-CPULTE8ST:
-    MOV AL, 0xff
-    RET
+    MOV SI, BITMASKN
+    MOV AH, 0
+    ADD SI, AX
+    MOV AL, [DI]
+    AND AL, [SI]
+    MOV [DI], AL
 
-; Is AL <= BL ? (unsigned)
-;   AL : 0xff if true, 0x00 if false
-CPULTE8U:
-    CMP AL, BL
-    JBE CPULTE8UST
-    MOV AL, 0x00
-    RET
-CPULTE8UST:
-    MOV AL, 0xff
     RET

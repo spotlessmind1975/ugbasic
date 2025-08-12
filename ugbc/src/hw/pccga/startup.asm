@@ -29,52 +29,11 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            lESS THAN (8 BIT) Z80                            *
+;*                      STARTUP ROUTINE FOR PC IBM WITH CGA                    *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Is AL < BL ? (signed)
-;   AL : 0xff if true, 0x00 if false
-CPULT8S:
-    CMP AL, BL
-    JL CPULT8ST
-    MOV AL, 0x00
-    RET
-CPULT8ST:
-    MOV AL, 0xff
-    RET
-
-; Is AL < BL ? (unsigned)
-;   AL : 0xff if true, 0x00 if false
-CPULT8U:
-    CMP AL, BL
-    JB CPULT8UST
-    MOV AL, 0x00
-    RET
-CPULT8UST:
-    MOV AL, 0xff
-    RET
-
-; Is AL <= BL ? (signed)
-;   AL : 0xff if true, 0x00 if false
-CPULTE8S:
-    CMP AL, BL
-    JLE CPULTE8ST
-    MOV AL, 0x00
-    RET
-CPULTE8ST:
-    MOV AL, 0xff
-    RET
-
-; Is AL <= BL ? (unsigned)
-;   AL : 0xff if true, 0x00 if false
-CPULTE8U:
-    CMP AL, BL
-    JBE CPULTE8UST
-    MOV AL, 0x00
-    RET
-CPULTE8UST:
-    MOV AL, 0xff
+PCCGASTARTUP:
     RET
