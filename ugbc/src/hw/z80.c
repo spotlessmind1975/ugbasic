@@ -4201,7 +4201,7 @@ void cpu_and_8bit_const( Environment * _environment, char * _left, int _right, c
     MAKE_LABEL
 
     outline1("LD A, (%s)", _left );
-    outline1("OR $%2.2x", _right );
+    outline1("AND $%2.2x", _right );
     outline1("LD (%s), A", _result );
 
 }
