@@ -2628,110 +2628,72 @@ void cpu_end( Environment * _environment ) {
 
 void cpu_random( Environment * _environment, char * _entropy ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_random )
+    no_inline( cpu_random )
 
-    //     if ( _entropy ) {
-    //         outline0("MOV HL, (CPURANDOM_SEED)");
-    //         outline0("MOV B, (HL)");
-    //         outline0("INC HL");
-    //         outline0("MOV A, (HL)");
-    //         outline0("XOR B");
-    //         outline1("MOV DE, [%s]", _entropy);
-    //         // outline0("MOV B, H");
-    //         outline0("MOV C, L");
-    //         outline0("ADD HL, HL");
-    //         outline0("RL E");
-    //         outline0("RL D");
-    //         outline0("ADD HL, DE");
-    //         outline0("RL E");
-    //         outline0("RL D");
-    //         outline0("INC L");
-    //         outline0("ADD HL, BC");
-    //         outline0("MOV (CPURANDOM_SEED), HL");
-    //         outline0("MOV HL, (CPURANDOM_SEED+2)");
-    //         outline0("ADD HL, DE");
-    //         outline0("MOV (CPURANDOM_SEED+1), HL");
-    //         outline0("EX DE, HL");
-    //         outline0("MOV HL, (CPURANDOM_SEED)");
-    //         outline1("MOV DE, [%s]", _entropy);
-    //         outline0("ADD HL, HL");
-    //         outline0("RL C");
-    //         outline0("RL B");
-    //         outline0("MOV (CPURANDOM_SEED+1), BC");
-    //         outline0("SBC A, A");
-    //         outline0("AND %11000101");
-    //         outline0("XOR L");
-    //         outline0("MOV L, A");
-    //         outline0("MOV (CPURANDOM_SEED+1), HL");
-    //         outline0("EX DE, HL");
-    //         outline0("ADD HL, BC");
-    //     }
-
-    // embedded( cpu_random, src_hw_8086_cpu_random_asm );
+    embedded( cpu_random, src_hw_8086_cpu_random_asm );
        
-    // done()
+    done()
 
 
 }
 
 void cpu_random_8bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    // cpu_random( _environment, _entropy );
+    cpu_random( _environment, _entropy );
 
-    // if ( _result ) {
-    //     outline0("CALL CPURANDOM16" );
-    //     outline0("MOV A, H" );
-    //     outline1("MOV [%s], A", _result );
-    // }
+    if ( _result ) {
+        outline0("CALL CPURANDOM16" );
+        outline1("MOV [%s], AL", _result );
+    }
 
 }
 
 void cpu_random_16bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    // cpu_random( _environment, _entropy );
+    cpu_random( _environment, _entropy );
 
-    // if ( _result ) {
-    //     outline0("CALL CPURANDOM16" );
-    //     outline1("MOV [%s], HL", _result );
-    // }
+    if ( _result ) {
+        outline0("CALL CPURANDOM16" );
+        outline1("MOV [%s], AX", _result );
+    }
 
 }
 
 void cpu_random_32bit( Environment * _environment, char * _entropy, char * _result ) {
 
-    // cpu_random( _environment, _entropy );
+    cpu_random( _environment, _entropy );
 
-    // if ( _result ) {
-    //     outline0("CALL CPURANDOM32" );
-    //     outline1("MOV [%s], HL", _result );
-    //     outline1("MOV [%s], BC", address_displacement( _environment, _result, "2" ) );
-    // }
+    if ( _result ) {
+        outline0("CALL CPURANDOM32" );
+        outline1("MOV [%s], AX", _result );
+        outline1("MOV [%s], BX", address_displacement( _environment, _result, "2" ) );
+    }
 
 }
 
 void cpu_limit_16bit( Environment * _environment, char * _variable, int _value ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1( "MOV A, [%s]", _variable );
-    // outline1( "CP 0x%2.2x", _value );
-    // outline1( "JR C, %s", label );
-    // outline1( "SUB 0x%2.2x", _value );
-    // outline1( "MOV [%s], A", _variable );
-    // outhead1( "%s:", label );
+    outline1( "MOV AL, [%s]", _variable );
+    outline1( "CMP AL, 0x%2.2x", (unsigned char)(_value&0xff) );
+    outline1( "JB %s", label );
+    outline1( "SUB AL, 0x%2.2x", (unsigned char)(_value&0xff) );
+    outline1( "MOV [%s], AL", _variable );
+    outhead1( "%s:", label );
 
 }
 
 void cpu_busy_wait( Environment * _environment, char * _timing ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _timing );
-    // outhead1("%s:", label );
-    // outline0("DEC A");
-    // outline1("JR NZ, %s", label);
+    outline1("MOV AL, [%s]", _timing );
+    outhead1("%s:", label );
+    outline0("DEC AL");
+    outline1("JNZ %s", label);
 
 }
 
@@ -2744,1344 +2706,979 @@ void cpu_busy_wait( Environment * _environment, char * _timing ) {
  */
 void cpu_port_out( Environment * _environment, char * _port, char * _value ) {
 
-    // outline1("MOV A, [%s]", _value );
-    // outline1("OUT [%s], A", _port );
+    outline1("MOV AL, [%s]", _value );
+    outline1("MOV DL, [%s]", _port );
+    outline0("MOV dh, 0" );
+    outline0("OUT DX, AL" );
 
 }
 
 void cpu_logical_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _left );
-    // outline0("CMP 0" );
-    // outline1("JR Z, %s", label );
-    // outline1("MOV A, [%s]", _right );
-    // outline0("CMP 0" );
-    // outline1("JR Z, %s", label );
-    // outline0("MOV A, 0xff" );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %s_2", label );
-    // outhead1("%s:", label );
-    // outline0("MOV A, 0" );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%s_2:", label );
-
+    outline1("MOV AL, [%s]", _left );
+    outline0("CMP AL, 0" );
+    outline1("JZ %s", label );
+    outline1("MOV AL, [%s]", _right );
+    outline0("CMP AL, 0" );
+    outline1("JZ %s", label );
+    outline0("MOV AL, 0xff" );
+    outline1("MOV [%s], AL", _result );
+    outline1("JP %s_2", label );
+    outhead1("%s:", label );
+    outline0("MOV AL, 0" );
+    outline1("MOV [%s], AL", _result );
+    outhead1("%s_2:", label );
 
 }
 
 void cpu_and_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, [%s]", _right );
+    outline0("AND AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_and_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV A, [%s]", _left );
-    // outline1("OR 0x%2.2x", _right );
-    // outline1("MOV [%s], A", _result );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, 0x%2.2x", _right );
+    outline0("AND AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_and_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX+1)" );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AX, [%s]", _left );
+    outline1("MOV BX, [%s]", _right );
+    outline0("AND AX, BX" );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 void cpu_and_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX+1)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX+2)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("AND (IX+3)" );
-    // outline0("MOV (DE), A" );
+    cpu_and_16bit( _environment, _left, _right, _result );
+    cpu_and_16bit( _environment, 
+            address_displacement( _environment, _left, "+2" ), 
+            address_displacement( _environment, _right, "+2" ),
+            address_displacement( _environment, _result, "+2" )
+        );
 
 }
 
 void cpu_logical_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _left );
-    // outline1("JR NZ, %sd1", label );
-    // outline1("MOV A, [%s]", _right );
-    // outline1("JR NZ, %sd1", label );
-    // outhead1("%s0:", label );
-    // outline0("MOV A, 0" );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sx", label );
-    // outhead1("%sd1:", label );
-    // outline0("MOV A, 0xff" );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sx:", label );
+    outline1("MOV AL, [%s]", _left );
+    outline0("CMP AL, 0" );
+    outline1("JZ %s", label );
+    outline0("MOV AL, 0xff" );
+    outline1("MOV [%s], AL", _result );
+    outline1("JP %s_2", label );
+    outline1("MOV AL, [%s]", _right );
+    outline0("CMP AL, 0" );
+    outline1("JZ %s", label );
+    outline0("MOV AL, 0xff" );
+    outline1("MOV [%s], AL", _result );
+    outline1("JP %s_2", label );
+    outhead1("%s:", label );
+    outline0("MOV AL, 0" );
+    outline1("MOV [%s], AL", _result );
+    outhead1("%s_2:", label );
 
 }
 
 void cpu_or_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, [%s]", _right );
+    outline0("OR AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_or_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV A, [%s]", _left );
-    // outline1("OR 0x%2.2x", _right );
-    // outline1("MOV [%s], A", _result );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, 0x%2.2x", _right );
+    outline0("OR AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
-
 void cpu_or_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX+1)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
+    outline1("MOV AX, [%s]", _left );
+    outline1("MOV BX, [%s]", _right );
+    outline0("OR AX, BX" );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 void cpu_or_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX+1)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX+2)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("OR (IX+3)" );
-    // outline0("MOV (DE), A" );
+    cpu_or_16bit( _environment, _left, _right, _result );
+    cpu_or_16bit( _environment, 
+            address_displacement( _environment, _left, "+2" ), 
+            address_displacement( _environment, _right, "+2" ),
+            address_displacement( _environment, _result, "+2" )
+        );
 
 }
 
 void cpu_xor_8bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX)" );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, [%s]", _right );
+    outline0("XOR AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_xor_8bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)(_right&0xff) );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AL, [%s]", _left );
+    outline1("MOV AH, 0x%2.2x", _right );
+    outline0("XOR AL, AH" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_xor_16bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX+1)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
+    outline1("MOV AX, [%s]", _left );
+    outline1("MOV BX, [%s]", _right );
+    outline0("XOR AX, BX" );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 void cpu_xor_16bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)((_right) & 0xff) );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)((_right>>8) & 0xff) );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
+    outline1("MOV AX, [%s]", _left );
+    outline1("MOV BX, 0x%4.4x", _right );
+    outline0("XOR AX, BX" );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 
 void cpu_xor_32bit( Environment * _environment, char * _left, char * _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV IX, %s", _right );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX+1)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX+2)" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR (IX+3)" );
-    // outline0("MOV (DE), A" );
+    cpu_xor_16bit( _environment, _left, _right, _result );
+    cpu_xor_16bit( _environment, 
+            address_displacement( _environment, _left, "+2" ), 
+            address_displacement( _environment, _right, "+2" ),
+            address_displacement( _environment, _result, "+2" )
+        );
 
 }
 
 void cpu_xor_32bit_const( Environment * _environment, char * _left, int _right, char * _result ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, %s", _left );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)(_right & 0xff ) );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)((_right>>8) & 0xff ) );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)((_right>>16) & 0xff ) );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline1("XOR 0x%2.2x", (unsigned char)((_right>>24) & 0xff ) );
-    // outline0("MOV (DE), A" );
+    cpu_xor_16bit_const( _environment, _left, (unsigned short)(_right&0xffff), _result );
+    cpu_xor_16bit_const( _environment, 
+            address_displacement( _environment, _left, "+2" ), 
+            address_displacement( _environment, (unsigned short)((_right>>16)&0xffff), "+2" ),
+            address_displacement( _environment, _result, "+2" )
+        );
 
 }
 
 void cpu_swap_8bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
+    inline( cpu_swap_8bit )
 
-    // embedded( cpu_swap_8bit, src_hw_8086_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
+        outline1("MOV AL, [%s]", _right );
+        outline1("MOV AH, [%s]", _left );
+        outline0("XCHG AL, AH" );
+        outline1("MOV [%s], AL", _right );
+        outline1("MOV [%s], AH", _left );
 
-    //     outline1("MOV HL, %s", _right );
-    //     outline1("MOV DE, %s", _left );
-    //     outline0("MOV B, 1" );
-    //     outline0("CALL CPUSWAP" );
-
-    // done( )
+    no_embedded( cpu_swap_8bit ) 
 
 }    
 
 void cpu_swap_16bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
+    inline( cpu_swap_8bit )
 
-    // embedded( cpu_swap_8bit, src_hw_8086_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
+        outline1("MOV AX, [%s]", _right );
+        outline1("MOV BX, [%s]", _left );
+        outline0("XCHG AX, BX" );
+        outline1("MOV [%s], AX", _right );
+        outline1("MOV [%s], BX", _left );
 
-    //     outline1("MOV HL, %s", _right );
-    //     outline1("MOV DE, %s", _left );
-    //     outline0("MOV B, 2" );
-    //     outline0("CALL CPUSWAP" );
-
-    // done( )
+    no_embedded( cpu_swap_8bit ) 
 
 }
 
 void cpu_swap_32bit( Environment * _environment, char * _left, char * _right ) {
 
-    // no_inline( cpu_swap_8bit )
-
-    // embedded( cpu_swap_8bit, src_hw_8086_cpu_swap_asm ) // it is not an error: swap 8/16/32 shares code
-
-    //     outline1("MOV HL, %s", _right );
-    //     outline1("MOV DE, %s", _left );
-    //     outline0("MOV B, 4" );
-    //     outline0("CALL CPUSWAP" );
-
-    // done( )
+    cpu_swap_16bit( _environment, _left, _right );
+    cpu_swap_16bit( _environment, address_displacement( _environment, _left, "+2" ), address_displacement( _environment, _right, "+2" ) );
     
 }
 
 void cpu_logical_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
-    // outline1("MOV A, [%s]", _value );
-    // outline0("XOR 0xFF" );
-    // outline1("MOV [%s], A", _result );
+    outline1("MOV AL, [%s]", _value );
+    outline0("XOR AL, 0xff" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_not_8bit( Environment * _environment, char * _value, char * _result ) {
 
-    // outline1("MOV A, [%s]", _value );
-    // outline0("XOR 0xFF" );
-    // outline1("MOV [%s], A", _result );
+    outline1("MOV AL, [%s]", _value );
+    outline0("XOR AL, 0xff" );
+    outline1("MOV [%s], AL", _result );
 
 }
 
 void cpu_not_16bit( Environment * _environment, char * _value, char * _result ) {
 
-    // outline1("MOV HL, %s", _value );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
+    outline1("MOV AX, [%s]", _value );
+    outline0("XOR AX, 0xffff" );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 void cpu_not_32bit( Environment * _environment, char * _value, char * _result ) {
 
-    // outline1("MOV HL, %s", _value );
-    // outline1("MOV DE, %s", _result );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("MOV A, (HL)" );
-    // outline0("XOR 0xFF" );
-    // outline0("MOV (DE), A" );
+    cpu_not_16bit( _environment, _value, _result );
+    cpu_not_16bit( _environment, 
+        address_displacement( _environment, _value, "+2" ), 
+        address_displacement( _environment, _result, "+2" ) 
+    );
 
 }
 
 void cpu_di( Environment * _environment ) {
 
-    // outline0("DI" );
+    outline0("CLI");
 
 }
 
 void cpu_ei( Environment * _environment ) {
 
-    // outline0("EI" );
+    outline0("STI");
 
 }
 
 void cpu_inc( Environment * _environment, char * _variable ) {
 
-    // outline1("MOV A, [%s]", _variable  );
-    // outline0("INC A" );
-    // outline1("MOV [%s], A", _variable  );
+    outline1("MOV AL, [%s]", _variable  );
+    outline0("INC AL" );
+    outline1("MOV [%s], AL", _variable  );
 
 }
 
 void cpu_dec( Environment * _environment, char * _variable ) {
 
-    // outline1("MOV A, [%s]", _variable  );
-    // outline0("DEC A" );
-    // outline1("MOV [%s], A", _variable  );
+    outline1("MOV AL, [%s]", _variable  );
+    outline0("DEC AL" );
+    outline1("MOV [%s], AL", _variable  );
 
 }
 
 void cpu_inc_16bit( Environment * _environment, char * _variable ) {
 
-    // outline1("MOV HL, [%s]", _variable  );
-    // outline0("INC HL" );
-    // outline1("MOV [%s], HL", _variable  );
+    outline1("MOV AX, [%s]", _variable  );
+    outline0("INC AX" );
+    outline1("MOV [%s], AX", _variable  );
 
 }
 
 void cpu_inc_32bit( Environment * _environment, char * _variable ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV HL, [%s]", _variable  );
-    // outline0("INC HL" );
-    // outline1("MOV [%s], HL", _variable  );
-    // outline0("MOV A, L"  );
-    // outline0("CMP 0"  );
-    // outline1("JR NZ, %s", label  );
-    // outline0("MOV A, h"  );
-    // outline0("CMP 0"  );
-    // outline1("JR NZ, %s", label  );
-    // outline1("MOV HL, [%s]", address_displacement(_environment, _variable, "2")  );
-    // outline0("INC HL" );
-    // outline1("MOV [%s], HL", address_displacement( _environment, _variable, "2" )  );
-    // outhead1("%s:", label  );
+    outline1("MOV AX, [%s]", _variable  );
+    outline0("INC AX" );
+    outline1("MOV [%s], AX", _variable  );
+    outline1("JNC %s", label  );
+    outline1("MOV AX, [%s]", address_displacement( _environment, _variable, "+2" ) );
+    outline0("INC AX" );
+    outline1("MOV [%s], AX", address_displacement( _environment, _variable, "+2" )  );
+    outhead1("%s:", label  );
 
 }
 
 void cpu_dec_16bit( Environment * _environment, char * _variable ) {
 
-    // outline1("MOV HL, [%s]", _variable  );
-    // outline0("DEC HL" );
-    // outline1("MOV [%s], HL", _variable  );
+    outline1("MOV AX, [%s]", _variable  );
+    outline0("DEC AX" );
+    outline1("MOV [%s], AX", _variable  );
 
 }
 
 void cpu_dec_32bit( Environment * _environment, char * _variable ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, [%s]", _variable  );
-    // outline0("DEC HL" );
-    // outline1("MOV [%s], HL", _variable  );
-    // outline0("MOV A, L" );
-    // outline0("AND H" );
-    // outline0("CP 0xFF" );
-    // outline1("JR NZ, %s", label );
-    // outline1("MOV HL, [%s]", _variable  );
-    // outline0("DEC HL" );
-    // outline1("MOV [%s], HL", _variable  );
-    // outhead1("%s:", label );
+    outline1("MOV AX, [%s]", _variable  );
+    outline0("DEC AX" );
+    outline1("MOV [%s], AX", _variable  );
+    outline0("CMP AX, 0xffff" );
+    outline1("JNZ %s", label  );
+    outline1("MOV AX, [%s]", address_displacement( _environment, _variable, "+2" ) );
+    outline0("DEC AX" );
+    outline1("MOV [%s], AX", address_displacement( _environment, _variable, "+2" )  );
+    outhead1("%s:", label  );
 
 }
 
 void cpu_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_8086_duff_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A");
-    // outline0("MOV B, 0");
-    // outline0("CALL DUFFDEVICE");
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CL, [%s]", _size);
+    outline0("MOV CH, 0");
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void cpu_mem_move_16bit( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_8086_duff_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV BC, [%s]", _size);
-    // outline0("CALL DUFFDEVICE");
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CX, [%s]", _size);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void cpu_mem_move_direct( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_8086_duff_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // outline1("MOV HL, %s", _source);
-    // outline1("MOV DE, %s", _destination);
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A");
-    // outline0("MOV B, 0");
-    // outline0("CALL DUFFDEVICE");
+    outline1("MOV SI, %s", _source);
+    outline1("MOV DI, %s", _destination);
+    outline1("MOV CL, [%s]", _size);
+    outline0("MOV CH, 0");
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void cpu_mem_move_direct2( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
-    // deploy( duff, src_hw_8086_duff_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, %s", _destination);
-    // outline1("MOV BC, [%s]", _size);
-    // outline0("CALL DUFFDEVICE");
+    outline1("MOV SI, %s", _source);
+    outline1("MOV DI, %s", _destination);
+    outline1("MOV CX, [%s]", _size);
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void cpu_mem_move_direct2_size( Environment * _environment, char *_source, char *_destination,  int _size ) {
 
-    // deploy( duff, src_hw_8086_duff_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, %s", _destination);
-    // outline1("MOV BC, 0x%4.4x", _size);
-    // outline0("CALL DUFFDEVICE");
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, %s", _destination);
+    outline1("MOV CX, 0x%4.4x", _size );
+    outline0("CALL DUFFDEVICE");
 
 }
 
 void cpu_mem_move_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    // if ( _size > 0 ) {
+    if ( _size > 0 ) {
 
-    //     deploy( duff, src_hw_8086_duff_asm );
+        deploy( duff, src_hw_8086_duff_asm );
 
-    //     outline1("MOV HL, [%s]", _source);
-    //     outline1("MOV DE, [%s]", _destination);
-    //     outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    //     outline0("MOV C, A");
-    //     outline1("MOV B, 0x%2.2x", ( _size >> 8 ) & 0xff );
-    //     outline0("CALL DUFFDEVICE");
+        outline1("MOV SI, [%s]", _source);
+        outline1("MOV DI, [%s]", _destination);
+        outline1("MOV CX, 0x%4.4x", _size );
+        outline0("CALL DUFFDEVICE");
 
-    // }
+    }
 
 }
 
 void cpu_mem_move_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    // if ( _size > 0 ) {
+    if ( _size > 0 ) {
 
-    //     deploy( duff, src_hw_8086_duff_asm );
+        deploy( duff, src_hw_8086_duff_asm );
 
-    //     outline1("MOV HL, %s", _source);
-    //     outline1("MOV DE, %s", _destination);
-    //     outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    //     outline0("MOV C, A");
-    //     outline1("MOV B, 0x%2.2x", ( _size >> 8 ) & 0xff );
-    //     outline0("CALL DUFFDEVICE");
-    // }
+        outline1("MOV SI, %s", _source);
+        outline1("MOV DI, %s", _destination);
+        outline1("MOV CX, 0x%4.4x", _size );
+        outline0("CALL DUFFDEVICE");
+
+    }
 
 }
 
 void cpu_mem_move_direct_indirect_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    // if ( _size ) {
+    if ( _size ) {
 
-    //     deploy( duff, src_hw_8086_duff_asm );
+        deploy( duff, src_hw_8086_duff_asm );
 
-    //     outline1("MOV HL, %s", _source);
-    //     outline1("MOV DE, [%s]", _destination);
-    //     outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    //     outline0("MOV C, A");
-    //     outline1("MOV B, 0x%2.2x", ( _size >> 8 ) & 0xff );
-    //     outline0("CALL DUFFDEVICE");
-    // }
+        outline1("MOV SI, %s", _source);
+        outline1("MOV DI, [%s]", _destination);
+        outline1("MOV CX, 0x%4.4x", _size );
+        outline0("CALL DUFFDEVICE");
+
+    }
 
 }
 
 void cpu_mem_move_indirect_direct_size( Environment * _environment, char *_source, char *_destination, int _size ) {
 
-    // if ( _size ) {
+    if ( _size ) {
 
-    //     deploy( duff, src_hw_8086_duff_asm );
+        deploy( duff, src_hw_8086_duff_asm );
 
-    //     outline1("MOV HL, [%s]", _source);
-    //     outline1("MOV DE, %s", _destination);
-    //     outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    //     outline0("MOV C, A");
-    //     outline1("MOV B, 0x%2.2x", ( _size >> 8 ) & 0xff );
-    //     outline0("CALL DUFFDEVICE");
-    // }
+        outline1("MOV SI, [%s]", _source);
+        outline1("MOV DI, %s", _destination);
+        outline1("MOV CX, 0x%4.4x", _size );
+        outline0("CALL DUFFDEVICE");
+
+    }
 
 }
 
 void cpu_compare_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _size);
-    // outline0("CP 0");
-    // outline1("JR Z, %sequal", label);
-    // outline0("MOV C, A");
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outhead1("%s:", label );
-    // outline0("MOV A, (HL)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (DE)");
-    // outline0("CP B");
-    // outline1("JR NZ, %sdiff", label);
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outhead1("%sequal:", label );
-    // outline1("MOV A, 0x%2.2x", _equal ? 255 : 0 );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline1("MOV A, 0x%2.2x", _equal ? 0 : 255 );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CX, [%s]", _size);
+    outline0("CLD");
+    outline0("REPE CMPSB");
+
+    outline1("JNE %s", label);
+    outhead1("%sequal:", label );
+    outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
+    outline1("MOV [%s], AL", _result );
+    outline1("JP %sfinal", label );
+    outhead1("%sdiff:", label );
+    outline1("MOV AL, 0x%2.2x", _equal ? 0 : 255 );
+    outline1("MOV [%s], AL", _result );
+    outhead1("%sfinal:", label );
 
 }
 
 void cpu_compare_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CX, 0x%4.4x", (unsigned short)(_size&0xffff));
+    outline0("CLD");
+    outline0("REPE CMPSB");
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0("MOV C, A");
-    // outhead1("%s:", label );
-    // outline0("MOV A, (HL)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (DE)");
-    // outline0("CP B");
-    // outline1("JR NZ, %sdiff", label);
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outline1("MOV A, 0x%2.2x", _equal ? 255 : 0 );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline1("MOV A, 0x%2.2x", _equal ? 0 : 255 );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    outline1("JNE %s", label);
+    outhead1("%sequal:", label );
+    outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
+    outline1("MOV [%s], AL", _result );
+    outline1("JP %sfinal", label );
+    outhead1("%sdiff:", label );
+    outline1("MOV AL, 0x%2.2x", _equal ? 0 : 255 );
+    outline1("MOV [%s], AL", _result );
+    outhead1("%sfinal:", label );
+
+    // comparazione:
+    // cmpsb                       ; Confronta [SI] con [DI]
+    // ja  string_maggiore         ; Salta se il primo byte è maggiore (no carry)
+    // jb  string_minore           ; Salta se il primo byte è minore (carry)
+
+    // loop comparazione           ; Ripeti il ciclo se i byte sono uguali
 
 }
 
 void cpu_less_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A");
-    // outhead1("%s:", label );
-    // outline0("MOV A, (DE)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (HL)");
-    // outline0("CP B");
-    // if ( _equal ) {
-    //     outline1("JR Z, %seq", label);
-    // }
-    // outline1("JR NC, %sdiff", label);
-    // if ( ! _equal ) {
-    //     outline1("JR Z, %sdiff", label);
-    // }
-    // outhead1("%seq:", label );
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outline0("MOV A, 0xff" );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline0("MOV A, 0" );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    char greaterLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( greaterLabel, "%sgt", label );
+    char lesserLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( lesserLabel, "%slt", label );
+
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CX, %s]", _size);
+    outline0("CLD");
+
+    outhead("%s:", label);
+    outline0("CMPSB");
+    if ( !_equal ) {
+        outline1("JAE %s", labelgreaterLabel);
+    } else {
+        outline1("JA %s", labelgreaterLabel);
+    }
+    outline1("LOOP %s", label );
+
+    outline0("MOV AL, 0xff");
+    outline1("JP %s", label);
+
+    outhead1("%s:", labelgreaterLabel );
+    outline0("MOV AL, 0");
+    outhead1("%s:", label );
 
 }
 
 void cpu_less_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]",_destination);
-    // outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0("MOV C, A");
-    // outhead1("%s:", label );
-    // outline0("MOV A, (DE)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (HL)");
-    // outline0("CP B");
-    // if ( _equal ) {
-    //     outline1("JR Z, %seq", label);
-    // }
-    // outline1("JR NC, %sdiff", label);
-    // if ( ! _equal ) {
-    //     outline1("JR Z, %sdiff", label);
-    // }
-    // outhead1("%seq:", label );
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outline0("MOV A, 0xff" );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline0("MOV A, 0" );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    char greaterLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( greaterLabel, "%sgt", label );
+    char lesserLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( lesserLabel, "%slt", label );
+
+    outline1("MOV SI, [%s]", _source);
+    outline1("MOV DI, [%s]", _destination);
+    outline1("MOV CX, 0x%4.4x", (unsigned short)(_size&0xffff));
+    outline0("CLD");
+
+    outhead("%s:", label);
+    outline0("CMPSB");
+    if ( !_equal ) {
+        outline1("JAE %s", labelgreaterLabel);
+    } else {
+        outline1("JA %s", labelgreaterLabel);
+    }
+    outline1("LOOP %s", label );
+
+    outline0("MOV AL, 0xff");
+    outline1("JP %s", label);
+
+    outhead1("%s:", labelgreaterLabel );
+    outline0("MOV AL, 0");
+    outhead1("%s:", label );
 
 }
 
 void cpu_greater_than_memory( Environment * _environment, char *_source, char *_destination, char *_size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A");
-    // outhead1("%s:", label );
-    // outline0("MOV A, (DE)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (HL)");
-    // outline0("CP B");
-    // if ( !_equal ) {
-    //     outline1("JR Z, %sdiff", label);
-    // }
-    // outline1("JR C, %sdiff", label);
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outline1("MOV A, 0x%2.2x", 255 );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline1("MOV A, 0x%2.2x", 0 );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    cpu_less_than_memory( _environment, _source, _destination, _size, _result, !_equal );
+    cpu_not_8bit( _environment, _result );
 
 }
 
 void cpu_greater_than_memory_size( Environment * _environment, char *_source, char *_destination, int _size, char * _result, int _equal ) {
 
-    // MAKE_LABEL
-
-    // outline1("MOV HL, [%s]", _source);
-    // outline1("MOV DE, [%s]", _destination);
-    // outline1("MOV A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0("MOV C, A");
-    // outhead1("%s:", label );
-    // outline0("MOV A, (DE)");
-    // outline0("MOV B, A");
-    // outline0("MOV A, (HL)");
-    // outline0("CP B");
-    // if ( ! _equal ) {
-    //     outline1("JR Z, %sdiff", label);
-    // }
-    // outline1("JR C, %sdiff", label);
-    // outline0("INC DE");
-    // outline0("INC HL");
-    // outline0("DEC C");
-    // outline1("JR NZ, %s", label);
-    // outline1("MOV A, 0x%2.2x", 255 );
-    // outline1("MOV [%s], A", _result );
-    // outline1("JP %sfinal", label );
-    // outhead1("%sdiff:", label );
-    // outline1("MOV A, 0x%2.2x", 0 );
-    // outline1("MOV [%s], A", _result );
-    // outhead1("%sfinal:", label );
+    cpu_less_than_memory_size( _environment, _source, _destination, _size, _result, !_equal );
+    cpu_not_8bit( _environment, _result );
 
 }
 
 void cpu_math_add_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // outline1("MOV HL, [%s]", _source );
-    // outline0("MOV DE, 0" );
-    // outline1("MOV A, [%s]", _destination );
-    // outline0("MOV E, A" );
-    // outline0("ADD HL, DE" );
-    // if ( _other ) {
-    //     outline1("MOV [%s], HL", _other );
-    // } else {
-    //     outline1("MOV [%s], HL", _destination );
-    // }
+    outline1("MOV AX, [%s]", _source );
+    outline1("MOV BL, [%s]", _destination );
+    outline0("MOV BH, 0" );
+    outline0("ADD AX, BX" );
+    if ( _other ) {
+        outline1("MOV [%s], AX", _other );
+    } else {
+        outline1("MOV [%s], AX", _destination );
+    }
 
 }
 
 void cpu_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_other ) {
 
-    // outline1("MOV HL, [%s]", _source );
-    // outline0("MOV DE, 0" );
-    // outline1("MOV A, [%s]", _destination );
-    // outline0("MOV E, A" );
-    // outline0("SBC HL, DE" );
-    // if ( _other ) {
-    //     outline1("MOV [%s], HL", _other );
-    // } else {
-    //     outline1("MOV [%s], HL", _destination );
-    // }
+    outline1("MOV AX, [%s]", _source );
+    outline1("MOV BL, [%s]", _destination );
+    outline0("MOV BH, 0" );
+    outline0("SUB AX, BX" );
+    if ( _other ) {
+        outline1("MOV [%s], AX", _other );
+    } else {
+        outline1("MOV [%s], AX", _destination );
+    }
 
 }
 
 void cpu_uppercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A" );
-    // outline1("MOV HL, [%s]", _source );
-    // if ( _result ) {
-    //     outline1("MOV DE, [%s]", _result );
-    // } else {
-    //     outline1("MOV DE, [%s]", _source );
-    // }
-    // outhead1("%supper:", label );
-    // outline0("MOV A, (HL)" );
+    outline1("MOV CL, [%s]", _size);
+    outline1("MOV SI, [%s]", _source );
+    if ( _result ) {
+        outline1("MOV DI, [%s]", _result );
+    } else {
+        outline1("MOV DI, [%s]", _source );
+    }
+    outhead1("%supper:", label );
+    outline0("MOV AL, [SI]" );
 
-    // outline0("CP 97");
-    // outline1("JR C, %snext", label);
+    outline0("CMP AL, 97");
+    outline1("JC %snext", label);
 
-    // outline0("CP 122");
-    // outline1("JR NC, %snext", label);
+    outline0("CMP AL, 122");
+    outline1("JNC %snext", label);
 
-    // outline0("SUB A, 32");
-    // outline0("MOV (DE), A" );
-    // outline1("JP %sdone", label );
+    outline0("SUB AL, 32");
+    outline0("MOV [DI], AL" );
+    outline1("JP %sdone", label );
 
-    // outhead1("%snext:", label );
-    // outline0("MOV (DE), A" );
-    // outhead1("%sdone:", label );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("DEC C" );
-    // outline0("MOV A, C" );
-    // outline0("CP 0" );
-    // outline1("JR NZ, %supper", label);
+    outhead1("%snext:", label );
+    outline0("MOV [DI], AL" );
+
+    outhead1("%sdone:", label );
+    outline0("INC SI" );
+    outline0("INC DI" );
+    outline0("DEC CX" );
+    outline0("CMP CX, 0" );
+    outline1("JNZ %supper", label);
 
 }
 
 void cpu_lowercase( Environment * _environment, char *_source, char *_size, char *_result ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outline1("MOV A, [%s]", _size);
-    // outline0("MOV C, A" );
-    // outline1("MOV HL, [%s]", _source );
-    // if ( _result ) {
-    //     outline1("MOV DE, [%s]", _result );
-    // } else {
-    //     outline1("MOV DE, [%s]", _source );
-    // }
-    // outhead1("%slower:", label );
-    // outline0("MOV A, (HL)" );
+    outline1("MOV CL, [%s]", _size);
+    outline1("MOV SI, [%s]", _source );
+    if ( _result ) {
+        outline1("MOV DI, [%s]", _result );
+    } else {
+        outline1("MOV DI, [%s]", _source );
+    }
+    outhead1("%slower:", label );
+    outline0("MOV AL, [SI]" );
 
-    // outline0("CP 65");
-    // outline1("JR C, %snext", label);
+    outline0("CMP AL, 65");
+    outline1("JC %snext", label);
 
-    // outline0("CP 91");
-    // outline1("JR NC, %snext", label);
+    outline0("CMP AL, 91");
+    outline1("JNC %snext", label);
 
-    // outline0("ADC A, 31");
-    // outline0("MOV (DE), A" );
-    // outline1("JP %sdone", label );
-    // outhead1("%snext:", label );
-    // outline0("MOV (DE), A" );
-    // outhead1("%sdone:", label );
-    // outline0("INC HL" );
-    // outline0("INC DE" );
-    // outline0("DEC C" );
-    // outline0("MOV A, C" );
-    // outline0("CP 0" );
-    // outline1("JR NZ, %slower", label);
+    outline0("SUB AL, 32");
+    outline0("MOV [DI], AL" );
+    outline1("JP %sdone", label );
+
+    outhead1("%snext:", label );
+    outline0("MOV [DI], AL" );
+
+    outhead1("%sdone:", label );
+    outline0("INC SI" );
+    outline0("INC DI" );
+    outline0("DEC CX" );
+    outline0("CMP CX, 0" );
+    outline1("JNZ %slower", label);
 
 }
 
 void cpu_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
-    // Variable * temp = variable_temporary( _environment, VT_WORD, "(temp)" );
-
-    // cpu_convert_string_into_16bit( _environment, _string, _len, temp->realName );
-
-    // cpu_move_8bit( _environment, temp->realName, _value );
+    Variable * temp = variable_temporary( _environment, VT_WORD, "(temp)" );
+    cpu_convert_string_into_16bit( _environment, _string, _len, temp->realName );
+    cpu_move_8bit( _environment, temp->realName, _value );
   
 }
 
 void cpu_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value ) {
 
-    // MAKE_LABEL
+    deploy( cpu_convert_string_into_16bit, src_hw_8086_cpu_convert_string_into_16bit_asm );
 
-    // outline1("MOV A, [%s]", _len );
-    // outline0("MOV IX, 0" );
-    // outline0("MOV IXL, A" );
-
-    // outline0("MOV A, 0" );
-    // outline1("MOV [%s], A", _value );
-    // outline1("MOV (%s+1), A", _value );
-
-    // outline1("MOV HL, [%s]", _string );
-
-    // outhead1("%srepeat:", label );
-
-    // outline0("MOV A, (HL)" );
-    // outline0("CP 0x40" );
-    // outline1("JR NC, %send", label);
-    // outline0("CP 0x30" );
-    // outline1("JR C, %send", label);
-    // outline0("SBC A, 0x30" );
-
-    // outline0("PUSH AF" );
-    // outline1("MOV A, [%s]", address_displacement(_environment, _value, "1") );
-    // outline0("MOV B, A"  );
-    // outline1("MOV A, [%s]", _value );
-    // outline0("MOV C, A" );
-    // outline0("POP AF" );
-    // outline0("MOV E, A" );
-    // outline0("MOV D, 0" );
-    // outline0("PUSH HL" );
-    // outline0("MOV HL, 0" );
-    // outline0("ADC HL, DE" );
-    // outline0("ADC HL, BC" );
-    // outline1("MOV [%s], HL", _value );
-    // outline0("POP HL" );
-
-
-    // // MULT x 10
-
-    // outline0("INC HL" );
-    // outline0("DEC IX" );
-    // outline0("MOV A, 0" );
-    // outline0("CP IXL" );
-    // outline1("JR Z,%send", label );
-
-    // outline0("PUSH HL" );
-
-    // outline1("MOV DE, [%s]", _value );
-    // outline0("MOV A, 10" );
-    // outline0("MOV B, 8" );
-    // outline0("MOV HL, 0" );
-    // outline0("ADD HL, HL" );
-    // outline0("RLCA" );
-    // outline0("JR NC,0x+3" );
-    // outline0("ADD HL, DE" );
-    // outline0("DJNZ 0x-5" );
-    // outline1("MOV [%s], HL", _value );
-
-    // outline0("POP HL" );
-
-    // outline1("JP %srepeat", label );
-
-    // outhead1("%send:", label );
+    outline1( "MOV SI, %s", _string );
+    outline1( "MOV CX, [%s]", _len );
+    outline0( "CALL CONVERTSTRING16BIT" );
+    outline1( "MOV [%s], AX", _value );
   
 }
 
 void cpu_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // // Use the current bitmap address as starting address for filling routine.
-    // outline1("MOV DE, [%s]", _address);
-    // outline1("MOV HL, [%s]", _pattern);
+    // Use the current bitmap address as starting address for filling routine.
+    outline1("MOV DI, [%s]", _address);
+    outline1("MOV SI, [%s]", _pattern);
 
-    // // Fill the bitmap with the given pattern.
-    // if ( _size_size >= 16 ) {
-    //     outline1("MOV A, [%s]", _size);
-    //     outline0("MOV C, A" );
-    //     outline1("MOV A, (%s+1)", _size);
-    //     outline0("MOV B, A" );
-    //     outhead1("%sx:", label);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV (DE),A");
-    //     outline0("INC DE");
-    //     outline0("DEC BC");
-    //     outline0("MOV A, B");
-    //     outline0("OR C");
-    //     outline1("JR NZ,%sx", label);
-    // } else {
-    //     outline1("MOV A, [%s]", _size);
-    //     outline0("MOV C, A" );
-    //     outhead1("%sx:", label);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV (DE),A");
-    //     outline0("INC DE");
-    //     outline0("DEC C");
-    //     outline1("JR NZ,%sx", label);
-    // }
+    // Fill the bitmap with the given pattern.
+    if ( _size_size >= 16 ) {
+        outline1("MOV CX, [%s]", _size);
+        outhead1("%sx:", label);
+        outline0("MOV AL, [SI]");
+        outline0("MOV [DI], AL");
+        outline0("INC DI");
+        outline0("DEC CX");
+        outline0("CMP CX, 0");
+        outline1("JNZ %sx", label);
+    } else {
+        outline1("MOV CL, [%s]", _size);
+        outline0("MOV CH, 0" );
+        outhead1("%sx:", label);
+        outline0("MOV AL, [SI]");
+        outline0("MOV [DI], AL");
+        outline0("INC DI");
+        outline0("CMP CL, 0");
+        outline1("JNZ %sx", label);
+    }
 
 }
 
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
-    // no_inline( cpu_flip )
+    no_inline( cpu_flip )
 
-    // embedded( cpu_flip, src_hw_8086_cpu_flip_asm );
+    embedded( cpu_flip, src_hw_8086_cpu_flip_asm );
 
-    //     outline1("MOV HL, [%s]", _source);
-    //     outline1("MOV DE, [%s]", _destination);
-    //     outline1("MOV A, [%s]", _size);
-    //     outline0("CALL CPUFLIP");
+        outline1("MOV SI, [%s]", _source);
+        outline1("MOV DI, [%s]", _destination);
+        outline1("MOV CL, [%s]", _size);
+        outline0("CALL CPUFLIP");
 
-    // done(  )
+    done(  )
 
 }
 
 void cpu_move_8bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline1("MOV A, [%s]", _source);
-    // outline0("MOV (DE), A");
+    outline1("MOV DI, [%s]", _value);
+    outline1("MOV AL, [%s]", _source);
+    outline0("MOV [DI], AL");
 
 }
 
 void cpu_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
-    // outline1("MOV HL, %s", _value);
-    // outline1("MOV A, [%s]", _offset );
-    // outline0("MOV E, A" );
-    // outline0("MOV D, 0" );
-    // outline0("ADD HL, DE" );
-    // outline1("MOV A, [%s]", _source);
-    // outline0("MOV (HL), A");
+    outline1("MOV SI, %s", _value);
+    outline1("MOV AL, [%s]", _offset );
+    outline0("MOV AH, 0" );
+    outline0("ADD SI, AX" );
+    outline1("MOV AL, [%s]", _source);
+    outline0("MOV (SI), AL");
 
 }
 
 void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_source, char * _value, int _offset ) {
 
-    // outline1("MOV HL, [%s]", _value);
-    // outline1("MOV DE, 0x%2.2x", ( _offset & 0xff ) );
-    // outline0("ADD HL, DE" );
-    // outline1("MOV A, [%s]", _source);
-    // outline0("MOV (HL), A");
+    outline1("MOV SI, [%s]", _value);
+    outline1("MOV AX, 0x%2.2x", ( _offset & 0xff ) );
+    outline0("ADD SI, AX" );
+    outline1("MOV AL, [%s]", _source);
+    outline0("MOV (SI), AL");
 
 }
 
 void cpu_move_8bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline0("MOV A, (DE)");
-    // outline1("MOV [%s], A", _source);
+    outline1("MOV DI, [%s]", _value);
+    outline0("MOV AL, [DI]");
+    outline1("MOV [%s], AL", _source);
 
 }
 
 void cpu_move_8bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
-    // outline1("MOV HL, %s", _value);
-    // outline1("MOV A, [%s]", _offset);
-    // outline0("MOV E, A");
-    // outline0("MOV D, 0");
-    // outline0("ADD HL, DE");
-    // outline0("MOV A, (HL)");
-    // outline1("MOV [%s], A", _source );
+    outline1("MOV SI, %s", _value);
+    outline1("MOV AL, [%s]", _offset);
+    outline0("MOV AH, 0");
+    outline0("ADD SI, AX");
+    outline0("MOV AL, (SI)");
+    outline1("MOV [%s], AL", _source );
 
 }
 
 void cpu_move_8bit_indirect2_16bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
-    // outline1("MOV HL, %s", _value);
-    // outline1("MOV DE, [%s]", _offset);
-    // outline0("ADD HL, DE");
-    // outline0("MOV A, (HL)");
-    // outline1("MOV [%s], A", _source );
+    outline1("MOV SI, %s", _value);
+    outline1("MOV AX, [%s]", _offset);
+    outline0("ADD SI, AX");
+    outline0("MOV AL, [SI]");
+    outline1("MOV [%s], AL", _source );
 
 }
 
 void cpu_move_16bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline1("MOV HL, [%s]", _source);
-    // outline0("MOV A, L");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
-    // outline0("MOV A, H");
-    // outline0("MOV (DE), A");
+    outline1("MOV DI, [%s]", _value);
+    outline1("MOV AX, [%s]", _source);
+    outline0("MOV [DI], AX");
 
 }
 
 void cpu_move_16bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline0("MOV A, (DE)");
-    // outline1("MOV [%s], A", _source);
-    // outline0("INC DE");
-    // outline0("MOV A, (DE)");
-    // outline1("MOV [%s], A", address_displacement(_environment, _source, "1"));
+    outline1("MOV DI, [%s]", _value);
+    outline0("MOV AX, [DI]");
+    outline1("MOV [%s], AX", _source);
 
 }
 
 void cpu_move_16bit_indirect2_8bit( Environment * _environment, char * _value, char * _offset, char *_source ) {
 
-    // outline1("MOV HL, %s", _value);
-    // outline1("MOV A, [%s]", _offset);
-    // outline0("MOV E, A");
-    // outline0("MOV A, 0");
-    // outline0("MOV D, A");
-    // outline0("ADD HL, DE");
-    // outline0("ADD HL, DE");
-    // outline0("MOV A, (HL)");
-    // outline1("MOV [%s], A", _source );
-    // outline0("INC HL");
-    // outline0("MOV A, (HL)");
-    // outline1("MOV [%s], A", address_displacement(_environment, _source, "1") );
+    outline1("MOV SI, %s", _value);
+    outline1("MOV AL, [%s]", _offset);
+    outline0("MOV AH, 0");
+    outline0("ADD SI, AX");
+    outline0("ADD SI, AX");
+    outline0("MOV AX, [SI]");
+    outline1("MOV [%s], AX", _source );
 
 }
 
 void cpu_move_32bit_indirect( Environment * _environment, char *_source, char * _value ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline1("MOV HL, [%s]", _source);
-    // outline0("MOV A, L");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
-    // outline0("MOV A, H");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
-    // outline1("MOV HL, [%s]", address_displacement(_environment, _source, "2"));
-    // outline0("MOV A, L");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
-    // outline0("MOV A, H");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
+    outline1("MOV DI, [%s]", _value);
+    outline1("MOV AX, [%s]", _source);
+    outline0("MOV [DI], AX");
+    outline0("INC DI");
+    outline0("INC DI");
+    outline1("MOV AX, [%s]", address_displacement(_environment, _source, "2"));
+    outline0("MOV [DI], AX");
 
 }
 
 void cpu_move_nbit_indirect( Environment * _environment, int _n, char *_source, char * _value ) {
 
-    // outline1("MOV DE, [%s]", _value);
+    outline1("MOV DI, [%s]", _value);
 
-    // char step[MAX_TEMPORARY_STORAGE];
-    // char step2[MAX_TEMPORARY_STORAGE];
+    char step[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
 
-    // int stepIndex = 0;
-    // while( _n ) {
-    //     sprintf( step, "%d", stepIndex );
-    //     sprintf( step2, "%d", stepIndex+2 );
-    //     if ( _n >= 32 ) {
-    //         outline1("MOV HL, [%s]", address_displacement(_environment, _source, step));
-    //         outline0("MOV A, L");
-    //         outline0("MOV (DE), A");
-    //         outline0("INC DE");
-    //         outline0("MOV A, H");
-    //         outline0("MOV (DE), A");
-    //         outline0("INC DE");
-    //         outline1("MOV HL, [%s]", address_displacement(_environment, _source, step2));
-    //         outline0("MOV A, L");
-    //         outline0("MOV (DE), A");
-    //         outline0("INC DE");
-    //         outline0("MOV A, H");
-    //         outline0("MOV (DE), A");
-    //         outline0("INC DE");
-    //         stepIndex += 4;
-    //         _n -= 32;
-    //     } else {
-    //         switch( _n ) {
-    //             case 32: case 31: case 30: case 29:
-    //             case 28: case 27: case 26: case 25:
-    //                 outline1("MOV HL, [%s]", address_displacement(_environment, _source, step));
-    //                 outline0("MOV A, L");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, H");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV HL, [%s]", address_displacement(_environment, _source, step2));
-    //                 outline0("MOV A, L");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, H");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 break;
-    //             case 24: case 23: case 22: case 21:
-    //             case 20: case 19: case 18: case 17:
-    //                 outline1("MOV HL, [%s]", address_displacement(_environment, _source, step));
-    //                 outline0("MOV A, L");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, H");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV A, [%s]", address_displacement(_environment, _source, step2));
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 break;
-    //             case 16: case 15: case 14: case 13:
-    //             case 12: case 11: case 10: case 9:
-    //                 outline1("MOV HL, [%s]", address_displacement(_environment, _source, step));
-    //                 outline0("MOV A, L");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, H");
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 break;
-    //             case 8: case 7: case 6: case 5:
-    //             case 4: case 3: case 2: case 1:
-    //                 outline1("MOV A, [%s]", address_displacement(_environment, _source, step));
-    //                 outline0("MOV (DE), A");
-    //                 outline0("INC DE");
-    //                 break;
-    //         }
-    //         _n = 0;
-    //     }
-    // }
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step2, "%d", stepIndex+2 );
+        if ( _n >= 32 ) {
+            outline1("MOV AX, [%s]", address_displacement(_environment, _source, step));
+            outline0("MOV [DI], AX");
+            outline0("INC DI");
+            outline0("INC DI");
+            outline1("MOV AX, [%s]", address_displacement(_environment, _source, step2));
+            outline0("MOV [DI], AX");
+            outline0("INC DI");
+            outline0("INC DI");
+            stepIndex += 4;
+            _n -= 32;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline1("MOV AX, [%s]", address_displacement(_environment, _source, step));
+                    outline0("MOV [DI], AX");
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    outline1("MOV AX, [%s]", address_displacement(_environment, _source, step2));
+                    outline0("MOV [DI], AX");
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline1("MOV AX, [%s]", address_displacement(_environment, _source, step));
+                    outline0("MOV [DI], AX");
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    outline1("MOV AL, [%s]", address_displacement(_environment, _source, step2));
+                    outline0("MOV [DI], AL");
+                    outline0("INC DI");
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline1("MOV AX, [%s]", address_displacement(_environment, _source, step));
+                    outline0("MOV [DI], AX");
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline1("MOV AL, [%s]", address_displacement(_environment, _source, step2));
+                    outline0("MOV [DI], AL");
+                    outline0("INC DI");
+                    break;
+            }
+            _n = 0;
+        }
+    }
 
 }
 
 void cpu_move_32bit_indirect2( Environment * _environment, char * _value, char *_source ) {
 
-    // outline1("MOV DE, [%s]", _value);
-    // outline0("MOV A, (DE)");
-    // outline0("MOV L, A");
-    // outline0("INC DE");
-    // outline0("MOV A, (DE)");
-    // outline0("MOV H, A");
-    // outline0("INC DE");
-    // outline1("MOV [%s], HL", _source);
-    // outline0("MOV A, (DE)");
-    // outline0("MOV L, A");
-    // outline0("INC DE");
-    // outline0("MOV A, (DE)");
-    // outline0("MOV H, A");
-    // outline0("INC DE");
-    // outline1("MOV [%s], HL", address_displacement( _environment, _source, "2" ) );
+    outline1("MOV DI, [%s]", _value);
+    outline0("MOV AX, [DI]");
+    outline1("MOV [%s], AX", _source);
+    outline0("INC DI");
+    outline0("INC DI");
+    outline0("MOV AX, [DI]");
+    outline1("MOV [%s], AX", address_displacement( _environment, _source, "2" ) );
 
 }
 
 void cpu_move_nbit_indirect2( Environment * _environment, int _n, char * _value, char *_source ) {
 
-    // outline1("MOV DE, [%s]", _value);
+    outline1("MOV DI, [%s]", _value);
 
-    // char step[MAX_TEMPORARY_STORAGE];
-    // char step2[MAX_TEMPORARY_STORAGE];
+    char step[MAX_TEMPORARY_STORAGE];
+    char step2[MAX_TEMPORARY_STORAGE];
 
-    // int stepIndex = 0;
-    // while( _n ) {
-    //     sprintf( step, "%d", stepIndex );
-    //     sprintf( step2, "%d", stepIndex+2 );
-    //     if ( _n >= 32 ) {
-    //         outline0("MOV A, (DE)");
-    //         outline0("MOV L, A");
-    //         outline0("INC DE");
-    //         outline0("MOV A, (DE)");
-    //         outline0("MOV H, A");
-    //         outline0("INC DE");
-    //         outline1("MOV [%s], HL", address_displacement( _environment, _source, step ) );
-    //         outline0("MOV A, (DE)");
-    //         outline0("MOV L, A");
-    //         outline0("INC DE");
-    //         outline0("MOV A, (DE)");
-    //         outline0("MOV H, A");
-    //         outline0("INC DE");
-    //         outline1("MOV [%s], HL", address_displacement( _environment, _source, step2 ) );
-    //         stepIndex += 4;
-    //         _n -= 32;
-    //     } else {
-    //         switch( _n ) {
-    //             case 32: case 31: case 30: case 29:
-    //             case 28: case 27: case 26: case 25:
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV L, A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV H, A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], HL", address_displacement( _environment, _source, step ) );
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV L, A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV H, A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], HL", address_displacement( _environment, _source, step2 ) );
-    //                 break;
-    //             case 24: case 23: case 22: case 21:
-    //             case 20: case 19: case 18: case 17:
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV L, A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV H, A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], HL", address_displacement( _environment, _source, step ) );
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], A", address_displacement( _environment, _source, step2 ) );
-    //                 break;
-    //             case 16: case 15: case 14: case 13:
-    //             case 12: case 11: case 10: case 9:
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV L, A");
-    //                 outline0("INC DE");
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("MOV H, A");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], HL", address_displacement( _environment, _source, step ) );
-    //                 break;
-    //             case 8: case 7: case 6: case 5:
-    //             case 4: case 3: case 2: case 1:
-    //                 outline0("MOV A, (DE)");
-    //                 outline0("INC DE");
-    //                 outline1("MOV [%s], A", address_displacement( _environment, _source, step ) );
-    //                 break;
-    //         }
-    //         _n = 0;
-    //     }
-    // }
+    int stepIndex = 0;
+    while( _n ) {
+        sprintf( step, "%d", stepIndex );
+        sprintf( step2, "%d", stepIndex+2 );
+        if ( _n >= 32 ) {
+            outline0("MOV AX, [DI]");
+            outline1("MOV [%s], AX", address_displacement( _environment, _source, step ) );
+            outline0("INC DI");
+            outline0("INC DI");
+            outline0("MOV AX, [DI]");
+            outline1("MOV [%s], AX", address_displacement( _environment, _source, step2 ) );
+            outline0("INC DI");
+            outline0("INC DI");
+            stepIndex += 4;
+            _n -= 32;
+        } else {
+            switch( _n ) {
+                case 32: case 31: case 30: case 29:
+                case 28: case 27: case 26: case 25:
+                    outline0("MOV AX, [DI]");
+                    outline1("MOV [%s], AX", address_displacement( _environment, _source, step ) );
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    outline0("MOV AX, [DI]");
+                    outline1("MOV [%s], AX", address_displacement( _environment, _source, step2 ) );
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    break;
+                case 24: case 23: case 22: case 21:
+                case 20: case 19: case 18: case 17:
+                    outline0("MOV AX, [DI]");
+                    outline1("MOV [%s], AX", address_displacement( _environment, _source, step ) );
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    outline0("MOV AL, [DI]");
+                    outline1("MOV [%s], AL", address_displacement( _environment, _source, step2 ) );
+                    outline0("INC DI");
+                    break;
+                case 16: case 15: case 14: case 13:
+                case 12: case 11: case 10: case 9:
+                    outline0("MOV AX, [DI]");
+                    outline1("MOV [%s], AX", address_displacement( _environment, _source, step ) );
+                    outline0("INC DI");
+                    outline0("INC DI");
+                    break;
+                case 8: case 7: case 6: case 5:
+                case 4: case 3: case 2: case 1:
+                    outline0("MOV AL, [DI]");
+                    outline1("MOV [%s], AL", address_displacement( _environment, _source, step ) );
+                    outline0("INC DI");
+                    break;
+            }
+            _n = 0;
+        }
+    }
 
 }
 
