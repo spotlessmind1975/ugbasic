@@ -29,584 +29,147 @@
 ; ;  ****************************************************************************/
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ; ;*                                                                             *
-; ;*                          STARTUP ROUTINE FOR TMS9918                        *
+; ;*                           STARTUP ROUTINE FOR CGA                           *
 ; ;*                                                                             *
 ; ;*                             by Marco Spedaletti                             *
 ; ;*                                                                             *
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; VDPLOCK:
-;         DI
-;         PUSH AF
-;         LD A, 1
-;         LD (VDPINUSE), A
-;         POP AF
-;         RET
+; Horizontal Total
+;   - 0x38 for 40x25 alphanumeric or Graphic modes
+;   - 0x71 for 80x25 alphanumeric
+CGA_REG_HZ_TOTAL = 0x00
 
-; VDPUNLOCK:
-;         PUSH AF
-;         LD A, 0
-;         LD (VDPINUSE), A
-;         IN A, ($bf)
-;         POP AF
-;         EI
-;         RET
+; Horizontal Displayed
+;   - 0x28 for 40x25 alphanumeric or Graphic modes
+;   - 0x50 for 80x25 alphanumeric
+CGA_REG_HZ_DISP = 0x01
 
-; ; if __coleco__
+; Horizontal Sync Position
+;   - 0x2d for 40x25 alphanumeric or Graphic modes
+;   - 0x5a for 80x25 alphanumeric
+CGA_REG_HZ_SYNC_POS = 0x02
 
-; ; WAIT_VDP_HOOK:
-; ;         LD A, (VDP_HOOK)
-; ;         CP $cd
-; ;         JR Z,WAIT_VDP_HOOK
-; ;         RET
+; Horizontal Sync Width
+;   - 0x0a for any mode
+CGA_REG_HZ_SYNC_WIDTH = 0x03
 
-; ; SET_VDP_HOOK0:
-; ;         LD (VDP_HOOK+1),HL
-; ;         LD A,$c9
-; ;         LD (VDP_HOOK+3),A
-; ;         LD A,$cd
-; ;         LD (VDP_HOOK),A
-; ;         RET
+; Vertical Total
+;   - 0x1f
+CGA_REG_VT_TOTAL = 0x04
 
-; ; SET_VDP_HOOK:
-; ;         LD (VDP_HOOK+1),HL
-; ;         LD A,$c9
-; ;         LD (VDP_HOOK+3),A
-; ;         LD A, B
-; ;         LD (VDP_HOOK+4),A
-; ;         LD A, C
-; ;         LD (VDP_HOOK+5),A
-; ;         LD A, D
-; ;         LD (VDP_HOOK+6),A
-; ;         LD A, E
-; ;         LD (VDP_HOOK+7),A
-; ;         LD A,$cd
-; ;         LD (VDP_HOOK),A
-; ;         RET
+; Vertical Total Ajust
+;   - 0x06
+CGA_REG_VT_TOTAL_ADJUST = 0x05
 
-; ; SET_VDP_HOOK_HL:
-; ;         LD A, H
-; ;         LD (VDP_HOOK+8),A
-; ;         LD A, L
-; ;         LD (VDP_HOOK+9),A
-; ;         RET
+; Vertical Displayed
+;   - 0x19 for 40x25 alphanumeric
+;   - 0x19 for 80x25 alphanumeric
+;   - 0x64 for Graphic modes
+CGA_REG_VT_VERT_TOTAL_ADJUST = 0x06
 
-; ; GET_VDP_HOOK:
-; ;         LD A, (VDP_HOOK+4)
-; ;         LD B, A
-; ;         LD A, (VDP_HOOK+5)
-; ;         LD C, A
-; ;         LD A, (VDP_HOOK+6)
-; ;         LD D, A
-; ;         LD A, (VDP_HOOK+7)
-; ;         LD E, A
-; ;         LD A, (VDP_HOOK+8)
-; ;         LD H, A
-; ;         LD A, (VDP_HOOK+9)
-; ;         LD L, A
-; ;         RET
+; Vertical Sync Position
+;   - 0x1c for 40x25 alphanumeric
+;   - 0x1c for 80x25 alphanumeric
+;   - 0x70 for Graphic modes
+CGA_REG_VT_VERT_SYNC_POSITION = 0x07
 
-; ; DONE_VDP_HOOK:
-; ;         LD A,0
-; ;         LD (VDP_HOOK),A
-; ;         RET
+; Interlace Mode
+;   - 0x02 for any mode
+CGA_REG_INTERLACE_MODE = 0x08
 
-; ; endif
+; Maximum Scan Line Address
+;   - 0x07 for any mode
+CGA_REG_MAX_SCAN_LINE_ADDRESS = 0x09
 
-; VDPWRITEBIT: EQU     40H
+; Cursor Start
+;   - 0x06 for any mode
+CGA_REG_CURSOR_START = 0x0a
 
-; VDPSETREGI:
-;         CALL    VDPREGOUT
-;         LD      A, E
-; VDPREGOUT:
-;         PUSH    BC
-;         LD      BC, (VDPCONTROLPORTWRITE)
-; ; if __sc3000__
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ; endif
-;         OUT     (C), A
-;         POP     BC
-;         RET
+; Cursor End
+;   - 0x07 for any mode
+CGA_REG_CURSOR_END = 0x0b
 
-; VDPREGIN:
-;         PUSH    BC
-;         LD      BC, (VDPCONTROLPORTREAD)
-; ; if __sc3000__
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ; endif
-;         IN      A, (C)
-;         POP     BC
-;         RET
+; Start Address (H)
+;   - 0x00 for any mode
+CGA_REG_START_ADDRESS_H = 0x0c
 
-; VDPRAMOUT:
-;         PUSH    BC
-;         LD      BC, (VDPDATAPORTWRITE)
-; ; if __sc3000__
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ; endif
-;         OUT     (C), A
-;         POP     BC
-;         RET
+; Start Address (L)
+;   - 0x00 for any mode
+CGA_REG_START_ADDRESS_L = 0x0d
 
-; VDPRAMOUT8:
-;         PUSH    BC
-;         LD      BC, (VDPDATAPORTWRITE)
-; ; if __sc3000__
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ; endif
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         OUT     (C), A
-; @IF MSX1
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; @ENDIF
-;         POP     BC
-;         RET
+; Cursor Address (H)
+;   - 0x?? for any mode
+CGA_REG_CURSOR_ADDRESS_H = 0x0e
 
-; VDPRAMIN:
-;         PUSH    BC
-;         LD      BC, (VDPDATAPORTREAD)
-; ; if __sc3000__
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ;         NOP
-; ; endif
-;         IN      A, (C)
-;         POP     BC
-;         RET
+; Cursor Address (L)
+;   - 0x?? for any mode
+CGA_REG_CURSOR_ADDRESS_L = 0x0f
 
-; VDPWRITEADDR:
-;         LD      A, E                    ; SEND LSB
-;         CALL    VDPREGOUT
-;         LD      A, D                    ; MASK OFF MSB TO MAX OF 16KB
-;         AND     3FH
-;         OR      VDPWRITEBIT             ; INDICATE THAT THIS IS A WRITE
-;         CALL    VDPREGOUT
-;         RET
+; Light Pen Address (H)
+;   - 0x?? for any mode
+CGA_REG_LPEN_ADDRESS_H = 0x10
 
-; VDPREADADDR:
-;         LD      A, E                    ; SEND LSB
-;         CALL    VDPREGOUT
-;         LD      A, D                    ; MASK OFF MSB TO MAX OF 16KB
-;         AND     3FH
-;         CALL    VDPREGOUT
-;         RET
+; Light Pen Address (L)
+;   - 0x?? for any mode
+CGA_REG_LPEN_ADDRESS_L = 0x11
 
-; VDPSETREG:
-;         CALL VDPLOCK
-;         CALL    VDPSETREGI
-;         CALL VDPUNLOCK
-;         RET
+; Write a specific value to the internal CGA register. 
+; Input: 
+;       AH = CGA register (0...16)
+;       AL = CGA value (0...255)
 
-; VDPOUTCHAR:
-;         CALL VDPLOCK
-;         PUSH AF
-;         CALL    VDPWRITEADDR
-;         POP AF
-;         CALL    VDPRAMOUT
-;         CALL VDPUNLOCK
-;         RET
+WRITECGAREG:
+    MOV DX, 0x3d4
+    PUSH AX
+    MOV AL, AH
+    OUT DX, AL
+    INC DX
+    POP AX
+    OUT DX, AL
+    RET
 
-; VDPINCHAR:
-;         CALL VDPLOCK
-;         PUSH AF
-;         CALL    VDPREADADDR
-;         POP AF
-;         CALL    VDPRAMIN
-;         CALL VDPUNLOCK
-;         RET
+; Write a value to the color select register
+; Input: 
+;       AL = xx543210 
+;              |||||+--- blue border (40x25), blue background (320x200), blue foreground (640x200)
+;              ||||+---- green border (40x25), green background (320x200), green foreground (640x200)
+;              |||+---- red border (40x25), red background (320x200), red foreground (640x200)
+;              ||+---- intensified color (any mode)
+;              |+---- intensified color (graphic mode) or background colors (text mode)
+;              +---- active color set: 
+;                       0 = green, red, brown
+;                       1 = cyan, magenta, white
 
-; VDPWRITE:
-;         CALL VDPLOCK
-;         CALL    VDPWRITEADDR
-; VDPWRITELOOP:
-;         LD      A, (HL)
-;         CALL    VDPRAMOUT
-;         INC     HL
-;         DEC     BC
-;         LD      A, B
-;         OR      C
-;         JP      NZ, VDPWRITELOOP
-;         CALL VDPUNLOCK
-;         RET
+WRITECGACOLORSELECTREG:
+    MOV DX, 0x3d9
+    OUT DX, AL
+    RET
 
-; VDPWRITEOPT:
-; 	; CALL VDPREGIN
-;         ; AND $80
-;         ; JR Z, VDPWRITEOPT
-;         CALL VDPLOCK
-;         CALL    VDPWRITEADDR
-; VDPWRITEOPTLOOP:
-;         ; LD      A, (HL)
-;         PUSH    BC
-;         LD      A, C
-;         LD      BC, (VDPDATAPORTWRITE)
-;         LD      B, A
+; Write a value to the mode control register
+; Input: 
+;       AL = xx543210 
+;              |||||+--- 1 = 80x25, 0 = 40x25
+;              ||||+---- 1 = 320x200, 0 = text mode
+;              |||+---- 1 = b/w mode, 0 = color mode
+;              ||+---- 1 = enable video, 0 = disable video
+;              |+---- 1 = 640x200, 0 = 320x200 / text mode
+;              +---- 1 = enable blink, 0 = disable blink
 
-; VDPWRITEOPTLOOP2:
-;         OUTI
-;         JP NZ, VDPWRITEOPTLOOP2
+WRITECGAMODECONTROLREG:
+    MOV DX, 0x3d8
+    OUT DX, AL
+    RET
 
-;         POP     BC
-;         ; INC     HL
-;         ; DEC     BC
-;         ; LD      A, B
-;         ; OR      C
-;         ; JP      NZ, VDPWRITELOOP
-;         CALL VDPUNLOCK
-;         RET
+; Read a value from the status register
+; Output: 
+;       AL = xxxx3210 
+;                |||+--- 1 = free access to frame buffer, 0 = frame buffer in use
+;                ||+---- 1 = light pen edge reached, 0 = light pen edge left
+;                |+---- 1 = light pen switch off, 0 = light pen switch on
+;                +---- 1 = vertical blank occurring, 0 = no vertical blank occurring
 
-; VDPWRITE8:
-;         CALL VDPLOCK
-;         CALL    VDPWRITEADDR
-; VDPWRITE8LOOP:
-;         LD      A, (HL)
-;         CALL    VDPRAMOUT8
-;         INC     HL
-;         DEC     BC
-;         LD      A, B
-;         OR      C
-;         JP      NZ, VDPWRITE8LOOP
-;         CALL VDPUNLOCK
-;         RET
-
-; VDPREAD:
-;         CALL VDPLOCK
-;         CALL    VDPREADADDR
-;         CALL    VDPRAMIN
-;         LD      H, A
-;         LD      L, A
-;         CALL VDPUNLOCK
-;         RET
-
-; VDPFILL:
-;         CALL VDPLOCK
-;         PUSH    AF
-;         CALL    VDPWRITEADDR
-;         POP     AF
-; VDPFILLLOOP:
-;         CALL    VDPRAMOUT
-;         DEC     C
-;         JP      NZ, VDPFILLLOOP
-;         DJNZ    VDPFILLLOOP
-;         CALL VDPUNLOCK
-;         RET
-
-; VDPFILL8:
-;         CALL VDPLOCK
-;         PUSH    AF
-;         CALL    VDPWRITEADDR
-;         POP     AF
-; VDPFILLLOOP8:
-;         CALL    VDPRAMOUT8
-;         DEC     C
-;         JP      NZ, VDPFILLLOOP8
-;         CALL VDPUNLOCK
-;         RET
-
-; VDPFILLA:
-;         CALL VDPLOCK
-;         PUSH    AF
-;         CALL    VDPWRITEADDR
-;         POP     AF
-; VDPFILLALOOP:
-;         CALL    VDPRAMOUT
-;         DEC     C
-;         INC     A
-;         JP      NZ, VDPFILLALOOP
-;         DJNZ    VDPFILLALOOP
-;         CALL VDPUNLOCK
-;         RET
-
-; VDP_R0              EQU 80H
-; VDP_R1              EQU 81H
-; VDP_RNAME           EQU 82H
-; VDP_RCOLORTABLE     EQU 83H
-; VDP_RPATTERN        EQU 84H
-; VDP_RSPRITEA        EQU 85H
-; VDP_RSPRITEP        EQU 86H
-; VDP_RCOLOR          EQU 87H
-
-; ONSCROLLVOID:
-;     RET
-
-; TMS9918STARTUP:
-        
-;         LD A, 16
-;         LD C, A
-;         LD A, 0
-;         LD HL, PALETTE
-; TMS9918STARTUPL1:        
-;         LD (HL), A
-;         INC HL
-;         INC A
-;         DEC C
-;         JR NZ, TMS9918STARTUPL1
-
-
-;         CALL VDPLOCK
-;         LD A, VDP_R0
-;         LD E, A
-;         LD A, $00
-;         CALL VDPSETREG
-
-;         LD A, VDP_RNAME
-;         LD E, A
-;         LD A, $06
-;         CALL VDPSETREG
-
-;         LD A, VDP_RCOLORTABLE
-;         LD E, A
-;         LD A, $80
-;         CALL VDPSETREG
-
-;         LD A, VDP_RPATTERN
-;         LD E, A
-;         LD A, $00
-;         CALL VDPSETREG
-
-;         LD A, VDP_RSPRITEA
-;         LD E, A
-;         LD A, $36
-;         CALL VDPSETREG
-
-;         LD A, VDP_RSPRITEP
-;         LD E, A
-;         LD A, $07
-;         CALL VDPSETREG
-
-;         LD A, VDP_RCOLOR
-;         LD E, A
-;         LD A, $F1
-;         CALL VDPSETREG
-
-;         LD A, VDP_R1
-;         LD E, A
-;         LD A, $e2
-;         CALL VDPSETREG
-
-;         LD A, $C3
-;         LD HL, ONSCROLLUP
-;         LD (HL), A
-;         INC HL
-;         LD DE, ONSCROLLVOID
-;         LD A, E
-;         LD (HL), A
-;         INC HL
-;         LD A, D
-;         LD (HL), A
-
-;         LD A, $C3
-;         LD HL, ONSCROLLDOWN
-;         LD (HL), A
-;         INC HL
-;         LD A, E
-;         LD (HL), A
-;         INC HL
-;         LD A, D
-;         LD (HL), A
-
-;         LD A, $C3
-;         LD HL, ONSCROLLLEFT
-;         LD (HL), A
-;         INC HL
-;         LD A, E
-;         LD (HL), A
-;         INC HL
-;         LD A, D
-;         LD (HL), A
-
-;         LD A, $C3
-;         LD HL, ONSCROLLRIGHT
-;         LD (HL), A
-;         INC HL
-;         LD A, E
-;         LD (HL), A
-;         INC HL
-;         LD A, D
-;         LD (HL), A
-
-;         LD E, $83
-;         CALL VDPREGIN
-;         AND $F0
-;         LD B, A
-;         LD E, $83
-;         LD A, $0
-;         AND $F0
-;         OR B
-;         CALL VDPSETREG
-        
-;         CALL VDPUNLOCK
-
-;         RET
-
-; TMS9918AFTERINIT:
-; @IF vestigialConfig.clsImplicit
-; 	CALL CLST
-; @ENDIF
-;         RET
-
-; TMS9918SPRITEINIT:
-;         PUSH HL
-;         LD HL, (SPRITEAADDRESS)
-;         LD B, 0
-;         LD C, 32
-; TMS9918SPRITEINITL1:
-;         LD A, $D0
-;         LD DE, HL
-;         CALL VDPOUTCHAR
-;         INC HL
-;         INC HL
-;         INC HL
-;         INC HL
-;         DEC C
-;         JR NZ, TMS9918SPRITEINITL1
-
-;         RET
-
-; WAITVBL:
-;         LD A, 0
-;         LD (VBLFLAG), A
-; WAITVBL2:
-;         LD A, (VBLFLAG)
-;         CP 0
-;         JR Z, WAITVBL2
-;         RET
-
-
-
-; CONSOLECALCULATE:
-;     LD HL, (TEXTADDRESS)
-;     LD A, (CURRENTTILESWIDTH)
-;     LD E, A
-;     LD D, 0
-;     LD A, (CONSOLEY1)
-;     LD B, A
-;     CP 0
-;     JR Z, CONSOLECALCULATEL10
-; CONSOLECALCULATEL1:
-;     ADD HL, DE
-;     DEC B
-;     JR NZ, CONSOLECALCULATEL1
-; CONSOLECALCULATEL10:
-;     LD A, (CONSOLEX1)
-;     LD E, A
-;     LD D, 0
-;     ADD HL, DE
-;     LD (CONSOLESA), HL
-;     RET
+READCGASTATUSREG:
+    MOV DX, 0x3da
+    IN AL, DX
+    RET

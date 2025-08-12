@@ -63,6 +63,40 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+#define CGA_COLOR_BLUE          0x01
+#define CGA_COLOR_GREEN         0x02
+#define CGA_COLOR_RED           0x04
+#define CGA_COLOR_LIGHT         0x08
+#define CGA_COLOR_LIGHT2        0x10
+#define CGA_COLOR_CSET1         0x20
+#define CGA_COLOR_CSET2         0x00
+
+#define WRITE_COLOR_SELECT_REGISTER( v ) \
+    outline1("MOV AL, 0x%2.2x", v ) \
+    outline0("CALL WRITECGACOLORSELECTREG")
+
+#define CGA_MODE_80x25          0x01
+#define CGA_MODE_40x25          0x00
+
+#define CGA_MODE_GRAPHIC        0x02
+#define CGA_MODE_TEXT           0x00
+
+#define CGA_MODE_BW             0x04
+#define CGA_MODE_COLOR          0x00
+
+#define CGA_MODE_ENABLE         0x08
+#define CGA_MODE_DISABLE        0x00
+
+#define CGA_MODE_HIRES          0x10
+#define CGA_MODE_LORES          0x00
+
+#define CGA_MODE_BLINK          0x20
+#define CGA_MODE_NOBLINK        0x00
+
+#define WRITE_MODE_CONTROL_REGISTER( v ) \
+    outline1("MOV AL, 0x%2.2x", v ) \
+    outline0("CALL WRITECGAMODECONTROLREG")
+
 RGBi * CGA_image_nearest_system_color( RGBi * _color ) {
 
     unsigned int minDistance = 0xffff;
@@ -269,6 +303,74 @@ void cga_bank_select( Environment * _environment, int _bank ) {
 
 int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
 
+    _screen_mode->selected = 1;
+
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
+
+    switch( _screen_mode->id ) {
+        case TILEMAP_MODE_40x25x2:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 2;
+            _environment->currentModeBW = 0;
+
+            //   Sequence of Events for Changing Modes
+            // 1 Determine the mode of operation.
+            // 2 Reset the video-enable bit in the mode-control register.
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
+            // 3 Program the 6845 CRT Controller to select the mode.
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+            // 4 Program the mode-control and color-select registers
+            // including re-enabling the video.
+            WRITE_COLOR_SELECT_REGISTER( CGA_COLOR_CSET1 )
+            // 4 Program the mode-control and color-select registers
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW | CGA_MODE_ENABLE );
+
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0xb8000 );
+
+            break;
+    }
+
+    _environment->consoleTilesWidth = _environment->screenTilesWidth;
+    _environment->consoleTilesHeight = _environment->screenTilesHeight;
+
+    cpu_store_16bit( _environment, "CLIPX1", 0 );
+    cpu_store_16bit( _environment, "CLIPX2", (_environment->screenWidth-1) );
+    cpu_store_16bit( _environment, "CLIPY1", 0 );
+    cpu_store_16bit( _environment, "CLIPY2", (_environment->screenHeight-1) );
+
+    cpu_store_16bit( _environment, "ORIGINX", 0 );
+    cpu_store_16bit( _environment, "ORIGINY", 0 );
+
+    cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
+    cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
+    cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
+    cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
+    cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CURRENTTILESWIDTHX8", _environment->screenTilesWidth * 8 );
+    cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
+    cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
+    cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
+
+    console_calculate( _environment );
+    
+    if (_environment->vestigialConfig.clsImplicit ) {
+        cga_cls( _environment );
+    }
+
 }
 
 void console_calculate( Environment * _environment ) {
@@ -281,6 +383,25 @@ void console_calculate_vars( Environment * _environment ) {
 
 void cga_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 1, _width, _height, _colors, 8, 8 );
+
+    if ( mode ) {
+        cga_screen_mode_enable( _environment, mode );
+
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 0 );
+
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 0;
+
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cga_cls( _environment );
+        }
+
+    } else {
+        WARNING_SCREEN_MODE( -1 );
+    }
+
 }
 
 void cga_bitmap_disable( Environment * _environment ) {
@@ -288,6 +409,29 @@ void cga_bitmap_disable( Environment * _environment ) {
 }
 
 void cga_tilemap_enable( Environment * _environment, int _width, int _height, int _colors, int _tile_width, int _tile_height ) {
+
+    ScreenMode * mode = find_screen_mode_by_suggestion( _environment, 0, _width, _height, _colors, _tile_width, _tile_height );
+
+    if ( mode ) {
+
+        // printf("cga_tilemap_enable() -> %d\n", mode->id );
+        
+        cga_screen_mode_enable( _environment, mode );
+
+        _environment->currentMode = mode->id;
+        _environment->currentTileMode = 1;
+
+        cpu_store_8bit( _environment, "CURRENTMODE", mode->id );
+        cpu_store_8bit( _environment, "CURRENTTILEMODE", 1 );
+
+        if (_environment->vestigialConfig.clsImplicit ) {
+            cga_cls( _environment );
+        }
+
+    } else {
+        // printf("cga_tilemap_enable() -> -1\n" );
+        WARNING_SCREEN_MODE( -1 );
+    }
 
 }
 
@@ -425,9 +569,242 @@ void cga_scroll_text( Environment * _environment, int _direction, int _overlap )
 
 void cga_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
+    deploy( cgavars, src_hw_cga_vars_asm);
+    // deploy( vScrollTextUp, src_hw_cga_vscroll_text_up_asm );
+
+    outline1("LD DI, (%s)", _text);
+    outline1("LD CL, (%s)", _text_size);
+
+    if ( _raw ) {
+
+        // if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+        //     deploy( clsGraphic, src_hw_cga_cls_graphic_asm );
+        //     deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+        //     deploy( textEncodedAt, src_hw_cga_text_asm );
+        //     deploy( textEncodedAtGraphicRaw, src_hw_cga_text_at_graphic_raw_asm );
+        //     if ( ! _environment->hasGameLoop ) {
+        //         outline0("CALL TEXTATBITMAPMODERAW");
+        //     } else {
+        //         outline0("CALL TEXTATBITMAPMODENMI2RAW");
+        //     }
+        // } else {
+        //     deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+        //     deploy( clsText, src_hw_cga_cls_text_asm );
+        //     #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
+        //             deploy( textEncodedAt, src_hw_cga_text_asm );
+        //     #endif
+        //     deploy( textEncodedAtTextRaw, src_hw_cga_text_at_text_raw_asm );
+        //     if ( ! _environment->hasGameLoop ) {
+        //         outline0("CALL TEXTATTILEMODERAW");
+        //     } else {
+        //         outline0("CALL TEXTATTILEMODENMI2RAW");
+        //     }
+        // }
+
+    } else {
+
+        // if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
+            // deploy( clsGraphic, src_hw_cga_cls_graphic_asm );
+            // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+            // deploy( textEncodedAt, src_hw_cga_text_asm );
+            // deploy( textEncodedAtGraphic, src_hw_cga_text_at_graphic_asm );
+            // if ( ! _environment->hasGameLoop ) {
+            //     outline0("CALL TEXTATBITMAPMODE");
+            // } else {
+            //     outline0("CALL TEXTATBITMAPMODENMI2");
+            // }
+        // } else {
+            // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+            // deploy( clsText, src_hw_cga_cls_text_asm );
+            // deploy( textEncodedAt, src_hw_cga_text_asm );
+            deploy( textEncodedAtText, src_hw_cga_text_at_text_asm );
+            outline0("CALL TEXTATTILEMODE");
+        // }
+
+
+    }
+
 }
 
 void cga_initialization( Environment * _environment ) {
+
+    // deploy( cgavars, src_hw_cga_vars_asm );
+    deploy_preferred( cgastartup, src_hw_cga_startup_asm );
+
+    variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
+    variable_global( _environment, "CURRENTWIDTH" );
+    variable_import( _environment, "CURRENTHEIGHT", VT_POSITION, 192  );
+    variable_global( _environment, "CURRENTHEIGHT" );
+    variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
+    variable_global( _environment, "CURRENTTILES" );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
+    variable_global( _environment, "CURRENTTILESWIDTH" );
+    variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
+    variable_global( _environment, "CURRENTTILESWIDTHX8" );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
+    variable_global( _environment, "CURRENTTILESHEIGHT" );
+    variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
+    variable_global( _environment, "FONTWIDTH" );
+    variable_import( _environment, "FONTHEIGHT", VT_BYTE, 8 );
+    variable_global( _environment, "FONTHEIGHT" );
+    variable_import( _environment, "SPRITEADDRESS", VT_ADDRESS, 0x3b00 );
+    variable_global( _environment, "SPRITEADDRESS" );    
+    variable_import( _environment, "SPRITEAADDRESS", VT_ADDRESS, 0x1800 );
+    variable_global( _environment, "SPRITEAADDRESS" );    
+    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0e * 0x0400 );
+    variable_global( _environment, "TEXTADDRESS" );    
+    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x2000 );
+    variable_global( _environment, "COLORMAPADDRESS" );    
+    variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
+    variable_global( _environment, "PATTERNADDRESS" );    
+
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_40x25x2, 0, 40, 25, 2, 8, 8, "Text Mode (40x25, b/w)" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_40x25x16, 0, 40, 25, 16, 8, 8, "Text Mode (40x25, 16 colors)" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_80x25x2, 0, 80, 25, 2, 8, 8, "Text Mode (80x25, 2 colors)" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_80x25x16, 0, 80, 25, 16, 8, 8, "Text Mode (80x25, 16 colors)" );
+    
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Grahic Mode (320x200, 2 colors)" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Grahic Mode (320x200, 4 colors)" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x2, 1, 640, 200, 2, 8, 8, "Grahic Mode (640x200, 2 colors)" );
+
+    // outline0("CALL TMS9918STARTUP");
+
+    variable_import( _environment, "XGR", VT_POSITION, 0 );
+    variable_global( _environment, "XGR" );
+    variable_import( _environment, "YGR", VT_POSITION, 0 );
+    variable_global( _environment, "YGR" );
+    variable_import( _environment, "LINE", VT_WORD, (unsigned short)(0xffff) );
+    variable_global( _environment, "LINE" );
+
+    variable_import( _environment, "CLIPX1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPX1" );
+    variable_import( _environment, "CLIPX2", VT_POSITION, 255 );
+    variable_global( _environment, "CLIPX2" );
+    variable_import( _environment, "CLIPY1", VT_POSITION, 0 );
+    variable_global( _environment, "CLIPY1" );
+    variable_import( _environment, "CLIPY2", VT_POSITION, 191 );
+    variable_global( _environment, "CLIPY2" );
+
+    variable_import( _environment, "ORIGINX", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINX" );
+    variable_import( _environment, "ORIGINY", VT_POSITION, 0 );
+    variable_global( _environment, "ORIGINY" );
+
+    variable_import( _environment, "RESOLUTIONX", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONX" );
+    variable_import( _environment, "RESOLUTIONY", VT_POSITION, 0 );
+    variable_global( _environment, "RESOLUTIONY" );
+    
+    variable_import( _environment, "TABCOUNT", VT_BYTE, 4 );
+    variable_global( _environment, "TABCOUNT" );
+
+    variable_import( _environment, "CLINEX", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEX" );
+
+    variable_import( _environment, "CLINEY", VT_BYTE, 0 );
+    variable_global( _environment, "CLINEY" );
+
+    variable_import( _environment, "PLOTCPE", VT_BYTE, 0 );
+    variable_global( _environment, "PLOTCPE" );
+
+    variable_import( _environment, "TABSTODRAW", VT_BYTE, 0 );
+    variable_global( _environment, "TABSTODRAW" );
+
+    variable_import( _environment, "CURRENTMODE", VT_BYTE, 2 );
+    variable_global( _environment, "CURRENTMODE" );
+    variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
+    variable_global( _environment, "CURRENTTILEMODE" );
+
+    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
+    variable_global( _environment, "SPRITECOUNT" );
+
+    variable_import( _environment, "TILEX", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX" );
+    variable_import( _environment, "TILEY", VT_BYTE, 0 );
+    variable_global( _environment, "TILEY" );
+    variable_import( _environment, "TILEX2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEX2" );
+    variable_import( _environment, "TILET", VT_BYTE, 0 );
+    variable_global( _environment, "TILET" );
+    variable_import( _environment, "TILEW", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW" );
+    variable_import( _environment, "TILEH", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH" );
+    variable_import( _environment, "TILEW2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEW2" );
+    variable_import( _environment, "TILEH2", VT_BYTE, 0 );
+    variable_global( _environment, "TILEH2" );
+    variable_import( _environment, "TILEA", VT_BYTE, 0 );
+    variable_global( _environment, "TILEA" );
+    variable_import( _environment, "TILEO", VT_WORD, 0 );
+    variable_global( _environment, "TILEO" );
+
+    variable_import( _environment, "XSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLLPOS" );
+    variable_import( _environment, "YSCROLLPOS", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLLPOS" );
+    variable_import( _environment, "XSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "XSCROLL" );
+    variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
+    variable_global( _environment, "YSCROLL" );
+    variable_import( _environment, "DIRECTION", VT_BYTE, 0 );
+    variable_global( _environment, "DIRECTION" );
+
+    variable_import( _environment, "ONSCROLLUP", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLUP" );
+
+    variable_import( _environment, "ONSCROLLDOWN", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLDOWN" );
+
+    variable_import( _environment, "ONSCROLLLEFT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLLEFT" );
+
+    variable_import( _environment, "ONSCROLLRIGHT", VT_BUFFER, 3 );
+    variable_global( _environment, "ONSCROLLRIGHT" );
+
+    variable_import( _environment, "IMAGEF", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEF" );
+
+    variable_import( _environment, "IMAGET", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGET" );
+
+    variable_import( _environment, "IMAGEY", VT_BYTE, 0 );
+    variable_global( _environment, "IMAGEY" );
+
+    variable_import( _environment, "BLITIMAGEBLITTINGADDR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITIMAGEBLITTINGADDR" );
+    variable_import( _environment, "BLITTMPPTR", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR" );
+    variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
+    variable_global( _environment, "BLITTMPPTR2" );
+
+    variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
+    variable_global( _environment, "VBLFLAG" ); 
+    variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
+    variable_global( _environment, "VDPINUSE" );
+
+    variable_import( _environment, "SLICEX", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEX" );
+    variable_import( _environment, "SLICEY", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEY" );
+    variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
+    variable_global( _environment, "SLICEDTARGET" );
+
+    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
+    variable_global( _environment, "CONSOLESA" );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEHB" );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_global( _environment, "CONSOLEWB" );
+
+    cga_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+
+    font_descriptors_init( _environment, 0 );
+    
+    console_calculate( _environment );
+
+    // _environment->currentRgbConverterFunction = rgbConverterFunction;
+    _environment->screenShades = 16;
 
 }
 
@@ -473,7 +850,7 @@ Variable * cga_sprite_converter( Environment * _environment, char * _source, int
 
 Variable * cga_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    return cga_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+    return cga_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
 
 }
 

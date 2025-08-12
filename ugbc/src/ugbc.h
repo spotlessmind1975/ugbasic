@@ -1717,6 +1717,9 @@ typedef struct _Deployed {
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
+    int cgavars;
+    int cgavarsGraphic;
+    int cgastartup;
     int ef936xvars;
     int ef936xstartup;
     int ef9345vars;
