@@ -4423,44 +4423,29 @@ void cpu_in_direct( Environment * _environment, char * _port, char * _value ) {
 
 void cpu_string_sub( Environment * _environment, char * _source, char * _source_size, char * _pattern, char * _pattern_size, char * _destination, char * _destination_size ) {
     
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_string_sub )
+    inline( cpu_string_sub )
 
-    // embedded( cpu_string_sub, src_hw_8086_cpu_string_sub_asm );
+    embedded( cpu_string_sub, src_hw_8086_cpu_string_sub_asm );
 
-    //     outline1("MOV A, [%s]", _source);
-    //     outline0("MOV L, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "1"));
-    //     outline0("MOV H, A");
-    //     outline1("MOV A, [%s]", _source_size);
-    //     outline0("MOV IYL, A");
+        outline1("MOV SI, [%s]", _source);
+        outline1("MOV CL, [%s]", _source_size);
+        outline1("MOV DX, [%s]", _pattern);
+        outline1("MOV CH, [%s]", _pattern_size);
+        outline1("MOV DI, [%s]", _destination);
+        outline0("CALL CPUSTRINGSUB");
+        outline0("MOV A, CL");
+        outline1("MOV [%s], A", _destination_size);
 
-    //     outline1("MOV A, [%s]", _pattern);
-    //     outline0("MOV IXL, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _pattern, "1"));
-    //     outline0("MOV IXH, A");
-    //     outline1("MOV A, [%s]", _pattern_size);
-    //     outline0("MOV IYH, A");
-
-    //     outline1("MOV A, [%s]", _destination);
-    //     outline0("MOV E, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _destination, "1"));
-    //     outline0("MOV D, A");
-
-    //     outline0("CALL CPUSTRINGSUB");
-
-    //     outline0("MOV A, IYL");
-    //     outline1("MOV [%s], A", _destination_size);
-
-    // done()
+    done()
 }
 
 static char cpu_BLIT_REGISTER[][2] = {
-    "L",
-    "H",
-    "E",
-    "D"
+    "DL",
+    "DH",
+    "CL",
+    "CH"
 };
 
 #define cpu_BLII_REGISTER_COUNT ( sizeof( cpu_BLIT_REGISTER ) / 2 )
