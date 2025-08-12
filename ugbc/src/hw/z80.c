@@ -2533,7 +2533,7 @@ void cpu_store_32bit( Environment * _environment, char *_destination, int _value
 
         outline1("LD HL, $%4.4x", ( _value & 0xffff ) );
         outline1("LD (%s), HL", _destination );
-        outline1("LD HL, $%2.2x", ( ( _value >> 16 ) & 0xffff ) );
+        outline1("LD HL, $%4.4x", ( ( _value >> 16 ) & 0xffff ) );
         outline1("LD (%s), HL", address_displacement(_environment, _destination, "2") );
 
     no_embedded( cpu_move_32bit )

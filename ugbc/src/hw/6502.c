@@ -1549,7 +1549,7 @@ void cpu_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             outline0("AND #$80" );
             outline0("TAX");
             outline1("BEQ %snocomplement", label );
-            cpu_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_8bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
             while( _steps ) {
                 outline0("CLC");
@@ -1558,7 +1558,7 @@ void cpu_math_div2_const_8bit( Environment * _environment, char *_source, int _s
             }
             outline0("TXA");
             outline1("BEQ %snocomplement", label );
-            cpu_complement2_16bit( _environment, _source, _source );
+            cpu_complement2_8bit( _environment, _source, _source );
             outhead1("%snocomplement:", label );
         } else {
             if ( _remainder ) {
