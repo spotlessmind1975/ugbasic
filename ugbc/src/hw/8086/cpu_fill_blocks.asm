@@ -29,45 +29,36 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             FILL AREA ON 8086                               *
+;*                             FILL BLOCKS ON 8086                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; CPU FILL
+; CPU FILL BLOCKS
 ;   Input:
 ;       AL : pattern
+;       CL : blocks
 ;       BX : address
-;       CL/CX : size
 ;
-
-CPUFILL8DONE:
+CPUFILLBLOCKSDONE:
     RET
 
-CPUFILL8:
+CPUFILLBLOCKS:
     CMP CL, 0
-    JZ CPUFILL8DONE
-  
-CPUFILL8L1:
+    JZ CPUFILLBLOCKSDONE
+
+CPUFILLBLOCKSL2:
+    MOV CH, 0xff
+CPUFILLBLOCKSL1:    
     MOV [BX], AL
     INC BX
+    DEC CH
+    CMP CH, 0
+    JNE CPUFILLBLOCKSL1
+
     DEC CL
     CMP CL, 0
-    JNE CPUFILL8L1
-    RET
+    JNZ CPUFILLBLOCKSL2
 
-CPUFILL16DONE:
-    RET
-
-CPUFILL16:
-    CMP CX, 0
-    JZ CPUFILL16DONE
-
-CPUFILL16L1:
-    MOV [BX], AL
-    INC BX
-    DEC CX
-    CMP CX, 0
-    JNE CPUFILL8L1
     RET
