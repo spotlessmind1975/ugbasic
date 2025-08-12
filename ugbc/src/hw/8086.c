@@ -4168,273 +4168,256 @@ void cpu_complement2_32bit( Environment * _environment, char * _source, char * _
 
 void cpu_sqroot( Environment * _environment, char * _number, char * _result ) {
 
-    // deploy( sqr, src_hw_8086_sqr_asm );
+    deploy( sqr, src_hw_8086_sqr_asm );
 
-    // outline1("MOV HL, [%s]", _number );
+    outline1("MOV AX, [%s]", _number );
+    outline0("MOV DX, 0" );
 
-    // outline0("CALL SQROOT" );
+    outline0("CALL SQROOT" );
 
-    // outline1("MOV [%s],A", _result );
+    outline1("MOV [%s], AX", _result );
 
 }
 
 void cpu_dstring_vars( Environment * _environment ) {
 
-//     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
-//     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
+    int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
+    int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-// #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-//     outhead0("section data_user" );
-// #endif
-//     outhead1("stringscount =                  %d", count );
-//     outhead1("stringsspace =                  %d", space );
-//     outhead0("MAXSTRINGS:                   DB stringscount" );
-//     outhead0("DESCRIPTORS:                  DEFS stringscount*4" );
-//     outhead0("WORKING:                      DEFS stringsspace" );
-//     outhead0("TEMPORARY:                    DEFS stringsspace" );
-//     outhead0("FREE_STRING:                  DW (stringsspace-1)" );
-// #if !defined(__vg5000__) && !defined(__cpc__) && !defined(__c128z__) && !defined(__zx__)
-//     outhead0("section code_user" );
-// #endif
+    outhead1("stringscount =                  %d", count );
+    outhead1("stringsspace =                  %d", space );
+    outhead0("MAXSTRINGS:                   db stringscount" );
+    outhead0("DESCRIPTORS:                  times stringscount*4 db 0" );
+    outhead0("WORKING:                      times stringsspace db 0" );
+    outhead0("TEMPORARY:                    rimes stringsspace db 0" );
+    outhead0("FREE_STRING:                  dw (stringsspace-1)" );
 
 }
 
 void cpu_protothread_vars( Environment * _environment ) {
 
-    // int count = _environment->protothreadConfig.count;
+    int count = _environment->protothreadConfig.count;
 
-    // variable_import( _environment, "PROTOTHREADLC", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADLC:      DEFS        %d", count );
-    // variable_import( _environment, "PROTOTHREADST", VT_BUFFER, count );
-    // // outhead1("PROTOTHREADST:      DEFS        %d", count );
-    // variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
-    // // outhead0("PROTOTHREADCT:      DEFB        0" );
-    // variable_import( _environment, "PROTOTHREADLOOP", VT_BUFFER, 1 + count * 8 );
-    // variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, count );
+    outhead1("PROTOTHREADLC:      times %d db 0", count );
+    outhead1("PROTOTHREADST:      times %d db 0", count );
+    outhead0("PROTOTHREADCT:      db 0" );
+    outhead0("PROTOTHREADLOOP:");
+
+    for( int i=0; i<count; ++i ) {
+        outline1("MOV AL, #%d-1", i+1 ); /* prevents optimizer changing code length */
+        outline0("MOV [PROTOTHREADCT], AL" );
+        outline0("CALL PROTOTHREADVOID" );
+    }
+    outhead1("PROTOTHREADCOUNT:      db %d", count );
 
 }
 
 
 void cpu_protothread_loop( Environment * _environment ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline0("CALL PROTOTHREADLOOP" );
+    outline0("CALL PROTOTHREADLOOP" );
 
 }
 
 void cpu_protothread_register_at( Environment * _environment, char * _index, char * _label ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV HL, %s", _label );
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A");
+    outline1("MOV SI, %s", _label );
+    outline1("MOV BL, [%s]", _index );
 
-    // outline0("CALL PROTOTHREADREGAT" );
+    outline0("CALL PROTOTHREADREGAT" );
 
 }
 
 void cpu_protothread_register( Environment * _environment, char * _label, char * _index ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV HL, %s", _label );
+    outline1("MOV SI, %s", _label );
 
-    // outline0("CALL PROTOTHREADREG" );
+    outline0("CALL PROTOTHREADREG" );
 
-    // outline0("MOV A, B" );
-    // outline1("MOV [%s], A", _index );
+    outline1("MOV [%s], BL", _index );
 
 }
 
 void cpu_protothread_unregister( Environment * _environment, char * _index ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
+    outline1("MOV BL, [%s]", _index );
 
-    // outline0("CALL PROTOTHREADUNREG" );
+    outline0("CALL PROTOTHREADUNREG" );
 
 }
 
 void cpu_protothread_save( Environment * _environment, char * _index, int _step ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
-    // outline1("MOV A, 0x%2.2x", ( _step & 0xff ) );
+    outline1("MOV BL, [%s]", _index );
+    outline1("MOV AL, 0x%2.2x", ( _step & 0xff ) );
 
-    // outline0("CALL PROTOTHREADSAVE" );
+    outline0("CALL PROTOTHREADSAVE" );
 
 }
 
 void cpu_protothread_restore( Environment * _environment, char * _index, char * _step ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
+    outline1("MOV BL, [%s]", _index );
 
-    // outline0("CALL PROTOTHREADRESTORE" );
+    outline0("CALL PROTOTHREADRESTORE" );
 
-    // outline1("MOV [%s], A", _step );
+    outline1("MOV [%s], AL", _step );
     
 }
 
 void cpu_protothread_set_state( Environment * _environment, char * _index, int _state ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
-    // outline1("MOV A, 0x%2.2x", ( _state & 0xff ) );
+    outline1("MOV BL, [%s]", _index );
+    outline1("MOV AL, 0x%2.2x", ( _state & 0xff ) );
 
-    // outline0("CALL PROTOTHREADSETSTATE" );
+    outline0("CALL PROTOTHREADSETSTATE" );
 
 }
 
 void cpu_protothread_get_state( Environment * _environment, char * _index, char * _state ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
-
-    // outline0("CALL PROTOTHREADGETSTATE" );
-
-    // outline1("MOV [%s], A", _state );
+    outline1("MOV BL, [%s]", _index );
+    outline0("CALL PROTOTHREADGETSTATE" );
+    outline1("MOV [%s], AL", _state );
 
 }
 
 void cpu_protothread_get_address( Environment * _environment, char * _index, char * _address ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline1("MOV A, [%s]", _index );
-    // outline0("MOV B, A" );
-
-    // outline0("CALL PROTOTHREADGETADDRESS" );
-
-    // outline1("MOV [%s], DE", _address );
+    outline1("MOV BL, [%s]", _index );
+    outline0("CALL PROTOTHREADGETADDRESS" );
+    outline1("MOV [%s], DI", _address );
 
 }
 
 void cpu_protothread_current( Environment * _environment, char * _current ) {
 
-    // deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
+    deploy_with_vars( protothread, src_hw_8086_protothread_asm, cpu_protothread_vars );
 
-    // outline0("MOV A, (PROTOTHREADCT)" );
-    // outline1("MOV [%s], A", _current );
+    outline0("MOV AL, [PROTOTHREADCT]" );
+    outline1("MOV [%s], AL", _current );
 
 }
 
 void cpu_set_callback( Environment * _environment, char * _callback, char * _label ) {
 
-    // outline1("MOV DE, %s", _label );
-    // outline1("MOV HL, %s", _callback );
-    // outline0("INC HL" );
-    // outline0("MOV (HL), E" );
-    // outline0("INC HL" );
-    // outline0("MOV (HL), D" );
+    outline1("MOV AX, %s", _label );
+    outline1("MOV DI, %s", _callback );
+    outline0("MOV [DI], AX" );
 
 }
 
 void cpu_msc1_uncompress_direct_direct( Environment * _environment, char * _input, char * _output ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_msc1_uncompress )
+    inline( cpu_msc1_uncompress )
 
-    // embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
 
-    //     outline1("MOV HL, %s", _input);
-    //     outline1("MOV DE, %s", _output);
-    //     outline0("CALL MSC1UNCOMPRESS");
+        outline1("MOV SI, %s", _input);
+        outline1("MOV DI, %s", _output);
+        outline0("CALL MSC1UNCOMPRESS");
 
-    // done()
+    done()
 
 }
 
 void cpu_msc1_uncompress_direct_indirect( Environment * _environment, char * _input, char * _output ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_msc1_uncompress )
+    inline( cpu_msc1_uncompress )
 
-    // embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
 
-    //     outline1("MOV HL, %s", _input);
-    //     outline1("MOV DE, [%s]", _output);
-    //     outline0("CALL MSC1UNCOMPRESS");
+        outline1("MOV SI, %s", _input);
+        outline1("MOV DI, [%s]", _output);
+        outline0("CALL MSC1UNCOMPRESS");
 
-    // done()
+    done()
 
 }
 
 void cpu_msc1_uncompress_indirect_direct( Environment * _environment, char * _input, char * _output ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_msc1_uncompress )
+    inline( cpu_msc1_uncompress )
 
-    // embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
 
-    //     outline1("MOV HL, [%s]", _input);
-    //     outline1("MOV DE, %s", _output);
-    //     outline0("CALL MSC1UNCOMPRESS");
+        outline1("MOV SI, [%s]", _input);
+        outline1("MOV DI, %s", _output);
+        outline0("CALL MSC1UNCOMPRESS");
 
-    // done()
+    done()
 
 }
 
 void cpu_msc1_uncompress_indirect_indirect( Environment * _environment, char * _input, char * _output ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_msc1_uncompress )
+    inline( cpu_msc1_uncompress )
 
-    // embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
+    embedded( cpu_msc1_uncompress, src_hw_8086_msc1_asm );
 
-    //     outline1("MOV HL, [%s]", _input);
-    //     outline1("MOV DE, [%s]", _output);
-    //     outline0("CALL MSC1UNCOMPRESS");
+        outline1("MOV SI, [%s]", _input);
+        outline1("MOV DI, [%s]", _output);
+        outline0("CALL MSC1UNCOMPRESS");
 
-    // done()
+    done()
 
 }
 
 void cpu_out( Environment * _environment, char * _port, char * _value ) {
 
-    // outline1("MOV A, [%s]", _value );
-    // outline1("MOV BC, [%s]", _port );
-    // outline0("OUT (C), A" );
+    outline1("MOV AL, [%s]", _value );
+    outline1("MOV DX, [%s]", _port );
+    outline0("OUT DX, AL" );
 
 }
 
 void cpu_in( Environment * _environment, char * _port, char * _value ) {
 
-    // outline1("MOV BC, [%s]", _port );
-    // outline0("IN A, (C)" );
-    // outline1("MOV [%s], A", _value );
+    outline1("MOV DX, [%s]", _port );
+    outline0("IN AL, DX" );
+    outline1("MOV [%s], AL", _value );
         
 }
 
 void cpu_out_direct( Environment * _environment, char * _port, char * _value ) {
 
-    // outline1("MOV A, [%s]", _value );
-    // outline1("MOV BC, %s", _port );
-    // outline0("OUT (C), A" );
+    outline1("MOV AL, [%s]", _value );
+    outline1("MOV DX, %s", _port );
+    outline0("OUT DX, AL" );
 
 }
 
 void cpu_in_direct( Environment * _environment, char * _port, char * _value ) {
 
-    // outline1("MOV BC, %s", _port );
-    // outline0("IN A, (C)" );
-    // outline1("MOV [%s], A", _value );
+    outline1("MOV DX, %s", _port );
+    outline0("IN AL, DX" );
+    outline1("MOV [%s], AL", _value );
         
 }
 
