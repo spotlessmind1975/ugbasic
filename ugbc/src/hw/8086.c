@@ -3684,908 +3684,203 @@ void cpu_move_nbit_indirect2( Environment * _environment, int _n, char * _value,
 
 void cpu_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV DX, [%s]", address_displacement( _environment, _source, "+2" ) );
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BX, [%s]", _destination );
 
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "3"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive", label);
-    //     cpu_complement2_32bit( _environment, _source, NULL );
-    //     outhead1("%spositive:", label);
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _destination, "1"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive2", label);
-    //     cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%spositive2:", label);
+    if ( _signed ) {
+        outline0( "IDIV BX" );
+    } else {
+        outline0( "DIV BX" );
+    }
 
-    //     // outline1("MOV HL, %s", _source);
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("PUSH AF");
-    //     // outline0("POP IX");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("MOV C, A");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline1("MOV DE, [%s]", _destination);
-
-    //     // outline0("MOV HL, 0");
-    //     // outline0("MOV B, 32");
-    //     // outhead1("%sloop:", label);
-    //     // outline0("ADD IX, IX");
-    //     // outline0("RL C");
-    //     // outline0("RLA");
-    //     // outline0("ADC HL, HL");
-    //     // outline1("JR C, %soverflow", label);
-    //     // outline0("SBC HL, DE");
-    //     // outline1("JR NC, %ssetbit", label);
-    //     // outline0("ADD HL, DE");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outline1("JP %send", label);
-    //     // outhead1("%soverflow:", label);
-    //     // outline0("OR A");
-    //     // outline0("SBC HL, DE");
-    //     // outhead1("%ssetbit:", label);
-    //     // outline0("INC IXL");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outhead1("%send:", label);
-    //     // outline1("MOV [%s], HL", _other_remainder);
-    //     // outline1("MOV HL, %s", _other);
-    //     // outline0("PUSH AF");
-    //     // outline0("PUSH IX");
-    //     // outline0("POP AF");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("POP AF");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("DEC HL");
-    //     // outline0("MOV C, (HL)");
-
-    //     outline1("MOV A, [%s]", _destination);
-    //     outline0("MOV E, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _destination, "1"));
-    //     outline0("MOV D, A");
-    //     outline1("MOV IX, [%s]", _source);
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "2"));
-    //     outline0("MOV C, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "3"));
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 32");
-    //     outhead1("%sdiv32a:", label);
-    //     outline0("ADD IX, IX");
-    //     outline0("RL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline1("JR C, %sdiv32ov", label);
-    //     outline0("SBC HL, DE");
-    //     outline1("JR NC, %sdiv32setbit", label);
-    //     outline0("ADD HL, DE");
-    //     outline1("DJNZ %sdiv32a", label);
-    //     outline1("JR %sdiv32end", label);
-    //     outhead1("%sdiv32ov:", label);
-    //     outline0("OR A");
-    //     outline0("SBC HL, DE");
-    //     outhead1("%sdiv32setbit:", label);
-    //     outline0("INC IX");
-    //     outline1("DJNZ %sdiv32a", label);
-    //     outhead1("%sdiv32end:", label);
-
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other, "3"));
-    //     outline0("MOV A, C" );
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other, "2"));
-    //     outline1("MOV [%s], IX", _other);
-    //     outline0("MOV A, L");
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, H");
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other_remainder, "1"));
-
-    //     outline0("POP AF");
-    //     outline0("MOV B, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive", label);
-    //     cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%srepositive:", label);
-    //     outline0("POP AF");
-    //     outline0("MOV C, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive2", label );
-    //     cpu_complement2_32bit( _environment, _source, NULL );
-    //     outhead1("%srepositive2:", label);
-    //     outline0("MOV A, B");
-    //     outline0("XOR C");
-    //     outline0("AND 0x80");
-    //     outline0("CP 0x80");
-    //     outline1("JR NZ, %srepositive3", label );
-    //     cpu_complement2_32bit( _environment, _other, NULL );
-    //     outhead1("%srepositive3:", label);
-
-    // } else {
-
-    //     // outline1("MOV HL, %s", _source);
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("PUSH AF");
-    //     // outline0("POP IX");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("MOV C, A");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline1("MOV DE, [%s]", _destination);
-
-    //     // outline0("MOV HL, 0");
-    //     // outline0("MOV B, 32");
-    //     // outhead1("%sloop:", label);
-    //     // outline0("ADD IX, IX");
-    //     // outline0("RL C");
-    //     // outline0("RLA");
-    //     // outline0("ADC HL, HL");
-    //     // outline1("JR C, %soverflow", label);
-    //     // outline0("SBC HL, DE");
-    //     // outline1("JR NC, %ssetbit", label);
-    //     // outline0("ADD HL, DE");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outline1("JP %send", label);
-    //     // outhead1("%soverflow:", label);
-    //     // outline0("OR A");
-    //     // outline0("SBC HL, DE");
-    //     // outhead1("%ssetbit:", label);
-    //     // outline0("INC IXL");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outhead1("%send:", label);
-    //     // outline1("MOV [%s], HL", _other_remainder);
-    //     // outline1("MOV HL, %s", _other);
-    //     // outline0("PUSH AF");
-    //     // outline0("PUSH IX");
-    //     // outline0("POP AF");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("POP AF");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("DEC HL");
-    //     // outline0("MOV C, (HL)");
-    //     // ; IN:	ACIX=dividend, DE=divisor
-    //     // ; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
-
-	//     outline1("MOV HL, [%s]", _source);
-	//     outline0("MOV IX, HL");
-	//     outline1("MOV HL, [%s]", address_displacement(_environment, _source, "2"));
-	//     outline0("MOV A, L");
-	//     outline0("MOV C, A");
-	//     outline0("MOV A, H");
-	//     outline1("MOV DE, [%s]", _destination);
-
-	//     outline0("MOV HL, 0");
-    //     outline0("MOV B, 32");
-    //     outhead1("%sloop1:", label);
-    //     outline0("ADD IX, IX");
-    //     outline0("RL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline1("JR C, %sloop2", label);
-    //     outline0("SBC HL, DE");
-    //     outline1("JR NC, %sloop3", label);
-    //     outline0("ADD HL, DE");
-    //     outline1("DJNZ %sloop1", label);
-    //     outline1("JR %sdone", label);
-    //     outhead1("%sloop2:", label);
-    //     outline0("OR A");
-    //     outline0("SBC HL, DE");
-    //     outhead1("%sloop3:", label);
-    //     outline0("INC IXL");
-    //     outline1("DJNZ %sloop1", label);
-    //     outhead1("%sdone:", label);
-
-	//     outline1("MOV [%s], HL", _other_remainder);
-	//     outline0("MOV H, A");
-	//     outline0("MOV A, C");
-	//     outline0("MOV L, C");
-	//     outline1("MOV [%s], HL", _other);
-	//     outline0("MOV HL, IX");
-	//     outline1("MOV [%s], HL", _other);
-
-    // }
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AX", _other);
  
 }
 
 void cpu_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV DX, [%s]", address_displacement( _environment, _source, "+2" ) );
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BX, 0x%4.4x", _destination );
 
-    //     int destination = abs(_destination);
+    if ( _signed ) {
+        outline0( "IDIV BX" );
+    } else {
+        outline0( "DIV BX" );
+    }
 
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "3"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive", label);
-    //     cpu_complement2_32bit( _environment, _source, NULL );
-    //     outhead1("%spositive:", label);
-    //     // outline1("MOV A, 0x%2.2x", (unsigned char)( (_destination >> 8 ) & 0xff ));
-    //     // outline0("AND 0x80");
-    //     // outline0("CP 0" );
-    //     // outline0("PUSH AF");
-    //     // outline1("JR Z,%spositive2", label);
-    //     // cpu_complement2_16bit( _environment, _destination, NULL );
-    //     // outhead1("%spositive2:", label);
-
-    //     // outline1("MOV HL, %s", _source);
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("PUSH AF");
-    //     // outline0("POP IX");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("MOV C, A");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline1("MOV DE, [%s]", _destination);
-
-    //     // outline0("MOV HL, 0");
-    //     // outline0("MOV B, 32");
-    //     // outhead1("%sloop:", label);
-    //     // outline0("ADD IX, IX");
-    //     // outline0("RL C");
-    //     // outline0("RLA");
-    //     // outline0("ADC HL, HL");
-    //     // outline1("JR C, %soverflow", label);
-    //     // outline0("SBC HL, DE");
-    //     // outline1("JR NC, %ssetbit", label);
-    //     // outline0("ADD HL, DE");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outline1("JP %send", label);
-    //     // outhead1("%soverflow:", label);
-    //     // outline0("OR A");
-    //     // outline0("SBC HL, DE");
-    //     // outhead1("%ssetbit:", label);
-    //     // outline0("INC IXL");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outhead1("%send:", label);
-    //     // outline1("MOV [%s], HL", _other_remainder);
-    //     // outline1("MOV HL, %s", _other);
-    //     // outline0("PUSH AF");
-    //     // outline0("PUSH IX");
-    //     // outline0("POP AF");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("POP AF");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("DEC HL");
-    //     // outline0("MOV C, (HL)");
-
-    //     outline1("MOV DE, 0x%4.4x", destination);
-    //     outline1("MOV IX, [%s]", _source);
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "2"));
-    //     outline0("MOV C, A");
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "3"));
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 32");
-    //     outhead1("%sdiv32a:", label);
-    //     outline0("ADD IX, IX");
-    //     outline0("RL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline1("JR C, %sdiv32ov", label);
-    //     outline0("SBC HL, DE");
-    //     outline1("JR NC, %sdiv32setbit", label);
-    //     outline0("ADD HL, DE");
-    //     outline1("DJNZ %sdiv32a", label);
-    //     outline1("JR %sdiv32end", label);
-    //     outhead1("%sdiv32ov:", label);
-    //     outline0("OR A");
-    //     outline0("SBC HL, DE");
-    //     outhead1("%sdiv32setbit:", label);
-    //     outline0("INC IX");
-    //     outline1("DJNZ %sdiv32a", label);
-    //     outhead1("%sdiv32end:", label);
-
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other, "3"));
-    //     outline0("MOV A, C" );
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other, "2"));
-    //     outline1("MOV [%s], IX", _other);
-    //     outline0("MOV A, L");
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, H");
-    //     outline1("MOV [%s], A", address_displacement(_environment, _other_remainder, "1"));
-
-    //     // outline0("POP AF");
-    //     outline1("MOV B, 0x%2.2x", (_destination < 0) ? 0x80 : 0x00 );
-    //     // outline0("CMP 0x80");
-    //     // outline1("JR NZ, %srepositive", label);
-    //     // cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%srepositive:", label);
-    //     outline0("POP AF");
-    //     outline0("MOV C, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive2", label );
-    //     cpu_complement2_32bit( _environment, _source, NULL );
-    //     outhead1("%srepositive2:", label);
-    //     outline0("MOV A, B");
-    //     outline0("XOR C");
-    //     outline0("AND 0x80");
-    //     outline0("CP 0x80");
-    //     outline1("JR NZ, %srepositive3", label );
-    //     cpu_complement2_32bit( _environment, _other, NULL );
-    //     outhead1("%srepositive3:", label);
-
-    // } else {
-
-    //     // outline1("MOV HL, %s", _source);
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("PUSH AF");
-    //     // outline0("POP IX");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline0("MOV C, A");
-    //     // outline0("INC HL");
-    //     // outline0("MOV A, (HL)");
-    //     // outline1("MOV DE, [%s]", _destination);
-
-    //     // outline0("MOV HL, 0");
-    //     // outline0("MOV B, 32");
-    //     // outhead1("%sloop:", label);
-    //     // outline0("ADD IX, IX");
-    //     // outline0("RL C");
-    //     // outline0("RLA");
-    //     // outline0("ADC HL, HL");
-    //     // outline1("JR C, %soverflow", label);
-    //     // outline0("SBC HL, DE");
-    //     // outline1("JR NC, %ssetbit", label);
-    //     // outline0("ADD HL, DE");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outline1("JP %send", label);
-    //     // outhead1("%soverflow:", label);
-    //     // outline0("OR A");
-    //     // outline0("SBC HL, DE");
-    //     // outhead1("%ssetbit:", label);
-    //     // outline0("INC IXL");
-    //     // outline1("DJNZ %sloop", label);
-    //     // outhead1("%send:", label);
-    //     // outline1("MOV [%s], HL", _other_remainder);
-    //     // outline1("MOV HL, %s", _other);
-    //     // outline0("PUSH AF");
-    //     // outline0("PUSH IX");
-    //     // outline0("POP AF");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("POP AF");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("INC HL");
-    //     // outline0("MOV (HL), A");
-    //     // outline0("DEC HL");
-    //     // outline0("MOV C, (HL)");
-    //     // ; IN:	ACIX=dividend, DE=divisor
-    //     // ; OUT:	ACIX=quotient, DE=divisor, HL=remainder, B=0
-
-	//     outline1("MOV HL, [%s]", _source);
-	//     outline0("MOV IX, HL");
-	//     outline1("MOV HL, [%s]", address_displacement(_environment, _source, "2"));
-	//     outline0("MOV A, L");
-	//     outline0("MOV C, A");
-	//     outline0("MOV A, H");
-	//     outline1("MOV DE, 0x%4.4x", _destination);
-
-	//     outline0("MOV HL, 0");
-    //     outline0("MOV B, 32");
-    //     outhead1("%sloop1:", label);
-    //     outline0("ADD IX, IX");
-    //     outline0("RL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline1("JR C, %sloop2", label);
-    //     outline0("SBC HL, DE");
-    //     outline1("JR NC, %sloop3", label);
-    //     outline0("ADD HL, DE");
-    //     outline1("DJNZ %sloop1", label);
-    //     outline1("JR %sdone", label);
-    //     outhead1("%sloop2:", label);
-    //     outline0("OR A");
-    //     outline0("SBC HL, DE");
-    //     outhead1("%sloop3:", label);
-    //     outline0("INC IXL");
-    //     outline1("DJNZ %sloop1", label);
-    //     outhead1("%sdone:", label);
-
-	//     outline1("MOV [%s], HL", _other_remainder);
-	//     outline0("MOV H, A");
-	//     outline0("MOV A, C");
-	//     outline0("MOV L, C");
-	//     outline1("MOV [%s], HL", _other);
-	//     outline0("MOV HL, IX");
-	//     outline1("MOV [%s], HL", _other);
-
-    // }
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AX", _other);
  
 }
 
 void cpu_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV DX, 0" );
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BX, [%s]", _destination );
 
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "1"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive", label);
-    //     cpu_complement2_16bit( _environment, _source, NULL );
-    //     outhead1("%spositive:", label);
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _destination, "1"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive2", label);
-    //     cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%spositive2:", label);
+    if ( _signed ) {
+        outline0( "IDIV BX" );
+    } else {
+        outline0( "DIV BX" );
+    }
 
-    //     outline1("MOV HL, %s", _source);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV C, A");
-    //     outline0("INC HL");
-    //     outline0("MOV A, (HL)");
-    //     outline1("MOV DE, [%s]", _destination);
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 16");
-    //     outhead1("%sloop:", label );
-    //     outline0("SLL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline0("SBC HL, DE");
-    //     outline0("JR NC, 0x+4");
-    //     outline0("ADD HL, DE");
-    //     outline0("DEC C");
-    //     outline1("DJNZ %sloop", label);
-    //     outline1("MOV [%s], HL", _other_remainder);
-    //     outline1("MOV DE, %s", _other);
-    //     outline0("MOV B, A");
-    //     outline0("MOV A, C");
-    //     outline0("MOV (DE), A");
-    //     outline0("INC DE");
-    //     outline0("MOV A, B");
-    //     outline0("MOV (DE), A");
-
-    //     outline0("POP AF");
-    //     outline0("MOV B, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive", label);
-    //     cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%srepositive:", label);
-    //     outline0("POP AF");
-    //     outline0("MOV C, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive2", label );
-    //     cpu_complement2_16bit( _environment, _source, NULL );
-    //     outhead1("%srepositive2:", label);
-    //     outline0("MOV A, B");
-    //     outline0("XOR C");
-    //     outline0("AND 0x80");
-    //     outline0("CP 0x80");
-    //     outline1("JR NZ, %srepositive3", label );
-    //     cpu_complement2_16bit( _environment, _other, NULL );
-    //     outhead1("%srepositive3:", label);
-
-    // } else {
-
-    //     outline1("MOV HL, %s", _source);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV C, A");
-    //     outline0("INC HL");
-    //     outline0("MOV A, (HL)");
-    //     outline1("MOV DE, [%s]", _destination);
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 16");
-    //     outhead1("%sloop:", label );
-    //     outline0("SLL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline0("SBC HL, DE");
-    //     outline0("JR NC, 0x+4");
-    //     outline0("ADD HL, DE");
-    //     outline0("DEC C");
-    //     outline1("DJNZ %sloop", label);
-    //     outline1("MOV [%s], HL", _other_remainder);
-    //     outline1("MOV DE, %s", _other);
-    //     outline0("MOV B, A");
-    //     outline0("MOV A, C");
-    //     outline0("MOV (DE), A");
-    //     outline0("INC DE");
-    //     outline0("MOV A, B");
-    //     outline0("MOV (DE), A");
-
-    // }
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AX", _other);
     
 }
 
 void cpu_math_div_16bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV DX, 0" );
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BX, 0x%4.4x", (unsigned short)(_destination&0xffff) );
 
-    //     int destination = abs(_destination);
+    if ( _signed ) {
+        outline0( "IDIV BX" );
+    } else {
+        outline0( "DIV BX" );
+    }
 
-    //     outline1("MOV A, [%s]", address_displacement(_environment, _source, "1"));
-    //     outline0("AND 0x80");
-    //     outline0("CP 0" );
-    //     outline0("PUSH AF");
-    //     outline1("JR Z,%spositive", label);
-    //     cpu_complement2_16bit( _environment, _source, NULL );
-    //     outhead1("%spositive:", label);
-    //     // outline1("MOV A, 0x%2.2x", (unsigned char)( (_destination>>8) & 0xff));
-    //     // outline0("AND 0x80");
-    //     // outline0("CP 0" );
-    //     // outline0("PUSH AF");
-    //     // outline1("JR Z,%spositive2", label);
-    //     // cpu_complement2_16bit( _environment, _destination, NULL );
-    //     // outhead1("%spositive2:", label);
-
-    //     outline1("MOV HL, %s", _source);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV C, A");
-    //     outline0("INC HL");
-    //     outline0("MOV A, (HL)");
-    //     outline1("MOV DE, 0x%4.4x", destination);
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 16");
-    //     outhead1("%sloop:", label );
-    //     outline0("SLL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline0("SBC HL, DE");
-    //     outline0("JR NC, 0x+4");
-    //     outline0("ADD HL, DE");
-    //     outline0("DEC C");
-    //     outline1("DJNZ %sloop", label);
-    //     outline1("MOV [%s], HL", _other_remainder);
-    //     outline1("MOV DE, %s", _other);
-    //     outline0("MOV B, A");
-    //     outline0("MOV A, C");
-    //     outline0("MOV (DE), A");
-    //     outline0("INC DE");
-    //     outline0("MOV A, B");
-    //     outline0("MOV (DE), A");
-
-    //     // outline0("POP AF");
-    //     outline1("MOV B, 0x%2.2x", _destination < 0 ? 0x80 : 0x00 );
-    //     // outline0("CMP 0x80");
-    //     // outline1("JR NZ, %srepositive", label);
-    //     // cpu_complement2_16bit( _environment, _destination, NULL );
-    //     outhead1("%srepositive:", label);
-    //     outline0("POP AF");
-    //     outline0("MOV C, A");
-    //     outline0("CMP 0x80");
-    //     outline1("JR NZ, %srepositive2", label );
-    //     cpu_complement2_16bit( _environment, _source, NULL );
-    //     outhead1("%srepositive2:", label);
-    //     outline0("MOV A, B");
-    //     outline0("XOR C");
-    //     outline0("AND 0x80");
-    //     outline0("CP 0x80");
-    //     outline1("JR NZ, %srepositive3", label );
-    //     cpu_complement2_16bit( _environment, _other, NULL );
-    //     outhead1("%srepositive3:", label);
-
-    // } else {
-
-    //     outline1("MOV HL, %s", _source);
-    //     outline0("MOV A, (HL)");
-    //     outline0("MOV C, A");
-    //     outline0("INC HL");
-    //     outline0("MOV A, (HL)");
-    //     outline1("MOV DE, 0x%4.4x", _destination);
-
-    //     outline0("MOV HL, 0");
-    //     outline0("MOV B, 16");
-    //     outhead1("%sloop:", label );
-    //     outline0("SLL C");
-    //     outline0("RLA");
-    //     outline0("ADC HL, HL");
-    //     outline0("SBC HL, DE");
-    //     outline0("JR NC, 0x+4");
-    //     outline0("ADD HL, DE");
-    //     outline0("DEC C");
-    //     outline1("DJNZ %sloop", label);
-    //     outline1("MOV [%s], HL", _other_remainder);
-    //     outline1("MOV DE, %s", _other);
-    //     outline0("MOV B, A");
-    //     outline0("MOV A, C");
-    //     outline0("MOV (DE), A");
-    //     outline0("INC DE");
-    //     outline0("MOV A, B");
-    //     outline0("MOV (DE), A");
-
-    // }
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AX", _other);
     
 }
 
 void cpu_math_div_8bit_to_8bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BL, [%s]", _destination );
 
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("MOV B, A" );
-    //     outline1("MOV A, [%s]", _destination );
-    //     outline0("XOR A, B" );
-    //     outline0("AND 0x80" );
-    //     outline0("PUSH AF" );
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%spos", label );
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("JP %spos2", label );
-    //     outhead1("%spos:", label );
-    //     outline1("MOV A, [%s]", _source );
-    //     outhead1("%spos2:", label );
-    //     outline0("MOV D, A");
-        
-    //     outline1("MOV A, [%s]", _destination );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%sposx", label );
-    //     outline1("MOV A, [%s]", _destination );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("JP %sposx2", label );
-    //     outhead1("%sposx:", label );
-    //     outline1("MOV A, [%s]", _destination );
-    //     outhead1("%sposx2:", label );
-    //     outline0("MOV E, A");
+    if ( _signed ) {
+        outline0( "IDIV BL" );
+    } else {
+        outline0( "DIV BL" );
+    }
 
-    //     outline0("XOR A");
-    //     outline0("AND A");
-    //     outline0("MOV B, 8");
-    //     outhead1("%sloop:", label);
-    //     outline0("SLA D");
-    //     outline0("RLA");
-    //     outline0("CP E");
-    //     outline0("JR C, 0x+4");
-    //     outline0("SUB E");
-    //     outline0("INC D");
-    //     outline1("DJNZ %sloop", label );
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AL", _other);
 
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, D");
-    //     outline1("MOV [%s], A", _other);
-
-    //     outline0("POP AF" );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%spos3", label );
-    //     outline1("MOV A, [%s]", _other );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("MOV [%s], A", _other );
-    //     outhead1("%spos3:", label );
-        
-    // } else {
-
-    //     outline1("MOV A, [%s]", _source);
-    //     outline0("MOV D, A");
-    //     outline1("MOV A, [%s]", _destination);
-    //     outline0("MOV E, A");
-
-    //     outline0("XOR A");
-    //     outline0("MOV B, 8");
-    //     outhead1("%sloop:", label);
-
-    //     outline0("SLA D");
-    //     outline0("RLA");
-    //     outline0("CP E");
-    //     outline0("JR C, 0x+4");
-    //     outline0("SUB E");
-    //     outline0("INC D");
-    //     outline1("DJNZ %sloop", label );
-
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, D");
-    //     outline1("MOV [%s], A", _other);
-
-    // }
 }
 
 void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // if ( _signed ) {
+    outline1( "MOV AX, [%s]", _source );
+    outline1( "MOV BL, 0x%4.4x", _destination );
 
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("MOV B, A" );
-    //     outline1("MOV A, 0x%2.2x", _destination );
-    //     outline0("XOR A, B" );
-    //     outline0("AND 0x80" );
-    //     outline0("PUSH AF" );
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%spos", label );
-    //     outline1("MOV A, [%s]", _source );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("JP %spos2", label );
-    //     outhead1("%spos:", label );
-    //     outline1("MOV A, [%s]", _source );
-    //     outhead1("%spos2:", label );
-    //     outline0("MOV D, A");
-        
-    //     outline1("MOV A, 0x%2.2x", _destination );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%sposx", label );
-    //     outline1("MOV A, 0x%2.2x", _destination );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("JP %sposx2", label );
-    //     outhead1("%sposx:", label );
-    //     outline1("MOV A, 0x%2.2x", _destination );
-    //     outhead1("%sposx2:", label );
-    //     outline0("MOV E, A");
+    if ( _signed ) {
+        outline0( "IDIV BL" );
+    } else {
+        outline0( "DIV BL" );
+    }
 
-    //     outline0("XOR A");
-    //     outline0("AND A");
-    //     outline0("MOV B, 8");
-    //     outhead1("%sloop:", label);
-    //     outline0("SLA D");
-    //     outline0("RLA");
-    //     outline0("CP E");
-    //     outline0("JR C, 0x+4");
-    //     outline0("SUB E");
-    //     outline0("INC D");
-    //     outline1("DJNZ %sloop", label );
+    outline1("MOV [%s], DX", _other_remainder);
+    outline1("MOV [%s], AL", _other);
 
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, D");
-    //     outline1("MOV [%s], A", _other);
-
-    //     outline0("POP AF" );
-    //     outline0("AND 0x80" );
-    //     outline0("CP 0" );
-    //     outline1("JR Z,%spos3", label );
-    //     outline1("MOV A, [%s]", _other );
-    //     outline0("XOR 0xFF" );
-    //     outline0("ADC 0x1" );
-    //     outline1("MOV [%s], A", _other );
-    //     outhead1("%spos3:", label );
-        
-    // } else {
-
-    //     outline1("MOV A, [%s]", _source);
-    //     outline0("MOV D, A");
-    //     outline1("MOV A, 0x%2.2x", _destination);
-    //     outline0("MOV E, A");
-
-    //     outline0("XOR A");
-    //     outline0("MOV B, 8");
-    //     outhead1("%sloop:", label);
-
-    //     outline0("SLA D");
-    //     outline0("RLA");
-    //     outline0("CP E");
-    //     outline0("JR C, 0x+4");
-    //     outline0("SUB E");
-    //     outline0("INC D");
-    //     outline1("DJNZ %sloop", label );
-
-    //     outline1("MOV [%s], A", _other_remainder);
-    //     outline0("MOV A, D");
-    //     outline1("MOV [%s], A", _other);
-
-    // }
 }
 
 void cpu_bit_check( Environment * _environment, char *_value, int _position, char * _result, int _bitwidth ) {
 
-    // no_inline( cpu_bit_check_extended )
+    no_inline( cpu_bit_check_extended )
 
-    // embedded( cpu_bit_check_extended, src_hw_8086_cpu_bit_check_extended_asm );
+    embedded( cpu_bit_check_extended, src_hw_8086_cpu_bit_check_extended_asm );
 
-    //     outline1("MOV DE, %s", _value);
-    //     outline1("MOV A, 0x%2.2x", _position );
-    //     outline0("CALL CPUBITCHECKEXTENDED" );
+        outline1("MOV DI, %s", _value);
+        outline1("MOV AL, 0x%2.2x", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
 
-    //     if ( _result ) {
-    //         outline1("MOV [%s], A", _result);
-    //     }
+        if ( _result ) {
+            outline1("MOV [%s], AL", _result);
+        }
 
-    // done( )
+    done( )
 
 }
 
 void cpu_bit_check_extended( Environment * _environment, char *_value, char * _position, char * _result, int _bitwidth ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // no_inline( cpu_bit_check_extended )
+    no_inline( cpu_bit_check_extended )
 
-    // embedded( cpu_bit_check_extended, src_hw_8086_cpu_bit_check_extended_asm );
+    embedded( cpu_bit_check_extended, src_hw_8086_cpu_bit_check_extended_asm );
 
-    //     outline1("MOV DE, %s", _value);
-    //     outline1("MOV A, [%s]", _position );
-    //     outline0("CALL CPUBITCHECKEXTENDED" );
+        outline1("MOV DI, %s", _value);
+        outline1("MOV AL, [%s]", _position );
+        outline0("CALL CPUBITCHECKEXTENDED" );
 
-    //     if ( _result ) {
-    //         outline1("MOV [%s], A", _result);
-    //     }
+        if ( _result ) {
+            outline1("MOV [%s], AL", _result);
+        }
 
-    // done( )
+    done( )
     
 }
 
 void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit ) {
 
-    // _environment->bitmaskNeeded = 1;
+    _environment->bitmaskNeeded = 1;
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // no_inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
-    // embedded( cpu_bit_inplace, src_hw_8086_cpu_bit_inplace_asm );
+    embedded( cpu_bit_inplace, src_hw_8086_cpu_bit_inplace_asm );
 
-    //     if ( _bit ) {
-    //         if ( * _bit ) {
-    //             outline0("MOV A, 0xff" );
-    //         } else {
-    //             outline0("MOV A, 0x0" );
-    //         }
-    //         outline0("SRL A" );
-    //     }
-    //     outline1("MOV DE, %s", _value );
-    //     outline1("MOV A, 0x%2.2x", _position);
-    //     outline0("CALL CPUBITINPLACE");
+        if ( _bit ) {
+            if ( * _bit ) {
+                outline0("MOV AL, 0xff" );
+            } else {
+                outline0("MOV AL, 0x0" );
+            }
+            outline0("SRL AL" );
+        }
+        outline1("MOV DI, %s", _value );
+        outline1("MOV AL, 0x%2.2x", _position);
+        outline0("CALL CPUBITINPLACE");
 
-    // done( )
+    done( )
 
 }
 
 void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * _address, char * _position, char * _bit ) {
 
-    // _environment->bitmaskNeeded = 1;
+    _environment->bitmaskNeeded = 1;
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // no_inline( cpu_bit_inplace )
+    no_inline( cpu_bit_inplace )
 
-    // embedded( cpu_bit_inplace, src_hw_8086_cpu_bit_inplace_asm );
+    embedded( cpu_bit_inplace, src_hw_8086_cpu_bit_inplace_asm );
 
-    //     if ( _bit ) {
-    //         outline1("MOV A, [%s]", _bit );
-    //         outline0("CP 0x0" );
-    //         outline1("JR Z, %s", label );
-    //         outline0("MOV A, 1" );;
-    //         outline0("SRL A" );
-    //         outhead1("%s:", label );
-    //     }
-    //     outline1("MOV DE, [%s]", _address );
-    //     outline1("MOV A, [%s]", _position);
-    //     outline0("CALL CPUBITINPLACE");
+        if ( _bit ) {
+            outline1("MOV AL, [%s]", _bit );
+            outline0("CMP AL, 0" );
+            outline1("JZ %s", label );
+            outline0("MOV AL, 1" );;
+            outline0("SRL A" );
+            outhead1("%s:", label );
+        }
+        outline1("MOV DI, [%s]", _address );
+        outline1("MOV AL, [%s]", _position);
+        outline0("CALL CPUBITINPLACE");
 
-    // done( )
+    done( )
 
 }
 
@@ -4599,118 +3894,34 @@ void cpu_number_to_string_vars( Environment * _environment ) {
 
 void cpu_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _signed ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
         
-    // deploy_with_vars( numberToString, src_hw_8086_number_to_string_asm, cpu_number_to_string_vars );
+    deploy_with_vars( numberToString, src_hw_8086_number_to_string_asm, cpu_number_to_string_vars );
 
-    // switch( _bits ) {
-    //     case 8:
-    //         outline1("MOV A, [%s]", _number);
-    //         if ( _signed ) {
-    //             outline0("AND 0x80");
-    //             outline0("MOV B, A");
-    //             outline0("PUSH BC");
-    //             outline0("CP 0");
-    //             outline1("JR Z, %sp81", label);
-    //             outline1("MOV A, [%s]", _number);
-    //             outline0("XOR 0xFF");
-    //             outline0("ADC 0x1");
-    //             outline1("JP %sp82", label);
-    //             outhead1("%sp81:", label);
-    //             outline1("MOV A, [%s]", _number);
-    //             outhead1("%sp82:", label);
-    //         } else {
-    //             outline0("MOV B, 0" );
-    //             outline0("PUSH BC");
-    //         }
-    //         outline0("POP IX");
-    //         outline0("CALL N2D8");
-    //         break;
-    //     case 16:
-    //         outline1("MOV HL, [%s]", _number);
-    //         if ( _signed ) {
-    //             outline0("MOV A, H");
-    //             outline0("AND 0x80");
-    //             outline0("MOV B, A");
-    //             outline0("PUSH BC");
-    //             outline0("CP 0");
-    //             outline1("JR Z, %sp161", label);
-    //             outline0("MOV A, H");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV H, A");
-    //             outline0("MOV A, L");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV L, A");
-    //             outline0("MOV DE, 1" );
-    //             outline0("ADD HL, DE" );
-    //             outline0("MOV DE, 0" );
-    //             outline1("JP %sp162", label);
-    //             outhead1("%sp161:", label);
-    //             outline1("MOV HL, [%s]", _number);
-    //             outhead1("%sp162:", label);
-    //         } else {
-    //             outline0("MOV B, 0" );
-    //             outline0("PUSH BC");
-    //         }
-    //         outline0("POP IX");
-    //         outline0("CALL N2D16");
-    //         break;
-    //     case 32:
-    //         outline1("MOV HL, [%s]", _number);
-    //         outline1("MOV DE, [%s]", address_displacement(_environment, _number, "2"));
-    //         if ( _signed ) {
-    //             outline0("MOV A, D");
-    //             outline0("AND 0x80");
-    //             outline0("MOV B, A");
-    //             outline0("PUSH BC");
-    //             outline0("CP 0");
-    //             outline1("JR Z, %sp321", label);
-    //             outline0("MOV A, D");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV D, A");
-    //             outline0("MOV A, E");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV E, A");
-    //             outline0("MOV A, H");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV H, A");
-    //             outline0("MOV A, L");
-    //             outline0("XOR 0xFF");
-    //             outline0("MOV L, A");
-    //             outline0("AND A");
-    //             outline0("INC HL");
-    //             outline0("MOV A, L");
-    //             outline0("OR H");
-    //             outline1("JR NZ, %sp322", label);
-    //             outline0("INC DE");
-    //             outline1("JP %sp322", label);
-    //             outhead1("%sp321:", label);
-    //             outline1("MOV HL, [%s]", _number);
-    //             outline1("MOV DE, [%s]", address_displacement(_environment, _number, "2"));
-    //             outhead1("%sp322:", label);
-    //         } else {
-    //             outline0("MOV B, 0" );
-    //             outline0("PUSH BC");
-    //         }
-    //         outline0("POP IX");
-    //         outline0("CALL N2D32");
-    //         break;
-    //     default:
-    //         CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
-    // }
+    outline1("MOV DI, [%s]", _string);
 
-    // outline1("MOV DE, [%s]", _string);
-    // outline0("MOV A, IXH");
-    // outline0("CP 0");
-    // outline1("JR Z, %spos", label);
-    // outline0("MOV A, '-'");
-    // outline0("MOV (DE), A");
-    // outline0("INC DE");
-    // outline0("INC C");
-    // outhead1("%spos:", label);
-    // outline0("MOV A, C");
-    // outline1("MOV [%s], A", _string_size);
-    // outline0("LDIR");
+    switch( _bits ) {
+        case 8:
+            outline1("MOV AL, [%s]", _number);
+            outline0("MOV AH, 0");
+            outline0("MOV DX, 0");
+            outline0("CALL NUMBERTOSTRING");
+            break;
+        case 16:
+            outline1("MOV AX, [%s]", _number);
+            outline0("MOV DX, 0");
+            outline0("CALL NUMBERTOSTRING");
+            break;
+        case 32:
+            outline1("MOV AX, [%s]", _number);
+            outline1("MOV DX, [%s]", address_displacement(_environment, _number, "2"));
+            outline0("CALL NUMBERTOSTRING");
+            break;
+        default:
+            CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
+    }
+
+    outline1("MOV [%s], CX", _string_size );
 
 }
 
@@ -4722,38 +3933,29 @@ void cpu_bits_to_string_vars( Environment * _environment ) {
 
 void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    // deploy_with_vars( bitsToString,src_hw_8086_bits_to_string_asm, cpu_bits_to_string_vars );
+    deploy_with_vars( bitsToString,src_hw_8086_bits_to_string_asm, cpu_bits_to_string_vars );
 
-    // switch( _bits ) {
-    //     case 32:
-    //         outline1("MOV BC, [%s]", address_displacement(_environment, _number, "2") );
-    //         outline1("MOV DE, [%s]", _number );
-    //         break;
-    //     case 16:
-    //         outline0("MOV BC, 0" );
-    //         outline1("MOV DE, [%s]", _number );
-    //         break;
-    //     case 8:        
-    //         outline0("MOV BC, 0" );
-    //         outline0("MOV D, 0" );
-    //         outline1("MOV A, [%s]", _number );
-    //         outline0("MOV E, A" );
-    //         outline0("MOV A, 0" );
-    //         break;
-    // }
+    switch( _bits ) {
+        case 32:
+            outline1("MOV AX, [%s]", address_displacement(_environment, _number, "2") );
+            outline1("MOV BX, [%s]", _number );
+            break;
+        case 16:
+            outline0("MOV AX, 0" );
+            outline1("MOV BX, [%s]", _number );
+            break;
+        case 8:        
+            outline0("MOV AX, 0" );
+            outline0("MOV BH, 0" );
+            outline1("MOV BL, [%s]", _number );
+            break;
+    }
 
-    // outline1("MOV A, 0x%2.2x", ( _bits & 0xff ) );
-    // outline0("CALL BINSTR");
+    outline1("MOV DI, [%s]", _string);
+    outline0("CALL BINSTR");
     
-    // outline1("MOV DE, [%s]", _string);
-    // outline1("MOV A, 0x%2.2x", ( (_bits) & 0xff ) );
-    // outline0("MOV C, A");
-    // outline0("MOV B, 0");
-    // outline0("LDIR");
-
-    // outline1("MOV A, 0x%2.2x", ( _bits & 0xff ) );
-    // outline1("MOV HL, %s", _string_size );
-    // outline0("MOV (HL), A" );
+    outline1("MOV AL, 0x%2.2x", ( _bits & 0xff ) );
+    outline1("MOV [%s], AL", _string_size );
 
 }
 
