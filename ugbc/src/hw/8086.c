@@ -2262,582 +2262,340 @@ void cpu_call( Environment * _environment, char * _label ) {
 
 void cpu_call_indirect( Environment * _environment, char * _value ) {
 
-    // MAKE_LABEL
-
-    // char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
-
-    // outline0( "MOV (CALLINDIRECTSAVEHL), HL" )
-    // outline1( "MOV HL, [%s]", _value )
-    // outline0( "MOV (CALLINDIRECT+1), HL" )
-    // outline0( "MOV HL, (CALLINDIRECTSAVEHL)" )
-    // outline0( "CALL CALLINDIRECT" );
+    outline1( "CALL [%s]", _value )
 
 }
 
 void cpu_jump_indirect( Environment * _environment, char * _value ) {
 
-    // outline1( "MOV HL, [%s]", _value )
-    // outline0( "JP (HL)" );
+    outline1( "JMP [%s]", _value )
 
 }
 
 int cpu_register_decode( Environment * _environment, char * _register ) {
 
-    // Z80Register result = REGISTER_NONE;
+    CPU8086Register result = REGISTER_NONE;
 
-    // if ( !_environment->emptyProcedure ) {
+    if ( !_environment->emptyProcedure ) {
 
-    //     if ( strcmp( _register, "A" ) == 0 ) {
-    //         result = REGISTER_A;
-    //     } else if ( strcmp( _register, "B" ) == 0 ) {
-    //         result = REGISTER_B;
-    //     } else if ( strcmp( _register, "C" ) == 0 ) {
-    //         result = REGISTER_C;
-    //     } else if ( strcmp( _register, "D" ) == 0 ) {
-    //         result = REGISTER_D;
-    //     } else if ( strcmp( _register, "E" ) == 0 ) {
-    //         result = REGISTER_E;
-    //     } else if ( strcmp( _register, "H" ) == 0 ) {
-    //         result = REGISTER_H;
-    //     } else if ( strcmp( _register, "L" ) == 0 ) {
-    //         result = REGISTER_L;
-    //     } else if ( strcmp( _register, "F" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_F;
-    //     } else if ( strcmp( _register, "I" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_I;
-    //     } else if ( strcmp( _register, "R" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_R;
-    //     } else if ( strcmp( _register, "SP" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_SP;
-    //     } else if ( strcmp( _register, "PC" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_PC;
-    //     } else if ( strcmp( _register, "IX" ) == 0 ) {
-    //         result = REGISTER_IX;
-    //     } else if ( strcmp( _register, "IY" ) == 0 ) {
-    //         result = REGISTER_IY;
-    //     } else if ( strcmp( _register, "AF" ) == 0 ) {
-    //         if ( !_environment->emptyProcedure ) {
-    //             CRITICAL_UNSETTABLE_CPU_REGISTER( _register );
-    //         }
-    //         // result = REGISTER_AF;
-    //     } else if ( strcmp( _register, "BC" ) == 0 ) {
-    //         result = REGISTER_BC;
-    //     } else if ( strcmp( _register, "DE" ) == 0 ) {
-    //         result = REGISTER_DE;
-    //     } else if ( strcmp( _register, "HL" ) == 0 ) {
-    //         result = REGISTER_HL;
-    //     } else if ( strcmp( _register, "IXL" ) == 0 ) {
-    //         result = REGISTER_IXL;
-    //     } else if ( strcmp( _register, "IXH" ) == 0 ) {
-    //         result = REGISTER_IXH;
-    //     } else if ( strcmp( _register, "IYL" ) == 0 ) {
-    //         result = REGISTER_IYL;
-    //     } else if ( strcmp( _register, "IYH" ) == 0 ) {
-    //         result = REGISTER_IYH;
-    //     } else if ( strcmp( _register, "CARRY" ) == 0 ) {
-    //         result = REGISTER_CARRY;
-    //     } else if ( strcmp( _register, "ZERO" ) == 0 ) {
-    //         result = REGISTER_ZERO;
-    //     } else if ( strcmp( _register, "HLA" ) == 0 ) {
-    //         result = REGISTER_HLA;
-    //     } else {
+    REGISTER_SP     =   REGISTER_BASE | 13,
+    REGISTER_BP     =   REGISTER_BASE | 14,
+    REGISTER_SI     =   REGISTER_BASE | 15,
+    REGISTER_DI     =   REGISTER_BASE | 16,
 
-    //     }
+        if ( strcmp( _register, "AL" ) == 0 ) {
+            result = REGISTER_AL;
+        } else if ( strcmp( _register, "AH" ) == 0 ) {
+            result = REGISTER_AH;
+        } else if ( strcmp( _register, "BL" ) == 0 ) {
+            result = REGISTER_BL;
+        } else if ( strcmp( _register, "BH" ) == 0 ) {
+            result = REGISTER_BH;
+        } else if ( strcmp( _register, "CL" ) == 0 ) {
+            result = REGISTER_CL;
+        } else if ( strcmp( _register, "CH" ) == 0 ) {
+            result = REGISTER_CH;
+        } else if ( strcmp( _register, "DL" ) == 0 ) {
+            result = REGISTER_DL;
+        } else if ( strcmp( _register, "DH" ) == 0 ) {
+            result = REGISTER_DH;
+        } else if ( strcmp( _register, "AX" ) == 0 ) {
+            result = REGISTER_AX;
+        } else if ( strcmp( _register, "BX" ) == 0 ) {
+            result = REGISTER_BX;
+        } else if ( strcmp( _register, "CX" ) == 0 ) {
+            result = REGISTER_CX;
+        } else if ( strcmp( _register, "DX" ) == 0 ) {
+            result = REGISTER_DX;
+        } else if ( strcmp( _register, "SP" ) == 0 ) {
+            result = REGISTER_SP;
+        } else if ( strcmp( _register, "BP" ) == 0 ) {
+            result = REGISTER_BP;
+        } else if ( strcmp( _register, "SI" ) == 0 ) {
+            result = REGISTER_SI;
+        } else if ( strcmp( _register, "DI" ) == 0 ) {
+            result = REGISTER_DI;
+        } else if ( strcmp( _register, "CARRY" ) == 0 ) {
+            result = REGISTER_CARRY;
+        } else if ( strcmp( _register, "ZERO" ) == 0 ) {
+            result = REGISTER_ZERO;
+        } else {
 
-    // }
+        }
 
-    // return (int)result;
+    }
+
+    return (int)result;
 
 }
 
 void cpu_set_asmio( Environment * _environment, int _asmio, int _value ) {
 
-    // if ( IS_REGISTER( _asmio ) ) {
+    if ( IS_REGISTER( _asmio ) ) {
 
-    //     MAKE_LABEL
+        MAKE_LABEL
 
-    //     Z80Register reg = (Z80Register) _asmio;
+        CPU8086Register reg = (CPU8086Register) _asmio;
 
-    //     switch ( reg ) {
-    //         case REGISTER_NONE:
-    //             CRITICAL_UNKNOWN_CPU_REGISTER( );
-    //             break;
-    //         case REGISTER_F:
-    //         case REGISTER_I:
-    //         case REGISTER_R:
-    //         case REGISTER_SP:
-    //         case REGISTER_PC:
-    //         case REGISTER_AF:
-    //             break;
-    //         case REGISTER_A:
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             break;
-    //         case REGISTER_B:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV B, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_C:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV C, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_D:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV D, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_E:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV E, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_H:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV H, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_L:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV L, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IX:
-    //             outline1( "MOV IX, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             break;
-    //         case REGISTER_IY:
-    //             outline1( "MOV IY, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             break;
-    //         case REGISTER_BC:
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             outline0( "MOV BC, HL" );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_DE:
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             outline0( "MOV DE, HL" );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_HL:
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             break;
-    //         case REGISTER_IXL:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV IXL, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IXH:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV IXH, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYL:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV IYL, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYH:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "MOV IYH, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_CARRY:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "CP 0" );
-    //             outline1( "JR Z, %snoc", label );
-    //             outline0( "MOV A, 0x1" );
-    //             outline0( "SRL A" );
-    //             outline1( "JP %sdone", label );
-    //             outhead1( "%snoc:", label );
-    //             outline0( "SRL A" );
-    //             outhead1( "%sdone:", label );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_ZERO:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "CP 0" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_HLA:
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned char)((_value >> 8 ) & 0xffff ) );
-    //             break;
-    //     }
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+                break;
+            case REGISTER_AL:
+                outline1( "MOV AL, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_AH:
+                outline1( "MOV AH, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_BL:
+                outline1( "MOV BL, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_BH:
+                outline1( "MOV BH, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_CL:
+                outline1( "MOV CL, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_CH:
+                outline1( "MOV CH, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_DL:
+                outline1( "MOV DL, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_DH:
+                outline1( "MOV DH, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                break;
+            case REGISTER_AX:
+                outline1( "MOV AX, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_BX:
+                outline1( "MOV BX, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_CX:
+                outline1( "MOV CX, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_DX:
+                outline1( "MOV DX, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_SP:
+                outline1( "MOV SP, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_BP:
+                outline1( "MOV BP, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_SI:
+                outline1( "MOV SI, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+            case REGISTER_DI:
+                outline1( "MOV DI, 0x%4.4x", (unsigned short)(_value & 0xffff ) );
+                break;
+        }
 
-    // } else {
+    } else {
 
-    //     Z80Stack stk = (Z80Stack) _asmio;
+        CPU8086Stack stk = (CPU8086Stack) _asmio;
 
-    //     switch ( stk ) {
-    //         case STACK_NONE:
-    //             break;
-    //         case STACK_BYTE:
-    //             outline1( "MOV A, 0x%2.2x", (unsigned char)(_value & 0xff ) );
-    //             outline0( "PUSH A" );
-    //             break;
-    //         case STACK_WORD:
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             outline0( "PUSH HL" );
-    //             break;
-    //         case STACK_DWORD:
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)(_value & 0xffff) );
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, 0x%4.4x", (unsigned short)((_value>>16) & 0xffff) );
-    //             outline0( "PUSH HL" );
-    //             break;
-    //     }
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "MOV AL, 0x%2.2x", (unsigned char)(_value & 0xff ) );
+                outline0( "PUSH AL" );
+                break;
+            case STACK_WORD:
+                outline1( "MOV AX, 0x%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "PUSH AX" );
+                break;
+            case STACK_DWORD:
+                outline1( "MOV AX, 0x%4.4x", (unsigned short)(_value & 0xffff) );
+                outline0( "PUSH AX" );
+                outline1( "MOV AX, 0x%4.4x", (unsigned short)((_value>>16) & 0xffff) );
+                outline0( "PUSH AX" );
+                break;
+        }
 
-    // }
+    }
 
 }
 
 void cpu_set_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
-    // if ( IS_REGISTER( _asmio ) ) {
+    if ( IS_REGISTER( _asmio ) ) {
 
-    //     MAKE_LABEL
+        MAKE_LABEL
 
-    //     Z80Register reg = (Z80Register) _asmio;
+        CPU8086Register reg = (CPU8086Register) _asmio;
 
-    //     switch ( reg ) {
-    //         case REGISTER_NONE:
-    //             CRITICAL_UNKNOWN_CPU_REGISTER( );
-    //             break;
-    //         case REGISTER_F:
-    //         case REGISTER_I:
-    //         case REGISTER_R:
-    //         case REGISTER_SP:
-    //         case REGISTER_PC:
-    //         case REGISTER_AF:
-    //             break;
-    //         case REGISTER_A:
-    //             outline1( "MOV A, [%s]", _value );
-    //             break;
-    //         case REGISTER_B:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV B, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_C:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV C, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_D:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV D, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_E:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV E, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_H:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV H, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_L:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV L, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IX:
-    //             outline1( "MOV IX, [%s]", _value );
-    //             break;
-    //         case REGISTER_IY:
-    //             outline1( "MOV IY, [%s]", _value );
-    //             break;
-    //         case REGISTER_BC:
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, [%s]", _value );
-    //             outline0( "MOV BC, HL" );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_DE:
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, [%s]", _value );
-    //             outline0( "MOV DE, HL" );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_HL:
-    //             outline1( "MOV HL, [%s]", _value );
-    //             break;
-    //         case REGISTER_IXL:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV IXL, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IXH:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV IXH, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYL:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV IYL, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYH:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "MOV IYH, A" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_CARRY:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "CP 0" );
-    //             outline1( "JR Z, %snoc", label );
-    //             outline0( "MOV A, 0x1" );
-    //             outline0( "SRL A" );
-    //             outline1( "JP %sdone", label );
-    //             outhead1( "%snoc:", label );
-    //             outline0( "SRL A" );
-    //             outhead1( "%sdone:", label );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_ZERO:
-    //             outline0( "PUSH AF" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "CP 0" );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_HLA:
-    //             outline1( "MOV A, [%s]", address_displacement( _environment, _value, "2" ) );
-    //             outline0( "MOV H, A" );
-    //             outline1( "MOV A, [%s]", address_displacement( _environment, _value, "1" ) );
-    //             outline0( "MOV L, A" );
-    //             outline1( "MOV A, [%s]", _value );
-    //             break;
-    //     }
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+                break;
+            case REGISTER_AL:
+                outline1( "MOV AL, [%s]", _value );
+                break;
+            case REGISTER_AH:
+                outline1( "MOV AH, [%s]", _value );
+                break;
+            case REGISTER_BL:
+                outline1( "MOV BL, [%s]", _value );
+                break;
+            case REGISTER_BH:
+                outline1( "MOV BH, [%s]", _value );
+                break;
+            case REGISTER_CL:
+                outline1( "MOV CL, [%s]", _value );
+                break;
+            case REGISTER_CH:
+                outline1( "MOV CH, [%s]", _value );
+                break;
+            case REGISTER_DL:
+                outline1( "MOV DL, [%s]", _value );
+                break;
+            case REGISTER_DH:
+                outline1( "MOV DH, [%s]", _value );
+                break;
+            case REGISTER_AX:
+                outline1( "MOV AX, [%s]", _value );
+                break;
+            case REGISTER_BX:
+                outline1( "MOV BX, [%s]", _value );
+                break;
+            case REGISTER_CX:
+                outline1( "MOV CX, [%s]", _value );
+                break;
+            case REGISTER_DX:
+                outline1( "MOV DX, [%s]", _value );
+                break;
+            case REGISTER_SP:
+                outline1( "MOV SP, [%s]", _value );
+                break;
+            case REGISTER_BP:
+                outline1( "MOV BP, [%s]", _value );
+                break;
+            case REGISTER_SI:
+                outline1( "MOV SI, [%s]", _value );
+                break;
+            case REGISTER_DI:
+                outline1( "MOV DI, [%s]", _value );
+                break;
+        }
 
-    // } else {
+    } else {
 
-    //     Z80Stack stk = (Z80Stack) _asmio;
+        CPU8086Stack stk = (CPU8086Stack) _asmio;
 
-    //     switch ( stk ) {
-    //         case STACK_NONE:
-    //             break;
-    //         case STACK_BYTE:
-    //             outline1( "MOV A, [%s]", _value );
-    //             outline0( "PUSH A" );
-    //             break;
-    //         case STACK_WORD:
-    //             outline1( "MOV HL, [%s]", _value );
-    //             outline0( "PUSH HL" );
-    //             break;
-    //         case STACK_DWORD:
-    //             outline1( "MOV HL, [%s]", address_displacement( _environment, _value, "0" ) );
-    //             outline0( "PUSH HL" );
-    //             outline1( "MOV HL, [%s]", address_displacement( _environment, _value, "2" ) );
-    //             outline0( "PUSH HL" );
-    //             break;
-    //     }
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline1( "MOV AL, [%s]", _value );
+                outline0( "PUSH AL" );
+                break;
+            case STACK_WORD:
+                outline1( "MOV AX, [%s]", _value );
+                outline0( "PUSH AX" );
+                break;
+            case STACK_DWORD:
+                outline1( "MOV AX, [%s]", _value );
+                outline0( "PUSH AX" );
+                outline1( "MOV AX, [%s]", address_displacement( _environment, _value, "+2" ) );
+                outline0( "PUSH AX" );
+                break;
+        }
 
-    // }
-
+    }
+    
 }
 
 void cpu_get_asmio_indirect( Environment * _environment, int _asmio, char * _value ) {
 
-    // if ( IS_REGISTER( _asmio ) ) {
+    if ( IS_REGISTER( _asmio ) ) {
 
-    //     MAKE_LABEL
+        MAKE_LABEL
 
-    //     Z80Register reg = (Z80Register) _asmio;
+        CPU8086Register reg = (CPU8086Register) _asmio;
 
-    //     switch ( reg ) {
-    //         case REGISTER_NONE:
-    //             CRITICAL_UNKNOWN_CPU_REGISTER( );
-    //             break;
-    //         case REGISTER_F:
-    //         case REGISTER_I:
-    //         case REGISTER_R:
-    //         case REGISTER_SP:
-    //         case REGISTER_PC:
-    //         case REGISTER_AF:
-    //             break;
-    //         case REGISTER_A:
-    //             outline1( "MOV [%s], A", _value );
-    //             break;
-    //         case REGISTER_B:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, B" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_C:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, C" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_D:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, D" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_E:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, E" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_H:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, H" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_L:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, L" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IX:
-    //             outline1( "MOV [%s], IX", _value );
-    //             break;
-    //         case REGISTER_IY:
-    //             outline1( "MOV [%s], IY", _value );
-    //             break;
-    //         case REGISTER_BC:
-    //             outline0( "PUSH HL" );
-    //             outline0( "MOV HL, BC" );
-    //             outline1( "MOV [%s], HL", _value );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_DE:
-    //             outline0( "PUSH HL" );
-    //             outline0( "MOV HL, DE" );
-    //             outline1( "MOV [%s], HL", _value );
-    //             outline0( "POP HL" );
-    //             break;
-    //         case REGISTER_HL:
-    //             outline1( "MOV [%s], HL", _value );
-    //             break;
-    //         case REGISTER_IXL:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, IXL" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IXH:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, IXH" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYL:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, IYL" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_IYH:
-    //             outline0( "PUSH AF" );
-    //             outline0( "MOV A, IYH" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_CARRY:
-    //             outline0( "PUSH AF" );
-    //             outline1( "JR NC, %snoc", label );
-    //             outline0( "MOV A, 0x1" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline1( "JP %sdone", label );
-    //             outhead1( "%snoc:", label );
-    //             outline0( "MOV A, 0x0" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outhead1( "%sdone:", label );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_ZERO:
-    //             outline0( "PUSH AF" );
-    //             outline1( "JR NZ, %snoz", label );
-    //             outline0( "MOV A, 0x1" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outline1( "JP %sdone", label );
-    //             outhead1( "%snoz:", label );
-    //             outline0( "MOV A, 0x0" );
-    //             outline1( "MOV [%s], A", _value );
-    //             outhead1( "%sdone:", label );
-    //             outline0( "POP AF" );
-    //             break;
-    //         case REGISTER_HLA:
-    //             outline1( "MOV [%s], A", _value );
-    //             outline0( "MOV A, L" );
-    //             outline1( "MOV [%s], A", address_displacement( _environment, _value, "1" ) );
-    //             outline0( "MOV A, H" );
-    //             outline1( "MOV [%s], A", address_displacement( _environment, _value, "2" ) );
-    //             break;
-    //     }
+        switch ( reg ) {
+            case REGISTER_NONE:
+                CRITICAL_UNKNOWN_CPU_REGISTER( );
+                break;
+                break;
+            case REGISTER_AL:
+                outline1( "MOV [%s], AL", _value );
+                break;
+            case REGISTER_AH:
+                outline1( "MOV [%s], AH", _value );
+                break;
+            case REGISTER_BL:
+                outline1( "MOV [%s], BL", _value );
+                break;
+            case REGISTER_BH:
+                outline1( "MOV [%s], BH", _value );
+                break;
+            case REGISTER_CL:
+                outline1( "MOV [%s], CL", _value );
+                break;
+            case REGISTER_CH:
+                outline1( "MOV [%s], CH", _value );
+                break;
+            case REGISTER_DL:
+                outline1( "MOV [%s], DL", _value );
+                break;
+            case REGISTER_DH:
+                outline1( "MOV [%s], DH", _value );
+                break;
+            case REGISTER_AX:
+                outline1( "MOV [%s], AX", _value );
+                break;
+            case REGISTER_BX:
+                outline1( "MOV [%s], BX", _value );
+                break;
+            case REGISTER_CX:
+                outline1( "MOV [%s], CX", _value );
+                break;
+            case REGISTER_DX:
+                outline1( "MOV [%s], DX", _value );
+                break;
+            case REGISTER_SP:
+                outline1( "MOV [%s], SP", _value );
+                break;
+            case REGISTER_BP:
+                outline1( "MOV [%s], BP", _value );
+                break;
+            case REGISTER_SI:
+                outline1( "MOV [%s], SI", _value );
+                break;
+            case REGISTER_DI:
+                outline1( "MOV [%s], DI", _value );
+                break;
+        }
 
-    // } else {
+    } else {
 
-    //     Z80Stack stk = (Z80Stack) _asmio;
+        CPU8086Stack stk = (CPU8086Stack) _asmio;
 
-    //     switch ( stk ) {
-    //         case STACK_NONE:
-    //             break;
-    //         case STACK_BYTE:
-    //             outline0( "POP AF" );
-    //             outline1( "MOV [%s], A", _value );
-    //             break;
-    //         case STACK_WORD:
-    //             outline0( "POP HL" );
-    //             outline1( "MOV [%s], HL", _value );
-    //             break;
-    //         case STACK_DWORD:
-    //             outline0( "POP HL" );
-    //             outline1( "MOV [%s], HL", address_displacement( _environment, _value, "0" ) );
-    //             outline0( "POP HL" );
-    //             outline1( "MOV [%s], HL", address_displacement( _environment, _value, "2" ) );
-    //             break;
-    //     }
+        switch ( stk ) {
+            case STACK_NONE:
+                break;
+            case STACK_BYTE:
+                outline0( "POP AL" );
+                outline1( "MOV [%s], AL", _value );
+                break;
+            case STACK_WORD:
+                outline0( "POP AX" );
+                outline1( "MOV [%s], AX", _value );
+                break;
+            case STACK_DWORD:
+                outline0( "POP AX" );
+                outline1( "MOV [%s], AX", address_displacement( _environment, _value, "+2" ) );
+                outline0( "POP AX" );
+                outline1( "MOV [%s], AX", _value );
+                break;
+        }
 
-    // }
+    }
 
 }
 
@@ -2849,23 +2607,22 @@ void cpu_return( Environment * _environment ) {
 
 void cpu_pop( Environment * _environment ) {
 
-    // outline0("POP IX" );
+    outline0("POP AX" );
 
 }
 
 void cpu_halt( Environment * _environment ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // outhead1("%s:", label );
-    // outline1("jp %s", label );
+    outhead1("%s:", label );
+    outline1("JMP %s", label );
 
 }
 
 void cpu_end( Environment * _environment ) {
 
-    // outline0("DI");
-    // outline0("HLT");
+    outline0("HLT");
 
 }
 
