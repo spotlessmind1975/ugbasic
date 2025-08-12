@@ -121,7 +121,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    // tms9918_initialization( _environment );
+    cga_initialization( _environment );
     // sn76489z_initialization( _environment );
 
     outline0("CALL PCCGASTARTUP");

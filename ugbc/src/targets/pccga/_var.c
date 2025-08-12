@@ -492,7 +492,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( startup, src_hw_pccga_startup_asm);
     // deploy_inplace_preferred( startup2, src_hw_pccga_startup2_asm);
     // deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
-    // deploy_inplace_preferred( cgastartup, src_hw_cga_startup_asm);
+    deploy_inplace_preferred( cgastartup, src_hw_cga_startup_asm);
 
     buffered_prepend_output( _environment );
 
@@ -553,37 +553,12 @@ void variable_cleanup( Environment * _environment ) {
         int i=0,j=0;
         for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
             outline1("; 0x%2.2x ", i);
-            out0("DEFB " );
+            out0("   db " );
             for(j=0;j<7;++j) {
                 out1("0x%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
             outline1("0x%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
-        outhead0("TMS9918AUDCCHAR01:" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, 0x%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline0("RET" );
-        outhead0("TMS9918AUDCCHAR23:" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, 0x%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, 0x800+0x%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, 0x1000+0x%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline0("RET" );
-    } else {
-        outhead0("TMS9918AUDCCHAR01:" );
-        outline0("RET" );
-        outhead0("TMS9918AUDCCHAR23:" );
-        outline0("RET" );
     }
 
 }

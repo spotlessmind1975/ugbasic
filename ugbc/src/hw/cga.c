@@ -332,7 +332,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             // 4 Program the mode-control and color-select registers
             WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW | CGA_MODE_ENABLE );
 
-            cpu_store_16bit( _environment, "TEXTADDRESS", 0xb8000 );
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
 
             break;
     }
@@ -572,8 +572,8 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
     deploy( cgavars, src_hw_cga_vars_asm);
     // deploy( vScrollTextUp, src_hw_cga_vscroll_text_up_asm );
 
-    outline1("LD DI, (%s)", _text);
-    outline1("LD CL, (%s)", _text_size);
+    outline1("MOV SI, [%s]", _text);
+    outline1("MOV CL, [%s]", _text_size);
 
     if ( _raw ) {
 
@@ -616,7 +616,7 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // } else {
             // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
             // deploy( clsText, src_hw_cga_cls_text_asm );
-            // deploy( textEncodedAt, src_hw_cga_text_asm );
+            deploy( textEncodedAt, src_hw_cga_text_asm );
             deploy( textEncodedAtText, src_hw_cga_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
         // }

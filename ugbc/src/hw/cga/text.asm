@@ -29,36 +29,36 @@
 ; ;  ****************************************************************************/
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ; ;*                                                                             *
-; ;*                      TEXT AT GIVEN POSITION ON MSX1                         *
+; ;*                      TEXT AT GIVEN POSITION ON CGA                          *
 ; ;*                                                                             *
 ; ;*                             by Marco Spedaletti                             *
 ; ;*                                                                             *
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; TEXTATDECODE:
-;     CP 97
-;     JR C, TEXTATDECODEX1F
-;     SUB 96
+TEXTATDECODE:
+    CMP AL, 97
+    JC TEXTATDECODEX1F
+    SUB AL, 96
+    JP TEXTATDECODE0
+TEXTATDECODEX1F:
+    ; CP 64
+    ; JR C, TEXTATDECODEX39
+    ; SUB 64
+    ; JP TEXTATDECODE0
+TEXTATDECODEX39:
+;     CP $5F
+;     JR C, TEXTATDECODEX5A
+;     SUB $40
 ;     JP TEXTATDECODE0
-; TEXTATDECODEX1F:
-;     ; CP 64
-;     ; JR C, TEXTATDECODEX39
-;     ; SUB 64
-;     ; JP TEXTATDECODE0
-; TEXTATDECODEX39:
-; ;     CP $5F
-; ;     JR C, TEXTATDECODEX5A
-; ;     SUB $40
-; ;     JP TEXTATDECODE0
-; ; TEXTATDECODEX5A:
-; ;     CP $7F
-; ;     JR C, TEXTATDECODEX7F
-; ;     SUB $20
-; ;     JP TEXTATDECODE0
-; ; TEXTATDECODEX7F:
-; ;     LD A, $60
-; ;     JP TEXTATDECODE0
-; TEXTATDECODE0:
-;     ; AND $3F
-;     RET
+; TEXTATDECODEX5A:
+;     CP $7F
+;     JR C, TEXTATDECODEX7F
+;     SUB $20
+;     JP TEXTATDECODE0
+; TEXTATDECODEX7F:
+;     LD A, $60
+;     JP TEXTATDECODE0
+TEXTATDECODE0:
+    ; AND $3F
+    RET
 
