@@ -4441,116 +4441,116 @@ void cpu_string_sub( Environment * _environment, char * _source, char * _source_
     done()
 }
 
-static char cpu_BLIT_REGISTER[][2] = {
+static char CPU8086_BLIT_REGISTER[][2] = {
     "DL",
     "DH",
     "CL",
     "CH"
 };
 
-#define cpu_BLII_REGISTER_COUNT ( sizeof( cpu_BLIT_REGISTER ) / 2 )
+#define CPU8086_BLIT_REGISTER_COUNT ( sizeof( CPU8086_BLIT_REGISTER ) / 2 )
 
 void cpu_blit_initialize( Environment * _environment ) {
 
-    // _environment->blit.freeRegisters = 0;
-    // _environment->blit.usedMemory = 0;
+    _environment->blit.freeRegisters = 0;
+    _environment->blit.usedMemory = 0;
 
-    // // outline0("; cpu_blit_initialize");
+    // outline0("; cpu_blit_initialize");
 
-    // outline0("PUSH HL");
-    // outline0("PUSH DE");
+    outline0("PUSH SI");
+    outline0("PUSH DI");
 
 }
 
 void cpu_blit_finalize( Environment * _environment ) {
 
-    // // outline0("; cpu_blit_finalize");
+    // outline0("; cpu_blit_finalize");
 
-    // _environment->blit.freeRegisters = 0;
-    // _environment->blit.usedMemory = 0;
+    _environment->blit.freeRegisters = 0;
+    _environment->blit.usedMemory = 0;
 
-    // outline0("POP DE");
-    // outline0("POP HL");
+    outline0("POP DI");
+    outline0("POP SI");
     
 }
 
 char * cpu_blit_register_name(  Environment * _environment, int _register ) {
     
-    // if ( _register < cpu_BLII_REGISTER_COUNT ) {
-    //     return &cpu_BLIT_REGISTER[_register][0];
-    // } else {
-    //     return &cpu_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
-    // }
+    if ( _register < CPU8086_BLIT_REGISTER_COUNT ) {
+        return &CPU8086_BLIT_REGISTER[_register][0];
+    } else {
+        return &CPU8086_BLIT_REGISTER[ (_register & 0xff00) >> 8][0];
+    }
 }
 
 int cpu_blit_alloc_register(  Environment * _environment ) {
 
-    // int reg = 0;
+    int reg = 0;
 
-    // for( reg = 0; reg < cpu_BLII_REGISTER_COUNT; ++reg ) {
-    //     int registerMask = ( 0x01 << reg );
-    //     int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
-    //     if ( ! isRegisterUsed ) {
-    //         _environment->blit.freeRegisters |= registerMask;
-    //         // printf( "cpu_blit_alloc_register() %4.4x -> 0x%4.4x\n", _environment->blit.freeRegisters, reg );
-    //         // outline1("; cpu_blit_alloc_register = %d", reg );
-    //         return reg;
-    //     }
-    // }
+    for( reg = 0; reg < CPU8086_BLIT_REGISTER_COUNT; ++reg ) {
+        int registerMask = ( 0x01 << reg );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( ! isRegisterUsed ) {
+            _environment->blit.freeRegisters |= registerMask;
+            // printf( "cpu_blit_alloc_register() %4.4x -> 0x%4.4x\n", _environment->blit.freeRegisters, reg );
+            // outline1("; cpu_blit_alloc_register = %d", reg );
+            return reg;
+        }
+    }
 
-    // int location = _environment->blit.usedMemory++;
+    int location = _environment->blit.usedMemory++;
 
-    // if ( location > 0xff ) {
-    //     CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
-    // }
+    if ( location > 0xff ) {
+        CRITICAL_BLIT_ALLOC_MEMORY_EXHAUSTED( );
+    }
 
-    // for( reg = 0; reg < cpu_BLII_REGISTER_COUNT; ++reg ) {
-    //     int registerMask = ( 0x10 << reg );
-    //     int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
-    //     if ( ! isRegisterUsed ) {
-    //         outline1( "MOV A, %s", &cpu_BLIT_REGISTER[reg][0] );
-    //         outline2( "MOV (%sbs+0x%2.2x), A",  _environment->blit.realName, location );
-    //         _environment->blit.freeRegisters |= registerMask;
-    //         // printf( "cpu_blit_alloc_register() -> %4.4x 0x%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
-    //         // outline1("; cpu_blit_alloc_register = %d", ( ( (reg+1) << 8 ) | location ) );
-    //         return ( ( (reg+1) << 8 ) | location );
-    //     }
-    // }
+    for( reg = 0; reg < CPU8086_BLIT_REGISTER_COUNT; ++reg ) {
+        int registerMask = ( 0x10 << reg );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( ! isRegisterUsed ) {
+            outline1( "MOV AL, %s", &CPU8086_BLIT_REGISTER[reg][0] );
+            outline2( "MOV [%sbs+0x%2.2x], AL",  _environment->blit.realName, location );
+            _environment->blit.freeRegisters |= registerMask;
+            // printf( "cpu_blit_alloc_register() -> %4.4x 0x%4.4x\n", _environment->blit.freeRegisters, ( ( reg << 8 ) | location ) );
+            // outline1("; cpu_blit_alloc_register = %d", ( ( (reg+1) << 8 ) | location ) );
+            return ( ( (reg+1) << 8 ) | location );
+        }
+    }
 
-    // CRITICAL_BLIT_ALLOC_REGISTER_EXHAUSTED( );
+    CRITICAL_BLIT_ALLOC_REGISTER_EXHAUSTED( );
 
 }
 
 void cpu_blit_free_register(  Environment * _environment, int _register ) {
 
-    // // outline1("; cpu_blit_free_register = %d", _register );
+    // outline1("; cpu_blit_free_register = %d", _register );
 
-    // // printf( "cpu_blit_free_register(0x%4.4x)\n", _register );
+    // printf( "cpu_blit_free_register(0x%4.4x)\n", _register );
 
-    // int location = _register & 0xff;
-    // int reg;
+    int location = _register & 0xff;
+    int reg;
 
-    // if ( _register < cpu_BLII_REGISTER_COUNT ) {
-    //     int registerMask = ( 0x01 << _register );
-    //     int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
-    //     if ( isRegisterUsed ) {
-    //         _environment->blit.freeRegisters &= ~registerMask;
-    //         return;
-    //     } else {
-    //         CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
-    //     }
-    // } else {
-    //     int registerMask = 0x10 << ( ( ( _register >> 8 ) & 0xff ) - 1 );
-    //     int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
-    //     if ( isRegisterUsed ) {
-    //         outline2( "MOV A, (%sbs+0x%2.2x)",  _environment->blit.realName, location );
-    //         outline1( "MOV %s, A", &cpu_BLIT_REGISTER[reg][0] );
-    //         _environment->blit.freeRegisters &= ~registerMask;
-    //         return;
-    //     }
-    // }
+    if ( _register < CPU8086_BLIT_REGISTER_COUNT ) {
+        int registerMask = ( 0x01 << _register );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( isRegisterUsed ) {
+            _environment->blit.freeRegisters &= ~registerMask;
+            return;
+        } else {
+            CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+        }
+    } else {
+        int registerMask = 0x10 << ( ( ( _register >> 8 ) & 0xff ) - 1 );
+        int isRegisterUsed = _environment->blit.freeRegisters & registerMask;
+        if ( isRegisterUsed ) {
+            outline2( "MOV AL, [%sbs+0x%2.2x]",  _environment->blit.realName, location );
+            outline1( "MOV %s, AL", &CPU8086_BLIT_REGISTER[reg][0] );
+            _environment->blit.freeRegisters &= ~registerMask;
+            return;
+        }
+    }
 
-    // CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
+    CRITICAL_BLIT_INVALID_FREE_REGISTER( _environment->blit.name, _register );
 
 }
 
@@ -4564,54 +4564,54 @@ void cpu_blit_free_register(  Environment * _environment, int _register ) {
  */
 void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int _value[] ) {
 
-    // int i = 0;
-    // while( _n ) {
-    //     char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
-    //     if ( _n <= 32 ) {
-    //         switch( _n ) {
-    //             case 1: case 2: case 3: case 4:
-    //             case 5: case 6: case 7: case 8:
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
-    //                 break;
-    //             case 9: case 10: case 11: case 12:
-    //             case 13: case 14: case 15: case 16:
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
-    //                 break;
-    //             case 17: case 18: case 19: case 20:
-    //             case 21: case 22: case 23: case 24:
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
-    //                 break;
-    //             case 25: case 26: case 27: case 28:
-    //             case 29: case 30: case 31: case 32:
-    //             default:
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //                 cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
-    //                 break;
-    //         }
-    //         _n = 0;
-    //     } else {
-    //         cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //         cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //         cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //         cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
-    //         _n -= 32;
-    //     }
-    //     ++i;
-    // }
+    int i = 0;
+    while( _n ) {
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff>>(8-_n)) ) );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff>>(16-_n)) ) );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff>>(24-_n)) ) );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+            _n -= 32;
+        }
+        ++i;
+    }
 
 }
 
@@ -4625,64 +4625,64 @@ void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int
  */
 void cpu_move_nbit( Environment * _environment, int _n, char * _source, char *_destination ) {
 
-    // int i = 0;
-    // while( _n ) {
-    //     char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
-    //     char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
-    //     if ( _n <= 32 ) {
-    //         switch( _n ) {
-    //             case 1: case 2: case 3: case 4:
-    //             case 5: case 6: case 7: case 8:
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 break;
-    //             case 9: case 10: case 11: case 12:
-    //             case 13: case 14: case 15: case 16:
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 break;
-    //             case 17: case 18: case 19: case 20:
-    //             case 21: case 22: case 23: case 24:
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 break;
-    //             case 25: case 26: case 27: case 28:
-    //             case 29: case 30: case 31: case 32:
-    //             default:
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //                 cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //                 break;
-    //         }
-    //         _n = 0;
-    //     } else {
-    //         cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //         cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //         cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //         cpu_move_8bit( _environment, sourceAddress, destinationAddress );
-    //         _n -= 32;
-    //     }
-    //     ++i;
-    // }
+    int i = 0;
+    while( _n ) {
+        char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu_move_8bit( _environment, sourceAddress, destinationAddress );
+            _n -= 32;
+        }
+        ++i;
+    }
 
 }
 
@@ -4696,93 +4696,93 @@ void cpu_move_nbit( Environment * _environment, int _n, char * _source, char *_d
  */
 void cpu_compare_nbit( Environment * _environment, int _n, char *_source, char *_destination,  char *_name, int _positive ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // char differentLabel[MAX_TEMPORARY_STORAGE];
-    // sprintf( differentLabel, "%sdifferent:", label );
+    char differentLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( differentLabel, "%sdifferent:", label );
 
-    // int i = 0;
-    // while( _n ) {
-    //     char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
-    //     char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
-    //     if ( _n <= 32 ) {
-    //         switch( _n ) {
-    //             case 1: case 2: case 3: case 4:
-    //             case 5: case 6: case 7: case 8:
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 break;
-    //             case 9: case 10: case 11: case 12:
-    //             case 13: case 14: case 15: case 16:
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 break;
-    //             case 17: case 18: case 19: case 20:
-    //             case 21: case 22: case 23: case 24:
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 break;
-    //             case 25: case 26: case 27: case 28:
-    //             case 29: case 30: case 31: case 32:
-    //             default:
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
-    //                 sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //                 cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //                 cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //                 break;
-    //         }
-    //         _n = 0;
-    //     } else {
-    //         cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //         cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-    //         cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //         cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-    //         cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //         cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //         sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
-    //         sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-    //         cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
-    //         cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
-    //         _n -= 32;
-    //     }
-    //     ++i;
-    // }
+    int i = 0;
+    while( _n ) {
+        char sourceAddress[MAX_TEMPORARY_STORAGE]; sprintf( sourceAddress, "%s+%d", _source, i*4 );
+        char destinationAddress[MAX_TEMPORARY_STORAGE]; sprintf( destinationAddress, "%s+%d", _destination, i*4 );
+        if ( _n <= 32 ) {
+            switch( _n ) {
+                case 1: case 2: case 3: case 4:
+                case 5: case 6: case 7: case 8:
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    break;
+                case 9: case 10: case 11: case 12:
+                case 13: case 14: case 15: case 16:
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    break;
+                case 17: case 18: case 19: case 20:
+                case 21: case 22: case 23: case 24:
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    break;
+                case 25: case 26: case 27: case 28:
+                case 29: case 30: case 31: case 32:
+                default:
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+                    sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+                    cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+                    cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+                    break;
+            }
+            _n = 0;
+        } else {
+            cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+1 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
+            cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+2 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
+            cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            sprintf( sourceAddress, "%s+%d", _source, i*4+3 );
+            sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
+            cpu_compare_8bit( _environment, sourceAddress, destinationAddress, _name, _positive );
+            cpu_compare_and_branch_8bit_const( _environment, _name, 0, differentLabel, _positive );
+            _n -= 32;
+        }
+        ++i;
+    }
 
-    // outline1("MOV A, 0x%2.2x", _positive * 0xff );
-    // outline1("MOV [%s], A", _name );
-    // outline1("JP %sdone", label );
+    outline1("MOV AL, 0x%2.2x", _positive * 0xff );
+    outline1("MOV [%s], AL", _name );
+    outline1("JP %sdone", label );
 
-    // outhead0(differentLabel);
-    // outline1("MOV A, 0x%2.2x", (1-_positive) * 0xff );
-    // outline1("MOV [%s], A", _name );
+    outhead0(differentLabel);
+    outline1("MOV AL, 0x%2.2x", (1-_positive) * 0xff );
+    outline1("MOV [%s], AL", _name );
 
-    // outhead1("%sdone:", label );
+    outhead1("%sdone:", label );
     
 }
 
