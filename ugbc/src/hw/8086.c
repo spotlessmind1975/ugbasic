@@ -3961,259 +3961,209 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // inline( cpu_hex_to_string )
+    no_inline( cpu_hex_to_string )
 
-    // embedded( cpu_hex_to_string, src_hw_8086_cpu_hex_to_string_asm );
+    embedded( cpu_hex_to_string, src_hw_8086_cpu_hex_to_string_asm );
 
-    //     outline1("MOV A, 0x%2.2x", _bits);
-    //     outline0("MOV IXL, A");
+        switch( _bits ) {
+            case 8:
+                outline1("MOV AL, [%s]", _number );
+                outline0("MOV AH, 0" );
+                outline0("MOV DX, 0" );
+                outline1("MOV DI, [%s]", _string );
+                outline0("CALL HEXTOSTRING" );
+                break;
+            case 16:
 
-    //     switch( _bits ) {
-    //         case 8:
-    //             outline1("MOV A, [%s]", _number );
-    //             outline0("MOV L, A" );
-    //             outline0("MOV H, 0" );
-    //             outline1("MOV DE, [%s]", _string );
+                outline1("MOV AX, [%s]", _number );
+                outline0("MOV DX, 0" );
+                outline1("MOV DI, [%s]", _string );
+                outline0("CALL HEXTOSTRING" );
+                break;
 
-    //             outline0("CALL H2STRING" );
-    //             break;
-    //         case 16:
+            case 32:
 
-    //             outline1("MOV HL, [%s]", _number );
-    //             outline1("MOV DE, [%s]", _string );
+                outline1("MOV AX, [%s]", _number );
+                outline1("MOV DX, [%s]", address_displacement(_environment, _number, "2") );
+                outline1("MOV DI, [%s]", _string );
+                outline0("CALL HEXTOSTRING" );
+                break;
 
-    //             outline0("CALL H2STRING" );
-    //             break;
+        }
 
-    //         case 32:
+        outline1("MOV A, 0x%2.2x", ( _bits >> 2 ) );
+        outline1("MOV [%s], A", _string_size );
 
-    //             outline1("MOV HL, [%s]", address_displacement(_environment, _number, "2") );
-    //             outline1("MOV DE, [%s]", _string );
-
-    //             outline0("CALL H2STRING" );
-
-    //             outline1("MOV HL, [%s]", _number );
-    //             outline1("MOV DE, [%s]", _string );
-    //             outline0("INC DE" );
-    //             outline0("INC DE" );
-    //             outline0("INC DE" );
-    //             outline0("INC DE" );
-
-    //             outline0("CALL H2STRING" );
-    //             break;
-
-    //     }
-
-    //     outline1("MOV A, 0x%2.2x", ( _bits >> 2 ) );
-    //     outline1("MOV [%s], A", _string_size );
-
-    // done()
+    done()
 
 }
 
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV HL, %s", _string );
-    // outline0( "CALL DSDEFINE" );
-    // outline0( "MOV A, B" );
-    // outline1( "MOV [%s], A", _index );
+    outline1( "MOV SI, %s", _string );
+    outline0( "CALL DSDEFINE" );
+    outline1( "MOV [%s], BL", _index );
     
 }
 
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, [%s]", _size );
-    // outline0( "MOV C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "MOV A, B" );
-    // outline1( "MOV [%s], A", _index );
+    outline1( "MOV CL, [%s]", _size );
+    outline0( "CALL DSALLOC" );
+    outline1( "MOV [%s], BL", _index );
 
 }
 
 void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, 0x%2.2x", ( _size & 0xff ) );
-    // outline0( "MOV C, A" );
-    // outline0( "CALL DSALLOC" );
-    // outline0( "MOV A, B" );
-    // outline1( "MOV [%s], A", _index );
+    outline1( "MOV CL, 0x%2.2x", ( _size & 0xff ) );
+    outline0( "CALL DSALLOC" );
+    outline1( "MOV [%s], BL", _index );
 
 }
 
 void cpu_dsfree( Environment * _environment, char * _index ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, [%s]", _index );
-    // outline0( "MOV B, A" );
-    // outline0( "CALL DSFREE" );
+    outline1( "MOV BL, [%s]", _index );
+    outline0( "CALL DSFREE" );
 
 }
 
 void cpu_dswrite( Environment * _environment, char * _index ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, [%s]", _index );
-    // outline0( "MOV B, A" );
-    // outline0( "CALL DSWRITE" );
+    outline1( "MOV BL, [%s]", _index );
+    outline0( "CALL DSWRITE" );
 
 }
 
 void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, [%s]", _index );
-    // outline0( "MOV B, A" );
-    // outline1( "MOV A, [%s]", _resize );
-    // outline0( "MOV C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "MOV BL, [%s]", _index );
+    outline1( "MOV CL, [%s]", _resize );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void cpu_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline1( "MOV A, [%s]", _index );
-    // outline0( "MOV B, A" );
-    // outline1( "MOV A, 0x%2.2x", ( _resize & 0xff ) );
-    // outline0( "MOV C, A" );
-    // outline0( "CALL DSRESIZE" );
+    outline1( "MOV AL, [%s]", _index );
+    outline1( "MOV CL, 0x%2.2x", ( _resize & 0xff ) );
+    outline0( "CALL DSRESIZE" );
 
 }
 
 void cpu_dsgc( Environment * _environment ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline0( "CALL DSGC" );
+    outline0( "CALL DSGC" );
 
 }
 
 void cpu_dsinit( Environment * _environment ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // outline0( "CALL DSINIT" );
+    outline0( "CALL DSINIT" );
 
 }
 
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
-    // deploy( dstring,src_hw_8086_dstring_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
 
-    // if ( _address || _size ) {
-    //     outline1( "MOV A, [%s]", _index );
-    //     outline0( "MOV B, A" );
-    //     outline0( "CALL DSDESCRIPTOR" );
-    //     if ( _size ) {
-    //         outline0( "MOV A, (IX)" );
-    //         outline1( "MOV [%s], A", _size );
-    //     }
-    //     if ( _address ) {
-    //         outline0( "MOV A, (IX+1)" );
-    //         outline1( "MOV [%s], A", _address );
-    //         outline0( "MOV A, (IX+2)" );
-    //         outline1( "MOV [%s], A", address_displacement(_environment, _address, "1") );
-    //     }
-    // }
+    if ( _address || _size ) {
+        outline1( "MOV BL, [%s]", _index );
+        outline0( "CALL DSDESCRIPTOR" );
+        if ( _size ) {
+            outline0( "MOV AL, [DX]" );
+            outline1( "MOV [%s], A", _size );
+        }
+        if ( _address ) {
+            outline0( "MOV DI, [DX+1]" );
+            outline1( "MOV [%s], DI", _address );
+        }
+    }
 
 }
 
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
-    // outline1("MOV HL, [%s]", _value);
-    // outline1("MOV A, [%s]", _offset );
-    // outline0("MOV E, A" );
-    // outline0("MOV A, 0" );
-    // outline0("MOV D, A" );
-    // outline0("ADD HL, DE" );
-    // outline1("MOV A, [%s]", _source);
-    // outline0("MOV (HL), A");
+    outline1("MOV DI, [%s]", _value);
+    outline1("MOV CL, [%s]", _offset );
+    outline0("MOV CH, 0" );
+    outline0("ADD DI, CX" );
+    outline1("MOV AL, [%s]", _source);
+    outline0("MOV (DI), AL");
 
 }
 
 void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
-    // outline1( "MOV A, [%s]", _source );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", _destination );        
-    // } else {
-    //     outline1( "MOV [%s], A", _source );        
-    // }
-    // if ( _destination ) {
-    //     cpu_inc( _environment, _destination );
-    // } else {
-    //     cpu_inc( _environment, _source );
-    // }
+    outline1( "MOV AL, [%s]", _source );
+    outline0( "XOR 0xff" );
+    if ( _destination ) {
+        outline1( "MOV [%s], AL", _destination );        
+    } else {
+        outline1( "MOV [%s], AL", _source );        
+    }
+    if ( _destination ) {
+        cpu_inc( _environment, _destination );
+    } else {
+        cpu_inc( _environment, _source );
+    }
 }
 
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
-    // outline1( "MOV A, [%s]", _source );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", _destination );        
-    // } else {
-    //     outline1( "MOV [%s], A", _source );        
-    // }
-    // outline1( "MOV A, [%s]", address_displacement(_environment, _source, "1") );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _destination, "1") );        
-    // } else {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _source, "1") );        
-    // }
-    // if ( _destination ) {
-    //     cpu_inc_16bit( _environment, _destination );
-    // } else {
-    //     cpu_inc_16bit( _environment, _source );
-    // }
+    outline1( "MOV AX, [%s]", _source );
+    outline0( "XOR 0xffff" );
+    if ( _destination ) {
+        outline1( "MOV [%s], AX", _destination );        
+    } else {
+        outline1( "MOV [%s], AX", _source );        
+    }
+    if ( _destination ) {
+        cpu_inc_16bit( _environment, _destination );
+    } else {
+        cpu_inc_16bit( _environment, _source );
+    }
 }
 
 void cpu_complement2_32bit( Environment * _environment, char * _source, char * _destination ) {
-    // outline1( "MOV A, [%s]", _source );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", _destination );        
-    // } else {
-    //     outline1( "MOV [%s], A", _source );        
-    // }
-    // outline1( "MOV A, [%s]", address_displacement(_environment, _source, "1") );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _destination, "1") );        
-    // } else {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _source, "1") );        
-    // }
-    // outline1( "MOV A, [%s]", address_displacement(_environment, _source, "2") );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _destination, "2") );        
-    // } else {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _source, "2") );        
-    // }
-    // outline1( "MOV A, [%s]", address_displacement(_environment, _source, "3") );
-    // outline0( "XOR 0xFF" );
-    // if ( _destination ) {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _destination, "3") );        
-    // } else {
-    //     outline1( "MOV [%s], A", address_displacement(_environment, _source, "3") );        
-    // } 
-    // if ( _destination ) {
-    //     cpu_inc_32bit( _environment, _destination );
-    // } else {
-    //     cpu_inc_32bit( _environment, _source );
-    // }
+    outline1( "MOV AX, [%s]", _source );
+    outline0( "XOR AX, 0xffff" );
+    if ( _destination ) {
+        outline1( "MOV [%s], AX", _destination );        
+    } else {
+        outline1( "MOV [%s], AX", _source );        
+    }
+    outline1( "MOV AX, [%s]", address_displacement( _environment, _source, "+2" ) );
+    outline0( "XOR AX, 0xffff" );
+    if ( _destination ) {
+        outline1( "MOV [%s], AX", address_displacement( _environment, _destination, "+2" ) );        
+    } else {
+        outline1( "MOV [%s], AX", address_displacement( _environment, _source, "+2" ) );        
+    }
+    if ( _destination ) {
+        cpu_inc_32bit( _environment, _destination );
+    } else {
+        cpu_inc_32bit( _environment, _source );
+    }
 }
 
 void cpu_sqroot( Environment * _environment, char * _number, char * _result ) {
