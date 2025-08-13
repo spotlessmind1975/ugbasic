@@ -587,7 +587,6 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
         //     deploy( clsGraphic, src_hw_cga_cls_graphic_asm );
         //     deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
-        //     deploy( textEncodedAt, src_hw_cga_text_asm );
         //     deploy( textEncodedAtGraphicRaw, src_hw_cga_text_at_graphic_raw_asm );
         //     if ( ! _environment->hasGameLoop ) {
         //         outline0("CALL TEXTATBITMAPMODERAW");
@@ -597,9 +596,6 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // } else {
         //     deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
         //     deploy( clsText, src_hw_cga_cls_text_asm );
-        //     #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-        //             deploy( textEncodedAt, src_hw_cga_text_asm );
-        //     #endif
         //     deploy( textEncodedAtTextRaw, src_hw_cga_text_at_text_raw_asm );
         //     if ( ! _environment->hasGameLoop ) {
         //         outline0("CALL TEXTATTILEMODERAW");
@@ -613,7 +609,6 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
             // deploy( clsGraphic, src_hw_cga_cls_graphic_asm );
             // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
-            // deploy( textEncodedAt, src_hw_cga_text_asm );
             // deploy( textEncodedAtGraphic, src_hw_cga_text_at_graphic_asm );
             // if ( ! _environment->hasGameLoop ) {
             //     outline0("CALL TEXTATBITMAPMODE");
@@ -623,7 +618,6 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // } else {
             // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
             deploy( clsText, src_hw_cga_cls_text_asm );
-            deploy( textEncodedAt, src_hw_cga_text_asm );
             deploy( textEncodedAtText, src_hw_cga_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
         // }
