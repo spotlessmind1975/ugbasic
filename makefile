@@ -853,7 +853,7 @@ generated/pccga/asm/%.asm:
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/pccga/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/pccga/exe/%.com:
-	@$(NASM) -f bin $(subst /exe/,/asm/,$(@:.com=.asm)) -o $@
+	@$(NASM) -f bin $(subst /exe/,/asm/,$(@:.com=.asm)) -o $@ -l $(@:.com=.lst)
 
 generated/pccga/exeso/%.com: $(subst /generated/pccga/exeso/,/$(EXAMPLESDIR)/,$(@:.com=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O com $(subst generated/pccga/exeso/,,$(@:.com=.bas))
