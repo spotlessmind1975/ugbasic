@@ -820,8 +820,8 @@ void cpu_less_than_8bit( Environment * _environment, char *_source, char *_desti
 
     embedded( cpu_less_than_8bit, src_hw_8086_cpu_less_than_8bit_asm );
 
-        outline1("MOV AL, [%s]", _destination);
-        outline1("MOV BL, [%s]", _source);
+        outline1("MOV AL, [%s]", _source);
+        outline1("MOV BL, [%s]", _destination);
         if ( _signed ) {
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
@@ -853,8 +853,8 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
     embedded( cpu_less_than_8bit, src_hw_8086_cpu_less_than_8bit_asm );
 
-        outline1("MOV AL, 0x%2.2x", _destination);
-        outline1("MOV BL, [%s]", _source);
+        outline1("MOV AL, [%s]", _source);
+        outline1("MOV BL, 0x%2.2x", _destination);
         if ( _signed ) {
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
@@ -886,8 +886,8 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
     embedded( cpu_less_than_8bit, src_hw_8086_cpu_less_than_8bit_asm );
 
-        outline1("MOV AL, 0x%2.2x", _destination);
-        outline1("MOV BL, [%s]", _source);
+        outline1("MOV AL, [%s]", _source);
+        outline1("MOV BL, 0x%2.2x", _destination);
         if ( _signed ) {
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
@@ -1351,8 +1351,8 @@ void cpu_less_than_16bit( Environment * _environment, char *_source, char *_dest
 
         if ( _signed ) {
 
-            outline1("MOV AX, [%s]", _destination);
-            outline1("MOV BX, [%s]", _source);
+            outline1("MOV AX, [%s]", _source);
+            outline1("MOV BX, [%s]", _destination);
             if ( _equal ) {
                 outline0("CALL CPULTE16S");
             } else {
@@ -1395,8 +1395,8 @@ void cpu_less_than_16bit_const( Environment * _environment, char *_source, int _
 
         if ( _signed ) {
 
-            outline1("MOV AX, 0x%4.4x", _destination);
-            outline1("MOV BX, [%s]", _source);
+            outline1("MOV AX, [%s]", _source);
+            outline1("MOV BX, 0x%4.4x", _destination);
             if ( _equal ) {
                 outline0("CALL CPULTE16S");
             } else {
@@ -1864,10 +1864,10 @@ void cpu_less_than_32bit( Environment * _environment, char *_source, char *_dest
 
     embedded( cpu_less_than_32bit, src_hw_8086_cpu_less_than_32bit_asm );
 
-        outline1("MOV DX, [%s]", _destination);
-        outline1("MOV CX, [%s]", address_displacement( _environment, _destination, "+2" ) );
         outline1("MOV BX, [%s]", _source);
         outline1("MOV AX, [%s]", address_displacement( _environment, _source, "+2" ) );
+        outline1("MOV DX, [%s]", _destination);
+        outline1("MOV CX, [%s]", address_displacement( _environment, _destination, "+2" ) );
         if ( _signed ) {
 
             if ( _equal ) {
@@ -1901,10 +1901,10 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
 
     embedded( cpu_less_than_32bit, src_hw_8086_cpu_less_than_32bit_asm );
 
-        outline1("MOV DX, 0x%4.4x", (unsigned short)(_destination&0xffff));
-        outline1("MOV CX, 0x%4.4x", (unsigned short)((_destination>>16)&0xffff));
         outline1("MOV BX, [%s]", _source);
         outline1("MOV AX, [%s]", address_displacement( _environment, _source, "+2" ) );
+        outline1("MOV DX, 0x%4.4x", (unsigned short)(_destination&0xffff));
+        outline1("MOV CX, 0x%4.4x", (unsigned short)((_destination>>16)&0xffff));
         if ( _signed ) {
 
             if ( _equal ) {

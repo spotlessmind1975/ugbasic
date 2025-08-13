@@ -284,6 +284,10 @@ void cga_background_color_semivars( Environment * _environment, int _index, char
  */
 void cga_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    outline0("CALL READCGACOLORSELECTREG" );
+    outline0("AND AL, 0x0f" );
+    outline1("MOV [%s], AL", _background_color );
+
 }
 
 /**
@@ -362,6 +366,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
 
     switch( _screen_mode->id ) {
+
         case TILEMAP_MODE_40x25x2:
             _environment->fontWidth = 8;
             _environment->fontHeight = 8;
@@ -376,9 +381,9 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             //   Sequence of Events for Changing Modes
             // 1 Determine the mode of operation.
             // 2 Reset the video-enable bit in the mode-control register.
-            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
             // 3 Program the 6845 CRT Controller to select the mode.
-            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
 
             // WRITE_REGISTER( CGA_REG_HZ_TOTAL, 0x38 );
             // WRITE_REGISTER( CGA_REG_HZ_DISP, 0x28 );
@@ -408,6 +413,148 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
 
             break;
+
+        case TILEMAP_MODE_40x25x16:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 40;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 16;
+            _environment->currentModeBW = 0;
+
+            //   Sequence of Events for Changing Modes
+            // 1 Determine the mode of operation.
+            // 2 Reset the video-enable bit in the mode-control register.
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
+            // 3 Program the 6845 CRT Controller to select the mode.
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+
+            // WRITE_REGISTER( CGA_REG_HZ_TOTAL, 0x38 );
+            // WRITE_REGISTER( CGA_REG_HZ_DISP, 0x28 );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_POS, 0x2d );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_WIDTH, 0x0a );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL, 0x1f );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL_ADJUST, 0x06 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_TOTAL_ADJUST, 0x19 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_SYNC_POSITION, 0x1c );
+            // WRITE_REGISTER( CGA_REG_INTERLACE_MODE, 0x02 );
+            // WRITE_REGISTER( CGA_REG_MAX_SCAN_LINE_ADDRESS, 0x07 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_START, 0x06 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_END, 0x07 );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_H, 0x0c );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_L, 0x00 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_L, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_L, 0x?? );
+
+            // 4 Program the mode-control and color-select registers
+            // including re-enabling the video.
+            WRITE_COLOR_SELECT_REGISTER( CGA_COLOR_CSET1 )
+            // 4 Program the mode-control and color-select registers
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_COLOR | CGA_MODE_ENABLE );
+            
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
+
+            break;
+
+        case TILEMAP_MODE_80x25x2:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 2;
+            _environment->currentModeBW = 0;
+
+            //   Sequence of Events for Changing Modes
+            // 1 Determine the mode of operation.
+            // 2 Reset the video-enable bit in the mode-control register.
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
+            // 3 Program the 6845 CRT Controller to select the mode.
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+
+            // WRITE_REGISTER( CGA_REG_HZ_TOTAL, 0x38 );
+            // WRITE_REGISTER( CGA_REG_HZ_DISP, 0x28 );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_POS, 0x2d );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_WIDTH, 0x0a );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL, 0x1f );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL_ADJUST, 0x06 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_TOTAL_ADJUST, 0x19 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_SYNC_POSITION, 0x1c );
+            // WRITE_REGISTER( CGA_REG_INTERLACE_MODE, 0x02 );
+            // WRITE_REGISTER( CGA_REG_MAX_SCAN_LINE_ADDRESS, 0x07 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_START, 0x06 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_END, 0x07 );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_H, 0x0c );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_L, 0x00 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_L, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_L, 0x?? );
+
+            // 4 Program the mode-control and color-select registers
+            // including re-enabling the video.
+            WRITE_COLOR_SELECT_REGISTER( CGA_COLOR_CSET1 )
+            // 4 Program the mode-control and color-select registers
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_80x25 | CGA_MODE_BW | CGA_MODE_ENABLE );
+            
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
+
+            break;
+
+        case TILEMAP_MODE_80x25x16:
+            _environment->fontWidth = 8;
+            _environment->fontHeight = 8;
+            _environment->screenTilesWidth = 80;
+            _environment->screenTilesHeight = 25;
+            _environment->screenTiles = 255;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
+            _environment->screenColors = 16;
+            _environment->currentModeBW = 0;
+
+            //   Sequence of Events for Changing Modes
+            // 1 Determine the mode of operation.
+            // 2 Reset the video-enable bit in the mode-control register.
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
+            // 3 Program the 6845 CRT Controller to select the mode.
+            // WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+
+            // WRITE_REGISTER( CGA_REG_HZ_TOTAL, 0x38 );
+            // WRITE_REGISTER( CGA_REG_HZ_DISP, 0x28 );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_POS, 0x2d );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_WIDTH, 0x0a );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL, 0x1f );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL_ADJUST, 0x06 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_TOTAL_ADJUST, 0x19 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_SYNC_POSITION, 0x1c );
+            // WRITE_REGISTER( CGA_REG_INTERLACE_MODE, 0x02 );
+            // WRITE_REGISTER( CGA_REG_MAX_SCAN_LINE_ADDRESS, 0x07 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_START, 0x06 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_END, 0x07 );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_H, 0x0c );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_L, 0x00 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_L, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_L, 0x?? );
+
+            // 4 Program the mode-control and color-select registers
+            // including re-enabling the video.
+            WRITE_COLOR_SELECT_REGISTER( CGA_COLOR_CSET1 )
+            // 4 Program the mode-control and color-select registers
+            WRITE_MODE_CONTROL_REGISTER( CGA_MODE_80x25 | CGA_MODE_COLOR | CGA_MODE_ENABLE );
+            
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
+
+            break;
+
     }
 
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
@@ -630,7 +777,7 @@ void cga_get_height( Environment * _environment, char *_result ) {
 
 void cga_cls( Environment * _environment ) {
     
-    if ( _environment->currentMode == 0 ) {
+    if ( _environment->currentMode <= 3 ) {
         deploy( clsText, src_hw_cga_cls_text_asm );
         outline0("CALL CLST");
     } else {
@@ -873,7 +1020,7 @@ void cga_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
-    cga_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    cga_tilemap_enable( _environment, 80, 25, 16, 8, 8 );
 
     font_descriptors_init( _environment, 0 );
     
