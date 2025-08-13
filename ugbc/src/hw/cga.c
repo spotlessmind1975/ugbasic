@@ -1211,6 +1211,10 @@ void cga_initialization( Environment * _environment ) {
 
 void cga_finalization( Environment * _environment ) {
 
+    if ( _environment->vestigialConfig.clsImplicit ) {
+        deploy( clsText, src_hw_cga_cls_text_asm );
+    }
+
 }
 
 void cga_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
