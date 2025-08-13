@@ -60,7 +60,7 @@ void cpu_ztoa( Environment * _environment ) {
 
         outline1("JE %syes", label );
         outline0("MOV AL, 0");
-        outline1("JP %s", label );
+        outline1("JMP %s", label );
         outhead1("%syes:", label );
         outline0("MOV AL, 0xff");
         outhead1("%s:", label );
@@ -77,7 +77,7 @@ void cpu_ctoa( Environment * _environment ) {
 
         outline1("JC %syes", label );
         outline0("MOV AL, 0");
-        outline1("JP %s", label );
+        outline1("JMP %s", label );
         outhead1("%syes:", label );
         outline0("MOV AL, 0xff");
         outhead1("%s:", label );
@@ -640,7 +640,7 @@ void cpu_compare_8bit( Environment * _environment, char *_source, char *_destina
         } else {
             outline1("MOV [%s], AL", _destination);
         }
-        outline1("JP %sb2", label);
+        outline1("JMP %sb2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*(1-_positive)));
         if ( _other ) {
@@ -674,7 +674,7 @@ void cpu_compare_8bit_const( Environment * _environment, char *_source, int _des
         outline1("JNZ %s", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*_positive));
         outline1("MOV [%s], AL", _other);
-        outline1("JP %sb2", label);
+        outline1("JMP %sb2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*(1-_positive)));
         outline1("MOV [%s], AL", _other);
@@ -903,7 +903,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
         }
         outline0("CMP AL, 0");
         outline1("JZ %sb2:", label);
-        outline1("JP %s", _label);
+        outline1("JMP %s", _label);
         outhead1("%sb2:", label);
 
     done(  )
@@ -1233,7 +1233,7 @@ void cpu_compare_16bit( Environment * _environment, char *_source, char *_destin
         } else {
             outline1("MOV [%s], AL", _destination);
         }
-        outline1("JP %sb2", label);
+        outline1("JMP %sb2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", 0xff*(1-_positive));
         if ( _other ) {
@@ -1271,7 +1271,7 @@ void cpu_compare_16bit_const( Environment * _environment, char *_source, int _de
         } else {
             outline1("MOV [%s], AL", _destination);
         }
-        outline1("JP %sb2", label);
+        outline1("JMP %sb2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", 0xff*(1-_positive));
         if ( _other ) {
@@ -1761,7 +1761,7 @@ void cpu_compare_32bit( Environment * _environment, char *_source, char *_destin
         } else {
             outline1("MOV [%s], AL", _destination);
         }
-        outline1("JP %s_2", label);
+        outline1("JMP %s_2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", 0xff*(1-_positive));
         if ( _other ) {
@@ -1800,7 +1800,7 @@ void cpu_compare_32bit_const( Environment * _environment, char *_source, int _de
         outline1("JNZ %s", label);
         outline1("MOV A, 0x%2.2x", 0xff*_positive);
         outline1("MOV [%s], AL", _other);
-        outline1("JP %s_2", label);
+        outline1("JMP %s_2", label);
         outhead1("%s:", label);
         outline1("MOV AL, 0x%2.2x", 0xff*(1-_positive));
         outline1("MOV [%s], AL", _other);
@@ -1834,12 +1834,12 @@ void cpu_compare_and_branch_32bit_const( Environment * _environment, char *_sour
         outline0("CMP AX, BX");
         outline1("JNZ %s", label);
         if ( _positive ) {
-            outline1("JP %s", _label);
+            outline1("JMP %s", _label);
             outhead1("%s:", label );
         } else {
-            outline1("JP %snot", label);
+            outline1("JMP %snot", label);
             outhead1("%s:", label );
-            outline1("JP %s", _label);
+            outline1("JMP %s", _label);
             outhead1("%snot:", label );
         }
 
@@ -2104,7 +2104,7 @@ void cpu_math_div2_const_32bit( Environment * _environment, char *_source, int _
             outline0("CMP AL, 0" );
             outline1("JR Z, %spos", label );
             cpu_complement2_32bit( _environment, _source, _source );
-            outline1("JP %spos2", label );
+            outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
             outline1("MOV AX, [%s]", _source );
@@ -2158,7 +2158,7 @@ void cpu_math_mul2_const_32bit( Environment * _environment, char *_source, int _
             outline0("CMP AL, 0" );
             outline1("JR Z, %spos", label );
             cpu_complement2_32bit( _environment, _source, _source );
-            outline1("JP %spos2", label );
+            outline1("JMP %spos2", label );
             outhead1("%spos:", label );
             outhead1("%spos2:", label );
             outline1("MOV AX, [%s]", _source );
@@ -2711,7 +2711,7 @@ void cpu_logical_and_8bit( Environment * _environment, char * _left, char * _rig
     outline1("JZ %s", label );
     outline0("MOV AL, 0xff" );
     outline1("MOV [%s], AL", _result );
-    outline1("JP %s_2", label );
+    outline1("JMP %s_2", label );
     outhead1("%s:", label );
     outline0("MOV AL, 0" );
     outline1("MOV [%s], AL", _result );
@@ -2766,13 +2766,13 @@ void cpu_logical_or_8bit( Environment * _environment, char * _left, char * _righ
     outline1("JZ %s", label );
     outline0("MOV AL, 0xff" );
     outline1("MOV [%s], AL", _result );
-    outline1("JP %s_2", label );
+    outline1("JMP %s_2", label );
     outline1("MOV AL, [%s]", _right );
     outline0("CMP AL, 0" );
     outline1("JZ %s", label );
     outline0("MOV AL, 0xff" );
     outline1("MOV [%s], AL", _result );
-    outline1("JP %s_2", label );
+    outline1("JMP %s_2", label );
     outhead1("%s:", label );
     outline0("MOV AL, 0" );
     outline1("MOV [%s], AL", _result );
@@ -3152,7 +3152,7 @@ void cpu_compare_memory( Environment * _environment, char *_source, char *_desti
     outhead1("%sequal:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
     outline1("MOV [%s], AL", _result );
-    outline1("JP %sfinal", label );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 0 : 255 );
     outline1("MOV [%s], AL", _result );
@@ -3174,7 +3174,7 @@ void cpu_compare_memory_size( Environment * _environment, char *_source, char *_
     outhead1("%sequal:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
     outline1("MOV [%s], AL", _result );
-    outline1("JP %sfinal", label );
+    outline1("JMP %sfinal", label );
     outhead1("%sdiff:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 0 : 255 );
     outline1("MOV [%s], AL", _result );
@@ -3213,7 +3213,7 @@ void cpu_less_than_memory( Environment * _environment, char *_source, char *_des
     outline1("LOOP %s", label );
 
     outline0("MOV AL, 0xff");
-    outline1("JP %s", label);
+    outline1("JMP %s", label);
 
     outhead1("%s:", greaterLabel );
     outline0("MOV AL, 0");
@@ -3245,7 +3245,7 @@ void cpu_less_than_memory_size( Environment * _environment, char *_source, char 
     outline1("LOOP %s", label );
 
     outline0("MOV AL, 0xff");
-    outline1("JP %s", label);
+    outline1("JMP %s", label);
 
     outhead1("%s:", greaterLabel );
     outline0("MOV AL, 0");
@@ -3317,7 +3317,7 @@ void cpu_uppercase( Environment * _environment, char *_source, char *_size, char
 
     outline0("SUB AL, 32");
     outline0("MOV [DI], AL" );
-    outline1("JP %sdone", label );
+    outline1("JMP %sdone", label );
 
     outhead1("%snext:", label );
     outline0("MOV [DI], AL" );
@@ -3353,7 +3353,7 @@ void cpu_lowercase( Environment * _environment, char *_source, char *_size, char
 
     outline0("SUB AL, 32");
     outline0("MOV [DI], AL" );
-    outline1("JP %sdone", label );
+    outline1("JMP %sdone", label );
 
     outhead1("%snext:", label );
     outline0("MOV [DI], AL" );
@@ -4770,7 +4770,7 @@ void cpu_compare_nbit( Environment * _environment, int _n, char *_source, char *
 
     outline1("MOV AL, 0x%2.2x", _positive * 0xff );
     outline1("MOV [%s], AL", _name );
-    outline1("JP %sdone", label );
+    outline1("JMP %sdone", label );
 
     outhead0(differentLabel);
     outline1("MOV AL, 0x%2.2x", (1-_positive) * 0xff );
@@ -5540,15 +5540,15 @@ void cpu_float_fast_cmp( Environment * _environment, char * _x, char * _y, char 
     // outline1( "JR C, %sless", label );
     // outline0( "MOV A, 1" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sequal:", label );
     // outline0( "MOV A, 0" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sless:", label );
     // outline0( "MOV A, 0xff" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sdone:", label );
 
 }
@@ -5850,15 +5850,15 @@ void cpu_float_single_cmp( Environment * _environment, char * _x, char * _y, cha
     // outline1( "JR C, %sless", label );
     // outline0( "MOV A, 1" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sequal:", label );
     // outline0( "MOV A, 0" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sless:", label );
     // outline0( "MOV A, 0xff" );
     // outline1( "MOV [%s], A", _result );
-    // outline1( "JP %sdone", label );
+    // outline1( "JMP %sdone", label );
     // outhead1( "%sdone:", label );
 
 }
