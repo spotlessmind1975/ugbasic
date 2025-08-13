@@ -1202,7 +1202,7 @@ void cga_initialization( Environment * _environment ) {
 
     font_descriptors_init( _environment, 0 );
     
-    console_calculate( _environment );
+    console_init( _environment );
 
     // _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
