@@ -73,15 +73,15 @@
 #define TEXT_COLUMNS_COUNT          40
 #define TEXT_ROWS_COUNT             25
 
-#define TILEMAP_MODE_40x25x2       0           // 40x25, 2 colors
-#define TILEMAP_MODE_40x25x16      1           // 40x25, 16 colors
-#define TILEMAP_MODE_80x25x2       2           // 80x25, 2 colors
-#define TILEMAP_MODE_80x25x16      3           // 80x25, 16 colors
+#define TILEMAP_MODE_40x25x2       0           // BIOS MODE 00h (40x25, 2 colors)
+#define TILEMAP_MODE_40x25x16      1           // BIOS MODE 01h (40x25, 16 colors)
+#define TILEMAP_MODE_80x25x2       2           // BIOS MODE 02h (80x25, 2 colors)
+#define TILEMAP_MODE_80x25x16      3           // BIOS MODE 03h (80x25, 16 colors)
 #define TILEMAP_MODE_STANDARD      TILEMAP_MODE_40x25x16
 
-#define BITMAP_MODE_320x200x2      4           // 320x200, 2 colors
-#define BITMAP_MODE_320x200x4      5           // 320x200, 4 colors
-#define BITMAP_MODE_640x200x2      6           // 320x200, 2 colors
+#define BITMAP_MODE_320x200x2      4           // BIOS MODE 05h (320x200, 2 colors)
+#define BITMAP_MODE_320x200x4      5           // BIOS MODE 04h (320x200, 4 colors)
+#define BITMAP_MODE_640x200x2      6           // BIOS MODE 06h (640x200, 2 colors)
 #define BITMAP_MODE_STANDARD       BITMAP_MODE_320x200x4
 
 #define BITMAP_MODE_DEFAULT         BITMAP_MODE_STANDARD
