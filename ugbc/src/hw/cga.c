@@ -962,6 +962,14 @@ void cga_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w,
 
 void cga_scroll_text( Environment * _environment, int _direction, int _overlap ) {
 
+    if ( _direction > 0 ) {
+        // deploy( vScrollTextDown, src_hw_tms9918_vscroll_text_down_asm );
+        // outline0("CALL VSCROLLTDOWN");
+    } else {
+        deploy( vScrollTextUp, src_hw_cga_vscroll_text_up_asm );
+        outline0("CALL VSCROLLTUP");
+    }
+
 }
 
 void cga_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
