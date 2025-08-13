@@ -34,35 +34,35 @@
 #include "../ugbc.h"
 
 #define COLOR_TRANSPARENT			0x00
-#define COLOR_BLACK					0x01
-#define COLOR_DARK_WHITE			0x0e // GREY
+#define COLOR_BLACK					0x00
+#define COLOR_DARK_WHITE			0x08 // DARK GRAY
 #define COLOR_WHITE					0x0f
 #define COLOR_LIGHT_WHITE			COLOR_WHITE
-#define COLOR_DARK_RED				0x06 // BROWN
-#define COLOR_RED					0x08
-#define COLOR_LIGHT_RED				0x09
-#define COLOR_CYAN					0x07
-#define COLOR_VIOLET				0x0d
-#define COLOR_DARK_GREEN			0x02 // GREEN
-#define COLOR_GREEN					0x02
-#define COLOR_LIGHT_GREEN			0x03
-#define COLOR_DARK_BLUE				0x04
-#define COLOR_BLUE					0x07
-#define COLOR_LIGHT_BLUE			0x05
-#define COLOR_YELLOW				0x0b
-#define COLOR_ORANGE				0x09
+#define COLOR_DARK_RED				0x04
+#define COLOR_RED					0x0c
+#define COLOR_LIGHT_RED				COLOR_RED
+#define COLOR_CYAN					0x0b
+#define COLOR_VIOLET				0x0d // LIGHT MAGENTA
+#define COLOR_DARK_GREEN			0x02
+#define COLOR_GREEN					0x0a
+#define COLOR_LIGHT_GREEN			COLOR_GREEN
+#define COLOR_DARK_BLUE				0x01
+#define COLOR_BLUE					0x09
+#define COLOR_LIGHT_BLUE			COLOR_BLUE
+#define COLOR_YELLOW				0x0e
+#define COLOR_ORANGE				COLOR_LIGHT_RED
 #define COLOR_BROWN					0x06
-#define COLOR_DARK_GREY				0x0e
-#define COLOR_GREY					0x0e
-#define COLOR_LIGHT_GREY			0x0e
+#define COLOR_DARK_GREY				COLOR_DARK_WHITE
+#define COLOR_GREY					0x07
+#define COLOR_LIGHT_GREY			COLOR_GREY
 #define COLOR_MAGENTA				0x0d
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET
-#define COLOR_GOLD       			0x0a
+#define COLOR_GOLD       			COLOR_YELLOW
 #define COLOR_TURQUOISE       		COLOR_LIGHT_BLUE
 #define COLOR_TAN       		    COLOR_BROWN
-#define COLOR_YELLOW_GREEN       	0x03
-#define COLOR_OLIVE_GREEN       	0x0c
+#define COLOR_YELLOW_GREEN       	COLOR_LIGHT_GREEN
+#define COLOR_OLIVE_GREEN       	COLOR_GREEN
 #define COLOR_PINK       			COLOR_LIGHT_RED
 #define COLOR_PEACH       			COLOR_PINK
 #define COLOR_COUNT                 16

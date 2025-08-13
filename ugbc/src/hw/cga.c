@@ -557,6 +557,13 @@ void cga_get_height( Environment * _environment, char *_result ) {
 
 void cga_cls( Environment * _environment ) {
     
+    if ( _environment->currentMode == 0 ) {
+        deploy( clsText, src_hw_cga_cls_text_asm );
+        outline0("CALL CLST");
+    } else {
+
+    }
+
 }
 
 void cga_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
@@ -615,7 +622,7 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
             // }
         // } else {
             // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
-            // deploy( clsText, src_hw_cga_cls_text_asm );
+            deploy( clsText, src_hw_cga_cls_text_asm );
             deploy( textEncodedAt, src_hw_cga_text_asm );
             deploy( textEncodedAtText, src_hw_cga_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
