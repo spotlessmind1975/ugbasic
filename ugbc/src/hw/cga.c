@@ -595,9 +595,21 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
 void console_calculate( Environment * _environment ) {
 
+    int startAddress = 0;
+
+    int consoleSA = startAddress + ( _environment->activeConsole.y1 * _environment->screenTilesWidth ) + _environment->activeConsole.x1;
+    int consoleWB = _environment->activeConsole.width * _environment->currentModeBW;
+    int consoleHB = _environment->activeConsole.height * 8;
+
+    cpu_store_16bit( _environment, "CONSOLESA", consoleSA );
+    cpu_store_8bit( _environment, "CONSOLEWB", consoleWB );
+    cpu_store_8bit( _environment, "CONSOLEHB", consoleHB );
+
 }
 
 void console_calculate_vars( Environment * _environment ) {
+
+    outline0( "CALL CONSOLECALCULATE" );
 
 }
 
