@@ -141,9 +141,16 @@ WRITECGAREG:
 ;                       0 EQU green, red, brown
 ;                       1 EQU cyan, magenta, white
 
+CGASHADOW3D9:   db 0
+
 WRITECGACOLORSELECTREG:
+    MOV [CGASHADOW3D9], AL
     MOV DX, 0x3d9
     OUT DX, AL
+    RET
+
+READCGACOLORSELECTREG:
+    MOV AL, [CGASHADOW3D9]
     RET
 
 ; Write a value to the mode control register
@@ -156,9 +163,16 @@ WRITECGACOLORSELECTREG:
 ;              |+---- 1 EQU 640x200, 0 EQU 320x200 / text mode
 ;              +---- 1 EQU enable blink, 0 EQU disable blink
 
+CGASHADOW3D8:   db 0
+
 WRITECGAMODECONTROLREG:
+    MOV [CGASHADOW3D8], AL
     MOV DX, 0x3d8
     OUT DX, AL
+    RET
+
+READCGAMODECONTROLREG:
+    MOV AL, [CGASHADOW3D9]
     RET
 
 ; Read a value from the status register

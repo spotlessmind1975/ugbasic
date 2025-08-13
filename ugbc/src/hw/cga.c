@@ -37,24 +37,43 @@
 #include "../ugbc.h"
 #include <math.h>
 
-static RGBi SYSTEM_PALETTE[] = {
-        {    0,    0,    0, 0xff,  0, "BLACK" },
-        {    0,    0,  170, 0xff,  1, "DARK_BLUE" },
-        {    0,  170,    0, 0xff,  2, "DARK_GREEN" },
-        {    0,  170,  170, 0xff,  3, "DARK_CYAN" },
-        {  170,    0,    0, 0xff,  4, "DARK_RED" },
-        {  170,    0,  170, 0xff,  5, "DARK_MAGENTA" },
-        {  170,   85,    0, 0xff,  6, "BROWN" },
-        {  170,  170,  170, 0xff,  7, "LIGHT_GRAY" },
-        {   85,   85,   85, 0xff,  8, "DARK_GRAY" },
-        {   85,   85,  255, 0xff,  9, "LIGHT_BLUE" },
-        {   85,  255,   85, 0xff, 10, "LIGHT_GREEN" },
-        {   85,  255,  255, 0xff, 11, "LIGHT_CYAN" },
-        {  255,   85,   85, 0xff, 12, "LIGHT_RED" },
-        {  255,   85,  255, 0xff, 13, "LIGHT_MAGENTA" },
-        {  255,  255,   85, 0xff, 14, "YELLOW" },
-        {  255,  255,  255, 0xff, 15, "WHITE" }
+static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
+        // CGA_COLOR_CSET1
+        {
+            {    0,    0,    0, 0xff,  0, "BLACK" },
+            {   85,  255,   85, 0xff,  1, "LIGHT_GREEN" },
+            {  255,   85,   85, 0xff,  2, "LIGHT_RED" },
+            {  170,   85,    0, 0xff,  3, "BROWN" },
+        },
+        // CGA_COLOR_CSET2
+        {
+            {    0,    0,    0, 0xff,  0, "BLACK" },
+            {   85,  255,  255, 0xff, 11, "LIGHT_CYAN" },
+            {  255,   85,  255, 0xff,  2, "LIGHT_MAGENTA" },
+            {  255,  255,  255, 0xff,  3, "WHITE" }
+        }
 };
+
+static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
+
+// static RGBi SYSTEM_PALETTE[] = {
+//         {    0,    0,    0, 0xff,  0, "BLACK" },
+//         {    0,    0,  170, 0xff,  1, "DARK_BLUE" },
+//         {    0,  170,    0, 0xff,  2, "DARK_GREEN" },
+//         {    0,  170,  170, 0xff,  3, "DARK_CYAN" },
+//         {  170,    0,    0, 0xff,  4, "DARK_RED" },
+//         {  170,    0,  170, 0xff,  5, "DARK_MAGENTA" },
+//         {  170,   85,    0, 0xff,  6, "BROWN" },
+//         {  170,  170,  170, 0xff,  7, "LIGHT_GRAY" },
+//         {   85,   85,   85, 0xff,  8, "DARK_GRAY" },
+//         {   85,   85,  255, 0xff,  9, "LIGHT_BLUE" },
+//         {   85,  255,   85, 0xff, 10, "LIGHT_GREEN" },
+//         {   85,  255,  255, 0xff, 11, "LIGHT_CYAN" },
+//         {  255,   85,   85, 0xff, 12, "LIGHT_RED" },
+//         {  255,   85,  255, 0xff, 13, "LIGHT_MAGENTA" },
+//         {  255,  255,   85, 0xff, 14, "YELLOW" },
+//         {  255,  255,  255, 0xff, 15, "WHITE" }
+// };
 
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
@@ -63,13 +82,37 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+#define CGA_REG_HZ_TOTAL				0x00
+#define CGA_REG_HZ_DISP				    0x01
+#define CGA_REG_HZ_SYNC_POS				0x02
+#define CGA_REG_HZ_SYNC_WIDTH			0x03
+#define CGA_REG_VT_TOTAL				0x04
+#define CGA_REG_VT_TOTAL_ADJUST			0x05
+#define CGA_REG_VT_VERT_TOTAL_ADJUST	0x06
+#define CGA_REG_VT_VERT_SYNC_POSITION	0x07
+#define CGA_REG_INTERLACE_MODE			0x08
+#define CGA_REG_MAX_SCAN_LINE_ADDRESS	0x09
+#define CGA_REG_CURSOR_START			0x0a
+#define CGA_REG_CURSOR_END				0x0b
+#define CGA_REG_START_ADDRESS_H			0x0c
+#define CGA_REG_START_ADDRESS_L			0x0d
+#define CGA_REG_CURSOR_ADDRESS_H		0x0e
+#define CGA_REG_CURSOR_ADDRESS_L		0x0f
+#define CGA_REG_LPEN_ADDRESS_H			0x10
+#define CGA_REG_LPEN_ADDRESS_L			0x11
+
+#define WRITE_REGISTER( r, v ) \
+    outline1("MOV AH, 0x%2.2x", r ) \
+    outline1("MOV AL, 0x%2.2x", v ) \
+    outline0("CALL WRITECGAREG")
+
 #define CGA_COLOR_BLUE          0x01
 #define CGA_COLOR_GREEN         0x02
 #define CGA_COLOR_RED           0x04
 #define CGA_COLOR_LIGHT         0x08
 #define CGA_COLOR_LIGHT2        0x10
-#define CGA_COLOR_CSET1         0x20
-#define CGA_COLOR_CSET2         0x00
+#define CGA_COLOR_CSET1         0x00
+#define CGA_COLOR_CSET2         0x20
 
 #define WRITE_COLOR_SELECT_REGISTER( v ) \
     outline1("MOV AL, 0x%2.2x", v ) \
@@ -126,18 +169,7 @@ RGBi * CGA_image_nearest_system_color( RGBi * _color ) {
 
 Variable * cga_collision( Environment * _environment, char * _sprite ) {
 
-    Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(collision)" );
-
-    deploy( sprite, src_hw_cga_sprites_asm );
-    
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL SPRITECOL");
-    } else {
-        outline0("CALL SPRITECOLNMI2");
-    }
-
-    outline1("LD (%s), A", result->realName )
 
     return result;
     
@@ -156,8 +188,6 @@ Variable * cga_collision( Environment * _environment, char * _sprite ) {
  */
 void cga_hit( Environment * _environment, char * _sprite_mask, char * _result ) {
 
-    //todo
-
 }
 
 /**
@@ -170,6 +200,13 @@ void cga_hit( Environment * _environment, char * _sprite_mask, char * _result ) 
  * @param _border_color Border color to use
  */
 void cga_border_color( Environment * _environment, char * _border_color ) {
+
+    outline0("CALL READCGACOLORSELECTREG" );
+    outline0("AND AL, 0xf0" );
+    outline1("MOV BL, [%s]", _border_color );
+    outline0("AND BL, 0x0f" );
+    outline0("OR AL, BL" );
+    outline0("CALL WRITECGACOLORSELECTREG" );
 
 }
 
@@ -185,9 +222,11 @@ void cga_border_color( Environment * _environment, char * _border_color ) {
  */
 void cga_background_color( Environment * _environment, int _index, int _background_color ) {
 
-    char value[MAX_TEMPORARY_STORAGE]; sprintf( value, "$%2.2x", _background_color );
-
-    cga_background_color_vars( _environment, NULL, value );
+    outline0("CALL READCGACOLORSELECTREG" );
+    outline0("AND AL, 0xf0" );
+    outline1("MOV BL, 0x%2.2x", (unsigned char)(_background_color&0x0f) );
+    outline0("OR AL, BL" );
+    outline0("CALL WRITECGACOLORSELECTREG" );
     
 }
 
@@ -203,6 +242,13 @@ void cga_background_color( Environment * _environment, int _index, int _backgrou
  */
 void cga_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    outline0("CALL READCGACOLORSELECTREG" );
+    outline0("AND AL, 0xf0" );
+    outline1("MOV BL, [%s]", _background_color );
+    outline0("AND BL, 0x0f" );
+    outline0("OR AL, BL" );
+    outline0("CALL WRITECGACOLORSELECTREG" );
+
 }
 
 /**
@@ -216,6 +262,13 @@ void cga_background_color_vars( Environment * _environment, char * _index, char 
  * @param _background_color Background color to use
  */
 void cga_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
+
+    outline0("CALL READCGACOLORSELECTREG" );
+    outline0("AND AL, 0xf0" );
+    outline1("MOV BL, [%s]", _background_color );
+    outline0("AND BL, 0x0f" );
+    outline0("OR AL, BL" );
+    outline0("CALL WRITECGACOLORSELECTREG" );
 
 }
 
@@ -326,12 +379,32 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             WRITE_MODE_CONTROL_REGISTER( CGA_MODE_DISABLE )
             // 3 Program the 6845 CRT Controller to select the mode.
             WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW );
+
+            // WRITE_REGISTER( CGA_REG_HZ_TOTAL, 0x38 );
+            // WRITE_REGISTER( CGA_REG_HZ_DISP, 0x28 );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_POS, 0x2d );
+            // WRITE_REGISTER( CGA_REG_HZ_SYNC_WIDTH, 0x0a );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL, 0x1f );
+            // WRITE_REGISTER( CGA_REG_VT_TOTAL_ADJUST, 0x06 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_TOTAL_ADJUST, 0x19 );
+            // WRITE_REGISTER( CGA_REG_VT_VERT_SYNC_POSITION, 0x1c );
+            // WRITE_REGISTER( CGA_REG_INTERLACE_MODE, 0x02 );
+            // WRITE_REGISTER( CGA_REG_MAX_SCAN_LINE_ADDRESS, 0x07 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_START, 0x06 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_END, 0x07 );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_H, 0x0c );
+            // WRITE_REGISTER( CGA_REG_START_ADDRESS_L, 0x00 );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_CURSOR_ADDRESS_L, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_H, 0x?? );
+            // WRITE_REGISTER( CGA_REG_LPEN_ADDRESS_L, 0x?? );
+
             // 4 Program the mode-control and color-select registers
             // including re-enabling the video.
             WRITE_COLOR_SELECT_REGISTER( CGA_COLOR_CSET1 )
             // 4 Program the mode-control and color-select registers
             WRITE_MODE_CONTROL_REGISTER( CGA_MODE_40x25 | CGA_MODE_BW | CGA_MODE_ENABLE );
-
+            
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0000 );
 
             break;
