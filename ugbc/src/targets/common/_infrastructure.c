@@ -11803,6 +11803,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "c64" );
 #elif __plus4__
     strcat( lookedFilename, "plus4" );
+#elif __c16__
+    strcat( lookedFilename, "c16" );
 #elif __zx__
     strcat( lookedFilename, "zx" );
 #elif __d32__ 

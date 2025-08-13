@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__plus4__)
+#if defined(__plus4__) || defined(__c16__)
 
 /**
  * @brief Emit code for <strong>FADE</strong>

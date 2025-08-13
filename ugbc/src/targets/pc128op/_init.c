@@ -46,7 +46,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->joystickConfig.notEmulated = 1;
 
-    cpu6809_init( _environment );
+    cpu_init( _environment );
 
     int allowed[] = { 6, 5, 4 };
 

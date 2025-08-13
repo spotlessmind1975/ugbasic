@@ -137,7 +137,7 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:");
 
-    z80_init( _environment );
+   cpu_init( _environment );
 
     deploy_deferred( startup, src_hw_zx_startup_asm);
     outline0("CALL ZXSTARTUP");

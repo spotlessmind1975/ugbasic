@@ -34,7 +34,7 @@
 
 #include "../../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__)
+#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK READ ...</b>

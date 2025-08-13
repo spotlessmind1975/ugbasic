@@ -44,7 +44,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x080e;
 
-    cpu6502_init( _environment );
+    cpu_init( _environment );
 
     if ( _environment->tenLinerRulesEnforced ) {
         MEMORY_AREA_DEFINE( MAT_DIRECT, 0xc000, 0xcfff );

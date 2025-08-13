@@ -543,7 +543,7 @@ void vic2z_hit( Environment * _environment, char * _sprite_mask, char * _result 
     // Check for collision using VIC-II registers
     outline0("LDA $D01F");
     outline1("AND %s", _sprite_mask);
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
 
     outline0("LDA #$1");
     outline1("STA %s", _result);
@@ -706,7 +706,7 @@ void vic2z_raster_at( Environment * _environment, char * _label, char * _positio
     outline0("STA $D012");
     outline1("LDA %s", _positionhi );
     outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
     outline0("LDA $D011" );
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );
@@ -759,7 +759,7 @@ void vic2z_next_raster_at( Environment * _environment, char * _label, char * _po
     outline0("STA $D012");
     outline1("LDA %s", _positionhi );
     outline0("AND #%00000001" );
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
     outline0("LDA $D011" );
     outline0("AND #%01111111" );
     outline0("ORA #%10000000" );
@@ -1075,7 +1075,7 @@ void vic2z_colormap_at( Environment * _environment, char * _address ) {
     // Let's check if we are in ECM mode.
     outline0("LDA $D011");
     outline0("BIT #%00100000");
-    cpu6502_beq(_environment, label);
+    cpu_beq(_environment, label);
 
     // Change the colormap address that is the text address.
     vic2z_textmap_at( _environment, _address );

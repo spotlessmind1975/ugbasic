@@ -128,7 +128,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("CODESTART:")
     outline0("LD SP, $C000");
 
-    z80_init( _environment );
+   cpu_init( _environment );
 
     // outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );

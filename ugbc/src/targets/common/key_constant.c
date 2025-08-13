@@ -43,10 +43,10 @@
     defined(__coleco__ ) || \
     defined( __cpc__ )  || \
     defined( __mo5__ ) || defined( __msx1__ ) || \
-    defined( __plus4__ ) || defined( __plus4__ ) || defined( __sc3000__ ) || \
+    defined( __plus4__ ) || defined( __sc3000__ ) || \
     defined( __sg1000__ ) || defined( __to8__ ) || defined( __vg5000__ ) || \
     defined( __vic20__) || defined ( __zx__ ) || defined( __pc1403__ ) || \
-    defined( __gb__) || defined ( __vz200__ )
+    defined( __gb__) || defined ( __vz200__ ) || defined( __c16__) || defined( __pccga__) 
     
 int key_constant( Environment * _environment, int _key ) {
 

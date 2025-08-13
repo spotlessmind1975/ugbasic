@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 plus4 sc3000 sg1000 to8 vg5000 vic20 vz200 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c16 c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 pccga plus4 sc3000 sg1000 to8 vg5000 vic20 vz200 zx))
 endif
 
 ifdef 10liner
@@ -63,6 +63,9 @@ ifeq ($(target),c128)
   output=prg
 endif
 ifeq ($(target),c128z)
+  output=prg
+endif
+ifeq ($(target),c16)
   output=prg
 endif
 ifeq ($(target),c64)
@@ -124,6 +127,9 @@ ifeq ($(target),zx)
 endif
 ifeq ($(target),pc1403)
   output=ram
+endif
+ifeq ($(target),pccga)
+  output=com
 endif
 ifeq ($(target),vz200)
   output=vz
@@ -192,6 +198,11 @@ COCO3DECB = ./coco3_decb.sh
 AS61860 = ./modules/asxv5pxx/asxmak/linux/exe/as61860$(EXESUFFIX)
 ASLINK = ./modules/asxv5pxx/asxmak/linux/exe/aslink$(EXESUFFIX)
 COCOBIN2RAM = ./modules/cocobin2ram/cocobin2ram$(EXESUFFIX)
+
+#------------------------------------------------ 
+# CPU INTEL 8086
+#------------------------------------------------ 
+NASM = ./modules/nasm/nasm$(EXESUFFIX)
 
 #------------------------------------------------ 
 # Examples
@@ -275,6 +286,7 @@ paths:
 	@mkdir -p $(dir $(Z80ASM))
 	@mkdir -p $(dir $(Z80APPMAKE))
 	@mkdir -p $(dir $(ASM6809))
+	@mkdir -p $(dir $(NASM))
 
 #------------------------------------------------ 
 # toolchain: 
@@ -435,6 +447,21 @@ $(DIR2ATR): $(dir $(DIR2ATR))./*.o
 	cd $(dir $(DIR2ATR)) && make dir2atr
 
 dir2atr: paths $(DIR2ATR)
+
+#------------------------------------------------ 
+# nasm:
+#    NANO ASSEMBLER
+#------------------------------------------------ 
+# 
+# Netwide Assembler (NASM), an assembler for the 
+# x86 CPU architecture portable to nearly every 
+# modern platform, and with code generation for 
+# many platforms old and new.
+#
+$(NASM): 
+	cd $(dir $(NASM)) && make
+
+nasm: paths $(NASM)
 
 #------------------------------------------------ 
 # atari:
@@ -819,6 +846,22 @@ generated/pc1403/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ra
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pc1403$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.ram=.info) -o ../$@ -O ram $(subst generated/pc1403/exeso/,,$(@:.ram=.bas))
 
 #------------------------------------------------ 
+# pccga:
+#    PC CGA (8086)
+#------------------------------------------------ 
+# 
+toolchain.pccga: nasm
+
+generated/pccga/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/pccga/asm/,,$(@:.asm=.bas)) ../$@ 
+
+generated/pccga/exe/%.com:
+	@$(NASM) -f bin $(subst /exe/,/asm/,$(@:.com=.asm)) -o $@ -l $(@:.com=.lst)
+
+generated/pccga/exeso/%.com: $(subst /generated/pccga/exeso/,/$(EXAMPLESDIR)/,$(@:.com=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.pccga$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O com $(subst generated/pccga/exeso/,,$(@:.com=.bas))
+
+#------------------------------------------------ 
 # plus4:
 #    COMMODORE PLUS/4 (7501/8501)
 #------------------------------------------------ 
@@ -834,6 +877,23 @@ generated/plus4/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
 
 generated/plus4/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.plus4$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/plus4/exeso/,,$(@:.prg=.bas))
+
+#------------------------------------------------ 
+# c16:
+#    COMMODORE C16 (7501/8501)
+#------------------------------------------------ 
+# 
+toolchain.c16: cc65
+
+generated/c16/asm/%.asm:
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c16$(UGBCEXESUFFIX) $(OPTIONS) -c ../$(subst /asm/,/cfg/,$(@:.asm=.cfg)) $(subst generated/c16/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/c16/exe/%.prg: $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@$(CL65) -Ln $(@:.prg=.lbl) --listing $(@:.prg=.lst) -g -o $@ --mapfile $(@:.prg=.map) -u __EXEHDR__ -t c16 -C $(subst /exe/,/cfg/,$(@:.prg=.cfg)) $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@rm -f $(@:.prg=.o)
+
+generated/c16/exeso/%.prg: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.prg=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.c16$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O prg $(subst generated/c16/exeso/,,$(@:.prg=.bas))
 
 #------------------------------------------------ 
 # sc3000:

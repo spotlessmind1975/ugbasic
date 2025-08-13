@@ -44,7 +44,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x3000;
 
-    cpu6809_init( _environment );
+    cpu_init( _environment );
 
     int * bankIds = NULL;
     int bankMax = 0;

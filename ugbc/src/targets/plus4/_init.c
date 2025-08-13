@@ -44,7 +44,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x1001;
 
-    cpu6502_init( _environment );
+    cpu_init( _environment );
 
     banks_init( _environment );
 

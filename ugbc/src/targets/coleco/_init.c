@@ -146,7 +146,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL COLECOSTARTUP2");
 
-    z80_init( _environment );
+   cpu_init( _environment );
 
     outline0("CALL PROTOTHREADINIT" );
 
@@ -157,7 +157,7 @@ void target_initialization( Environment * _environment ) {
     tms9918_initialization( _environment );
     sn76489z_initialization( _environment );
 
-    z80_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
+   cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
     variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );

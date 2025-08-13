@@ -103,6 +103,13 @@ ifeq ($(target),atarixl)
   audio=pokey
   io=pokey
 endif
+ifeq ($(target),c16)
+  cpu=6502
+  video=ted
+  video2=
+  audio=ted
+  io=ted
+endif
 ifeq ($(target),c128)
   cpu=6502
   video=vic2
@@ -199,6 +206,13 @@ ifeq ($(target),pc128op)
   video=ef936x
   video2=
   audio=sn76489m
+  io=
+endif
+ifeq ($(target),pccga)
+  cpu=8086
+  video=cga
+  video2=
+  audio=noaudio
   io=
 endif
 ifeq ($(target),pc1403)
@@ -635,6 +649,14 @@ SOURCES_TMS9918 := $(subst src/hw/tms9918/,src-generated/tms9918_,$(MODULES_TMS9
 src-generated/tms9918_%.c: $(MODULES_TMS9918)
 	@xxd -i $(subst src-generated/tms9918_,src/hw/tms9918/,$(@:.c=.asm)) >$@
 
+# IBM CGA
+
+MODULES_CGA := $(wildcard src/hw/cga/*.asm)
+SOURCES_CGA := $(subst src/hw/cga/,src-generated/cga_,$(MODULES_CGA:.asm=.c)) $(FONTS)
+
+src-generated/cga_%.c: $(MODULES_CGA)
+	@xxd -i $(subst src-generated/cga_,src/hw/cga/,$(@:.c=.asm)) >$@
+
 # Zilog Z80
 
 MODULES_Z80 := $(wildcard src/hw/z80/*.asm)
@@ -642,6 +664,14 @@ SOURCES_Z80 := $(subst src/hw/z80/,src-generated/z80_,$(MODULES_Z80:.asm=.c))
 
 src-generated/z80_%.c: $(MODULES_Z80)
 	@xxd -i $(subst src-generated/z80_,src/hw/z80/,$(@:.c=.asm)) >$@
+
+# Intel 8086
+
+MODULES_8086 := $(wildcard src/hw/8086/*.asm)
+SOURCES_8086 := $(subst src/hw/8086/,src-generated/8086_,$(MODULES_8086:.asm=.c))
+
+src-generated/8086_%.c: $(MODULES_8086)
+	@xxd -i $(subst src-generated/8086_,src/hw/8086/,$(@:.c=.asm)) >$@
 
 # ----------------------------------------------------------------------------
 # Computers and targets
@@ -768,6 +798,20 @@ src-generated/modules_plus4.c: $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED)
 	@cat $(SOURCES_6502) $(SOURCES_PLUS4) $(SOURCES_TED) >src-generated/modules_plus4.c
 	@grep "src" src-generated/modules_plus4.c | awk -f modules.awk >src-generated/modules_plus4.h
 	@grep "data" src-generated/modules_plus4.c | awk -f modules.awk >>src-generated/modules_plus4.h
+
+# Commodore C16
+
+MODULES_C16 := $(wildcard src/hw/c16/*.asm)
+SOURCES_C16 := $(subst src/hw/c16/,src-generated/c16_,$(MODULES_C16:.asm=.c))
+
+src-generated/c16_%.c: $(MODULES_C16)
+	@xxd -i $(subst src-generated/c16_,src/hw/c16/,$(@:.c=.asm)) >$@
+
+src-generated/modules_c16.c: $(SOURCES_6502) $(SOURCES_C16) $(SOURCES_TED)
+	@cat $(SOURCES_6502) $(SOURCES_C16) $(SOURCES_TED) >src-generated/modules_c16.c
+	@grep "src" src-generated/modules_c16.c | awk -f modules.awk >src-generated/modules_c16.h
+	@grep "data" src-generated/modules_c16.c | awk -f modules.awk >>src-generated/modules_c16.h
+
 
 # Gameboy 
 
@@ -972,6 +1016,19 @@ src-generated/modules_zx.c: $(SOURCES_Z80) $(SOURCES_ZX)
 	@cat $(SOURCES_Z80) $(SOURCES_ZX) >src-generated/modules_zx.c
 	@grep "src" src-generated/modules_zx.c | awk -f modules.awk >src-generated/modules_zx.h
 	@grep "data" src-generated/modules_zx.c | awk -f modules.awk >>src-generated/modules_zx.h
+
+# PC IBM - CGA
+
+MODULES_PCCGA := $(wildcard src/hw/pccga/*.asm)
+SOURCES_PCCGA := $(subst src/hw/pccga/,src-generated/pccga_,$(MODULES_PCCGA:.asm=.c))
+
+src-generated/pccga_%.c: $(MODULES_PCCGA)
+	@xxd -i $(subst src-generated/pccga_,src/hw/pccga/,$(@:.c=.asm)) >$@
+
+src-generated/modules_pccga.c: $(SOURCES_8086) $(SOURCES_CGA) $(SOURCES_PCCGA)
+	@cat $(SOURCES_8086) $(SOURCES_CGA) $(SOURCES_PCCGA) >src-generated/modules_pccga.c
+	@grep "src" src-generated/modules_pccga.c | awk -f modules.awk >src-generated/modules_pccga.h
+	@grep "data" src-generated/modules_pccga.c | awk -f modules.awk >>src-generated/modules_pccga.h
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------

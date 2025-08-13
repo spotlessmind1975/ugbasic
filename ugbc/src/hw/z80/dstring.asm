@@ -164,6 +164,7 @@ DSWRITEOK:
 DSCOPY:
     LD C, (IX)
     LD A, C
+    CP 0
     JR Z,DSWRITED
 DSWRITECOPY:
     LD A, (HL)

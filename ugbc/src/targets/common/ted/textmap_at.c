@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__plus4__)
+#if defined(__plus4__) || defined(__c16__)
 
 void textmap_at( Environment * _environment, int _address ) {
 

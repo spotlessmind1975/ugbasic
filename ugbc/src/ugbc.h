@@ -269,7 +269,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_REU = 11,
     OUTPUT_FILE_TYPE_RAM = 12,
     OUTPUT_FILE_TYPE_GB = 13,
-    OUTPUT_FILE_TYPE_VZ = 14
+    OUTPUT_FILE_TYPE_COM = 14,
+    OUTPUT_FILE_TYPE_VZ = 15
 
 } OutputFileType;
 
@@ -1707,6 +1708,7 @@ typedef struct _Deployed {
     int sg1000vars;
     int vg5000vars;
     int colecovars;
+    int pccgavars;
     int cpcvars;
     int cpcvarsGraphic;
     int cpcstartup;
@@ -1716,6 +1718,9 @@ typedef struct _Deployed {
     int tms9918vars;
     int tms9918varsGraphic;
     int tms9918startup;
+    int cgavars;
+    int cgavarsGraphic;
+    int cgastartup;
     int ef936xvars;
     int ef936xstartup;
     int ef9345vars;
@@ -4743,6 +4748,50 @@ char * strcopy( char * _dest, char * _source );
         sprintf(executableName, "%s", "aslink" ); \
     }
 
+#define BUILD_TOOLCHAIN_NASM_GET_EXECUTABLE( _environment, executableName ) \
+    if ( _environment->compilerFileName ) { \
+        sprintf( executableName, "%s", _environment->compilerFileName ); \
+    } else if( access( "modules\\nasm\\nasm.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules\\nasm\\nasm.exe" ); \
+    } else if( access( "..\\modules\\nasm\\nasm.exe", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "..\\modules\\nasm\\nasm.exe" ); \
+    } else if( access( "modules/nasm/nasm", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "modules/nasm/nasm" ); \
+    } else if( access( "../modules/nasm/nasm", F_OK ) == 0 ) { \
+        sprintf(executableName, "%s", "../modules/nasm/nasm" ); \
+    } else { \
+        sprintf(executableName, "%s", "nasm" ); \
+    }
+
+#define BUILD_TOOLCHAIN_NASM_GET_LISTING_FILE( _environment, listingFileName ) \
+    memset( listingFileName, 0, MAX_TEMPORARY_STORAGE ); \
+    if ( _environment->listingFileName ) { \
+        sprintf( listingFileName, "-l \"%s\"", _environment->listingFileName ); \
+    } else { \
+        strcopy( listingFileName, "" ); \
+    }
+
+#define BUILD_TOOLCHAIN_NASM_EXEC( _environment, target, executableName, listingFileName, cpu ) \
+    sprintf( commandLine, "\"%s\" -f bin %s -o %s \"%s\"", \
+        executableName, \
+        _environment->asmFileName, \
+        _environment->exeFileName, \
+        listingFileName ); \
+    if ( system_call( _environment,  commandLine ) ) { \
+        printf("The compilation of assembly program failed.\n\n"); \
+        printf("Please check if %s is correctly installed.\n\n", executableName); \
+        printf("For more info, please visit: https://ugbasic.iwashere.eu/install.\n\n"); \
+        return; \
+    }; \
+    if ( _environment->listingFileName ) { \
+        char * p = strdup( _environment->asmFileName ); \
+        char * q = strchr( p, '.' ); \
+        if ( q ) { \
+            strcopy( q, ".lis" ); \
+        } \
+        BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
+    }
+
 void setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
@@ -6003,6 +6052,16 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/z80.h"
     #include "hw/vz200.h"
     #include "hw/6847z.h"
+#elif __c16__
+    #include "../src-generated/modules_c16.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/c16.h"
+#elif __pccga__
+    #include "../src-generated/modules_pccga.h"
+    #include "hw/8086.h"
+    #include "hw/cga.h"
+    #include "hw/pccga.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN

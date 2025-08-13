@@ -44,7 +44,7 @@ void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x080e;
 
-    cpu6502_init( _environment );
+    cpu_init( _environment );
 
     _environment->audioConfig.async = 1;
 

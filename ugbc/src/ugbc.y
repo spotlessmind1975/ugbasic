@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE
+%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1209,7 +1209,7 @@ const_factor:
             defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
             defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__) || \
-            defined( __vz200__) 
+            defined(__pccga__) || defined( __vz200__) 
             $$ = 1;
         #else
             $$ = 0;
@@ -3963,7 +3963,7 @@ exponential_less:
         defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
         defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
         defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__) || defined(__gb__) || defined(__vz200__)
+        defined( __c64reu__) || defined(__gb__) || defined(__vz200__) || defined(__c16__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -9650,7 +9650,7 @@ target :
     | CPU6502 {
         #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__)
+            defined( __c64reu__) || defined(__c16__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9736,6 +9736,14 @@ target :
         #endif
     }
     |
+    PCCGA {
+        #ifdef __pccga__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
     CPC {
         #ifdef __cpc__
             $$ = 1;
@@ -9762,6 +9770,14 @@ target :
     |
     PLUS4 {
         #ifdef __plus4__
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    |
+    C16 {
+        #ifdef __c16__
             $$ = 1;
         #else
             $$ = 0;
@@ -13295,6 +13311,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "Gameboy";
 #elif __plus4__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore PLUS/4";
+#elif __c16__
+    char target[MAX_TEMPORARY_STORAGE] = "Commodore 16";
 #elif __zx__
     char target[MAX_TEMPORARY_STORAGE] = "ZX Spectrum 48K";
 #elif __d32__
@@ -13313,6 +13331,8 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     char target[MAX_TEMPORARY_STORAGE] = "MSX 1";
 #elif __coleco__
     char target[MAX_TEMPORARY_STORAGE] = "ColecoVision";
+#elif __pccga__
+    char target[MAX_TEMPORARY_STORAGE] = "PC IBM (CGA)";
 #elif __sc3000__
     char target[MAX_TEMPORARY_STORAGE] = "SEGA SC-3000";
 #elif __sg1000__
@@ -13406,6 +13426,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __plus4__
     printf("\t                prg - program binary file\n" );
     #define defaultExtension "prg"
+#elif __c16__
+    printf("\t                prg - program binary file\n" );
+    #define defaultExtension "prg"
 #elif __zx__
     printf("\t                tap - tape file\n" );
     #define defaultExtension "tap"
@@ -13448,6 +13471,9 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __coleco__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
+#elif __pccga__
+    printf("\t                com - binary executable\n" );
+    #define defaultExtension "com"
 #elif __sc3000__
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
@@ -13545,6 +13571,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __plus4__
     _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif __c16__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
 #elif __zx__
     _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
 #elif __coco__
@@ -13569,6 +13597,8 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
 #elif __coleco__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif __pccga__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
 #elif __sc3000__
     _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
 #elif __sg1000__
@@ -13714,6 +13744,8 @@ int main( int _argc, char *_argv[] ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
                     } else if ( strcmp( optarg, "rom") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "com") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
                     } else if ( strcmp( optarg, "d64") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
                     } else if ( strcmp( optarg, "gb") == 0 ) {
