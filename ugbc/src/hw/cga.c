@@ -380,7 +380,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
-            _environment->currentModeBW = 0;
+            _environment->currentModeBW = 2;
 
             //   Sequence of Events for Changing Modes
             // 1 Determine the mode of operation.
@@ -429,7 +429,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
-            _environment->currentModeBW = 0;
+            _environment->currentModeBW = 2;
 
             //   Sequence of Events for Changing Modes
             // 1 Determine the mode of operation.
@@ -478,7 +478,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 2;
-            _environment->currentModeBW = 0;
+            _environment->currentModeBW = 2;
 
             //   Sequence of Events for Changing Modes
             // 1 Determine the mode of operation.
@@ -527,7 +527,7 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
             _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
-            _environment->currentModeBW = 0;
+            _environment->currentModeBW = 2;
 
             //   Sequence of Events for Changing Modes
             // 1 Determine the mode of operation.
@@ -967,7 +967,6 @@ void cga_scroll_text( Environment * _environment, int _direction, int _overlap )
 void cga_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( cgavars, src_hw_cga_vars_asm);
-    // deploy( vScrollTextUp, src_hw_cga_vscroll_text_up_asm );
 
     outline1("MOV SI, [%s]", _text);
     outline1("MOV CL, [%s]", _text_size);
@@ -1008,6 +1007,7 @@ void cga_text( Environment * _environment, char * _text, char * _text_size, int 
         // } else {
             // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
             deploy( clsText, src_hw_cga_cls_text_asm );
+            deploy( vScrollTextUp, src_hw_cga_vscroll_text_up_asm );
             deploy( textEncodedAtText, src_hw_cga_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
         // }
