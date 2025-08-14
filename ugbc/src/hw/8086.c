@@ -1552,12 +1552,12 @@ void cpu_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
         } else {
 
-            outline1("MOV BC, [%s]", _source );
+            outline1("MUL BX", _source );
 
         }
 
         outline1("MOV [%s], AX", _other );
-        outline1("MOV [%s], DX", address_displacement( _environment, _other, "+1" ) );
+        outline1("MOV [%s], DX", address_displacement( _environment, _other, "+2" ) );
 
     no_embedded( cpu_math_mul_16bit_to_32bit );
 
@@ -3915,7 +3915,7 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
     }
 
-    outline1("MOV [%s], CX", _string_size );
+    outline1("MOV [%s], CL", _string_size );
 
 }
 
