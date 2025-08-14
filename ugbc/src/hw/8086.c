@@ -3974,31 +3974,31 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
         switch( _bits ) {
             case 8:
-                outline1("MOV AL, [%s]", _number );
-                outline0("MOV AH, 0" );
+                outline1("MOV BL, [%s]", _number );
+                outline0("MOV BH, 0" );
                 outline0("MOV DX, 0" );
                 outline1("MOV DI, [%s]", _string );
-                outline0("CALL HEXTOSTRING" );
+                outline0("CALL HEXTOSTRING8" );
                 break;
             case 16:
 
-                outline1("MOV AX, [%s]", _number );
+                outline1("MOV BX, [%s]", _number );
                 outline0("MOV DX, 0" );
                 outline1("MOV DI, [%s]", _string );
-                outline0("CALL HEXTOSTRING" );
+                outline0("CALL HEXTOSTRING16" );
                 break;
 
             case 32:
 
-                outline1("MOV AX, [%s]", _number );
+                outline1("MOV BX, [%s]", _number );
                 outline1("MOV DX, [%s]", address_displacement(_environment, _number, "2") );
                 outline1("MOV DI, [%s]", _string );
-                outline0("CALL HEXTOSTRING" );
+                outline0("CALL HEXTOSTRING32" );
                 break;
 
         }
 
-        outline1("MOV A, 0x%2.2x", ( _bits >> 2 ) );
+        outline1("MOV AL, 0x%2.2x", ( _bits >> 2 ) );
         outline1("MOV [%s], AL", _string_size );
 
     done()
