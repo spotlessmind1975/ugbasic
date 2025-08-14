@@ -3897,24 +3897,35 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
     switch( _bits ) {
         case 8:
             outline1("MOV AL, [%s]", _number);
-            outline0("MOV AH, 0");
-            outline0("MOV DX, 0");
-            outline0("CALL NUMBERTOSTRING");
+            if ( _signed ) {
+                outline0("CBW");
+                outline0("CWD");
+            } else {
+                outline0("MOV AH, 0");
+                outline0("MOV DX, 0");
+            }
             break;
         case 16:
             outline1("MOV AX, [%s]", _number);
-            outline0("MOV DX, 0");
-            outline0("CALL NUMBERTOSTRING");
+            if ( _signed ) {
+                outline0("CWD");
+            } else {
+                outline0("MOV DX, 0");
+            }
             break;
         case 32:
             outline1("MOV AX, [%s]", _number);
             outline1("MOV DX, [%s]", address_displacement(_environment, _number, "2"));
-            outline0("CALL NUMBERTOSTRING");
             break;
         default:
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
     }
 
+    if ( _signed ) {
+        outline0("CALL NUMBERTOSTRINGSIGNED");
+    } else {
+        outline0("CALL NUMBERTOSTRING");
+    }
     outline1("MOV [%s], CL", _string_size );
 
 }

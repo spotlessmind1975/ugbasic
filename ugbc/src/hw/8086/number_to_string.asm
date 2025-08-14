@@ -41,11 +41,55 @@
 ;   Stringa salvata nella memoria a partire dall'indirizzo di DI
 ; Registri usati: AX, BX, CX, DX, DI, SP (implicitamente), SI
 
+NUMBERTOSTRINGSIGNED:
+
+    MOV BH, DH
+    AND BH, 0x80
+    CMP BH, 0x80
+    JNE NUMBERTOSTRING
+
+    XOR DX, 0xffff
+    XOR AX, 0xffff
+    INC AX
+    ADC DX, 0
+
+    PUSH BX
+    CALL NUMBERTOSTRING
+    POP BX
+
+    CMP BH, 0x80
+    JNE NUMBERTOSTRINGDONE
+
+    PUSH SI
+    PUSH CX
+    MOV DI, SI
+    ADD DI, CX
+    ADD SI, CX
+    DEC SI
+NUMBERTOSTRINGL1N:
+    MOV AL, [SI]
+    MOV [DI], AL
+    DEC SI
+    DEC DI
+    DEC CX
+    CMP CX, 0
+    JNZ NUMBERTOSTRINGL1N
+    POP CX
+    POP SI
+    MOV AL, '-'
+    MOV [SI], AL
+    INC CX
+
+NUMBERTOSTRINGDONE:
+    RET
+
 NUMBERTOSTRING:
 
     MOV SI, DI
     ADD DI, 10
     MOV CX, 0
+
+NUMBERTOSTRING2:
 
     CMP DX, 0
     JNZ NUMBERTOSTRINGL0
