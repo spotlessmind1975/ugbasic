@@ -36,6 +36,7 @@
 ;   DI = l'indirizzo di memoria dove salvare la stringa
 ; Output:
 ;   DI = l'indirizzo della fine della stringa
+;   SI = l'indirizzo dell'inizio della stringa
 ;   CX = Numero di caratteri che compongono il numero
 ;   Stringa salvata nella memoria a partire dall'indirizzo di DI
 ; Registri usati: AX, BX, CX, DX, DI, SP (implicitamente), SI
@@ -43,8 +44,8 @@
 NUMBERTOSTRING:
 
     MOV SI, DI
+    ADD DI, 10
     MOV CX, 0
-    MOV BX, 10
 
     CMP DX, 0
     JNZ NUMBERTOSTRINGL0
@@ -53,44 +54,45 @@ NUMBERTOSTRING:
 
 NUMBERTOSTRINGL0:
 
-    PUSH DX
+    MOV BX, 10
+    
+    ; -----------------------------
+    ; DX = DX / 10
+    ; AX = AX / 10
+
     PUSH AX
-
-    ; DX = resto di ( AX / BX )
+    MOV AX, DX
     DIV BX
+    MOV DX, AX
+    POP AX
 
+    PUSH DX
+    DIV BX
     MOV BX, DX
-
     ADD DL, '0'
     MOV [DI], DL
-    INC DI
+    DEC DI
     INC CX
-
-    POP AX
     POP DX
-
-    SUB AX, BX
-    SBB DX, 0
-
-    MOV BX, 10
 
     CMP DX, 0
     JNZ NUMBERTOSTRINGL0
     CMP AX, 0
     JNZ NUMBERTOSTRINGL0
 
-    PUSH CX
+    INC DI
     PUSH SI
+    PUSH CX
 NUMBERTOSTRINGL1:
-    MOV AL, [SI]
-    MOV [DI], AL
-    DEC DI
+    MOV AL, [DI]
+    MOV [SI], AL
     INC SI
+    INC DI
     DEC CX
     CMP CX, 0
     JNZ NUMBERTOSTRINGL1
-    POP SI
     POP CX
+    POP SI
     RET
 
 NUMBERTOSTRING0:
