@@ -35,7 +35,7 @@
 
 ; SOURCE: SI, LEN: CL
 ; PATTERN: DX, LEN: CH
-; DISTINATION: DI
+; DESTINATION: DI
 
 CPUSTRINGSUB:
 
@@ -70,7 +70,10 @@ CPUSTRINGSUBL1:
     ; LD A, (SI)
     MOV AL, [SI]
     ; CP (DX)
-    CMP AL, [DX]
+    PUSH DI
+    MOV DI, DX
+    CMP AL, [DI]
+    POP DX
     ; ; go to copy it on the target string.
     ; JR NZ, CPUSTRINGSUBL2
     JNZ CPUSTRINGSUBL2

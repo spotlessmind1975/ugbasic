@@ -213,3 +213,32 @@ CONSOLECALCULATEL10:
     ADD DI, AX
     MOV [CONSOLESA], DI
     RET
+
+    ; Calculate position on the screen.
+    ; Input  : DX = x; CL = y
+    ; Output : DI address
+CALCPOS:
+    MOV AL, CL
+    MOV AH, 0
+    XOR DI, DI
+    SHR AL, 1
+    SBB DI, 0
+    AND DI, 0x2000
+    SHL AX, 1
+    SHL AX, 1
+    SHL AX, 1
+    SHL AX, 1
+    MOV BX, AX
+    SHL AX, 1
+    SHL AX, 1
+    ADD DI, AX
+    ADD DI, AX
+    MOV AX, DX
+    MOV CL, AL
+    SHR AX, 1
+    SHR AX, 1
+    ADD DI, AX
+    INC CL
+    AND CL, 3
+    SHL CL, 1
+    RET

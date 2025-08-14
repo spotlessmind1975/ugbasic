@@ -41,6 +41,7 @@
 ; Registri usati: AX, BX, CX, DX, DI, SP (implicitamente), SI
 
 NUMBERTOSTRING:
+
     MOV SI, DI
     MOV CX, 0
     MOV BX, 10
@@ -48,57 +49,52 @@ NUMBERTOSTRING:
     CMP DX, 0
     JNZ NUMBERTOSTRINGL0
     CMP AX, 0
-    JNZ NUMBERTOSTRING0
+    JZ NUMBERTOSTRING0
 
 NUMBERTOSTRINGL0:
-    PUSH AX
-    MOV AX, DX
-    XOR DX, DX
-    DIV BX
-    XCHG DX, AX
-    POP DX
-    XCHG DX, AX
 
+    PUSH DX
     PUSH AX
-    MOV AX, DX
-    XOR DX, DX
-    DIV BX
-    
-    XCHG DX, AX
-    MOV AX, DX
-    MOV DX, [SP+2]
-    MOV [SP+2], AX
-    MOV DX, AX
 
-    MOV AX, [SP+2]
-    MOV DX, 0
-    MOV AX, [SP+2]
-    MOV DX, 0
-    XOR DX, DX
+    ; DX = resto di ( AX / BX )
     DIV BX
+
+    MOV BX, DX
 
     ADD DL, '0'
-    PUSH DX
+    MOV [DI], DL
+    INC DI
     INC CX
 
-    CMP AX, 0
-    JNE NUMBERTOSTRINGL0
-    CMP DX, 0
-    JNE NUMBERTOSTRINGL0
-
-NUMBERTOSTRINGD0:
     POP AX
+    POP DX
+
+    SUB AX, BX
+    SBB DX, 0
+
+    MOV BX, 10
+
+    CMP DX, 0
+    JNZ NUMBERTOSTRINGL0
+    CMP AX, 0
+    JNZ NUMBERTOSTRINGL0
+
+    PUSH CX
+    PUSH SI
+NUMBERTOSTRINGL1:
+    MOV AL, [SI]
     MOV [DI], AL
-    INC DI
-    LOOP NUMBERTOSTRINGD0
-
-    MOV CX, DI
-    SUB CX, SI
-
+    DEC DI
+    INC SI
+    DEC CX
+    CMP CX, 0
+    JNZ NUMBERTOSTRINGL1
+    POP SI
+    POP CX
     RET
 
 NUMBERTOSTRING0:
-    MOV [DI], '0'
-    INC DI
+    MOV AL, '0'
+    MOV [SI], AL
     MOV CX, 1
     RET

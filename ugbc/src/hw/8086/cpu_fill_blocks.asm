@@ -39,7 +39,7 @@
 ;   Input:
 ;       AL : pattern
 ;       CL : blocks
-;       BX : address
+;       DI : address
 ;
 CPUFILLBLOCKSDONE:
     RET
@@ -51,7 +51,7 @@ CPUFILLBLOCKS:
 CPUFILLBLOCKSL2:
     MOV CH, 0xff
 CPUFILLBLOCKSL1:    
-    MOV [BX], AL
+    MOV [DI], AL
     INC BX
     DEC CH
     CMP CH, 0

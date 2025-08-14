@@ -158,8 +158,8 @@ void cpu_peek( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV AL, [BX]");
+        outline1("MOV SI, [%s]", _address);
+        outline0("MOV AL, [SI]");
         outline1("MOV [%s], AL", _target);
 
     no_embedded( cpu_peek )
@@ -171,8 +171,8 @@ void cpu_poke( Environment * _environment, char * _address, char * _source ) {
     inline( cpu_poke )
 
         outline1("MOV AL, [%s]", _source);
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AL");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AL");
 
     no_embedded( cpu_poke )
 
@@ -183,8 +183,8 @@ void cpu_poke_const( Environment * _environment, char * _address, int _source ) 
     // inline( cpu_poke )
 
         outline1("MOV AL, 0x%2.2x", (unsigned char)(_source&0xff));
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AL");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AL");
 
     // no_embedded( cpu_poke )
 
@@ -194,8 +194,8 @@ void cpu_peekw( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV AX, [BX]");
+        outline1("MOV SI, [%s]", _address);
+        outline0("MOV AX, [SI]");
         outline1("MOV [%s], AX", _target);
 
     no_embedded( cpu_peek )
@@ -207,8 +207,8 @@ void cpu_pokew( Environment * _environment, char * _address, char * _source ) {
     inline( cpu_poke )
 
         outline1("MOV AX, [%s]", _source);
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AX");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AX");
 
     no_embedded( cpu_poke )
 
@@ -219,8 +219,8 @@ void cpu_pokew_const( Environment * _environment, char * _address, int _source )
     // inline( cpu_poke )
 
         outline1("MOV AX, 0x%4.4x", (unsigned short)(_source&0xffFF));
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AX");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AX");
 
     // no_embedded( cpu_poke )
 
@@ -230,12 +230,12 @@ void cpu_peekd( Environment * _environment, char * _address, char * _target ) {
 
     inline( cpu_peek )
 
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV AX, [BX]");
+        outline1("MOV SI, [%s]", _address);
+        outline0("MOV AX, [SI]");
         outline1("MOV [%s], AX", _target);
-        outline0("INC BX" );
-        outline0("INC BX" );
-        outline0("MOV AX, [BX]");
+        outline0("INC SI" );
+        outline0("INC SI" );
+        outline0("MOV AX, [SI]");
         outline1("MOV [%s], AX", address_displacement( _environment, _target, "+2" ));
 
     no_embedded( cpu_peek )
@@ -247,12 +247,12 @@ void cpu_poked( Environment * _environment, char * _address, char * _source ) {
     inline( cpu_poke )
 
         outline1("MOV AX, [%s]", _source);
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AX");
-        outline0("INC BX");
-        outline0("INC BX");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AX");
+        outline0("INC DI");
+        outline0("INC DI");
         outline1("MOV AX, [%s]", address_displacement( _environment, _source, "+2") );
-        outline0("MOV [BX], AX");
+        outline0("MOV [DI], AX");
 
     no_embedded( cpu_poke )
 
@@ -263,12 +263,12 @@ void cpu_poked_const( Environment * _environment, char * _address, int _source )
     // inline( cpu_poke )
 
         outline1("MOV AX, 0x%4.4x", (unsigned short)(_source&0xffff));
-        outline1("MOV BX, [%s]", _address);
-        outline0("MOV [BX], AX");
-        outline0("INC BX");
-        outline0("INC BX");
+        outline1("MOV DI, [%s]", _address);
+        outline0("MOV [DI], AX");
+        outline0("INC DI");
+        outline0("INC DI");
         outline1("MOV AX, 0x%4.4x", (unsigned short)((_source>>16)&0xffff));
-        outline0("MOV [BX], AX");
+        outline0("MOV [DI], AX");
 
     // no_embedded( cpu_poke )
 
@@ -295,7 +295,7 @@ void cpu_fill_blocks( Environment * _environment, char * _address, char * _block
 
         outline1("MOV CL, [%s]", _blocks);
         outline1("MOV AL, [%s]", _pattern);
-        outline1("MOV BX, [%s]", _address);
+        outline1("MOV DI, [%s]", _address);
         outline0("CALL CPUFILLBLOCKS");
 
     done(  )
@@ -605,11 +605,11 @@ void cpu_store_8bit_with_offset2( Environment * _environment, char *_destination
 
     inline( cpu_store_8bit_with_offset2 )
 
-        outline1("MOV BX, %s", _destination );
+        outline1("MOV DI, %s", _destination );
         outline1("MOV AL, [%s]", _offset );
         outline0("MOV AH, 0" );
-        outline0("ADD BX, AX" );
-        outline1("MOV BYTE [BX], 0x%2.2x", ( _value & 0xff ));
+        outline0("ADD DI, AX" );
+        outline1("MOV BYTE [DI], 0x%2.2x", ( _value & 0xff ));
 
     no_embedded( cpu_store_8bit_with_offset2 )
 
@@ -631,8 +631,8 @@ void cpu_compare_8bit( Environment * _environment, char *_source, char *_destina
     inline( cpu_compare_8bit )
 
         outline1("MOV AX, [%s]", _destination);
-        outline1("MOV BX, %s", _source);
-        outline0("CMP AX, [BX]");
+        outline1("MOV DI, %s", _source);
+        outline0("CMP AX, [DI]");
         outline1("JNZ %s", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*_positive));
         if ( _other ) {
@@ -669,8 +669,8 @@ void cpu_compare_8bit_const( Environment * _environment, char *_source, int _des
 
     inline( cpu_compare_8bit )
 
-        outline1("MOV BX, %s", _source);
-        outline1("CMP BYTE [BX], 0x%2.2x", (unsigned char)(_destination&0xff));
+        outline1("MOV DI, %s", _source);
+        outline1("CMP BYTE [DI], 0x%2.2x", (unsigned char)(_destination&0xff));
         outline1("JNZ %s", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*_positive));
         outline1("MOV [%s], AL", _other);
@@ -1577,7 +1577,7 @@ void cpu_math_sub_16bit( Environment * _environment, char *_source, char *_desti
 
         outline1("MOV AX, [%s]", _source );
         outline1("MOV BX, [%s]", _destination );
-        outline0("SBC AX, BX" );
+        outline0("SBB AX, BX" );
         if ( _other ) {
             outline1("MOV [%s], AX", _other );
         } else {
@@ -2048,7 +2048,7 @@ void cpu_math_sub_32bit( Environment * _environment, char *_source, char *_desti
         outline1("MOV [%s], AX", _other );
         outline1("MOV AX, [%s]", address_displacement( _environment, _source, "+2" ) );
         outline1("MOV BX, [%s]", address_displacement( _environment, _destination, "+2" ) );
-        outline0("SBC AX, BX" );
+        outline0("SBB AX, BX" );
         outline1("MOV [%s], AX", address_displacement( _environment, _other, "+2" ) );
 
     no_embedded( cpu_math_sub_32bit )
@@ -2072,7 +2072,7 @@ void cpu_math_complement_const_32bit( Environment * _environment, char *_source,
         outline1("MOV [%s], AX", _source );
         outline1("MOV BX, [%s]", address_displacement( _environment, _source, "+2" ) );
         outline1("MOV AX, 0x%4.4x", (unsigned short)((_value>>16)&0xffff) );
-        outline0("SBC AX, BX" );
+        outline0("SBB AX, BX" );
         outline1("MOV [%s], AX", address_displacement( _environment, _source, "+2" ) );
 
     no_embedded( cpu_math_complement_const_32bit )
@@ -4086,12 +4086,12 @@ void cpu_dsdescriptor( Environment * _environment, char * _index, char * _addres
         outline1( "MOV BL, [%s]", _index );
         outline0( "CALL DSDESCRIPTOR" );
         if ( _size ) {
-            outline0( "MOV AL, [DX]" );
+            outline0( "MOV AL, [DI]" );
             outline1( "MOV [%s], AL", _size );
         }
         if ( _address ) {
-            outline0( "MOV DI, [DX+1]" );
-            outline1( "MOV [%s], DI", _address );
+            outline0( "MOV DX, [DI+1]" );
+            outline1( "MOV [%s], DX", _address );
         }
     }
 
@@ -4178,12 +4178,12 @@ void cpu_dstring_vars( Environment * _environment ) {
     int count = _environment->dstring.count == 0 ? DSTRING_DEFAULT_COUNT : _environment->dstring.count;
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
-    outhead1("stringscount =                  %d", count );
-    outhead1("stringsspace =                  %d", space );
+    outhead1("stringscount EQU                %d", count );
+    outhead1("stringsspace EQU                %d", space );
     outhead0("MAXSTRINGS:                   db stringscount" );
     outhead0("DESCRIPTORS:                  times stringscount*4 db 0" );
     outhead0("WORKING:                      times stringsspace db 0" );
-    outhead0("TEMPORARY:                    rimes stringsspace db 0" );
+    outhead0("TEMPORARY:                    times stringsspace db 0" );
     outhead0("FREE_STRING:                  dw (stringsspace-1)" );
 
 }
@@ -6113,7 +6113,7 @@ void cpu_move_8bit_signed_16bit_signed( Environment * _environment, char *_sourc
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
 
 }
@@ -6125,7 +6125,7 @@ void cpu_move_8bit_signed_16bit_unsigned( Environment * _environment, char *_sou
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
 
 }
@@ -6159,7 +6159,7 @@ void cpu_move_8bit_signed_32bit_signed( Environment * _environment, char *_sourc
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("MOV (DE), A" );
@@ -6175,7 +6175,7 @@ void cpu_move_8bit_signed_32bit_unsigned( Environment * _environment, char *_sou
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("MOV (DE), A" );
@@ -6256,7 +6256,7 @@ void cpu_move_16bit_signed_32bit_signed( Environment * _environment, char *_sour
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("MOV (DE), A" );
@@ -6273,7 +6273,7 @@ void cpu_move_16bit_signed_32bit_unsigned( Environment * _environment, char *_so
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("ADD A, A" );
-    // outline0("SBC A" );
+    // outline0("SBB A" );
     // outline0("MOV (DE), A" );
     // outline0("INC DE" );
     // outline0("MOV (DE), A" );

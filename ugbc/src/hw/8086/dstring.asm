@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; DSEQUAL(DX=descriptor,SI=string) -> C / NC
+; DSEQUAL(DI=descriptor,SI=string) -> C / NC
 DSEQUAL:
     ; PUSH BC
     ; PUSH DE
@@ -48,17 +48,18 @@ DSEQUAL:
     ; LD A, (IX)
     ; CP B
     MOV AL, [SI]
-    CMP AL, [DX]
+    CMP AL, [DI]
     ; JR NZ, DSEQUALNO
     JNZ DSEQUALNO
     ; INC HL
     INC SI
     ; LD A, (IX)
     ; LD B, A
-    MOV CL, [DX]
+    MOV CL, [DI]
     ; LD E, (IX+1)
     ; LD D, (IX+2)
-    MOV DI, [DX+1]
+    MOV DX, [DI+1]
+    MOV DI, DX
 DSEQUALL1:
     REPE CMPSB
     ; LD A, (DE)
@@ -73,9 +74,9 @@ DSEQUALYES:
     ; POP HL
     ; POP DE
     ; POP BC
-    PUSH SI
-    PUSH DI
-    PUSH AX
+    POP SI
+    POP DI
+    POP AX
     ; SCF
     STC
     ; RET
@@ -84,9 +85,9 @@ DSEQUALNO:
     ; POP HL
     ; POP DE
     ; POP BC
-    PUSH SI
-    PUSH DI
-    PUSH AX
+    POP SI
+    POP DI
+    POP AX
     ; SCF
     ; CCF
     CLC
@@ -100,7 +101,7 @@ DSFINDEQUAL:
 DSFINDEQUALL:
     CALL DSDESCRIPTOR
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $C0
     AND AL, 0xc0
     ; CP $C0
@@ -145,13 +146,14 @@ DSDEFINE:
     ; INC HL
     INC SI
     ; LD (IX),A
-    MOV [DX], AL
+    MOV [DI], AL
     ; LD (IX+1),L
     ; LD (IX+2),H
-    MOV [DX+1], SI
+    MOV [DI+1], SI
     ; LD A, $C0
     ; LD (IX+3),A
-    MOV [DX+3], 0xc0
+    MOV AL, 0xc0
+    MOV [DI+3], AL
 DSDEFINEE:
     RET
 
@@ -159,12 +161,12 @@ DSDEFINEE:
 DSALLOC:
     CALL DSFINDFREE
     CALL DSDESCRIPTOR
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; LD A, (IX+3)
     ; OR A, $40
     OR AL, 0x40
     ; LD (IX+3),A
-    MOV [DX+3], AL
+    MOV [DI+3], AL
     CALL DSCHECKFREE
 DSALLOCOK:
     CALL DSUSING
@@ -176,40 +178,41 @@ DSFREE:
     CALL DSDESCRIPTOR
     ; LD A, 0
     ; LD (IX+3), A
-    MOV [DX+3], 0
+    MOV AL, 0
+    MOV [DI+3], AL
     RET
 
 ; DSWRITE(BL)
 DSWRITE:
     CALL DSDESCRIPTOR
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $80
     AND AL, 0x80
     ; CP $0
     CMP AL, 0
     ; JR Z, DSWRITED
-    JZ, DSWRITED
+    JZ DSWRITED
     ; LD C, (IX)
-    MOV CL, [DX]
+    MOV CL, [DI]
     CALL DSCHECKFREE
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $7F
     AND AL, 0x7f
     ; LD (IX+3),A
-    MOV [DX+3], AL
+    MOV [DI+3], AL
     ; LD D, B
     MOV DL, BL
 DSWRITEOK:
     ; LD C, (IX+1)
     ; LD B, (IX+2)
-    MV BX, [DX+1]
+    MOV BX, [DI+1]
     ; PUSH BC
     PUSH BX
     CALL DSUSING
     ; LD C, (IX)
-    MOV CL, [DX]
+    MOV CL, [DI]
     ; LD B, D
     MOV BL, DL
     CALL DSMALLOC
@@ -219,10 +222,10 @@ DSWRITEOK:
     MOV SI, BX
     ; LD E, (IX+1)
     ; LD D, (IX+2)
-    MOV DI, [DX+1]
+    MOV DX, [DI+1]
 DSCOPY:
     ; LD C, (IX)
-    MOV CL, [DX]
+    MOV CL, [DI]
     ; LD A, C
     CMP CL, 0
     ; JR Z,DSWRITED
@@ -234,7 +237,10 @@ DSWRITECOPY:
     ; INC DE
     ; DEC C
     ; JR NZ, DSWRITECOPY
+    PUSH DI
+    MOV DI, DX
     REPE MOVSB
+    POP DI
 DSWRITED:
     RET
 
@@ -243,7 +249,7 @@ DSRESIZE:
     CALL DSDESCRIPTOR
     ; LD A, C
     ; LD (IX), A    
-    MOV [DX], CL
+    MOV [DI], CL
     ; CP 0
     CMP CL, 0
     ; JR NZ, DSRESIZEDONE
@@ -251,9 +257,9 @@ DSRESIZE:
     ; LD A, (IX+3)
     ; OR $80
     ; LD (IX+3), A
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     OR AL, 0x80
-    MOV [DX+3], AL
+    MOV [DI+3], AL
 DSRESIZEDONE:
     RET
 
@@ -264,27 +270,28 @@ DSGC:
     ; LD HL, FREE_STRING
     MOV SI, FREE_STRING
     ; LD DE, max_free_string
-    MOV [SI], max_free_string
+    MOV DX, max_free_string
+    MOV [SI], DX
     ; LD (HL), E
     ; INC HL
     ; LD (HL), D
-    ; LD A, (USING)
+    ; LD A, [USING]
     MOV AL, [USING]
     ; CP 0
     CMP AL, 0
     ; JR Z, DSGT
     JZ DSGT
     ; JMP DSGW
-    JP DSGW
+    JMP DSGW
 DSGT:
     ; LD HL, TEMPORARY
     MOV SI, TEMPORARY
-    JP BSGCLOOP0
+    JMP BSGCLOOP0
 DSGW:
     ; LD HL, WORKING
     MOV SI, WORKING
     ; JMP BSGCLOOP0
-    JP BSGCLOOP0
+    JMP BSGCLOOP0
 BSGCLOOP0:
     ; LD B, 1
     MOV BL, 1
@@ -293,7 +300,7 @@ DSGCLOOP:
     PUSH BX
     CALL DSDESCRIPTOR
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $80
     AND AL, 0x80
     ; CP $0
@@ -301,7 +308,7 @@ DSGCLOOP:
     ; JR NZ, DSGCLOOP2
     JNZ DSGCLOOP2
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $40
     AND AL, 0x40
     ; CP $0
@@ -309,7 +316,7 @@ DSGCLOOP:
     ; JR Z, DSGCLOOP2
     JZ DSGCLOOP2
     ; LD A, (IX)
-    MOV AL, [DX]
+    MOV AL, [DI]
     ; CP 0
     CMP AL, 0
     ; JR Z, DSGCLOOP3
@@ -318,32 +325,33 @@ DSGCLOOP:
     MOV AL, BL
     ; LD C, (IX+1)
     ; LD B, (IX+2)
-    NOV BX, [DX+1]
+    MOV BX, [DI+1]
     ; PUSH BC
     PUSH BX
     ; LD B, A
     MOV BL, AL
     ; LD C, (IX)
-    MOV CL, [DX]
+    MOV CL, [DI]
     CALL DSMALLOC
     ; POP BC
     POP BX
     ; LD E, (IX+1)
     ; LD D, (IX+2)
-    MOV DI, [IX+1]
+    MOV DX, [DI+1]
+    MOV DI, DX
     ; PUSH HL
     PUSH SI
     ; LD HL, BC
     MOV SI, BX
     ; LD C, (IX)
-    MOV XL, [IX]
+    MOV CL, [DI]
     CALL DSWRITECOPY
     ; POP HL
     POP SI
     ; JMP DSGCLOOP3
-    JP DSGCLOOP3
+    JMP DSGCLOOP3
 DSGCLOOP2:
-    JP DSGCLOOP3
+    JMP DSGCLOOP3
 DSGCLOOP3:
     ; POP BC
     POP BX
@@ -358,9 +366,9 @@ DSGCLOOP3:
     ; JR NZ, DSGCLOOP
     JNZ DSGCLOOP
 DSGCEND:
-    ; LD A, (USING)
+    ; LD A, [USING]
     ; XOR $FF
-    ; LD (USING),A
+    ; LD [USING],A
     MOV AL, [USING]
     XOR AL, 0xff
     MOV [USING], AL
@@ -377,7 +385,7 @@ DSFINDFREE:
 DSFINDFREEL:
     CALL DSDESCRIPTOR
     ; LD A, (IX+3)
-    MOV AL, [DX+3]
+    MOV AL, [DI+3]
     ; AND $40
     AND AL, 0x40
     ; CP $0
@@ -393,13 +401,13 @@ DSFINDFREEL:
     ; JR NZ, DSFINDFREEL
     JNZ DSFINDFREEL
     ; JMP OUT_OF_MEMORY   
-    JP OUT_OF_MEMORY
+    JMP OUT_OF_MEMORY
 DSFINDFREEN:
     POP SI
     RET
 
 OUT_OF_MEMORY2:
-    JP OUT_OF_MEMORY
+    JMP OUT_OF_MEMORY
 
 ; DSMALLOC(SI,CL,BL)
 DSMALLOC:
@@ -424,13 +432,14 @@ DSMALLOC:
     PUSH SI
     ADD SI, BX
     ; ADD HL, DE
-    MOV [DX], CL
+    MOV [DI], CL
     ; LD (IX), C
     ; LD (IX+1), L
     ; LD (IX+2), H
-    MOV [DX+1], SI
+    MOV [DI+1], SI
     ; POP HL
     POP SI
+    POP BX
     RET
 
 ; DSCHECKFREE()
@@ -445,7 +454,7 @@ DSCHECKFREE2:
     ; JR NC, DSCHECKFREEKO
     CMP AX, CX
     JBE DSCHECKFREEKO
-    JP DSCHECKFREEOK
+    JMP DSCHECKFREEOK
     ; LD B, A
     ; LD A, 0
     ; CP B
@@ -462,7 +471,7 @@ DSCHECKFREEKO:
     PUSH BX
     CALL DSGC
     POP BX
-    JP DSCHECKFREE2
+    JMP DSCHECKFREE2
 DSCHECKFREEOK:
     POP BX
     POP AX
@@ -470,14 +479,14 @@ DSCHECKFREEOK:
 
 ; DSUSING() -> SI
 DSUSING:
-    ; LD A, (USING)
+    ; LD A, [USING]
     ; CP 0
-    MOV AL, (USING)
+    MOV AL, [USING]
     CMP AL, 0
     ; JR Z, DSUSINGW
     JZ DSUSINGW
     ; JR DSUSINGT
-    JP DSUSINGT
+    JMP DSUSINGT
 DSUSINGT:
     ; LD HL, TEMPORARY
     MOV SI, TEMPORARY
@@ -492,6 +501,7 @@ DSDESCRIPTOR:
     ; PUSH HL
     ; PUSH BC
     PUSH BX
+    MOV BH, 0
     ; LD A, B
     ; LD C, A
     ; LD A, 0
@@ -506,8 +516,8 @@ DSDESCRIPTOR:
     ; POP DE
     ; LD HL, DESCRIPTORS
     ; ADD HL, DE
-    MOV DX, DESCRIPTORS
-    ADD DX, BX
+    MOV DI, DESCRIPTORS
+    ADD DI, BX
     ; PUSH HL
     ; POP IX
     ; POP BC
@@ -516,16 +526,17 @@ DSDESCRIPTOR:
     RET
 
 OUT_OF_MEMORY:
-    JP OUT_OF_MEMORY
+    JMP OUT_OF_MEMORY
 
 DSINIT:
     ; LD BC, stringscount*4+stringsspace*2
     MOV CX, stringscount*4+stringsspace*2
     ; LD A, 0
     ; LD HL, DESCRIPTORS
-    LD SI, DESCRIPTORS
-    MOV [SI], 0
-    LD DI, DESCRIPTORS
+    MOV SI, DESCRIPTORS
+    MOV AL, 0
+    MOV [SI], AL
+    MOV DI, DESCRIPTORS
     INC DI
     ; LD DE, HL
     ; INC DE
@@ -537,7 +548,7 @@ DSINIT:
     ; LD (MAXSTRINGS), A
     MOV [MAXSTRINGS], AL
     ; LD DE, stringsspace
-    MOV DE, stringsspace
+    MOV DX, stringsspace
     ; LD (FREE_STRING), DE
-    MOV [FREE_STRING], DE
+    MOV [FREE_STRING], DX
     RET

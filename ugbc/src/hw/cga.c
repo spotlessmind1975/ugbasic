@@ -839,21 +839,80 @@ void cga_textmap_at( Environment * _environment, char * _address ) {
 
 void cga_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
+    // deploy( cgavars, src_hw_cga_vars_asm);
+    // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+    deploy( plot, src_hw_cga_plot_asm );
+    
+    if ( _c ) {
+        outline1("MOV AL, 0x%2.2x", ( *_c & 0xff ) );
+    } else {
+        Variable * c = variable_retrieve( _environment, "PEN" );
+        outline1("MOV AL, [%s]", c->realName );
+    }
+    outline0("MOV [PLOTCPE], AL");
+    outline1("MOV CL, 0x%2.2x", ( _y & 0xff ) );
+    outline1("MOV DX, 0x%4.4x", ( _x & 0xffff ) );
+    outline0("MOV AL, 1");
+    outline0("CALL PLOT");
+
 }
 
 void cga_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
+
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * c;
+    
+    if ( _c ) {
+        c = variable_retrieve_or_define( _environment, _c, VT_COLOR, 0 );
+    } else {
+        c = variable_retrieve( _environment, "PEN" );
+    }
+
+    // deploy( cgavars, src_hw_cga_vars_asm);
+    // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+    deploy( plot, src_hw_cga_plot_asm );
+    
+    outline1("MOV AL, [%s]", c->realName );
+    outline0("MOV [PLOTCPE], AL");
+    outline1("MOV CL, [%s]", y->realName );
+    outline1("MOV DX, [%s]", x->realName );
+    outline0("MOV AL, 1");
+    outline0("CALL PLOT");
 
 }
 
 void cga_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result ) {
 
+    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    Variable * result = variable_retrieve_or_define( _environment, _result, VT_COLOR, 0 );
+    
+    // deploy( cgavars, src_hw_cga_vars_asm);
+    // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
+    deploy( plot, src_hw_cga_plot_asm );
+    
+    outline1("MOV CL, [%s]", y->realName );
+    outline1("MOV DX, [%s]", x->realName );
+    outline0("MOV AL, 3");
+    outline0("CALL PLOT")
+    outline1("MOV [%s], AL", result->realName );
+
 }
 
 void cga_screen_on( Environment * _environment ) {
 
+    outline0("CALL READCGAMODECONTROLREG")
+    outline0("OR AL, 0x80")
+    outline0("CALL WRITECGAMODECONTROLREG")
+
 }
 
 void cga_screen_off( Environment * _environment ) {
+
+    outline0("CALL READCGAMODECONTROLREG")
+    outline0("AND AL, 0xf7")
+    outline0("CALL WRITECGAMODECONTROLREG")
 
 }
 

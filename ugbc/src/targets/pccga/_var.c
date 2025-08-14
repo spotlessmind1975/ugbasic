@@ -441,7 +441,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASKN: defm 0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f");
                 }
                 if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
+                    outhead1("max_free_string EQU 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
                 }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
