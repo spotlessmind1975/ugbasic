@@ -5044,94 +5044,23 @@ void cpu_float_double_from_double_to_int_array( Environment * _environment, doub
 
 void cpu_float_fast_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
-    // MAKE_LABEL
-
-    // deploy( fp_vars, src_hw_8086_fp_vars_asm );
-    // deploy( fp_mul16, src_hw_8086_fp_mul16_asm );
-    // deploy( fp_fast_mul, src_hw_8086_fp_fast_mul_asm );
-    // deploy( fp_fast_pow10_lut, src_hw_8086_fp_fast_pow10_lut_asm );
-    // deploy( fp_format_str, src_hw_8086_fp_format_str_asm );
-    // deploy( fp_fast_to_string, src_hw_8086_fp_fast_to_string_asm );
-
-    // // ;converts a 24-bit float to a string
-
-    // // ;Inputs:
-    // // ;   AHL is the float to convert
-
-    // outline1( "MOV A, [%s]", address_displacement( _environment, _x, "+2" ) );
-    // outline0( "MOV L, A" );
-    // outline1( "MOV A, [%s]", address_displacement( _environment, _x, "+1" ) );
-    // outline0( "MOV H, A" );
-    // outline1( "MOV A, [%s]", _x );
-
-    // // ;   DE points to where to write the string
-    // outline1( "MOV DE, [%s]", _string );
-
-    // outline0( "CALL FPFASTTOA" );
-
-    // // ;Output:
-    // // ;   HL pointing to the string
-    // outline0( "PUSH HL" );
-    // outline0( "POP DE" );
-    // outhead1( "%s:", label );
-    // outline0( "MOV A, (DE)" );
-    // outline0( "CP 0" );
-    // outline1( "JR Z, %sdone", label );
-    // outline0( "INC DE" );
-    // outline0( "INC C" );
-    // outline1( "JR %s", label );
-    // outhead1( "%sdone:", label );
-    // outline0( "MOV A, C" );
-    // outline1( "MOV [%s], A", _string_size );
-
-    // // ;Destroys:
-    // // ;   A,DE,BC
-    // // ;Notes:
-    // // ;   Uses up to 12 bytes to store the string
+    cpu_float_single_to_string( _environment, _x, _string,  _string_size );
 
 }
 
 void cpu_float_single_to_string( Environment * _environment, char * _x, char * _string, char * _string_size ) {
 
-    // MAKE_LABEL
+    MAKE_LABEL
 
-    // deploy( fp_vars, src_hw_8086_fp_vars_asm );
-    // deploy( fp_pushpop, src_hw_8086_fp_pushpop_asm );
-    // deploy( fp_c_times_bde, src_hw_8086_fp_c_times_bde_asm );
-    // deploy( fp_mul24_stack_based, src_hw_8086_fp_mul24_stack_based_asm );
-    // deploy( fp_single_pow10_lut, src_hw_8086_fp_single_pow10_lut_asm );
-    // deploy( fp_single_mul, src_hw_8086_fp_single_mul_asm );
-    // deploy( fp_mov4, src_hw_8086_fp_mov4_asm );
-    // deploy( fp_common_str, src_hw_8086_fp_common_str_asm );
-    // deploy( fp_format_str, src_hw_8086_fp_format_str_asm );
-    // deploy( fp_single_to_string, src_hw_8086_fp_single_to_string_asm );
+    deploy( fp_vars, src_hw_8086_fp_vars_asm );
+    deploy( fp_single_to_string, src_hw_8086_fp_single_to_string_asm );
+    deploy( numberToString, src_hw_8086_number_to_string_asm );
+    deploy( duff, src_hw_8086_duff_asm );
 
-    // // ;converts a 32-bit float to a string
-
-    // // ;Inputs:
-    // // ;   HL points to the input float
-    // // ;   BC points to where the string gets written.
-
-    // outline1( "MOV HL, %s", _x );
-
-    // outline1( "MOV BC, [%s]", _string );
-
-    // outline0( "CALL FPSINGLETOA" );
-
-    // // ;Output:
-    // // ;   HL pointing to the string
-    // outline0( "PUSH HL" );
-    // outline0( "POP DE" );
-    // outhead1( "%s:", label );
-    // outline0( "MOV A, (DE)" );
-    // outline0( "CP 0" );
-    // outline1( "JR Z, %sdone", label );
-    // outline0( "INC DE" );
-    // outline0( "INC C" );
-    // outline1( "JR %s", label );
-    // outhead1( "%sdone:", label );
-    // outline0( "MOV A, C" );
-    // outline1( "MOV [%s], A", _string_size );
+    outline1( "MOV DI, [%s]", _string );
+    outline1( "FLD DWORD [%s]", _x );
+    outline0( "CALL FPSINGLETOA" );
+    outline1( "MOV [%s], CL", _string_size );
 
 }
 
