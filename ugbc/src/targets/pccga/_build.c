@@ -64,12 +64,7 @@ void target_cleanup( Environment * _environment ) {
     if ( _environment->exeFileName ) {
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcopy( binFileName, _environment->exeFileName );
-        char * p = strrchr( binFileName, '.' );
-        memcpy( p, ".com", 4 );
-
         remove( _environment->configurationFileName );
-        remove( binFileName );
         remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
