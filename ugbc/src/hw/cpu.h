@@ -98,6 +98,7 @@ void cpu_set_asmio_indirect( Environment * _environment, int _asmio, char * _val
 void cpu_get_asmio_indirect( Environment * _environment, int _asmio, char * _value );
 int cpu_register_decode( Environment * _environment, char * _register );
 void cpu_pop( Environment * _environment );
+void cpu_port_out( Environment * _environment, char * _port, char * _value );
 void cpu_return( Environment * _environment );
 void cpu_label( Environment * _environment, char * _label );
 void cpu_limit_16bit( Environment * _environment, char * _variable, int _value );
