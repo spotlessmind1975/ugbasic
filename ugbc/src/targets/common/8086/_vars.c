@@ -44,13 +44,13 @@ extern char DATATYPE_AS_STRING[][16];
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
 
-    outhead2("%s = 0x%4.4x", _name, _value );
+    outhead2("%s EQU 0x%4.4x", _name, _value );
 
 }
 
 void vars_emit_constant_integer_relative( Environment * _environment, char * _name, char * _relative, int _value ) {
 
-    outhead3("%s = %s+0x%4.4x", _name, _relative, _value );
+    outhead3("%s EQU %s+0x%4.4x", _name, _relative, _value );
 
 }
 

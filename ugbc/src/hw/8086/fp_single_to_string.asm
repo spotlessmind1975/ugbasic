@@ -27,29 +27,73 @@
 ;  * implicite. Consultare la Licenza per il testo specifico che regola le
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
-;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-;*                                                                             *
-;*                               DUFF'S DEVICE                                 *
-;*                                                                             *
-;*                             by Marco Spedaletti                             *
-;*                                                                             *
-;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-DUFFDEVICEDONE:
+FPSTRINGBUF: times 16 db 0
+FPFLOAT: dd 0
+FPINTEGERPART:  dw 0
+FPDECIMALPART:  dw 0
+FP1000: dw 1000
+
+FPSINGLETOA:
+    FST DWORD [FPFLOAT]
+    FISTP WORD [FPINTEGERPART]
+    FLD DWORD [FPFLOAT]
+    FILD WORD [FPINTEGERPART]
+    FSUB
+    FILD WORD [FP1000]
+    FMUL
+    FISTP WORD [FPDECIMALPART]
+
+    MOV AX, [FPDECIMALPART]
+    CMP AX, 0
+    JE FPSINGLETOANODECIMAL
+
+    PUSH DI
+
+    MOV AX, [FPINTEGERPART]
+    CWD
+    MOV DI, FPSTRINGBUF
+    CALL NUMBERTOSTRINGSIGNED
+
+    MOV SI, FPSTRINGBUF    
+    POP DI    
+    PUSH CX
+
+    PUSH DI
+    CALL DUFFDEVICE
+    POP DI
+
+    POP CX
+    PUSH CX
+
+    ADD DI, CX
+    MOV AL, '.'
+    MOV [DI], AL
+    INC DI
+
+    PUSH DI
+
+    MOV AX, [FPDECIMALPART]
+    CWD
+    MOV DI, FPSTRINGBUF
+    CALL NUMBERTOSTRINGSIGNED
+
+    MOV SI, FPSTRINGBUF
+    POP DI
+
+    PUSH CX
+    CALL DUFFDEVICE
+    POP BX
+
+    POP CX
+    ADD CX, BX
+    INC CX
     RET
 
-DUFFDEVICE:
-    CMP CX, 0
-    JZ DUFFDEVICEDONE
-
-    PUSH ES
-    PUSH DX
-    MOV DX, DS
-    MOV ES, DX
-    CLD
-DUFFDEVICEL0:
-    REP MOVSB
-    POP DX
-    POP ES
-
+FPSINGLETOANODECIMAL:
+    MOV AX, [FPINTEGERPART]
+    CWD
+    CALL NUMBERTOSTRINGSIGNED
     RET
+
+

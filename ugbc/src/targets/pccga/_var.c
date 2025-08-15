@@ -110,7 +110,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead2("%s: times %d db 0", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outhead2("%s: dd %f", variable->realName, variable->valueFloating );
                     }
                     break;
                 case VT_STRING:
@@ -441,7 +441,7 @@ void variable_cleanup( Environment * _environment ) {
                     outhead0("BITMASKN: defm 0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f");
                 }
                 if ( _environment->deployed.dstring ) {
-                    outhead1("max_free_string = 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
+                    outhead1("max_free_string EQU 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
                 }
 
                 for( int j=0; j< (_environment->currentProcedure+1); ++j ) {

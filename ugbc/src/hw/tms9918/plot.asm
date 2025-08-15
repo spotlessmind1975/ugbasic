@@ -70,7 +70,7 @@ PLOTNMI2:
 
     LD A, (CURRENTTILEMODE)
     CP 1
-    JP Z, PLOTDONE
+    JP Z, PLOTP
 
 @IF scaleX > 0
     PUSH AF

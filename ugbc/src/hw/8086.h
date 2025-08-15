@@ -35,7 +35,7 @@
 
 #define VT_FLOAT_BITWIDTH( p ) \
         ( \
-            VT_BW_24BIT( p, FT_FAST ) + \
+            VT_BW_32BIT( p, FT_FAST ) + \
             VT_BW_32BIT( p, FT_SINGLE ) \
         )
 

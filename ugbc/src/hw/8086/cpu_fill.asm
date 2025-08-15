@@ -38,7 +38,7 @@
 ; CPU FILL
 ;   Input:
 ;       AL : pattern
-;       BX : address
+;       DI : address
 ;       CL/CX : size
 ;
 
@@ -50,7 +50,7 @@ CPUFILL8:
     JZ CPUFILL8DONE
   
 CPUFILL8L1:
-    MOV [BX], AL
+    MOV [DI], AL
     INC BX
     DEC CL
     CMP CL, 0
@@ -65,7 +65,7 @@ CPUFILL16:
     JZ CPUFILL16DONE
 
 CPUFILL16L1:
-    MOV [BX], AL
+    MOV [DI], AL
     INC BX
     DEC CX
     CMP CX, 0

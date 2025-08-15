@@ -36,69 +36,111 @@
 ;   DI = l'indirizzo di memoria dove salvare la stringa
 ; Output:
 ;   DI = l'indirizzo della fine della stringa
+;   SI = l'indirizzo dell'inizio della stringa
 ;   CX = Numero di caratteri che compongono il numero
 ;   Stringa salvata nella memoria a partire dall'indirizzo di DI
 ; Registri usati: AX, BX, CX, DX, DI, SP (implicitamente), SI
 
+NUMBERTOSTRINGSIGNED:
+
+    MOV BH, DH
+    AND BH, 0x80
+    CMP BH, 0x80
+    JNE NUMBERTOSTRING
+
+    XOR DX, 0xffff
+    XOR AX, 0xffff
+    INC AX
+    ADC DX, 0
+
+    PUSH BX
+    CALL NUMBERTOSTRING
+    POP BX
+
+    CMP BH, 0x80
+    JNE NUMBERTOSTRINGDONE
+
+    PUSH SI
+    PUSH CX
+    MOV DI, SI
+    ADD DI, CX
+    ADD SI, CX
+    DEC SI
+NUMBERTOSTRINGL1N:
+    MOV AL, [SI]
+    MOV [DI], AL
+    DEC SI
+    DEC DI
+    DEC CX
+    CMP CX, 0
+    JNZ NUMBERTOSTRINGL1N
+    POP CX
+    POP SI
+    MOV AL, '-'
+    MOV [SI], AL
+    INC CX
+
+NUMBERTOSTRINGDONE:
+    RET
+
 NUMBERTOSTRING:
+
     MOV SI, DI
+    ADD DI, 10
     MOV CX, 0
-    MOV BX, 10
+
+NUMBERTOSTRING2:
 
     CMP DX, 0
     JNZ NUMBERTOSTRINGL0
     CMP AX, 0
-    JNZ NUMBERTOSTRING0
+    JZ NUMBERTOSTRING0
 
 NUMBERTOSTRINGL0:
-    PUSH AX
-    MOV AX, DX
-    XOR DX, DX
-    DIV BX
-    XCHG DX, AX
-    POP DX
-    XCHG DX, AX
 
-    PUSH AX
-    MOV AX, DX
-    XOR DX, DX
-    DIV BX
+    MOV BX, 10
     
-    XCHG DX, AX
+    ; -----------------------------
+    ; DX = DX / 10
+    ; AX = AX / 10
+
+    PUSH AX
     MOV AX, DX
-    MOV DX, [SP+2]
-    MOV [SP+2], AX
-    MOV DX, AX
-
-    MOV AX, [SP+2]
-    MOV DX, 0
-    MOV AX, [SP+2]
-    MOV DX, 0
-    XOR DX, DX
     DIV BX
-
-    ADD DL, '0'
-    PUSH DX
-    INC CX
-
-    CMP AX, 0
-    JNE NUMBERTOSTRINGL0
-    CMP DX, 0
-    JNE NUMBERTOSTRINGL0
-
-NUMBERTOSTRINGD0:
+    MOV DX, AX
     POP AX
-    MOV [DI], AL
+
+    PUSH DX
+    DIV BX
+    MOV BX, DX
+    ADD DL, '0'
+    MOV [DI], DL
+    DEC DI
+    INC CX
+    POP DX
+
+    CMP DX, 0
+    JNZ NUMBERTOSTRINGL0
+    CMP AX, 0
+    JNZ NUMBERTOSTRINGL0
+
     INC DI
-    LOOP NUMBERTOSTRINGD0
-
-    MOV CX, DI
-    SUB CX, SI
-
+    PUSH SI
+    PUSH CX
+NUMBERTOSTRINGL1:
+    MOV AL, [DI]
+    MOV [SI], AL
+    INC SI
+    INC DI
+    DEC CX
+    CMP CX, 0
+    JNZ NUMBERTOSTRINGL1
+    POP CX
+    POP SI
     RET
 
 NUMBERTOSTRING0:
-    MOV [DI], '0'
-    INC DI
+    MOV AL, '0'
+    MOV [SI], AL
     MOV CX, 1
     RET

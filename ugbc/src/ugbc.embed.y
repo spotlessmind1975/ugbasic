@@ -545,6 +545,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.fade;
             } else if ( strcmp( $3, "joystick" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.joystick;
+            } else if ( strcmp( $3, "fp" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.fp_vars;
             } else {
                 $$ = 0;
             }
