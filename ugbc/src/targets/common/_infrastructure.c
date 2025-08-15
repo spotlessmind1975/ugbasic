@@ -1912,6 +1912,8 @@ Variable * variable_store_float( Environment * _environment, char * _destination
 
     Variable * destination = variable_retrieve( _environment, _destination );
 
+    destination->valueFloating = _value;
+    
     switch( destination->type ) {
         case VT_FLOAT: {
             switch( destination->precision ) {

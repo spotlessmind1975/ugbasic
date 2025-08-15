@@ -110,7 +110,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead2("%s: times %d db 0", variable->realName, 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( variable->arrayPrecision) );
+                        outhead2("%s: dd %f", variable->realName, variable->valueFloating );
                     }
                     break;
                 case VT_STRING:

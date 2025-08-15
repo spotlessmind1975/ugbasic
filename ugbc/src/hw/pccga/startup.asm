@@ -36,4 +36,12 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PCCGASTARTUP:
+    
+@IF deployed.fp
+
+    FINIT
+    WAIT
+
+@ENDIF
+
     RET

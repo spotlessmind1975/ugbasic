@@ -27,29 +27,3 @@
 ;  * implicite. Consultare la Licenza per il testo specifico che regola le
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
-;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-;*                                                                             *
-;*                               DUFF'S DEVICE                                 *
-;*                                                                             *
-;*                             by Marco Spedaletti                             *
-;*                                                                             *
-;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-DUFFDEVICEDONE:
-    RET
-
-DUFFDEVICE:
-    CMP CX, 0
-    JZ DUFFDEVICEDONE
-
-    PUSH ES
-    PUSH DX
-    MOV DX, DS
-    MOV ES, DX
-    CLD
-DUFFDEVICEL0:
-    REP MOVSB
-    POP DX
-    POP ES
-
-    RET
