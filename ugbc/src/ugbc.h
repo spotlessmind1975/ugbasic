@@ -4772,7 +4772,7 @@ char * strcopy( char * _dest, char * _source );
     }
 
 #define BUILD_TOOLCHAIN_NASM_EXEC( _environment, target, executableName, listingFileName, cpu ) \
-    sprintf( commandLine, "\"%s\" -f bin %s -o %s \"%s\"", \
+    sprintf( commandLine, "\"%s\" -f bin \"%s\" -o \"%s\" %s", \
         executableName, \
         _environment->asmFileName, \
         _environment->exeFileName, \
