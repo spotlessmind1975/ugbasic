@@ -381,7 +381,7 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
         !po_buf_match( buf[1], " RETI" ) &&
         !po_buf_match( buf[1], " RET *", v2 )
     ) {
-		optim( buf[0], RULE "(CALL+RET)->(JP)", "\tJP %s", v1->str );
+		optim( buf[0], RULE "(CALL+RET)->(JP)", "\tJMP %s", v1->str );
 		optim( buf[1], NULL, NULL );
     }
 

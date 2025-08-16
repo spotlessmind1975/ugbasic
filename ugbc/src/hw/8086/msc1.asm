@@ -55,7 +55,7 @@ MSC1UNCOMPRESSL1:
     ; CP 0
     CMP AL, 0
     ; JR NZ, MSC1UNCOMPRESSL1NE
-    JR NZ, MSC1UNCOMPRESSL1NE
+    JNZ MSC1UNCOMPRESSL1NE
     ; RET
     RET
 
@@ -92,8 +92,8 @@ MSC1DUPES:
     AND AL, 0x7f
     ; SRL A
     ; SRL A
-    SRL A, 1
-    SRL A, 1
+    SAL A, 1
+    SAL A, 1
     ; ; If repetitions is zero then repetitions
     ; ; will be 32 times.
     ; CP 0

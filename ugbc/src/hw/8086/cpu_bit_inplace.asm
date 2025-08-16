@@ -40,7 +40,7 @@
 ;  - A = position
 ;  - set to 1 if carry flag is set
 CPUBITINPLACE:
-    JNC, CPUBITINPLACE0
+    JNC CPUBITINPLACE0
 
 ; Set bit A of byte DE to 1
 ;  - DE = byte to operate

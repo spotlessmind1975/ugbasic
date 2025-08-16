@@ -718,9 +718,9 @@ void cpu_compare_and_branch_8bit_const( Environment * _environment, char *_sourc
 
         MAKE_LABEL
 
-        outline1("MOV AX, 0x%4.4x", _destination);
-        outline1("MOV BX, [%s]", _source);
-        outline1("CMP AX, BX", _destination );
+        outline1("MOV AL, 0x%2.2x", _destination);
+        outline1("MOV BL, [%s]", _source);
+        outline1("CMP AL, BL", _destination );
         if ( _positive ) {
             outline1("JZ %s", _label);
         } else {
@@ -3842,7 +3842,7 @@ void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
             } else {
                 outline0("MOV AL, 0x0" );
             }
-            outline0("SRL AL" );
+            outline0("SAL AL, 1" );
         }
         outline1("MOV DI, %s", _value );
         outline1("MOV AL, 0x%2.2x", _position);
@@ -3867,7 +3867,7 @@ void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
             outline0("CMP AL, 0" );
             outline1("JZ %s", label );
             outline0("MOV AL, 1" );;
-            outline0("SRL A" );
+            outline0("SAL A, 1" );
             outhead1("%s:", label );
         }
         outline1("MOV DI, [%s]", _address );

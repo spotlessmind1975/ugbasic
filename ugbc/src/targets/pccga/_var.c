@@ -437,8 +437,8 @@ void variable_cleanup( Environment * _environment ) {
                 variable_cleanup_entry_bit( _environment, variable );
             } else if ( actual->type == BT_TEMPORARY ) {
                 if ( _environment->bitmaskNeeded ) {
-                    outhead0("BITMASK: defm 0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80");
-                    outhead0("BITMASKN: defm 0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f");
+                    outhead0("BITMASK: db 0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80");
+                    outhead0("BITMASKN: db 0xfe,0xfd,0xfb,0xf7,0xef,0xdf,0xbf,0x7f");
                 }
                 if ( _environment->deployed.dstring ) {
                     outhead1("max_free_string EQU 0x%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
