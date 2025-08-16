@@ -630,9 +630,9 @@ void cpu_compare_8bit( Environment * _environment, char *_source, char *_destina
 
     inline( cpu_compare_8bit )
 
-        outline1("MOV AX, [%s]", _destination);
+        outline1("MOV AL, [%s]", _destination);
         outline1("MOV DI, %s", _source);
-        outline0("CMP AX, [DI]");
+        outline0("CMP AL, [DI]");
         outline1("JNZ %s", label);
         outline1("MOV AL, 0x%2.2x", (unsigned char)(0xff*_positive));
         if ( _other ) {
@@ -1755,7 +1755,7 @@ void cpu_compare_32bit( Environment * _environment, char *_source, char *_destin
         outline1("MOV BX, [%s]", address_displacement(_environment, _destination, "2"));
         outline0("CMP AX, BX");
         outline1("JNZ %s", label);
-        outline1("MOV A, 0x%2.2x", 0xff*_positive);
+        outline1("MOV AL, 0x%2.2x", 0xff*_positive);
         if ( _other ) {
             outline1("MOV [%s], AL", _other);
         } else {
@@ -1798,7 +1798,7 @@ void cpu_compare_32bit_const( Environment * _environment, char *_source, int _de
         outline1("MOV BX, 0x%4.4x", (unsigned short)((_destination>>16)&0xffff));
         outline0("CMP AX, BX");
         outline1("JNZ %s", label);
-        outline1("MOV A, 0x%2.2x", 0xff*_positive);
+        outline1("MOV AL, 0x%2.2x", 0xff*_positive);
         outline1("MOV [%s], AL", _other);
         outline1("JMP %s_2", label);
         outhead1("%s:", label);
@@ -2093,7 +2093,7 @@ void cpu_math_div2_const_32bit( Environment * _environment, char *_source, int _
         MAKE_LABEL
 
         if ( _remainder ) {
-            outline1("MOV A, [%s]", _source );
+            outline1("MOV AL, [%s]", _source );
             outline0("AND 0x1" );
             outline1("MOV [%s], AL", _remainder );
         }
@@ -4440,7 +4440,7 @@ void cpu_string_sub( Environment * _environment, char * _source, char * _source_
         outline1("MOV CH, [%s]", _pattern_size);
         outline1("MOV DI, [%s]", _destination);
         outline0("CALL CPUSTRINGSUB");
-        outline0("MOV A, CL");
+        outline0("MOV AL, CL");
         outline1("MOV [%s], AL", _destination_size);
 
     done()
@@ -5250,7 +5250,7 @@ void cpu_float_single_cmp( Environment * _environment, char * _x, char * _y, cha
     outline0( "CMP AX, %0100000000000000B");
     outline1( "JE %sequal", label );
     outhead1( "%sgreater:", label );
-    outline0( "MOV A, 1" );
+    outline0( "MOV AL, 1" );
     outline1( "MOV [%s], A", _result );
     outline1( "JMP %sdone", label );
     outhead1( "%sequal:", label );
@@ -5323,22 +5323,22 @@ void cpu_address_table_lookup( Environment * _environment, char * _table, int _c
     //     outline1("MOV HL, %s", _table );
     //     outline0("MOV C, 0" );
     //     outhead1("LOOKFOR%sL1:", _table );
-    //     outline0("MOV A, (HL)" );
+    //     outline0("MOV AL, (HL)" );
     //     outline0("INC HL" );
     //     outline0("MOV B, A" );
-    //     outline0("MOV A, E" );
+    //     outline0("MOV AL, E" );
     //     outline0("CP B" );
     //     outline1("JR NZ, LOOKFOR%sNEXT3", _table );
-    //     outline0("MOV A, (HL)" );
+    //     outline0("MOV AL, (HL)" );
     //     outline0("INC HL" );
     //     outline0("MOV B, A" );
-    //     outline0("MOV A, D" );
+    //     outline0("MOV AL, D" );
     //     outline0("CP B" );
     //     outline1("JR NZ, LOOKFOR%sNEXT2", _table );
-    //     outline0("MOV A, (HL)" );
+    //     outline0("MOV AL, (HL)" );
     //     outline0("INC HL" );
     //     outline0("MOV E, A" );
-    //     outline0("MOV A, (HL)" );
+    //     outline0("MOV AL, (HL)" );
     //     outline0("INC HL" );
     //     outline0("MOV D, A" );
     //     outline0("RET" );
@@ -5348,7 +5348,7 @@ void cpu_address_table_lookup( Environment * _environment, char * _table, int _c
     //     outline0("INC HL" );
     //     outline0("INC HL" );
     //     outline0("INC C" );
-    //     outline0("MOV A, C" );
+    //     outline0("MOV AL, C" );
     //     outline1("CP 0x%4.4x", (_count+1) );
     //     outline1("JR NZ, LOOKFOR%sL1", _table );
     // }
