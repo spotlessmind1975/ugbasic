@@ -71,7 +71,7 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     variable_store( _environment, blocks->name, 196 );
     variable_store( _environment, pattern->name, _pattern );
 
-    z80_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
+    cpu_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
 
 }
 
@@ -101,7 +101,7 @@ void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
     variable_store( _environment, blocks->name, 196 );
 
-    z80_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
+    cpu_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
 
 }
 
