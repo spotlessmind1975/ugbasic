@@ -3451,7 +3451,7 @@ void cpu_move_8bit_with_offset2( Environment * _environment, char *_source, char
     outline0("MOV AH, 0" );
     outline0("ADD SI, AX" );
     outline1("MOV AL, [%s]", _source);
-    outline0("MOV (SI), AL");
+    outline0("MOV [SI], AL");
 
 }
 
@@ -3461,7 +3461,7 @@ void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
     outline1("MOV AX, 0x%2.2x", ( _offset & 0xff ) );
     outline0("ADD SI, AX" );
     outline1("MOV AL, [%s]", _source);
-    outline0("MOV (SI), AL");
+    outline0("MOV [SI], AL");
 
 }
 
@@ -3479,7 +3479,7 @@ void cpu_move_8bit_indirect2_8bit( Environment * _environment, char * _value, ch
     outline1("MOV AL, [%s]", _offset);
     outline0("MOV AH, 0");
     outline0("ADD SI, AX");
-    outline0("MOV AL, (SI)");
+    outline0("MOV AL, [SI]");
     outline1("MOV [%s], AL", _source );
 
 }
