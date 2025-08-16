@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA
+%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9651,6 +9651,13 @@ target :
         #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
             defined( __c64reu__) || defined(__c16__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPU8086 {
+        #if defined(__pccga__)
             $$ = 1;
         #else
             $$ = 0;

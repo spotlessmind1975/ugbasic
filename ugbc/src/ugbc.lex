@@ -12,6 +12,7 @@
 }
 
 char * strcopy( char * _dest, char * _source );
+char * strcopy( char * _dest, char * _source );
 
 extern int yycolno;
 extern int yyposno;
@@ -573,6 +574,7 @@ C% { RETURN(COUNT,1); }
 CPC { RETURN(CPC,1); }
 CPU6502 { RETURN(CPU6502,1); }
 CPU6809 { RETURN(CPU6809,1); }
+CPU8086 { RETURN(CPU8086,1); }
 CPUSC61860 { RETURN(CPUSC61860,1); }
 CPUSM83 { RETURN(CPUSM83,1); }
 CPUZ80 { RETURN(CPUZ80,1); }
