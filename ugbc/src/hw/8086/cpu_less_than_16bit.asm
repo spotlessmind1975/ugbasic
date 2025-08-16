@@ -38,7 +38,7 @@
 ; Is BX < AX ? (signed)
 ;   AL : 0xff if true, 0x00 if false
 CPULT16S:
-    CMP BX, AX
+    CMP AX, BX
     JL CPULT16SLOW
     MOV AL, 0
     RET
@@ -47,7 +47,7 @@ CPULT16SLOW:
     RET
 
 CPULT16U:
-    CMP BX, AX
+    CMP AX, BX
     JB CPULT16ULOW
     MOV AL, 0
     RET
@@ -56,7 +56,7 @@ CPULT16ULOW:
     RET
 
 CPULTE16S:
-    CMP BX, AX
+    CMP AX, BX
     JLE CPULTE16SLOW
     MOV AL, 0
     RET
@@ -65,7 +65,7 @@ CPULTE16SLOW:
     RET
 
 CPULTE16U:
-    CMP BX, AX
+    CMP AX, BX
     JBE CPULTE16ULOW
     MOV AL, 0
     RET
