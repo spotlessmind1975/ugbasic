@@ -75,3 +75,4 @@ stg4score/
 stgfinal/
 union-galaxy/
 build_deb.sh
+build_deb_beta.sh
