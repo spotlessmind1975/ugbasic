@@ -3867,7 +3867,7 @@ void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
             outline0("CMP AL, 0" );
             outline1("JZ %s", label );
             outline0("MOV AL, 1" );;
-            outline0("SAL A, 1" );
+            outline0("SAL AL, 1" );
             outhead1("%s:", label );
         }
         outline1("MOV DI, [%s]", _address );

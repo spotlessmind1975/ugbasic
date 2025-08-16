@@ -92,8 +92,8 @@ MSC1DUPES:
     AND AL, 0x7f
     ; SRL A
     ; SRL A
-    SAL A, 1
-    SAL A, 1
+    SAL AL, 1
+    SAL AL, 1
     ; ; If repetitions is zero then repetitions
     ; ; will be 32 times.
     ; CP 0
