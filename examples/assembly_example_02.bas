@@ -28,18 +28,18 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
         DEC _x
     END ASM ON CPU6809
 
-    ' CPU DOS
+    ' CPU 6502
     ON CPU6502 BEGIN ASM 
         INC _x
         DEC _x
     END ASM
 
-    ' CPU DOS
     BEGIN ASM 
         INC _x
         DEC _x
     END ASM ON CPU6502
 
+  '  CPU Z80
     ON CPUZ80 BEGIN ASM 
         LD A, (_x)
         INC A
@@ -54,6 +54,21 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
         LD (_x), A
     END ASM ON CPUZ80 
 
+  '  CPU 8086
+    ON CPU8086 BEGIN ASM 
+        MOV AL, [_x]
+        INC AL
+        DEC AL
+        MOV [_x], AL
+    END ASM
+
+    BEGIN ASM 
+        MOV AL, [_x]
+        INC AL
+        DEC AL
+        MOV [_x], AL
+    END ASM ON CPU8086 
+    
     IF x = 42 THEN
         PRINT "ok!"
     ELSE

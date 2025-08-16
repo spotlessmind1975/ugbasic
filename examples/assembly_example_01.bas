@@ -23,6 +23,10 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
 
     ON CPUZ80 ASM LD A, (_x) \ INC A \ LD (_x), A
 
+    ON CPU8086 ASM MOV AL, [_x]
+    ON CPU8086 ASM INC AL
+    ON CPU8086 ASM  MOV [_x], AL
+    
     IF x = 2 THEN
         PRINT "ok!"
     ELSE
