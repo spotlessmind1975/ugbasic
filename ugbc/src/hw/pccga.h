@@ -181,6 +181,7 @@ void pccga_key_pressed( Environment * _environment, char *_scancode, char * _res
 void pccga_clear_key( Environment * _environment );
 void pccga_joy( Environment * _environment, int _port, char * _value );
 void pccga_joy_vars( Environment * _environment, char * _port, char * _value );
+void pccga_wait_key( Environment * _environment, int _release );
 
 void pccga_sys_call( Environment * _environment, int _destination );
 

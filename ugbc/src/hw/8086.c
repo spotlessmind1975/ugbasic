@@ -854,7 +854,7 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
     embedded( cpu_less_than_8bit, src_hw_8086_cpu_less_than_8bit_asm );
 
         outline1("MOV AL, [%s]", _source);
-        outline1("MOV BL, 0x%2.2x", _destination);
+        outline1("MOV BL, 0x%2.2x", (unsigned char)(_destination&0xff));
         if ( _signed ) {
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
@@ -887,7 +887,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
     embedded( cpu_less_than_8bit, src_hw_8086_cpu_less_than_8bit_asm );
 
         outline1("MOV AL, [%s]", _source);
-        outline1("MOV BL, 0x%2.2x", _destination);
+        outline1("MOV BL, 0x%2.2x", (unsigned char)(_destination&0xff));
         if ( _signed ) {
             if ( _equal ) {
                 outline0("CALL CPULTE8S");
@@ -967,7 +967,7 @@ void cpu_math_add_8bit_const( Environment * _environment, char *_source, int _de
     inline( cpu_math_add_8bit )
 
         outline1("MOV AL, [%s]", _source );
-        outline1("MOV BL, 0x%4.4x", _destination );
+        outline1("MOV BL, 0x%2.2x", (unsigned char)(_destination&0xff) );
         outline0("ADD AL, BL" );
         outline1("MOV [%s], AL", _other );
 
@@ -2225,7 +2225,10 @@ void cpu_combine_nibbles( Environment * _environment, char * _low_nibble, char *
 
         outline1("MOV BL, [%s]", _low_nibble );
         outline1("MOV AL, [%s]", _hi_nibble );
-        outline0("SLA AL, 4");
+        outline0("SAL AL, 1");
+        outline0("SAL AL, 1");
+        outline0("SAL AL, 1");
+        outline0("SAL AL, 1");
         outline0("OR AL, BL");
         outline1("MOV [%s], AL", _byte );
 
@@ -3774,8 +3777,8 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
 
     MAKE_LABEL
 
-    outline1( "MOV AX, [%s]", _source );
-    outline1( "MOV BL, 0x%4.4x", _destination );
+    outline1( "MOV AL, [%s]", _source );
+    outline1( "MOV BL, 0x%2.2x", (unsigned char)(_destination&0xff) );
 
     if ( _signed ) {
         outline0( "IDIV BL" );

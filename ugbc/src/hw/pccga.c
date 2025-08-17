@@ -56,6 +56,21 @@ void pccga_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
 }
 
+void pccga_wait_key( Environment * _environment, int _release ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy_deferred( keyboard, src_hw_pccga_keyboard_asm );
+
+    if ( _release ) {
+        outline0("CALL WAITKEYRELEASE");
+    } else {
+        outline0("CALL WAITKEY");
+    }
+   
+}
+
+
 void pccga_wait_key_or_fire( Environment * _environment, int _port, int _release ) {
    
 }
