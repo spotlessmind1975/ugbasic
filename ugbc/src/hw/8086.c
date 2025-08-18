@@ -3148,8 +3148,14 @@ void cpu_compare_memory( Environment * _environment, char *_source, char *_desti
     outline1("MOV SI, [%s]", _source);
     outline1("MOV DI, [%s]", _destination);
     outline1("MOV CX, [%s]", _size);
+    outline0("PUSH ES");
+    outline0("PUSH DX");
+    outline0("MOV DX, DS");
+    outline0("MOV ES, DX");
+    outline0("POP DX");
     outline0("CLD");
     outline0("REPE CMPSB");
+    outline0("POP ES");
 
     outline1("JNE %s", label);
     outhead1("%sequal:", label );
@@ -3170,8 +3176,14 @@ void cpu_compare_memory_size( Environment * _environment, char *_source, char *_
     outline1("MOV SI, [%s]", _source);
     outline1("MOV DI, [%s]", _destination);
     outline1("MOV CX, 0x%4.4x", (unsigned short)(_size&0xffff));
+    outline0("PUSH ES");
+    outline0("PUSH DX");
+    outline0("MOV DX, DS");
+    outline0("MOV ES, DX");
+    outline0("POP DX");
     outline0("CLD");
     outline0("REPE CMPSB");
+    outline0("POP ES");
 
     outline1("JNE %s", label);
     outhead1("%sequal:", label );
@@ -3204,6 +3216,11 @@ void cpu_less_than_memory( Environment * _environment, char *_source, char *_des
     outline1("MOV SI, [%s]", _source);
     outline1("MOV DI, [%s]", _destination);
     outline1("MOV CX, %s]", _size);
+    outline0("PUSH ES");
+    outline0("PUSH DX");
+    outline0("MOV DX, DS");
+    outline0("MOV ES, DX");
+    outline0("POP DX");
     outline0("CLD");
 
     outhead1("%s:", label);
@@ -3214,6 +3231,7 @@ void cpu_less_than_memory( Environment * _environment, char *_source, char *_des
         outline1("JA %s", greaterLabel);
     }
     outline1("LOOP %s", label );
+    outline0("POP ES");
 
     outline0("MOV AL, 0xff");
     outline1("JMP %s", label);
@@ -3236,6 +3254,11 @@ void cpu_less_than_memory_size( Environment * _environment, char *_source, char 
     outline1("MOV SI, [%s]", _source);
     outline1("MOV DI, [%s]", _destination);
     outline1("MOV CX, 0x%4.4x", (unsigned short)(_size&0xffff));
+    outline0("PUSH ES");
+    outline0("PUSH DX");
+    outline0("MOV DX, DS");
+    outline0("MOV ES, DX");
+    outline0("POP DX");
     outline0("CLD");
 
     outhead1("%s:", label);
@@ -3249,7 +3272,8 @@ void cpu_less_than_memory_size( Environment * _environment, char *_source, char 
 
     outline0("MOV AL, 0xff");
     outline1("JMP %s", label);
-
+    outline0("POP ES");
+    
     outhead1("%s:", greaterLabel );
     outline0("MOV AL, 0");
     outhead1("%s:", label );
