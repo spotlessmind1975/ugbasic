@@ -91,7 +91,7 @@
 
 ; KEYBOARDSHIFT:          DB $00
 KEYBOARDPRESSED:        db 0
-; KEYBOARDACTUAL:         DB $FF
+KEYBOARDACTUAL:         DB 0xff
 ; KEYBOARDINKEY:          DB $FF
 
 @IF keyboardConfig.sync
@@ -531,122 +531,6 @@ SCANCODEREADE:
 
 KEYBOARDBUFFER:     db 0
 
-KEYBOARDMANAGER:
-    ; rawcode = inp(0x60); /* read scancode from keyboard controller */
-    IN AL, 0x60
-    MOV BL, AL
-    ; make_break = !(rawcode & 0x80); /* bit 7: 0 = make, 1 = break */
-    MOV AH, AL
-    AND AH, 0x80
-    XOR AH, 0xff
-
-    ; scancode = rawcode & 0x7F;
-    AND BL, 0x7f
-    MOV BH, 0
-
-    MOV CL, [KEYBOARDBUFFER]
-    ; if (buffer == 0xE0) { /* second byte of an extended key */
-    CMP CL, 0x0e
-    JNE KEYBOARDMANAGERJ1
-
-    ;     if (scancode < 0x60) {
-    CMP AL, 0x60
-    JA KEYBOARDMANAGERJ1B
-
-    MOV CL, BL
-    SAR BL, 1
-    SAR BL, 1
-    SAR BL, 1
-    MOV CH, [SCANCODEREADE+BX]
-    PUSH BX
-    MOV BL, CL
-    AND BL, 0x07
-
-    CMP AH, 0x00
-    JZ KEYBOARDMANAGERJ1BSPACE
-
-    MOV CL, [BITMASK+BX]
-    OR CH, CL
-
-    JMP KEYBOARDMANAGERJ1BDONE
-
-KEYBOARDMANAGERJ1BSPACE:
-    MOV CL, [BITMASKN+BX]
-    AND CH, CL
-
-KEYBOARDMANAGERJ1BDONE:
-    POP BX
-    MOV [SCANCODEREADE+BX], CH
-
-    ;         extended_keys[scancode] = make_break;
-    ;     }
-
-KEYBOARDMANAGERJ1B:
-    ;     buffer = 0;
-    MOV AL, 0
-    MOV [KEYBOARDBUFFER], AL
-    JMP KEYBOARDMANAGERJ4
-
-KEYBOARDMANAGERJ1:
-    ; } else if (buffer >= 0xE1 && buffer <= 0xE2) {
-    CMP CL, 0xe1
-    JB KEYBOARDMANAGERJ2
-    CMP CL, 0x0e2
-    JA KEYBOARDMANAGERJ2
-
-    ;     buffer = 0; /* ingore these extended keys */
-    MOV AL, 0
-    MOV [KEYBOARDBUFFER], AL
-    JMP KEYBOARDMANAGERJ4
-
-KEYBOARDMANAGERJ2:
-    ; } else if (rawcode >= 0xE0 && rawcode <= 0xE2) {
-    CMP AH, 0xe0
-    JB KEYBOARDMANAGERJ3
-    CMP AH, 0x0e2
-    JA KEYBOARDMANAGERJ3
-
-        ; buffer = rawcode; /* first byte of an extended key */
-    MOV [KEYBOARDBUFFER], AL
-    JMP KEYBOARDMANAGERJ4
-
-KEYBOARDMANAGERJ3:
-    ; } else if (scancode < 0x60) {
-    CMP AL, 0x60
-    JA KEYBOARDMANAGERJ4
-
-        ; normal_keys[scancode] = make_break;
-
-    MOV CL, BL
-    SAR BL, 1
-    SAR BL, 1
-    SAR BL, 1
-    MOV CH, [SCANCODEREAD+BX]
-    PUSH BX
-    MOV BL, CL
-    AND BL, 0x07
-
-    CMP AH, 0x00
-    JZ KEYBOARDMANAGERJ3BSPACE
-
-    MOV CL, [BITMASK+BX]
-    OR CH, CL
-
-    JMP KEYBOARDMANAGERJ3BDONE
-
-KEYBOARDMANAGERJ3BSPACE:
-    MOV CL, [BITMASKN+BX]
-    AND CH, CL
-
-KEYBOARDMANAGERJ3BDONE:
-    POP BX
-    MOV [SCANCODEREAD+BX], CH
-
-    ; }
-
-KEYBOARDMANAGERJ4:
-   IRET
-
 ; KEYBOARDQUEUE:          DS 10,$FF
 ; KEYBOARDQUEUERPOS:      DB $00
 ; KEYBOARDQUEUEWPOS:      DB $00
@@ -793,469 +677,515 @@ KEYBOARDMANAGERJ4:
 ;         POP AF
 ;         JP SCANCODEENTIREL1B
 
+;   AL = rawcode (0x00..0xff)
+;   AH = make (0) or break (1)
+;   BL = scancode (0x00..0x7f); BX = offset inside SCANCODE table
+;   CL = (spare)
+;   CH = (spare)
 
-;     KEYBOARDMANAGER:
+KEYBOARDMANAGER:
+    PUSH AX
+    PUSH BX
+    PUSH CX
 
-;         PUSH HL
-;         PUSH BC
-;         PUSH DE
-;         PUSH AF
+    MOV AL, 0xff
+    MOV [KEYBOARDACTUAL], AL
+    
+    ; rawcode = inp(0x60); /* read scancode from keyboard controller */
+    IN AL, 0x60
+    MOV BL, AL
+    ; make_break = !(rawcode & 0x80); /* bit 7: 0 = make, 1 = break */
+    MOV AH, AL
+    AND AH, 0x80
+    XOR AH, 0xff
 
-;         ; CALL KEYBOARDEMPTY
-;         ; JP NC, KEYBOARDMANAGERDONEYES
+    ; scancode = rawcode & 0x7F;
+    AND BL, 0x7f
+    MOV BH, 0
 
-;         DI
+    MOV CL, [KEYBOARDBUFFER]
+    ; if (buffer == 0xE0) { /* second byte of an extended key */
+    CMP CL, 0x0e
+    JNE KEYBOARDMANAGERJ1
 
-;         LD IXL, 0
-;         LD A, 0
-;         LD (KEYBOARDPRESSED), A
+    ;     if (scancode < 0x60) {
+    CMP AL, 0x60
+    JA KEYBOARDMANAGERJ1B
 
-;         LD HL, SCANCODEREAD
-;         LD BC, $f782
-;         OUT (C), C
-;         LD BC, $f40e
-;         LD E, B
-;         OUT (C), C
-;         LD BC, $f6c0
-;         LD D, B
-;         OUT (C), C
-;         XOR A
-;         OUT (C), A
-;         LD BC, $f792
-;         OUT (C), C
-;         LD A, $40
-;         LD C, $4A
-;     SCANCODEENTIREL1:
-;         LD B, D
-;         OUT (C), A
-;         LD B, E
+    MOV [KEYBOARDACTUAL], BL
+    
+    MOV CL, BL
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    MOV CH, [SCANCODEREADE+BX]
+    PUSH BX
+    MOV BL, CL
+    AND BL, 0x07
+
+    CMP AH, 0x00
+    JZ KEYBOARDMANAGERJ1BSPACE
+
+    MOV CL, [BITMASK+BX]
+    OR CH, CL
+    
+    PUSH AX
+    MOV AL, 0xff
+    MOV [KEYBOARDPRESSED], AL
+    POP AX
+
+    JMP KEYBOARDMANAGERJ1BDONE
+
+KEYBOARDMANAGERJ1BSPACE:
+    MOV CL, [BITMASKN+BX]
+    AND CH, CL
+
+    PUSH AX
+    MOV AL, 0x00
+    MOV [KEYBOARDPRESSED], AL
+    POP AX
+
+KEYBOARDMANAGERJ1BDONE:
+    POP BX
+    MOV [SCANCODEREADE+BX], CH
+
+    ;         extended_keys[scancode] = make_break;
+    ;     }
+
+KEYBOARDMANAGERJ1B:
+    ;     buffer = 0;
+    MOV AL, 0
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ1:
+    ; } else if (buffer >= 0xE1 && buffer <= 0xE2) {
+    CMP CL, 0xe1
+    JB KEYBOARDMANAGERJ2
+    CMP CL, 0x0e2
+    JA KEYBOARDMANAGERJ2
+
+    ;     buffer = 0; /* ingore these extended keys */
+    MOV AL, 0
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ2:
+    ; } else if (rawcode >= 0xE0 && rawcode <= 0xE2) {
+    CMP AH, 0xe0
+    JB KEYBOARDMANAGERJ3
+    CMP AH, 0x0e2
+    JA KEYBOARDMANAGERJ3
+
+        ; buffer = rawcode; /* first byte of an extended key */
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ3:
+    ; } else if (scancode < 0x60) {
+    CMP AL, 0x60
+    JA KEYBOARDMANAGERJ4
+
+        ; normal_keys[scancode] = make_break;
+
+    MOV [KEYBOARDACTUAL], BL
+    
+    MOV CL, BL
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    MOV CH, [SCANCODEREAD+BX]
+    PUSH BX
+    MOV BL, CL
+    AND BL, 0x07
+
+    CMP AH, 0x00
+    JZ KEYBOARDMANAGERJ3BSPACE
+
+    MOV CL, [BITMASK+BX]
+    OR CH, CL
+
+    PUSH AX
+    MOV AL, 0xff
+    MOV [KEYBOARDPRESSED], AL
+    POP AX
+
+    JMP KEYBOARDMANAGERJ3BDONE
+
+KEYBOARDMANAGERJ3BSPACE:
+    MOV CL, [BITMASKN+BX]
+    AND CH, CL
+
+    PUSH AX
+    MOV AL, 0x00
+    MOV [KEYBOARDPRESSED], AL
+    POP AX
+
+KEYBOARDMANAGERJ3BDONE:
+    POP BX
+    MOV [SCANCODEREAD+BX], CH
+
+    ; }
+
+KEYBOARDMANAGERJ4:
+
+    MOV AL, [KEYBOARDELAPSED]
+    INC AL
+    MOV [KEYBOARDELAPSED], AL
+
+    ; Update the ASF.
+
+    CALL KEYBOARDASF
+
+    MOV AL, 0x20
+    OUT 0x20, AL
+
+    POP CX
+    POP BX
+    POP AX
+    ; JMP FAR [KEYBOARDIRQSAVED]
+    IRET
+
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDDETECT
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to dectect if any key has been pressed. The
+    ; actual key is read by KEYBOARD MANAGER that runs on IRQ, and the actual
+    ; and previous values are stored by it.
+    ;
+    ; Return values:
+    ; - C : key pressed (1) or not (0)
+    ; - Z : key is equal to the previous detection (1) or different (0)
+    ;
+    ; The four values allowed by keyboard state machine follows:
+    ;
+    ; - DETECT (white): C = 0, Z = any
+    ; - DETECT (green): C = 1, Z = 1
+    ; - DETECT (red)  : C = 1, Z = 0
+
+    KEYBOARDDETECT:
+
+        ; Check if any key has been pressed.
+
+        MOV AL, [KEYBOARDACTUAL]
+        CMP AL, 0xFF
+        JZ KEYBOARDDETECTNONE
+
+        STC
+
+        RET
+
+    KEYBOARDDETECTNONE:
+        CLC
+        RET
+
+KEYBOARDELAPSED:     db 0
+
+@EMIT keyboardConfig.latency AS KEYBOARDLATENCY
+@EMIT keyboardConfig.delay AS KEYBOARDDELAY
+@EMIT keyboardConfig.release AS KEYBOARDRELEASE
+
+KEYBOARDASFSTATE:    db 0
+
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDLATENCYELAPSED
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to dectect if the latency time has elapsed.
+    ; The KEYBOARDELAPSED timer is incremented by IRQ.
+    ;
+    ; Return values:
+    ; - C : latency elapsed (1) or not (0)
+    ;
+    ; The four values allowed by keyboard state machine follows:
+    ;
+    ; - LATENCYELAPSED (white): C = 0
+    ; - LATENCYELAPSED (green): C = 1
+
+    KEYBOARDLATENCYELAPSED:
+        MOV AL, [KEYBOARDELAPSED]
+        CMP AL, KEYBOARDLATENCY
+        RET
+
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDRELEASEELAPSED
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to dectect if the release time has elapsed.
+    ; The KEYBOARDELAPSED timer is incremented by IRQ.
+    ;
+    ; Return values:
+    ; - C : release elapsed (1) or not (0)
+    ;
+    ; The four values allowed by keyboard state machine follows:
+    ;
+    ; - RELEASEELAPSED (white): C = 0
+    ; - RELEASEELAPSED (green): C = 1
+
+    KEYBOARDRELEASEELAPSED:
+        MOV AL, [KEYBOARDELAPSED]
+        CMP AL, KEYBOARDRELEASE
+        RET
         
-;         PUSH AF
-;         IN A, (C)
-;         XOR $FF
-;         LD (HL), A
-;         INC HL
-;         CP 0
-;         JR Z, KEYBOARDMANAGERSINGLEKEYL1CONTINUE
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDDELAYLAPSED
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to dectect if the delay time has elapsed.
+    ; The KEYBOARDELAPSED timer is incremented by IRQ.
+    ;
+    ; Return values:
+    ; - C : delay elapsed (1) or not (0)
+    ;
+    ; The four values allowed by keyboard state machine follows:
+    ;
+    ; - DELAYELAPSED (white): C = 0
+    ; - DELAYELAPSED (green): C = 1
 
-;         PUSH IX
-;     SCANCODEENTIREL1BL1:
-;         CP 0
-;         JR Z, SCANCODEENTIREL1B
-;         SRL A
-;         JR NC, SCANCODEENTIREL1BL2
+    KEYBOARDDELAYELAPSED:
+        MOV AL, [KEYBOARDELAPSED]
+        CMP AL, KEYBOARDDELAY
+        RET
 
-;         LD A, IXL
+    ; ----------------------------------------------------------------------------
+    ; KEYBOARDASF
+    ; ----------------------------------------------------------------------------
+    ; This routine will implement the ASF for keyboard. It means that will check
+    ; for events and change the state of the ASF.
+    ;
 
-;         CP 23
-;         JR Z, KEYBOARDMANAGERSINGLEKEYPRESSEDCTRL
+    KEYBOARDASF:
 
-;         CP $46
-;         JR Z, KEYBOARDMANAGERSINGLEKEYPRESSECAPSLOCK
+        ; Preserve used registers
 
-;         LD (KEYBOARDACTUAL), A
-;         LD A, 1
-;         LD (KEYBOARDPRESSED), A
-;         JR SCANCODEENTIREL1B
+        PUSH AX
+        PUSH BX
+        PUSH CX
 
-;     SCANCODEENTIREL1BL2:
-;         INC IXL
-;         JR SCANCODEENTIREL1BL1
+        ; Decode the actual state.
 
-;     SCANCODEENTIREL1B:
-;         POP IX
-
-;     KEYBOARDMANAGERSINGLEKEYL1CONTINUE:
-;         POP AF
-
-;         INC IXL
-;         INC IXL
-;         INC IXL
-;         INC IXL
-;         INC IXL
-;         INC IXL
-;         INC IXL
-;         INC IXL
-
-;         INC A
-;         CP C
-;         JR C, SCANCODEENTIREL1
-;         LD BC, $f782
-;         OUT (C), C
-
-;         LD A, (KEYBOARDPRESSED)
-;         CP 1
-;         JR Z, SCANCODEENTIREL1XX
-
-;         LD A, $FF
-;         LD (KEYBOARDACTUAL), A
-
-;         JP KEYBOARDMANAGERDONEYES
-
-;     SCANCODEENTIREL1XX:
-;         NOP
-;     KEYBOARDMANAGERDONEYES:
-
-;         ; Increase the elapsed timer.
-
-;         LD A, (KEYBOARDELAPSED)
-;         ADD $1
-;         LD (KEYBOARDELAPSED), A
-
-;         ; Update the ASF.
-
-;         CALL KEYBOARDASF
-
-;         EI
+        MOV Al, [KEYBOARDASFSTATE]
         
-;         POP AF
-;         POP DE
-;         POP BC
-;         POP HL
+        CMP AL, 0
+        JZ KEYBOARDASF0
+        MOV BL, AL
+        DEC BL
+        JZ KEYBOARDASF1
+        DEC BL
+        JZ KEYBOARDASF2
+        DEC BL
+        JZ KEYBOARDASF3
+        JMP KEYBOARDASFDONE
 
-;         RET
+        ; --------------
+        ; STATE 0 - FREE
+        ; --------------
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEYBOARDDETECT
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to dectect if any key has been pressed. The
-;     ; actual key is read by KEYBOARD MANAGER that runs on IRQ, and the actual
-;     ; and previous values are stored by it.
-;     ;
-;     ; Return values:
-;     ; - C : key pressed (1) or not (0)
-;     ; - Z : key is equal to the previous detection (1) or different (0)
-;     ;
-;     ; The four values allowed by keyboard state machine follows:
-;     ;
-;     ; - DETECT (white): C = 0, Z = any
-;     ; - DETECT (green): C = 1, Z = 1
-;     ; - DETECT (red)  : C = 1, Z = 0
+    KEYBOARDASF0:
 
-;     KEYBOARDDETECT:
+        ; CALL KEYBOARDEMPTY
+        ; JR C, KEYBOARDASF0B
+        ; CALL KEYBOARDPOP
+        ; LD (KEYBOARDACTUAL), A
 
-;         ; Check if any key has been pressed.
+    KEYBOARDASF0B:
 
-;         LD A, (KEYBOARDACTUAL)
-;         CP $FF
-;         JR Z, KEYBOARDDETECTNONE
+        ; We just check for detection of a key.
+        ; It means both a key pressed (KEYBOARDDETECT green) 
+        ; and a different key pressed from the previous
+        ; one (KEYBOARDDETECT red)
 
-;         SCF
+        CALL KEYBOARDDETECT
 
-;         RET
+        ; If no key has been detected, we can remain
+        ; in this state.
 
-;     KEYBOARDDETECTNONE:
-;         SCF
-;         CCF
-;         RET
+        JNC KEYBOARDASFDONE
 
-;     KEYBOARDELAPSED:     DB 0
-
-; @EMIT keyboardConfig.latency AS KEYBOARDLATENCY
-; @EMIT keyboardConfig.delay AS KEYBOARDDELAY
-; @EMIT keyboardConfig.release AS KEYBOARDRELEASE
-
-;     KEYBOARDASFSTATE:    DB 0
-
-;     ; ----------------------------------------------------------------------------
-;     ; KEYBOARDLATENCYELAPSED
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to dectect if the latency time has elapsed.
-;     ; The KEYBOARDELAPSED timer is incremented by IRQ.
-;     ;
-;     ; Return values:
-;     ; - C : latency elapsed (1) or not (0)
-;     ;
-;     ; The four values allowed by keyboard state machine follows:
-;     ;
-;     ; - LATENCYELAPSED (white): C = 0
-;     ; - LATENCYELAPSED (green): C = 1
-
-;     KEYBOARDLATENCYELAPSED:
-;         LD A, (KEYBOARDELAPSED)
-;         CP KEYBOARDLATENCY
-;         RET
-
-;     ; ----------------------------------------------------------------------------
-;     ; KEYBOARDRELEASEELAPSED
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to dectect if the release time has elapsed.
-;     ; The KEYBOARDELAPSED timer is incremented by IRQ.
-;     ;
-;     ; Return values:
-;     ; - C : release elapsed (1) or not (0)
-;     ;
-;     ; The four values allowed by keyboard state machine follows:
-;     ;
-;     ; - RELEASEELAPSED (white): C = 0
-;     ; - RELEASEELAPSED (green): C = 1
-
-;     KEYBOARDRELEASEELAPSED:
-;         LD A, (KEYBOARDELAPSED)
-;         CP KEYBOARDRELEASE
-;         RET
+        ; Move to state 1, and reset the elapsed 
+        ; timer at the same time.
         
-;     ; ----------------------------------------------------------------------------
-;     ; KEYBOARDDELAYLAPSED
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to dectect if the delay time has elapsed.
-;     ; The KEYBOARDELAPSED timer is incremented by IRQ.
-;     ;
-;     ; Return values:
-;     ; - C : delay elapsed (1) or not (0)
-;     ;
-;     ; The four values allowed by keyboard state machine follows:
-;     ;
-;     ; - DELAYELAPSED (white): C = 0
-;     ; - DELAYELAPSED (green): C = 1
+    KEYBOARDASFTO1:
 
-;     KEYBOARDDELAYELAPSED:
-;         LD A, (KEYBOARDELAPSED)
-;         CP KEYBOARDDELAY
-;         RET
+        ; Reset the elapsed timer.
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEYBOARDASF
-;     ; ----------------------------------------------------------------------------
-;     ; This routine will implement the ASF for keyboard. It means that will check
-;     ; for events and change the state of the ASF.
-;     ;
+        MOV AL, 0
+        MOV [KEYBOARDELAPSED], AL
 
-;     KEYBOARDASF:
+        ; Set the state.
 
-;         ; Preserve used registers
+        MOV Al, 1
+        MOV [KEYBOARDASFSTATE], AL
 
-;         PUSH AF
-;         PUSH BC
-;         PUSH HL
+        JMP KEYBOARDASFDONE
 
-;         ; Decode the actual state.
+        ; -----------------
+        ; STATE 1 - PRESSED
+        ; -----------------
 
-;         LD A, (KEYBOARDASFSTATE)
+    KEYBOARDASF1:
+
+        ; CALL KEYBOARDEMPTY
+        ; JR C, KEYBOARDASF1B
+        ; JMP KEYBOARDASFTO0
+
+    KEYBOARDASF1B:
+
+        ; We just check for detection of a key.
+        ; It means both a key pressed (KEYBOARDDETECT green) 
+        ; and a different key pressed from the previous
+        ; one (KEYBOARDDETECT red).
         
-;         CP 0
-;         JR Z, KEYBOARDASF0
-;         LD B, A
-;         DEC B
-;         JR Z, KEYBOARDASF1
-;         DEC B
-;         JR Z, KEYBOARDASF2
-;         DEC B
-;         JR Z, KEYBOARDASF3
-;         JP KEYBOARDASFDONE
+        CALL KEYBOARDDETECT
 
-;         ; --------------
-;         ; STATE 0 - FREE
-;         ; --------------
+        ; If the no key has been pressed, 
+        ; we go back to state 0.
 
-;     KEYBOARDASF0:
+        JNC KEYBOARDASFTO0
 
-;         ; CALL KEYBOARDEMPTY
-;         ; JR C, KEYBOARDASF0B
-;         ; CALL KEYBOARDPOP
-;         ; LD (KEYBOARDACTUAL), A
+        ; ; If a different key has been pressed, 
+        ; ; we go back to state 0.
 
-;     KEYBOARDASF0B:
+        ; BEQ KEYBOARDASFTO0
 
-;         ; We just check for detection of a key.
-;         ; It means both a key pressed (KEYBOARDDETECT green) 
-;         ; and a different key pressed from the previous
-;         ; one (KEYBOARDDETECT red)
+        ; Chek for latency elapsed.
 
-;         CALL KEYBOARDDETECT
+        CALL KEYBOARDLATENCYELAPSED
 
-;         ; If no key has been detected, we can remain
-;         ; in this state.
+        ; If latency has passed, we move to the 
+        ; state 2.
 
-;         JR NC, KEYBOARDASFDONE
+        JNC KEYBOARDASFTO2
 
-;         ; Move to state 1, and reset the elapsed 
-;         ; timer at the same time.
+        ; We remain in state 1.
+
+        JMP KEYBOARDASFDONE
+
+        ; Move to state 0, and reset the elapsed 
+        ; timer at the same time.
+
+    KEYBOARDASFTO0:
+
+        ; Reset the elapsed timer.
+
+        MOV AL, 0
+        MOV [KEYBOARDELAPSED], AL
+
+        ; Reset the state.
+
+        MOV [KEYBOARDASFSTATE], AL
+
+        JMP KEYBOARDASFDONE
+
+    KEYBOARDASFTO2:
+
+        ; Reset the elapsed timer.
+
+        MOV AL, 0x00
+        MOV [KEYBOARDELAPSED], AL
+
+        ; Set the state.
+
+        MOV Al, 2
+        MOV [KEYBOARDASFSTATE], AL
+
+        JMP KEYBOARDASFDONE
+
+        ; -----------------
+        ; STATE 2 - PRESSED
+        ; -----------------
+
+    KEYBOARDASF2:
+
+        ; We just check for detection of a key.
+        ; It means both a key pressed (KEYBOARDDETECT green) 
+        ; and a different key pressed from the previous
+        ; one (KEYBOARDDETECT red).
         
-;     KEYBOARDASFTO1:
+        CALL KEYBOARDDETECT
 
-;         ; Reset the elapsed timer.
+        ; If the no key has been pressed, 
+        ; we go back to state 0.
 
-;         LD A, 0
-;         LD (KEYBOARDELAPSED), A
+        JNC KEYBOARDASFTO0
 
-;         ; Set the state.
+        ; ; If a different key has been pressed, 
+        ; ; we go back to state 0.
 
-;         LD A, 1
-;         LD (KEYBOARDASFSTATE), A
+        ; BEQ KEYBOARDASFTO0
 
-;         JP KEYBOARDASFDONE
+        ; Chek for release elapsed.
 
-;         ; -----------------
-;         ; STATE 1 - PRESSED
-;         ; -----------------
+        CALL KEYBOARDRELEASEELAPSED
 
-;     KEYBOARDASF1:
+        ; If released has passed, we move to the 
+        ; state 3.
 
-;         ; CALL KEYBOARDEMPTY
-;         ; JR C, KEYBOARDASF1B
-;         ; JMP KEYBOARDASFTO0
+        JNC KEYBOARDASFTO3
 
-;     KEYBOARDASF1B:
+        ; We remain in state 2.
 
-;         ; We just check for detection of a key.
-;         ; It means both a key pressed (KEYBOARDDETECT green) 
-;         ; and a different key pressed from the previous
-;         ; one (KEYBOARDDETECT red).
+        JMP KEYBOARDASFDONE
+
+        ; Move to state 3, and reset the elapsed 
+        ; timer at the same time.
+
+    KEYBOARDASFTO3:
+
+        ; Reset the elapsed timer.
+
+        MOV AL, 0
+        MOV [KEYBOARDELAPSED], AL
+
+        ; Set the next state.
+
+        MOV AL, 3
+        MOV [KEYBOARDASFSTATE], AL
+
+        JMP KEYBOARDASFDONE
+
+        ; -------------------
+        ; STATE 3 - CONTINUED
+        ; -------------------
+
+    KEYBOARDASF3:
+
+        ; We just check for detection of a key.
+        ; It means both a key pressed (KEYBOARDDETECT green) 
+        ; and a different key pressed from the previous
+        ; one (KEYBOARDDETECT red).
         
-;         CALL KEYBOARDDETECT
+        CALL KEYBOARDDETECT
 
-;         ; If the no key has been pressed, 
-;         ; we go back to state 0.
+        ; If the no key has been pressed, 
+        ; we go back to state 0.
 
-;         JR NC, KEYBOARDASFTO0
+        JNC KEYBOARDASFTO0
 
-;         ; ; If a different key has been pressed, 
-;         ; ; we go back to state 0.
+        ; ; If a different key has been pressed, 
+        ; ; we go back to state 0.
 
-;         ; BEQ KEYBOARDASFTO0
+        ; BEQ KEYBOARDASFTO0
 
-;         ; Chek for latency elapsed.
+        ; Chek for delay elapsed.
 
-;         CALL KEYBOARDLATENCYELAPSED
+        CALL KEYBOARDDELAYELAPSED
 
-;         ; If latency has passed, we move to the 
-;         ; state 2.
+        ; If delay has passed, we move to the 
+        ; state 2.
 
-;         JR NC, KEYBOARDASFTO2
+        JNC KEYBOARDASFTO2
 
-;         ; We remain in state 1.
+        ; We remain in state 3.
 
-;         JP KEYBOARDASFDONE
+        JMP KEYBOARDASFDONE
 
-;         ; Move to state 0, and reset the elapsed 
-;         ; timer at the same time.
+    KEYBOARDASFDONE:
 
-;     KEYBOARDASFTO0:
+        ; Restore used registers
 
-;         ; Reset the elapsed timer.
-
-;         LD A, 0
-;         LD (KEYBOARDELAPSED), A
-
-;         ; Reset the state.
-
-;         LD (KEYBOARDASFSTATE), A
-
-;         JP KEYBOARDASFDONE
-
-;     KEYBOARDASFTO2:
-
-;         ; Reset the elapsed timer.
-
-;         LD A, 0
-;         LD (KEYBOARDELAPSED), A
-
-;         ; Set the state.
-
-;         LD A, 2
-;         LD (KEYBOARDASFSTATE), A
-
-;         JP KEYBOARDASFDONE
-
-;         ; -----------------
-;         ; STATE 2 - PRESSED
-;         ; -----------------
-
-;     KEYBOARDASF2:
-
-;         ; We just check for detection of a key.
-;         ; It means both a key pressed (KEYBOARDDETECT green) 
-;         ; and a different key pressed from the previous
-;         ; one (KEYBOARDDETECT red).
+        POP CX
+        POP BX
+        POP AX
         
-;         CALL KEYBOARDDETECT
-
-;         ; If the no key has been pressed, 
-;         ; we go back to state 0.
-
-;         JR NC, KEYBOARDASFTO0
-
-;         ; ; If a different key has been pressed, 
-;         ; ; we go back to state 0.
-
-;         ; BEQ KEYBOARDASFTO0
-
-;         ; Chek for release elapsed.
-
-;         CALL KEYBOARDRELEASEELAPSED
-
-;         ; If released has passed, we move to the 
-;         ; state 3.
-
-;         JR NC, KEYBOARDASFTO3
-
-;         ; We remain in state 2.
-
-;         JP KEYBOARDASFDONE
-
-;         ; Move to state 3, and reset the elapsed 
-;         ; timer at the same time.
-
-;     KEYBOARDASFTO3:
-
-;         ; Reset the elapsed timer.
-
-;         LD A, 0
-;         LD (KEYBOARDELAPSED), A
-
-;         ; Set the next state.
-
-;         LD A, 3
-;         LD (KEYBOARDASFSTATE), A
-
-;         JP KEYBOARDASFDONE
-
-;         ; -------------------
-;         ; STATE 3 - CONTINUED
-;         ; -------------------
-
-;     KEYBOARDASF3:
-
-;         ; We just check for detection of a key.
-;         ; It means both a key pressed (KEYBOARDDETECT green) 
-;         ; and a different key pressed from the previous
-;         ; one (KEYBOARDDETECT red).
-        
-;         CALL KEYBOARDDETECT
-
-;         ; If the no key has been pressed, 
-;         ; we go back to state 0.
-
-;         JR NC, KEYBOARDASFTO0
-
-;         ; ; If a different key has been pressed, 
-;         ; ; we go back to state 0.
-
-;         ; BEQ KEYBOARDASFTO0
-
-;         ; Chek for delay elapsed.
-
-;         CALL KEYBOARDDELAYELAPSED
-
-;         ; If delay has passed, we move to the 
-;         ; state 2.
-
-;         JR NC, KEYBOARDASFTO2
-
-;         ; We remain in state 3.
-
-;         JP KEYBOARDASFDONE
-
-;     KEYBOARDASFDONE:
-
-;         ; Restore used registers
-
-;         POP HL
-;         POP BC
-;         POP AF
-        
-;         RET
+        RET
 
 ;     ; ----------------------------------------------------------------------------
 ;     ; WAITKEY
@@ -1275,7 +1205,7 @@ KEYBOARDMANAGERJ4:
     WAITKEY1:
         MOV AL, [KEYBOARDASFSTATE]
         CMP AL, 0
-        JZ WAItKEY1
+        JZ WAITKEY1
         RET
 
 ;     ; ----------------------------------------------------------------------------

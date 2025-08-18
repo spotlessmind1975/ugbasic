@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF deployed.keyboard && !keyboardConfig.sync
+
+KEYBOARDIRQSAVED:   dw 0, 0
+
+@ENDIF
+
 PCCGASTARTUP:
     
 @IF deployed.fp
@@ -48,9 +54,18 @@ PCCGASTARTUP:
 
     CLI
     PUSH DS
-    MOV DX, 0x0000
+    MOV DX, 0
     MOV DS, DX
-    MOV WORD [9*4], KEYBOARDMANAGER
+    MOV DX, WORD [9*4]
+    MOV CX, WORD [9*4+2]
+    POP DS
+    MOV WORD [KEYBOARDIRQSAVED], DX
+    MOV WORD [KEYBOARDIRQSAVED+2], CX
+    PUSH DS
+    MOV DX, 0
+    MOV DS, DX
+    MOV DX, KEYBOARDMANAGER
+    MOV WORD [9*4], DX
     MOV DX, CS
     MOV WORD [9*4+2], DX
     POP DS
