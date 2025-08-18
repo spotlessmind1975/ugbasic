@@ -60,8 +60,14 @@ DSEQUAL:
     ; LD D, (IX+2)
     MOV DX, [DI+1]
     MOV DI, DX
+    PUSH ES
+    PUSH DX
+    MOV DX, DS
+    MOV ES, DX
+    POP DX
 DSEQUALL1:
     REPE CMPSB
+    POP ES
     ; LD A, (DE)
     ; CP (HL)
     ; INC HL
@@ -239,7 +245,13 @@ DSWRITECOPY:
     ; JR NZ, DSWRITECOPY
     PUSH DI
     MOV DI, DX
+    PUSH ES
+    PUSH DX
+    MOV DX, DS
+    MOV ES, DX
+    POP DX
     REPE MOVSB
+    POP ES
     POP DI
 DSWRITED:
     RET
@@ -542,7 +554,13 @@ DSINIT:
     ; INC DE
     ; LD (HL), A
     ; LDIR
+    PUSH ES
+    PUSH DX
+    MOV DX, DS
+    MOV ES, DX
+    POP DX
     REP MOVSB
+    POP ES
     ; LD A, stringscount
     MOV AL, stringscount
     ; LD (MAXSTRINGS), A
