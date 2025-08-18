@@ -58,6 +58,7 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_bit_check_extended = 1;
     _environment->embedded.cpu_flip = 1;
     _environment->embedded.cpu_hex_to_string = 1;
+    _environment->embedded.cpu_math_mul2_const_8bit = 1;
     
 }
 
