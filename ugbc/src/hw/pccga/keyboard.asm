@@ -35,35 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; KEYBOARDMANAGER:
-
-SCANCODERAW:
-    CLI
-    MOV AL, 2
-    OUT 0x21, AL
-    STI
-
-    MOV AL, 0
-    MOV [KEYBOARDPRESSED], AL
-SCANCODERAWL1:
-    IN AL, 0x64
-    TEST AL, 1
-    JZ SCANCODERAWNOKEY
-    TEST AL, 0x20
-    JNZ SCANCODERAWNOKEY
-    MOV AL, 1
-    MOV [KEYBOARDPRESSED], AL
-    IN AL, 0x60
-SCANCODERAWNOKEY:
-    CLI
-    XOR AL, AL
-    OUT 0x21, AL
-    STI
-    RET
-
-; SCANCODEREAD:
-; 	DB $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-
 ; KEYBOARDMAP:
 ;     ; 0
 ;     ;       0   1   2   3   4   5   6   7   8   9
@@ -124,6 +95,30 @@ KEYBOARDPRESSED:        db 0
 ; KEYBOARDINKEY:          DB $FF
 
 @IF keyboardConfig.sync
+
+SCANCODERAW:
+    CLI
+    MOV AL, 2
+    OUT 0x21, AL
+    STI
+
+    MOV AL, 0
+    MOV [KEYBOARDPRESSED], AL
+SCANCODERAWL1:
+    IN AL, 0x64
+    TEST AL, 1
+    JZ SCANCODERAWNOKEY
+    TEST AL, 0x20
+    JNZ SCANCODERAWNOKEY
+    MOV AL, 1
+    MOV [KEYBOARDPRESSED], AL
+    IN AL, 0x60
+SCANCODERAWNOKEY:
+    CLI
+    XOR AL, AL
+    OUT 0x21, AL
+    STI
+    RET
 
     ; SCANCODESINGLEKEYPRESSEDSHIFT:
     ;     PUSH AF
@@ -526,6 +521,131 @@ KEYBOARDPRESSED:        db 0
     ; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 @ELSE
+
+SCANCODEREAD:
+	DB $00, $00, $00, $00, $00, $00, $00, $00
+	DB $00, $00, $00, $00, $00, $00, $00, $00
+SCANCODEREADE:
+	DB $00, $00, $00, $00, $00, $00, $00, $00
+	DB $00, $00, $00, $00, $00, $00, $00, $00
+
+KEYBOARDBUFFER:     db 0
+
+KEYBOARDMANAGER:
+    ; rawcode = inp(0x60); /* read scancode from keyboard controller */
+    IN AL, 0x60
+    MOV BL, AL
+    ; make_break = !(rawcode & 0x80); /* bit 7: 0 = make, 1 = break */
+    MOV AH, AL
+    AND AH, 0x80
+    XOR AH, 0xff
+
+    ; scancode = rawcode & 0x7F;
+    AND BL, 0x7f
+    MOV BH, 0
+
+    MOV CL, [KEYBOARDBUFFER]
+    ; if (buffer == 0xE0) { /* second byte of an extended key */
+    CMP CL, 0x0e
+    JNE KEYBOARDMANAGERJ1
+
+    ;     if (scancode < 0x60) {
+    CMP AL, 0x60
+    JA KEYBOARDMANAGERJ1B
+
+    MOV CL, BL
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    MOV CH, [SCANCODEREADE+BX]
+    PUSH BX
+    MOV BL, CL
+    AND BL, 0x07
+
+    CMP AH, 0x00
+    JZ KEYBOARDMANAGERJ1BSPACE
+
+    MOV CL, [BITMASK+BX]
+    OR CH, CL
+
+    JMP KEYBOARDMANAGERJ1BDONE
+
+KEYBOARDMANAGERJ1BSPACE:
+    MOV CL, [BITMASKN+BX]
+    AND CH, CL
+
+KEYBOARDMANAGERJ1BDONE:
+    POP BX
+    MOV [SCANCODEREADE+BX], CH
+
+    ;         extended_keys[scancode] = make_break;
+    ;     }
+
+KEYBOARDMANAGERJ1B:
+    ;     buffer = 0;
+    MOV AL, 0
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ1:
+    ; } else if (buffer >= 0xE1 && buffer <= 0xE2) {
+    CMP CL, 0xe1
+    JB KEYBOARDMANAGERJ2
+    CMP CL, 0x0e2
+    JA KEYBOARDMANAGERJ2
+
+    ;     buffer = 0; /* ingore these extended keys */
+    MOV AL, 0
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ2:
+    ; } else if (rawcode >= 0xE0 && rawcode <= 0xE2) {
+    CMP AH, 0xe0
+    JB KEYBOARDMANAGERJ3
+    CMP AH, 0x0e2
+    JA KEYBOARDMANAGERJ3
+
+        ; buffer = rawcode; /* first byte of an extended key */
+    MOV [KEYBOARDBUFFER], AL
+    JMP KEYBOARDMANAGERJ4
+
+KEYBOARDMANAGERJ3:
+    ; } else if (scancode < 0x60) {
+    CMP AL, 0x60
+    JA KEYBOARDMANAGERJ4
+
+        ; normal_keys[scancode] = make_break;
+
+    MOV CL, BL
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    MOV CH, [SCANCODEREAD+BX]
+    PUSH BX
+    MOV BL, CL
+    AND BL, 0x07
+
+    CMP AH, 0x00
+    JZ KEYBOARDMANAGERJ3BSPACE
+
+    MOV CL, [BITMASK+BX]
+    OR CH, CL
+
+    JMP KEYBOARDMANAGERJ3BDONE
+
+KEYBOARDMANAGERJ3BSPACE:
+    MOV CL, [BITMASKN+BX]
+    AND CH, CL
+
+KEYBOARDMANAGERJ3BDONE:
+    POP BX
+    MOV [SCANCODEREAD+BX], CH
+
+    ; }
+
+KEYBOARDMANAGERJ4:
+   IRET
 
 ; KEYBOARDQUEUE:          DS 10,$FF
 ; KEYBOARDQUEUERPOS:      DB $00
@@ -1144,19 +1264,19 @@ KEYBOARDPRESSED:        db 0
 ;     ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
 ;     ; a key pressed, we must also wait for FREE(0) state, first.
 
-;     WAITKEY:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR Z, WAITKEY1
-;     WAITKEY0:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR NZ, WAITKEY0
-;     WAITKEY1:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR Z, WAITKEY1
-;         RET
+    WAITKEY:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JZ WAITKEY1
+    WAITKEY0:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JNZ WAITKEY0
+    WAITKEY1:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JZ WAItKEY1
+        RET
 
 ;     ; ----------------------------------------------------------------------------
 ;     ; WAITKEYRELEASE
