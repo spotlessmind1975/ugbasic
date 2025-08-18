@@ -35,64 +35,64 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; KEYBOARDMAP:
-;     ; 0
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
-;     ; 1
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0,  0,  0,  0,  0, 'N', 00,  0, 13,'\\'
-;     ; 2
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
-;     ; 3
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, '.','0','9','O','I','L','K','M',','
-;     ; 4
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     '8','7','U','Y','H','J','N',' ', '6','5'
-;     ; 5
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     'R','T','G','F','B','V','4','3','E','W'
-;     ; 6
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     'S','D','C','X','1','2', 27,'Q',  9,'A'
-;     ; 7
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     00,'Z','8',  0,  0,  0,  0,  0,  0,  8
-;     DB     $FF
+KEYBOARDMAP:
+    ; 0
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
+    ; 1
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0,  0,  0,  0,  0, 'N', 00,  0, 13,'\\'
+    ; 2
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
+    ; 3
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, '.','0','9','O','I','L','K','M',','
+    ; 4
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     '8','7','U','Y','H','J','N',' ', '6','5'
+    ; 5
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'R','T','G','F','B','V','4','3','E','W'
+    ; 6
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'S','D','C','X','1','2', 27,'Q',  9,'A'
+    ; 7
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     00,'Z','8',  0,  0,  0,  0,  0,  0,  8
+    DB     0xFF
 
-; KEYBOARDMAP2:
-;     ; 0
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
-;     ; 1
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0,  0,  0,  0,  0,'n', 00,  0, 13,'\\'
-;     ; 2
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
-;     ; 3
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB      0, '.','0','9','o','i','l','k','m',','
-;     ; 4
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     '8','7','u','y','h','j','n',' ', '6','5'
-;     ; 5
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     'r','t','g','f','b','v','4','3','e','w'
-;     ; 6
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     's','d','c','x','1','2', 27,'q',  9,'a'
-;     ; 7
-;     ;       0   1   2   3   4   5   6   7   8   9
-;     DB     00,'z','8',  0,  0,  0,  0,  0,  0,  8
-;     DB    $FF
+KEYBOARDMAP2:
+    ; 0
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
+    ; 1
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0,  0,  0,  0,  0,'n', 00,  0, 13,'\\'
+    ; 2
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
+    ; 3
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB      0, '.','0','9','o','i','l','k','m',','
+    ; 4
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     '8','7','u','y','h','j','n',' ', '6','5'
+    ; 5
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     'r','t','g','f','b','v','4','3','e','w'
+    ; 6
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     's','d','c','x','1','2', 27,'q',  9,'a'
+    ; 7
+    ;       0   1   2   3   4   5   6   7   8   9
+    DB     00,'z','8',  0,  0,  0,  0,  0,  0,  8
+    DB    0xFF
 
-; KEYBOARDSHIFT:          DB $00
+KEYBOARDSHIFT:          DB 0x00
 KEYBOARDPRESSED:        db 0
 KEYBOARDACTUAL:         DB 0xff
-; KEYBOARDINKEY:          DB $FF
+KEYBOARDINKEY:          DB 0xff
 
 @IF keyboardConfig.sync
 
@@ -1208,253 +1208,234 @@ KEYBOARDASFSTATE:    db 0
         JZ WAITKEY1
         RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; WAITKEYRELEASE
-;     ; ----------------------------------------------------------------------------
-;     ; This routine will wait for a key press AND for a release. It means that it 
-;     ; will, first, WAITKEY. Then, it will wait for a FREE(0) state.
+    ; ----------------------------------------------------------------------------
+    ; WAITKEYRELEASE
+    ; ----------------------------------------------------------------------------
+    ; This routine will wait for a key press AND for a release. It means that it 
+    ; will, first, WAITKEY. Then, it will wait for a FREE(0) state.
 
-;     WAITKEYRELEASE:
-;         CALL WAITKEY
-;     WAITKEYRELEASE0:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR NZ, WAITKEYRELEASE0
-;         RET
+    WAITKEYRELEASE:
+        CALL WAITKEY
+    WAITKEYRELEASE0:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JNZ WAITKEYRELEASE0
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEYSTATE
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to detect if any key has been pressed. It does
-;     ; not disturb the hardware but it will use the memory map, that has been
-;     ; refreshed by the last IRQ.
-;     ;
-;     ; Input:
-;     ; - A : key to check
-;     ;
-;     ; Return values:
-;     ; - C : key pressed (1) or not (0)
+    ; ----------------------------------------------------------------------------
+    ; KEYSTATE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to detect if any key has been pressed. It does
+    ; not disturb the hardware but it will use the memory map, that has been
+    ; refreshed by the last IRQ.
+    ;
+    ; Input:
+    ; - A : key to check
+    ;
+    ; Return values:
+    ; - C : key pressed (1) or not (0)
 
-;     KEYSTATE:
+    KEYSTATE:
 
-;         LD HL, SCANCODEREAD 
+        MOV DI, SCANCODEREAD 
+        MOV SI, BITMASK
 
-;         PUSH AF
-;         SRL A
-;         SRL A
-;         SRL A
-;         LD E, A
-;         LD A, 0
-;         LD D, A
-;         ADD HL, DE
-;         POP AF
+        MOV BL, AL
+        SAR BL, 1
+        SAR BL, 1
+        SAR BL, 1
+        MOV BH, 0
+        MOV CL, [DI+BX]
 
-;         PUSH AF
-;         AND $07
-;         LD B, A
-;         POP AF
+        AND AL, 0x07
+        MOV BL, AL
 
-;         PUSH HL
-;         LD HL, BITMASK
-;         LD E, B
-;         LD D, 0
-;         ADD HL, DE
-;         LD A, (HL)
-;         POP HL
-;         LD B, A
-;         LD A, (HL)
-;         AND B
-;         CP B
-;         JR Z, KEYSTATEL1Y
-;     KEYSTATEL1N:
-;         SCF
-;         CCF
-;         RET
-;     KEYSTATEL1Y:
-;         SCF
-;         RET
+        MOV CH, [SI+BX]
+        AND CL, CH
+        CMP CL, CH
+        JE KEYSTATEL1Y
+        CLC
+        RET
+    KEYSTATEL1Y:
+        STC
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; SCANCODE
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve the key pressed. It will not disturb
-;     ; the hardware, since it will use the KEYBOARDACTUAL value.
-;     ;
-;     ; Return values:
-;     ; - A : KEYBOARDACTUAL
+    ; ----------------------------------------------------------------------------
+    ; SCANCODE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the key pressed. It will not disturb
+    ; the hardware, since it will use the KEYBOARDACTUAL value.
+    ;
+    ; Return values:
+    ; - A : KEYBOARDACTUAL
 
-;     SCANCODE:
-;         LD A, (KEYBOARDINKEY)
-;         CP $FF
-;         JR Z, SCANCODE0
-;         RET
-;     SCANCODE0:
-;         LD A, (KEYBOARDACTUAL)
-;         RET
+    SCANCODE:
+        MOV AL, [KEYBOARDINKEY]
+        CMP AL, 0xff
+        JZ SCANCODE0
+        RET
+    SCANCODE0:
+        MOV AL, [KEYBOARDACTUAL]
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; ASCIICODE
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve the key pressed, converted into 
-;     ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
-;     ;
-;     ; Return values:
-;     ; - A : ASCII value
+    ; ----------------------------------------------------------------------------
+    ; ASCIICODE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the key pressed, converted into 
+    ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
+    ;
+    ; Return values:
+    ; - A : ASCII value
 
-;     ASCIICODE:
-;         CALL SCANCODE
-;         CP $ff
-;         JR Z, ASCIICODEDIR
-;         LD A, 0
-;         RET
-;     ASCIICODEDIR:
-;         LD HL, KEYBOARDMAP 
-;         LD E, A
-;         LD A, 0
-;         LD D, A
-;         ADD HL, DE
-;         LD A, (HL)
-;         RET
+    ASCIICODE:
+        CALL SCANCODE
+        CMP AL, 0xff
+        JZ ASCIICODEDIR
+        MOV AL, 0
+        RET
+    ASCIICODEDIR:
+        MOV DI, [KEYBOARDMAP]
+        MOV BL, AL
+        MOV BH, 0
+        MOV AL, [DI+BX]
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEYPRESS
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve if a specific key is pressed, 
-;     ; counting the ASF state. It will return the value only in the duty cycle.
-;     ;
-;     ; Input:
-;     ; - X : key to check
-;     ;
-;     ; Return values:
-;     ; - C : key pressed (1) or not (0)
+    ; ----------------------------------------------------------------------------
+    ; KEYPRESS
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve if a specific key is pressed, 
+    ; counting the ASF state. It will return the value only in the duty cycle.
+    ;
+    ; Input:
+    ; - X : key to check
+    ;
+    ; Return values:
+    ; - C : key pressed (1) or not (0)
 
-;     KEYPRESS:
+    KEYPRESS:
 
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR Z, KEYSINGLE0
-;         LD B, A
-;         DEC B
-;         JR Z, KEYSINGLE1
-;         DEC B
-;         JR Z, KEYSINGLE2
-;         DEC B
-;         JR Z, KEYSINGLE3
-;         JP KEYBOARDASFDONE
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JZ KEYSINGLE0
+        MOV BL, AL
+        DEC BL
+        JZ KEYSINGLE1
+        DEC BL
+        JZ KEYSINGLE2
+        DEC BL
+        JZ KEYSINGLE3
+        JMP KEYBOARDASFDONE
 
-;     KEYSINGLE0:
-;     KEYSINGLE2:
-;         SCF
-;         CCF
-;         RET
+    KEYSINGLE0:
+    KEYSINGLE2:
+        CLC
+        RET
 
-;     KEYSINGLE1:
-;     KEYSINGLE3:
-;         CALL KEYSTATE
-;         RET
+    KEYSINGLE1:
+    KEYSINGLE3:
+        CALL KEYSTATE
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEYPRESSED
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve the pressed key, counting the ASF 
-;     ; state. It will return the value only in the duty cycle.
-;     ;
-;     ; Return values:
-;     ; - A : KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
+    ; ----------------------------------------------------------------------------
+    ; KEYPRESSED
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the pressed key, counting the ASF 
+    ; state. It will return the value only in the duty cycle.
+    ;
+    ; Return values:
+    ; - A : KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
 
-;     KEYPRESSED:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 0
-;         JR Z, KEYPRESSED0
-;         LD B, A
-;         DEC B
-;         JR Z, KEYPRESSED1
-;         DEC B
-;         JR Z, KEYPRESSED2
-;         DEC B
-;         JR Z, KEYPRESSED3
-;         RET
+    KEYPRESSED:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 0
+        JZ KEYPRESSED0
+        MOV BL, AL
+        DEC BL
+        JZ KEYPRESSED1
+        DEC BL
+        JZ KEYPRESSED2
+        DEC BL
+        JZ KEYPRESSED3
+        RET
 
-;     KEYPRESSED0:
-;     KEYPRESSED2:
-;         LD A, $FF
-;         RET
+    KEYPRESSED0:
+    KEYPRESSED2:
+        MOV AL, 0xff
+        RET
 
-;     KEYPRESSED1:
-;     KEYPRESSED3:
-;         LD A, (KEYBOARDACTUAL)
-;         RET
+    KEYPRESSED1:
+    KEYPRESSED3:
+        MOV AL, [KEYBOARDACTUAL]
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; INKEY
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve the pressed key, counting the ASF 
-;     ; state, and converted to ASCII. It will return the value only in 
-;     ; the duty cycle.
-;     ;
-;     ; Return values:
-;     ; - A : ASCII CODE of KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
+    ; ----------------------------------------------------------------------------
+    ; INKEY
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the pressed key, counting the ASF 
+    ; state, and converted to ASCII. It will return the value only in 
+    ; the duty cycle.
+    ;
+    ; Return values:
+    ; - A : ASCII CODE of KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
 
-;     WAITKEY02:
-;         PUSH AF
-;     WAITKEY02L:
-;         LD A, (KEYBOARDASFSTATE)
-;         CP 1
-;         JR Z, WAITKEY02L
-;         CP 3
-;         JR Z, WAITKEY02L
-;         POP AF
-;         RET
+    WAITKEY02:
+        PUSH AX
+    WAITKEY02L:
+        MOV AL, [KEYBOARDASFSTATE]
+        CMP AL, 1
+        JZ WAITKEY02L
+        CMP AL, 3
+        JZ WAITKEY02L
+        POP AX
+        RET
 
-;     INKEY:
-;         CALL KEYBOARDEMPTY
-;         JR C, INKEYB
-;         CALL KEYBOARDPOP
-;         CALL ASCIICODEDIR
-;         RET
-;     INKEYB:
-;         CALL KEYPRESSED
-;         CP $FF
-;         JR Z, INKEY0
-;         LD (KEYBOARDINKEY), A
-;         LD A, (KEYBOARDSHIFT)
-;         AND $04
-;         CP $04
-;         JR Z, INKEYUP
-;         LD HL, KEYBOARDMAP2
-;         JR INKEYCOMMON
-; INKEYUP:
-;         LD HL, KEYBOARDMAP
-; INKEYCOMMON:
-;         LD A, (KEYBOARDINKEY)
-;         LD E, A
-;         LD A, 0
-;         LD D, A
-;         ADD HL, DE
-;         LD A, (HL)
-;         CALL WAITKEY02
-;         RET
-;     INKEY0:
-;         LD A, 0
-;         RET
+    INKEY:
+        ; CALL KEYBOARDEMPTY
+        ; JC INKEYB
+        ; CALL KEYBOARDPOP
+        ; CALL ASCIICODEDIR
+        ; RET
+    INKEYB:
+        CALL KEYPRESSED
+        CMP AL, 0xff
+        JZ INKEY0
+        MOV [KEYBOARDINKEY], AL
+        MOV AL, [KEYBOARDSHIFT]
+        AND AL, 0x04
+        CMP AL, 0x04
+        JZ INKEYUP
+        MOV DI, KEYBOARDMAP2
+        JMP INKEYCOMMON
+    INKEYUP:
+        MOV DI, KEYBOARDMAP
+    INKEYCOMMON:
+        MOV AL, [KEYBOARDINKEY]
+        MOV BL, AL
+        MOV BH, 0
+        MOV AL, [DI+BX]
+        CALL WAITKEY02
+        RET
+    INKEY0:
+        MOV AL, 0
+        RET
 
-;     ; ----------------------------------------------------------------------------
-;     ; KEY SHIFT
-;     ; ----------------------------------------------------------------------------
-;     ; This routine can be called to retrieve the status of key / control buttons.
-;     ;
-;     ; Return values:
-;     ; - A : bitmap of key pressed
-;     ;           0	Left SHIFT
-;     ;           1	Right SHIFT
-;     ;           2	CAPS LOCK
-;     ;           3	CONTROL
-;     ;           4	Left ALT
-;     ;           5	Right ALT
+    ; ----------------------------------------------------------------------------
+    ; KEY SHIFT
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the status of key / control buttons.
+    ;
+    ; Return values:
+    ; - A : bitmap of key pressed
+    ;           0	Left SHIFT
+    ;           1	Right SHIFT
+    ;           2	CAPS LOCK
+    ;           3	CONTROL
+    ;           4	Left ALT
+    ;           5	Right ALT
 
-;     KEYSHIFT:
-;         LD A, (KEYBOARDSHIFT)
-;         RET
+    KEYSHIFT:
+        MOV AL, [KEYBOARDSHIFT]
+        RET
 
 ;     ; ----------------------------------------------------------------------------
 ;     ; CLEAR KEY
