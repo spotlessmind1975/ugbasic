@@ -53,12 +53,20 @@ extern char DATATYPE_AS_STRING[][16];
 @english
 The ''RND'' function generates integers at random, between zero and any number specified
 in brackets (minus one). If your specified number is greater than zero, random numbers will be generated 
-up to that maximum number.
+up to that maximum number (minus one). 
+
+To better understand how the bounds work for random number extraction, if the value ''max'' 
+is an integer greater than ''1'', then the call to ''RND(max)'' generates a random integer 
+between ''0'' and ''max-1''.
 
 @italian
 La funzione ''RND'' genera numeri interi casuali, compresi tra zero e qualsiasi numero 
 specificato tra parentesi (meno uno). Se il numero specificato è maggiore di zero, verranno generati 
-numeri casuali fino a quel numero massimo.
+numeri casuali fino a quel numero massimo (meno uno).
+
+Per meglio comprendere come funzionano gli estremi per l'estrazione dei numeri casuali,
+se il valore ''max'' è un intero più grande di ''1'', allora la chiamata a ''RND(max)'' 
+genera un numero intero casuale tra ''0'' e ''max-1''.
 
 @syntax = RND(max)
 
