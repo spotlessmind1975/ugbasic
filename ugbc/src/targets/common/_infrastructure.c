@@ -11337,6 +11337,97 @@ Variable * variable_array_sum_vars( Environment * _environment, char * _name ) {
 }
 
 /* <usermanual>
+@keyword ARRAY MAX
+
+@english
+
+The ''ARRAY MAX'' statement find out the maximum value of all the elements inside 
+a vector or ''array''.
+
+@italian
+
+L'istruzione trova il valore massimo di tutti gli elementi
+all'interno di un vettore o matrice array (quindi, un ''array'' 
+generico).
+
+@syntax = [ARRAY] MAX( array )
+
+@example IF MAX(vector) = 42 THEN: PRINT "max value is 42": ENDIF
+
+@alias MAX
+
+@target all
+</usermanual> */
+
+Variable * variable_array_max_vars( Environment * _environment, char * _name ) {
+    
+    Variable * array = variable_retrieve( _environment, _name );
+    Variable * max = NULL;
+
+    if ( array->type != VT_TARRAY ) {
+        CRITICAL_NOT_ARRAY( array->name );
+    }
+
+    if ( array->size > 0 ) {
+
+        MAKE_LABEL
+        char loopLabel[MAX_TEMPORARY_STORAGE]; sprintf( loopLabel, "%slabel", label );
+        char targetLabel[MAX_TEMPORARY_STORAGE]; sprintf( targetLabel, "%starget", label );
+        char skipLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipLabel, "%sskip", label );
+        int sizeInElements = 1;
+        for( int i=0; i<array->arrayDimensions; ++i ) {
+            sizeInElements *= array->arrayDimensionsEach[i];
+        }
+        Variable * index;
+        if ( sizeInElements < 256 ) {
+            index = variable_temporary( _environment, VT_BYTE, "(index)");
+        } else {
+            index = variable_temporary( _environment, VT_WORD, "(index)");
+        }
+        max = variable_temporary( _environment, array->arrayType, "(max)");
+        variable_store( _environment, index->name, 0 );
+        variable_store( _environment, max->name, 0 );
+        Variable * value = variable_temporary( _environment, array->arrayType, "value");
+        Variable * startAddress = variable_temporary( _environment, VT_ADDRESS, "(startAddress)");
+        cpu_addressof_16bit( _environment, array->realName, startAddress->realName );
+        cpu_label( _environment, loopLabel );
+            switch( VT_BITWIDTH( array->arrayType ) ) {
+                case 32:
+                    cpu_peekd( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 16:
+                    cpu_peekw( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                case 8:
+                    cpu_peek( _environment, startAddress->realName, value->realName );
+                    variable_increment( _environment, startAddress->name );
+                    break;
+                default:
+                    CRITICAL_NOT_SUPPORTED( _name );
+            }
+            Variable * comparison = variable_less_than( _environment, max->name, value->name, 0 );
+            cpu_compare_and_branch_8bit_const( _environment, comparison->realName, 0, skipLabel, 1 );
+            variable_move( _environment, value->name, max->name );
+            cpu_label( _environment, skipLabel );
+            variable_increment( _environment, index->name );
+            variable_compare_and_branch_const( _environment, index->name, sizeInElements, label, 1 );
+        cpu_jump( _environment, loopLabel );
+        cpu_label( _environment, label );
+    } else {
+        CRITICAL_NOT_SUPPORTED( array->name );
+    }
+
+    return max;
+
+}
+
+/* <usermanual>
 @keyword FILL (array)
 
 @english

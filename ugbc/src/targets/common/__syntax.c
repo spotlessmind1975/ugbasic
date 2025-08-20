@@ -5655,7 +5655,7 @@ certain number of concatenated lines.
 Il comando ''POLYLINE'' permette di disegnare 
 un certo numero di linee concatenate.
 
-@syntax POLYLINE [[x1],[y1]] TO [x2],[y2] [TO [x3],[y3] [TO [x4],[y4]]]...
+@syntax POLYLINE [[x1],[y1]] TO x2, y2 [TO x3,y3 [TO x4,y4]]...
 
 @example POLYLINE 10,10 TO 20,10 TO 20,20 TO 10,20 TO 10,10
 

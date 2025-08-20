@@ -62,6 +62,9 @@ of the first term. If the conversion is not possible, a specific error will be i
 The comparison of heterogeneous types is, in effect, a comparison of implicitly 
 promoted types. In particular, static strings are always promoted to dynamic strings.
 
+There is also a variant of the function that accepts a single parameter. In this case, 
+the parameter must be an array, and is a synonym for the ''ARRAY MAX'' command.
+
 @italian
 La funzione ''MAX'' consente di identificare il maggiore tra due valori. Se entrambi i termini 
 sono costanti (numeriche), la valutazione viene effettuata al momento della compilazione. 
@@ -75,8 +78,11 @@ In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamich
 @syntax = MAX(#const1,#const2)
 @syntax = MAX(val1,val2)
 @syntax = MAX(string1,string2)
+@syntax = MAX(array)
 
 @example result = MAX( a, b )
+@example DIM v(21) AS INTEGER
+@example v(1) = 42: PRINT MAX( v ): ' it will be 42!
 
 @usedInExample maths_relative_01.bas
 
