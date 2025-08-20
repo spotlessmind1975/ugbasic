@@ -646,6 +646,26 @@ typedef struct _Resource {
 #define VT_UNSIGN_16BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_16BIT(v) : (v) ) 
 #define VT_UNSIGN_32BIT( t, v ) ( VT_SIGNED(t) ? VT_USIGN_32BIT(v) : (v) ) 
 
+#define VT_VALUE( v, t, d ) ( ( v == t ) ? d : 0 )
+
+#define VT_MIN( t ) ( \
+        VT_VALUE( t, VT_BYTE, 0x00 ) + \
+        VT_VALUE( t, VT_SBYTE, 0x80 ) + \
+        VT_VALUE( t, VT_WORD, 0x0000 ) + \
+        VT_VALUE( t, VT_SWORD, 0x8000 ) + \
+        VT_VALUE( t, VT_DWORD, 0x00000000 ) + \
+        VT_VALUE( t, VT_DWORD, 0x80000000 ) \
+    )
+
+#define VT_MAX( t ) ( \
+        VT_VALUE( t, VT_BYTE, 0xff ) + \
+        VT_VALUE( t, VT_SBYTE, 0x7f ) + \
+        VT_VALUE( t, VT_WORD, 0xffff ) + \
+        VT_VALUE( t, VT_SWORD, 0x7fff ) + \
+        VT_VALUE( t, VT_DWORD, 0xffffffff ) + \
+        VT_VALUE( t, VT_DWORD, 0x7fffffff ) \
+    )
+
 #define VT_DIRECT_ASSIGN( t ) ( \
         ( t == VT_BUFFER ) + \
         ( t == VT_IMAGE ) + \
@@ -5734,6 +5754,7 @@ Variable *              variable_and( Environment * _environment, char * _left, 
 Variable *              variable_and_const( Environment * _environment, char * _source, int _mask );
 Variable *              variable_array_count_vars( Environment * _environment, char * _name, char * _target );
 Variable *              variable_array_max_vars( Environment * _environment, char * _name );
+Variable *              variable_array_min_vars( Environment * _environment, char * _name );
 Variable *              variable_array_sum_vars( Environment * _environment, char * _name );
 void                    variable_array_fill( Environment * _environment, char * _name, int _value );
 void                    variable_array_fill_random( Environment * _environment, char * _name, int _base, int _min_value, int _max_value, int _count, int _boolean );

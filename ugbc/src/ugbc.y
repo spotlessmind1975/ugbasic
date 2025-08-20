@@ -3592,6 +3592,12 @@ exponential_less:
     | MAX OP expr CP {
         $$ = variable_array_max_vars( _environment, $3 )->name;
     }
+    | ARRAY MIN OP expr CP {
+        $$ = variable_array_min_vars( _environment, $4 )->name;
+    }
+    | MIN OP expr CP {
+        $$ = variable_array_min_vars( _environment, $3 )->name;
+    }
     | LEN OP expr CP {
         $$ = variable_string_len( _environment, $3 )->name;
     }

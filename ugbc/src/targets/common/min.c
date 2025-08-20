@@ -63,6 +63,9 @@ of the first term. If the conversion is not possible, a specific error will be i
 The comparison of heterogeneous types is, in effect, a comparison of implicitly 
 promoted types. In particular, static strings are always promoted to dynamic strings.
 
+There is also a variant of the function that accepts a single parameter. In this case, 
+the parameter must be an array, and is a synonym for the ''ARRAY MIN'' command.
+
 @italian
 La funzione ''MIN'' consente di identificare il minore tra due valori. Se entrambi i termini 
 sono costanti (numeriche), la valutazione viene effettuata al momento della compilazione. 
@@ -73,11 +76,17 @@ primo termine. Se la conversione non è possibile, verrà emesso un errore speci
 confronto tra tipi eterogenei è, in effetti, un confronto tra tipi promossi implicitamente. 
 In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamiche.
 
+Esiste anche una variante della funzione che accetta un singolo parametro. In questo caso,
+il parametro deve essere un array ed è sinonimo del comando ''ARRAY MIN''.
+
 @syntax = MIN(#const1,#const2)
 @syntax = MIN(val1,val2)
 @syntax = MIN(string1,string2)
+@syntax = MIN(array)
 
 @example result = MIN( a, b )
+@example DIM v(21) AS INTEGER
+@example v(1) = 42: PRINT MIN( v ): ' it will be 21!
 
 @usedInExample maths_relative_02.bas
 

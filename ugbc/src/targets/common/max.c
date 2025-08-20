@@ -75,6 +75,9 @@ primo termine. Se la conversione non è possibile, verrà emesso un errore speci
 confronto tra tipi eterogenei è, in effetti, un confronto tra tipi promossi implicitamente. 
 In particolare, le stringhe statiche vengono sempre promosse a stringhe dinamiche.
 
+Esiste anche una variante della funzione che accetta un singolo parametro. In questo caso,
+il parametro deve essere un array ed è sinonimo del comando ''ARRAY MAX''.
+
 @syntax = MAX(#const1,#const2)
 @syntax = MAX(val1,val2)
 @syntax = MAX(string1,string2)
