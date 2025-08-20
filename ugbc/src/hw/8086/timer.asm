@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+TIMERRUNNING:   db   0x00
+TIMERSTATUS:    db   0x00
+TIMERCOUNTER:   dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+TIMERINIT:      dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+TIMERADDRESS:   dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+
 TIMERMANAGER:
 
     ; First of all, we have to save the actual state of registers
@@ -47,7 +53,7 @@ TIMERMANAGER:
     ; RET
 
 	PUSH AX
-    MOV AL, ]TIMERRUNNING]
+    MOV AL, [TIMERRUNNING]
     CMP AL, 0
     JZ TIMERMANAGERGO
     POP AX
@@ -83,25 +89,25 @@ TIMERMANAGERGO:
     ; loop through every specific timer status
     ; looking to the specific bit in the TIMERSTATUS
     ; control word.
-    LD A, (TIMERSTATUS)
+    MOV AL, [TIMERSTATUS]
 
     ; Up to 8 timers.
-    LD B, 0
-    PUSH AF
+    MOV BL, 0
+    PUSH AX
 
 TIMERMANAGERL1:
-    POP AF
+    POP AX
 
     ; Move the first bit into the carry.
-    SRA A
+    SAR AL, 1
 
     ; If the carry is cleared, move to the next timer. 
-    JR NC, TIMERMANAGERL2
+    JNC TIMERMANAGERL2
 
-    PUSH AF
-    PUSH DE
-    PUSH HL
-    PUSH BC
+    PUSH AX
+    PUSH DI
+    PUSH SI
+    PUSH BX
 
     ; Retrieve the actual time counter, using the current
     ; index (X-1). The Y will be the offset starting from
@@ -109,95 +115,65 @@ TIMERMANAGERL1:
     ;
     ;       TIMERCOUNTER + (X-1) * 2 -> Y = (X-1) * 2
     ;
-    LD A, B
-    SLA A
-    LD E, A
-    LD A, 0
-    LD D, A 
+    MOV AL, BL
+    SAL AL, 1
+    MOV AH, 0 
 
-    LD HL, TIMERCOUNTER 
-    ADD HL, DE
+    MOV SI, TIMERCOUNTER 
+    ADD SI, AX
 
     ; Now we are going to check if the timer is not zero.
     ; If not zero, we must decrement the counter.
-    INC HL
-    LD A, (HL)
-    CP 0
-    JR NZ, TIMERMANAGERL2AH
-    DEC HL
-    LD A, (HL)
-    CP 0
-    JR NZ, TIMERMANAGERL2AL
+    MOV DX, [SI]
+    CMP DX, 0
+    JNZ TIMERMANAGERL2AL
 
     ; Ok the counter is zero. So we must reset to the
     ; value we received previously, and call the routine.
 
-    LD HL, TIMERINIT
-    ADD HL, DE
-    LD A, (HL)
-    LD IXL, A
-    INC HL
-    LD A, (HL)
-    LD IXH, A
+    MOV SI, [TIMERINIT]
+    ADD DI, AX
+    MOV DX, [SI]
 
-    LD HL, TIMERCOUNTER 
-    ADD HL, DE
-    LD A, IXL
-    LD (HL), A
-    INC HL
-    LD A, IXH
-    LD (HL), A
+    MOV SI, [TIMERCOUNTER]
+    ADD DI, AX
+    MOV [SI], DX
 
 TIMERMANAGERJMP2:
-    LD HL, TIMERADDRESS
-    ADD HL, DE
+    MOV SI, [TIMERADDRESS]
+    ADD SI, AX
 
     ; Now we are going to check if the address
     ; to call is zero. In this case, we must
     ; avoid to jump to it.
-    INC HL
-    LD A, (HL)
-    CP 0
-    JR NZ, TIMERMANAGERJMP2AH
-    DEC HL
-    LD A, (HL)
-    CP 0
-    JR NZ, TIMERMANAGERJMP2AL
+    MOV DX, [SI]
+    CMP DX, 0
+    JNZ TIMERMANAGERJMP2AH
 
     JP TIMERMANAGERL2AL
 
-TIMERMANAGERJMP:
-    JP (HL)
-
 TIMERMANAGERJMP2AH:
 TIMERMANAGERJMP2AL:
-    LD HL, TIMERADDRESS
-    ADD HL, DE
-    LD A, (HL)
-    LD IXL, A
-    INC HL
-    LD A, (HL)
-    LD IXH, A
+    MOV DI, TIMERADDRESS 
+    ADD DI, AX
 
-    PUSH AF
-    PUSH HL
-    PUSH DE
-    
-    LD A, IXL
-    LD L, A
-    LD A, IXH
-    LD H, A
+    PUSH AX
+    PUSH SI
+    PUSH DI
+
+    MOV DX, [DI]
+    MOV SI, DX
 
     ; Disable timer before calling
 
-    LD C, 0
+    MOV CL, 0
     CALL TIMERSETSTATUS
 
-    CALL TIMERMANAGERJMP
+    CALL [SI]
 
-    POP DE
-    POP HL
-    POP AF
+    POP DI
+    POP SI
+    POP AX
 
     ; If we reach this line, we are going to decrement the
     ; counter since it is not zero.
@@ -205,178 +181,134 @@ TIMERMANAGERL2AH:
     ; Move to the LSB
 TIMERMANAGERL2AL:
     ; 16 bit decrement
-    LD HL, TIMERCOUNTER 
-    ADD HL, DE
-    PUSH DE
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    DEC HL
-    DEC DE
-    LD A, E
-    LD (HL), A
-    INC HL
-    LD A, D
-    LD (HL), A
-    POP DE
+    MOV SI, TIMERCOUNTER  
+    ADD SI, AX
+    MOV DX, [SI]
+    DEC DX
+    MOV [SI], DX
+
 TIMERMANAGERL2ALD:
 
-    POP BC
-    POP HL
-    POP DE
-    POP AF
+    POP BX
+    POP SI
+    POP DI
+    POP AX
 
     ; If we reach this line, we are going to check the next timer.
 TIMERMANAGERL2:
 
-    INC B
-    PUSH AF
-    LD A, B
-    CP 8
-    JP NZ, TIMERMANAGERL1
-    POP AF
+    INC BL
+    CMP BL, 8
+    JNZ TIMERMANAGERL1
+
+    POP AX
     
     ; Finally, restore the actual state of registers
 
-    LD A, 0
-    LD (TIMERRUNNING), A
+    MOV AL, 0
+    MOV [TIMERRUNNING], AL
     
-	POP	HL
-	POP	DE
-	POP	BC
-	EXX
-	POP	AF
-	EX	AF,AF'
-	POP	IY
-	POP	IX
-	POP	HL
-	POP	DE
-	POP	BC
-	POP	AF
+	POP	SI
+	POP	DI
+	POP	BX
 
     RET
 
 ; TIMERSETSTATUS(B,C)
 TIMERSETSTATUS:
-    PUSH AF
-    PUSH BC
-    LD A, B
-    CP 0
-    LD A, 1
-    JR Z, TIMERSETSTATUSDONE
+    PUSH AX
+    PUSH BX
+    MOV AL, 1
+    CMP BL, 0
+    JZ TIMERSETSTATUSDONE
 TIMERSETSTATUSL1:
-    SLA A
-    DEC B
-    JR NZ, TIMERSETSTATUSL1
+    SAL AL, 1
+    DEC BL
+    JNZ TIMERSETSTATUSL1
 TIMERSETSTATUSDONE:
-    PUSH AF
-    LD A, C
-    CP 0
-    JR Z, TIMERSETSTATUS0
+    CMP CL, 0
+    JZ TIMERSETSTATUS0
 TIMERSETSTATUS1:
-    LD A, (TIMERSTATUS)
-    LD B, A
-    POP AF
-    OR B
-    LD (TIMERSTATUS), A
-    POP BC
-    POP AF
+    PUSH AX
+    MOV AL, [TIMERSTATUS]
+    MOV BL, AL
+    POP AX
+    OR AL, BL
+    MOV [TIMERSTATUS], AL
+    POP BX
+    POP AX
     RET
 TIMERSETSTATUS0:
-    LD A, (TIMERSTATUS)
-    LD B, A
-    POP AF
-    XOR $FF
-    AND B
-    LD (TIMERSTATUS), A
-    POP BC
-    POP AF
+    MOV AL, [TIMERSTATUS]
+    MOV BL, AL
+    POP AX
+    XOR AL, 0xFF
+    AND AL, BL
+    MOV [TIMERSTATUS], AL
+    POP BX
+    POP AX
     RET
 
-; TIMERSETCOUNTER(B,IX)
+; TIMERSETCOUNTER(B,DX)
 TIMERSETCOUNTER:
-    PUSH AF
-    PUSH BC
-    PUSH IX
-    PUSH DE
+    PUSH AX
+    PUSH BX
+    PUSH DX
+    PUSH DI
 
-    LD A, B
-    SLA A
-    LD E, A
-    LD A, 0
-    LD D, A 
+    SAL BL, 1
+    MOV BH, 0
 
-    LD HL, TIMERCOUNTER 
-    ADD HL, DE
-    LD A, IXL
-    LD (HL), A
-    INC HL
-    LD A, IXH
-    LD (HL), A
+    MOV SI, TIMERCOUNTER 
+    ADD SI, BX
+    MOV [SI], DX
 
-    POP DE
-    POP IX
-    POP BC
-    POP AF
+    POP DI
+    POP DX
+    POP BX
+    POP AX
 
     RET
 
-; TIMERSETINIT(B,IX)
+; TIMERSETINIT(B,DX)
 TIMERSETINIT:
-    PUSH AF
-    PUSH BC
-    PUSH IX
-    PUSH DE
+    PUSH AX
+    PUSH BX
+    PUSH DX
+    PUSH DI
 
-    LD A, B
-    SLA A
-    LD E, A
-    LD A, 0
-    LD D, A 
+    SAL BL, 1
+    MOV BH, 0
 
-    LD HL, TIMERINIT
-    ADD HL, DE
-    LD A, IXL
-    LD (HL), A
-    INC HL
-    LD A, IXH
-    LD (HL), A
+    MOV SI, TIMERINIT
+    ADD SI, BX
+    MOV [SI], DX
 
-    POP DE
-    POP IX
-    POP BC
-    POP AF
+    POP DI
+    POP DX
+    POP BX
+    POP AX
 
     RET
 
 
-; TIMERSETADDRESS(B,IX)
+; TIMERSETADDRESS(B,Dx)
 TIMERSETADDRESS:
-    PUSH AF
-    PUSH BC
-    PUSH IX
-    PUSH DE
+    PUSH AX
+    PUSH BX
+    PUSH DX
+    PUSH DI
 
-    LD A, B
-    SLA A
-    LD E, A
-    LD A, 0
-    LD D, A 
+    SAL BL, 1
+    MOV BH, 0
 
-    LD HL, TIMERADDRESS
-    ADD HL, DE
-    LD A, IXL
-    LD (HL), A
-    INC HL
-    LD A, IXH
-    LD (HL), A
+    MOV SI, TIMERADDRESS
+    ADD SI, BX
+    MOV [SI], DX
 
-    POP DE
-    POP IX
-    POP BC
-    POP AF
+    POP DI
+    POP DX
+    POP BX
+    POP AX
 
     RET
-

@@ -42,7 +42,9 @@ KEYBOARDIRQSAVED:   dw 0, 0
 @ENDIF
 
 PCCGASTARTUP:
-    
+    MOV AX, 50
+    MOV [TICKSPERSECOND], AX
+
 @IF deployed.fp
 
     FINIT
@@ -50,9 +52,22 @@ PCCGASTARTUP:
 
 @ENDIF
 
+  CLI 
+
+@IF deployed.timer
+
+    PUSH DS
+    MOV DX, 0
+    MOV DS, DX
+    MOV WORD [0x1C * 4], TIMERMANAGER 
+    MOV DX, CS
+    MOV WORD [0x1C * 4 + 2], DX
+    POP DS
+
+@ENDIF
+
 @IF deployed.keyboard && !keyboardConfig.sync
 
-    CLI
     PUSH DS
     MOV DX, 0
     MOV DS, DX
@@ -69,20 +84,9 @@ PCCGASTARTUP:
     MOV DX, CS
     MOV WORD [9*4+2], DX
     POP DS
-    STI
-
-    ; The interrupt vector table (contains addresses of interrupt 
-    ; handling routines) is in memory starting at 0000:0000 address.
-
-    ; Every entry in the table consist of four bytes, so then offset
-    ; for 21h is 21h*4 = 84h (not 84, but 84h == 132).
-
-    ; Those four bytes of single entry are segment:offset address 
-    ; of routine, the offset part is stored as first word, segment
-    ; part is the second word (at 0:86h). Your original code does set 
-    ; only offset part, but not segment, that's why it jumps to 
-    ; F400h:1500h, you didn't change that old F400h of original DOS handler.
 
 @ENDIF
+
+    STI
 
     RET
