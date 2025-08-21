@@ -55,3 +55,6 @@
 [submodule "modules/sidreloc"]
 	path = modules/sidreloc
 	url = https://github.com/spotlessmind1975/sidreloc.git
+[submodule "modules/bsdnt"]
+	path = modules/bsdnt
+	url = https://github.com/spotlessmind1975/bsdnt.git
