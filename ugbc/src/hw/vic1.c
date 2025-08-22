@@ -3021,4 +3021,47 @@ void vic1_screen( Environment * _environment, char * _x, char * _y, char * _c ) 
 
 }
 
+void vic1_flash_begin( Environment * _environment, char * _index, char * _register ) {
+
+    deploy( flash, src_hw_vic1_flash_asm );
+
+    outline0("JSR FLASHBEGIN");
+    if ( _register ) {
+        outline1("LDA %s", _index );
+        outline0("ASL" );
+        outline0("TAX" );
+        outline0("LDA FLASHREGISTERADDRESSES, X" );
+        outline0("STA TMPPTR" );
+        outline0("INX" );
+        outline0("LDA FLASHREGISTERADDRESSES, X" );
+        outline0("STA TMPPTR+1" );
+        outline0("LDY #0" );
+        outline1("LDA %s", _register );
+        outline0("STA (TMPPTR), Y" );
+        outline0("INY" );
+        outline1("LDA %s", address_displacement( _environment, _register, "+1" ) );
+        outline0("STA (TMPPTR), Y" );
+    }
+    
+}
+
+void vic1_flash_register( Environment * _environment, char * _index, char * _timer, char * _color ) {
+
+    deploy( flash, src_hw_vic1_flash_asm );
+
+    outline1("LDX %s", _index );
+    outline1("LDY %s", _color );
+    outline1("LDA %s", _timer );
+    outline0("JSR FLASHREGISTER");
+
+}
+
+void vic1_flash_end( Environment * _environment ) {
+
+    deploy( flash, src_hw_vic1_flash_asm );
+
+    outline0("JSR FLASHEND");
+
+}
+
 #endif

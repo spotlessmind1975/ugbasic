@@ -110,6 +110,11 @@ MSPRITESMANAGERADDRESS:
     AND #1
     BEQ IRQSVCX 
     STA $D019
+
+@IF deployed.flash
+    JSR FLASHMANAGER
+@ENDIF
+
 @IF copperList
     NOP
     NOP

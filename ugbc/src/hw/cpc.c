@@ -2892,4 +2892,55 @@ void cpc_fade( Environment * _environment, char * _ticks ) {
     outline0( "EI" );
 
 }
+
+void cpc_flash_begin( Environment * _environment, char * _index, char * _register ) {
+
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( flash, src_hw_cpc_flash_asm );
+
+    outline0("CALL FLASHBEGIN");
+    if ( _register ) {
+        outline1("LD A, (%s)", _index );
+        outline1("LD B, (%s)", _register );
+        outline0("LD E, A" );
+        outline0("LD D, 0" );
+        outline0("LD HL, FLASHREGISTERADDRESSES" );
+        outline0("ADD HL, DE" );
+        outline0("ADD HL, DE" );
+        outline0("LD A, (HL)" );
+        outline0("LD E, A" );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline0("LD D, A" );
+        outline0("LD (HL), B" );
+    }
+
+}
+
+void cpc_flash_register( Environment * _environment, char * _index, char * _timer, char * _color ) {
+
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( flash, src_hw_cpc_flash_asm );
+
+    outline1("LD A, (%s)", _color );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _timer );
+    outline0("LD B, A" );
+    outline1("LD A, (%s)", _index );
+    outline0("CALL FLASHREGISTER");
+
+}
+
+void cpc_flash_end( Environment * _environment ) {
+
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( flash, src_hw_cpc_flash_asm );
+
+    outline0("CALL FLASHEND");
+
+}
+
 #endif

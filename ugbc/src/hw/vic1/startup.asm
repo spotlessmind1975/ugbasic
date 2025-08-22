@@ -124,6 +124,10 @@ VIC1IRQ:
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
+@IF deployed.flash
+    JSR FLASHMANAGER
+@ENDIF
+
     JMP $EABF
 
 VIC1STARTUP:

@@ -332,4 +332,8 @@ void gtia_flip_image( Environment * _environment, Resource * _image, char * _fra
 
 void gtia_screen( Environment * _environment, char * _x, char * _y, char * _c );
 
+void gtia_flash_begin( Environment * _environment, char * _index, char * _register );
+void gtia_flash_register( Environment * _environment, char * _index, char * _timer, char * _color );
+void gtia_flash_end( Environment * _environment );
+
 #endif

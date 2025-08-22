@@ -226,4 +226,8 @@ void vic2_fade( Environment * _environment, char * _ticks );
 
 void vic2_screen( Environment * _environment, char * _x, char * _y, char * _c );
 
+void vic2_flash_begin( Environment * _environment, char * _index, char * _register );
+void vic2_flash_register( Environment * _environment, char * _index, char * _timer, char * _color );
+void vic2_flash_end( Environment * _environment );
+
 #endif
