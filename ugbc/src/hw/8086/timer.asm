@@ -42,43 +42,14 @@ TIMERINIT:      dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 TIMERADDRESS:   dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
 TIMERMANAGER:
-
-    ; First of all, we have to save the actual state of registers
-
-	; PUSH	AF
-    ; LD A, (TIMERRUNNING)
-    ; CP 0
-    ; JR Z, TIMERMANAGERGO
-    ; POP     AF
-    ; RET
-
-	PUSH AX
-    MOV AL, [TIMERRUNNING]
-    CMP AL, 0
-    JZ TIMERMANAGERGO
-    POP AX
-    RET
-
 TIMERMANAGERGO:
 
-	; PUSH	BC
-	; PUSH	DE
-	; PUSH	HL
-	; PUSH	IX
-	; PUSH	IY
-	; EX	AF,AF'
-	; PUSH	AF
-	; EXX
-	; PUSH	BC
-	; PUSH	DE
-	; PUSH	HL
-
-	PUSH	DX
-	PUSH	CX
-	PUSH	BX
 	PUSH	AX
-	PUSH	DI
+	PUSH	BX
+	PUSH	CX
+	PUSH	DX
 	PUSH	SI
+	PUSH	DI
 
     ; LD A, 1
     ; LD (TIMERRUNNING), A
@@ -140,7 +111,7 @@ TIMERMANAGERL1:
     MOV [SI], DX
 
 TIMERMANAGERJMP2:
-    MOV SI, [TIMERADDRESS]
+    MOV SI, TIMERADDRESS
     ADD SI, AX
 
     ; Now we are going to check if the address
@@ -153,7 +124,6 @@ TIMERMANAGERJMP2:
     JP TIMERMANAGERL2AL
 
 TIMERMANAGERJMP2AH:
-TIMERMANAGERJMP2AL:
     MOV DI, TIMERADDRESS 
     ADD DI, AX
 
@@ -188,7 +158,7 @@ TIMERMANAGERL2AL:
     MOV [SI], DX
 
 TIMERMANAGERL2ALD:
-
+TIMERMANAGERJMP2AL:
     POP BX
     POP SI
     POP DI
@@ -197,6 +167,7 @@ TIMERMANAGERL2ALD:
     ; If we reach this line, we are going to check the next timer.
 TIMERMANAGERL2:
 
+    PUSH AX
     INC BL
     CMP BL, 8
     JNZ TIMERMANAGERL1
@@ -210,9 +181,14 @@ TIMERMANAGERL2:
     
 	POP	SI
 	POP	DI
+    POP	DX
+	POP	CX
 	POP	BX
+	POP	AX
 
-    RET
+    STI
+
+    IRET
 
 ; TIMERSETSTATUS(B,C)
 TIMERSETSTATUS:
@@ -239,6 +215,7 @@ TIMERSETSTATUS1:
     POP AX
     RET
 TIMERSETSTATUS0:
+    PUSH AX
     MOV AL, [TIMERSTATUS]
     MOV BL, AL
     POP AX
