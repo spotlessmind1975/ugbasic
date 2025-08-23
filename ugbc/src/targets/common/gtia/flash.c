@@ -43,7 +43,7 @@
 
 void flash( Environment * _environment, char * _index, char * _register ) {
 
-        Variable * idx = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+    Variable * idx = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
     Variable * reg = NULL;
     if ( _register ) {
         reg = variable_retrieve_or_define( _environment, _register, VT_ADDRESS, 0xd021 );

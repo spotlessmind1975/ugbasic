@@ -3115,4 +3115,39 @@ void gime_screen( Environment * _environment, char * _x, char * _y, char * _c ) 
 
 }
 
+void gime_flash_begin( Environment * _environment, char * _index, char * _register ) {
+
+    deploy( flash, src_hw_gime_flash_asm );
+
+    outline0("JSR FLASHBEGIN");
+    if ( _register ) {
+        outline1("LDA %s", _index );
+        outline0("ASLA" );
+        outline0("LDX FLASHREGISTERADDRESSES" );
+        outline0("LDY A,X" );
+        outline1("LDB %s", _register );
+        outline0("STB ,Y" );
+    }
+
+}
+
+void gime_flash_register( Environment * _environment, char * _index, char * _timer, char * _color ) {
+
+    deploy( flash, src_hw_gime_flash_asm );
+
+    outline1("LDA %s", _index );
+    outline1("LDB %s", _color );
+    outline1("LDX %s-1", _timer );
+    outline0("JSR FLASHREGISTER");
+
+}
+
+void gime_flash_end( Environment * _environment ) {
+
+    deploy( flash, src_hw_gime_flash_asm );
+
+    outline0("JSR FLASHEND");
+
+}
+
 #endif

@@ -120,6 +120,9 @@ SKIPGIMEROM
 @IF deployed.music
     JSR MUSICPLAYER
 @ENDIF
+@IF deployed.flash
+    JSR FLASHMANAGER
+@ENDIF
 
     JSR IRQSVC
 

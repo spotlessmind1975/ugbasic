@@ -7,7 +7,7 @@
 ;  * you may not use this file except in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
-;  * http://www.apache.org/licenses/LICENSE-2.0
+;  * http//www.apache.org/licenses/LICENSE-2.0
 ;  *
 ;  * Unless required by applicable law or agreed to in writing, software
 ;  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,9 @@
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
 ;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
-;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+;  * Licenza. Una copia della Licenza è disponibile all'indirizzo
 ;  *
-;  * http://www.apache.org/licenses/LICENSE-2.0
+;  * http//www.apache.org/licenses/LICENSE-2.0
 ;  *
 ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
 ;  * il software distribuito nei termini della Licenza è distribuito
@@ -29,52 +29,48 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                            FLASH ROUTINE FOR GTIA                           *
+;*                            FLASH ROUTINE FOR GIME                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-FLASHREGISTERADDRESSES:
-    .WORD FLASHMANAGERL0ADDR+1
-    .WORD FLASHMANAGERL1ADDR+1
-    .WORD FLASHMANAGERL2ADDR+1
-    .WORD FLASHMANAGERL3ADDR+1
+FLASHREGISTERADDRESSES
+    fdb FLASHMANAGERL0ADDR+1
+    fdb FLASHMANAGERL1ADDR+1
+    fdb FLASHMANAGERL2ADDR+1
+    fdb FLASHMANAGERL3ADDR+1
     
-FLASHREGISTERINDEX:
-    .BYTE $00, $00, $00, $00
+FLASHREGISTERINDEX
+    fcb $00, $00, $00, $00
 
-FLASHREGISTERTIMER:
-    .BYTE $00, $00, $00, $00
+FLASHREGISTERTIMER
+    fcb $00, $00, $00, $00
 
-FLASHREGISTERS0:
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+FLASHREGISTERS0
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-FLASHREGISTERS1:
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+FLASHREGISTERS1
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-FLASHREGISTERS2:
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+FLASHREGISTERS2
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
-FLASHREGISTERS3:
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-    .BYTE $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+FLASHREGISTERS3
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+    fcb $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
 
 ; Manager for FLASH command
-FLASHMANAGER:
+FLASHMANAGER
 
-	PHP
-	PHA
-	TXA
-	PHA
-	TYA
-	PHA
+    PULS X
+    PULS D
 
     ; Load actual timer for register 0
-    LDX FLASHREGISTERTIMER
+    LDA FLASHREGISTERTIMER
 
     ; If it is zero then we can load
     ; the next couple color + timer.
@@ -82,50 +78,53 @@ FLASHMANAGER:
 
     ; Otherwise, we must wait for the
     ; next tick to come.
-    DEX
-    STX FLASHREGISTERTIMER
+    DECA
+    STA FLASHREGISTERTIMER
 
     ; Move to register 1
     JMP FLASHMANAGER1
 
-FLASHMANAGERRT0:
+FLASHMANAGERRT0
 
     ; Load current index for register 0
-    LDX FLASHREGISTERINDEX
+    LDA FLASHREGISTERINDEX
+    LDX FLASHREGISTERS0
 
     ; Load timer valure for this index.
-    LDA FLASHREGISTERS0, X
+    LDB A, X
 
     ; If it is not zero, we can consider it
     ; a real couple (timer, color); otherwise...
-    CMP #$00
     BNE FLASHMANAGERL0
 
     ; ... we must reset the index for register 0.
-    STA FLASHREGISTERINDEX
+    STB FLASHREGISTERINDEX
 
     ; Move to register 1
     JMP FLASHMANAGER1
 
-FLASHMANAGERL0:
+FLASHMANAGERL0
 
     ; Store timer
-    STA FLASHREGISTERTIMER
+    STB FLASHREGISTERTIMER
 
     ; Load color and store in the right register
-    INX
-    LDA FLASHREGISTERS0, X
-FLASHMANAGERL0ADDR:
-    STA $02c4
+    INCA
+    LDB A, X
+    PUSH D
+FLASHMANAGERL0ADDR
+    LDA #0
+    JSR GIMEUPDATEPALETTE
+    PULS D
 
     ; Increment index.
-    INX
-    STX FLASHREGISTERINDEX
+    INCA
+    STA FLASHREGISTERINDEX
 
-FLASHMANAGER1:
+FLASHMANAGER1
 
     ; Load actual timer for register 0
-    LDX FLASHREGISTERTIMER+1
+    LDA FLASHREGISTERTIMER+1
 
     ; If it is zero then we can load
     ; the next couple color + timer.
@@ -133,46 +132,50 @@ FLASHMANAGER1:
 
     ; Otherwise, we must wait for the
     ; next tick to come.
-    DEX
-    STX FLASHREGISTERTIMER+1
+    DECA
+    STA FLASHREGISTERTIMER+1
 
     ; Move to register 1
     JMP FLASHMANAGER2
 
-FLASHMANAGERRT1:
+FLASHMANAGERRT1
 
     ; Load current index for register 0
-    LDX FLASHREGISTERINDEX+1
+    LDA FLASHREGISTERINDEX+1
 
     ; Load timer valure for this index.
-    LDA FLASHREGISTERS1, X
+    LDX FLASHREGISTERS1
+
+    LDB A, X
 
     ; If it is not zero, we can consider it
     ; a real couple (timer, color); otherwise...
-    CMP #$00
     BNE FLASHMANAGERL1
 
     ; ... we must reset the index for register 0.
-    STA FLASHREGISTERINDEX+1
+    STB FLASHREGISTERINDEX+1
 
     ; Move to register 1
     JMP FLASHMANAGER2
 
-FLASHMANAGERL1:
+FLASHMANAGERL1
 
     ; Store timer
-    STA FLASHREGISTERTIMER+1
+    STB FLASHREGISTERTIMER+1
 
     ; Load color and store in the right register
-    INX
-    LDA FLASHREGISTERS1, X
-FLASHMANAGERL1ADDR:
-    STA $02c5
+    INCA
+    LDB A, X
+    PUSH D
+FLASHMANAGERL1ADDR
+    LDA #1
+    JSR GIMEUPDATEPALETTE
+    PULS D
 
-FLASHMANAGER2:
+FLASHMANAGER2
 
     ; Load actual timer for register 0
-    LDX FLASHREGISTERTIMER+2
+    LDB FLASHREGISTERTIMER+2
 
     ; If it is zero then we can load
     ; the next couple color + timer.
@@ -180,50 +183,53 @@ FLASHMANAGER2:
 
     ; Otherwise, we must wait for the
     ; next tick to come.
-    DEX
-    STX FLASHREGISTERTIMER+2
+    DECB
+    STB FLASHREGISTERTIMER+1
 
     ; Move to register 1
     JMP FLASHMANAGER3
 
-FLASHMANAGERRT2:
+FLASHMANAGERRT2
 
     ; Load current index for register 0
-    LDX FLASHREGISTERINDEX+2
+    LDA FLASHREGISTERINDEX+2
 
     ; Load timer valure for this index.
-    LDA FLASHREGISTERS2, X
+    LDX FLASHREGISTERS2
+    LDB A, X
 
     ; If it is not zero, we can consider it
     ; a real couple (timer, color); otherwise...
-    CMP #$00
     BNE FLASHMANAGERL2
 
     ; ... we must reset the index for register 0.
-    STA FLASHREGISTERINDEX+2
+    STB FLASHREGISTERINDEX+2
 
     ; Move to register 1
     JMP FLASHMANAGER3
 
-FLASHMANAGERL2:
+FLASHMANAGERL2
 
     ; Store timer
-    STA FLASHREGISTERTIMER+2
+    STB FLASHREGISTERTIMER+2
 
     ; Load color and store in the right register
-    INX
-    LDA FLASHREGISTERS2, X
-FLASHMANAGERL2ADDR:
-    STA $02c7
+    INCA
+    LDB A, X
+    PUSH D
+FLASHMANAGERL2ADDR
+    LDA #2
+    JSR GIMEUPDATEPALETTE
+    PULS D
 
     ; Increment index.
-    INX
-    STX FLASHREGISTERINDEX+2
+    INCB
+    STB FLASHREGISTERINDEX+2
 
-FLASHMANAGER3:
+FLASHMANAGER3
 
     ; Load actual timer for register 0
-    LDX FLASHREGISTERTIMER+3
+    LDB FLASHREGISTERTIMER+3
 
     ; If it is zero then we can load
     ; the next couple color + timer.
@@ -231,99 +237,116 @@ FLASHMANAGER3:
 
     ; Otherwise, we must wait for the
     ; next tick to come.
-    DEX
-    STX FLASHREGISTERTIMER+3
+    DECB
+    STB FLASHREGISTERTIMER+3
 
     ; Move to register 1
     JMP FLASHMANAGER4
 
-FLASHMANAGERRT3:
+FLASHMANAGERRT3
 
     ; Load current index for register 0
-    LDX FLASHREGISTERINDEX+3
+    LDB FLASHREGISTERINDEX+3
 
     ; Load timer valure for this index.
-    LDA FLASHREGISTERS3, X
+    LDX FLASHREGISTERS3
 
     ; If it is not zero, we can consider it
     ; a real couple (timer, color); otherwise...
-    CMP #$00
     BNE FLASHMANAGERL3
 
     ; ... we must reset the index for register 0.
-    STA FLASHREGISTERINDEX+3
+    STB FLASHREGISTERINDEX+3
 
     ; Move to register 1
     JMP FLASHMANAGER4
 
-FLASHMANAGERL3:
+FLASHMANAGERL3
 
     ; Store timer
-    STA FLASHREGISTERTIMER+3
+    STB FLASHREGISTERTIMER+3
 
     ; Load color and store in the right register
-    INX
-    LDA FLASHREGISTERS3, X
-FLASHMANAGERL3ADDR:
-    STA $02c8
+    INCA
+    LDA A, X
+    PUSH D
+FLASHMANAGERL3ADDR
+    LDA #3
+    JSR GIMEUPDATEPALETTE
+    PULS D
 
     ; Increment index.
     INX
     STX FLASHREGISTERINDEX+3
 
-FLASHMANAGER4:
+FLASHMANAGER4
 
-    PLA
-    TAY
-	PLA
-	TAX
-	PLA
-	PLP
-	RTS
+    PULS D
+    PULS X
 
     RTS
 
-; Y - color
-; A - timer
-FLASHREGISTER0:
-    LDX FLASHREGISTERINDEX
-    STA FLASHREGISTERS0, X
-    INX
-    TYA
-    STA FLASHREGISTERS0, X
-    INX
-    STX FLASHREGISTERINDEX
+; B - color
+; X - timer
+FLASHREGISTER0
+    PUSH D
+    TFR X, D
+    LDY FLASHREGISTERS0
+    LDA FLASHREGISTERINDEX
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX
+    PULS D
+    LDA FLASHREGISTERINDEX
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX
     RTS
-FLASHREGISTER1:
-    LDX FLASHREGISTERINDEX+1
-    STA FLASHREGISTERS1, X
-    INX
-    TYA
-    STA FLASHREGISTERS1, X
-    INX
-    STX FLASHREGISTERINDEX+1
+FLASHREGISTER1
+    PUSH D
+    TFR X, D
+    LDY FLASHREGISTERS1
+    LDA FLASHREGISTERINDEX+1
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+1
+    PULS D
+    LDA FLASHREGISTERINDEX+1
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+1
     RTS
-FLASHREGISTER2:
-    LDX FLASHREGISTERINDEX+2
-    STA FLASHREGISTERS2, X
-    INX
-    TYA
-    STA FLASHREGISTERS2, X
-    INX
-    STX FLASHREGISTERINDEX+2
+FLASHREGISTER2
+    PUSH D
+    TFR X, D
+    LDY FLASHREGISTERS2
+    LDA FLASHREGISTERINDEX+2
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+2
+    PULS D
+    LDA FLASHREGISTERINDEX+2
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+2
     RTS
-FLASHREGISTER3:
-    LDX FLASHREGISTERINDEX+3
-    STA FLASHREGISTERS3, X
-    INX
-    TYA
-    STA FLASHREGISTERS3, X
-    INX
-    STX FLASHREGISTERINDEX+3
+FLASHREGISTER3
+    PUSH D
+    TFR X, D
+    LDY FLASHREGISTERS3
+    LDA FLASHREGISTERINDEX+3
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+3
+    PULS D
+    LDA FLASHREGISTERINDEX+3
+    STB A, X
+    INCA
+    STA FLASHREGISTERINDEX+3
     RTS
 
-FLASHBEGIN:
-    SEI
+FLASHBEGIN
+    ORCC #$50
     LDA #0
     STA FLASHREGISTERINDEX
     STA FLASHREGISTERINDEX+1
@@ -331,45 +354,52 @@ FLASHBEGIN:
     STA FLASHREGISTERINDEX+3
     RTS
 
-; X - register number
-; Y - color
-; A - timer
-FLASHREGISTER:
-    CPX #0
+; A - register number
+; B - color
+; X - timer
+FLASHREGISTER
+    CMPA #0
     BEQ FLASHREGISTER0
-    CPX #1
+    CMPA #1
     BEQ FLASHREGISTER1
-    CPX #2
+    CMPA #2
     BEQ FLASHREGISTER2
-    CPX #3
+    CMPA #3
     BEQ FLASHREGISTER3
     RTS
     
-FLASHEND:
+FLASHEND
     LDA #0
-    LDX FLASHREGISTERINDEX
+    LDB FLASHREGISTERINDEX
     BEQ FLASHEND1
-    STA FLASHREGISTERS0, X
+    LDX FLASHREGISTERS0
+    STA B, X
     STA FLASHREGISTERINDEX
 
-FLASHEND1:
-    LDX FLASHREGISTERINDEX+1
+FLASHEND1
+    LDA #0
+    LDB FLASHREGISTERINDEX+1
     BEQ FLASHEND2
-    STA FLASHREGISTERS1, X
+    LDX FLASHREGISTERS1
+    STA B, X
     STA FLASHREGISTERINDEX+1
 
-FLASHEND2:
-    LDX FLASHREGISTERINDEX+2
+FLASHEND2
+    LDA #0
+    LDB FLASHREGISTERINDEX+2
     BEQ FLASHEND3
-    STA FLASHREGISTERS2, X
+    LDX FLASHREGISTERS2
+    STA B, X
     STA FLASHREGISTERINDEX+2
 
-FLASHEND3:
-    LDX FLASHREGISTERINDEX+3
+FLASHEND3
+    LDA #0
+    LDB FLASHREGISTERINDEX+3
     BEQ FLASHEND4
-    STA FLASHREGISTERS3, X
+    LDX FLASHREGISTERS3
+    STA B, X
     STA FLASHREGISTERINDEX+3
 
-FLASHEND4:
-    CLI
+FLASHEND4
+    ANDCC #$AF
     RTS
