@@ -152,9 +152,9 @@ void pccga_timer_set_counter( Environment * _environment, char * _timer, char * 
     deploy( timer, src_hw_8086_timer_asm);
 
     if ( _counter ) {
-        outline1("MOV AX, [%s]", _counter );
+        outline1("MOV DX, [%s]", _counter );
     } else {
-        outline0("MOV AX, 0" );
+        outline0("MOV DX, 0" );
     }
     if ( _timer ) {
         outline1("MOV BL, [%s]", _timer );
@@ -188,9 +188,9 @@ void pccga_timer_set_address( Environment * _environment, char * _timer, char * 
     deploy( timer, src_hw_8086_timer_asm);
 
     if ( _address ) {
-        outline1("MOV SI, %s", _address );
+        outline1("MOV DX, %s", _address );
     } else {
-        outline0("MOV SI, 0" );
+        outline0("MOV DX, 0" );
     }
     if ( _timer ) {
         outline1("MOV BL, [%s]", _timer );

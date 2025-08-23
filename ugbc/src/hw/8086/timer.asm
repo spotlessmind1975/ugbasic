@@ -41,6 +41,9 @@ TIMERCOUNTER:   dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 TIMERINIT:      dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 TIMERADDRESS:   dw   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 
+TIMERVOID:
+    db 0xea, 0x00, 0x00, 0x00, 0x00
+
 TIMERMANAGER:
 TIMERMANAGERGO:
 
@@ -132,14 +135,16 @@ TIMERMANAGERJMP2AH:
     PUSH DI
 
     MOV DX, [DI]
-    MOV SI, DX
+    MOV [TIMERVOID+1], DX
+    MOV DX, CS
+    MOV [TIMERVOID+3], DX
 
     ; Disable timer before calling
 
     MOV CL, 0
     CALL TIMERSETSTATUS
 
-    CALL [SI]
+    CALL TIMERVOID
 
     POP DI
     POP SI
