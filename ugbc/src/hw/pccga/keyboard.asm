@@ -1414,8 +1414,10 @@ KEYBOARDASFSTATE:    db 0
         MOV BH, 0
         MOV AL, [DI+BX]
         CALL WAITKEY02
+        MOV BL, 0xff
         RET
     INKEY0:
+        MOV BL, 0
         MOV AL, 0
         RET
 

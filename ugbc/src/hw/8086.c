@@ -690,9 +690,9 @@ void cpu_compare_and_branch_8bit( Environment * _environment, char *_source, cha
 
         MAKE_LABEL
 
-        outline1("MOV AX, [%s]", _destination);
-        outline1("MOV BX, [%s]", _source);
-        outline1("CMP AX, BX", _destination );
+        outline1("MOV AL, [%s]", _destination);
+        outline1("MOV BL, [%s]", _source);
+        outline0("CMP AL, BL" );
         if ( _positive ) {
             outline1("JZ %s", _label);
         } else {
@@ -4094,7 +4094,7 @@ void cpu_dsresize_size( Environment * _environment, char * _index, int _resize )
 
     deploy( dstring,src_hw_8086_dstring_asm );
 
-    outline1( "MOV AL, [%s]", _index );
+    outline1( "MOV BL, [%s]", _index );
     outline1( "MOV CL, 0x%2.2x", ( _resize & 0xff ) );
     outline0( "CALL DSRESIZE" );
 

@@ -54,6 +54,14 @@ static RGBi SYSTEM_PALETTE[] = {
 
 void pccga_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_pccga_keyboard_asm);
+
+    outline0("CALL INKEY");
+    outline1("MOV [%s], AL", _key);
+    outline1("MOV [%s], BL", _pressed);
+
 }
 
 void pccga_wait_key( Environment * _environment, int _release ) {
