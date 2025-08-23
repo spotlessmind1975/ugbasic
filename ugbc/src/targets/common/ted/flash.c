@@ -45,4 +45,8 @@ void flash( Environment * _environment, char * _index, char * _register ) {
 
 }
 
+void flash_off( Environment * _environment, char * _index ) {
+
+}
+
 #endif

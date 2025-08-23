@@ -370,6 +370,18 @@ FLASHREGISTER:
     CPX #3
     BEQ FLASHREGISTER3
     RTS
+
+FLASHOFF:
+    TXA
+    PHA
+    JSR FLASHBEGIN
+    PLA
+    TAX
+    LDA #0
+    LDY #0
+    JSR FLASHREGISTER    
+    JSR FLASHEND
+    RTS    
     
 FLASHEND:
     LDA #0

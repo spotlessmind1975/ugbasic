@@ -216,5 +216,6 @@ void vic1_screen( Environment * _environment, char * _x, char * _y, char * _c );
 void vic1_flash_begin( Environment * _environment, char * _index, char * _register );
 void vic1_flash_register( Environment * _environment, char * _index, char * _timer, char * _color );
 void vic1_flash_end( Environment * _environment );
+void vic1_flash_off( Environment * _environment, char * _index );
 
 #endif

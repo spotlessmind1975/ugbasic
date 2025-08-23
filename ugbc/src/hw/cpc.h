@@ -402,5 +402,6 @@ void cpc_flip_image( Environment * _environment, Resource * _image, char * _fram
 void cpc_flash_begin( Environment * _environment, char * _index, char * _register );
 void cpc_flash_register( Environment * _environment, char * _index, char * _timer, char * _color );
 void cpc_flash_end( Environment * _environment );
+void cpc_flash_off( Environment * _environment, char * _index );
 
 #endif

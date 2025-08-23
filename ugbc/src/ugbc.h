@@ -5263,6 +5263,7 @@ void                    file_storage( Environment * _environment, char * _source
 void                    fill( Environment * _environment, char * _x, char * _y, char * _w, char * _h, char * _char, char * _color );
 int                     find_frame_by_type( Environment * _environment, TsxTileset * _tileset, char * _images, char * _description );
 void                    flash( Environment * _environment, char * _index, char * _register );
+void                    flash_off( Environment * _environment, char * _index );
 void                    flip_image_vars( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );
 void                    flip_image_vars_direction( Environment * _environment, char * _image, char * _frame, char * _sequence, int _direction );
 void                    flip_image_vars_indirection( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _direction );

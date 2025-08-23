@@ -2943,4 +2943,15 @@ void cpc_flash_end( Environment * _environment ) {
 
 }
 
+void cpc_flash_off( Environment * _environment, char * _index ) {
+
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
+    deploy( flash, src_hw_cpc_flash_asm );
+
+    outline1("LD A, (%s)", _index);
+    outline0("CALL FLASHOFF");
+
+}
+
 #endif

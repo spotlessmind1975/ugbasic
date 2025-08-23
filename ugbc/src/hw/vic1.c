@@ -3064,4 +3064,13 @@ void vic1_flash_end( Environment * _environment ) {
 
 }
 
+void vic1_flash_off( Environment * _environment, char * _index ) {
+
+    deploy( flash, src_hw_vic1_flash_asm );
+
+    outline1("LDX %s", _index );
+    outline0("JSR FLASHOFF");
+
+}
+
 #endif

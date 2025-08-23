@@ -11981,6 +11981,9 @@ flash_definition:
         ((Environment *)_environment)->flashVarsIndex = 0;
     } flash_definition_couples on_flash_address {
         flash( _environment, $1, $5 );
+    }
+    | expr OFF {
+        flash_off( _environment, $1 );
     };
 
 statement2nc:

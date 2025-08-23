@@ -71,4 +71,12 @@ void flash( Environment * _environment, char * _index, char * _register ) {
 
 }
 
+void flash_off( Environment * _environment, char * _index ) {
+
+    Variable * idx = variable_retrieve_or_define( _environment, _index, VT_BYTE, 0 );
+
+    gtia_flash_off( _environment, idx->realName );
+
+}
+
 #endif
