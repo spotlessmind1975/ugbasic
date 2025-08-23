@@ -3157,7 +3157,7 @@ void cpu_compare_memory( Environment * _environment, char *_source, char *_desti
     outline0("REPE CMPSB");
     outline0("POP ES");
 
-    outline1("JNE %s", label);
+    outline1("JNE %sdiff", label);
     outhead1("%sequal:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
     outline1("MOV [%s], AL", _result );
@@ -3185,7 +3185,7 @@ void cpu_compare_memory_size( Environment * _environment, char *_source, char *_
     outline0("REPE CMPSB");
     outline0("POP ES");
 
-    outline1("JNE %s", label);
+    outline1("JNE %sdiff", label);
     outhead1("%sequal:", label );
     outline1("MOV AL, 0x%2.2x", _equal ? 255 : 0 );
     outline1("MOV [%s], AL", _result );
