@@ -232,7 +232,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     // outline0("CALL PROTOTHREADINIT" );
 
-    sc61860_init( _environment );
+    cpu_init( _environment );
 
     pc1403_initialization( _environment );
     

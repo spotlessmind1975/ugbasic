@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@
  *
  * http://www.apache.org/licenses/LICENSE-2.0
  *
+
  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
  * il software distribuito nei termini della Licenza è distribuito
  * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
@@ -38,45 +39,15 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit ASM code for <b>= RANDOM(...)</b>
- * 
- * This function outputs a code suitable for calculating a random value, 
- * the range of which depends on the type of data passed as a parameter:
- * 
- * - `VT_BYTE` (<b>BYTE</b>) : 0...255
- * - `VT_COLOR` (<b>COLOR</b>) : 0...15
- * - `VT_WORD` (<b>WORD</b>) : 0...65.535
- * - `VT_ADDRESS` (<b>ADDRESS</b>) : 0...65.535
- * - `VT_POSITION` (<b>POSITION</b>) : 0...65.535
- * - `VT_DWORD` (<b>DWORD</b>) : 0...4.294.967.295
- * 
- * The random value is passed back into a temporary variable.
- * 
- * @param _environment Current calling environment
- * @param _type Type of random number to generate
- * @return Variable* The random value calculated
- */
-Variable * random_value( Environment * _environment, VariableType _type ) {
+#if defined(__pc1403__)
 
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
-
-    Variable * result = variable_temporary( _environment, _type, "(random value)" );
-
-    switch( VT_BITWIDTH( _type ) ) {
-        case 8:
-            cpu_random_8bit( _environment, "$FC9E", result->realName );
-            break;
-        case 16:
-            cpu_random_16bit( _environment, "$FC9E", result->realName );
-            break;
-        case 32:
-            cpu_random_32bit( _environment, "$FC9E", result->realName );
-            break;
-        default:
-            CRITICAL_CANNOT_GENERATE_RANDOM( );     
-    }
-
-    return result;
+void flash( Environment * _environment, char * _index, char * _register ) {
 
 }
+
+void flash_off( Environment * _environment, char * _index ) {
+
+}
+
+
+#endif
