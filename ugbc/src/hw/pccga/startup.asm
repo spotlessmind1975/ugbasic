@@ -35,6 +35,19 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+PCCGATIMER:     dw  $0000
+
+TIMERISVC:
+@IF deployed.timer
+    CALL TIMERMANAGER
+@ENDIF
+    PUSH DX
+    MOV DX, [PCCGATIMER]
+    INC DX
+    MOV [PCCGATIMER], DX
+    POP DX
+    IRET
+
 @IF deployed.keyboard && !keyboardConfig.sync
 
 KEYBOARDIRQSAVED:   dw 0, 0
@@ -52,21 +65,19 @@ PCCGASTARTUP:
 
 @ENDIF
 
-  CLI 
-
-@IF deployed.timer
+    CLI 
 
     PUSH DS
     MOV DX, 0
     MOV DS, DX
-    MOV WORD [0x1C * 4], TIMERMANAGER 
+    MOV WORD [0x1C * 4], TIMERISVC 
     MOV DX, CS
     MOV WORD [0x1C * 4 + 2], DX
     POP DS
 
-@ENDIF
+@IF deployed.keyboard
 
-@IF deployed.keyboard && !keyboardConfig.sync
+@IF !keyboardConfig.sync
 
     PUSH DS
     MOV DX, 0
@@ -84,6 +95,15 @@ PCCGASTARTUP:
     MOV DX, CS
     MOV WORD [9*4+2], DX
     POP DS
+
+@ELSE
+
+    CLI
+    MOV AL, 2
+    OUT 0x21, AL
+    STI
+
+@ENDIF
 
 @ENDIF
 
