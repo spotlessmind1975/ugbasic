@@ -128,361 +128,312 @@ KEYBOARDTIMER:          DW 0x0000
     SCANCODERAWNOKEYSKIP:
         RET
 
-        ; SCANCODESINGLEKEYPRESSEDSHIFT:
-        ;     PUSH AF
-        ;     LD A, (KEYBOARDSHIFT)
-        ;     OR $03
-        ;     LD (KEYBOARDSHIFT), A
-        ;     POP AF
-        ;     JP SCANCODEENTIREL1B
+    ; SCANCODESINGLEKEYPRESSEDSHIFT:
+    ;     PUSH AF
+    ;     LD A, (KEYBOARDSHIFT)
+    ;     OR $03
+    ;     LD (KEYBOARDSHIFT), A
+    ;     POP AF
+    ;     JP SCANCODEENTIREL1B
 
-        ; SCANCODESINGLEKEYPRESSEDCTRL:
-        ;     PUSH AF
-        ;     LD A, (KEYBOARDSHIFT)
-        ;     OR $08
-        ;     LD (KEYBOARDSHIFT), A
-        ;     POP AF
-        ;     JP SCANCODEENTIREL1B
+    ; SCANCODESINGLEKEYPRESSEDCTRL:
+    ;     PUSH AF
+    ;     LD A, (KEYBOARDSHIFT)
+    ;     OR $08
+    ;     LD (KEYBOARDSHIFT), A
+    ;     POP AF
+    ;     JP SCANCODEENTIREL1B
 
-        ; SCANCODESINGLEKEYPRESSECAPSLOCK:
-        ;     PUSH AF
-        ;     LD A, (KEYBOARDSHIFT)
-        ;     XOR $04
-        ;     LD (KEYBOARDSHIFT), A
-        ;     POP AF
-        ;     JP SCANCODEENTIREL1B
+    ; SCANCODESINGLEKEYPRESSECAPSLOCK:
+    ;     PUSH AF
+    ;     LD A, (KEYBOARDSHIFT)
+    ;     XOR $04
+    ;     LD (KEYBOARDSHIFT), A
+    ;     POP AF
+    ;     JP SCANCODEENTIREL1B
 
-        ; SCANCODERAW:
+    ; SCANCODERAW:
 
-        ;     PUSH HL
-        ;     PUSH BC
-        ;     PUSH DE
-        ;     PUSH AF
+    ;     PUSH HL
+    ;     PUSH BC
+    ;     PUSH DE
+    ;     PUSH AF
 
-        ;     LD IXL, 0
-        ;     LD A, 0
-        ;     LD (KEYBOARDPRESSED), A
+    ;     LD IXL, 0
+    ;     LD A, 0
+    ;     LD (KEYBOARDPRESSED), A
 
-        ;     LD HL, SCANCODEREAD
-        ;     LD BC, $f782
-        ;     OUT (C), C
-        ;     LD BC, $f40e
-        ;     LD E, B
-        ;     OUT (C), C
-        ;     LD BC, $f6c0
-        ;     LD D, B
-        ;     OUT (C), C
-        ;     XOR A
-        ;     OUT (C), A
-        ;     LD BC, $f792
-        ;     OUT (C), C
-        ;     LD A, $40
-        ;     LD C, $4A
-        ; SCANCODEENTIREL1:
-        ;     LD B, D
-        ;     OUT (C), A
-        ;     LD B, E
-            
-        ;     PUSH AF
-        ;     IN A, (C)
-        ;     XOR $FF
-        ;     LD (HL), A
-        ;     INC HL
+    ;     LD HL, SCANCODEREAD
+    ;     LD BC, $f782
+    ;     OUT (C), C
+    ;     LD BC, $f40e
+    ;     LD E, B
+    ;     OUT (C), C
+    ;     LD BC, $f6c0
+    ;     LD D, B
+    ;     OUT (C), C
+    ;     XOR A
+    ;     OUT (C), A
+    ;     LD BC, $f792
+    ;     OUT (C), C
+    ;     LD A, $40
+    ;     LD C, $4A
+    ; SCANCODEENTIREL1:
+    ;     LD B, D
+    ;     OUT (C), A
+    ;     LD B, E
+        
+    ;     PUSH AF
+    ;     IN A, (C)
+    ;     XOR $FF
+    ;     LD (HL), A
+    ;     INC HL
 
-        ;     CP 0
-        ;     JR Z, SCANCODESINGLEKEYL1CONTINUE
+    ;     CP 0
+    ;     JR Z, SCANCODESINGLEKEYL1CONTINUE
 
-        ;     PUSH IX
+    ;     PUSH IX
 
-        ; SCANCODEENTIREL1BL1:
-        ;     CP 0
-        ;     JR Z, SCANCODEENTIREL1B
-        ;     SRL A
-        ;     JR NC, SCANCODEENTIREL1BL2
+    ; SCANCODEENTIREL1BL1:
+    ;     CP 0
+    ;     JR Z, SCANCODEENTIREL1B
+    ;     SRL A
+    ;     JR NC, SCANCODEENTIREL1BL2
 
-        ;     LD A, IXL
+    ;     LD A, IXL
 
-        ;     CP 23
-        ;     JR Z, SCANCODESINGLEKEYPRESSEDCTRL
+    ;     CP 23
+    ;     JR Z, SCANCODESINGLEKEYPRESSEDCTRL
 
-        ;     CP $46
-        ;     JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
+    ;     CP $46
+    ;     JR Z, SCANCODESINGLEKEYPRESSECAPSLOCK
 
-        ;     LD (KEYBOARDACTUAL), A
-        ;     LD A, 1
-        ;     LD (KEYBOARDPRESSED), A
-        ;     JR SCANCODEENTIREL1B
+    ;     LD (KEYBOARDACTUAL), A
+    ;     LD A, 1
+    ;     LD (KEYBOARDPRESSED), A
+    ;     JR SCANCODEENTIREL1B
 
-        ; SCANCODEENTIREL1BL2:
-        ;     INC IXL
-        ;     JR SCANCODEENTIREL1BL1
+    ; SCANCODEENTIREL1BL2:
+    ;     INC IXL
+    ;     JR SCANCODEENTIREL1BL1
 
-        ; SCANCODEENTIREL1B:
-        ;     POP IX
-        ; SCANCODESINGLEKEYL1CONTINUE:
-        ;     POP AF
+    ; SCANCODEENTIREL1B:
+    ;     POP IX
+    ; SCANCODESINGLEKEYL1CONTINUE:
+    ;     POP AF
 
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
-        ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
+    ;     INC IXL
 
-        ;     INC A
-        ;     CP C
-        ;     JR C, SCANCODEENTIREL1
-        ;     LD BC, $f782
-        ;     OUT (C), C
+    ;     INC A
+    ;     CP C
+    ;     JR C, SCANCODEENTIREL1
+    ;     LD BC, $f782
+    ;     OUT (C), C
 
-        ;     LD A, (KEYBOARDPRESSED)
-        ;     CP 1
-        ;     JR Z, SCANCODEENTIREL1XX
+    ;     LD A, (KEYBOARDPRESSED)
+    ;     CP 1
+    ;     JR Z, SCANCODEENTIREL1XX
 
-        ;     LD A, $FF
-        ;     LD (KEYBOARDACTUAL), A
+    ;     LD A, $FF
+    ;     LD (KEYBOARDACTUAL), A
 
-        ;     JP SCANCODEDONEYES
+    ;     JP SCANCODEDONEYES
 
-        ; SCANCODEENTIREL1XX:
-        ;     NOP
-        ; SCANCODEDONEYES:
+    ; SCANCODEENTIREL1XX:
+    ;     NOP
+    ; SCANCODEDONEYES:
 
-        ;     POP AF
-        ;     POP DE
-        ;     POP BC
-        ;     POP HL
+    ;     POP AF
+    ;     POP DE
+    ;     POP BC
+    ;     POP HL
 
-        ;     RET
+    ;     RET
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; WAITKEY
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine will wait for a key press. It means that it will, first, wait
-        ; ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
-        ; ; a key pressed, we must also wait for FREE(0) state, first.
+    ; ----------------------------------------------------------------------------
+    ; WAITKEY
+    ; ----------------------------------------------------------------------------
+    ; This routine will wait for a key press. It means that it will, first, wait
+    ; for the passing FREE(0)->PRESSED(1). Since the keyboard could already have
+    ; a key pressed, we must also wait for FREE(0) state, first.
 
-        WAITKEY:
-            CALL SCANCODERAW
-            MOV AL, [KEYBOARDPRESSED]
-            CMP AL, 0
-            JZ WAITKEY1
-        WAITKEY0:
-            CALL SCANCODERAW
-            MOV AL, [KEYBOARDPRESSED]
-            CMP AL, 0
-            JNZ WAITKEY0
-        WAITKEY1:
-            CALL SCANCODERAW
-            MOV AL, [KEYBOARDPRESSED]
-            CMP AL, 0
-            JZ WAITKEY1
-            RET
+    WAITKEY:
+        CALL SCANCODERAW
+        MOV AL, [KEYBOARDPRESSED]
+        CMP AL, 0
+        JZ WAITKEY1
+    WAITKEY0:
+        CALL SCANCODERAW
+        MOV AL, [KEYBOARDPRESSED]
+        CMP AL, 0
+        JNZ WAITKEY0
+    WAITKEY1:
+        CALL SCANCODERAW
+        MOV AL, [KEYBOARDPRESSED]
+        CMP AL, 0
+        JZ WAITKEY1
+        RET
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; WAITKEYRELEASE
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine will wait for a key press AND for a release. It means that it 
-        ; ; will, first, WAITKEY. Then, it will wait for a FREE(0) state.
+    ; ----------------------------------------------------------------------------
+    ; WAITKEYRELEASE
+    ; ----------------------------------------------------------------------------
+    ; This routine will wait for a key press AND for a release. It means that it 
+    ; will, first, WAITKEY. Then, it will wait for a FREE(0) state.
 
-        WAITKEYRELEASE:
-            CALL WAITKEY
-        WAITKEYRELEASE0:
-            CALL SCANCODERAW
-            MOV AL, [KEYBOARDPRESSED]
-            CMP AL, 0
-            JNZ WAITKEYRELEASE0
-            RET
+    WAITKEYRELEASE:
+        CALL WAITKEY
+    WAITKEYRELEASE0:
+        CALL SCANCODERAW
+        MOV AL, [KEYBOARDPRESSED]
+        CMP AL, 0
+        JNZ WAITKEYRELEASE0
+        RET
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; KEYSTATE
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to detect if any key has been pressed. It does
-        ; ; not disturb the hardware but it will use the memory map, that has been
-        ; ; refreshed by the last IRQ.
-        ; ;
-        ; ; Input:
-        ; ; - A : key to check
-        ; ;
-        ; ; Return values:
-        ; ; - C : key pressed (1) or not (0)
+    ; ----------------------------------------------------------------------------
+    ; KEYSTATE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to detect if any key has been pressed. It does
+    ; not disturb the hardware but it will use the memory map, that has been
+    ; refreshed by the last IRQ.
+    ;
+    ; Input:
+    ; - A : key to check
+    ;
+    ; Return values:
+    ; - C : key pressed (1) or not (0)
 
-        ; KEYSTATE:
+    KEYSTATE:
+        CLC
+        RET
 
-        ;     CALL SCANCODERAW
+    ; ----------------------------------------------------------------------------
+    ; SCANCODE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the key pressed. It will not disturb
+    ; the hardware, since it will use the KEYBOARDACTUAL value.
+    ;
+    ; Return values:
+    ; - A : KEYBOARDACTUAL
 
-        ;     LD HL, SCANCODEREAD 
+    SCANCODE:
+        MOV AL, [KEYBOARDINKEY]
+        CMP AL, 0xFF
+        JZ SCANCODE0
+        RET
+    SCANCODE0:
+        CALL SCANCODERAW
+        RET
 
-        ;     PUSH AF
-        ;     SRL A
-        ;     SRL A
-        ;     SRL A
-        ;     LD E, A
-        ;     LD A, 0
-        ;     LD D, A
-        ;     ADD HL, DE
-        ;     POP AF
+    ; ----------------------------------------------------------------------------
+    ; ASCIICODE
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the key pressed, converted into 
+    ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
+    ;
+    ; Return values:
+    ; - A : ASCII value
 
-        ;     PUSH AF
-        ;     AND $07
-        ;     LD B, A
-        ;     POP AF
+    ASCIICODE:
+        CALL SCANCODE
+        CMP AL, 0xff
+        JNZ ASCIICODEDIR
+        MOV AL, 0
+        RET
+    ASCIICODEDIR:
+        MOV SI, KEYBOARDMAP 
+        MOV BL, AL
+        MOV BH, 0
+        MOV AL, [SI+BX]
+        RET
 
-        ;     PUSH HL
-        ;     LD HL, BITMASK
-        ;     LD E, B
-        ;     LD D, 0
-        ;     ADD HL, DE
-        ;     LD A, (HL)
-        ;     POP HL
-        ;     LD B, A
-        ;     LD A, (HL)
-        ;     AND B
-        ;     CP B
-        ;     JR Z, KEYSTATEL1Y
-        ; KEYSTATEL1N:
-        ;     SCF
-        ;     CCF
-        ;     RET
-        ; KEYSTATEL1Y:
-        ;     SCF
-        ;     RET
+    ; ----------------------------------------------------------------------------
+    ; KEYPRESS
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve if a specific key is pressed, 
+    ; counting the ASF state. It will return the value only in the duty cycle.
+    ;
+    ; Input:
+    ; - X : key to check
+    ;
+    ; Return values:
+    ; - C : key pressed (1) or not (0)
 
-        ; ----------------------------------------------------------------------------
-        ; SCANCODE
-        ; ----------------------------------------------------------------------------
-        ; This routine can be called to retrieve the key pressed. It will not disturb
-        ; the hardware, since it will use the KEYBOARDACTUAL value.
-        ;
-        ; Return values:
-        ; - A : KEYBOARDACTUAL
+    KEYPRESS:
+        CLC
+        RET
 
-        SCANCODE:
-            MOV AL, [KEYBOARDINKEY]
-            CMP AL, 0xFF
-            JZ SCANCODE0
-            RET
-        SCANCODE0:
-            CALL SCANCODERAW
-            RET
+    ; ----------------------------------------------------------------------------
+    ; KEYPRESSED
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the pressed key, counting the ASF 
+    ; state. It will return the value only in the duty cycle.
+    ;
+    ; Return values:
+    ; - A : KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
 
-        ; ----------------------------------------------------------------------------
-        ; ASCIICODE
-        ; ----------------------------------------------------------------------------
-        ; This routine can be called to retrieve the key pressed, converted into 
-        ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
-        ;
-        ; Return values:
-        ; - A : ASCII value
+    KEYPRESSED:
+        MOV BL, AL
+        CALL SCANCODERAW
+        CMP AL, BL
+        JNZ KEYPRESSED0
+        MOV AL, 0xff
+        RET
+    KEYPRESSED0:
+        MOV AL, 0x00
+        RET
 
-        ASCIICODE:
-            CALL SCANCODE
-            CMP AL, 0xff
-            JNZ ASCIICODEDIR
-            MOV AL, 0
-            RET
-        ASCIICODEDIR:
-            MOV SI, KEYBOARDMAP 
-            MOV BL, AL
-            MOV BH, 0
-            MOV AL, [SI+BX]
-            RET
+    ; ----------------------------------------------------------------------------
+    ; INKEY
+    ; ----------------------------------------------------------------------------
+    ; This routine can be called to retrieve the pressed key, counting the ASF 
+    ; state, and converted to ASCII. It will return the value only in 
+    ; the duty cycle.
+    ;
+    ; Return values:
+    ; - A : ASCII CODE of KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; KEYPRESS
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to retrieve if a specific key is pressed, 
-        ; ; counting the ASF state. It will return the value only in the duty cycle.
-        ; ;
-        ; ; Input:
-        ; ; - X : key to check
-        ; ;
-        ; ; Return values:
-        ; ; - C : key pressed (1) or not (0)
+    WAITKEY02:
+        PUSH AX
+    WAITKEY02L:
+        CALL SCANCODERAW
+        MOV BL, [KEYBOARDPRESSED]
+        CMP BL, 0
+        JNZ WAITKEY02L
+        POP AX
+        RET
 
-        ; KEYPRESS:
-
-        ;     CALL SCANCODERAW
-
-        ;     LD A, (KEYBOARDPRESSED)
-        ;     CP 0
-        ;     JR Z, KEYSINGLE0
-        ;     CALL KEYSTATE
-        ;     RET
-
-        ; KEYSINGLE0:
-        ;     SCF
-        ;     CCF
-        ;     RET
-
-        ; ; ----------------------------------------------------------------------------
-        ; ; KEYPRESSED
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to retrieve the pressed key, counting the ASF 
-        ; ; state. It will return the value only in the duty cycle.
-        ; ;
-        ; ; Return values:
-        ; ; - A : KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
-
-        ; KEYPRESSED:
-        ;     CALL SCANCODERAW
-        ;     LD A, (KEYBOARDPRESSED)
-        ;     CP 0
-        ;     JR Z, KEYPRESSED0
-        ;     LD A, (KEYBOARDACTUAL)
-        ;     RET
-
-        ; KEYPRESSED0:
-        ;     LD A, $FF
-        ;     RET
-
-        ; ; ----------------------------------------------------------------------------
-        ; ; INKEY
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to retrieve the pressed key, counting the ASF 
-        ; ; state, and converted to ASCII. It will return the value only in 
-        ; ; the duty cycle.
-        ; ;
-        ; ; Return values:
-        ; ; - A : ASCII CODE of KEYBOARDACTUAL only if KEYBOARDASFSTATE = 1 or 3
-
-        ; WAITKEY02:
-        ;     PUSH AF
-        ; WAITKEY02L:
-        ;     CALL SCANCODERAW
-        ;     LD A, (KEYBOARDPRESSED)
-        ;     CP 0
-        ;     JR nZ, WAITKEY02L
-        ;     POP AF
-        ;     RET
-
-        ; INKEY:
-        ;     CALL KEYPRESSED
-        ;     CP $FF
-        ;     JR Z, INKEY0
-        ;     LD (KEYBOARDINKEY), A
-        ;     LD A, (KEYBOARDSHIFT)
-        ;     AND $04
-        ;     CP $04
-        ;     JR Z, INKEYUP
-        ;     LD HL, KEYBOARDMAP2
-        ;     JR INKEYCOMMON
-        ; INKEYUP:
-        ;     LD HL, KEYBOARDMAP
-        ; INKEYCOMMON:
-        ;     LD A, (KEYBOARDINKEY)
-        ;     LD E, A
-        ;     LD A, 0
-        ;     LD D, A
-        ;     ADD HL, DE
-        ;     LD A, (HL)
-        ;     CALL WAITKEY02
-        ;     RET
-        ; INKEY0:
-        ;     LD A, 0
-        ;     RET
+    INKEY:
+        CALL SCANCODERAW
+        MOV BL, [KEYBOARDPRESSED]
+        CMP BL, 0
+        JZ INKEY0
+        MOV [KEYBOARDINKEY], AL
+        ; MOV AL, [KEYBOARDSHIFT]
+        ; AND $04
+        ; CP $04
+        ; JZ INKEYUP
+        ; MOV SI, KEYBOARDMAP2
+        ; JR INKEYCOMMON
+    INKEYUP:
+        MOV SI, KEYBOARDMAP
+    INKEYCOMMON:
+        MOV BL, [KEYBOARDINKEY]
+        MOV BH, 0
+        MOV AL, [SI+BX]
+        CALL WAITKEY02
+        MOV BL, 0xff
+        RET
+    INKEY0:
+        MOV BL, 0
+        MOV AL, 0
+        RET
 
         ; ; ----------------------------------------------------------------------------
         ; ; KEY SHIFT

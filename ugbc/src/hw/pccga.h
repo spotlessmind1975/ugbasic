@@ -177,6 +177,7 @@ void pccga_inkey( Environment * _environment, char * _pressed, char * _key );
 void pccga_scancode( Environment * _environment, char * _scacode );
 void pccga_asciicode( Environment * _environment, char * _scacode );
 void pccga_scanshift( Environment * _environment, char * _shifts );
+void pccga_key_state( Environment * _environment, char *_scancode, char * _result );
 void pccga_keyshift( Environment * _environment, char * _shifts );
 void pccga_key_pressed( Environment * _environment, char *_scancode, char * _result );
 void pccga_clear_key( Environment * _environment );

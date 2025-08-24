@@ -117,6 +117,32 @@ void pccga_asciicode( Environment * _environment, char * _result ) {
 
 void pccga_key_pressed( Environment * _environment, char *_scancode, char * _result ) {
 
+    _environment->bitmaskNeeded = 1;
+
+    MAKE_LABEL
+
+    deploy( keyboard, src_hw_pccga_keyboard_asm );
+
+    outline1("MOV AL, [%s]", _scancode);
+    outline0("CALL KEYPRESSED");
+    cpu_ctoa( _environment );
+    outline1("MOV [%s], AL", _result);
+
+}
+
+void pccga_key_state( Environment * _environment, char *_scancode, char * _result ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    MAKE_LABEL
+
+    deploy( keyboard, src_hw_pccga_keyboard_asm );
+
+    outline1("MOV AL, [%s]", _scancode);
+    outline0("CALL KEYSTATE");
+    cpu_ctoa( _environment );
+    outline1("MOV [%s], AL", _result);
+
 }
 
 void pccga_scanshift( Environment * _environment, char * _shifts ) {
