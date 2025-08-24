@@ -95,7 +95,23 @@ void pccga_wait_fire_semivar( Environment * _environment, char * _port, int _rel
 
 }
 
-void pccga_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
+void pccga_scancode( Environment * _environment, char * _scancode ) {
+
+    _environment->bitmaskNeeded = 1;
+
+    deploy( keyboard, src_hw_pccga_keyboard_asm);
+
+    outline0("CALL SCANCODE");
+    outline1("MOV [%s], AL", _scancode);
+
+}
+
+void pccga_asciicode( Environment * _environment, char * _result ) {
+
+    deploy( keyboard, src_hw_pccga_keyboard_asm);
+
+    outline0("CALL ASCIICODE");
+    outline1("MOV [%s], AL", _result);   
 
 }
 

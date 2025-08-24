@@ -44,6 +44,8 @@ Variable * asciicode( Environment * _environment ) {
 
     Variable * result = variable_temporary( _environment, VT_BYTE, "(result of ASCIICODE)");
 
+    pccga_asciicode( _environment, result->realName );
+
     return result;
 
 }

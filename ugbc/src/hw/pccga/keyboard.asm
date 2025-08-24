@@ -38,56 +38,56 @@
 KEYBOARDMAP:
     ; 0
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, 00, 00,  0,  0,'V',  0,  0, 00,  0
+    DB      0, 27,'1','2','3','4','5','6','7','8'
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0, 'N', 00,  0, 13,'\\'
+    DB    '9','0',  0,  0, 8, 9, 'Q', 'W', 13,'R'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, 00,  0, 00, 00, '-',  0,'P',  0,  0
+    DB     'T', 'Y', 'U', 'I', 'O', 'P',  0,'+',13, 0
     ; 3
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, '.','0','9','O','I','L','K','M',','
+    DB    'A', 'S','D','F','G','H','J','K','L',','
     ; 4
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     '8','7','U','Y','H','J','N',' ', '6','5'
+    DB     '8','\\',  0,'Y','Z','X','C','V', 'B','N'
     ; 5
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     'R','T','G','F','B','V','4','3','E','W'
+    DB     'M',',','.', 0,'B','V','4',' ', 0,0
     ; 6
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     'S','D','C','X','1','2', 27,'Q',  9,'A'
+    DB       0,  0,  0,  0,  0,  0, 0,'Q',  9,'A'
     ; 7
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     00,'Z','8',  0,  0,  0,  0,  0,  0,  8
+    DB      00,  0, 0,  0,  0,  0,  0,  0,  0,  8
     DB     0xFF
 
 KEYBOARDMAP2:
     ; 0
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, 00, 00,  0,  0,'v',  0,  0, 00,  0
+    db      0, 27,'1','2','3','4','5','6','7','8'
     ; 1
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0,  0,  0,  0,  0,'n', 00,  0, 13,'\\'
+    db    '9','0',  0,  0, 8, 9, 'q', 'w', 13,'r'
     ; 2
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, 00,  0, 00, 00, '-',  0,'p',  0,  0
+    db     't', 'y', 'u', 'i', 'o', 'p',  0,'+',13, 0
     ; 3
     ;       0   1   2   3   4   5   6   7   8   9
-    DB      0, '.','0','9','o','i','l','k','m',','
+    db    'a', 's','d','f','g','h','j','k','l',','
     ; 4
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     '8','7','u','y','h','j','n',' ', '6','5'
+    db     '8','\\',  0,'y','z','x','c','v', 'b','n'
     ; 5
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     'r','t','g','f','b','v','4','3','e','w'
+    db     'm',',','.', 0,'b','v','4',' ', 0,0
     ; 6
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     's','d','c','x','1','2', 27,'q',  9,'a'
+    db       0,  0,  0,  0,  0,  0, 0,'q',  9,'a'
     ; 7
     ;       0   1   2   3   4   5   6   7   8   9
-    DB     00,'z','8',  0,  0,  0,  0,  0,  0,  8
-    DB    0xFF
+    db      00,  0, 0,  0,  0,  0,  0,  0,  0,  8
+    db     0xff
 
 KEYBOARDSHIFT:          DB 0x00
 KEYBOARDPRESSED:        db 0
@@ -104,13 +104,20 @@ KEYBOARDTIMER:          DW 0x0000
         JZ SCANCODERAWNOKEY
         TEST AL, 0x20
         JNZ SCANCODERAWNOKEY
+        IN AL, 0x60
+        MOV BL, AL
+        AND AL, 0x7f
+        CMP AL, BL
+        JNZ SCANCODERAWNOKEY
+        PUSH AX
         MOV AL, 0xff
         MOV [KEYBOARDPRESSED], AL
         MOV DX, [PCCGATIMER]
         MOV [KEYBOARDTIMER], DX
-        IN AL, 0x60
+        POP AX
         JMP SCANCODERAWNOKEYSKIP
     SCANCODERAWNOKEY:
+        MOV AL, 0
         MOV DX, [PCCGATIMER]
         MOV BX, [KEYBOARDTIMER]
         SUB DX, BX
@@ -343,48 +350,45 @@ KEYBOARDTIMER:          DW 0x0000
         ;     SCF
         ;     RET
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; SCANCODE
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to retrieve the key pressed. It will not disturb
-        ; ; the hardware, since it will use the KEYBOARDACTUAL value.
-        ; ;
-        ; ; Return values:
-        ; ; - A : KEYBOARDACTUAL
+        ; ----------------------------------------------------------------------------
+        ; SCANCODE
+        ; ----------------------------------------------------------------------------
+        ; This routine can be called to retrieve the key pressed. It will not disturb
+        ; the hardware, since it will use the KEYBOARDACTUAL value.
+        ;
+        ; Return values:
+        ; - A : KEYBOARDACTUAL
 
-        ; SCANCODE:
-        ;     LD A, (KEYBOARDINKEY)
-        ;     CP $FF
-        ;     JR Z, SCANCODE0
-        ;     RET
-        ; SCANCODE0:
-        ;     CALL SCANCODERAW
-        ;     LD A, (KEYBOARDACTUAL)
-        ;     RET
+        SCANCODE:
+            MOV AL, [KEYBOARDINKEY]
+            CMP AL, 0xFF
+            JZ SCANCODE0
+            RET
+        SCANCODE0:
+            CALL SCANCODERAW
+            RET
 
-        ; ; ----------------------------------------------------------------------------
-        ; ; ASCIICODE
-        ; ; ----------------------------------------------------------------------------
-        ; ; This routine can be called to retrieve the key pressed, converted into 
-        ; ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
-        ; ;
-        ; ; Return values:
-        ; ; - A : ASCII value
+        ; ----------------------------------------------------------------------------
+        ; ASCIICODE
+        ; ----------------------------------------------------------------------------
+        ; This routine can be called to retrieve the key pressed, converted into 
+        ; ASCII code. It will not disturb the hardware, since it will use SCANCODE.
+        ;
+        ; Return values:
+        ; - A : ASCII value
 
-        ; ASCIICODE:
-        ;     CALL SCANCODE
-        ;     CP $ff
-        ;     JR Z, ASCIICODEDIR
-        ;     LD A, 0
-        ;     RET
-        ; ASCIICODEDIR:
-        ;     LD HL, KEYBOARDMAP 
-        ;     LD E, A
-        ;     LD A, 0
-        ;     LD D, A
-        ;     ADD HL, DE
-        ;     LD A, (HL)
-        ;     RET
+        ASCIICODE:
+            CALL SCANCODE
+            CMP AL, 0xff
+            JNZ ASCIICODEDIR
+            MOV AL, 0
+            RET
+        ASCIICODEDIR:
+            MOV SI, KEYBOARDMAP 
+            MOV BL, AL
+            MOV BH, 0
+            MOV AL, [SI+BX]
+            RET
 
         ; ; ----------------------------------------------------------------------------
         ; ; KEYPRESS
