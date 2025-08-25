@@ -826,7 +826,26 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("LDA #%00111110");
     outline0("STA $FF00");
-    outline0("JMP CODESTART")
+    outline0("JMP CODESTART");
+
+    if ( _environment->chainUsed ) {
+        _environment->sysCallUsed = 1;
+        deploy_preferred( syscall, src_hw_c128_syscall_asm);
+        deploy_inplace_preferred( syscall, src_hw_c128_syscall_asm);
+        _environment->deployed.syscall = 0;
+        deploy_preferred( dcommon, src_hw_c128_dcommon_asm );
+        deploy_inplace_preferred( dcommon, src_hw_c128_dcommon_asm );
+        _environment->deployed.dcommon = 0;
+        deploy_preferred( dload, src_hw_c128_dload_asm );
+        deploy_inplace_preferred( dload, src_hw_c128_dload_asm );
+        _environment->deployed.dload = 0;
+        deploy_preferred( chain, src_hw_c128_chain_asm );
+        deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
+        _environment->deployed.chain = 0;
+        outhead0("CHAINEDSTART:");
+        outline0("JMP CODESTART");
+    }
+
     if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
         int lastAddress = 0;
         SIDFILE * actual = _environment->sidFiles;
@@ -842,12 +861,17 @@ void variable_cleanup( Environment * _environment ) {
         outline1("   .RES $%4.4x", lastAddress - _environment->program.startingAddress - 5 );;
     }
     deploy_inplace_preferred( vars, src_hw_c128_vars_asm);
+    deploy_inplace_preferred( syscall, src_hw_c128_syscall_asm);
     deploy_inplace_preferred( startup, src_hw_c128_startup_asm);
     deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
     deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
     deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy_inplace_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_inplace_preferred( dcommon, src_hw_c128_dcommon_asm );
+    deploy_inplace_preferred( dload, src_hw_c128_dload_asm );
+    deploy_inplace_preferred( dsave, src_hw_c128_dsave_asm );
+    deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
 
     // outhead0(".segment \"CODE\"" );
 

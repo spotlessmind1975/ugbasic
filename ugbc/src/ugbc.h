@@ -1915,6 +1915,7 @@ typedef struct _Deployed {
     int center;
     int flash;
     int chain;
+    int syscall;
     
 } Deployed;
 

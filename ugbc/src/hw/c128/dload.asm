@@ -35,9 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; TMPPTR : filename; MATHPTR0: filename size
-; MATHPTR1: 1 if address is NULL; 0 if address is not NULL
-; TMPPTR2: address
+; DCOMMONP1 : filename; DCOMMON0: filename size
+; DCOMMON1: 1 if address is NULL; 0 if address is not NULL
+; DCOMMONP2: address
 C128DLOAD:
 
     ; SETNAM. Set file name parameters.
@@ -48,15 +48,15 @@ C128DLOAD:
 
     PHA
     LDA #$00
-    STA MATHPTR2
+    STA DCOMMON2
     LDA #$02
-    STA MATHPTR2+1
+    STA DCOMMON2+1
     LDY #0
 C128DLOADL1:
-    LDA (TMPPTR), Y
-    STA (MATHPTR2), Y
+    LDA (DCOMMONP1), Y
+    STA (DCOMMON2), Y
     INY
-    CPY MATHPTR0
+    CPY DCOMMON0
     BNE C128DLOADL1
     PLA
 
@@ -66,7 +66,7 @@ C128DLOADL1:
     LDA #$FF
     STA SYSCALL0+2
     PLA
-    LDA MATHPTR0
+    LDA DCOMMON0
     LDX #$00
     LDY #$02
     JSR SYSCALL
@@ -82,7 +82,7 @@ C128DLOADL1:
     BNE C128DLOADSKIP
     LDX #$08      ; default to device 8
 C128DLOADSKIP:
-    LDY MATHPTR1      ; not $01 means: load to address stored in file
+    LDY DCOMMON1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
     STA SYSCALL0+1
@@ -91,11 +91,11 @@ C128DLOADSKIP:
     PLA
     JSR SYSCALL
 
-    LDY MATHPTR1
+    LDY DCOMMON1
     BNE C128DLOADSKIP2
 
-    LDX TMPPTR2
-    LDY TMPPTR2+1
+    LDX DCOMMONP2
+    LDY DCOMMONP2+1
 
 C128DLOADSKIP2:
     ; LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)

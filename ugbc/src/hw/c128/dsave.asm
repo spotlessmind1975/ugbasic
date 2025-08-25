@@ -35,8 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; TMPPTR : filename; MATHPTR0: filename size
-; TMPPTR2: address;  MATHPTR4:MATHPTR5 : size
+; DCOMMONP1 : filename; DCOMMON0: filename size
+; DCOMMONP2: address;  DCOMMON4:DCOMMON5 : size
 C128DSAVE:
 
     ; SETNAM. Set file name parameters.
@@ -47,15 +47,15 @@ C128DSAVE:
 
     PHA
     LDA #$00
-    STA MATHPTR2
+    STA DCOMMON2
     LDA #$02
-    STA MATHPTR2+1
+    STA DCOMMON2+1
     LDY #0
 C128DSAVEL1:
-    LDA (TMPPTR), Y
-    STA (MATHPTR2), Y
+    LDA (DCOMMONP1), Y
+    STA (DCOMMON2), Y
     INY
-    CPY MATHPTR0
+    CPY DCOMMON0
     BNE C128DSAVEL1
     PLA
 
@@ -65,7 +65,7 @@ C128DSAVEL1:
     LDA #$FF
     STA SYSCALL0+2
     PLA
-    LDA MATHPTR0
+    LDA DCOMMON0
     LDX #$00
     LDY #$02
     JSR SYSCALL
@@ -81,7 +81,7 @@ C128DSAVEL1:
     BNE C128DSAVESKIP
     LDX #$08      ; default to device 8
 C128DSAVESKIP:
-    LDY MATHPTR1      ; not $01 means: load to address stored in file
+    LDY DCOMMON1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
     STA SYSCALL0+1
@@ -112,36 +112,36 @@ C128DSAVESKIP2:
 
     PHA
     LDA #$00
-    STA MATHPTR2
+    STA DCOMMON2
     LDA #$03
-    STA MATHPTR2+1
+    STA DCOMMON2+1
     LDY #0
 C128DSAVEL1X:
-    LDA (TMPPTR2), Y
-    STA (MATHPTR2), Y
+    LDA (DCOMMONP2), Y
+    STA (DCOMMON2), Y
     INY
-    CPY MATHPTR4
+    CPY DCOMMON4
     BNE C128DSAVEL1X
     PLA
 
     LDA #$00
-    STA TMPPTR2
+    STA DCOMMONP2
     LDA #$03
-    STA TMPPTR2+1
+    STA DCOMMONP2+1
 
     CLC
-    LDA TMPPTR2
-    ADC MATHPTR4
-    STA MATHPTR4
-    LDA TMPPTR2+1
-    ADC MATHPTR4+1
-    STA MATHPTR4+1
-    LDX MATHPTR4
-    LDY MATHPTR4+1
+    LDA DCOMMONP2
+    ADC DCOMMON4
+    STA DCOMMON4
+    LDA DCOMMONP2+1
+    ADC DCOMMON4+1
+    STA DCOMMON4+1
+    LDX DCOMMON4
+    LDY DCOMMON4+1
 
     ; Load the accumulator with the single byte page zero offset to the pointer.
     
-    LDA #TMPPTR2
+    LDA #DCOMMONP2
 
     JSR SYSCALL
 
