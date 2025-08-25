@@ -502,8 +502,14 @@ generated/atarixl/exe/%.xex: $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@$(CL65) -Ln $(@:.xex=.lbl) --listing $(@:.xex=.lst) -g -o $@ --mapfile $(@:.xex=.map) -t atari -D __atarixl__ -C $(subst /exe/,/cfg/,$(@:.xex=.cfg)) $(subst /exe/,/asm/,$(@:.xex=.asm))
 	@rm -f $(@:.xex=.o)
 
+generated/atarixl/exe/%.atr: $(subst /generated/atarixl/exe/,/$(EXAMPLESDIR)/,$(@:.atr=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O atr $(subst generated/atarixl/exe/,,$(@:.atr=.bas))
+
 generated/atarixl/exeso/%.xex: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.xex=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O xex $(subst generated/atarixl/exeso/,,$(@:.xex=.bas))
+
+generated/atarixl/exeso/%.atr: $(subst /generated/atarixl/exeso/,/$(EXAMPLESDIR)/,$(@:.atr=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.atarixl$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O atr $(subst generated/atarixl/exeso/,,$(@:.atr=.bas))
 
 #------------------------------------------------ 
 # c128:
