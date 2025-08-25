@@ -1914,6 +1914,7 @@ typedef struct _Deployed {
     int dojo_fujinet_init;
     int center;
     int flash;
+    int chain;
     
 } Deployed;
 
@@ -3203,7 +3204,9 @@ typedef struct _Environment {
 
     char * flashVars[128];
     int flashVarsIndex;
-    
+
+    int chainUsed;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -5060,6 +5063,7 @@ void                    case_equals_var( Environment * _environment, char * _val
 void                    case_equals_label( Environment * _environment );
 void                    center( Environment * _environment, char * _string, int _newline, char * _width );
 void                    cgoto( Environment * _environment, char * _expression );
+void                    chain( Environment * _environment, char *_filename );
 void                    char_at( Environment * _environment, char *_x, char *_y, char *_code, char *_type, char *_size );
 void                    charset_at( Environment * _environment, int _value );
 void                    charset_at_var( Environment * _environment, char * _value );

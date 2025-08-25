@@ -29,39 +29,23 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                        DISK COMMON ROUTINE ON ATARI                         *
+;*                           CHAIN ROUTINE ON ATARI                            *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-DCOMMON0  = $84
-DCOMMON1  = $85
-DCOMMON2  = $86
-DCOMMON3  = $87
-DCOMMON4  = $88
-DCOMMON5  = $89
-DCOMMON6  = $8A
-DCOMMON7  = $8B
-DCOMMONP1 = $80    ; $81
-DCOMMONP2 = $82    ; $83
-
-ATARIFILENAME:      .BYTE 'D', ':'
-ATARIFILENAME0:     .RES 13,0
-
-ATARIPREPAREFILENAME:
-    LDA #<ATARIFILENAME0
-    STA DCOMMON1
-    LDA #>ATARIFILENAME0
-    STA DCOMMON1+1
-
-    LDY #0
-ATARIPREPAREFILENAMEL1:
-    LDA (DCOMMONP1), Y
-    STA (DCOMMON1), Y
-    INY
-    CPY DCOMMON0
-    BNE ATARIPREPAREFILENAMEL1
-    LDA #$9B
-    STA (DCOMMON1), Y
-    RTS
+CHAIN:
+    LDA GTIAVBLIRQPREV
+    STA $0222
+    LDA GTIAVBLIRQPREV+1
+    STA $0223
+    LDA OLDIRQLISTENER
+    STA $0200
+    LDA OLDIRQLISTENER+1
+    STA $0201
+    LDA #$ff
+    STA DCOMMON4
+    LDA #$c0
+    JSR ATARIDLOAD
+    JMP CHAINEDSTART

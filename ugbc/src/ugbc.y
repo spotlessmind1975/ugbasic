@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH
+%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9154,7 +9154,10 @@ audio_source :
     };
 
 define_definition :
-    SET LINE {
+    CHAIN {
+        ((struct _Environment *)_environment)->chainUsed = 1;
+    }
+    | SET LINE {
         ((struct _Environment *)_environment)->lineNeeded = 1;
     }
     | CLIP option_clip {
@@ -10478,6 +10481,11 @@ dload_size_size :
 dload_definition :
     expr dload_from_offset dload_to_address dload_to_bank dload_size_size {
         dload( _environment, $1, $2, $3, $4, $5 );
+    };
+
+chain_definition :
+    expr {
+        chain( _environment, $1 );
     };
 
 to_variable : 
@@ -12097,6 +12105,7 @@ statement2nc:
   | KEY key_definition
   | DLOAD dload_definition
   | DSAVE dsave_definition
+  | CHAIN chain_definition
   | SWAP swap_definition
   | OUT out_definition
   | DATA data_definition

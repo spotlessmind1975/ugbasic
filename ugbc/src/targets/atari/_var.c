@@ -771,6 +771,21 @@ void variable_cleanup( Environment * _environment ) {
     outhead0(".proc MAINENTRY");
     outline0("JMP CODESTART");
 
+    if ( _environment->chainUsed ) {
+        outhead0("CHAINLOADADDRESS=$2000-6");
+        deploy_preferred( dcommon, src_hw_atari_dcommon_asm );
+        deploy_inplace_preferred( dcommon, src_hw_atari_dcommon_asm );
+        _environment->deployed.dcommon = 0;
+        deploy_preferred( dload, src_hw_atari_dload_asm );
+        deploy_inplace_preferred( dload, src_hw_atari_dload_asm );
+        _environment->deployed.dload = 0;
+        deploy_preferred( chain, src_hw_atari_chain_asm );
+        deploy_inplace_preferred( chain, src_hw_atari_chain_asm );
+        _environment->deployed.chain = 0;
+        outhead0("CHAINEDSTART:");
+        outline0("JMP CODESTART");
+    }
+
     deploy_inplace_preferred( vars, src_hw_atari_vars_asm);
     deploy_inplace_preferred( startup, src_hw_atari_startup_asm);
     deploy_inplace_preferred( gtiavars, src_hw_gtia_vars_asm );
@@ -778,6 +793,9 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( pokeystartup, src_hw_pokey_startup_asm );
     deploy_inplace_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
     deploy_inplace_preferred( textHScroll, src_hw_gtia_hscroll_text_asm );
+    deploy_inplace_preferred( dcommon, src_hw_atari_dcommon_asm );
+    deploy_inplace_preferred( dload, src_hw_atari_dload_asm );
+    deploy_inplace_preferred( chain, src_hw_atari_chain_asm );
     
     outhead0("CODESTART:");
 

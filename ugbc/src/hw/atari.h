@@ -227,4 +227,6 @@ void atari_fujinet_json_query( Environment * _environment, char * _query, char *
 void atari_fujinet_login( Environment * _environment, char * _login, char * _size );
 void atari_fujinet_password( Environment * _environment, char * _password, char * _size );
 
+void atari_chain( Environment * _environment, char * _filename );
+
 #endif
