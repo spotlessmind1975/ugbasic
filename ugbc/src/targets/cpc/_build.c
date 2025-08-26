@@ -566,6 +566,16 @@ static void generate_bin( Environment * _environment ) {
     }
     system_remove_safe( _environment, binaryName );
 
+    strcopy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'b';
+        *(p+2) = 'i';
+        *(p+3) = 'n';
+        *(p+43) = 0;
+    }
+    BUILD_SAFE_MOVE( _environment, binaryName, _environment->exeFileName );
+
 }
 
 static void generate_dsk( Environment * _environment ) {
@@ -619,11 +629,13 @@ void target_cleanup( Environment * _environment ) {
     if ( _environment->exeFileName ) {
         char binFileName[MAX_TEMPORARY_STORAGE];
 
-        strcopy( binFileName, _environment->exeFileName );
-        char * p = strrchr( binFileName, '.' );
-        memcpy( p, ".bin", 4 );
+        if ( _environment->outputFileType != OUTPUT_FILE_TYPE_BIN ) {
+            strcopy( binFileName, _environment->exeFileName );
+            char * p = strrchr( binFileName, '.' );
+            memcpy( p, ".bin", 4 );
+            remove( binFileName );
+        }
 
-        remove( binFileName );
         remove( _environment->asmFileName );
 
         if ( _environment->analysis && _environment->listingFileName ) {
