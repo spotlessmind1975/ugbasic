@@ -13539,6 +13539,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                rom - cartridge ROM\n" );
     #define defaultExtension "rom"
 #elif __cpc__
+    printf("\t                bin - binary image\n" );
     printf("\t                dsk - disk image\n" );
     #define defaultExtension "dsk"
 #elif __vg5000__

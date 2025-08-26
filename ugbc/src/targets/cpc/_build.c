@@ -509,7 +509,66 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
 }
 
-void target_linkage( Environment * _environment ) {
+static void generate_bin( Environment * _environment ) {
+
+    Storage * storage = _environment->storage;
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+    strcopy( temporaryPath, _environment->temporaryPath );
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+    strcat( temporaryPath, "dsk" );
+#ifdef _WIN32
+    mkdir( temporaryPath );
+#else
+    mkdir( temporaryPath, 0777 );
+#endif
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
+    char executableName[MAX_TEMPORARY_STORAGE];
+    char binaryName[MAX_TEMPORARY_STORAGE];
+    char diskName[MAX_TEMPORARY_STORAGE];
+    char listingFileName[MAX_TEMPORARY_STORAGE];
+    char binaryName2[MAX_TEMPORARY_STORAGE];
+    
+    BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_BIN)
+
+    BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_Z80ASM( _environment, executableName );
+
+    BUILD_TOOLCHAIN_Z88DK_GET_LISTING_FILE( _environment, listingFileName );
+
+    BUILD_TOOLCHAIN_Z88DK_EXEC( _environment, "cpc", executableName, listingFileName, "z80" );
+
+    char * p;
+
+    if ( _environment->listingFileName ) {
+        strcopy( binaryName, _environment->asmFileName );
+        p = strstr( binaryName, ".asm" );
+        if ( p ) {
+            *(p+1) = 'l';
+            *(p+2) = 'i';
+            *(p+3) = 's';
+            *(p+4) = 0;
+        }
+        TRACE2( "  renaming %s to %s", binaryName, _environment->listingFileName );
+        BUILD_SAFE_MOVE( _environment, binaryName, _environment->listingFileName );
+    }
+
+    strcopy( binaryName, _environment->asmFileName );
+    p = strstr( binaryName, ".asm" );
+    if ( p ) {
+        *(p+1) = 'o';
+        *(p+2) = 0;
+    }
+    system_remove_safe( _environment, binaryName );
+
+}
+
+static void generate_dsk( Environment * _environment ) {
 
     char commandLine[2*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
@@ -536,6 +595,21 @@ void target_linkage( Environment * _environment ) {
         } else {
             target_linkage_z88dk_appmake_unpatched( _environment );
         }
+    }
+
+}
+
+void target_linkage( Environment * _environment ) {
+
+    switch( _environment->outputFileType ) {
+        case OUTPUT_FILE_TYPE_BIN:
+            generate_bin( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_DSK:
+            generate_dsk( _environment );
+            break;
+        default:
+            CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
 }

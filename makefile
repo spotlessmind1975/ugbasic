@@ -652,8 +652,18 @@ generated/cpc/exe/%.dsk:
 #	@$(Z80APPMAKE) +cpc --org 256 --exec 256 --disk -b $(@:.dsk=.) -o $(dir $@)main. 2>/dev/null
 #	@rm -f $(@:.dsk=.bin) $(@:.dsk=_*.bin) $(@:.dsk=.) $(@:.dsk=_*.) $(dir $@)main.
 
+generated/cpc/exe/%.bin:
+	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@mv $(subst /exe/,/asm/,$(@:.bin=.sym)) $(subst /exe/,/asm/,$(@:.bin=.osym))
+	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.bin=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@rm -f $(subst /exe/,/asm/,$(@:.bin=.o))
+	@mv $(subst /exe/,/asm/,$(@:.bin=.bin)) $(@:.dsk=.)
+
 generated/cpc/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.dsk=.info) -o ../$@ -O dsk $(subst generated/cpc/exeso/,,$(@:.dsk=.bas))
+
+generated/cpc/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cpc$(UGBCEXESUFFIX) $(OPTIONS) -D ../$(@:.bin=.info) -o ../$@ -O bin $(subst generated/cpc/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # coco:
