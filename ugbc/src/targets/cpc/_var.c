@@ -445,9 +445,24 @@ void variable_cleanup( Environment * _environment ) {
     // outhead0("SECTION code_user");
     outhead1("ORG $%4.4x", _environment->program.startingAddress);
     outline0("JP CODESTART");
+
+    if ( _environment->chainUsed ) {
+        deploy_preferred( dload, src_hw_cpc_dload_asm );
+        deploy_inplace_preferred( dload, src_hw_cpc_dload_asm );
+        _environment->deployed.dload = 0;
+        deploy_preferred( chain, src_hw_cpc_chain_asm );
+        deploy_inplace_preferred( chain, src_hw_cpc_chain_asm );
+        _environment->deployed.chain = 0;
+        outhead0("CHAINEDSTART:");
+        outline0("JP CODESTART");
+    }
+
     deploy_inplace_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
     deploy_inplace_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
     deploy_inplace_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy_inplace_preferred( dload, src_hw_cpc_dload_asm );
+    deploy_inplace_preferred( dsave, src_hw_cpc_dsave_asm );
+    deploy_inplace_preferred( chain, src_hw_cpc_chain_asm );
     // outhead0("SECTION data_user");
     // outhead0("ORG $7030");
     // outhead0("SECTION code_user");

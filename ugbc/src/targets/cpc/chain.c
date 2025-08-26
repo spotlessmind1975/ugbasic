@@ -41,4 +41,10 @@
 
 void chain( Environment * _environment, char * _filename ) {
 
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
+
+    cpc_chain( _environment, _filename );
+
 }

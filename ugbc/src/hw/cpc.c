@@ -2691,7 +2691,7 @@ void cpc_timer_set_address( Environment * _environment, char * _timer, char * _a
 
 void cpc_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dload, src_hw_cpc_dload_asm );
+    deploy_preferred( dload, src_hw_cpc_dload_asm );
 
     MAKE_LABEL
     
@@ -2739,7 +2739,7 @@ void cpc_dload( Environment * _environment, char * _filename, char * _offset, ch
 
 void cpc_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dsave, src_hw_cpc_dsave_asm );
+    deploy_preferred( dsave, src_hw_cpc_dsave_asm );
 
     MAKE_LABEL
     
@@ -2951,6 +2951,36 @@ void cpc_flash_off( Environment * _environment, char * _index ) {
 
     outline1("LD A, (%s)", _index);
     outline0("CALL FLASHOFF");
+
+}
+
+void cpc_chain( Environment * _environment, char * _filename ) {
+
+    deploy_preferred( dload, src_hw_cpc_dload_asm );
+    deploy_preferred( dload, src_hw_cpc_chain_asm );
+
+    MAKE_LABEL
+    
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
+
+    outline1("LD HL, (%s)", tnaddress->realName);
+    outline1("LD A, (%s)", tnsize->realName);
+    outline0("LD B, A");
+
+    outline0("CALL CHAIN");
 
 }
 

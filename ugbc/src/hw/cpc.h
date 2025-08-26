@@ -404,4 +404,6 @@ void cpc_flash_register( Environment * _environment, char * _index, char * _time
 void cpc_flash_end( Environment * _environment );
 void cpc_flash_off( Environment * _environment, char * _index );
 
+void cpc_chain( Environment * _environment, char * _filename );
+
 #endif
