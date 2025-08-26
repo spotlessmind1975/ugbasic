@@ -35,9 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; TMPPTR : filename; MATHPTR0: filename size
-; MATHPTR1: 1 if address is NULL; 0 if address is not NULL
-; TMPPTR2: address
+; DCOMMONP1 : filename; DCOMMON0: filename size
+; DCOMMON1: 1 if address is NULL; 0 if address is not NULL
+; DCOMMONP2: address
 C64DSAVE:
 
     ; SETNAM. Set file name parameters.
@@ -52,9 +52,9 @@ C64DSAVE:
     LDA #$FF
     STA SYSCALL0+2
     PLA
-    LDA MATHPTR0
-    LDX TMPPTR
-    LDY TMPPTR+1
+    LDA DCOMMON0
+    LDX DCOMMONP1
+    LDY DCOMMONP1+1
     JSR SYSCALL
 
     ; SETLFS. Set file parameters.
@@ -68,7 +68,7 @@ C64DSAVE:
     BNE C64DSAVESKIP
     LDX #$08      ; default to device 8
 C64DSAVESKIP:
-    LDY MATHPTR1      ; not $01 means: load to address stored in file
+    LDY DCOMMON1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
     STA SYSCALL0+1
@@ -77,11 +77,11 @@ C64DSAVESKIP:
     PLA
     JSR SYSCALL
 
-    LDY MATHPTR1
+    LDY DCOMMON1
     BNE C64DSAVESKIP2
 
-    LDX TMPPTR2
-    LDY TMPPTR2+1
+    LDX DCOMMONP2
+    LDY DCOMMONP2+1
 
 C64DSAVESKIP2:
     ; $FFD8 SAVEIO - Save memory to a device
@@ -104,18 +104,18 @@ C64DSAVESKIP2:
     ; Load the X and Y registers with the low byte and high byte re- spectively of the location of the end of the save.
 
     CLC
-    LDA TMPPTR2
-    ADC MATHPTR4
-    STA MATHPTR4
-    LDA TMPPTR2+1
-    ADC MATHPTR4+1
-    STA MATHPTR4+1
-    LDX MATHPTR4
-    LDY MATHPTR4+1
+    LDA DCOMMONP2
+    ADC DCOMMON4
+    STA DCOMMON4
+    LDA DCOMMONP2+1
+    ADC DCOMMON4+1
+    STA DCOMMON4+1
+    LDX DCOMMON4
+    LDY DCOMMON4+1
 
     ; Load the accumulator with the single byte page zero offset to the pointer.
     
-    LDA #TMPPTR2
+    LDA #DCOMMONP2
 
     JSR SYSCALL
 

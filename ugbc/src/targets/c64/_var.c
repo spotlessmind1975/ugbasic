@@ -827,7 +827,26 @@ void variable_cleanup( Environment * _environment ) {
     outhead0(".segment \"CODE\"");
     outline0("NOP");
     outline0("NOP");
-    outline0("JMP CODESTART")
+    outline0("JMP CODESTART");
+
+    if ( _environment->chainUsed ) {
+        _environment->sysCallUsed = 1;
+        deploy_preferred( syscall, src_hw_c64_syscall_asm);
+        deploy_inplace_preferred( syscall, src_hw_c64_syscall_asm);
+        _environment->deployed.syscall = 0;
+        deploy_preferred( dcommon, src_hw_c64_dcommon_asm );
+        deploy_inplace_preferred( dcommon, src_hw_c64_dcommon_asm );
+        _environment->deployed.dcommon = 0;
+        deploy_preferred( dload, src_hw_c64_dload_asm );
+        deploy_inplace_preferred( dload, src_hw_c64_dload_asm );
+        _environment->deployed.dload = 0;
+        deploy_preferred( chain, src_hw_c64_chain_asm );
+        deploy_inplace_preferred( chain, src_hw_c64_chain_asm );
+        _environment->deployed.chain = 0;
+        outhead0("CHAINEDSTART:");
+        outline0("JMP CODESTART");
+    }
+
     if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
         int lastAddress = 0;
         SIDFILE * actual = _environment->sidFiles;
@@ -850,6 +869,10 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
     deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy_inplace_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_inplace_preferred( dcommon, src_hw_c64_dcommon_asm );
+    deploy_inplace_preferred( dload, src_hw_c64_dload_asm );
+    deploy_inplace_preferred( dsave, src_hw_c64_dsave_asm );
+    deploy_inplace_preferred( chain, src_hw_c64_chain_asm );
 
     // Moved here for banking reasons.
 

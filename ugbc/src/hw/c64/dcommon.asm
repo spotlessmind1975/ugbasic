@@ -3,7 +3,7 @@
 ;  *****************************************************************************
 ;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * Licensed under the Apache License, Version 2.0 (the "License
 ;  * you may not use this file eXcept in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * (la "Licenza è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,118 +29,19 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           SYSCALL ROUTINE ON C=128                          *
+;*                         DISK COMMON ROUTINE ON C64                          *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SYSCALLDONE:
-    SEI
-
-    JSR RESTOREUGBASICIRQVECTORS
-
-    PHA
-    LDA #%00111110
-    STA $FF00
-    PLA
-
-    CLI
-
-    RTS
-
-SYSCALL:
-    SEI
-    JSR RESTORESYSTEMIRQVECTORS
-    CLI
-    PHA
-    LDA #$0
-    STA $FF00
-    PLA
-SYSCALL0:
-    JSR $0000
-    JMP SYSCALLDONE
-
-SAVESYSTEMIRQVECTORS:
-    PHA
-    LDA $FFFA
-    STA NMISVC_SYSTEM
-    LDA $FFFB
-    STA NMISVC_SYSTEM+1
-
-    LDA $FFFE
-    STA IRQSVC_SYSTEM
-    LDA $FFFF
-    STA IRQSVC_SYSTEM+1
-
-    LDA $0314
-    STA IRQSVC2_SYSTEM
-    LDA $0315
-    STA IRQSVC2_SYSTEM+1
-    PLA
-    RTS
-
-SAVEUGBASICIRQVECTORS:
-    PHA
-
-    LDA $D018
-    STA OLDD018
-
-    LDA $FFFA
-    STA NMISVC_UGBASIC
-    LDA $FFFB
-    STA NMISVC_UGBASIC+1
-
-    LDA $FFFE
-    STA IRQSVC_UGBASIC
-    LDA $FFFF
-    STA IRQSVC_UGBASIC+1
-
-    LDA $0314
-    STA IRQSVC2_UGBASIC
-    LDA $0315
-    STA IRQSVC2_UGBASIC+1
-    PLA
-    RTS
-
-RESTORESYSTEMIRQVECTORS:
-    PHA
-    LDA NMISVC_SYSTEM
-    STA $FFFA
-    LDA NMISVC_SYSTEM+1
-    STA $FFFB
-
-    LDA IRQSVC_SYSTEM
-    STA $FFFE
-    LDA IRQSVC_SYSTEM+1
-    STA $FFFF
-
-    LDA IRQSVC2_SYSTEM
-    STA $0314
-    LDA IRQSVC2_SYSTEM+1
-    STA $0315
-    PLA
-    RTS
-
-RESTOREUGBASICIRQVECTORS:
-    PHA
-
-    LDA OLDD018
-    STA $D018
-
-    LDA NMISVC_UGBASIC
-    STA $FFFA
-    LDA NMISVC_UGBASIC+1
-    STA $FFFB
-
-    LDA IRQSVC_UGBASIC
-    STA $FFFE
-    LDA IRQSVC_UGBASIC+1
-    STA $FFFF
-
-    LDA IRQSVC2_UGBASIC
-    STA $0314
-    LDA IRQSVC2_UGBASIC+1
-    STA $0315
-    PLA
-    RTS
+DCOMMON0  = $84
+DCOMMON1  = $85
+DCOMMON2  = $86
+DCOMMON3  = $87
+DCOMMON4  = $88
+DCOMMON5  = $89
+DCOMMON6  = $8A
+DCOMMON7  = $8B
+DCOMMONP1 = $80    ; $81
+DCOMMONP2 = $82    ; $83

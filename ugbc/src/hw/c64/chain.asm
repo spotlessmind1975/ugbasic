@@ -3,7 +3,7 @@
 ;  *****************************************************************************
 ;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
 ;  *
-;  * Licensed under the Apache License, Version 2.0 (the "License");
+;  * Licensed under the Apache License, Version 2.0 (the "License
 ;  * you may not use this file eXcept in compliance with the License.
 ;  * You may obtain a copy of the License at
 ;  *
@@ -16,7 +16,7 @@
 ;  * limitations under the License.
 ;  *----------------------------------------------------------------------------
 ;  * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
-;  * (la "Licenza"); è proibito usare questo file se non in conformità alla
+;  * (la "Licenza è proibito usare questo file se non in conformità alla
 ;  * Licenza. Una copia della Licenza è disponibile all'indirizzo:
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
@@ -29,118 +29,54 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                           SYSCALL ROUTINE ON C=128                          *
+;*                            CHAIN ROUTINE ON c64                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-SYSCALLDONE:
-    SEI
+CHAINIRQ    =   $47
 
-    JSR RESTOREUGBASICIRQVECTORS
+CHAIN:
+    LDA #$ff
+    STA DCOMMONP2
+    LDA #$07
+    STA DCOMMONP2+1
+    LDA #0
+    STA DCOMMON1
 
-    PHA
-    LDA #%00111110
-    STA $FF00
-    PLA
-
-    CLI
-
-    RTS
-
-SYSCALL:
-    SEI
-    JSR RESTORESYSTEMIRQVECTORS
-    CLI
-    PHA
-    LDA #$0
-    STA $FF00
-    PLA
-SYSCALL0:
-    JSR $0000
-    JMP SYSCALLDONE
-
-SAVESYSTEMIRQVECTORS:
-    PHA
-    LDA $FFFA
-    STA NMISVC_SYSTEM
-    LDA $FFFB
-    STA NMISVC_SYSTEM+1
-
-    LDA $FFFE
-    STA IRQSVC_SYSTEM
-    LDA $FFFF
-    STA IRQSVC_SYSTEM+1
-
-    LDA $0314
-    STA IRQSVC2_SYSTEM
-    LDA $0315
-    STA IRQSVC2_SYSTEM+1
-    PLA
-    RTS
-
-SAVEUGBASICIRQVECTORS:
-    PHA
-
-    LDA $D018
-    STA OLDD018
-
-    LDA $FFFA
-    STA NMISVC_UGBASIC
-    LDA $FFFB
-    STA NMISVC_UGBASIC+1
-
-    LDA $FFFE
-    STA IRQSVC_UGBASIC
-    LDA $FFFF
-    STA IRQSVC_UGBASIC+1
-
-    LDA $0314
-    STA IRQSVC2_UGBASIC
-    LDA $0315
-    STA IRQSVC2_UGBASIC+1
-    PLA
-    RTS
-
-RESTORESYSTEMIRQVECTORS:
-    PHA
     LDA NMISVC_SYSTEM
-    STA $FFFA
+    STA CHAINIRQ
     LDA NMISVC_SYSTEM+1
-    STA $FFFB
+    STA CHAINIRQ+1
 
     LDA IRQSVC_SYSTEM
-    STA $FFFE
+    STA CHAINIRQ+2
     LDA IRQSVC_SYSTEM+1
-    STA $FFFF
+    STA CHAINIRQ+3
 
     LDA IRQSVC2_SYSTEM
-    STA $0314
+    STA CHAINIRQ+4
     LDA IRQSVC2_SYSTEM+1
-    STA $0315
-    PLA
-    RTS
+    STA CHAINIRQ+5
 
-RESTOREUGBASICIRQVECTORS:
-    PHA
+    JSR C64DLOAD
 
-    LDA OLDD018
-    STA $D018
-
-    LDA NMISVC_UGBASIC
+    SEI
+    LDA CHAINIRQ
     STA $FFFA
-    LDA NMISVC_UGBASIC+1
+    LDA CHAINIRQ+1
     STA $FFFB
 
-    LDA IRQSVC_UGBASIC
+    LDA CHAINIRQ+2
     STA $FFFE
-    LDA IRQSVC_UGBASIC+1
+    LDA CHAINIRQ+3
     STA $FFFF
 
-    LDA IRQSVC2_UGBASIC
+    LDA CHAINIRQ+4
     STA $0314
-    LDA IRQSVC2_UGBASIC+1
+    LDA CHAINIRQ+5
     STA $0315
-    PLA
-    RTS
+    CLI
+
+    JMP CHAINEDSTART

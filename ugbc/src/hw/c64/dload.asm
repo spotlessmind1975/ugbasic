@@ -35,9 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; TMPPTR : filename; MATHPTR0: filename size
-; MATHPTR1: 1 if address is NULL; 0 if address is not NULL
-; TMPPTR2: address
+; DCOMMONP1 : filename; DCOMMON0: filename size
+; DCOMMON1: 1 if address is NULL; 0 if address is not NULL
+; DCOMMONP2: address
 C64DLOAD:
 
     ; SETNAM. Set file name parameters.
@@ -52,9 +52,9 @@ C64DLOAD:
     LDA #$FF
     STA SYSCALL0+2
     PLA
-    LDA MATHPTR0
-    LDX TMPPTR
-    LDY TMPPTR+1
+    LDA DCOMMON0
+    LDX DCOMMONP1
+    LDY DCOMMONP1+1
     JSR SYSCALL
 
     ; SETLFS. Set file parameters.
@@ -68,7 +68,7 @@ C64DLOAD:
     BNE C64DLOADSKIP
     LDX #$08      ; default to device 8
 C64DLOADSKIP:
-    LDY MATHPTR1      ; not $01 means: load to address stored in file
+    LDY DCOMMON1      ; not $01 means: load to address stored in file
     PHA
     LDA #$BA
     STA SYSCALL0+1
@@ -77,11 +77,11 @@ C64DLOADSKIP:
     PLA
     JSR SYSCALL
 
-    LDY MATHPTR1
+    LDY DCOMMON1
     BNE C64DLOADSKIP2
 
-    LDX TMPPTR2
-    LDY TMPPTR2+1
+    LDX DCOMMONP2
+    LDY DCOMMONP2+1
 
 C64DLOADSKIP2:
     ; LOAD. Load or verify file. (Must call SETLFS and SETNAM beforehands.)

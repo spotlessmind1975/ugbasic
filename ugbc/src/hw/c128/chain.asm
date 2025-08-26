@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+CHAINIRQ    =   $47
+
 CHAIN:
     LDA #$ff
     STA DCOMMONP2
@@ -42,5 +44,39 @@ CHAIN:
     STA DCOMMONP2+1
     LDA #0
     STA DCOMMON1
+
+    LDA NMISVC_SYSTEM
+    STA CHAINIRQ
+    LDA NMISVC_SYSTEM+1
+    STA CHAINIRQ+1
+
+    LDA IRQSVC_SYSTEM
+    STA CHAINIRQ+2
+    LDA IRQSVC_SYSTEM+1
+    STA CHAINIRQ+3
+
+    LDA IRQSVC2_SYSTEM
+    STA CHAINIRQ+4
+    LDA IRQSVC2_SYSTEM+1
+    STA CHAINIRQ+5
+
     JSR C128DLOAD
+
+    SEI
+    LDA CHAINIRQ
+    STA $FFFA
+    LDA CHAINIRQ+1
+    STA $FFFB
+
+    LDA CHAINIRQ+2
+    STA $FFFE
+    LDA CHAINIRQ+3
+    STA $FFFF
+
+    LDA CHAINIRQ+4
+    STA $0314
+    LDA CHAINIRQ+5
+    STA $0315
+    CLI    
+
     JMP CHAINEDSTART

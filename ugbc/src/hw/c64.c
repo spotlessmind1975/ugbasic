@@ -69,7 +69,9 @@ void c64_dload( Environment * _environment, char * _filename, char * _offset, ch
 
     _environment->sysCallUsed = 1;
 
-    deploy( dload, src_hw_c64_dload_asm);
+    deploy_preferred( syscall, src_hw_c64_syscall_asm);
+    deploy_preferred( dcommon, src_hw_c128_dcommon_asm);
+    deploy_preferred( dload, src_hw_c64_dload_asm);
 
     MAKE_LABEL
     
@@ -123,7 +125,9 @@ void c64_dsave( Environment * _environment, char * _filename, char * _offset, ch
 
     _environment->sysCallUsed = 1;
 
-    deploy( dsave, src_hw_c64_dsave_asm);
+    deploy_preferred( syscall, src_hw_c64_syscall_asm);
+    deploy_preferred( dcommon, src_hw_c128_dcommon_asm);
+    deploy_preferred( dsave, src_hw_c64_dsave_asm);
 
     MAKE_LABEL
     
@@ -191,6 +195,8 @@ void c64_dsave( Environment * _environment, char * _filename, char * _offset, ch
 void c64_sys_call( Environment * _environment, int _destination ) {
 
     _environment->sysCallUsed = 1;
+
+    deploy_preferred( syscall, src_hw_c64_syscall_asm);
 
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
@@ -471,5 +477,40 @@ void c64_timer_set_address( Environment * _environment, char * _timer, char * _a
 //     outline1("STA %s", _result );
 
 // }
+
+void c64_chain( Environment * _environment, char * _filename ) {
+
+    _environment->sysCallUsed = 1;
+    _environment->chainUsed = 1;
+
+    deploy_preferred( syscall, src_hw_c64_syscall_asm);
+    deploy_preferred( dcommon, src_hw_c64_dcommon_asm );
+    deploy_preferred( dload, src_hw_c64_dload_asm );
+    deploy_preferred( chain, src_hw_c64_chain_asm );
+
+    Variable * filename = variable_retrieve( _environment, _filename );
+    Variable * tnaddress = variable_temporary( _environment, VT_ADDRESS, "(address of target_name)");
+    Variable * tnsize = variable_temporary( _environment, VT_BYTE, "(size of target_name)");
+
+    switch( filename->type ) {
+        case VT_STRING:
+            cpu_move_8bit( _environment, filename->realName, tnsize->realName );
+            cpu_addressof_16bit( _environment, filename->realName, tnaddress->realName );
+            cpu_inc_16bit( _environment, tnaddress->realName );
+            break;
+        case VT_DSTRING:
+            cpu_dsdescriptor( _environment, filename->realName, tnaddress->realName, tnsize->realName );
+            break;
+    }
+
+    outline1("LDA %s", tnaddress->realName);
+    outline0("STA DCOMMONP1");
+    outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
+    outline0("STA DCOMMONP1+1");
+    outline1("LDA %s", tnsize->realName);
+    outline0("STA DCOMMON0");
+    outline0("JMP CHAIN");
+
+}
 
 #endif

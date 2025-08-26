@@ -1,6 +1,3 @@
-#ifndef __UGBC_C64__
-#define __UGBC_C64__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -26,36 +23,34 @@
  *
  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
  * il software distribuito nei termini della Licenza è distribuito
- * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
  * implicite. Consultare la Licenza per il testo specifico che regola le
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#include "../ugbc.h"
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
 
-#define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
+#include "../../ugbc.h"
+#include "../../libs/msc1.h"
 
-#define DEFAULT_PAINT_BUCKET_SIZE   512
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
 
-#define BANK_COUNT          1
-#define BANK_SIZE           4096
-#define BANK_BASE_ADDRESS   0
+/**
+ * @brief Emit code for <strong>DLOAD(...)</strong>
+ * 
+ * @param _environment Current calling environment
+ * @param _filename Filename to read into buffer
+ */
+void chain( Environment * _environment, char * _filename ) {
 
-#define MAX_AUDIO_CHANNELS  3
+    if ( _environment->emptyProcedure ) {
+        return;
+    }
 
-void c64_xpen( Environment * _environment, char * _destination );
-void c64_ypen( Environment * _environment, char * _destination );
+    c64_chain( _environment, _filename );
 
-void c64_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void c64_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void c64_sys_call( Environment * _environment, int _destination );
-
-void c64_timer_set_status_on( Environment * _environment, char * _timer );
-void c64_timer_set_status_off( Environment * _environment, char * _timer );
-void c64_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
-void c64_timer_set_init( Environment * _environment, char * _timer, char * _init );
-void c64_timer_set_address( Environment * _environment, char * _timer, char * _address );
-
-void c64_chain( Environment * _environment, char * _filename );
-
-#endif
+}
