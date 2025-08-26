@@ -39,12 +39,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-/**
- * @brief Emit code for <strong>DLOAD(...)</strong>
- * 
- * @param _environment Current calling environment
- * @param _filename Filename to read into buffer
- */
 void chain( Environment * _environment, char * _filename ) {
 
     if ( _environment->emptyProcedure ) {
