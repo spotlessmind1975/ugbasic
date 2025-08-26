@@ -48,7 +48,7 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
-    outline1( "LD HL, $%4.4x", _timing );
+    outline1( "MOV DX, 0x%4.4x", _timing );
     outline0( "CALL WAITTIMER" );
 
 }
@@ -67,7 +67,7 @@ void wait_ticks_var( Environment * _environment, char * _timing ) {
 
     Variable * realTiming = variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 );
     
-    outline1( "LD HL, (%s)", realTiming->realName );
+    outline1( "MOV DX, [%s]", realTiming->realName );
     outline0( "CALL WAITTIMER" );
 
 }
