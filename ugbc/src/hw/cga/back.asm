@@ -29,7 +29,7 @@
 ; ;  ****************************************************************************/
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ; ;*                                                                             *
-; ;*                      FILL SCREEN BACKGROUND FOR MSX1                        *
+; ;*                      FILL SCREEN BACKGROUND FOR PCCGA                    *
 ; ;*                                                                             *
 ; ;*                             by Marco Spedaletti                             *
 ; ;*                                                                             *
