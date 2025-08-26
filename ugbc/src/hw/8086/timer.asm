@@ -79,9 +79,9 @@ TIMERMANAGERL1:
     JNC TIMERMANAGERL2
 
     PUSH AX
-    PUSH DI
-    PUSH SI
     PUSH BX
+    PUSH SI
+    PUSH DI
 
     ; Retrieve the actual time counter, using the current
     ; index (X-1). The Y will be the offset starting from
@@ -105,11 +105,11 @@ TIMERMANAGERL1:
     ; Ok the counter is zero. So we must reset to the
     ; value we received previously, and call the routine.
 
-    MOV SI, [TIMERINIT]
+    MOV SI, TIMERINIT
     ADD DI, AX
     MOV DX, [SI]
 
-    MOV SI, [TIMERCOUNTER]
+    MOV SI, TIMERCOUNTER
     ADD DI, AX
     MOV [SI], DX
 
@@ -164,9 +164,9 @@ TIMERMANAGERL2AL:
 
 TIMERMANAGERL2ALD:
 TIMERMANAGERJMP2AL:
-    POP BX
-    POP SI
     POP DI
+    POP SI
+    POP BX
     POP AX
 
     ; If we reach this line, we are going to check the next timer.
@@ -184,8 +184,8 @@ TIMERMANAGERL2:
     MOV AL, 0
     MOV [TIMERRUNNING], AL
     
-	POP	SI
 	POP	DI
+	POP	SI
     POP	DX
 	POP	CX
 	POP	BX
@@ -193,7 +193,7 @@ TIMERMANAGERL2:
 
     STI
 
-    IRET
+    RET
 
 ; TIMERSETSTATUS(B,C)
 TIMERSETSTATUS:
