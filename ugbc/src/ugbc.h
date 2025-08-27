@@ -2193,6 +2193,13 @@ typedef struct _CopperList {
 
 } CopperList;
 
+typedef struct _NumberConfig {
+
+    int maxBytes;
+    int maxDigits;
+
+} NumberConfig;
+
 /**
  * @brief Structure of compilation environment
  * 
@@ -2336,6 +2343,11 @@ typedef struct _Environment {
      * 
      */
     DString dstring;
+
+    /**
+     * 
+     */
+    NumberConfig numberConfig;
 
     /**
      * 

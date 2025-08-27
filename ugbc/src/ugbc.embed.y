@@ -470,6 +470,14 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "numberConfig" ) == 0 ) {
+            if ( strcmp( $3, "maxBytes" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->numberConfig.maxBytes;
+            } else if ( strcmp( $3, "maxDigits" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->numberConfig.maxDigits;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "joystickConfig" ) == 0 ) {
             if ( strcmp( $3, "retries" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->joystickConfig.retries;
@@ -755,6 +763,12 @@ embed2:
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.delay );
             } else if ( strcmp( $5, "release" ) == 0 ) {
                 vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->keyboardConfig.release );
+            }
+        } else if ( strcmp( $3, "numberConfig" ) == 0 ) {
+            if ( strcmp( $5, "maxBytes" ) == 0 ) {
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->numberConfig.maxBytes );
+            } else if ( strcmp( $5, "maxDigits" ) == 0 ) {
+                vars_emit_constant_integer( _environment, $7, ((struct _Environment *)_environment)->numberConfig.maxDigits );
             }
         } else if ( strcmp( $3, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {

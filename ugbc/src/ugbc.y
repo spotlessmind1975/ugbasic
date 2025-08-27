@@ -9367,6 +9367,18 @@ define_definition :
     | PROGRAM NAME const_expr_string {
         ((struct _Environment *)_environment)->program.name = strdup( $3 );
     }
+    | NUMBER BYTES const_expr {
+        if ( $3 <= 4 ) {
+            CRITICAL_INVALID_NUMBER_BYTES( $3 );
+        }
+        ((struct _Environment *)_environment)->numberConfig.maxBytes = $3;
+    }
+    | NUMBER DIGITS const_expr {
+        if ( $3 <= 0 ) {
+            CRITICAL_INVALID_NUMBER_DIGITS( $3 );
+        }
+        ((struct _Environment *)_environment)->numberConfig.maxDigits = $3;
+    }
     | STRING COUNT const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_STRING_COUNT( $3 );
@@ -13595,6 +13607,9 @@ int main( int _argc, char *_argv[] ) {
     _environment->peepholeOptimizationLimit = 16;
 
     _environment->floatType.precision = FT_FAST;
+
+    _environment->numberConfig.maxBytes = 4;
+    _environment->numberConfig.maxDigits = 10;
 
     _environment->temporaryPath = get_default_temporary_path( );
 

@@ -35,58 +35,173 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@EMIT numberConfig.maxDigits AS N2STRINGRESBUFFERSIZE
+@EMIT numberConfig.maxBytes AS N2STRINGNUMBERMAXBYTES
+
+N2STRINGRESBUFFER:  .RES    N2STRINGRESBUFFERSIZE,0
+N2STRINGNUMBERSIGNED: .BYTE $00
+N2STRINGNUMBER: .RES N2STRINGNUMBERMAXBYTES, 0
+N2STRINGBYTES = N2STRINGDIV10BYTES+1
+
 N2STRING:
+    LDX N2STRINGBYTES
+    DEX
+    LDA N2STRINGNUMBER,X
+    AND #$80
+    STA N2STRINGNUMBERSIGNED
+    BEQ N2STRINGGO
+    LDX #0
+N2STRINGLS:
+    EOR N2STRINGNUMBER,X
+    INX
+    CPX N2STRINGBYTES
+    BNE N2STRINGLS
+    LDX #0
+    LDA #1
+N2STRINGLSB:
+    ADC N2STRINGNUMBER,X
+    STA N2STRINGNUMBER,X
+    LDA #0
+    INX
+    CPX N2STRINGBYTES
+    BNE N2STRINGLSB
+N2STRINGGO:
     JSR N2STRINGH2D
     LDX #9;
     LDY #0;
 N2STRINGL1:
-    LDA RESBUFFER,x
+    LDA N2STRINGRESBUFFER,x
     BNE N2STRINGL2
     DEX
     BNE N2STRINGL1
 N2STRINGL2:
-    LDA MATHPTR4
+    LDA N2STRINGNUMBERSIGNED
     BEQ N2STRINGL2A
     LDA #'-'
     STA (TMPPTR),Y
     INY
 N2STRINGL2A:
-    LDA RESBUFFER,X
+    LDA N2STRINGRESBUFFER,X
     ORA #$30
     STA (TMPPTR),Y
     INY
     DEX
     BPL N2STRINGL2A
-    JMP N2STRINGEND
-N2STRINGH2D:
-    LDX #0
-N2STRINGL3:
-    JSR N2STRINGDIV10
-    STA RESBUFFER, X
-    INX
-    CPX #10
-    BNE N2STRINGL3
-    RTS
-N2STRINGDIV10:
-    LDY #32
-    LDA #0
-    CLC
-N2STRINGL4:
-    ROL
-    CMP #10
-    BCC N2STRINGSSKIP
-    SBC #10
-N2STRINGSSKIP:
-    ROL MATHPTR0
-    ROL MATHPTR1
-    ROL MATHPTR2
-    ROL MATHPTR3
-    DEY
-    BPL N2STRINGL4
-    RTS
-N2STRINGEND:
     TYA
     STA MATHPTR5
     RTS
 
-RESBUFFER:  .RES    10,0
+; Convert a number to a BCD string.
+;
+; Input: 
+;       N2STRINGNUMBERADDRESS = address of the number to divide (first byte)
+;       N2STRINGBYTES = number of bytes
+; Output:
+;       NS2RESBUFFER = destination buffer with the translated number 
+;       NS2RESBUFFERSIZE = size of the destination buffer
+
+N2STRINGH2D:
+
+    ; Let start from the first digit to convert on the
+    ; destination buffer.
+
+    LDX #0
+
+N2STRINGL3:
+
+    ; Extract the right most digit of the number.
+    
+    JSR N2STRINGDIV10
+
+    ; Put it on the destination buffer.
+
+    STA N2STRINGRESBUFFER, X
+
+    ; Move to the next.
+
+    INX
+
+    ; Repeat until all digits have been extracted.
+    CPX #N2STRINGRESBUFFERSIZE
+    BNE N2STRINGL3
+
+    ; Done!
+
+    RTS
+
+; Divide a number by 10.
+; Input: 
+;       N2STRINGNUMBER = number to be divided
+;       N2STRINGBYTES = number of bytes
+; Output:
+;       A = remainder
+
+N2STRINGDIV10:
+
+    ; Preserve the X register
+
+    STX MATHPTR0
+
+    ; Calculate the number of effective bits, to perform
+    ; bitwise division (bits = bytes * 8 ), and move them
+    ; on the Y register.
+N2STRINGDIV10BYTES:
+    LDA #00
+    ASL
+    ASL
+    ASL
+    TAY
+
+    ; Initialize the calculation.
+
+    LDA #0
+    CLC
+
+    ; For each bit...
+
+N2STRINGDIV10L1:
+
+    ; ... collect the remainder into the register A.
+    
+    ROL
+    CMP #10
+    BCC N2STRINGSSKIP
+    SBC #10
+
+    ; Perform a bit rotation of the number, for a number
+    ; of bytes equal to the number of bytes of the original
+    ; number to divide.
+
+N2STRINGSSKIP:
+
+    ; We are using X register to index the target number,
+    ; while the Y register will be used as a counter.
+
+    LDX #0
+
+    ; Preserve the Y register
+
+    STY MATHPTR1
+
+    LDY N2STRINGBYTES
+
+N2STRINGSSKIP2:
+    ROL N2STRINGNUMBER, X
+    INX
+    DEY
+    BNE N2STRINGSSKIP2
+
+    ; Restore the original Y value.
+
+    LDY MATHPTR1
+
+    ; Repeat the process for each bit.
+
+    DEY
+    BPL N2STRINGDIV10L1
+
+    ; Restore the X register
+
+    LDX MATHPTR0
+
+    RTS
