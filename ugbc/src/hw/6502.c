@@ -2424,6 +2424,121 @@ void cpu_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
 }
 
+void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+
+    char destination[MAX_TEMPORARY_STORAGE]; sprintf( destination, "CPUMATHMULNBITTONBIT%d_DESTINATION", (_bits>>3));
+    char source[MAX_TEMPORARY_STORAGE]; sprintf( source, "CPUMATHMULNBITTONBIT%d_SOURCE", (_bits>>3));
+    char other[MAX_TEMPORARY_STORAGE]; sprintf( other, "CPUMATHMULNBITTONBIT%d_OTHER", (_bits>>3));
+
+    // no_inline( cpu_math_mul_nbit_to_nbit )
+
+    // embedded( cpu_math_mul_nbit_to_nbit, src_hw_6502_cpu_math_mul_nbit_to_nbit_asm )
+
+    if ( ! _environment->cpuOptimization.cpu_math_mul_nbit_to_nbit[_bits>>3] ) {
+
+        outhead2("CPUMATHMULNBITTONBIT%d_SOURCE: .RES %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_DESTINATION: .RES %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_OTHER: .RES %d", _bits>>3, _bits>>3 );
+
+        outhead1("CPUMATHMULNBITTONBIT%d:", _bits>>3);
+        outhead0("LDA #$00");
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_OTHER", offset ) );
+        }
+        outline1("LDX #$%2.2x", _bits );
+
+        outhead1("CPUMATHMULNBITTONBIT%dL1:", _bits>>3);
+
+        // The process of multiplying binary numbers is similar and easier to do than
+        // decimal multiplication as binary numbers consist of only two digits which 
+        // are 0 and 1. The method of multiplying binary numbers is given below. The 
+        // same set of rules also apply to binary numbers with a decimal point. Let 
+        // us take the example of multiplying (11101) and (1001). 
+        // 
+        // The decimal equivalent of (11101) is 29 and the decimal equivalent 
+        // of (1001) is 9. Now let us multiply these numbers.
+
+        // Step 1: Write down the multiplicand (11101) and the multiplier (1001)
+        // one below the other in proper positions.
+
+        char multiplyByBit0Label[MAX_TEMPORARY_STORAGE]; sprintf( multiplyByBit0Label, "%sb%dbit0", label, _bits>>3 );
+
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
+
+        outline1("LSR %s", address_displacement( _environment, destination, offset ) );
+        for( i=(_bits>>3)-2; i>-1; --i ) {
+            sprintf( offset, "%d", i );
+            outline1("ROR %s", address_displacement( _environment, destination, offset ) );
+        }
+        outline1("BCC %s", multiplyByBit0Label );
+
+        // Step 2: Multiply the rightmost digit or the least significant bit (LSB) 
+        // of the multiplier (1) with all the digits of the multiplicand (11101).
+
+        outline0("CLC" );
+        for( i=0; i<(_bits>>3); ++i ) {
+            sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement( _environment, source, offset ) );
+            outline1("ADC %s", address_displacement( _environment, other, offset ) );
+            outline1("STA %s", address_displacement( _environment, other, offset ) );
+        }
+
+        // Step 3: Add a place holder of '0' or 'X' before multiplying the next 
+        // higher order digit of the multiplier& with the multiplicand.
+
+        outhead1("%s", multiplyByBit0Label);
+
+        outline0("CLC" );
+        outline1("ASL %s", address_displacement( _environment, source, "0" ) );
+        for( i=1; i<(_bits>>3); ++i ) {
+            sprintf( offset, "%d", i );
+            outline1("ROL %s", address_displacement( _environment, source, offset ) );
+        }
+
+        // Step 4: Repeat the same process for all the next higher-order digits 
+        // until we reach the most significant bit (MSB) which is the left-most 
+        // digit of the multiplicand with the multiplier.
+
+        outline0("DEX" );
+        outline1("BNE CPUMATHMULNBITTONBIT%dL1:", (_bits>>3) );
+
+        outline0("RTS" );
+
+        // Step 5: The product obtained in each row is called the partial product. 
+        // Finally, add all the partial products. To add all the binary numbers 
+        // use the rules of binary addition.
+
+        // (The rules for binary addition are listed as follows: 0 + 0 = 0, 0 + 1 = 1, and 1 + 1 = 0, with a carryover of 1. So, 1 + 1 = 10 and 1 + 1 + 1 = 11 in the binary number system)
+
+    }
+
+    for( i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1("LDA %s", address_displacement( _environment, _source, offset ) );
+        outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_SOURCE", offset ) );
+        outline1("LDA %s", address_displacement( _environment, _destination, offset ) );
+        outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_DESTINATION", offset ) );
+    }
+    outline0("JSR CPUMATHMULNBITTONBIT" );
+    for( i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1("LDA %s", address_displacement( _environment, other, offset ) );
+        if ( _other ) {
+            outline1("STA %s", address_displacement( _environment, _other, offset ) );
+        } else {
+            outline1("STA %s", address_displacement( _environment, _destination, offset ) );
+        }
+    }
+
+    // done()
+
+}
+
 void cpu_math_div_16bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
     MAKE_LABEL
@@ -3313,6 +3428,38 @@ void cpu_compare_32bit( Environment * _environment, char *_source, char *_destin
 
 }
 
+void cpu_compare_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_nbit )
+
+        for( int i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset));
+            outline1("CMP %s", address_displacement(_environment, _destination, offset));
+            outline1("BNE %s", label);
+        }
+        outline1("LDA #$%2.2x", 0xff*_positive);
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline1("LDA #$%2.2x", 0xff*(1-_positive));
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%s_2:", label);
+    
+    no_embedded( cpu_compare_nbit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values
  * 
@@ -3322,6 +3469,32 @@ void cpu_compare_32bit( Environment * _environment, char *_source, char *_destin
  * @param _other Destination address for result
  * @param _positive Meaning of comparison
  */
+void cpu_compare_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+
+    inline( cpu_compare_nbit )
+
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset));
+            outline1("CMP #$%2.2x", (unsigned char) ( ( _destination >> (i*8) ) & 0xff ) );
+            outline1("BNE %s", label);
+        }
+        outline1("LDA #$%2.2x", 0xff*_positive);
+        outline1("STA %s", _other);
+        outline1("JMP %s_2", label);
+        outhead1("%s:", label);
+        outline1("LDA #$%2.2x", 0xff*(1-_positive));
+        outline1("STA %s", _other);
+        outhead1("%s_2:", label);
+    
+    no_embedded( cpu_compare_nbit )
+
+}
+
 void cpu_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive ) {
 
     MAKE_LABEL
@@ -3596,6 +3769,118 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
 
 }
 
+void cpu_less_than_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_less_than_nbit )
+
+        if ( _equal ) {
+
+            cpu_compare_nbit( _environment, _source, _destination, _other, 1, _bits );
+
+            if ( _other ) {
+                outline1("LDA %s", _other);
+            } else {
+                outline1("LDA %s", _destination);
+            }
+
+            outline1("BEQ %sless", label );
+            outline1("JMP %sdone", label );
+            outhead1("%sless:", label );
+
+        }
+
+        outline1("LDA %s", _source);
+        outline1("CMP %s", _destination);
+        for(int i=1; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset ) );
+            outline1("SBC %s", address_displacement(_environment, _destination, offset ) );
+        }
+        outline1("BVC %sv0", label );
+        outline0("EOR #$80" );
+        outhead1("%sv0:", label );
+        outline1("BMI %smi", label );
+        outhead1("%spl:", label );
+        outline0("LDA #$00" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outline1("JMP %sen", label );
+        outhead1("%smi:", label );
+        outline0("LDA #$FF" );
+        if ( _other ) {
+            outline1("STA %s", _other);
+        } else {
+            outline1("STA %s", _destination);
+        }
+        outhead1("%sen:", label);
+
+        if ( _equal ) {
+
+            outhead1("%sdone:", label );
+
+        }
+
+    no_embedded( cpu_less_than_nbit )
+
+}
+
+void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+
+    inline( cpu_less_than_nbit_const )
+
+        if ( _equal ) {
+
+            cpu_compare_nbit_const( _environment, _source, _destination, _other, 1, _bits );
+
+            if ( _other ) {
+                outline1("LDA %s", _other);
+            } else {
+                outline1("LDA %s", _destination);
+            }
+
+            outline1("BEQ %sless", label );
+            outline1("JMP %sdone", label );
+            outhead1("%sless:", label );
+
+        }
+
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset ) );
+            outline1("CMP #$%2.2x", (unsigned char)( ( _destination >> (i*8) ) & 0xff ) );
+        }
+        outline1("BVC %sv0", label );
+        outline0("EOR #$80" );
+        outhead1("%sv0:", label );
+        outline1("BMI %smi", label );
+        outhead1("%spl:", label );
+        outline0("LDA #$00" );
+        outline1("STA %s", _other);
+        outline1("JMP %sen", label );
+        outhead1("%smi:", label );
+        outline0("LDA #$ff" );
+        outline1("STA %s", _other);
+        outhead1("%sen:", label);
+
+        if ( _equal ) {
+
+            outhead1("%sdone:", label );
+
+        }
+
+    no_embedded( cpu_less_than_nbit_const )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 8 bit values
  * 
@@ -3699,6 +3984,42 @@ void cpu_math_add_32bit_const( Environment * _environment, char *_source, int _d
 
 }
 
+void cpu_math_add_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _bits ) {
+
+    inline( cpu_math_add_nbit )
+
+        outline0("CLC");
+        for( int i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset));
+            outline1("ADC %s", address_displacement(_environment, _destination, offset));
+            if ( _other ) {
+                outline1("STA %s", address_displacement(_environment, _other, offset));
+            } else {
+                outline1("STA %s", address_displacement(_environment, _destination, offset));
+            }
+        }
+    no_embedded( cpu_math_add_nbit )
+
+}
+
+void cpu_math_add_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _bits ) {
+
+    int i;
+    
+    inline( cpu_math_add_32bit_const )
+
+        outline0("CLC");
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset));
+            outline1("ADC #$%2.2x", (unsigned char)( ( _destination >> (i*8) ) & 0xff ) );
+            outline1("STA %s", address_displacement(_environment, _other, offset));
+        }
+
+    no_embedded( cpu_math_add_nbit_const )
+
+}
 
 /**
  * @brief <i>CPU 6502</i>: emit code to double a 32 bit value
@@ -3873,6 +4194,43 @@ void cpu_math_div2_const_32bit( Environment * _environment, char *_source, int _
         }
 
     no_embedded( cpu_math_div2_const_32bit )
+
+}
+
+void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _steps, int _bits, char * _remainder ) {
+
+    inline( cpu_math_div2_const_nbit )
+
+        MAKE_LABEL
+
+        if ( _remainder ) {
+            outline1("LDA %s", _source);
+            outline0("AND #$01" );
+            outline1("STA %s", _remainder);
+        }
+        char offsetMsb[MAX_TEMPORARY_STORAGE]; sprintf( offsetMsb, "%d", (_bits>>3)-1 );
+
+        outline1("LDA %s", address_displacement(_environment, _source, offsetMsb));
+        outline0("AND #$80");
+        outline0("TAX");
+        outline1("BEQ %snocomplement", label );
+        cpu_complement2_nbit( _environment, _source, _source, _bits );
+        outhead1("%snocomplement:", label );
+        while( _steps ) {
+            outline0("CLC");
+            outline1("LSR %s", address_displacement(_environment, _source, offsetMsb));
+            for( int i=(_bits>>3)-2; i>-1; ++i ) {
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+                outline1("ROR %s", address_displacement(_environment, _source, offset));
+            }
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("BEQ %snocomplement2", label );
+        cpu_complement2_nbit( _environment, _source, _source, _bits );
+        outhead1("%snocomplement2:", label );
+
+    no_embedded( cpu_math_div2_const_nbit )
 
 }
 
@@ -5135,6 +5493,23 @@ void cpu_inc_32bit( Environment * _environment, char * _variable ) {
 
 }
 
+void cpu_inc_nbit( Environment * _environment, char * _variable, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_inc_nbit )
+
+        for( int i=0; i<(_bits>>3);++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
+            outline1("INC %s", address_displacement(_environment, _variable, offset ) );
+            outline1("BNE %s", label );
+        }
+        outhead1("%s:", label );
+
+    no_embedded( cpu_inc_nbit )
+
+}
+
 void cpu_dec( Environment * _environment, char * _variable ) {
 
     inline( cpu_dec )
@@ -5187,6 +5562,26 @@ void cpu_dec_32bit( Environment * _environment, char * _variable ) {
     no_embedded( cpu_dec_32bit )
 
 }
+
+void cpu_dec_nbit( Environment * _environment, char * _variable, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_dec_32bit )
+
+        for( int i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("DEC %s", address_displacement(_environment, _variable, offset) );
+            outline1("LDA %s", address_displacement(_environment, _variable, offset) );
+            outline0("CMP #$FF" );
+            outline1("BNE %s", label );
+        }
+        outhead1("%s:", label );
+
+    no_embedded( cpu_dec_32bit )
+
+}
+
 
 void cpu_mem_move( Environment * _environment, char *_source, char *_destination,  char *_size ) {
 
@@ -7007,6 +7402,26 @@ void cpu_complement2_32bit( Environment * _environment, char * _source, char * _
         cpu_inc_32bit( _environment, _destination );
     } else {
         cpu_inc_32bit( _environment, _source );
+    }
+
+}
+
+void cpu_complement2_nbit( Environment * _environment, char * _source, char * _destination, int _bits ) {
+
+    for( int i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1( "LDA %s", address_displacement(_environment, _source, offset) );
+        outline0( "EOR #$FF" );
+        if ( _destination ) {
+            outline1( "STA %s", address_displacement(_environment, _destination, "1") );
+        } else {
+            outline1( "STA %s", address_displacement(_environment, _source, "1") );
+        }
+    }
+    if ( _destination ) {
+        cpu_inc_nbit( _environment, _destination, _bits );
+    } else {
+        cpu_inc_nbit( _environment, _source, _bits );
     }
 
 }

@@ -1534,6 +1534,7 @@ typedef struct _Embedded {
     int cpu_compare_16bit;
     int cpu_compare_32bit;
     int cpu_compare_8bit;
+    int cpu_compare_nbit;
     int cpu_compare_and_branch_8bit;
     int cpu_compare_and_branch_16bit;
     int cpu_compare_and_branch_16bit_const;
@@ -1545,18 +1546,23 @@ typedef struct _Embedded {
     int cpu_inc;
     int cpu_inc_16bit;
     int cpu_inc_32bit;
+    int cpu_inc_nbit;
     int cpu_dec;
     int cpu_dec_16bit;
     int cpu_dec_32bit;
+    int cpu_dec_nbit;
     int cpu_less_than_16bit_const;
     int cpu_less_than_32bit_const;
     int cpu_less_than_8bit_const;
+    int cpu_less_than_nbit_const;
     int cpu_less_than_16bit;
     int cpu_less_than_32bit;
     int cpu_less_than_8bit;
+    int cpu_less_than_nbit;
     int cpu_greater_than_16bit;
     int cpu_greater_than_32bit;
     int cpu_greater_than_8bit;
+    int cpu_greater_than_nbit;
     int cpu_fill;
     int cpu_fill_blocks;
     int cpu_halt;
@@ -1595,6 +1601,8 @@ typedef struct _Embedded {
     int cpu_math_add_16bit_with_8bit;
     int cpu_math_add_32bit;
     int cpu_math_add_32bit_const;
+    int cpu_math_add_nbit;
+    int cpu_math_add_nbit_const;
     int cpu_math_add_8bit;
     int cpu_math_add_8bit_const;
     int cpu_math_and_const_16bit;
@@ -1606,6 +1614,7 @@ typedef struct _Embedded {
     int cpu_math_div2_const_16bit;
     int cpu_math_div2_const_32bit;
     int cpu_math_div2_const_8bit;
+    int cpu_math_div2_const_nbit;
     int cpu_math_double_16bit;
     int cpu_math_double_32bit;
     int cpu_math_double_8bit;
@@ -2045,6 +2054,7 @@ typedef struct _CpuOptimization {
 
     int cpu_math_mul2_const_8bit_generated[8];
     int cpu_math_mul2_const_16bit_generated[16];
+    int cpu_math_mul_nbit_to_nbit[32];
 
 } CpuOptimization;
 

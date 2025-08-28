@@ -48,6 +48,8 @@ void cpu_compare_16bit( Environment * _environment, char *_source, char *_destin
 void cpu_compare_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu_compare_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu_compare_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
+void cpu_compare_nbit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive, int _bits );
+void cpu_compare_nbit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive, int _bits );
 void cpu_compare_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _positive );
 void cpu_compare_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _positive );
 void cpu_prepare_for_compare_and_branch_8bit( Environment * _environment, char *_source );
@@ -130,6 +132,7 @@ void cpu_xor_32bit_const( Environment * _environment, char * _left, int _right, 
 void cpu_not_32bit( Environment * _environment, char * _value, char * _result );
 void cpu_swap_32bit( Environment * _environment, char * _left, char * _right );
 void cpu_math_add_nbit( Environment * _environment, char *_source, char *_destination,  char *_name, int _bits );
+void cpu_math_add_nbit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _bits );
 void cpu_math_add_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu_math_add_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name );
 void cpu_math_add_16bit_with_16bit( Environment * _environment, char *_source, char *_destination,  char *_name );
@@ -282,6 +285,7 @@ void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_32bit( Environment * _environment, char * _source, char * _destination );
+void cpu_complement2_nbit( Environment * _environment, char * _source, char * _destination, int _bits );
 void cpu_sqroot( Environment * _environment, char * _number, char * _result );
 void cpu_dstring_vars( Environment * _environment );
 void cpu_set_callback( Environment * _environment, char * _callback, char * _label );
