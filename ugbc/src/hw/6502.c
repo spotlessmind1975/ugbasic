@@ -4006,7 +4006,7 @@ void cpu_math_add_nbit( Environment * _environment, char *_source, char *_destin
 void cpu_math_add_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _bits ) {
 
     int i;
-    
+
     inline( cpu_math_add_32bit_const )
 
         outline0("CLC");
@@ -4272,6 +4272,33 @@ void cpu_math_mul2_const_32bit( Environment * _environment, char *_source, int _
         }
 
     no_embedded( cpu_math_mul2_const_32bit )
+
+}
+
+void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _steps, int _bits ) {
+
+    int i;
+
+    inline( cpu_math_mul2_const_nbit )
+
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
+        outline1("LDA %s", address_displacement(_environment, _source, offset));
+        outline0("AND #$80");
+        outline0("TAX");
+        while( _steps ) {
+            outline0("CLC");
+            outline1("ASL %s", _source);
+            for( i=1; i<(_bits>>3); ++i ) {
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1);
+                outline1("ROL %s", address_displacement(_environment, _source, offset));
+            }
+            --_steps;
+        }
+        outline0("TXA");
+        outline1("ORA %s", address_displacement(_environment, _source, offset));
+        outline1("STA %s", address_displacement(_environment, _source, offset));
+
+    no_embedded( cpu_math_mul2_const_nbit )
 
 }
 
