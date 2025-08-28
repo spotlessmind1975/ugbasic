@@ -537,7 +537,10 @@ typedef enum _VariableType {
     VT_VECTOR2 = 33,
 
     /** TYPE */
-    VT_TYPE = 34
+    VT_TYPE = 34,
+
+    /** NUMBER */
+    VT_NUMBER = 35
 
 } VariableType;
 
@@ -596,14 +599,19 @@ typedef struct _Resource {
 #define VT_OPTIMAL_SHIFT( s )         ( (s<=2)?(log2(s)):(log2(s)+1) )
 
 #define VT_MAX_BITWIDTH_TYPE( a, b ) \
-        ( ( ( a == VT_FLOAT ) || ( b == VT_FLOAT ) ) ? ( VT_FLOAT ) : \
-            ( VT_BITWIDTH( a ) > VT_BITWIDTH( b ) ) ? ( a ) : ( b ) )
+        ( \
+            ( ( a == VT_FLOAT ) || ( b == VT_FLOAT ) ) ? \
+                ( VT_FLOAT ) : \
+                ( ( a == VT_NUMBER ) || ( b == VT_NUMBER ) ) ? \
+                    ( VT_NUMBER ) : \
+                    ( VT_BITWIDTH( a ) > VT_BITWIDTH( b ) ) ? ( a ) : ( b )  \
+        )
 
 #define VT_MAX_FLOAT_BITWIDTH_TYPE( a, b ) \
         ( ( VT_FLOAT_BITWIDTH( a ) > VT_FLOAT_BITWIDTH( b ) ) ? ( a ) : ( b ) )
 
 #define VT_SIGNED( t ) \
-        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) || ( (t) == VT_FLOAT ) )
+        ( ( (t) == VT_SBYTE ) || ( (t) == VT_SWORD ) || ( (t) == VT_SDWORD ) || ( (t) == VT_POSITION ) || ( (t) == VT_FLOAT ) || ( (t) == VT_NUMBER ) )
 
 #define VT_UNSIGN( t ) \
             ( VT_SIGNED( t ) ? \
@@ -612,7 +620,8 @@ typedef struct _Resource {
                     ( ( (t) == (VT_SWORD) ) ? VT_WORD : 0 ) + \
                     ( ( (t) == (VT_SDWORD) ) ? VT_DWORD : 0 ) + \
                     ( ( (t) == (VT_POSITION) ) ? VT_WORD : 0 ) + \
-                    ( ( (t) == (VT_FLOAT) ) ? VT_FLOAT : 0 ) \
+                    ( ( (t) == (VT_FLOAT) ) ? VT_FLOAT : 0 ) + \
+                    ( ( (t) == (VT_NUMBER) ) ? VT_NUMBER : 0 ) \
                 ) \
             : t )
 

@@ -104,4 +104,14 @@ void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     }
 }
 
+void vars_emit_number( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outhead3("%s  fdb $%4.4x,$%4.4x", _name, (unsigned int)( (_value>>16) & 0xffff ), (unsigned int)( _value & 0xffff ) );
+        outhead1("    rsz %d", _environment->numberConfig.maxBytes - 4 );
+    } else {
+        outline2(" fdb $%4.4x,$%4.4x", (unsigned int)( (_value>>16) & 0xffff ), (unsigned int)( _value & 0xffff ) );
+        outhead1("    rsz %d", _environment->numberConfig.maxBytes - 4 );
+    }
+}
+
 #endif

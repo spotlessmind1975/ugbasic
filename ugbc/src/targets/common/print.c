@@ -202,6 +202,24 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                 }
                 case 0:
                     switch( value->type ) {
+                        case VT_NUMBER: {
+                            Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
+                            Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
+                            Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                            variable_store_string( _environment, tmp->name, "          " );
+
+                            cpu_dswrite( _environment, tmp->realName );
+
+                            cpu_dsdescriptor( _environment, tmp->realName, address->realName, size->realName );
+
+                            cpu_number_to_string( _environment, value->realName, address->realName, size->realName, _environment->numberConfig.maxBytes << 3, 1 );
+
+                            cpu_dsresize( _environment, tmp->realName, size->realName );
+
+                            value = tmp;
+                            
+                            break;
+                        }
                         case VT_FLOAT: {
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");

@@ -104,4 +104,14 @@ void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     }
 }
 
+void vars_emit_number( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outhead3("%s:  dw 0x%4.4x,0x%4.4x", _name, (unsigned short)( _value & 0xffff ), (unsigned short)( (_value>>16) & 0xffffffff ) );
+        outhead1("    times %d db 0x00", _environment->numberConfig.maxBytes - 4 );
+    } else {
+        outhead2(" dw 0x%4.4x,0x%4.4x", (unsigned short)( _value & 0xffff ), (unsigned short)( (_value>>16) & 0xffffffff ) );
+        outhead1("    times %d db 0x00", _environment->numberConfig.maxBytes - 4 );
+    }
+}
+
 #endif

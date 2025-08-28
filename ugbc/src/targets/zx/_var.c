@@ -78,6 +78,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SDWORD:
                     vars_emit_dword( _environment, variable->realName, variable->initialValue);
                     break;
+                case VT_NUMBER:
+                    vars_emit_number( _environment, variable->realName, variable->initialValue);
+                    break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);

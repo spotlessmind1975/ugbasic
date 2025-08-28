@@ -104,4 +104,14 @@ void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     }
 }
 
+void vars_emit_number( Environment * _environment, char * _name, int _value ) {
+    if ( _name ) {
+        outline2("%s:  .dword $%8.8x", _name, (unsigned int)( _value & 0xffffffff ) );
+        outline1("  .res %d", _environment->numberConfig.maxBytes - 4 );
+    } else {
+        outline1(" .dword $%8.8x", (unsigned int)( _value & 0xffffffff ) );
+        outline1("  .res %d", _environment->numberConfig.maxBytes - 4 );
+    }
+}
+
 #endif

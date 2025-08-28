@@ -112,6 +112,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead2("%s: .res %d,0", variable->realName, _environment->numberConfig.maxBytes);
+                    }
+                    break;                    
                 case VT_FLOAT:
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -397,6 +404,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_DWORD:
         case VT_SDWORD:
             vars_emit_dword( _environment, _variable->realName, _variable->initialValue );
+            break;
+        case VT_NUMBER:
+            vars_emit_number( _environment, _variable->realName, _variable->initialValue );
             break;
         case VT_FLOAT: {
             // outhead1("%s:", _variable->realName );

@@ -120,6 +120,15 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead0("section data_user");
+                        vars_emit_number( _environment, variable->realName, variable->initialValue );
+                        outhead0("section code_user");
+                    }
+                    break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);

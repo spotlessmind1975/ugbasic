@@ -1443,6 +1443,9 @@ casting :
     | OP float_or_single CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_FLOAT )->name;
       }
+    | OP NUMBER CP exponential_less { 
+        $$ = variable_cast( _environment, $4, VT_NUMBER )->name;
+      }
     | OP DWORD CP exponential_less { 
         $$ = variable_cast( _environment, $4, VT_DWORD )->name;
       }
@@ -1591,7 +1594,7 @@ modula:
     | modula OP_MULTIPLICATION factor {
         Variable * modula = variable_retrieve( _environment, $1 );
         Variable * factor = variable_retrieve( _environment, $3 );
-        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT ) && factor->initializedByConstant ) {
+        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT && modula->type != VT_NUMBER && factor->type != VT_NUMBER ) && factor->initializedByConstant ) {
             if ( modula->initializedByConstant ) {
                 Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
                 $$ = number->name;
@@ -2065,6 +2068,9 @@ random_definition_simple:
     }
     | float_or_single {
         $$ = random_value( _environment, VT_FLOAT )->name;
+    }
+    | NUMBER {
+        $$ = random_value( _environment, VT_NUMBER )->name;
     }
     | DWORD {
         $$ = random_value( _environment, VT_DWORD )->name;
@@ -3009,6 +3015,9 @@ exponential_less:
       }
     | OP float_or_single CP OP expr CP {
         $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
+      }
+    | OP NUMBER CP direct_integer {
+        $$ = parser_casted_numeric( _environment, VT_NUMBER, $4 )->name;
       }
     | OP DWORD CP direct_integer {
         $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
@@ -5501,6 +5510,9 @@ as_datatype_suffix :
     | OP_AMPERSAND {
         $$ = VT_SDWORD;
     }
+    | OP_AMPERSAND OP_AMPERSAND {
+        $$ = VT_NUMBER;
+    }
     | OP_EXCLAMATION {
         $$ = VT_FLOAT;
     }
@@ -7158,6 +7170,9 @@ datatype :
     }
     | float_or_single {
         $$ = VT_FLOAT;
+    }
+    | NUMBER {
+        $$ = VT_NUMBER;
     }
     | ADDRESS {
         $$ = VT_ADDRESS;

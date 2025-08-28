@@ -68,6 +68,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_TARRAY:
                 case VT_BLIT:
                 case VT_FLOAT:
+                case VT_NUMBER:
                     break;
                 default:
                     if ( variable->value != 0 ) {
@@ -103,6 +104,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_TARRAY:
                 case VT_BLIT:
                 case VT_FLOAT:
+                case VT_NUMBER:
                     break;
                 default:
                     if ( variable->value != 0 ) {

@@ -76,6 +76,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                         vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }   
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        vars_emit_number( _environment, variable->realName, variable->initialValue );
+                    }   
+                    break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);

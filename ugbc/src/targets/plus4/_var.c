@@ -111,6 +111,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         vars_emit_dword( _environment, variable->realName, variable->initialValue);
                     }
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        vars_emit_number( _environment, variable->realName, variable->initialValue);
+                    }
+                    break;
                 case VT_FLOAT:
                     if ( variable->memoryArea && !variable->bankAssigned ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -311,6 +318,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_DWORD:
         case VT_SDWORD:
             vars_emit_dword( _environment, NULL, _variable->initialValue);
+            break;
+        case VT_NUMBER:
+            vars_emit_number( _environment, NULL, _variable->initialValue);
             break;
         case VT_FLOAT: {
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;

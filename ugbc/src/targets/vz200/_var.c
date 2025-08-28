@@ -98,6 +98,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         vars_emit_dword( _environment, variable->realName, variable->initialValue );
                     }
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        vars_emit_number( _environment, variable->realName, variable->initialValue );
+                    }
+                    break;
                 case VT_FLOAT:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
@@ -208,7 +215,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                             }
                             outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
-                        } else if ( variable->value || variable->arrayType == VT_FLOAT ) {
+                        } else if ( variable->value || variable->arrayType == VT_FLOAT || variable->arrayType == VT_NUMBER ) {
                             switch( VT_BITWIDTH( variable->arrayType ) ) {
                                 case 32: {
                                     out1("%s: db ", variable->realName );
@@ -235,7 +242,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                                 case 0: /* float! */
-                                    outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, 0x00);
+                                    if ( variable->arrayType == VT_NUMBER ) {
+                                        outline3("%s: defs %d, $%2.2x", variable->realName, _environment->numberConfig.maxBytes, 0x00);
+                                    } else {
+                                        outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, 0x00);
+                                    }
                                     break;
                             }                             
                         } else {

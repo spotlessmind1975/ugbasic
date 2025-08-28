@@ -101,7 +101,8 @@ char DATATYPE_AS_STRING[][16] = {
     "IMAGEREF",
     "PATH",
     "VECTOR",
-    "TYPE"
+    "TYPE",
+    "NUMBER"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -327,6 +328,8 @@ static int calculate_cast_type_best_fit( Environment * _environment, int _type1,
 
     if ( _type1 == VT_FLOAT || _type2 == VT_FLOAT ) {
         return VT_FLOAT;
+    } else if ( _type1 == VT_NUMBER || _type2 == VT_NUMBER ) {
+        return VT_NUMBER;
     } else {
         if ( VT_SIGNED( _type1 ) != VT_SIGNED( _type2 ) ) {
             int bits1 = VT_BITWIDTH( _type1 ) + VT_SIGNED( _type1 );
@@ -960,7 +963,7 @@ Variable * variable_retrieve_or_define( Environment * _environment, char * _name
 
     if ( var ) {
 
-        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING && _type != VT_FLOAT && _type != VT_BIT ) ) {
+        if ( var->initializedByConstant && ( _type != VT_DSTRING && _type != VT_STRING && _type != VT_FLOAT && _type != VT_BIT && _type != VT_NUMBER ) ) {
             if ( 
                 ( VT_BITWIDTH( var->type ) != VT_BITWIDTH( _type ) ) 
             ) {
@@ -1098,6 +1101,9 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
         _environment->bitPosition = 0;
     } else if ( var->arrayType == VT_FLOAT ) {
         size *= ( 1 << VT_FLOAT_NORMALIZED_POW2_WIDTH( var->arrayPrecision ) );
+    } else if ( var->arrayType == VT_NUMBER ) {
+        int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
+        size *= (1 << os);
     } else {
         CRITICAL_DATATYPE_UNSUPPORTED("array(1a)", DATATYPE_AS_STRING[var->arrayType]);
     }
@@ -1203,6 +1209,10 @@ static Variable * variable_move_from_array_get_address( Environment * _environme
             break;
         case VT_FLOAT:
             offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( array->arrayPrecision ) );
+            break;
+        case VT_NUMBER:
+            int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
+            offset = variable_sl_const( _environment, offset->name, os );
             break;
         case VT_STRING:
             CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
@@ -1343,6 +1353,8 @@ Variable * variable_temporary( Environment * _environment, VariableType _type, c
             sprintf(name, "Tmus%d", UNIQUE_ID);
         } else if ( _type == VT_FLOAT ) {
             sprintf(name, "Tflt%d", UNIQUE_ID);
+        } else if ( _type == VT_NUMBER ) {
+            sprintf(name, "Tnum%d", UNIQUE_ID);
         } else if ( _type == VT_BIT ) {
             sprintf(name, "Tbit%d", UNIQUE_ID);
         } else {
@@ -1444,6 +1456,8 @@ Variable * variable_resident( Environment * _environment, VariableType _type, ch
         sprintf(name, "Tmus%d", UNIQUE_ID);
     } else if ( _type == VT_FLOAT ) {
         sprintf(name, "Tflt%d", UNIQUE_ID);
+    } else if ( _type == VT_NUMBER ) {
+        sprintf(name, "Tnum%d", UNIQUE_ID);
     } else if ( _type == VT_BIT ) {
         sprintf(name, "Tbit%d", UNIQUE_ID);
     } else {
@@ -1662,6 +1676,9 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 4;
                 } else if ( destination->arrayType == VT_FLOAT ) {
                     size *= ( VT_FLOAT_NORMALIZED_BITWIDTH( destination->arrayPrecision ) >> 3 );
+                } else if ( destination->arrayType == VT_FLOAT ) {
+                    int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
+                    size *= ( 1 << os );
                 } else {
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1b)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
@@ -2775,6 +2792,172 @@ static void variable_move_higher_32bit_16bit( Environment * _environment, Variab
 
 }
 
+static void variable_move_32bit_number( Environment * _environment, Variable * _source, Variable * _target ) {
+    
+    MAKE_LABEL
+
+    Variable * sign = variable_temporary( _environment, VT_SBYTE, "(sign)");
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_32bit( _environment, _source->realName, targetRealName );
+            cpu_move_8bit( _environment, _source->realName, sign->realName );
+            cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+            cpu_bveq( _environment, sign->realName, label );
+            for( int i=0; i<(_environment->numberConfig.maxBytes - 4); ++i ) {
+                char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+                cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+            }
+            cpu_label( _environment, label );
+        }
+    #else
+        cpu_move_32bit( _environment, _source->realName, _target->realName );
+        cpu_move_8bit( _environment, address_displacement( _environment, _source->realName, "4" ), sign->realName );
+        cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+        cpu_bveq( _environment, sign->realName, label );
+        for( int i=4; i<(_environment->numberConfig.maxBytes); ++i ) {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+            cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+        }
+        cpu_label( _environment, label );
+    #endif
+
+}
+
+static void variable_move_16bit_number( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    Variable * sign = variable_temporary( _environment, VT_SBYTE, "(sign)");
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_16bit( _environment, _source->realName, targetRealName );
+            cpu_move_8bit( _environment, _source->realName, sign->realName );
+            cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+            cpu_bveq( _environment, sign->realName, label );
+            for( int i=0; i<(_environment->numberConfig.maxBytes - 2); ++i ) {
+                char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+                cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+            }
+            cpu_label( _environment, label );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+        cpu_move_8bit( _environment, address_displacement( _environment, _source->realName, "2" ), sign->realName );
+        cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+        cpu_bveq( _environment, sign->realName, label );
+        for( int i=2; i<(_environment->numberConfig.maxBytes); ++i ) {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+            cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+        }
+        cpu_label( _environment, label );
+    #endif
+
+}
+
+static void variable_move_8bit_number( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    MAKE_LABEL
+
+    Variable * sign = variable_temporary( _environment, VT_SBYTE, "(sign)");
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_8bit( _environment, _source->realName, targetRealName );
+            cpu_move_8bit( _environment, _source->realName, sign->realName );
+            cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+            cpu_bveq( _environment, sign->realName, label );
+            for( int i=0; i<(_environment->numberConfig.maxBytes - 1); ++i ) {
+                char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+                cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+            }
+            cpu_label( _environment, label );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+        cpu_move_8bit( _environment, address_displacement( _environment, _source->realName, "1" ), sign->realName );
+        cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
+        cpu_bveq( _environment, sign->realName, label );
+        for( int i=1; i<(_environment->numberConfig.maxBytes); ++i ) {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", i );
+            cpu_store_8bit( _environment, address_displacement( _environment, _target->realName, offsetAsString ), 0xff );
+        }
+        cpu_label( _environment, label );
+    #endif
+
+}
+
+static void variable_move_1bit_number( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * byte = variable_temporary( _environment, VT_BYTE, "(1bit)");
+    cpu_bit_check( _environment, _source->realName, _source->bitPosition, byte->realName, 8 );
+    variable_move_8bit_number( _environment, byte, _target );
+
+}
+
+static void variable_move_number_number( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    cpu_move_nbit( _environment, _environment->numberConfig.maxBytes << 3, _source->realName, _target->realName );
+    
+}
+
+static void variable_move_number_32bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_32bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_32bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_number_16bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_16bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_16bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_number_8bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    #ifdef CPU_BIG_ENDIAN
+        {
+            char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
+            char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            cpu_move_8bit( _environment, sourceRealName, _target->realName );
+        }
+    #else
+        cpu_move_8bit( _environment, _source->realName, _target->realName );
+    #endif
+
+}
+
+static void variable_move_number_1bit( Environment * _environment, Variable * _source, Variable * _target ) {
+
+    Variable * sourceByte = variable_temporary( _environment, VT_BYTE, "()");
+    variable_move_number_8bit( _environment, _source, sourceByte );
+    variable_move_8bit_1bit( _environment, sourceByte, _target );
+
+}
+
 /**
  * @brief Store the value of a variable inside another variable by converting it
  * 
@@ -2870,6 +3053,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_NUMBER:
+                            variable_move_32bit_number( _environment, source, target );
+                            break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             break;
@@ -2930,6 +3116,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_NUMBER:
+                            variable_move_16bit_number( _environment, source, target );
+                            break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                     }
@@ -2985,6 +3174,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
+                            break;
+                        case VT_NUMBER:
+                            variable_move_8bit_number( _environment, source, target );
                             break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -3042,6 +3234,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_NUMBER:
+                            variable_move_1bit_number( _environment, source, target );
+                            break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                     }
@@ -3059,6 +3254,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                     switch( source->type ) {
                         case VT_FLOAT:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            break;
+                        case VT_NUMBER:
+                            variable_move_number_32bit( _environment, source, target );
                             break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -3079,6 +3277,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
                             break;
+                        case VT_NUMBER:
+                            variable_move_number_16bit( _environment, source, target );
+                            break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             break;
@@ -3097,6 +3298,19 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                 default:
                                     CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
                             }
+                            break;
+                        case VT_NUMBER:
+                            variable_move_number_8bit( _environment, source, target );
+                            break;
+                        default:
+                            CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
+                case 1:
+                    switch( source->type ) {
+                        case VT_NUMBER:
+                            variable_move_number_1bit( _environment, source, target );
                             break;
                         default:
                             CRITICAL_CANNOT_CAST( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type]);
@@ -3184,6 +3398,9 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     break;
                             }
                             break;                            
+                        case VT_NUMBER:
+                            variable_move_number_number( _environment, source, target );
+                            break;
                         case VT_TILESET:
                             switch( target->type ) {
                                 case VT_TILESET: {
@@ -3754,6 +3971,7 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 case VT_TARRAY:
                 case VT_SEQUENCE:
                 case VT_TYPE:
+                case VT_NUMBER:
                 case VT_BUFFER: {
                     if ( target->size == 0 ) {
                         target->size = source->size;
@@ -3916,6 +4134,10 @@ Variable * variable_add( Environment * _environment, char * _source, char * _des
                             break;
                     }
                     break;                            
+                case VT_NUMBER:
+                    result = variable_temporary( _environment, VT_NUMBER, "(result of sum)" );
+                    cpu_math_add_nbit( _environment, source->realName, target->realName, result->realName, _environment->numberConfig.maxBytes << 3 );
+                    break;                            
                 default: {
                     CRITICAL_ADD_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
                 }
@@ -4055,6 +4277,9 @@ void variable_add_inplace_vars( Environment * _environment, char * _source, char
                     cpu_math_add_16bit( _environment, source->realName, target->realName, source->realName );
                     cpu_math_add_16bit( _environment, address_displacement( _environment, source->realName, "2" ), target->realName, address_displacement( _environment, source->realName, "2" ) );
                     break;
+                case VT_NUMBER:
+                    cpu_math_add_nbit( _environment, source->realName, target->realName, source->realName, _environment->numberConfig.maxBytes << 3 );
+                    break;                            
                 case VT_FLOAT:
                     switch( target->precision ) {
                         case FT_FAST: {
@@ -4362,6 +4587,9 @@ Variable * variable_sub( Environment * _environment, char * _source, char * _des
                                 break;
                         }
                         break; 
+                    case VT_NUMBER:
+                        cpu_math_sub_nbit( _environment, source->realName, target->realName, result->realName, _environment->numberConfig.maxBytes << 3 );
+                        break;                            
                     case VT_VECTOR2: {
                         switch( VT_BITWIDTH( target->type ) ) {
                             case 32:
@@ -4506,6 +4734,9 @@ void variable_sub_inplace( Environment * _environment, char * _source, char * _d
                             break;
                     }
                     break; 
+                case VT_NUMBER:
+                    cpu_math_sub_nbit( _environment, source->realName, target->realName, source->realName, _environment->numberConfig.maxBytes << 3 );
+                    break;
                 default:
                     CRITICAL_SUB_INPLACE_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }
@@ -4656,6 +4887,13 @@ void variable_swap( Environment * _environment, char * _source, char * _dest ) {
                     cpu_move_nbit( _environment, VT_FLOAT_BITWIDTH( source->precision ), temp->realName, target->realName );
                     break; 
                 }
+                case VT_NUMBER: {
+                    Variable * temp = variable_temporary( _environment, VT_NUMBER, "(temp)" );
+                    cpu_move_nbit( _environment, _environment->numberConfig.maxBytes << 3, source->realName, temp->realName );
+                    cpu_move_nbit( _environment, _environment->numberConfig.maxBytes << 3, target->realName, source->realName );
+                    cpu_move_nbit( _environment, _environment->numberConfig.maxBytes << 3, temp->realName, target->realName );
+                    break; 
+                }
                 default:
                     CRITICAL_SWAP_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }
@@ -4772,6 +5010,10 @@ Variable * variable_mul( Environment * _environment, char * _source, char * _des
                                 break;
                         }
                         break; 
+                    case VT_NUMBER:
+                        result = variable_temporary( _environment, VT_NUMBER, "(result of multiplication)" );
+                        cpu_math_mul_nbit_to_nbit( _environment, source->realName, target->realName, result->realName, _environment->numberConfig.maxBytes << 3 );
+                        break;
                     default:
                         CRITICAL_MUL_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
                 }
@@ -4983,6 +5225,12 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
                             break;
                     }
                     break; 
+                case VT_NUMBER:
+                    realTarget = variable_cast( _environment, target->name, VT_NUMBER );
+                    result = variable_temporary( _environment, VT_NUMBER, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_NUMBER, "(remainder of division)" );
+                    cpu_math_div_nbit_to_nbit( _environment, source->realName, realTarget->realName, result->realName, remainder->realName, _environment->numberConfig.maxBytes << 3 );
+                    break;
                 default:
                     CRITICAL_DIV_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }        
@@ -5043,6 +5291,11 @@ Variable * variable_div_const( Environment * _environment, char * _source, int _
                             break;
                     }
                     break; 
+                case VT_NUMBER:
+                    result = variable_temporary( _environment, VT_NUMBER, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_NUMBER, "(remainder of division)" );
+                    cpu_math_div_nbit_to_nbit_const( _environment, source->realName, _destination, result->realName, remainder->realName, _environment->numberConfig.maxBytes << 3 );
+                    break;
                 default:
                     CRITICAL_DIV_UNSUPPORTED( _source, DATATYPE_AS_STRING[source->type]);
             }        
@@ -5109,10 +5362,16 @@ void variable_increment( Environment * _environment, char * _source ) {
     Variable * source = variable_retrieve( _environment, _source );
 
     switch( VT_BITWIDTH( source->type ) ) {
+        case 0:
+            switch( source->type ) {
+                case VT_NUMBER:
+                    cpu_inc_nbit( _environment, source->realName, _environment->numberConfig.maxBytes << 3 );
+                default:
+                    CRITICAL_DATATYPE_UNSUPPORTED("INC", DATATYPE_AS_STRING[source->type])
+            }
+            // @todo INC VT_FLOAT to be supported?
         case 32:
         case 1:
-        case 0:
-            // @todo INC VT_FLOAT to be supported?
             CRITICAL_DATATYPE_UNSUPPORTED("INC", DATATYPE_AS_STRING[source->type])
             break;
         case 16:
@@ -5425,9 +5684,15 @@ void variable_decrement( Environment * _environment, char * _source ) {
     Variable * source = variable_retrieve( _environment, _source );
 
     switch( VT_BITWIDTH( source->type ) ) {
-        case 1:
         case 0:
+            switch( source->type ) {
+                case VT_NUMBER:
+                    cpu_dec_nbit( _environment, source->realName, _environment->numberConfig.maxBytes << 3 );
+                default:
+                    CRITICAL_DATATYPE_UNSUPPORTED("DEC", DATATYPE_AS_STRING[source->type])
+            }
             // @todo DEC VT_FLOAT to be supported?
+        case 1:
             CRITICAL_DATATYPE_UNSUPPORTED("DEC", DATATYPE_AS_STRING[source->type])
             break;
         case 32:
@@ -5641,6 +5906,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                                 return variable_compare( _environment, source->name, floatToInteger->name );
                             }
                             break;
+                        case VT_NUMBER: {
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
+                                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, offsetAsString) );
+                                    cpu_compare_32bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                                }
+                            #else
+                                cpu_compare_32bit( _environment, source->realName, target->realName, result->realName, 1 );
+                            #endif
+                            break;
+                        }
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                     }
@@ -5697,6 +5974,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                                 return variable_compare( _environment, source->name, floatToInteger->name );
                             }
                             break;
+                        case VT_NUMBER: {
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
+                                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, offsetAsString) );
+                                    cpu_compare_16bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                                }
+                            #else
+                                cpu_compare_16bit( _environment, source->realName, target->realName, result->realName, 1 );
+                            #endif
+                            break;
+                        }
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                     }
@@ -5746,6 +6035,18 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                                 return variable_compare( _environment, source->name, floatToInteger->name );
                             }
                             break;
+                        case VT_NUMBER: {
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
+                                    char sourceRealName[MAX_TEMPORARY_STORAGE]; sprintf( sourceRealName, "%s", address_displacement(_environment, source->realName, offsetAsString) );
+                                    cpu_compare_8bit( _environment, sourceRealName, target->realName, result->realName, 1 );
+                                }
+                            #else
+                                cpu_compare_8bit( _environment, source->realName, target->realName, result->realName, 1 );
+                            #endif
+                            break;
+                        }
                         default:
                             CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
                     }
@@ -5883,6 +6184,16 @@ Variable * variable_compare( Environment * _environment, char * _source, char * 
                     if ( source->sidFile ) {
                         CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
                     }
+                case VT_NUMBER:
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            cpu_compare_memory_size( _environment, source->realName, target->realName, _environment->numberConfig.maxBytes, result->realName, 1 );
+                            break;
+                        default:
+                            CRITICAL_CANNOT_COMPARE(DATATYPE_AS_STRING[source->type],DATATYPE_AS_STRING[target->type]);
+                            break;
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -6094,8 +6405,14 @@ Variable * variable_mul2_const( Environment * _environment, char * _destination,
             break;
         case 1:
         case 0:
-            // @todo VT_FLOAT mul2(const) to be supported?
-            CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            switch( destination->type ) {
+                case VT_NUMBER:
+                    cpu_math_mul2_const_nbit( _environment, result->realName, (int)log2(_steps), _environment->numberConfig.maxBytes << 3 );
+                    break;
+                default:
+                    // @todo VT_FLOAT mul2(const) to be supported?
+                    CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            }
             break;
     }
     return result;
@@ -6128,8 +6445,14 @@ Variable * variable_sl_const( Environment * _environment, char * _destination, i
             break;
         case 1:
         case 0:
-            // @todo VT_FLOAT mul2(const) to be supported?
-            CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            switch( destination->type ) {
+                case VT_NUMBER:
+                    cpu_math_mul2_const_nbit( _environment, result->realName, _steps, _environment->numberConfig.maxBytes << 3 );
+                    break;
+                default:
+                    // @todo VT_FLOAT mul2(const) to be supported?
+                    CRITICAL_MUL2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            }        
             break;
     }
     return result;
@@ -6178,8 +6501,14 @@ Variable * variable_div2_const( Environment * _environment, char * _destination,
             break;
         case 1:
         case 0:
-            // @todo VT_FLOAT div2(const) to be supported?
-            CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            switch( destination->type ) {
+                case VT_NUMBER:
+                    cpu_math_div2_const_nbit( _environment, result->realName, (int)(log2(_bits)), _environment->numberConfig.maxBytes << 3, remainder ? remainder->realName : NULL );
+                    break;
+                default:
+                    // @todo VT_FLOAT div2(const) to be supported?
+                    CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            }        
             break;
     }
     return result;
@@ -6202,8 +6531,14 @@ Variable * variable_sr_const( Environment * _environment, char * _destination, i
             break;
         case 1:
         case 0:
-            // @todo VT_FLOAT div2(const) to be supported?
-            CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            switch( destination->type ) {
+                case VT_NUMBER:
+                    cpu_math_div2_const_nbit( _environment, result->realName, _bits, _environment->numberConfig.maxBytes << 3, NULL );
+                    break;
+                default:
+                    // @todo VT_FLOAT div2(const) to be supported?
+                    CRITICAL_DIV2_UNSUPPORTED( _destination, DATATYPE_AS_STRING[destination->type] );
+            }        
             break;
     }
     return result;
@@ -6800,8 +7135,22 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case 1:
                 case 0:
-                    // @todo direct comparing 32bit <|<= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_less_than_32bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_less_than_32bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 32bit <|<= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
             }
             break;
         case 16:
@@ -6833,8 +7182,22 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case 1:
                 case 0:
-                    // @todo direct comparing 16bit <|<= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_less_than_16bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_less_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 16bit <|<= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
             }
             break;
         case 8:
@@ -6852,8 +7215,22 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     break;
                 case 1:
                 case 0:
-                    // @todo direct comparing 8bit <|<= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_less_than_8bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_less_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 8bit <|<= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );
+                    }
             }
             break;
         case 1:
@@ -6952,6 +7329,15 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                     if ( source->sidFile ) {
                         CRITICAL_CANNOT_COMPARE_SID_FILE(source->name);
                     }                
+                case VT_NUMBER:
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            cpu_less_than_memory_size( _environment, source->realName, target->realName, _environment->numberConfig.maxBytes, result->realName, _equal );
+                            break;
+                        default:                
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -7033,7 +7419,13 @@ Variable * variable_less_than_const( Environment * _environment, char * _source,
             cpu_less_than_8bit_const( _environment, source->realName, _destination, result->realName, _equal, VT_SIGNED( source->type ) );
             break;
         default:
-            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], "(const integer)" );
+            switch( source->type ) {
+                case VT_NUMBER:
+                    cpu_less_than_nbit_const( _environment, source->realName, _destination, result->realName, _equal, _environment->numberConfig.maxBytes << 3 );
+                    break;
+                default:                
+                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[source->type] );        
+            }
             break;
     }
     return result;
@@ -7097,9 +7489,24 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     #endif
                     break;
                 case 1:
-                case 0:
-                    // @todo direct comparing 32bit >|>= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                case 0: {
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_greater_than_32bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_greater_than_32bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 32bit >|>= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                    }
+                }
             }
             break;
         case 16:
@@ -7130,9 +7537,25 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     #endif
                     break;
                 case 1:
-                case 0:
-                    // @todo direct comparing 16bit >|>= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                case 0: {
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_greater_than_16bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_greater_than_16bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 16bit >|>= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                    }
+                }
+
             }
             break;
         case 8:
@@ -7162,9 +7585,24 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
                     break;
                 case 1:
-                case 0:
-                    // @todo direct comparing 8bit >|>= VT_FLOAT to be supported?
-                    CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                case 0: {
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            #ifdef CPU_BIG_ENDIAN
+                                {
+                                    char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
+                                    char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, target->realName, offsetAsString) );
+                                    cpu_greater_than_8bit( _environment, targetRealName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                                }
+                            #else                      
+                                cpu_greater_than_8bit( _environment, source->realName, target->realName, result->realName, _equal, VT_SIGNED( source->type ) );
+                            #endif
+                            break;
+                        default:
+                            // @todo direct comparing 8bit >|>= VT_FLOAT to be supported?
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                    }
+                }
             }
             break;
         case 0:
@@ -7274,6 +7712,15 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     if ( source->sidFile ) {
                         CRITICAL_CANNOT_COMPARE_SID_FILE(target->name);
                     }
+                case VT_NUMBER:
+                    switch( target->type ) {
+                        case VT_NUMBER:
+                            cpu_greater_than_memory_size( _environment, source->realName, target->realName, _environment->numberConfig.maxBytes, result->realName, _equal );
+                            break;
+                        default:                
+                            CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -7296,7 +7743,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                     }
                     break;
                 case VT_FLOAT:
-                    switch( source->type ) {
+                    switch( target->type ) {
                         case VT_FLOAT: {
                             MAKE_LABEL
                             if ( source->precision != target->precision ) {
@@ -9620,6 +10067,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         case VT_FLOAT:
             offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( _array->arrayPrecision ) );
             break;
+        case VT_NUMBER:
+            offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes ) );
+            break;
         case VT_STRING:
             CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
          case VT_TILE:
@@ -9658,6 +10108,9 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 break;
             case VT_FLOAT:
                 cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), _value->realName, offset->realName );
+                break;
+            case VT_NUMBER:
+                cpu_move_nbit_indirect( _environment, _environment->numberConfig.maxBytes << 3, _value->realName, offset->realName );
                 break;
             case VT_TILES:
                 cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
@@ -9713,6 +10166,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
                 break;
             case VT_FLOAT:
+            case VT_NUMBER:
                 CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
                 break;
             case VT_TILES:
@@ -10043,6 +10497,18 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                 }
 
+                case VT_NUMBER: {
+
+                    offset = variable_sl_const( _environment, offset->name, VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes ) );
+
+                    cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
+
+                    cpu_move_nbit_indirect2( _environment, _environment->numberConfig.maxBytes << 3, offset->realName, _result->realName );
+
+                    break;
+
+                }
+
                 case VT_IMAGEREF: {
 
                     offset = variable_sl_const( _environment, offset->name, 4 );
@@ -10156,6 +10622,14 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
             }
 
             case VT_FLOAT: {
+
+                CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
+
+                break;
+
+            }
+
+            case VT_NUMBER: {
 
                 CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[_array->arrayType]);
 
@@ -10846,10 +11320,19 @@ Variable * variable_mod( Environment * _environment, char * _source, char * _des
             cpu_math_div_8bit_to_8bit( _environment, source->realName, target->realName, result->realName, remainder->realName, VT_SIGNED( source->type ) );
             break;
         case 1:
-        case 0:
-            // @todo MOD VT_FLOAT to be supported?
-            CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
-            break;
+        case 0: {
+            switch( source->type ) {
+                case VT_NUMBER:
+                    result = variable_temporary( _environment, VT_NUMBER, "(result of division)" );
+                    remainder = variable_temporary( _environment, VT_NUMBER, "(remainder of division)" );
+                    cpu_math_div_nbit_to_nbit( _environment, source->realName, target->realName, result->realName, remainder->realName, _environment->numberConfig.maxBytes << 3 );
+                default:
+                    // @todo MOD VT_FLOAT to be supported?
+                    CRITICAL_DIV_UNSUPPORTED(_source, DATATYPE_AS_STRING[source->type]);
+                    break;
+            }
+        }
+            
     }
 
     return remainder;

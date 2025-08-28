@@ -98,6 +98,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead1("%s: .res 4,0", variable->realName);
                     }
                     break;
+                case VT_NUMBER:
+                    if ( variable->memoryArea ) {
+                        // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                    } else {
+                        outhead2("%s: .res %d,0", variable->realName, _environment->numberConfig.maxBytes);
+                    }
+                    break;
                 case VT_STRING:
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -302,6 +309,9 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_DWORD:
         case VT_SDWORD:
             vars_emit_dword( _environment, NULL, _variable->initialValue );
+            break;
+        case VT_NUMBER:
+            vars_emit_number( _environment, NULL, _variable->initialValue );
             break;
         case VT_FLOAT: {
             int bytes = VT_FLOAT_BITWIDTH( _variable->precision ) >> 3;
