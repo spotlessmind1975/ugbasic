@@ -9368,13 +9368,13 @@ define_definition :
         ((struct _Environment *)_environment)->program.name = strdup( $3 );
     }
     | NUMBER BYTES const_expr {
-        if ( $3 <= 4 ) {
+        if ( $3 <= 4 || ( $3 & 0x01 ) ) {
             CRITICAL_INVALID_NUMBER_BYTES( $3 );
         }
         ((struct _Environment *)_environment)->numberConfig.maxBytes = $3;
     }
     | NUMBER DIGITS const_expr {
-        if ( $3 <= 0 ) {
+        if ( $3 <= 10 || ( $3 & 0x01 ) ) {
             CRITICAL_INVALID_NUMBER_DIGITS( $3 );
         }
         ((struct _Environment *)_environment)->numberConfig.maxDigits = $3;
