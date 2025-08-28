@@ -5394,44 +5394,44 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
     switch( _bits ) {
         case 32:
 			outline1("LDD %s", address_displacement(_environment, _number, "2") );
-            outline0("STD <MATHPTR2");
+            outline0("STD N2STRINGNUMBER+2");
             outline1("LDD %s", _number );
-            outline0("STD <MATHPTR0");
+            outline0("STD N2STRINGNUMBER");
             if ( _signed ) {
-                outline0("STA <MATHPTR4");
+                outline0("STA N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_32bit( _environment, "<MATHPTR0", NULL);
+                cpu_complement2_32bit( _environment, "N2STRINGNUMBER", NULL);
                 outhead1("%spositive", label );
             } else {
-                outline0("CLR <MATHPTR4");
+                outline0("CLR N2STRINGNUMBERSIGNED");
             }
             break;
         case 16:
             outline1("LDD %s", _number );
-            outline0("STD <MATHPTR2");
+            outline0("STD N2STRINGNUMBER+2");
             if ( _signed ) {
-                outline0("STA <MATHPTR4");
+                outline0("STA N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_16bit( _environment, "<MATHPTR2", NULL);
+                cpu_complement2_16bit( _environment, "N2STRINGNUMBER+2", NULL);
                 outhead1("%spositive", label );
             }
             outline0("LDD #0");
-            outline0("STD <MATHPTR0");
-            if ( !_signed ) outline0("STA <MATHPTR4");
+            outline0("STD N2STRINGNUMBER");
+            if ( !_signed ) outline0("STA N2STRINGNUMBERSIGNED");
             break;
         case 8:
             outline1("LDB %s", _number );
             outline0("CLRA");
-            outline0("STD <MATHPTR2");
+            outline0("STD N2STRINGNUMBER+2");
             if ( _signed && _bits == 8 ) {
-                outline0("STB <MATHPTR4");
+                outline0("STB N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_8bit( _environment, "<MATHPTR3", NULL);
+                cpu_complement2_8bit( _environment, "N2STRINGNUMBER+3", NULL);
                 outhead1("%spositive", label );
             }
             outline0("CLRB");
-            outline0("STD <MATHPTR0");
-            if ( !_signed ) outline0("STA <MATHPTR4");
+            outline0("STD N2STRINGNUMBER");
+            if ( !_signed ) outline0("STA N2STRINGNUMBERSIGNED");
             break;
     }
 
