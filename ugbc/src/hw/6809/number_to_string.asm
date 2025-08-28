@@ -32,6 +32,7 @@
 ;*                      CONVERT A NUMBER TO A STRING                           *
 ;*                                                                             *
 ;*                            by Samuel Devulder                               *
+;*                       Adapted by Marco Spedaletti                           *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
@@ -260,7 +261,7 @@ N2STRINGL5
   BLE   N2STRINGL4
 
   ; Finally, calculate the size of the string.
-  
+
   TFR   X,D
   SUBD  <TMPPTR
   TFR   B,A

@@ -6406,8 +6406,8 @@ void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
 void cpu_number_to_string_vars( Environment * _environment ) {
 
-    variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
-    variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
+    variable_import( _environment, "N2DINV", VT_BUFFER, _environment->numberConfig.maxBytes );
+    variable_import( _environment, "N2DBUF", VT_BUFFER, _environment->numberConfig.maxDigits );
     variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
 
 }
@@ -6418,96 +6418,50 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         
     deploy_with_vars( numberToString, src_hw_z80_number_to_string_asm, cpu_number_to_string_vars );
 
+    outline0("CALL N2STRINGRESET");
+    outline0("LD IXH, 0");
     switch( _bits ) {
         case 8:
             outline1("LD A, (%s)", _number);
+            outline0("LD (N2DINV), A");
             if ( _signed ) {
                 outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
                 outline0("CP 0");
                 outline1("JR Z, %sp81", label);
-                outline1("LD A, (%s)", _number);
-                outline0("XOR $FF");
-                outline0("ADC $1");
-                outline1("JP %sp82", label);
+                cpu_complement2_8bit( _environment, "N2DINV", NULL );
+                outline0("LD IXH, 0xff");
                 outhead1("%sp81:", label);
-                outline1("LD A, (%s)", _number);
-                outhead1("%sp82:", label);
-            } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
             }
-            outline0("POP IX");
             outline0("CALL N2D8");
             break;
         case 16:
             outline1("LD HL, (%s)", _number);
+            outline0("LD (N2DINV), HL");
             if ( _signed ) {
                 outline0("LD A, H");
                 outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
                 outline0("CP 0");
-                outline1("JR Z, %sp161", label);
-                outline0("LD A, H");
-                outline0("XOR $FF");
-                outline0("LD H, A");
-                outline0("LD A, L");
-                outline0("XOR $FF");
-                outline0("LD L, A");
-                outline0("LD DE, 1" );
-                outline0("ADD HL, DE" );
-                outline0("LD DE, 0" );
-                outline1("JP %sp162", label);
-                outhead1("%sp161:", label);
-                outline1("LD HL, (%s)", _number);
-                outhead1("%sp162:", label);
-            } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
+                outline1("JR Z, %sp81", label);
+                cpu_complement2_16bit( _environment, "N2DINV", NULL );
+                outline0("LD IXH, 0xff");
+                outhead1("%sp81:", label);
             }
-            outline0("POP IX");
             outline0("CALL N2D16");
             break;
         case 32:
             outline1("LD HL, (%s)", _number);
-            outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
+            outline0("LD (N2DINV), HL");
+            outline1("LD HL, (%s)", address_displacement(_environment, _number, "2"));
+            outline0("LD (N2DINV+2), HL");
             if ( _signed ) {
-                outline0("LD A, D");
-                outline0("AND $80");
-                outline0("LD B, A");
-                outline0("PUSH BC");
-                outline0("CP 0");
-                outline1("JR Z, %sp321", label);
-                outline0("LD A, D");
-                outline0("XOR $FF");
-                outline0("LD D, A");
-                outline0("LD A, E");
-                outline0("XOR $FF");
-                outline0("LD E, A");
                 outline0("LD A, H");
-                outline0("XOR $FF");
-                outline0("LD H, A");
-                outline0("LD A, L");
-                outline0("XOR $FF");
-                outline0("LD L, A");
-                outline0("AND A");
-                outline0("INC HL");
-                outline0("LD A, L");
-                outline0("OR H");
-                outline1("JR NZ, %sp322", label);
-                outline0("INC DE");
-                outline1("JP %sp322", label);
-                outhead1("%sp321:", label);
-                outline1("LD HL, (%s)", _number);
-                outline1("LD DE, (%s)", address_displacement(_environment, _number, "2"));
-                outhead1("%sp322:", label);
-            } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
+                outline0("AND $80");
+                outline0("CP 0");
+                outline1("JR Z, %sp81", label);
+                cpu_complement2_32bit( _environment, "N2DINV", NULL  );
+                outline0("LD IXH, 0xff");
+                outhead1("%sp81:", label);
             }
-            outline0("POP IX");
             outline0("CALL N2D32");
             break;
         default:
