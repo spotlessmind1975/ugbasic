@@ -58,16 +58,6 @@
 @EMIT numberConfig.maxDigits AS N2STRINGRESBUFFERSIZE
 @EMIT numberConfig.maxBytes AS N2STRINGNUMBERMAXBYTES
 
-N2STRINGRESET:
-        LD C, N2STRINGNUMBERMAXBYTES
-        LD A, 0
-N2STRINGRESETL1:
-        LD (HL), A
-        INC HL
-        DEC C
-        JR NZ, N2STRINGRESETL1
-        RET
-
 N2STRING:
 N2D8:    
         ; LD H,0

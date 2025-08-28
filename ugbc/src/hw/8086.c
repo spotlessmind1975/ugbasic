@@ -3907,8 +3907,8 @@ void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
 void cpu_number_to_string_vars( Environment * _environment ) {
 
-    // variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
-    // variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
+    // variable_import( _environment, "N2DINV", VT_BUFFER, _environment->numberConfig.maxBytes );
+    // variable_import( _environment, "N2DBUF", VT_BUFFER, _environment->numberConfig.maxDigits );
     // variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
 
 }
@@ -3919,41 +3919,72 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         
     deploy_with_vars( numberToString, src_hw_8086_number_to_string_asm, cpu_number_to_string_vars );
 
-    outline1("MOV DI, [%s]", _string);
-
+    outline0("MOV BL, 0");
     switch( _bits ) {
         case 8:
             outline1("MOV AL, [%s]", _number);
+            outline0("MOV [N2DINV], AL");
             if ( _signed ) {
-                outline0("CBW");
-                outline0("CWD");
-            } else {
-                outline0("MOV AH, 0");
-                outline0("MOV DX, 0");
+                outline0("AND AL, 0x80");
+                outline0("CMP AL, 0");
+                outline1("JZ %sp81", label);
+                cpu_complement2_8bit( _environment, "N2DINV", NULL );
+                outline0("MOV BL, 0xff");
+                outhead1("%sp81:", label);
             }
             break;
         case 16:
             outline1("MOV AX, [%s]", _number);
+            outline0("MOV [N2DINV], AX");
             if ( _signed ) {
-                outline0("CWD");
-            } else {
-                outline0("MOV DX, 0");
+                outline0("AND AH, 0x80");
+                outline0("CMP AH, 0");
+                outline1("JZ %sp81", label);
+                cpu_complement2_16bit( _environment, "N2DINV", NULL );
+                outline0("MOV BL, 0xff");
+                outhead1("%sp81:", label);
             }
             break;
         case 32:
             outline1("MOV AX, [%s]", _number);
-            outline1("MOV DX, [%s]", address_displacement(_environment, _number, "2"));
+            outline0("MOV [N2DINV], AX");
+            outline1("MOV AX, [%s]", address_displacement(_environment, _number, "2"));
+            outline0("MOV [N2DINV+2], HL");
+            if ( _signed ) {
+                outline0("AND AH, 0x80");
+                outline0("CMP AH, 0");
+                outline1("JZ %sp81", label);
+                cpu_complement2_32bit( _environment, "N2DINV", NULL  );
+                outline0("MOV BL, 0xff");
+                outhead1("%sp81:", label);
+            }
             break;
         default:
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
     }
 
-    if ( _signed ) {
-        outline0("CALL NUMBERTOSTRINGSIGNED");
-    } else {
-        outline0("CALL NUMBERTOSTRING");
-    }
-    outline1("MOV [%s], CL", _string_size );
+    outline0("PUSH BX");
+    outline0("CALL N2STRING");
+    outline0("POP BX");
+    outline1("MOV SI, [%s]", _string);
+    outline0("MOV AL, BL");
+    outline0("CMP AL, 0");
+    outline1("JZ %spos", label);
+    outline0("MOV AL, '-'");
+    outline0("MOV [SI], AL");
+    outline0("INC SI");
+    outline0("INC CL");
+    outhead1("%spos:", label);
+    outline0("MOV AL, CL");
+    outline1("MOV [%s], AL", _string_size);
+    outhead1("%sloop1:", label );
+    outline0("MOV AL, [DI]");
+    outline0("MOV [SI], AL");
+    outline0("INC SI");
+    outline0("INC DI");
+    outline0("DEC CL");
+    outline0("CMP CL, 0");
+    outline1("JNZ %sloop1", label );
 
 }
 
@@ -4148,7 +4179,7 @@ void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_sou
 
 void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "MOV AL, [%s]", _source );
-    outline0( "XOR 0xff" );
+    outline0( "XOR AL, 0xff" );
     if ( _destination ) {
         outline1( "MOV [%s], AL", _destination );        
     } else {
@@ -4163,7 +4194,7 @@ void cpu_complement2_8bit( Environment * _environment, char * _source, char * _d
 
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
     outline1( "MOV AX, [%s]", _source );
-    outline0( "XOR 0xffff" );
+    outline0( "XOR AX, 0xffff" );
     if ( _destination ) {
         outline1( "MOV [%s], AX", _destination );        
     } else {

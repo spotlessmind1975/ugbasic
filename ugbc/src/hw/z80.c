@@ -6418,7 +6418,6 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         
     deploy_with_vars( numberToString, src_hw_z80_number_to_string_asm, cpu_number_to_string_vars );
 
-    outline0("CALL N2STRINGRESET");
     outline0("LD IXH, 0");
     switch( _bits ) {
         case 8:

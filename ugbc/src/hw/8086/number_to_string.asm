@@ -30,117 +30,284 @@
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
 
-; Routine per convertire un numero a 32 bit (DX:AX) in una stringa ASCII
-; Input:
-;   DX:AX = il numero a 32 bit da convertire
-;   DI = l'indirizzo di memoria dove salvare la stringa
-; Output:
-;   DI = l'indirizzo della fine della stringa
-;   SI = l'indirizzo dell'inizio della stringa
-;   CX = Numero di caratteri che compongono il numero
-;   Stringa salvata nella memoria a partire dall'indirizzo di DI
-; Registri usati: AX, BX, CX, DX, DI, SP (implicitamente), SI
+@EMIT numberConfig.maxDigits AS N2STRINGRESBUFFERSIZE
+@EMIT numberConfig.maxBytes AS N2STRINGNUMBERMAXBYTES
 
-NUMBERTOSTRINGSIGNED:
+N2DINV: times N2STRINGNUMBERMAXBYTES db 0x00
+N2DBUF: times N2STRINGRESBUFFERSIZE db 0x00
+N2DEND: db 0x00
 
-    MOV BH, DH
-    AND BH, 0x80
-    CMP BH, 0x80
-    JNE NUMBERTOSTRING
+N2STRING:
+N2D8:    
+N2D16:   
+N2D24:   
+N2D32:   
+N2D48:   
+N2D64:   
 
-    XOR DX, 0xffff
-    XOR AX, 0xffff
-    INC AX
-    ADC DX, 0
-
-    PUSH BX
-    CALL NUMBERTOSTRING
-    POP BX
-
-    CMP BH, 0x80
-    JNE NUMBERTOSTRINGDONE
-
-    PUSH SI
-    PUSH CX
-    MOV DI, SI
-    ADD DI, CX
-    ADD SI, CX
-    DEC SI
-NUMBERTOSTRINGL1N:
-    MOV AL, [SI]
+    MOV DI, N2DBUF
+    MOV CH, 0
+    MOV CL, N2STRINGRESBUFFERSIZE
+    MOV AL, 32
+N2STRINGCD1:
     MOV [DI], AL
-    DEC SI
+    INC DI
+    DEC CL
+    CMP CL, 0
+    JNZ N2STRINGCD1
+
+    ; LD (N2DEND-1),BC ;set BCD value to "0" & place terminating 0
+    MOV [N2DEND-1], CX
+
+    ; LD E,1          ; no. of bytes in BCD value
+
+    MOV DL, 1
+
+    ; LD HL,N2DINV+N2STRINGNUMBERMAXBYTES  ; (address MSB input)+1
+
+    MOV DI, N2DINV+N2STRINGNUMBERMAXBYTES
+
+    ; LD A, N2STRINGNUMBERMAXBYTES+1
+    ; LD B, A
+    ; LD A, $09
+    ; LD C, A
+    MOV CH, N2STRINGNUMBERMAXBYTES+1
+    MOV CL, 0x09
+    ; XOR A
+    MOV AL, 0
+N2DSKP0: 
+    ; DEC B
+    DEC CH
+    ; JR Z,N2DSIZ     ; all 0: continue with postprocessing
+    CMP CH, 0
+    JZ N2DSIZ
+    ; DEC HL
     DEC DI
-    DEC CX
-    CMP CX, 0
-    JNZ NUMBERTOSTRINGL1N
-    POP CX
-    POP SI
-    MOV AL, '-'
-    MOV [SI], AL
-    INC CX
+    ; OR (HL)         ; find first byte <>0
+    ; JR Z,N2DSKP0
+    OR AL, [DI]
+    CMP AL, 0
+    JZ N2DSKP0
 
-NUMBERTOSTRINGDONE:
-    RET
+N2DFND1: 
+    ; DEC C
+    DEC CL
 
-NUMBERTOSTRING:
+    ; RLA
+    ROL AL, 1
 
-    MOV SI, DI
-    ADD DI, 10
-    MOV CX, 0
+    ; JR NC,N2DFND1   ; determine no. of most significant 1-bit
+    JNC N2DFND1
 
-NUMBERTOSTRING2:
+    ; RRA
+    ROR AL, 1
 
-    CMP DX, 0
-    JNZ NUMBERTOSTRINGL0
-    CMP AX, 0
-    JZ NUMBERTOSTRING0
-
-NUMBERTOSTRINGL0:
-
-    MOV BX, 10
+    ; LD D,A          ; byte from binary input value
+    MOV DH, AL
     
-    ; -----------------------------
-    ; DX = DX / 10
-    ; AX = AX / 10
+N2DLUS2: 
+    ; PUSH HL
+    PUSH DI
 
-    PUSH AX
-    MOV AX, DX
-    DIV BX
-    MOV DX, AX
-    POP AX
-
-    PUSH DX
-    DIV BX
-    MOV BX, DX
-    ADD DL, '0'
-    MOV [DI], DL
-    DEC DI
-    INC CX
-    POP DX
-
-    CMP DX, 0
-    JNZ NUMBERTOSTRINGL0
-    CMP AX, 0
-    JNZ NUMBERTOSTRINGL0
-
-    INC DI
-    PUSH SI
+    ; PUSH BC
     PUSH CX
-NUMBERTOSTRINGL1:
+
+N2DLUS1: 
+    ; LD HL,N2DEND-1  ; address LSB of BCD value
+    MOV DI, N2DEND-1
+
+    ; LD B,E          ; current length of BCD value in bytes
+    MOV CH, DL
+
+    ; RL D            ; highest bit from input value -> carry
+    ROL DH, 1
+
+N2DLUS0: 
+    ; LD A, (HL)
     MOV AL, [DI]
+
+    ; ADC A,A
+
+    ADC AL, AL
+
+    ; DAA
+    DAA
+
+    ; LD (HL),A       ; double 1 BCD byte from intermediate result
+    MOV [DI], AL
+
+    ; DEC HL
+    DEC DI
+
+    ; DJNZ N2DLUS0    ; and go on to double entire BCD value (+carry!)
+    DEC CH
+    CMP CH, 0
+    JNZ N2DLUS0
+
+    ; JR NC,N2DNXT
+    JNC N2DNXT
+
+    ; INC E           ; carry at MSB -> BCD value grew 1 byte larger
+    INC DL
+    ; LD (HL),1       ; initialize new MSB of BCD value
+
+    MOV AL, 1
     MOV [SI], AL
-    INC SI
-    INC DI
-    DEC CX
-    CMP CX, 0
-    JNZ NUMBERTOSTRINGL1
+
+N2DNXT:  
+    ; DEC C
+    DEC CL
+
+    ; JR NZ,N2DLUS1   ; repeat for remaining bits from 1 input byte
+    JNZ N2DLUS1
+
+    ; POP BC          ; no. of remaining bytes in input value
     POP CX
+
+    ; LD C,8          ; reset bit-counter
+    MOV CL, 8
+
+    ; POP HL          ; pointer to byte from input value
+    POP DI
+
+    ; DEC HL
+    DEC DI
+
+    ; LD D,(HL)       ; get next group of 8 bits
+
+    MOV DH, [DI]
+
+    ; DJNZ N2DLUS2    ; and repeat until last byte from input value
+    DEC CH
+    CMP CH, 0
+    JNZ N2DLUS2
+
+N2DSIZ:  
+    ; LD HL,N2DEND    ; address of terminating 0
+    MOV DI, N2DEND
+
+    ; LD C,E          ; size of BCD value in bytes
+    MOV CL, DL
+
+    ; OR A
+    CLC
+
+    ; SBB HL,BC       ; calculate address of MSB BCD
+    SBB DI, CX
+
+    ; LD D,H
+    ; LD E,L
+
+    PUSH DI
     POP SI
+
+    ; SBB HL,BC
+    SBB DI, CX
+
+    ; EX DE,HL        ; HL=address BCD value, DE=start of decimal value
+    XCHG SI, DI
+
+    ; LD B,C          ; no. of bytes BCD
+    MOV CH, CL
+
+    ; SLA C           ; no. of bytes decimal (possibly 1 too high)
+
+    SAL CL, 1
+
+    ; LD A, 48 ; 0 is ASCII 48
+    MOV AL, 48
+
+    ; RLD             ; shift bits 4-7 of (HL) into bit 0-3 of A
+
+    CALL N2STRINGRLD
+    
+    ; The contents of the high-order 
+    ; bits of the Accumulator are unaffected.
+
+    ; CP 48           ; 0 is ASCII 48, (HL) was > 9h?
+    CMP AL, 48
+
+    ; JR NZ,N2DEXPH   ; if yes, start with recording high digit
+    JNZ N2DEXPH
+
+    ; DEC C           ; correct number of decimals
+    DEC CL
+
+    ; INC DE          ; correct start address
+    INC SI
+
+    ; JR N2DEXPL      ; continue with converting low digit
+    JMP N2DEXPL
+
+N2DEXP:  
+    ; RLD             ; shift high digit (HL) into low digit of A
+    CALL N2STRINGRLD
+
+N2DEXPH: 
+    ; LD (DE),A       ; record resulting ASCII-code
+    MOV [SI], AL
+
+    ; INC DE
+    INC SI
+
+N2DEXPL: 
+    ; RLD
+    CALL N2STRINGRLD
+
+    ; LD (DE),A
+    MOV [SI], AL
+
+    ; INC DE
+    INC SI
+
+    ; INC HL          ; next BCD-byte
+    INC DI
+
+    ; DJNZ N2DEXP     ; and go on to convert each BCD-byte into 2 ASCII
+    DEC CH
+    CMP CH, 0
+    JNZ N2DEXP
+
+    ; SBB HL,BC       ; return with HL pointing to 1st decimal
+
+    SBB DI, CX
+
+    ; RET
     RET
 
-NUMBERTOSTRING0:
-    MOV AL, '0'
-    MOV [SI], AL
-    MOV CX, 1
+N2STRINGRLD:
+    ; the previous contents of those high-order four bits are 
+    ; copied to the low-order four bits of the Accumulator (Register A); 
+
+    MOV BL, [DI]
+    AND BL, 0xf0
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    SAR BL, 1
+    MOV AH, AL
+    AND AL, 0xf0
+    OR AL, BL
+
+    ; The contents of the low-order four bits (bits 3, 2, 1, and 0) of the memory 
+    ; location (HL) are copied to the high-order four bits (7, 6, 5, and 4) of that 
+    ; same memory location; 
+
+    MOV BL, [DI]
+    SAL BL, 1
+    SAL BL, 1
+    SAL BL, 1
+    SAL BL, 1
+    MOV [DI], BL
+
+    ; and the previous contents of the low-order four bits of the Accumulator 
+    ; are copied to the low-order four bits of memory location (HL). 
+    
+    PUSH AX
+    AND AH, 0x0f
+    MOV AL, [DI]
+    AND AL, 0xf0
+    OR AL, AH
+    mov [DI], AL
+    POP AX
     RET
