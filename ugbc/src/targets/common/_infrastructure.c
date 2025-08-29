@@ -1676,7 +1676,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                     size *= 4;
                 } else if ( destination->arrayType == VT_FLOAT ) {
                     size *= ( VT_FLOAT_NORMALIZED_BITWIDTH( destination->arrayPrecision ) >> 3 );
-                } else if ( destination->arrayType == VT_FLOAT ) {
+                } else if ( destination->arrayType == VT_NUMBER ) {
                     int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
                     size *= ( 1 << os );
                 } else {
@@ -1685,6 +1685,17 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 cpu_fill_direct_size_value( _environment, destination->realName, size, _value );
             } else if ( destination->type == VT_TILE ) {
                 cpu_store_8bit( _environment, destination->realName, _value );
+            } else if ( destination->type == VT_NUMBER ) {
+                int value[8];
+                value[0] = (unsigned char)((_value) & 0xff );
+                value[1] = (unsigned char)((_value>>8) & 0xff );
+                value[2] = (unsigned char)((_value>>16) & 0xff );
+                value[3] = (unsigned char)((_value>>24) & 0xff );
+                // value[4] = (unsigned char)((_value>>32) & 0xff );
+                // value[5] = (unsigned char)((_value>>40) & 0xff );
+                // value[6] = (unsigned char)((_value>>48) & 0xff );
+                // value[7] = (unsigned char)((_value>>56) & 0xff );
+                cpu_store_nbit( _environment, destination->realName, _environment->numberConfig.maxBytes << 3, value );
             } else {
                 CRITICAL_STORE_UNSUPPORTED(DATATYPE_AS_STRING[destination->type]);
             }

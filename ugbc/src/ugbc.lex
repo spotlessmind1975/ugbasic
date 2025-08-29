@@ -1172,6 +1172,8 @@ NTSC { RETURN(NTSC,1); }
 Nts { RETURN(NTSC,1); }
 NULL { RETURN(NULLkw,1); }
 Nu { RETURN(NULLkw,1); }
+NUMBER { RETURN(NUMBER,1); }
+NUm { RETURN(NUMBER,1); }
 
 %{ /* --------------------------------- O --------------------------------- */ %}
 
