@@ -7344,7 +7344,7 @@ Variable * variable_less_than( Environment * _environment, char * _source, char 
                 case VT_NUMBER:
                     switch( target->type ) {
                         case VT_NUMBER:
-                            cpu_less_than_memory_size( _environment, source->realName, target->realName, _environment->numberConfig.maxBytes, result->realName, _equal );
+                            cpu_less_than_nbit( _environment, source->realName, target->realName, result->realName, _equal, _environment->numberConfig.maxBytes << 3 );
                             break;
                         default:                
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        

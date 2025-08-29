@@ -4512,7 +4512,7 @@ void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _s
             outline0("CLC");
             outline1("ASL %s", _source);
             for( i=1; i<(_bits>>3); ++i ) {
-                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1);
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i);
                 outline1("ROL %s", address_displacement(_environment, _source, offset));
             }
             --_steps;
