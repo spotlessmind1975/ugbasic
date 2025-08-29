@@ -206,7 +206,11 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
                             Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary for PRINT)");
                             Variable * size = variable_temporary( _environment, VT_BYTE, "(temporary for PRINT)");
                             Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
-                            variable_store_string( _environment, tmp->name, "          " );
+
+                            char * stringSpace = malloc( _environment->numberConfig.maxDigits + 1 );
+                            memset( stringSpace, 0, _environment->numberConfig.maxDigits + 1 );
+                            memset( stringSpace, 32, _environment->numberConfig.maxDigits );
+                            variable_store_string( _environment, tmp->name, stringSpace );
 
                             cpu_dswrite( _environment, tmp->realName );
 

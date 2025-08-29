@@ -2430,6 +2430,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
 
     int i;
 
+    char afterLabel[MAX_TEMPORARY_STORAGE]; sprintf( afterLabel, "%safter", label);
     char destination[MAX_TEMPORARY_STORAGE]; sprintf( destination, "CPUMATHMULNBITTONBIT%d_DESTINATION", (_bits>>3));
     char source[MAX_TEMPORARY_STORAGE]; sprintf( source, "CPUMATHMULNBITTONBIT%d_SOURCE", (_bits>>3));
     char other[MAX_TEMPORARY_STORAGE]; sprintf( other, "CPUMATHMULNBITTONBIT%d_OTHER", (_bits>>3));
@@ -2439,6 +2440,8 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
     // embedded( cpu_math_mul_nbit_to_nbit, src_hw_6502_cpu_math_mul_nbit_to_nbit_asm )
 
     if ( ! _environment->cpuOptimization.cpu_math_mul_nbit_to_nbit[_bits>>3] ) {
+
+        outline1("JMP %s", afterLabel );
 
         outhead2("CPUMATHMULNBITTONBIT%d_SOURCE: .RES %d", _bits>>3, _bits>>3 );
         outhead2("CPUMATHMULNBITTONBIT%d_DESTINATION: .RES %d", _bits>>3, _bits>>3 );
@@ -2475,7 +2478,9 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
             sprintf( offset, "%d", i );
             outline1("ROR %s", address_displacement( _environment, destination, offset ) );
         }
-        outline1("BCC %s", multiplyByBit0Label );
+        outline1("BCS %sx", multiplyByBit0Label );
+        outline1("JMP %s", multiplyByBit0Label );
+        outhead1("%sx:", multiplyByBit0Label );
 
         // Step 2: Multiply the rightmost digit or the least significant bit (LSB) 
         // of the multiplier (1) with all the digits of the multiplicand (11101).
@@ -2491,7 +2496,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         // Step 3: Add a place holder of '0' or 'X' before multiplying the next 
         // higher order digit of the multiplier& with the multiplicand.
 
-        outhead1("%s", multiplyByBit0Label);
+        outhead1("%s:", multiplyByBit0Label);
 
         outline0("CLC" );
         outline1("ASL %s", address_displacement( _environment, source, "0" ) );
@@ -2505,7 +2510,9 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         // digit of the multiplicand with the multiplier.
 
         outline0("DEX" );
-        outline1("BNE CPUMATHMULNBITTONBIT%dL1:", (_bits>>3) );
+        outline1("BEQ CPUMATHMULNBITTONBIT%dL1x", (_bits>>3) );
+        outline1("JMP CPUMATHMULNBITTONBIT%dL1", (_bits>>3) );
+        outhead1("CPUMATHMULNBITTONBIT%dL1x:", (_bits>>3) );
 
         outline0("RTS" );
 
@@ -2514,6 +2521,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         // use the rules of binary addition.
 
         // (The rules for binary addition are listed as follows: 0 + 0 = 0, 0 + 1 = 1, and 1 + 1 = 0, with a carryover of 1. So, 1 + 1 = 10 and 1 + 1 + 1 = 11 in the binary number system)
+        outhead1("%s:", afterLabel );
 
     }
 
@@ -2524,7 +2532,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         outline1("LDA %s", address_displacement( _environment, _destination, offset ) );
         outline1("STA %s", address_displacement( _environment, destination, offset ) );
     }
-    outline0("JSR CPUMATHMULNBITTONBIT" );
+    outline1("JSR CPUMATHMULNBITTONBIT%d", _bits >> 3 );
     for( i=0; i<(_bits>>3); ++i ) {
         char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
         outline1("LDA %s", address_displacement( _environment, other, offset ) );
@@ -3493,7 +3501,8 @@ void cpu_math_div_nbit_to_nbit( Environment * _environment, char *_source, char 
             outline1("LDA %s", address_displacement( _environment, _destination, offset ) );
             outline1("STA %s", address_displacement( _environment, divisor, offset ) );
         }
-        outline1("JSR CPUMATHDIVNBITTONBIT%d:", _bits>>3);
+        outline1("JSR CPUMATHDIVNBITTONBIT%d", _bits>>3);
+
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
             if ( _other ) {
@@ -3600,7 +3609,9 @@ void cpu_compare_nbit( Environment * _environment, char *_source, char *_destina
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
             outline1("LDA %s", address_displacement(_environment, _source, offset));
             outline1("CMP %s", address_displacement(_environment, _destination, offset));
-            outline1("BNE %s", label);
+            outline2("BEQ %sx%dx", label, i);
+            outline1("JMP %s", label);
+            outhead2("%sx%dx:", label, i);
         }
         outline1("LDA #$%2.2x", 0xff*_positive);
         if ( _other ) {
@@ -4421,20 +4432,24 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
         outline1("LDA %s", address_displacement(_environment, _source, offsetMsb));
         outline0("AND #$80");
         outline0("TAX");
-        outline1("BEQ %snocomplement", label );
+        outline1("BNE %snocomplementx", label );
+        outline1("JMP %snocomplement", label );
+        outhead1("%snocomplementx:", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
         outhead1("%snocomplement:", label );
         while( _steps ) {
             outline0("CLC");
             outline1("LSR %s", address_displacement(_environment, _source, offsetMsb));
-            for( int i=(_bits>>3)-2; i>-1; ++i ) {
+            for( int i=(_bits>>3)-2; i>-1; --i ) {
                 char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
                 outline1("ROR %s", address_displacement(_environment, _source, offset));
             }
             --_steps;
         }
         outline0("TXA");
-        outline1("BEQ %snocomplement2", label );
+        outline1("BNE %snocomplement2x", label );
+        outline1("JMP %snocomplement2", label );
+        outhead1("%snocomplement2x:", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
         outhead1("%snocomplement2:", label );
 

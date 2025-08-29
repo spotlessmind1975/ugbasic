@@ -1686,7 +1686,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
             } else if ( destination->type == VT_TILE ) {
                 cpu_store_8bit( _environment, destination->realName, _value );
             } else if ( destination->type == VT_NUMBER ) {
-                int value[8];
+                int * value = malloc( _environment->numberConfig.maxBytes * sizeof(int) );
+                memset( value, 0, _environment->numberConfig.maxBytes * sizeof(int) );
                 value[0] = (unsigned char)((_value) & 0xff );
                 value[1] = (unsigned char)((_value>>8) & 0xff );
                 value[2] = (unsigned char)((_value>>16) & 0xff );
