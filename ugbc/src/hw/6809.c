@@ -1882,19 +1882,19 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
 
         outline1("JMP %s", afterLabel );
 
-        outhead2("CPUMATHMULNBITTONBIT%d_SOURCE: rsz %d", _bits>>3, _bits>>3 );
-        outhead2("CPUMATHMULNBITTONBIT%d_DESTINATION: rsz %d", _bits>>3, _bits>>3 );
-        outhead2("CPUMATHMULNBITTONBIT%d_OTHER: rsz %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_SOURCE rzb %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_DESTINATION rzb %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_OTHER rzb %d", _bits>>3, _bits>>3 );
 
-        outhead1("CPUMATHMULNBITTONBIT%d:", _bits>>3);
-        outhead0("LDA #$00");
+        outhead1("CPUMATHMULNBITTONBIT%d", _bits>>3);
+        outline0("LDA #$00");
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
             outline1("STA %s", address_displacement( _environment, other, offset ) );
         }
         outline1("LDB #$%2.2x", _bits );
 
-        outhead1("CPUMATHMULNBITTONBIT%dL1:", _bits>>3);
+        outhead1("CPUMATHMULNBITTONBIT%dL1", _bits>>3);
 
         // The process of multiplying binary numbers is similar and easier to do than
         // decimal multiplication as binary numbers consist of only two digits which 
@@ -1917,14 +1917,14 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
             sprintf( offset, "%d", i );
             outline1("ROR %s", address_displacement( _environment, destination, offset ) );
         }
-        outline1("BCS %sx", multiplyByBit0Label );
+        outline1("LBCS %sx", multiplyByBit0Label );
         outline1("JMP %s", multiplyByBit0Label );
-        outhead1("%sx:", multiplyByBit0Label );
+        outhead1("%sx", multiplyByBit0Label );
 
         // Step 2: Multiply the rightmost digit or the least significant bit (LSB) 
         // of the multiplier (1) with all the digits of the multiplicand (11101).
 
-        outline0("CLC" );
+        outline0("ANDCC #$FE" );
         for( i=0; i<(_bits>>3); ++i ) {
             sprintf( offset, "%d", i );
             outline1("LDA %s", address_displacement( _environment, source, offset ) );
@@ -1935,9 +1935,9 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         // Step 3: Add a place holder of '0' or 'X' before multiplying the next 
         // higher order digit of the multiplier& with the multiplicand.
 
-        outhead1("%s:", multiplyByBit0Label);
+        outhead1("%s", multiplyByBit0Label);
 
-        outline0("CLC" );
+        outline0("ANDCC #$FE" );
         outline1("ASL %s", address_displacement( _environment, source, "0" ) );
         for( i=1; i<(_bits>>3); ++i ) {
             sprintf( offset, "%d", i );
@@ -1951,7 +1951,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         outline0("DECB" );
         outline1("BEQ CPUMATHMULNBITTONBIT%dL1x", (_bits>>3) );
         outline1("JMP CPUMATHMULNBITTONBIT%dL1", (_bits>>3) );
-        outhead1("CPUMATHMULNBITTONBIT%dL1x:", (_bits>>3) );
+        outhead1("CPUMATHMULNBITTONBIT%dL1x", (_bits>>3) );
 
         outline0("RTS" );
 
@@ -1960,7 +1960,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         // use the rules of binary addition.
 
         // (The rules for binary addition are listed as follows: 0 + 0 = 0, 0 + 1 = 1, and 1 + 1 = 0, with a carryover of 1. So, 1 + 1 = 10 and 1 + 1 + 1 = 11 in the binary number system)
-        outhead1("%s:", afterLabel );
+        outhead1("%s", afterLabel );
 
     }
 
@@ -2600,18 +2600,18 @@ void cpu_math_div_nbit_to_nbit( Environment * _environment, char *_source, char 
 
             cpu_jump( _environment, afterLabel );
 
-            outhead2("%s: rsz %d", quotient, _bits>>3 );
-            outhead2("%s: rsz %d", divisor, _bits>>3 );
-            outhead2("%s: rsz %d", dividend, _bits>>3 );
-            outhead1("%s: fcb 0", k );
-            outhead1("%s: fcb 0", result1 );
-            outhead1("%s: fcb 0", result2 );
+            outhead2("%s rzb %d", quotient, _bits>>3 );
+            outhead2("%s rzb %d", divisor, _bits>>3 );
+            outhead2("%s rzb %d", dividend, _bits>>3 );
+            outhead1("%s fcb 0", k );
+            outhead1("%s fcb 0", result1 );
+            outhead1("%s fcb 0", result2 );
 
             // public static long div(long dividend, long divisor) {
             //     long quotient = 0;
 
-            outhead1("CPUMATHDIVNBITTONBIT%d:", _bits>>3);
-            outhead0("LDA #$00");
+            outhead1("CPUMATHDIVNBITTONBIT%d", _bits>>3);
+            outline0("LDA #$00");
             for( i=0; i<(_bits>>3); ++i ) {
                 char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
                 outline1("STA %s", address_displacement( _environment, quotient, offset ) );
@@ -2721,7 +2721,7 @@ void cpu_math_div_nbit_to_nbit_const( Environment * _environment, char *_source,
 
             cpu_jump( _environment, afterLabel );
 
-            outhead2("%s: rsz %d", data, _bits>>3 );
+            outhead2("%s: rzb %d", data, _bits>>3 );
 
             cpu_label( _environment, afterLabel );
             
@@ -2843,14 +2843,14 @@ void cpu_compare_nbit( Environment * _environment, char *_source, char *_destina
             outline1("STA %s", _destination);
         }
         outline1("JMP %s_2", label);
-        outhead1("%s:", label);
+        outhead1("%s", label);
         outline1("LDA #$%2.2x", 0xff*(1-_positive));
         if ( _other ) {
             outline1("STA %s", _other);
         } else {
             outline1("STA %s", _destination);
         }
-        outhead1("%s_2:", label);
+        outhead1("%s_2", label);
     
     no_embedded( cpu_compare_nbit )
 
@@ -2873,10 +2873,10 @@ void cpu_compare_nbit_const( Environment * _environment, char *_source, int _des
         outline1("LDA #$%2.2x", 0xff*_positive);
         outline1("STA %s", _other);
         outline1("JMP %s_2", label);
-        outhead1("%s:", label);
+        outhead1("%s", label);
         outline1("LDA #$%2.2x", 0xff*(1-_positive));
         outline1("STA %s", _other);
-        outhead1("%s_2:", label);
+        outhead1("%s_2", label);
     
     no_embedded( cpu_compare_nbit )
 
@@ -3069,10 +3069,9 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("LDB %s", address_displacement(_environment, _destination, offset ) );
-            outline1("LDA %s", address_displacement(_environment, _source, offset ) );
-            outline0("SUBA A,B");
+            outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
             outline2("BEQ %snext%dx", label, i );
-            outline1("BCS %sbga", label );
+            outline1("LBCS %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
@@ -3116,25 +3115,24 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("LDB #$%2.2x", (unsigned char)((_destination>>(i*8))&0xff) );
-            outline1("LDA %s", address_displacement(_environment, _source, offset ) );
-            outline0("SUB A, B");
+            outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
             outline2("BEQ %snext%dx", label, i );
-            outline1("BCS %sbga", label );
+            outline1("LBCS %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
 
         outhead1("%sbga", label );
         outline0("LDA 0xff" );
-        outline1("LD (%s), A", _other );
-        outline1("JR %sdone", label );
+        outline1("STA %s", _other );
+        outline1("BRA %sdone", label );
 
-        outhead1("%sagb:", label );
-        outline0("LD A, 0x00" );
-        outline1("LD (%s), A", _other );
-        outline1("JR %sdone", label );
+        outhead1("%sagb", label );
+        outline0("LDA 0x00" );
+        outline1("STA %s", _other );
+        outline1("BRA %sdone", label );
 
-        outhead1("%sdone:", label );
+        outhead1("%sdone", label );
 
     no_embedded( cpu_less_than_nbit_const )
 
@@ -3569,7 +3567,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
         outline0("TFR A, B");
         outline1("LBEQ %snocomplement", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
-        outhead1("%snocomplement:", label );
+        outhead1("%snocomplement", label );
         while( _steps ) {
             outline0("ANDCC #$FE");
             outline1("LSR %s", address_displacement(_environment, _source, offsetMsb));
@@ -3582,7 +3580,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
         outline0("CMPB #0");
         outline1("LBNE %snocomplement2", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
-        outhead1("%snocomplement2:", label );
+        outhead1("%snocomplement2", label );
 
     no_embedded( cpu_math_div2_const_nbit )
 
@@ -4674,7 +4672,7 @@ void cpu_inc_nbit( Environment * _environment, char * _variable, int _bits ) {
             outline1("INC %s", address_displacement(_environment, _variable, offset ) );
             outline1("BNE %s", label );
         }
-        outhead1("%s:", label );
+        outhead1("%s", label );
 
     no_embedded( cpu_inc_nbit )
 
@@ -4735,7 +4733,7 @@ void cpu_dec_nbit( Environment * _environment, char * _variable, int _bits ) {
             outline0("CMPA #$FF" );
             outline1("BNE %s", label );
         }
-        outhead1("%s:", label );
+        outhead1("%s", label );
 
     no_embedded( cpu_dec_32bit )
 
