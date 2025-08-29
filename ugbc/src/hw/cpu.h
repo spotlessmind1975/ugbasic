@@ -82,9 +82,11 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 void cpu_greater_than_16bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu_greater_than_32bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
 void cpu_greater_than_8bit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _signed );
+void cpu_greater_than_nbit( Environment * _environment, char *_source, char *_destination,  char *_name, int _equal, int _bits );
 void cpu_greater_than_16bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu_greater_than_32bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
 void cpu_greater_than_8bit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _signed );
+void cpu_greater_than_nbit_const( Environment * _environment, char *_source, int _destination,  char *_name, int _equal, int _bits );
 void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _bytes_width, char * _pattern );
 void cpu_fill_size( Environment * _environment, char * _address, int _bytes, char * _pattern );
 void cpu_fill_size_value( Environment * _environment, char * _address, int _bytes, int _pattern );

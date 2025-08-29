@@ -1623,10 +1623,12 @@ typedef struct _Embedded {
     int cpu_math_div_32bit_to_16bit;
     int cpu_math_div_16bit_to_16bit;
     int cpu_math_div_8bit_to_8bit;
+    int cpu_math_div_nbit_to_nbit;
     int cpu_math_mul2_const_16bit;
     int cpu_math_mul2_const_32bit;
     int cpu_math_mul2_const_8bit;
     int cpu_math_mul2_const_nbit;
+    int cpu_math_sub_nbit;
     int cpu_math_sub_16bit;
     int cpu_math_sub_32bit;
     int cpu_math_sub_8bit;
@@ -2056,6 +2058,8 @@ typedef struct _CpuOptimization {
     int cpu_math_mul2_const_8bit_generated[8];
     int cpu_math_mul2_const_16bit_generated[16];
     int cpu_math_mul_nbit_to_nbit[32];
+    int cpu_math_div_nbit_to_nbit[32];
+    int cpu_math_div_nbit_to_nbit_const[32];
 
 } CpuOptimization;
 

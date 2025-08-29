@@ -2448,7 +2448,7 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         outhead0("LDA #$00");
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
-            outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_OTHER", offset ) );
+            outline1("STA %s", address_displacement( _environment, other, offset ) );
         }
         outline1("LDX #$%2.2x", _bits );
 
@@ -2520,9 +2520,9 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
     for( i=0; i<(_bits>>3); ++i ) {
         char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
         outline1("LDA %s", address_displacement( _environment, _source, offset ) );
-        outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_SOURCE", offset ) );
+        outline1("STA %s", address_displacement( _environment, source, offset ) );
         outline1("LDA %s", address_displacement( _environment, _destination, offset ) );
-        outline1("STA %s", address_displacement( _environment, "CPUMATHMULNBITTONBIT_DESTINATION", offset ) );
+        outline1("STA %s", address_displacement( _environment, destination, offset ) );
     }
     outline0("JSR CPUMATHMULNBITTONBIT" );
     for( i=0; i<(_bits>>3); ++i ) {
@@ -3381,6 +3381,168 @@ void cpu_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
 
 }
 
+void cpu_math_div_nbit_to_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+
+    inline( cpu_math_div_nbit_to_nbit )
+
+        char afterLabel[MAX_TEMPORARY_STORAGE]; sprintf( afterLabel, "%safter", label );
+        char skipLabel[MAX_TEMPORARY_STORAGE]; sprintf( skipLabel, "%sskip", label );
+        char skip2Label[MAX_TEMPORARY_STORAGE]; sprintf( skip2Label, "%sskipb", label );
+        char skip3Label[MAX_TEMPORARY_STORAGE]; sprintf( skip3Label, "%sskipc", label );
+        char skip4Label[MAX_TEMPORARY_STORAGE]; sprintf( skip4Label, "%sskipd", label );
+        char quotient[MAX_TEMPORARY_STORAGE]; sprintf( quotient, "CPUMATHDIVNBITTONBIT%d_QUOTIENT", _bits >> 3 );
+        char divisor[MAX_TEMPORARY_STORAGE]; sprintf( divisor, "CPUMATHDIVNBITTONBIT%d_DIVISOR", _bits >> 3 );
+        char dividend[MAX_TEMPORARY_STORAGE]; sprintf( dividend, "CPUMATHDIVNBITTONBIT%d_DIVIDEND", _bits >> 3 );
+        char result1[MAX_TEMPORARY_STORAGE]; sprintf( result1, "CPUMATHDIVNBITTONBIT%d_RESULT1", _bits >> 3 );
+        char result2[MAX_TEMPORARY_STORAGE]; sprintf( result2, "CPUMATHDIVNBITTONBIT%d_RESULT2", _bits >> 3 );
+        char k[MAX_TEMPORARY_STORAGE]; sprintf( k, "CPUMATHDIVNBITTONBIT%d_K", _bits >> 3 );
+
+        if ( ! _environment->cpuOptimization.cpu_math_div_nbit_to_nbit[_bits>>3] ) {
+
+            cpu_jump( _environment, afterLabel );
+
+            outhead2("%s: .RES %d", quotient, _bits>>3 );
+            outhead2("%s: .RES %d", divisor, _bits>>3 );
+            outhead2("%s: .RES %d", dividend, _bits>>3 );
+            outhead1("%s: .BYTE 0", k );
+            outhead1("%s: .BYTE 0", result1 );
+            outhead1("%s: .BYTE 0", result2 );
+
+            // public static long div(long dividend, long divisor) {
+            //     long quotient = 0;
+
+            outhead1("CPUMATHDIVNBITTONBIT%d:", _bits>>3);
+            outhead0("LDA #$00");
+            for( i=0; i<(_bits>>3); ++i ) {
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+                outline1("STA %s", address_displacement( _environment, quotient, offset ) );
+            }
+
+            //     int k = 0;
+            cpu_store_8bit( _environment, k, 0 );
+
+            //     while (divisor <= dividend && divisor > 0) {
+
+            cpu_label( _environment, label );
+            cpu_less_than_nbit( _environment, divisor, dividend, result1, 1, _bits );
+            cpu_greater_than_nbit_const( _environment, divisor, 0, result2, 0, _bits );
+            cpu_and_8bit( _environment, result1, result2, result1 );
+            cpu_compare_and_branch_8bit_const( _environment, result1, 0, skipLabel, 1 );
+
+            //         divisor <<= 1;
+
+            cpu_math_mul2_const_nbit( _environment, divisor, 1, _bits );
+
+            //         k++;
+
+            cpu_inc( _environment, k );
+
+            //     }
+
+            cpu_jump( _environment, label );
+
+            cpu_label( _environment, skipLabel );
+
+            //     while (k-- > 0) {
+
+            cpu_greater_than_8bit_const( _environment, k, 0, result1, 0, 1 );
+            cpu_dec( _environment, k );
+            cpu_compare_and_branch_8bit_const( _environment, result1, 0, skip2Label, 1 );
+
+            //         divisor >>= 1;
+
+            cpu_math_div2_const_nbit( _environment, divisor, 1, _bits, NULL );
+
+            //         if (divisor <= dividend) {
+            cpu_less_than_nbit( _environment, divisor, dividend, result1, 1, _bits );
+            cpu_compare_and_branch_8bit_const( _environment, result1, 0, skip3Label, 1 );
+
+            //             dividend -= divisor;
+
+            cpu_math_sub_nbit( _environment, dividend, divisor, dividend, _bits );
+
+            //             quotient = (quotient << 1) + 1;
+            cpu_math_mul2_const_nbit( _environment, quotient, 1, _bits );
+            cpu_inc_nbit( _environment, quotient, _bits );
+
+            //         }
+            cpu_jump( _environment, skip4Label );
+            cpu_label( _environment, skip3Label );
+            //         else quotient <<= 1;
+            cpu_math_mul2_const_nbit( _environment, quotient, 1, _bits );
+            cpu_label( _environment, skip4Label );
+            cpu_jump( _environment, skipLabel );
+
+            //     }
+            cpu_label( _environment, skip2Label );
+            //     return quotient;
+            cpu_return( _environment );
+
+            cpu_label( _environment, afterLabel );
+
+        }
+
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement( _environment, _source, offset ) );
+            outline1("STA %s", address_displacement( _environment, dividend, offset ) );
+            outline1("LDA %s", address_displacement( _environment, _destination, offset ) );
+            outline1("STA %s", address_displacement( _environment, divisor, offset ) );
+        }
+        outline1("JSR CPUMATHDIVNBITTONBIT%d:", _bits>>3);
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            if ( _other ) {
+                outline1("LDA %s", address_displacement( _environment, quotient, offset ) );
+                outline1("STA %s", address_displacement( _environment, _other, offset ) );
+            } else {
+                outline1("LDA %s", address_displacement( _environment, quotient, offset ) );
+                outline1("STA %s", address_displacement( _environment, _destination, offset ) );            
+            }
+        }
+
+        // }
+    no_embedded( cpu_math_div_nbit_to_nbit )
+
+}
+
+void cpu_math_div_nbit_to_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+    
+    inline( cpu_math_div_nbit_to_nbit )
+
+        char afterLabel[MAX_TEMPORARY_STORAGE]; sprintf( afterLabel, "%safter", label );
+        char data[MAX_TEMPORARY_STORAGE]; sprintf( data, "CPUMATHDIVNBITTONBITCONST%d_DATA", _bits >> 3 );
+
+        if ( ! _environment->cpuOptimization.cpu_math_div_nbit_to_nbit_const[_bits>>3] ) {
+
+            cpu_jump( _environment, afterLabel );
+
+            outhead2("%s: .RES %d", data, _bits>>3 );
+
+            cpu_label( _environment, afterLabel );
+            
+        }
+
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA #$%2.2x", (unsigned char)( (_destination >> (i*8)) & 0xff ) );
+            outline1("STA %s", address_displacement( _environment, data, offset ) );
+        }
+        cpu_math_div_nbit_to_nbit( _environment, _source, data, _other, _other_remainder, _bits );
+
+        // }
+    no_embedded( cpu_math_div_nbit_to_nbit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to compare two 32 bit values
  * 
@@ -3916,6 +4078,32 @@ void cpu_greater_than_32bit_const( Environment * _environment, char *_source, in
 
 }
 
+void cpu_greater_than_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _bits ) {
+
+    inline( cpu_greater_than_nbit )
+
+        cpu_less_than_nbit( _environment, _source, _destination, _other, !_equal, _bits );
+        if ( _other ) {
+            cpu_not_8bit( _environment, _other, _other );
+        } else {
+            cpu_not_8bit( _environment, _destination, _destination );
+        }
+
+    no_embedded( cpu_greater_than_nbit )
+
+}
+
+void cpu_greater_than_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _bits ) {
+
+    inline( cpu_greater_than_nbit )
+
+        cpu_less_than_nbit_const( _environment, _source, _destination, _other, !_equal, _bits );
+        cpu_not_8bit( _environment, _other, _other );
+
+    no_embedded( cpu_greater_than_nbit )
+
+}
+
 /**
  * @brief <i>CPU 6502</i>: emit code to add two 32 bit values
  * 
@@ -4108,6 +4296,26 @@ void cpu_math_sub_32bit( Environment * _environment, char *_source, char *_desti
         }
 
     no_embedded( cpu_math_sub_32bit )
+
+}
+
+void cpu_math_sub_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _bits ) {
+
+    inline( cpu_math_sub_nbit )
+
+        outline0("SEC");
+        for( int i=0; i<(_bits)>>3; ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LDA %s", address_displacement(_environment, _source, offset));
+            outline1("SBC %s", address_displacement(_environment, _destination, offset));
+            if ( _other ) {
+                outline1("STA %s", address_displacement(_environment, _other, offset));
+            } else {
+                outline1("STA %s", address_displacement(_environment, _destination, offset));
+            }
+        }
+
+    no_embedded( cpu_math_sub_nbit )
 
 }
 
