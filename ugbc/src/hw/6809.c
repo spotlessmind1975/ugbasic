@@ -3046,6 +3046,43 @@ void cpu_math_div2_const_32bit( Environment * _environment, char *_source, int _
 
 }
 
+void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _steps, int _bits, char * _remainder ) {
+
+    inline( cpu_math_div2_const_nbit )
+
+        MAKE_LABEL
+
+        if ( _remainder ) {
+            outline1("LDA %s", _source);
+            outline0("ANDA #$01" );
+            outline1("STA %s", _remainder);
+        }
+        char offsetMsb[MAX_TEMPORARY_STORAGE]; sprintf( offsetMsb, "%d", (_bits>>3)-1 );
+
+        outline1("LDA %s", address_displacement(_environment, _source, offsetMsb));
+        outline0("ANDA #$80");
+        outline0("TFR A, B");
+        outline1("LBEQ %snocomplement", label );
+        cpu_complement2_nbit( _environment, _source, _source, _bits );
+        outhead1("%snocomplement:", label );
+        while( _steps ) {
+            outline0("ANDCC #$FE");
+            outline1("LSR %s", address_displacement(_environment, _source, offsetMsb));
+            for( int i=(_bits>>3)-2; i>-1; --i ) {
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+                outline1("ROR %s", address_displacement(_environment, _source, offset));
+            }
+            --_steps;
+        }
+        outline0("CMPB #0");
+        outline1("LBNE %snocomplement2", label );
+        cpu_complement2_nbit( _environment, _source, _source, _bits );
+        outhead1("%snocomplement2:", label );
+
+    no_embedded( cpu_math_div2_const_nbit )
+
+}
+
 /**
  * @brief <i>CPU 6809</i>: emit code to double for several times a 32 bit value
  *
@@ -3167,6 +3204,32 @@ void cpu_math_mul2_const_32bit( Environment * _environment, char *_source, int _
         }
 
     no_embedded( cpu_math_mul2_const_32bit )
+
+}
+
+void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _steps, int _bits ) {
+
+    int i;
+
+    inline( cpu_math_mul2_const_nbit )
+
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
+        outline1("LDA %s", address_displacement(_environment, _source, offset));
+        outline0("ANDA #$80");
+        outline0("TFR A, B");
+        while( _steps ) {
+            outline0("ANDCC #$FE");
+            outline1("ASL %s", _source);
+            for( i=1; i<(_bits>>3); ++i ) {
+                char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i);
+                outline1("ROL %s", address_displacement(_environment, _source, offset));
+            }
+            --_steps;
+        }
+        outline1("ORB %s", address_displacement(_environment, _source, offset));
+        outline1("STB %s", address_displacement(_environment, _source, offset));
+
+    no_embedded( cpu_math_mul2_const_nbit )
 
 }
 
@@ -4092,6 +4155,23 @@ void cpu_inc_32bit( Environment * _environment, char * _variable ) {
         outhead1("%s", label)
 
     no_embedded( cpu_inc_32bit )
+
+}
+
+void cpu_inc_nbit( Environment * _environment, char * _variable, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_inc_nbit )
+
+        for( int i=0; i<(_bits>>3);++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
+            outline1("INC %s", address_displacement(_environment, _variable, offset ) );
+            outline1("BNE %s", label );
+        }
+        outhead1("%s:", label );
+
+    no_embedded( cpu_inc_nbit )
 
 }
 
