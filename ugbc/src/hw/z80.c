@@ -3205,8 +3205,6 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
     int i;
 
-    outline0("; cpu_less_than_nbit");
-
     inline( cpu_less_than_nbit )
 
         if ( _equal ) {
@@ -3226,7 +3224,7 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
         }
 
-        for( i=0; i<(_bits>>3); ++i ) {
+        for( i=(_bits>>3)-1; i>-1; --i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("LD A, (%s)", address_displacement(_environment, _destination, offset ) );
             outline0("LD B, A");
@@ -3274,7 +3272,7 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
 
         }
 
-        for( i=0; i<(_bits>>3); ++i ) {
+        for( i=(_bits>>3)-2; i>-1; --i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("LD B, $%2.2x", (unsigned char)((_destination>>(i*8))&0xff) );
             outline1("LD A, (%s)", address_displacement(_environment, _source, offset ) );
