@@ -2669,6 +2669,8 @@ typedef struct _Environment {
      */
     RgbConverterFunction currentRgbConverterFunction;
 
+    int checkBoundary;
+    
     /**
      * Temporary storage for array definition
      */

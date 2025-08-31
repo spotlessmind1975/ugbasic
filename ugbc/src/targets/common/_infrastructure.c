@@ -324,6 +324,14 @@ Offsetting * offsetting_size_count( Environment * _environment, int _size, int _
 
 }
 
+static void error_out_of_boundary( Environment * _environment ) {
+
+    Variable * message = variable_temporary( _environment, VT_STRING, "(message)" );
+    variable_store_string( _environment, message->name, "Out of boundary access" );
+    error( _environment, message->name );
+
+}
+
 static int calculate_cast_type_best_fit( Environment * _environment, int _type1, int _type2 ) {
 
     if ( _type1 == VT_FLOAT || _type2 == VT_FLOAT ) {
@@ -1135,6 +1143,14 @@ static Variable * calculate_offset_in_array( Environment * _environment, char * 
             variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
         } else {
             Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0]);
+            if ( _environment->checkBoundary ) {
+                MAKE_LABEL
+                char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                Variable * checkBoundary = variable_less_than_const( _environment, index->name, array->arrayDimensionsEach[0], 0 );
+                cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                error_out_of_boundary( _environment );
+                cpu_label( _environment, checkBoundaryOk );
+            }
             variable_add_inplace_vars( _environment, offset->name, index->name );
         }
     } else {
@@ -9795,11 +9811,22 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
         if ( _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] == NULL ) {
             // variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
             Variable * offset = variable_temporary( _environment, VT_BYTE, "(offset in array)");
+            if ( _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] >= array->arrayDimensionsEach[0] ) {
+                CRITICAL_ARRAY_OUT_OF_BOUND( _array );
+            }
             variable_store( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
             return offset;
         } else {
-            Variable * offset = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0);
-            return offset;
+            Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0);
+            if ( _environment->checkBoundary ) {
+                MAKE_LABEL
+                char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                Variable * checkBoundary = variable_less_than_const( _environment, index->name, array->arrayDimensionsEach[0], 0 );
+                cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                error_out_of_boundary( _environment );
+                cpu_label( _environment, checkBoundaryOk );
+            }
+            return index;
         }
     } else {
 
@@ -9816,6 +9843,15 @@ static Variable * calculate_offset_in_array_byte( Environment * _environment, ch
                 variable_add_inplace( _environment, offset->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1] * baseValue );
             } else {
                 Variable * index = variable_retrieve( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][array->arrayDimensions-i-1]);
+                if ( _environment->checkBoundary ) {
+                    MAKE_LABEL
+                    char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                    Variable * checkBoundary = variable_less_than_const( _environment, index->name, array->arrayDimensionsEach[array->arrayDimensions-i-1], 0 );
+                    cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                    error_out_of_boundary( _environment );
+                    cpu_label( _environment, checkBoundaryOk );
+                }
+
                 if(baseValue!=1) {
                     variable_store( _environment, base->name, baseValue );
                     Variable * additionalOffset = variable_mul( _environment, index->name, base->name );
@@ -10356,12 +10392,36 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
         if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
+            if ( _environment->checkBoundary ) {
+                MAKE_LABEL
+                char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                Variable * checkBoundary = variable_less_than_const( _environment, index->name, _array->arrayDimensionsEach[0], 0 );
+                cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                error_out_of_boundary( _environment );
+                cpu_label( _environment, checkBoundaryOk );
+            }
             cpu_move_8bit_indirect2_8bit( _environment, _array->realName, index->realName, _result->realName );
         } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 65535 && VT_BITWIDTH( _array->arrayType ) == 8 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_WORD, 0 );
+            if ( _environment->checkBoundary ) {
+                MAKE_LABEL
+                char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                Variable * checkBoundary = variable_less_than_const( _environment, index->name, _array->arrayDimensionsEach[0], 0 );
+                cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                error_out_of_boundary( _environment );
+                cpu_label( _environment, checkBoundaryOk );
+            }
             cpu_move_8bit_indirect2_16bit( _environment, _array->realName, index->realName, _result->realName );
         } else if ( _array->arrayDimensions == 1 && _array->arrayDimensionsEach[0] <= 256 && VT_BITWIDTH( _array->arrayType ) == 16 && _environment->arrayIndexesEach[_environment->arrayNestedIndex][0] != NULL ) {
             Variable * index = variable_retrieve_or_define( _environment, _environment->arrayIndexesEach[_environment->arrayNestedIndex][0], VT_BYTE, 0 );
+            if ( _environment->checkBoundary ) {
+                MAKE_LABEL
+                char checkBoundaryOk[MAX_TEMPORARY_STORAGE]; sprintf( checkBoundaryOk, "%s", label );
+                Variable * checkBoundary = variable_less_than_const( _environment, index->name, _array->arrayDimensionsEach[0], 0 );
+                cpu_compare_and_branch_8bit_const( _environment, checkBoundary->realName, 0xff, checkBoundaryOk, 1 );
+                error_out_of_boundary( _environment );
+                cpu_label( _environment, checkBoundaryOk );
+            }
             cpu_move_16bit_indirect2_8bit( _environment, _array->realName, index->realName, _result->realName );
         } else if ( _array->size < 256 && VT_BITWIDTH( _array->arrayType ) == 8 ) {
             if ( _environment->arrayIndexes[_environment->arrayNestedIndex] == 1 ) {

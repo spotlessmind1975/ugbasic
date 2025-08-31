@@ -10135,7 +10135,10 @@ option_read :
     };
 
 option_definitions :
-    LEFT REPLACE {
+    ARRAY CHECK {
+        ((struct _Environment *)_environment)->checkBoundary = 1;
+    }
+    | LEFT REPLACE {
         ((struct _Environment *)_environment)->leftReplace = 1;
     }
     | LEFT INSERT {
