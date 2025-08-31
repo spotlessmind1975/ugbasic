@@ -12809,6 +12809,9 @@ statement2nc:
   | HALT {
       halt( _environment );
   }
+  | ERROR expr {
+      error( _environment, $2 );
+  }
   | END {
       end( _environment );
   }

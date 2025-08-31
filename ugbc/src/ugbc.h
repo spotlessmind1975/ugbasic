@@ -5276,6 +5276,7 @@ void                    end_storage( Environment * _environment );
 void                    end_type( Environment * _environment );
 void                    end_while( Environment * _environment );
 void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
+void                    error( Environment * _environment, char * _message );
 char *                  escape_newlines( char * _string );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment, char * _timer );
