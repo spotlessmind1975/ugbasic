@@ -65,7 +65,7 @@ N2STRING
 
   LDX   #N2STRING_bcd
   LDD   #0
-  LDU   #N2STRINGRESBUFFERSIZE
+  LDU   #(N2STRINGRESBUFFERSIZE/2)
 N2STRINGCD1
   STD   ,X++
   LEAU  -2, U
@@ -76,7 +76,7 @@ N2STRINGCD1
 
   LDX   #N2STRING_pwr
   LDD   #0
-  LDU   #N2STRINGRESBUFFERSIZE
+  LDU   #(N2STRINGRESBUFFERSIZE/2)
 N2STRINGCD2
   STD   ,X++
   LEAU  -2, U
@@ -205,7 +205,7 @@ N2STRINGL2
 
   ; Move the U pointer to the end of the BCD space.
 
-  LDU   #N2STRING_bcd+N2STRINGNUMBERMAXBYTES
+  LDU   #N2STRING_bcd+(N2STRINGRESBUFFERSIZE/2)-1
 
   ; If the number is positive, go ahead to printing.
 
@@ -273,7 +273,7 @@ N2STRING_add
 
   ; Load the effective size of the number, in bytes.
 
-  LDB   #N2STRINGNUMBERMAXBYTES
+  LDB   #(N2STRINGRESBUFFERSIZE/2)-1
 
   ; Clear the carry.
   CLRA
@@ -290,7 +290,7 @@ N2STRING_add1
 
   ; Adjusts the value resulting from the binary addition 
   ; in accumulator A so that it contains the desired BCD 
-  ; result instead of jsut a binary addition.
+  ; result instead of just a binary addition.
 
   DAA
 
