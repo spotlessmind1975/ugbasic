@@ -3248,7 +3248,7 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
         outhead1("%sdone:", label );
 
-    no_embedded( cpu_less_than_nbit_const )
+    no_embedded( cpu_less_than_nbit )
 
 }
 
