@@ -65,13 +65,13 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     switch( VT_BITWIDTH( _type ) ) {
         case 8:
-            sm83_random_8bit( _environment, "$FC9E", result->realName );
+            cpu_random_8bit( _environment, "$FC9E", result->realName );
             break;
         case 16:
-            sm83_random_16bit( _environment, "$FC9E", result->realName );
+            cpu_random_16bit( _environment, "$FC9E", result->realName );
             break;
         case 32:
-            sm83_random_32bit( _environment, "$FC9E", result->realName );
+            cpu_random_32bit( _environment, "$FC9E", result->realName );
             break;
         default:
             CRITICAL_CANNOT_GENERATE_RANDOM( );     

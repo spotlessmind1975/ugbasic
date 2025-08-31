@@ -231,7 +231,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
-    sm83_init( _environment );
+    cpu_init( _environment );
 
     deploy_preferred( startup, src_hw_gb_startup_asm);
 
