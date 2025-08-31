@@ -6713,6 +6713,7 @@ void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
                     cpu_store_8bit( _environment, destinationAddress, ( _value[n-1-(i*4)] & (0xff>>(8-_n)) ) );
+                    i+=1;
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:

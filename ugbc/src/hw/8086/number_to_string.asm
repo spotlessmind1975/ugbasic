@@ -308,6 +308,6 @@ N2STRINGRLD:
     MOV AL, [DI]
     AND AL, 0xf0
     OR AL, AH
-    mov [DI], AL
+    MOV [DI], AL
     POP AX
     RET
