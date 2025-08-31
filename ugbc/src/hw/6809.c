@@ -1910,22 +1910,20 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
 
         char multiplyByBit0Label[MAX_TEMPORARY_STORAGE]; sprintf( multiplyByBit0Label, "%sb%dbit0", label, _bits>>3 );
 
-        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", 0 );
 
         outline1("LSR %s", address_displacement( _environment, destination, offset ) );
-        for( i=(_bits>>3)-2; i>-1; --i ) {
+        for( i=1; i<(_bits>>3); ++i ) {
             sprintf( offset, "%d", i );
             outline1("ROR %s", address_displacement( _environment, destination, offset ) );
         }
-        outline1("LBCS %sx", multiplyByBit0Label );
-        outline1("JMP %s", multiplyByBit0Label );
-        outhead1("%sx", multiplyByBit0Label );
+        outline1("LBCC %s", multiplyByBit0Label );
 
         // Step 2: Multiply the rightmost digit or the least significant bit (LSB) 
         // of the multiplier (1) with all the digits of the multiplicand (11101).
 
         outline0("ANDCC #$FE" );
-        for( i=0; i<(_bits>>3); ++i ) {
+        for( i=(_bits>>3)-1; i>-1; --i ) {
             sprintf( offset, "%d", i );
             outline1("LDA %s", address_displacement( _environment, source, offset ) );
             outline1("ADCA %s", address_displacement( _environment, other, offset ) );
@@ -1938,8 +1936,9 @@ void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char 
         outhead1("%s", multiplyByBit0Label);
 
         outline0("ANDCC #$FE" );
-        outline1("ASL %s", address_displacement( _environment, source, "0" ) );
-        for( i=1; i<(_bits>>3); ++i ) {
+        sprintf( offset, "%d", (_bits>>3)-1 );
+        outline1("ASL %s", address_displacement( _environment, source, offset ) );
+        for( i=(_bits>>3)-2; i>-1; --i ) {
             sprintf( offset, "%d", i );
             outline1("ROL %s", address_displacement( _environment, source, offset ) );
         }
@@ -3071,7 +3070,7 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
             outline1("LDB %s", address_displacement(_environment, _destination, offset ) );
             outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
             outline2("BEQ %snext%dx", label, i );
-            outline1("LBCS %sbga", label );
+            outline1("LBCC %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
@@ -3117,7 +3116,7 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
             outline1("LDB #$%2.2x", (unsigned char)((_destination>>(i*8))&0xff) );
             outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
             outline2("BEQ %snext%dx", label, i );
-            outline1("LBCS %sbga", label );
+            outline1("LBCC %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
@@ -3560,7 +3559,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
             outline0("ANDA #$01" );
             outline1("STA %s", _remainder);
         }
-        char offsetMsb[MAX_TEMPORARY_STORAGE]; sprintf( offsetMsb, "%d", (_bits>>3)-1 );
+        char offsetMsb[MAX_TEMPORARY_STORAGE]; sprintf( offsetMsb, "%d", 0 );
 
         outline1("LDA %s", address_displacement(_environment, _source, offsetMsb));
         outline0("ANDA #$80");
@@ -3571,7 +3570,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
         while( _steps ) {
             outline0("ANDCC #$FE");
             outline1("LSR %s", address_displacement(_environment, _source, offsetMsb));
-            for( int i=(_bits>>3)-2; i>-1; --i ) {
+            for( int i=1; i<(_bits>>3); ++i ) {
                 char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
                 outline1("ROR %s", address_displacement(_environment, _source, offset));
             }
@@ -3722,8 +3721,9 @@ void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _s
         outline0("TFR A, B");
         while( _steps ) {
             outline0("ANDCC #$FE");
-            outline1("ASL %s", _source);
-            for( i=1; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1);
+            outline1("ASL %s", address_displacement(_environment, _source, offset));
+            for( i=(_bits>>3)-2; i>-1; --i ) {
                 char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i);
                 outline1("ROL %s", address_displacement(_environment, _source, offset));
             }
@@ -4667,7 +4667,7 @@ void cpu_inc_nbit( Environment * _environment, char * _variable, int _bits ) {
 
     inline( cpu_inc_nbit )
 
-        for( int i=0; i<(_bits>>3);++i ) {
+        for( int i=(_bits>>3)-1; i>-1;--i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("INC %s", address_displacement(_environment, _variable, offset ) );
             outline1("BNE %s", label );
@@ -4726,7 +4726,7 @@ void cpu_dec_nbit( Environment * _environment, char * _variable, int _bits ) {
 
     inline( cpu_dec_32bit )
 
-        for( int i=0; i<(_bits>>3); ++i ) {
+        for( int i=(_bits>>3)-1; i>-1; --i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
             outline1("DEC %s", address_displacement(_environment, _variable, offset) );
             outline1("LDA %s", address_displacement(_environment, _variable, offset) );
