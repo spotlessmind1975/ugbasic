@@ -2254,6 +2254,141 @@ void cpu_math_mul_16bit_to_32bit( Environment * _environment, char *_source, cha
 
 }
 
+void cpu_math_mul_nbit_to_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _bits ) {
+
+    MAKE_LABEL
+
+    int i;
+
+    char afterLabel[MAX_TEMPORARY_STORAGE]; sprintf( afterLabel, "%safter", label);
+    char destination[MAX_TEMPORARY_STORAGE]; sprintf( destination, "CPUMATHMULNBITTONBIT%d_DESTINATION", (_bits>>3));
+    char source[MAX_TEMPORARY_STORAGE]; sprintf( source, "CPUMATHMULNBITTONBIT%d_SOURCE", (_bits>>3));
+    char other[MAX_TEMPORARY_STORAGE]; sprintf( other, "CPUMATHMULNBITTONBIT%d_OTHER", (_bits>>3));
+
+    // no_inline( cpu_math_mul_nbit_to_nbit )
+
+    // embedded( cpu_math_mul_nbit_to_nbit, src_hw_6502_cpu_math_mul_nbit_to_nbit_asm )
+
+    if ( ! _environment->cpuOptimization.cpu_math_mul_nbit_to_nbit[_bits>>3] ) {
+
+        outline1("JP %s", afterLabel );
+
+        outhead2("CPUMATHMULNBITTONBIT%d_SOURCE: defs %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_DESTINATION: defs %d", _bits>>3, _bits>>3 );
+        outhead2("CPUMATHMULNBITTONBIT%d_OTHER: defs %d", _bits>>3, _bits>>3 );
+
+        outhead1("CPUMATHMULNBITTONBIT%d:", _bits>>3);
+        outhead0("LD A, $00");
+        for( i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LD (%s), A", address_displacement( _environment, other, offset ) );
+        }
+        outline1("LD C, $%2.2x", _bits );
+
+        outhead1("CPUMATHMULNBITTONBIT%dL1:", _bits>>3);
+
+        // The process of multiplying binary numbers is similar and easier to do than
+        // decimal multiplication as binary numbers consist of only two digits which 
+        // are 0 and 1. The method of multiplying binary numbers is given below. The 
+        // same set of rules also apply to binary numbers with a decimal point. Let 
+        // us take the example of multiplying (11101) and (1001). 
+        // 
+        // The decimal equivalent of (11101) is 29 and the decimal equivalent 
+        // of (1001) is 9. Now let us multiply these numbers.
+
+        // Step 1: Write down the multiplicand (11101) and the multiplier (1001)
+        // one below the other in proper positions.
+
+        char multiplyByBit0Label[MAX_TEMPORARY_STORAGE]; sprintf( multiplyByBit0Label, "%sb%dbit0", label, _bits>>3 );
+
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
+
+        outline1("LD A, (%s)", address_displacement( _environment, destination, offset ) );
+        outline0("SRA A" );
+        outline1("LD (%s), A", address_displacement( _environment, destination, offset ) );
+        for( i=(_bits>>3)-2; i>-1; --i ) {
+            sprintf( offset, "%d", i );
+            outline1("LD A, (%s)", address_displacement( _environment, destination, offset ) );
+            outline0("RR A" );
+            outline1("LD (%s), A", address_displacement( _environment, destination, offset ) );
+        }
+        outline1("JR C, %sx", multiplyByBit0Label );
+        outline1("JP %s", multiplyByBit0Label );
+        outhead1("%sx:", multiplyByBit0Label );
+
+        // Step 2: Multiply the rightmost digit or the least significant bit (LSB) 
+        // of the multiplier (1) with all the digits of the multiplicand (11101).
+
+        outline0("SCF" );
+        outline0("CCF" );
+        for( i=0; i<(_bits>>3); ++i ) {
+            sprintf( offset, "%d", i );
+            outline1("LD A, (%s)", address_displacement( _environment, source, offset ) );
+            outline0("LD B, A" );
+            outline1("LD A, (%s)", address_displacement( _environment, other, offset ) );
+            outline0("ADC A, B" );
+            outline1("LD (%s), A", address_displacement( _environment, other, offset ) );
+        }
+
+        // Step 3: Add a place holder of '0' or 'X' before multiplying the next 
+        // higher order digit of the multiplier& with the multiplicand.
+
+        outhead1("%s:", multiplyByBit0Label);
+
+        outline0("SCF" );
+        outline0("CCF" );
+        outline1("LD A, (%s)", address_displacement( _environment, source, "0" ) );
+        outline0("SLA A" );
+        outline1("LD (%s), A", address_displacement( _environment, source, "0" ) );
+        for( i=1; i<(_bits>>3); ++i ) {
+            sprintf( offset, "%d", i );
+            outline1("LD A, (%s)", address_displacement( _environment, source, offset ) );
+            outline0("RL A" );
+            outline1("LD (%s), A", address_displacement( _environment, source, offset ) );
+        }
+
+        // Step 4: Repeat the same process for all the next higher-order digits 
+        // until we reach the most significant bit (MSB) which is the left-most 
+        // digit of the multiplicand with the multiplier.
+
+        outline0("DEC C" );
+        outline0("LD A, C" );
+        outline0("CP 0" );
+        outline1("JP NZ, CPUMATHMULNBITTONBIT%dL1", (_bits>>3) );
+
+        outline0("RET" );
+
+        // Step 5: The product obtained in each row is called the partial product. 
+        // Finally, add all the partial products. To add all the binary numbers 
+        // use the rules of binary addition.
+
+        // (The rules for binary addition are listed as follows: 0 + 0 = 0, 0 + 1 = 1, and 1 + 1 = 0, with a carryover of 1. So, 1 + 1 = 10 and 1 + 1 + 1 = 11 in the binary number system)
+        outhead1("%s:", afterLabel );
+
+    }
+
+    for( i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1("LD A, (%s)", address_displacement( _environment, _source, offset ) );
+        outline1("LD (%s), A", address_displacement( _environment, source, offset ) );
+        outline1("LD A, (%s)", address_displacement( _environment, _destination, offset ) );
+        outline1("LD (%s), A", address_displacement( _environment, destination, offset ) );
+    }
+    outline1("CALL CPUMATHMULNBITTONBIT%d", _bits >> 3 );
+    for( i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1("LD A, (%s)", address_displacement( _environment, other, offset ) );
+        if ( _other ) {
+            outline1("LD (%s), A", address_displacement( _environment, _other, offset ) );
+        } else {
+            outline1("LD (%s), A", address_displacement( _environment, _destination, offset ) );
+        }
+    }
+
+    // done()
+
+}
+
 void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _steps, int _bits ) {
 
     int i;
@@ -2917,6 +3052,32 @@ void cpu_greater_than_32bit_const( Environment * _environment, char *_source, in
 
     cpu_less_than_32bit_const( _environment, _source, _destination, _other, !_equal, _signed );
     cpu_not_8bit( _environment, _other, _other );
+
+}
+
+void cpu_greater_than_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _equal, int _bits ) {
+
+    inline( cpu_greater_than_nbit )
+
+        cpu_less_than_nbit( _environment, _source, _destination, _other, !_equal, _bits );
+        if ( _other ) {
+            cpu_not_8bit( _environment, _other, _other );
+        } else {
+            cpu_not_8bit( _environment, _destination, _destination );
+        }
+
+    no_embedded( cpu_greater_than_nbit )
+
+}
+
+void cpu_greater_than_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _equal, int _bits ) {
+
+    inline( cpu_greater_than_nbit )
+
+        cpu_less_than_nbit_const( _environment, _source, _destination, _other, !_equal, _bits );
+        cpu_not_8bit( _environment, _other, _other );
+
+    no_embedded( cpu_greater_than_nbit )
 
 }
 
@@ -6531,8 +6692,8 @@ void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * 
 
 void cpu_number_to_string_vars( Environment * _environment ) {
 
-    variable_import( _environment, "N2DINV", VT_BUFFER, 8 );
-    variable_import( _environment, "N2DBUF", VT_BUFFER, 20 );
+    variable_import( _environment, "N2DINV", VT_BUFFER, _environment->numberConfig.maxBytes );
+    variable_import( _environment, "N2DBUF", VT_BUFFER, _environment->numberConfig.maxDigits );
     variable_import( _environment, "N2DEND", VT_BUFFER, 1 );
 
 }
@@ -6543,113 +6704,75 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         
     deploy_with_vars( numberToString, src_hw_sm83_number_to_string_asm, cpu_number_to_string_vars );
 
+    outline0("LD A, 0");
+    outline0("LD (IXHR), A");
     switch( _bits ) {
         case 8:
+            outline1("LD A, (%s)", _number);
+            outline0("LD (N2DINV), A");
             if ( _signed ) {
-                outline1("LD A, (%s)", _number);
                 outline0("AND $80");
-                outline0("LD (IXHR), A");
                 outline0("CP 0");
                 outline1("JR Z, %sp81", label);
-                outline1("LD A, (%s)", _number);
-                outline0("XOR $FF");
-                outline0("ADC $1");
-                outline1("JP %sp82", label);
-                outhead1("%sp81:", label);
-                outline1("LD A, (%s)", _number);
-                outhead1("%sp82:", label);
-            } else {
-                outline0("LD A, 0" );
+                cpu_complement2_8bit( _environment, "N2DINV", NULL );
+                outline0("LD A, $ff");
                 outline0("LD (IXHR), A");
-                outline1("LD A, (%s)", _number);
+                outhead1("%sp81:", label);
             }
             outline0("CALL N2D8");
             break;
         case 16:
             outline1("LD HL, (%s)", _number);
+            outline0("LD (N2DINV), HL");
             if ( _signed ) {
                 outline0("LD A, H");
                 outline0("AND $80");
-                outline0("LD (IXHR), A");
                 outline0("CP 0");
-                outline1("JR Z, %sp161", label);
-                outline0("LD A, H");
-                outline0("XOR $FF");
-                outline0("LD H, A");
-                outline0("LD A, L");
-                outline0("XOR $FF");
-                outline0("LD L, A");
-                outline0("LD DE, 1" );
-                outline0("ADD HL, DE" );
-                outline0("LD DE, 0" );
-                outline1("JP %sp162", label);
-                outhead1("%sp161:", label);
-                outline1("LD HL, (%s)", _number);
-                outhead1("%sp162:", label);
-            } else {
-                outline0("LD A, 0" );
+                outline1("JR Z, %sp81", label);
+                cpu_complement2_16bit( _environment, "N2DINV", NULL );
+                outline0("LD A, $ff");
                 outline0("LD (IXHR), A");
+                outhead1("%sp81:", label);
             }
-            outline0("LD (IXR), HL");
             outline0("CALL N2D16");
             break;
         case 32:
             outline1("LD HL, (%s)", _number);
-            outline0("PUSH HL");
+            outline0("LD (N2DINV), HL");
             outline1("LD HL, (%s)", address_displacement(_environment, _number, "2"));
-            outline0("LD D, H");
-            outline0("LD E, L");
-            outline0("POP HL");
-
+            outline0("LD (N2DINV+2), HL");
             if ( _signed ) {
-                outline0("LD A, D");
-                outline0("AND $80");
-                outline0("LD (IXHR), A");
-                outline0("CP 0");
-                outline1("JR Z, %sp321", label);
-                outline0("LD A, D");
-                outline0("XOR $FF");
-                outline0("LD D, A");
-                outline0("LD A, E");
-                outline0("XOR $FF");
-                outline0("LD E, A");
                 outline0("LD A, H");
-                outline0("XOR $FF");
-                outline0("LD H, A");
-                outline0("LD A, L");
-                outline0("XOR $FF");
-                outline0("LD L, A");
-                outline0("AND A");
-                outline0("INC HL");
-                outline0("LD A, L");
-                outline0("OR H");
-                outline1("JR NZ, %sp322", label);
-                outline0("INC DE");
-                outline1("JP %sp322", label);
-                outhead1("%sp321:", label);
-                outline1("LD HL, (%s)", _number);
-                outline0("PUSH HL");
-                outline1("LD HL, (%s)", address_displacement(_environment, _number, "2"));
-                outline0("LD D, H");
-                outline0("LD E, L");
-                outline0("POP HL");
-                outhead1("%sp322:", label);
-            } else {
-                outline0("LD B, 0" );
-                outline0("PUSH BC");
+                outline0("AND $80");
+                outline0("CP 0");
+                outline1("JR Z, %sp81", label);
+                cpu_complement2_32bit( _environment, "N2DINV", NULL  );
+                outline0("LD A, $ff");
+                outline0("LD (IXHR), A");
+                outhead1("%sp81:", label);
             }
             outline0("CALL N2D32");
             break;
-        default:
+        case 0:
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
+        default:
+            cpu_mem_move_direct_size( _environment, _number, "N2DINV", _bits >> 3 );
+            if ( _signed ) {
+                outline1("LD A, (N2DINV+%d)", (_bits >> 3)-1 );
+                outline0("AND $80");
+                outline0("CP 0");
+                outline1("JP Z, %sp81", label);
+                cpu_complement2_nbit( _environment, "N2DINV", NULL, _bits  );
+                outline0("LD A, $ff");
+                outline0("LD (IXHR), A");
+                outhead1("%sp81:", label);
+            }
+            outline0("CALL N2STRING");
+            break;
     }
 
-    outline0("PUSH HL");
     outline1("LD HL, (%s)", _string);
-    outline0("LD D, H");
-    outline0("LD E, L");
-    outline0("POP HL");
-
+    outline0("LD DE, HL");
     outline0("LD A, (IXHR)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);
@@ -6998,6 +7121,59 @@ void cpu_complement2_32bit( Environment * _environment, char * _source, char * _
     } else {
         cpu_inc_32bit( _environment, _source );
     }
+}
+
+void cpu_complement2_nbit( Environment * _environment, char * _source, char * _destination, int _bits ) {
+
+    for( int i=0; i<(_bits>>3); ++i ) {
+        char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+        outline1( "LD A, (%s)", address_displacement(_environment, _source, offset) );
+        outline0( "XOR $FF" );
+        if ( _destination ) {
+            outline1( "LD (%s), A", address_displacement(_environment, _destination, "1") );
+        } else {
+            outline1( "LD (%s), A", address_displacement(_environment, _source, "1") );
+        }
+    }
+    if ( _destination ) {
+        cpu_inc_nbit( _environment, _destination, _bits );
+    } else {
+        cpu_inc_nbit( _environment, _source, _bits );
+    }
+
+}
+
+void cpu_compare_nbit_const( Environment * _environment, char *_source, int _destination,  char *_other, int _positive, int _bits ) {
+
+    MAKE_LABEL
+
+    inline( cpu_compare_nbit )
+
+        for( int i=0; i<(_bits>>3); ++i ) {
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            outline1("LD A, (%s)", address_displacement(_environment, _source, offset));
+            outline1("LD B, $%2.2x", (unsigned char)((_destination>>(i*8))&0xff));
+            outline0("CP B");
+            outline1("JP NZ, %s", label);
+        }
+        outline1("LD A, $%2.2x", 0xff*_positive);
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outline1("JP %s_2", label);
+        outhead1("%s:", label);
+        outline1("LD A, $%2.2x", 0xff*(1-_positive));
+        if ( _other ) {
+            outline1("LD (%s), A", _other);
+        } else {
+            outline1("LD (%s), A", _destination);
+        }
+        outhead1("%s_2:", label);
+    
+    no_embedded( cpu_compare_nbit )
+
 }
 
 void cpu_sqroot( Environment * _environment, char * _number, char * _result ) {

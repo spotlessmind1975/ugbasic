@@ -107,9 +107,9 @@ void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
 void vars_emit_number( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
         outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
-        out0(" db" );
+        out0(" db " );
         for( int i=0; i<(_environment->numberConfig.maxBytes - 4); ++i ) {
-            out0("0x0");
+            out0("$0");
             if ( i == (_environment->numberConfig.maxBytes - 5) ) {
                 outline0(" ");
             } else {
@@ -120,7 +120,7 @@ void vars_emit_number( Environment * _environment, char * _name, int _value ) {
         outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
         out0(" db" );
         for( int i=0; i<(_environment->numberConfig.maxBytes - 4); ++i ) {
-            out0("0x0");
+            out0("$0");
             if ( i == (_environment->numberConfig.maxBytes - 5) ) {
                 outline0(" ");
             } else {

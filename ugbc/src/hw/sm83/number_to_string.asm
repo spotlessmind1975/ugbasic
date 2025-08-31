@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
 ;  * Inspired from source code by Alwin Henseler on:
 ;  * https://www.msx.org/forum/development/msx-development/32-bit-long-ascii
 ;  *
@@ -52,30 +52,42 @@
 ; Changes: AF,BC,DE,HL,IX
 ;
 ; @thirdparts Alwin Henseler
+; Adapter by Marco Spedaletti
 ; -------------------------------------------------------------------------------
 
-N2D8:    LD H,0
-         LD L,A
-N2D16:   LD E,0
-N2D24:   LD D,0
-N2D32:   LD BC,0
+@EMIT numberConfig.maxDigits AS N2STRINGRESBUFFERSIZE
+@EMIT numberConfig.maxBytes AS N2STRINGNUMBERMAXBYTES
+
+N2STRING:
+N2D8:    
+        ; LD H,0
+        ; LD L,A
+N2D16:   
+        ; LD E,0
+N2D24:   
+        ; LD D,0
+N2D32:   
+        ; LD BC,0
 N2D48:   
         ;  LD IX,0          ; zero all non-used bits
 N2D64:   
-         LD (N2DINV),HL
-         LD (N2DINV+2),DE
-        ;  LD (N2DINV+4),BC
-        ;  LD (N2DINV+6),IX ; place full 64-bit input value in buffer
+        ;  LD (N2DINV),HL
+        ;  LD (N2DINV+2),DE
+        ; ;  LD (N2DINV+4),BC
+        ; ;  LD (N2DINV+6),IX ; place full 64-bit input value in buffer
          LD HL,N2DBUF
          LD DE,N2DBUF+1
          LD (HL), 32 ; space is ASCII 32
 N2DFILC: EQU $-1         ; address of fill-character
-         LD BC,18
+         LD BC,N2STRINGRESBUFFERSIZE
          CALL REPLACEMENT_LDIR            ; fill 1st 19 bytes of buffer with spaces
          LD (N2DEND-1),BC ;set BCD value to "0" & place terminating 0
          LD E,1          ; no. of bytes in BCD value
-         LD HL,N2DINV+8  ; (address MSB input)+1
-         LD BC, $0909
+         LD HL,N2DINV+N2STRINGNUMBERMAXBYTES  ; (address MSB input)+1
+         LD A, N2STRINGNUMBERMAXBYTES+1
+         LD B, A
+         LD A, $09
+         LD C, A
          XOR A
 N2DSKP0: DEC B
          JR Z,N2DSIZ     ; all 0: continue with postprocessing
@@ -112,10 +124,10 @@ N2DNXT:  DEC C
 N2DSIZ:  LD HL,N2DEND    ; address of terminating 0
          LD C,E          ; size of BCD value in bytes
          OR A
-         CALL SBC_HL_BC       ; calculate address of MSB BCD
+         CALL SBC_HL_DE       ; calculate address of MSB BCD
          LD D,H
          LD E,L
-         CALL SBC_HL_BC
+         CALL SBC_HL_DE
          EX DE,HL        ; HL=address BCD value, DE=start of decimal value
          LD B,C          ; no. of bytes BCD
          SLA C           ; no. of bytes decimal (possibly 1 too high)
@@ -134,6 +146,6 @@ N2DEXPL: CALL REPLACEMENT_RLD
          INC DE
          INC HL          ; next BCD-byte
          DJNZ N2DEXP     ; and go on to convert each BCD-byte into 2 ASCII
-         CALL SBC_HL_BC       ; return with HL pointing to 1st decimal
+         CALL SBC_HL_DE       ; return with HL pointing to 1st decimal
          RET
 
