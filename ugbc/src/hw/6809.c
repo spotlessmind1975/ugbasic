@@ -2833,7 +2833,7 @@ void cpu_compare_nbit( Environment * _environment, char *_source, char *_destina
             char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
             outline1("LDA %s", address_displacement(_environment, _source, offset));
             outline1("CMPA %s", address_displacement(_environment, _destination, offset));
-            outline2("LBEQ %s", label, i);
+            outline2("LBNE %s", label, i);
         }
         outline1("LDA #$%2.2x", 0xff*_positive);
         if ( _other ) {
@@ -6303,9 +6303,9 @@ void cpu_complement2_nbit( Environment * _environment, char * _source, char * _d
         outline1( "LDA %s", address_displacement(_environment, _source, offset) );
         outline0( "COMA" );
         if ( _destination ) {
-            outline1( "STA %s", address_displacement(_environment, _destination, "1") );
+            outline1( "STA %s", address_displacement(_environment, _destination, offset) );
         } else {
-            outline1( "STA %s", address_displacement(_environment, _source, "1") );
+            outline1( "STA %s", address_displacement(_environment, _source, offset) );
         }
     }
     if ( _destination ) {
