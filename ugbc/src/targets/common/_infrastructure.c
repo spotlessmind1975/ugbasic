@@ -1226,25 +1226,26 @@ static Variable * variable_move_from_array_get_address( Environment * _environme
         case VT_FLOAT:
             offset = variable_sl_const( _environment, offset->name, VT_FLOAT_NORMALIZED_POW2_WIDTH( array->arrayPrecision ) );
             break;
-        case VT_NUMBER:
-            int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
-            offset = variable_sl_const( _environment, offset->name, os );
+        case VT_NUMBER: {
+                int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
+                offset = variable_sl_const( _environment, offset->name, os );
+            }
             break;
-        case VT_STRING:
+        case VT_STRING: 
             CRITICAL_DATATYPE_UNSUPPORTED("array(a)", DATATYPE_AS_STRING[array->arrayType]);
-            case VT_TILE:
-            case VT_TILESET:
-            case VT_SPRITE:
-            case VT_DSTRING:
+        case VT_TILE:
+        case VT_TILESET:
+        case VT_SPRITE:
+        case VT_DSTRING:
             offset = variable_sl_const( _environment, offset->name, 0 );
             break;
-            case VT_MSPRITE:
+        case VT_MSPRITE:
             offset = variable_sl_const( _environment, offset->name, 1 );
             break;
-            case VT_TILES:
+        case VT_TILES:
             offset = variable_sl_const( _environment, offset->name, 2 );
             break;
-            default:
+        default:
             offset = variable_sl_const( _environment, offset->name, ( VT_BITWIDTH( array->arrayType ) >> 3 ) - 1 );
             break;
     }
