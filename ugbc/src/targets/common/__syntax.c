@@ -6779,3 +6779,26 @@ ovvero un poligono con tre vertici.
 @example TRIANGLE 10,10 TO 20,10 TO 20,20
 
 </usermanual> */
+
+/* <usermanual>
+@keyword RESET
+
+@english
+
+The ''RESET'' command is an instruction that initiates the 
+reset or reboot process of a computer system, returning it to an 
+initial state, as if it had just been turned on. Depending on the 
+target, the command will do something different.
+
+@italian
+
+Il comando ''RESET'' è un'istruzione che avvia il processo 
+di reset o riavvio di un sistema informatico, riportandolo allo 
+stato iniziale, come se fosse appena stato acceso. A seconda del 
+target, il comando avrà un effetto diverso.
+
+@syntax RESET
+
+@example RESET
+
+</usermanual> */
