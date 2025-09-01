@@ -5623,6 +5623,7 @@ void                    read_data( Environment * _environment, char * _variable,
 void                    read_data_unsafe( Environment * _environment, char * _variable );
 void                    remember( Environment * _environment );
 void                    repeat( Environment * _environment, char *_label );
+void                    reset( Environment * _environment );
 char *                  resolve_color( Environment * _environment, char * _color );
 char *                  resource_load_asserts( Environment * _environment, char * _filename );
 Variable *              respawn_procedure( Environment * _environment, char * _name );

@@ -35,6 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+RESET
+    STA $FFDE
+    JMP [$FFFE]
+
 COCO3STARTUP
 
     LDD OLDISVC

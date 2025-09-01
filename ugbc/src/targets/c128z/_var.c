@@ -431,6 +431,7 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("DEFS %d, 0", ( _environment->program.startingAddress - 0x1c2f ) );
     }
     outhead0("JP CODESTART" );
+    outhead0("DEFB $6C, $FC, $FF" );
 
     deploy_inplace( startup, src_hw_c128z_startup_asm);
     deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
