@@ -141,7 +141,7 @@ N2DLUS0:
 
     ; DJNZ N2DLUS0    ; and go on to double entire BCD value (+carry!)
     DEC CH
-    CMP CH, 0
+    
     JNZ N2DLUS0
 
     ; JR NC,N2DNXT
@@ -157,6 +157,8 @@ N2DLUS0:
 N2DNXT:  
     ; DEC C
     DEC CL
+
+    CMP CL, 0
 
     ; JR NZ,N2DLUS1   ; repeat for remaining bits from 1 input byte
     JNZ N2DLUS1
@@ -281,10 +283,11 @@ N2STRINGRLD:
 
     MOV BL, [DI]
     AND BL, 0xf0
-    SAR BL, 1
-    SAR BL, 1
-    SAR BL, 1
-    SAR BL, 1
+    CLC
+    SHR BL, 1
+    SHR BL, 1
+    SHR BL, 1
+    SHR BL, 1
     MOV AH, AL
     AND AL, 0xf0
     OR AL, BL
@@ -294,6 +297,7 @@ N2STRINGRLD:
     ; same memory location; 
 
     MOV BL, [DI]
+    CLC
     SAL BL, 1
     SAL BL, 1
     SAL BL, 1

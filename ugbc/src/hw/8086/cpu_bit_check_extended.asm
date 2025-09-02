@@ -41,9 +41,9 @@
 ;  - set to 1 if carry flag is set
 CPUBITCHECKEXTENDED:
     MOV BL, AL
-    SAR AL, 1
-    SAR AL, 1
-    SAR AL, 1
+    SHR AL, 1
+    SHR AL, 1
+    SHR AL, 1
     CMP AL, 3
     JZ CPUBITCHECKEXTENDED3
     CMP AL, 2

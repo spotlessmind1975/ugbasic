@@ -58,6 +58,11 @@ PCCGASTARTUP:
     MOV AX, 50
     MOV [TICKSPERSECOND], AX
 
+@IF dataSegment
+    MOV DX, DATAFIRSTSEGMENT
+    MOV [DATAPTR], DX
+@ENDIF
+
 @IF deployed.fp
 
     FINIT

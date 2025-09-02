@@ -73,7 +73,7 @@ TIMERMANAGERL1:
     POP AX
 
     ; Move the first bit into the carry.
-    SAR AL, 1
+    SHR AL, 1
 
     ; If the carry is cleared, move to the next timer. 
     JNC TIMERMANAGERL2

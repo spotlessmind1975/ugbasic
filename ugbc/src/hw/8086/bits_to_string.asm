@@ -41,7 +41,7 @@ BINSTR:
     MOV DX, 31
     ADD DI, 31
 BINSTRL:
-    SAR AX, 1
+    SHR AX, 1
     ROR BX, 1
     JC, BINSTRO1
     JP BINSTRO0
