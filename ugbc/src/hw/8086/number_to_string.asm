@@ -48,7 +48,7 @@ N2D64:
     MOV DI, N2DBUF
     MOV CH, 0
     MOV CL, N2STRINGRESBUFFERSIZE
-    MOV AL, 32
+    MOV AL, 0
 N2STRINGCD1:
     MOV [DI], AL
     INC DI
@@ -152,7 +152,7 @@ N2DLUS0:
     ; LD (HL),1       ; initialize new MSB of BCD value
 
     MOV AL, 1
-    MOV [SI], AL
+    MOV [DI], AL
 
 N2DNXT:  
     ; DEC C
