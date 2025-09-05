@@ -850,8 +850,9 @@ void cga_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
         outline1("MOV AL, [%s]", c->realName );
     }
     outline0("MOV [PLOTCPE], AL");
-    outline1("MOV CL, 0x%2.2x", ( _y & 0xff ) );
-    outline1("MOV DX, 0x%4.4x", ( _x & 0xffff ) );
+    outline0("AND AL, 3");
+    outline1("MOV CX, 0x%4.4x", ( _x & 0xffff ) );
+    outline1("MOV DX, 0x%4.4x", ( _y & 0xffff ) );
     outline0("MOV AL, 1");
     outline0("CALL PLOT");
 
@@ -874,9 +875,10 @@ void cga_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
     deploy( plot, src_hw_cga_plot_asm );
     
     outline1("MOV AL, [%s]", c->realName );
+    outline0("AND AL, 3");
     outline0("MOV [PLOTCPE], AL");
-    outline1("MOV CL, [%s]", y->realName );
-    outline1("MOV DX, [%s]", x->realName );
+    outline1("MOV CX, [%s]", x->realName );
+    outline1("MOV DX, [%s]", y->realName );
     outline0("MOV AL, 1");
     outline0("CALL PLOT");
 
@@ -892,8 +894,8 @@ void cga_pget_color_vars( Environment * _environment, char *_x, char *_y, char *
     // deploy( cgavarsGraphic, src_hw_cga_vars_graphic_asm );
     deploy( plot, src_hw_cga_plot_asm );
     
-    outline1("MOV CL, [%s]", y->realName );
-    outline1("MOV DX, [%s]", x->realName );
+    outline1("MOV CX, [%s]", x->realName );
+    outline1("MOV DX, [%s]", y->realName );
     outline0("MOV AL, 3");
     outline0("CALL PLOT")
     outline1("MOV [%s], AL", result->realName );
@@ -1123,8 +1125,8 @@ void cga_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80x25x2, 0, 80, 25, 2, 8, 8, "Text Mode (80x25, 2 colors)" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_80x25x16, 0, 80, 25, 16, 8, 8, "Text Mode (80x25, 16 colors)" );
     
-    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Grahic Mode (320x200, 2 colors)" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x4, 1, 320, 200, 4, 8, 8, "Grahic Mode (320x200, 4 colors)" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_320x200x2, 1, 320, 200, 2, 8, 8, "Grahic Mode (320x200, 2 colors)" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_640x200x2, 1, 640, 200, 2, 8, 8, "Grahic Mode (640x200, 2 colors)" );
 
     // outline0("CALL TMS9918STARTUP");

@@ -38,10 +38,9 @@
 ; Plot / erase a pixel
 ; Input:
 ;       AL : mode
-;       DX : x
-;       CL : y
+;       CX : x
+;       DX : y
 PLOT:
-
     ; PUSH AF
 
     PUSH AX
@@ -55,57 +54,51 @@ PLOT:
     JB PLOTP
 
 @IF scaleX > 0
-    SLA DX, 1
+    SLA CX, 1
 @ENDIF
 
 @IF scaleX > 1
-    SLA DX, 1
+    SLA CX, 1
 @ENDIF
 
 @IF offsetX > 0
 @EMIT offsetX AS offsetX
-    ADD DX, offsetX
+    ADD CX, offsetX
 @ENDIF
 
 @IF scaleY > 0
-    SLA CL, 1
+    SLA DX, 1
 @ENDIF
 
 @IF scaleY > 1
-    SLA CL, 1
+    SLA DX, 1
 @ENDIF
 
 @IF offsetY > 0
 @EMIT offsetY AS offsetY
-    ADD CL, offsetY
+    ADD DX, offsetY
 @ENDIF
 
 @IF optionClip
 
-    CMP CL, [CLIPY2]
+    CMP DX, [CLIPY2]
     JA PLOTP
-    CMP CL, [CLIPY1]
+    CMP DX, [CLIPY1]
     JB PLOTP
-    CMP DX, [CLIPX2]
+    CMP CX, [CLIPX2]
     JA PLOTP
-    CMP DX, [CLIPX1]
+    CMP CX, [CLIPX1]
     JB PLOTP
 
 @ENDIF
 
 PLOTMODE:
     MOV AL, [CURRENTMODE]
-    CMP AL, 4
-    JZ PLOT4
     CMP AL, 5
     JZ PLOT5
-    CMP AL, 6
-    JZ PLOT6
     JMP PLOTP
 
-PLOT4:
 PLOT5:
-PLOT6:
 
     ;----------------------------------------------
     ;depending on PLOTM, routine draws or erases
@@ -130,14 +123,12 @@ PLOTD:
 
     CALL CALCPOS
 
-    MOV DL, [PLOTCPE]
-    ROR DL, CL
-    MOV AL, 0xfc
-    ROR AL, CL
-    AND AL, ES:[DI]
-    OR AL, DL
-    STOSB
-    JZ PLOTDONE
+    MOV AL, [PLOTCPE]    
+    ROL AL, CL
+    AND ES:[DI], BL
+    OR ES:[DI], AL
+
+    JMP PLOTDONE
 
     ;-----------
     ;erase point
@@ -146,11 +137,8 @@ PLOTE:                          ;handled same way as setting a point
     
     CALL CALCPOS
 
-    MOV AL, 0xfc
-    ROR AL, CL
-    AND AL, ES:[DI]
-    STOSB
-    JZ PLOTDONE
+    AND ES:[DI], BL
+    JMP PLOTDONE
 
 PLOTG:    
     JP PLOTDONE
@@ -163,3 +151,5 @@ PLOTP:
 
 PLOTDONE:
     RET
+
+

@@ -219,30 +219,37 @@ CONSOLECALCULATEL10:
     RET
 
     ; Calculate position on the screen.
-    ; Input  : DX = x; CL = y
-    ; Output : DI address
+    ; Input  : CX = x; DX = y
+    ; Output : DI address, BL = mask, CL = shift for color
 CALCPOS:
-    MOV AL, CL
-    MOV AH, 0
-    XOR DI, DI
-    SHR AL, 1
-    SBB DI, 0
-    AND DI, 0x2000
-    SHL AX, 1
-    SHL AX, 1
-    SHL AX, 1
-    SHL AX, 1
-    MOV BX, AX
-    SHL AX, 1
-    SHL AX, 1
-    ADD DI, AX
-    ADD DI, AX
+    PUSH CX
+    PUSH DX
+
     MOV AX, DX
-    MOV CL, AL
     SHR AX, 1
-    SHR AX, 1
-    ADD DI, AX
-    INC CL
+    MOV BX, 80
+    MUL BX
+
+    MOV BX, CX
+    SHR BX, 2
+    ADD AX, BX
+
+    POP DX
+    PUSH DX
+    AND DL, 1
+    CMP DL, 1
+    POP DX
+    JNZ CALCPOSE
+    ADD AX, 0x2000
+CALCPOSE:
+    MOV DI, AX
+    POP CX
     AND CL, 3
+
+    MOV BL, 3
     SHL CL, 1
+
+    ROL BL, CL
+    NOT BL
+
     RET
