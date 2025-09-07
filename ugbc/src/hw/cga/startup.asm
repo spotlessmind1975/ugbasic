@@ -245,6 +245,9 @@ CALCPOSE:
     MOV DI, AX
     POP CX
     AND CL, 3
+    MOV CH, CL
+    MOV CL, 3
+    SUB CL, CH
 
     MOV BL, 3
     SHL CL, 1
