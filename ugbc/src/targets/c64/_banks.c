@@ -1,6 +1,3 @@
-#ifndef __UGBC_C64__
-#define __UGBC_C64__
-
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
@@ -26,36 +23,27 @@
  *
  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
  * il software distribuito nei termini della Licenza è distribuito
- * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
  * implicite. Consultare la Licenza per il testo specifico che regola le
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#include "../ugbc.h"
+/****************************************************************************
+ * INCLUDE SECTION 
+ ****************************************************************************/
 
-#define SCREEN_CAPABILITIES         ( ( 1<<TILEMAP_NATIVE ) | ( 1<<BITMAP_NATIVE ) )
+#include "../../ugbc.h"
 
-#define DEFAULT_PAINT_BUCKET_SIZE   512
+#if defined(__c64__)
 
-#define BANK_COUNT          0 /* by command line */
-#define BANK_SIZE           16384
-#define BANK_BASE_ADDRESS   0
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
 
-#define MAX_AUDIO_CHANNELS  3
+extern char DATATYPE_AS_STRING[][16];
 
-void c64_xpen( Environment * _environment, char * _destination );
-void c64_ypen( Environment * _environment, char * _destination );
-
-void c64_dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void c64_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size );
-void c64_sys_call( Environment * _environment, int _destination );
-
-void c64_timer_set_status_on( Environment * _environment, char * _timer );
-void c64_timer_set_status_off( Environment * _environment, char * _timer );
-void c64_timer_set_counter( Environment * _environment, char * _timer, char * _counter );
-void c64_timer_set_init( Environment * _environment, char * _timer, char * _init );
-void c64_timer_set_address( Environment * _environment, char * _timer, char * _address );
-
-void c64_chain( Environment * _environment, char * _filename );
+void banks_generate( Environment * _environment ) {
+    
+}
 
 #endif

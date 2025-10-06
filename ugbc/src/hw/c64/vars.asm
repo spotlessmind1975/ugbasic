@@ -141,3 +141,10 @@ DSAVEERROR:         .BYTE   $0
 
 OLDD018:            .BYTE   $0
 DOJOERROR:          .BYTE $00
+
+GEORAMBANK          = $DFFF
+GEORAMPAGE          = $DFFE
+GEORAMSWAP          = $DE00
+
+GEORAMBANKSHADOW:   .BYTE   $00
+GEORAMSWAPSHADOW:   .BYTE   $00

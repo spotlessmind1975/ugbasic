@@ -32,57 +32,74 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__c64__)
 
 /**
- * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
  * 
- * This function outputs the ASM code to uncompress data from
- * a specific bank into the RAM.
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
  * 
  * @param _environment Current calling environment
- * @param _bank bank from uncompress from
- * @param _address1 address to uncompress from (0 based)
- * @param _address2 address to write to (RAM)
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
  */
 /* <usermanual>
-@target atari
-@verified
+@keyword BANK ADDRESS
+
+@english
+
+The ''BANK ADDRESS'' function allows you to know the memory address where the swap 
+window with the expanded memory appears, for the given bank. In the case of 
+expansion memories with DMA access, this area does not exist and therefore the
+function returns zero. Exactly the same value returned in case there are no memory expansions.
+
+@italian
+
+La funzione ''BANK ADDRESS'' consente di conoscere l'indirizzo di memoria dove 
+appare la finestra di scambio con la memoria espansa, per il dato banco. Nel caso di memorie di 
+espansione con accesso DMA, questa zona non esiste e quindi la funzione restituisce 
+zero. Esattamente lo stesso valore restituito in caso che non vi siano espansioni 
+di memoria.
+
+@syntax = BANK ADDRESS(id)
+
+@example x = BANK ADDRESS(1)
+
+@seeAlso BANK
+@seeAlso BANK COUNT (constant)
+@target all
 </usermanual> */
-void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
+Variable * bank_get_address( Environment * _environment, int _bank ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
-    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
+    variable_store( _environment, result->name, 0xde00 );
 
+    return result;
+    
 }
 
 /**
- * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
  * 
- * This function outputs the ASM code to uncompress data from
- * a specific bank into the RAM.
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
  * 
  * @param _environment Current calling environment
- * @param _bank bank from uncompress from
- * @param _address1 address to uncompress from (0 based)
- * @param _address2 address to write to (RAM)
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
  */
-void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
+Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
+    variable_store( _environment, result->name, 0xde00 );
     
+    return result;
+
 }
 
 #endif

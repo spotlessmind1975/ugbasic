@@ -32,50 +32,62 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
 
 /**
- * @brief Emit ASM code for instruction <b>= BANK( )</b>
+ * @brief Emit ASM code for instruction <b>BANK ...</b>
  * 
- * This function outputs the ASM code to get the current 
+ * This function outputs the ASM code to set the current 
  * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @return Current number of the bank selected
+ * @param _bank Bank to select
  */
 /* <usermanual>
-@keyword BANK (function)
+@keyword BANK
 
 @english
 
-The ''BANK'' function allows you to know the currently selected bank. All 
+The ''BANK'' command allows you to change the currently selected bank. All 
 operations that are performed on the banks, and that do not explicitly indicate 
-the bank to operate on, work with this implicit bank. 
+the bank to operate on, work with the implicit bank, which is set by this command. 
+The minimum bank number is zero (''0'') while the maximum is equal to ''BANK COUNT - 1''.
 
 @italian
 
-La funzione ''BANK'' consente di conoscere il banco di memoria attualmente 
-selezionato. Tutte le operazioni che vengono eseguite sui banchi e che non 
-indicano esplicitamente la banca su cui operare, funzionano con questo banco 
-implicito.
+Il comando ''BANK'' permette di modificare il banco selezionato attualmente. Tutte
+le operazioni che si svolgono sui banchi, e che non indicano espressamente il banco 
+su cui operare, lavorano con il banco implicito, che viene impostato da questo comando.
+Il numero minimo del banco è zero (''0'') mentre il massimo è pari a ''BANK COUNT - 1''.
 
-@syntax = BANK()
+@syntax BANK id
 
-@example x = BANK()
+@example BANK #1
 
-@seeAlso BANK
+@seeAlso BANK COUNT (constant)
 @target all
 </usermanual> */
-Variable * bank_get( Environment * _environment ) {
+void bank_set( Environment * _environment, int _bank ) {
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
-
-    variable_store( _environment, result->name, 0 );
-
-    return result;
+    variable_store( _environment, "GEORAMBANKSHADOW", _bank );
     
+}
+
+/**
+ * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * 
+ * This function outputs the ASM code to set the current 
+ * expansion bank index.
+ * 
+ * @param _environment Current calling environment
+ * @param _bank Bank to select
+ */
+void bank_set_var( Environment * _environment, char * _bank ) {
+    
+    variable_move( _environment, _bank, "GEORAMBANKSHADOW" );
+
 }
 
 #endif

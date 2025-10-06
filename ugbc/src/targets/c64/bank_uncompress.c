@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__atari__) || defined(__atarixl__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
@@ -47,19 +45,8 @@
  * @param _address1 address to uncompress from (0 based)
  * @param _address2 address to write to (RAM)
  */
-/* <usermanual>
-@target atari
-@verified
-</usermanual> */
+// @tobe BANK UNCOMPRESS
 void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
-
-    char * bankAddress = banks_get_address( _environment, _bank );
-    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    cpu_addressof_16bit( _environment, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
-    cpu_msc1_uncompress_indirect_direct( _environment, realAddress->realName, _address2 );
 
 }
 
@@ -76,13 +63,4 @@ void bank_uncompress_semi_var( Environment * _environment, int _bank, int _addre
  */
 void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
-
-    cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->name, address2->name );
-    
 }
-
-#endif
