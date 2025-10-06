@@ -7392,7 +7392,11 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
     outline0("STA TMPPTR");
     outline1("LDA %s", address_displacement(_environment, _string, "1") );
     outline0("STA TMPPTR+1");
-    outline0("JSR N2STRING" );
+    if ( _signed ) {
+        outline0("JSR N2STRING" );
+    } else {
+        outline0("JSR N2STRINGGO" );
+    }
 
     outline0("LDA MATHPTR5" );
     outline1("STA %s", _string_size);
