@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EXPANSION MANAGEMENT LIST OF AVAILABLE BANKS
 REM
 REM This example prints the starting addresses and the size 
@@ -17,7 +17,7 @@ REM da ugBASIC.
 REM
 REM @include coco3,c64reu
 
-PROCEDURE example ON COCO3, C64REU
+PROCEDURE example ON COCO3, C64REU, C64
 
     CLS
     
@@ -45,4 +45,4 @@ PROCEDURE example ON COCO3, C64REU
 
 END PROCEDURE
 
-    example[] ON COCO3, C64REU
+    example[] ON COCO3, C64REU, C64

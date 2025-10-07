@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EXPANSION MANAGEMENT COPY FROM AND TO EXPANSION
 REM
 REM This example shows how to copy data from / to an expansion bank.
@@ -10,7 +10,7 @@ REM Questo esempio mostra come copiare dati da o verso un banco di espansione.
 REM
 REM @include coco3,c64reu
 
-PROCEDURE example ON COCO3, C64REU
+PROCEDURE example ON COCO3, C64REU, C64
 
     IF BANK COUNT = 0 THEN
         PRINT "Sorry, this target "
@@ -35,4 +35,4 @@ PROCEDURE example ON COCO3, C64REU
 
 END PROCEDURE
 
-    example[] ON COCO3, C64REU
+    example[] ON COCO3, C64REU, C64

@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EXPANSION MANAGEMENT SET A BANK
 REM
 REM This example will change the current selected bank.
@@ -10,7 +10,7 @@ REM Questo esempio cambierà il banco selezionato.
 REM
 REM @include coco3,c64reu
 
-PROCEDURE example ON COCO3, C64REU
+PROCEDURE example ON COCO3, C64REU, C64
 
     CLS
 
@@ -41,5 +41,5 @@ PROCEDURE example ON COCO3, C64REU
 
 END PROCEDURE
 
-    example[] ON COCO3, C64REU
+    example[] ON COCO3, C64REU, C64
 
