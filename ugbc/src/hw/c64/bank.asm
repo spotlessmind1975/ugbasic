@@ -50,25 +50,7 @@ BANKREADGB:
     STA GEORAMPAGE
     STA GEORAMPAGESHADOW
 
-    ; Then, calculate the offset of the heading block to read.
-    ;      +--- starting address on geoRAM's block (lo byte of address)
-    ; |-y--v
-    ; +----|-----+----------+----------+----------+....
-    ; |    |     .          .          .          .
-    ; +----+-----+----------+----------+----------+....
-    ; |    |- x -|  <-- x = 256 - y is the number of bytes 
-    ; |--- 256 --|      to copy from start of the block
-    ;
-    ; Skip head copying if reading from the beginning of a block.
-    ;
-    SEC
-    LDA #$00
-    SBC TMPPTR
-    STA MATHPTR2
-    BEQ BANKREADSKIPHEAD
-
-    ; Copy head of the block.
-
+    LDA #0
 BANKREADGBHL1:
     TAY
     LDA TMPPTR
@@ -76,96 +58,28 @@ BANKREADGBHL1:
 BANKREADGBHL2:
     LDA GEORAMSWAP, X
     STA (TMPPTR2), Y
+    DEC MATHPTR0
+    LDA MATHPTR0
+    CMP #$FF
+    BNE BANKREADGBHL3
+    DEC MATHPTR1
+BANKREADGBHL3:
+    LDA MATHPTR0
+    ORA MATHPTR1
+    BEQ BANKREADGBHDONE
     INX
+    BNE BANKREADGBNSKIPPAGE
+    INC GEORAMPAGESHADOW
+    STA GEORAMPAGE
+BANKREADGBNSKIPPAGE:
     INY
     BNE BANKREADGBHL2
-
-    ; After copying the bytes, reduce the number of bytes to copy...
-    SEC
-    LDA MATHPTR0
-    SBC MATHPTR2
-    STA MATHPTR0
-    LDA MATHPTR1
-    SBC #$0
-    STA MATHPTR1
-
-    ; ... and move the pointer forward.
-
-    CLC
-    LDA TMPPTR2
-    ADC MATHPTR2
-    STA TMPPTR2
-    LDA TMPPTR2+1
-    ADC MATHPTR2
-    STA TMPPTR2+1
-
-    ; Move to the next page.
-    INC GEORAMPAGESHADOW
-    STA GEORAMPAGE
-
-BANKREADSKIPHEAD:
-
-    ; Now check if more blocks must be copied.
-
-    LDA MATHPTR1
-    BEQ BANKREADSKIPMIDDLE
-
-BANKREADGBML1:
+    INC TMPPTR2+1
     LDY #0
     LDX #0
-BANKREADGBML2:
-    LDA GEORAMSWAP, X
-    STA (TMPPTR2), Y
-    INX
-    INY
-    BNE BANKREADGBML2
+    JMP BANKREADGBHL1
 
-    DEC MATHPTR1
-
-    ; ... and move the pointer forward.
-
-    CLC
-    LDA TMPPTR2
-    ADC MATHPTR2
-    STA TMPPTR2
-    LDA TMPPTR2+1
-    ADC #0
-    STA TMPPTR2+1
-
-    ; Move to the next page.
-    INC GEORAMPAGESHADOW
-    STA GEORAMPAGE
-
-    JMP BANKREADSKIPHEAD
-
-BANKREADSKIPMIDDLE:
-
-    ; Now check if tail block must be copied.
-
-    LDA MATHPTR0
-    BEQ BANKREADSKIPTAIL
-
-    ; Then, calculate the offset of the heading block to read.
-    ;                       +--- starting copy from here
-    ;                       V-y-| bytes to copy
-    ; +----|-----+----------+---|------+----------+....
-    ; |    |     .          .   |      .          .
-    ; +----+-----+----------+---+------+----------+....
-    ;
-
-BANKREADGBTL1:
-    LDY #0
-    LDX #0
-BANKREADGBTL2:
-    LDA GEORAMSWAP, X
-    STA (TMPPTR2), Y
-    INX
-    INY
-    CPY MATHPTR0
-    BNE BANKREADGBTL2
-
-BANKREADSKIPTAIL:
-
+BANKREADGBHDONE:
     RTS
 
 ; Read 1 byte from geoRAM to memory
@@ -232,25 +146,7 @@ BANKWRITEGB:
     STA GEORAMPAGE
     STA GEORAMPAGESHADOW
 
-    ; Then, calculate the offset of the heading block to read.
-    ;      +--- starting address on geoRAM's block (lo byte of address)
-    ; |-y--v
-    ; +----|-----+----------+----------+----------+....
-    ; |    |     .          .          .          .
-    ; +----+-----+----------+----------+----------+....
-    ; |    |- x -|  <-- x = 256 - y is the number of bytes 
-    ; |--- 256 --|      to copy from start of the block
-    ;
-    ; Skip head copying if reading from the beginning of a block.
-    ;
-    SEC
-    LDA #$00
-    SBC TMPPTR2
-    STA MATHPTR2
-    BEQ BANKWRITESKIPHEAD
-
-    ; Copy head of the block.
-
+    LDA #0
 BANKWRITEGBHL1:
     TAY
     LDA TMPPTR2
@@ -258,96 +154,28 @@ BANKWRITEGBHL1:
 BANKWRITEGBHL2:
     LDA (TMPPTR), Y
     STA GEORAMSWAP, X
+    DEC MATHPTR0
+    LDA MATHPTR0
+    CMP #$FF
+    BNE BANKWRITEGBHL3
+    DEC MATHPTR1
+BANKWRITEGBHL3:
+    LDA MATHPTR0
+    ORA MATHPTR1
+    BEQ BANKWRITEGBHDONE
     INX
+    BNE BANKWRITEGBNSKIPPAGE
+    INC GEORAMPAGESHADOW
+    STA GEORAMPAGE
+BANKWRITEGBNSKIPPAGE:
     INY
     BNE BANKWRITEGBHL2
-
-    ; After copying the bytes, reduce the number of bytes to copy...
-    SEC
-    LDA MATHPTR0
-    SBC MATHPTR2
-    STA MATHPTR0
-    LDA MATHPTR1
-    SBC #$0
-    STA MATHPTR1
-
-    ; ... and move the pointer forward.
-
-    CLC
-    LDA TMPPTR
-    ADC MATHPTR2
-    STA TMPPTR
-    LDA TMPPTR+1
-    ADC #0
-    STA TMPPTR+1
-
-    ; Move to the next page.
-    INC GEORAMPAGESHADOW
-    STA GEORAMPAGE
-
-BANKWRITESKIPHEAD:
-
-    ; Now check if more blocks must be copied.
-
-    LDA MATHPTR1
-    BEQ BANKWRITESKIPMIDDLE
-
-BANKWRITEGBML1:
+    INC TMPPTR2+1
     LDY #0
     LDX #0
-BANKWRITEGBML2:
-    LDA (TMPPTR), Y
-    STA GEORAMSWAP, X
-    INX
-    INY
-    BNE BANKWRITEGBML2
+    JMP BANKWRITEGBHL1
 
-    DEC MATHPTR1
-
-    ; ... and move the pointer forward.
-
-    CLC
-    LDA TMPPTR
-    ADC MATHPTR2
-    STA TMPPTR
-    LDA TMPPTR+1
-    ADC MATHPTR2
-    STA TMPPTR+1
-
-    ; Move to the next page.
-    INC GEORAMPAGESHADOW
-    STA GEORAMPAGE
-
-    JMP BANKWRITESKIPHEAD
-
-BANKWRITESKIPMIDDLE:
-
-    ; Now check if tail block must be copied.
-
-    LDA MATHPTR0
-    BEQ BANKWRITESKIPTAIL
-
-    ; Then, calculate the offset of the heading block to read.
-    ;                       +--- starting copy from here
-    ;                       V-y-| bytes to copy
-    ; +----|-----+----------+---|------+----------+....
-    ; |    |     .          .   |      .          .
-    ; +----+-----+----------+---+------+----------+....
-    ;
-
-BANKWRITEGBTL1:
-    LDY #0
-    LDX #0
-BANKWRITEGBTL2:
-    LDA (TMPPTR), Y
-    STA GEORAMSWAP, X
-    INX
-    INY
-    CPY MATHPTR0
-    BNE BANKWRITEGBTL2
-
-BANKWRITESKIPTAIL:
-
+BANKWRITEGBHDONE:
     RTS
 
 ; Write 1 byte(s) to geoRAM from memory
