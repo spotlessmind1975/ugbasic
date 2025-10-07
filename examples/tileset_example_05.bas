@@ -19,9 +19,15 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
 
 	CLS
 
+PROCEDURE example ON ALL BUT PLUS4, C16
+
 	tilemap := LOAD TILEMAP("kenney-tiny-town-large.tmx") UNBANKED
 
 	FOR x = 0 TO TILEMAP WIDTH(tilemap)-1
 		PUT TILEMAP tilemap FROM x, 1
 		WAIT KEY
 	NEXT
+
+END PROCEDURE
+
+	example[] ON ALL BUT PLUS4, C16

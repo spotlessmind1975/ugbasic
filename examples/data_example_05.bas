@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM EMBEDDED DATA USING DATA LOAD
 REM
 REM This small example will show how to use the ''DATA LOAD'' instruction.
@@ -10,7 +10,7 @@ REM Questo piccolo esempio mostra come usare l'istruzione ''DATA LOAD''.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,vic20,zx
 
-PROCEDURE example ON ALL BUT PLUS4
+PROCEDURE example ON ALL BUT PLUS4, C16
 
     DATA LOAD "spock.csv" AS TEXT
 
@@ -26,4 +26,4 @@ PROCEDURE example ON ALL BUT PLUS4
 
 END PROC
 
-example[] ON ALL BUT PLUS4
+example[] ON ALL BUT PLUS4, C16

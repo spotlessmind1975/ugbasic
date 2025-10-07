@@ -20,7 +20,7 @@ REM @include atari,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,
 
 	DEFINE SCREEN MODE UNIQUE
 
-	PROCEDURE example ON ALL BUT VIC20, PLUS4, ATARIXL
+	PROCEDURE example ON ALL BUT VIC20, PLUS4, ATARIXL, C16
 
 		BITMAP ENABLE(320,200)
 
@@ -45,4 +45,5 @@ REM @include atari,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,
 
 	END PROC
 
-	example[] ON ALL BUT VIC20, PLUS4, ATARIXL
+	example[] ON ALL BUT VIC20, PLUS4, ATARIXL, C16
+	

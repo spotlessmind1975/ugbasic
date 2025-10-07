@@ -19,12 +19,12 @@ REM @include c64,c64reu,c128
 	
 	DEFINE IMAGE FREE HEIGHT
 	DEFINE MSPRITE ASYNC
-	
+
+	CONST maxAlienships = 5
+
 	BITMAP ENABLE
 	
 	COLOR BORDER BLACK
-	
-	CONST maxAlienships = 5
 	
 	DIM index AS BYTE
 
@@ -44,6 +44,8 @@ REM @include c64,c64reu,c128
 	DIM alienshipMove(maxAlienships) AS PATH
 	DIM alienshipLX(maxAlienships) AS POSITION, alienshipRX(maxAlienships) AS POSITION
 	DIM alienshipX AS POSITION, alienshipY AS POSITION
+	
+PROCEDURE example ON C64, C64REU, C128
 
 	spaceImage := LOAD IMAGE("space.png")
 		
@@ -95,3 +97,7 @@ REM @include c64,c64reu,c128
 
 		MSPRITE UPDATE
 	LOOP
+
+END PROCEDURE
+
+	example[] ON C64, C64REU, C128

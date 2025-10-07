@@ -1,12 +1,12 @@
 ﻿REM @english
-REM RASTER ROUTINES VERTICAL BANDING
+REM RASTER ROUTINES HORIZONTAL BANDING
 REM
 REM This small example will show how to use the raster
 REM routines to create an horizontal banding on the border
 REM of the screen.
 REM 
 REM @italian
-REM AUDIO E MUSICA ESEMPIO CON SOUND (3)
+REM ROUTINE RASTER BANDE ORIZZONTALI
 REM
 REM Questo piccolo esempio mostrerà come usare le routine
 REM raster per creare una banda orizzontale sul bordo dello
