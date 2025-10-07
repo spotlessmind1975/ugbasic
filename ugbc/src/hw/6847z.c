@@ -833,7 +833,16 @@ void c6847z_finalization( Environment * _environment ) {
     if (_environment->vestigialConfig.clsImplicit ) {
         deploy( clsText, src_hw_6847z_cls_text_asm );
     }
-    
+
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
+
 }
 
 void c6847z_hscroll_line( Environment * _environment, int _direction, int _overlap ) {

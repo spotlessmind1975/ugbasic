@@ -1276,6 +1276,15 @@ void cga_finalization( Environment * _environment ) {
         deploy( clsText, src_hw_cga_cls_text_asm );
     }
 
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
+
 }
 
 void cga_hscroll_line( Environment * _environment, int _direction, int _overlap ) {

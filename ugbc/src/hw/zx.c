@@ -551,7 +551,16 @@ void zx_finalization( Environment * _environment ) {
     if ( _environment->vestigialConfig.clsImplicit ) {
         deploy( cls, src_hw_zx_cls_asm );
     }
-    
+
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
+
 }
 
 void zx_screen_rows( Environment * _environment, char * _rows ) {

@@ -1684,6 +1684,15 @@ void tms9918_finalization( Environment * _environment ) {
     if ( _environment->vestigialConfig.clsImplicit ) {
         deploy( clsText, src_hw_tms9918_cls_text_asm );
     }
+
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
     
 }
 

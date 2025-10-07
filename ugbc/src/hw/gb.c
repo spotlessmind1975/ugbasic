@@ -1285,7 +1285,16 @@ void gb_finalization( Environment * _environment ) {
     // if ( _environment->vestigialConfig.clsImplicit ) {
     //     // deploy( clsText, src_hw_gb_cls_text_asm );
     // }
-    
+
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
+
 }
 
 void gb_hscroll_line( Environment * _environment, int _direction, int _overlap ) {

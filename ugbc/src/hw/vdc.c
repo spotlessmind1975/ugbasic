@@ -924,6 +924,15 @@ static RGBi * multicolorSpritePalette[2];
 
 void vdc_finalization( Environment * _environment ) {
 
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RTS");
+            copperList = copperList->next;
+        }    
+    }
+
 }
 
 void vdc_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
