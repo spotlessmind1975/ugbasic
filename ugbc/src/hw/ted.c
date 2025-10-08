@@ -2459,96 +2459,35 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
 #define     PROGRAM_NOISE_SV( c ) \
     outline0("JSR TEDPROGNOISE" );
 
-#define     PROGRAM_SAW( c ) \
-    outline0("LDX #$22" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGCTR1" ); \
+#define     PROGRAM_SAW( c )
 
-#define     PROGRAM_SAW_V( c) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$22" ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_SAW_V( c )
 
-#define     PROGRAM_SAW_SV( c ) \
-    outline0("LDX #$22" ); \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_SAW_SV( c )
 
-#define     PROGRAM_TRIANGLE( c ) \
-    outline0("LDX #$12" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGCTR1" ); \
+#define     PROGRAM_TRIANGLE( c )
 
-#define     PROGRAM_TRIANGLE_V( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$12" ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_TRIANGLE_V( c )
 
-#define     PROGRAM_TRIANGLE_SV( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$12" ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_TRIANGLE_SV( c )
 
-#define     PROGRAM_SAW_TRIANGLE( c ) \
-    outline0("LDX #$32" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGCTR1" ); \
+#define     PROGRAM_SAW_TRIANGLE( c )
 
-#define     PROGRAM_SAW_TRIANGLE_V( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$32" ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_SAW_TRIANGLE_V( c )
 
-#define     PROGRAM_SAW_TRIANGLE_SV( c ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$32" ); \
-    outline0("JSR TEDPROGCTR" );
+#define     PROGRAM_SAW_TRIANGLE_SV( c )
 
-#define     PROGRAM_ATTACK_DECAY( c, a, d ) \
-    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGAD0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGAD1" ); \
+#define     PROGRAM_ATTACK_DECAY( c, a, d )
 
-#define     PROGRAM_ATTACK_DECAY_V( c, a, d ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline1("LDX %s", a ); \
-    outline1("LDY %s", d ); \
-    outline0("JSR TEDPROGAD" );
+#define     PROGRAM_ATTACK_DECAY_V( c, a, d )
 
-#define     PROGRAM_ATTACK_DECAY_SV( c, a, d ) \
-    outline1("LDX #$%2.2x", ( a & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( d & 0x0f ) ); \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("JSR TEDPROGAD" );
+#define     PROGRAM_ATTACK_DECAY_SV( c, a, d )
 
-#define     PROGRAM_SUSTAIN_RELEASE( c, s, r ) \
-    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGSR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGSR1" ); \
+#define     PROGRAM_SUSTAIN_RELEASE( c, s, r )
 
-#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline1("LDX %s", s ); \
-    outline1("LDY %s", r ); \
-    outline0("JSR TEDPROGSR" );
+#define     PROGRAM_SUSTAIN_RELEASE_V( c, s, r )
 
-#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r ) \
-    outline1("LDX #$%2.2x", ( s & 0x0f ) ); \
-    outline1("LDY #$%2.2x", ( r & 0x0f ) ); \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("JSR TEDPROGSR" );
+#define     PROGRAM_SUSTAIN_RELEASE_SV( c, s, r )
 
 #define     STOP_FREQUENCY( c ) \
     if ( ( c & 0x01 ) ) \
