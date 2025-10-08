@@ -28,7 +28,7 @@
  * autorizzazioni e le limitazioni previste dalla medesima.
  ****************************************************************************/
 
-#if defined(__pc128op__) || defined(__coco__) || defined(__coco3__)
+#if defined(__pc128op__) || defined(__coco__) || defined(__coco3__) || defined(__cocob__) || defined(__coco3b__)
 
 #include "../ugbc.h"
 

@@ -68,7 +68,7 @@ leggere l'informazione.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 Variable * fujinet_get_bytes_waiting( Environment * _environment ) {
 

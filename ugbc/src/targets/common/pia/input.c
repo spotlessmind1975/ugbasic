@@ -38,7 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__)
+#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || \
+    defined(__cocob__) || defined(__coco3b__) || defined(__d32b__) || defined(__d64b__)
 
 extern char DATATYPE_AS_STRING[][16];
 
@@ -78,7 +79,7 @@ void input( Environment * _environment, char * _variable, VariableType _default_
 
     cpu_store_8bit( _environment, enter->realName, 13 );
     cpu_store_8bit( _environment, offset->realName, 0 );
-#if defined(__coco__) || defined(__coco3__)
+#if defined(__coco__) || defined(__coco3__) || defined(__cocob__) || defined(__coco3b__)
     cpu_store_8bit( _environment, backspace->realName, 8 );
 #else
     cpu_store_8bit( _environment, backspace->realName, 0xfc );

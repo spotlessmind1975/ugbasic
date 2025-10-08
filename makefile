@@ -31,7 +31,7 @@
 .PHONY: paths toolchain compiler clean all built so
 
 ifndef target
-$(error missing 'target' (valid values: atari atarixl c128 c128z c16 c64 c64reu coco coco3 coleco cpc d32 d64 gb mo5 msx1 pc128op pc1403 pccga plus4 sc3000 sg1000 to8 vg5000 vic20 vz200 zx))
+$(error missing 'target' (valid values: atari atarixl c128 c128z c16 c64 c64reu coco coco3 coco3b coleco cpc d32 d32b d64 d64b gb mo5 msx1 pc128op pc1403 pccga plus4 sc3000 sg1000 to8 vg5000 vic20 vz200 zx))
 endif
 
 ifdef 10liner
@@ -80,6 +80,9 @@ endif
 ifeq ($(target),coco3)
   output=dsk
 endif
+ifeq ($(target),coco3b)
+  output=dsk
+endif
 ifeq ($(target),coleco)
   output=rom
 endif
@@ -89,7 +92,13 @@ endif
 ifeq ($(target),d32)
   output=bin
 endif
+ifeq ($(target),d32b)
+  output=bin
+endif
 ifeq ($(target),d64)
+  output=bin
+endif
+ifeq ($(target),d64b)
   output=bin
 endif
 ifeq ($(target),gb)
@@ -676,17 +685,40 @@ generated/coco/asm/%.asm: compiler
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/coco/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -3 -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -3 -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco/exeso/,,$(@:.dsk=.bas))
 
 generated/coco/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
+# cocob:
+#    TRS-80 Color Computer (6309)
+#------------------------------------------------ 
+# 
+toolchain.cocob: asm6809 decb
+
+generated/cocob/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/cocob/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/cocob/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+
+generated/cocob/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/cocob/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/cocob/exeso/,,$(@:.dsk=.bas))
+
+generated/cocob/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/cocob/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # coco3:
@@ -712,6 +744,29 @@ generated/coco3/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O bin $(subst generated/coco3/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
+# coco3b:
+#    TRS-80 Color Computer (6309 upgrade)
+#------------------------------------------------ 
+# 
+toolchain.coco3b: asm6809 decb
+
+generated/coco3b/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3b$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/coco3b/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/coco3b/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -3 -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+
+generated/coco3b/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -3 -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/coco3b/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3b$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco3b/exeso/,,$(@:.dsk=.bas))
+
+generated/coco3b/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco3b$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O bin $(subst generated/coco3b/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
 # d32:
 #    DRAGON 32 (6809)
 #------------------------------------------------ 
@@ -728,6 +783,22 @@ generated/d32/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d32$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/d32/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
+# d32:
+#    DRAGON 32 (6309 upgrade)
+#------------------------------------------------ 
+# 
+toolchain.d32b: asm6809
+
+generated/d32b/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d32b$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/d32b/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/d32b/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -3 -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/d32b/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d32b$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/d32b/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
 # d64:
 #    DRAGON 64 (6809)
 #------------------------------------------------ 
@@ -742,6 +813,22 @@ generated/d64/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/d64/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d64$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -l ../$(@:.bin=.lis) -O bin $(subst generated/d64/exeso/,,$(@:.bin=.bas))
+
+#------------------------------------------------ 
+# d64:
+#    DRAGON 64 (6309 upgrade)
+#------------------------------------------------ 
+# 
+toolchain.d64b: asm6809
+
+generated/d64b/asm/%.asm: compiler
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d64b$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/d64b/asm/,,$(@:.asm=.bas)) ../$@
+
+generated/d64b/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -l $(@:.bin=.lis) -3 -s $(@:.bin=.lbl) -D -e 10240 -o $@ $(subst /exe/,/asm/,$(@:.bin=.asm))
+
+generated/d64b/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.d64b$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -l ../$(@:.bin=.lis) -O bin $(subst generated/d64b/exeso/,,$(@:.bin=.bas))
 
 #------------------------------------------------ 
 # gb:

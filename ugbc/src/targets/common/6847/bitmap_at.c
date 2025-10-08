@@ -38,7 +38,8 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+    defined(__cocob__) || defined(__d32b__) || defined(__d64b__)
 
 /**
  * @brief Emit ASM implementation for <b>BITMAP AT [int]</b> instruction

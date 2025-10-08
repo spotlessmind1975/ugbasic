@@ -109,7 +109,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FUJINET BYTES CONNECTED OPEN CLOSE JSON QUERY PASSWORD DEVICE CHANNEL PARSE HDBDOS BECKER SIO HTTP POST
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
-%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET
+%token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET CPU6309 
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -1219,7 +1219,7 @@ const_factor:
       | BIG ENDIAN {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
             defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-            defined(__to8__)
+            defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -3996,7 +3996,7 @@ exponential_less:
         Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
     #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
         defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-        defined(__to8__)
+        defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
         variable_store( _environment, endianess->name, 1 );
     #else
         variable_store( _environment, endianess->name, 0 );
@@ -9677,7 +9677,14 @@ target :
     | CPU6809 {
         #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
             defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-            defined(__to8__)
+            defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPU6309 {
+        #if defined(__d32b__) || defined(__d64b__) || defined(__coco3b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9875,7 +9882,7 @@ target :
     }
     |
     COCO {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9883,7 +9890,7 @@ target :
     }
     |
     COCO1 {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9891,7 +9898,7 @@ target :
     }
     |
     COCO2 {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9899,7 +9906,7 @@ target :
     }
     |
     COCO3 {
-        #if defined(__coco3__)
+        #if defined(__coco3__) || defined(__coco3b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9907,7 +9914,7 @@ target :
     }
     |
     DRAGON {
-        #if defined(__d32__) || defined(__d64__)
+        #if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9915,7 +9922,7 @@ target :
     }
     |
     DRAGON32 {
-        #ifdef __d32__
+        #if defined(__d32__) || defined(__d32b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -9923,7 +9930,7 @@ target :
     }
     |
     DRAGON64 {
-        #ifdef __d64__
+        #if defined(__d64__) || defined(__d64b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -13410,9 +13417,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __zx__
     char target[MAX_TEMPORARY_STORAGE] = "ZX Spectrum 48K";
 #elif __d32__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32";
+    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32 (Motorola 6809)";
+#elif __d32b__
+    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32 (Hitachi 6309)";
 #elif __d64__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 64";
+    char target[MAX_TEMPORARY_STORAGE] = "Dragon 64 (Motorola 6809)";
+#elif __d64b__
+    char target[MAX_TEMPORARY_STORAGE] = "Dragon 64 (Hitachi 6309)";
 #elif __pc128op__
     char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest / Thomson MO6";
 #elif __to8__
@@ -13436,9 +13447,13 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif __vg5000__
     char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
 #elif __coco__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer";
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer (Motorola 6809)";
+#elif __cocob__
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer (Hitachi 6309)";
+#elif __coco3b__
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3 (Motorola 6809)";
 #elif __coco3__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3";
+    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3 (Hitachi 6309)";
 #elif __c64reu__
     char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
 #elif __pc1403__
@@ -13474,7 +13489,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-R <size>    Size of expansion memory (in KB)\n" );
 #endif
     printf("\t-c <file>    Output filename with linker configuration\n" );
-#if defined(__coco__) || defined(__coco3__)
+#if defined(__coco__) || defined(__coco3__) || defined(__cocob__) || defined(__coco3b__)
     printf("\t-b <file>    Path to DECB image tool\n" );
 #endif
 #if defined(__atari__) || defined(__atarixl__)
@@ -13530,14 +13545,28 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                bin - COCO binary file\n" );
     printf("\t                dsk - COCO disk basic\n" );
     #define defaultExtension "bin"
+#elif __cocob__
+    printf("\t                bin - COCO binary file\n" );
+    printf("\t                dsk - COCO disk basic\n" );
+    #define defaultExtension "bin"
 #elif __coco3__
+    printf("\t                bin - COCO binary file\n" );
+    printf("\t                dsk - COCO disk basic\n" );
+    #define defaultExtension "bin"
+#elif __coco3b__
     printf("\t                bin - COCO binary file\n" );
     printf("\t                dsk - COCO disk basic\n" );
     #define defaultExtension "bin"
 #elif __d32__
     printf("\t                bin - dragon dos binary file\n" );
     #define defaultExtension "bin"
+#elif __d32b__
+    printf("\t                bin - dragon dos binary file\n" );
+    #define defaultExtension "bin"
 #elif __d64__
+    printf("\t                bin - dragon dos binary file\n" );
+    #define defaultExtension "bin"
+#elif __d64b__
     printf("\t                bin - dragon dos binary file\n" );
     #define defaultExtension "bin"
 #elif __pc128op__
@@ -13675,11 +13704,19 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
 #elif __coco__
     _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif __cocob__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #elif __coco3__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif __coco3b__
     _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
 #elif __d32__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __d32b__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
 #elif __d64__
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif __d64b__
     _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
 #elif __pc128op__
     _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;

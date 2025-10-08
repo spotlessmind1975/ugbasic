@@ -39,12 +39,20 @@ extern char * importPath;
     char targetName[] = "zx";
 #elif defined(__coco__)
     char targetName[] = "coco";
+#elif defined(__cocob__)
+    char targetName[] = "cocob";
 #elif defined(__coco3__)
     char targetName[] = "coco3";
+#elif defined(__coco3b__)
+    char targetName[] = "coco3b";
 #elif defined(__d32__)
     char targetName[] = "d32";
+#elif defined(__d32b__)
+    char targetName[] = "d32b";
 #elif defined(__d64__)
     char targetName[] = "d64";
+#elif defined(__d64b__)
+    char targetName[] = "d64b";
 #elif defined(__gb__)
     char targetName[] = "gb";
 #elif defined(__pc128op__)
@@ -575,6 +583,7 @@ COUNT { RETURN(COUNT,1); }
 C% { RETURN(COUNT,1); }
 CPC { RETURN(CPC,1); }
 CPU6502 { RETURN(CPU6502,1); }
+CPU6309 { RETURN(CPU6309,1); }
 CPU6809 { RETURN(CPU6809,1); }
 CPU8086 { RETURN(CPU8086,1); }
 CPUSC61860 { RETURN(CPUSC61860,1); }

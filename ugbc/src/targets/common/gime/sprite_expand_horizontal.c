@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coco3__)
+#if defined(__coco3__) || defined(__coco3b__)
 
 /**
  * @brief Emit ASM code for <b>SPRITE [int] EXPAND HORIZONTAL</b>

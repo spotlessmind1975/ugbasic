@@ -63,7 +63,7 @@ seriale standard. L'istruzione restituirà ''FALSE'' se si verifica un errore.
 
 </usermanual> */
 
-#if ! defined( __coco__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
+#if ! defined( __coco__ ) && ! defined( __cocob__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ )
 
 Variable * serial_write( Environment * _environment, char * _data ) {
 

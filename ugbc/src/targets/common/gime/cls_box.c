@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coco3__)
+#if defined(__coco3__) || defined(__coco3b__)
 
 void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 

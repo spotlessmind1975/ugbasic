@@ -266,7 +266,7 @@ target :
     }
     |
     COCO {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -274,7 +274,7 @@ target :
     }
     |
     COCO1 {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -282,7 +282,7 @@ target :
     }
     |
     COCO2 {
-        #if defined(__coco__)
+        #if defined(__coco__) || defined(__cocob__)
             $$ = 1;
         #else
             $$ = 0;
@@ -290,7 +290,7 @@ target :
     }
     |
     COCO3 {
-        #if defined(__coco3__)
+        #if defined(__coco3__) || defined(__coco3b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -298,7 +298,7 @@ target :
     }
     |
     DRAGON {
-        #if defined(__d32__) || defined(__d64__)
+        #if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -306,7 +306,7 @@ target :
     }
     |
     DRAGON32 {
-        #ifdef __d32__
+        #if defined(__d32__) || defined(__d32b__)
             $$ = 1;
         #else
             $$ = 0;
@@ -314,7 +314,7 @@ target :
     }
     |
     DRAGON64 {
-        #ifdef __d64__
+        #if defined(__d64__) || defined(__d64b__)
             $$ = 1;
         #else
             $$ = 0;

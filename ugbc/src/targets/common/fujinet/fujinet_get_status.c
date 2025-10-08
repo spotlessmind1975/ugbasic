@@ -62,7 +62,7 @@ o se il canale è effettivamente connesso.
 @target coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 void fujinet_get_status( Environment * _environment ) {
 

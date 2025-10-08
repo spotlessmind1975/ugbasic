@@ -38,7 +38,8 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined( __coco__ ) || defined(__coco3__ )
+#if defined( __coco__ ) || defined(__coco3__ ) || \
+    defined( __cocob__ ) || defined(__coco3b__ )
 
 int key_constant( Environment * _environment, int _key ) {
 
@@ -134,8 +135,9 @@ int key_constant( Environment * _environment, int _key ) {
 #endif
 
 
-#if defined( __d32__ ) || defined(__d64__ )
-
+#if defined( __d32__ ) || defined(__d64__ ) || \
+    defined( __d32b__ ) || defined(__d64b__ )
+    
 int key_constant( Environment * _environment, int _key ) {
 
     if (  !_environment->keyboardConfig.sync ) {

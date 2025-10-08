@@ -38,7 +38,7 @@
   * CODE SECTION 
   ****************************************************************************/
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
 

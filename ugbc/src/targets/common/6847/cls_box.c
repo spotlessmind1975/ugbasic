@@ -38,7 +38,8 @@
   * CODE SECTION 
   ****************************************************************************/
  
-#if defined(__coco__) || defined(__d32__) || defined(__d64__)
+#if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+    defined(__cocob__) || defined(__d32b__) || defined(__d64b__)
 
  void cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
  

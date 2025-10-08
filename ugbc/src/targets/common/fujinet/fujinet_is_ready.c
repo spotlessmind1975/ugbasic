@@ -58,7 +58,7 @@ alla periferica selezionata è prondo per leggere / scrivere dati.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__)  
 
 Variable * fujinet_is_ready( Environment * _environment ) {
 

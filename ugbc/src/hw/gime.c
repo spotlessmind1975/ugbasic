@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__coco3__)
+#if defined(__coco3__) || defined(__coco3b__)
 
 #include "../ugbc.h"
 #include <math.h>

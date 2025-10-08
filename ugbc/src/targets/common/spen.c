@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
- #if !defined(__coco__)
+ #if !defined(__coco__) && !defined(__cocob__) 
  
 /**
  * @brief Emit ASM code for <b>= SPEN()</b>

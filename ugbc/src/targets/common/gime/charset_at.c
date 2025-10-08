@@ -38,7 +38,7 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__coco3__)
+#if defined(__coco3__) || defined(__coco3b__)
 
 void charset_at( Environment * _environment, int _address ) {
 

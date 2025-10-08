@@ -56,7 +56,7 @@ L'istruzione ''FUJINET PASSWORD'' consente di inviare una password a FujiNet.
 @target coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 void fujinet_password( Environment * _environment, char * _password ) {
 

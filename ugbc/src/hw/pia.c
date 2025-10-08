@@ -38,7 +38,8 @@
  * CODE SECTION
  ****************************************************************************/
 
-#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__)
+#if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || \
+    defined(__cocob__) || defined(__coco3b__) || defined(__d32b__) || defined(__d64b__)
 
 void pia_inkey( Environment * _environment, char * _key ) {
 

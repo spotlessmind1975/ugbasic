@@ -12551,7 +12551,11 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "zx" );
 #elif __d32__ 
     strcat( lookedFilename, "d32" );
+#elif __d32b__ 
+    strcat( lookedFilename, "d32" );
 #elif __d64__ 
+    strcat( lookedFilename, "d64" );
+#elif __d64b__ 
     strcat( lookedFilename, "d64" );
 #elif __pc128op__ 
     strcat( lookedFilename, "pc128op" );
@@ -12579,7 +12583,11 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "vg5000" );
 #elif __coco__
     strcat( lookedFilename, "coco" );
+#elif __cocob__
+    strcat( lookedFilename, "coco" );
 #elif __coco3__
+    strcat( lookedFilename, "coco3" );
+#elif __coco3b__
     strcat( lookedFilename, "coco3" );
 #elif __c64reu__
     strcat( lookedFilename, "c64reu" );

@@ -145,8 +145,22 @@ ifeq ($(target),coco)
   audio=sn76489m
   io=pia
 endif
+ifeq ($(target),cocob)
+  cpu=6309
+  video=6847
+  video2=
+  audio=sn76489m
+  io=pia
+endif
 ifeq ($(target),coco3)
   cpu=6809
+  video=gime
+  video2=
+  audio=sn76489m
+  io=pia
+endif
+ifeq ($(target),coco3b)
+  cpu=6309
   video=gime
   video2=
   audio=sn76489m
@@ -173,8 +187,22 @@ ifeq ($(target),d32)
   audio=
   io=pia
 endif
+ifeq ($(target),d32b)
+  cpu=6309
+  video=6847
+  video2=
+  audio=
+  io=pia
+endif
 ifeq ($(target),d64)
   cpu=6809
+  video=6847
+  video2=
+  audio=
+  io=pia
+endif
+ifeq ($(target),d64b)
+  cpu=6309
   video=6847
   video2=
   audio=
@@ -440,6 +468,14 @@ TO8 := src-generated/to8_loader.c
 # Components and chipsets
 # ----------------------------------------------------------------------------
 
+# Motorola 6309
+
+MODULES_6309 := $(wildcard src/hw/6309/*.asm)
+SOURCES_6309 := $(subst src/hw/6309/,src-generated/6309_,$(MODULES_6309:.asm=.c))
+
+src-generated/6309_%.c: $(MODULES_6309)
+	@xxd -i $(subst src-generated/6309_,src/hw/6309/,$(@:.c=.asm)) >$@
+
 # Motorola 6809
 
 MODULES_6809 := $(wildcard src/hw/6809/*.asm)
@@ -448,7 +484,7 @@ SOURCES_6809 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c)
 src-generated/6809_%.c: $(MODULES_6809)
 	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
 
-# Motorola 6847 (for CPU 6809)
+# Motorola 6847 (for CPU 6809/6309)
 
 MODULES_6847 := $(wildcard src/hw/6847/*.asm)
 SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)) $(FONTS)
@@ -839,6 +875,19 @@ src-generated/modules_coco.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_SN76489M
 	@grep "src" src-generated/modules_coco.c | awk -f modules.awk >src-generated/modules_coco.h
 	@grep "data" src-generated/modules_coco.c | awk -f modules.awk >>src-generated/modules_coco.h
 
+# TRS-80 Color Computer 1 and 2 (6309 upgrade)
+
+MODULES_COCOB := $(wildcard src/hw/cocob/*.asm)
+SOURCES_COCOB := $(subst src/hw/cocob/,src-generated/cocob_,$(MODULES_COCOB:.asm=.c))
+
+src-generated/cocob_%.c: $(MODULES_COCOB)
+	@xxd -i $(subst src-generated/cocob_,src/hw/cocob/,$(@:.c=.asm)) >$@
+
+src-generated/modules_cocob.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) 
+	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) >src-generated/modules_cocob.c
+	@grep "src" src-generated/modules_cocob.c | awk -f modules.awk >src-generated/modules_cocob.h
+	@grep "data" src-generated/modules_cocob.c | awk -f modules.awk >>src-generated/modules_cocob.h
+
 # TRS-80 Color Computer 3
 
 MODULES_COCO3 := $(wildcard src/hw/coco3/*.asm)
@@ -851,6 +900,19 @@ src-generated/modules_coco3.c: $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489
 	@cat $(SOURCES_6809) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO3) $(COCO3) >src-generated/modules_coco3.c
 	@grep "src" src-generated/modules_coco3.c | awk -f modules.awk >src-generated/modules_coco3.h
 	@grep "data" src-generated/modules_coco3.c | awk -f modules.awk >>src-generated/modules_coco3.h
+
+# TRS-80 Color Computer 3 (6309 upgrade)
+
+MODULES_COCO3B := $(wildcard src/hw/coco3b/*.asm)
+SOURCES_COCO3B := $(subst src/hw/coco3b/,src-generated/coco3b_,$(MODULES_COCO3B:.asm=.c))
+
+src-generated/coco3b_%.c: $(MODULES_COCO3B)
+	@xxd -i $(subst src-generated/coco3b_,src/hw/coco3b/,$(@:.c=.asm)) >$@
+
+src-generated/modules_coco3b.c: $(SOURCES_6309) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO3B) $(COCO3B)
+	@cat $(SOURCES_6309) $(SOURCES_GIME) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCO3B) $(COCO3B) >src-generated/modules_coco3b.c
+	@grep "src" src-generated/modules_coco3b.c | awk -f modules.awk >src-generated/modules_coco3b.h
+	@grep "data" src-generated/modules_coco3b.c | awk -f modules.awk >>src-generated/modules_coco3b.h
 
 # Dragon 32
 
@@ -865,6 +927,19 @@ src-generated/modules_d32.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D32)  $(S
 	@grep "src" src-generated/modules_d32.c | awk -f modules.awk >src-generated/modules_d32.h
 	@grep "data" src-generated/modules_d32.c | awk -f modules.awk >>src-generated/modules_d32.h
 
+# Dragon 32 (6309 upgrade)
+
+MODULES_D32B := $(wildcard src/hw/d32b/*.asm)
+SOURCES_D32B := $(subst src/hw/d32b/,src-generated/d32b_,$(MODULES_D32B:.asm=.c))
+
+src-generated/d32b_%.c: $(MODULES_D32B)
+	@xxd -i $(subst src-generated/d32b_,src/hw/d32b/,$(@:.c=.asm)) >$@
+
+src-generated/modules_d32b.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_D32B)  $(SOURCES_PIA)
+	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D32B) >src-generated/modules_d32b.c
+	@grep "src" src-generated/modules_d32b.c | awk -f modules.awk >src-generated/modules_d32b.h
+	@grep "data" src-generated/modules_d32b.c | awk -f modules.awk >>src-generated/modules_d32b.h
+
 # Dragon 64
 
 MODULES_D64 := $(wildcard src/hw/d64/*.asm)
@@ -877,6 +952,19 @@ src-generated/modules_d64.c: $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_D64) $(SO
 	@cat $(SOURCES_6809) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D64) >src-generated/modules_d64.c
 	@grep "src" src-generated/modules_d64.c | awk -f modules.awk >src-generated/modules_d64.h
 	@grep "data" src-generated/modules_d64.c | awk -f modules.awk >>src-generated/modules_d64.h
+
+# Dragon 64 (6309 upgrade)
+
+MODULES_D64B := $(wildcard src/hw/d64b/*.asm)
+SOURCES_D64B := $(subst src/hw/d64b/,src-generated/d64b_,$(MODULES_D64B:.asm=.c))
+
+src-generated/d64b_%.c: $(MODULES_D64B)
+	@xxd -i $(subst src-generated/d64b_,src/hw/d64b/,$(@:.c=.asm)) >$@
+
+src-generated/modules_d64b.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_D64B) $(SOURCES_PIA)
+	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D64B) >src-generated/modules_d64b.c
+	@grep "src" src-generated/modules_d64b.c | awk -f modules.awk >src-generated/modules_d64b.h
+	@grep "data" src-generated/modules_d64b.c | awk -f modules.awk >>src-generated/modules_d64b.h
 
 # SEGA SC-3000
 

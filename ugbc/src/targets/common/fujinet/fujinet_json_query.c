@@ -61,7 +61,7 @@ il parsing di uno specifico percorso JSON.
 @target coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 void fujinet_json_query( Environment * _environment, char * _json ) {
 

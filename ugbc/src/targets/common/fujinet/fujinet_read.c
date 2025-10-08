@@ -56,7 +56,7 @@ La funzione ''FUJINET OPEN'' consente di leggere dati da una connessione.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__)
 
 Variable * fujinet_read( Environment * _environment, char * _size ) {
 

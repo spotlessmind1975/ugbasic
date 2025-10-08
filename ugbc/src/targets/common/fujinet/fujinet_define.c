@@ -53,6 +53,17 @@ void fujinet_define( Environment * _environment, FujiNetDefine _mode ) {
             break;
 #endif
 
+#if defined(__cocob__)
+        case FN_HDBDOS:
+            deploy( serial, src_hw_cocob_serial_asm);
+            cpu_call( _environment, "SERIALDEFINEHDBDOS" );
+            break;
+        case FN_BECKER:
+            deploy( serial, src_hw_cocob_serial_asm);
+            cpu_call( _environment, "SERIALDEFINEBECKERPORT" );
+            break;
+#endif
+
 #if defined(__atari__) || defined(__atarixl__)
         case FN_SERIAL:
             deploy( serial, src_hw_atari_serial_asm);

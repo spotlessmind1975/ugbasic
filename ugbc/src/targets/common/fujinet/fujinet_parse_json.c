@@ -58,7 +58,7 @@ di interpretare il json restituito dall'ultima operazione di GET.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 Variable * fujinet_parse_json( Environment * _environment ) {
 

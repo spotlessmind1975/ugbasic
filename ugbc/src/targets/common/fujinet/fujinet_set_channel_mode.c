@@ -60,7 +60,7 @@ contrario.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__) 
 
 Variable * fujinet_set_channel_mode( Environment * _environment, int _mode ) {
 

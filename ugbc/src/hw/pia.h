@@ -33,7 +33,7 @@
 
 #include "../ugbc.h"
 
-#if defined(__d32__) || defined(__d64__)
+#if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__)
 
     #define KEY_NONE					255
     #define KEY_0                       0
@@ -161,7 +161,7 @@
     #define INPUT_DEFAULT_CURSOR        96
     #define INPUT_DEFAULT_RATE          16
 
-#elif defined(__coco__)
+#elif defined(__coco__) || defined(__cocob__)
 
     #define KEY_NONE				   255
     #define KEY_AT						 0
@@ -288,7 +288,7 @@
     #define INPUT_DEFAULT_CURSOR        32
     #define INPUT_DEFAULT_RATE          16
 
-#elif defined(__coco3__)
+#elif defined(__coco3__) || defined(__coco3b__)
 
     #define KEY_NONE				   255
     #define KEY_AT						 0

@@ -56,7 +56,7 @@ La funzione ''FUJINET WRITE'' consente di scrivere dati su una connessione.
 @target atari coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__)
 
 Variable * fujinet_write( Environment * _environment, char * _value ) {
 

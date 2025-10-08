@@ -71,7 +71,7 @@ usato anche come una funzione, per ottenere l'eventuale codice di errore, se di 
 @target coco
 </usermanual> */
 
-#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) 
+#if !defined(__atari__) && !defined(__atarixl__) && !defined(__coco__) && !defined(__cocob__)  
 
 Variable * fujinet_open( Environment * _environment, char * _url, char * _mode, char * _trans ) {
 

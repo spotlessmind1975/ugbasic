@@ -6017,6 +6017,13 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco.h"
     #include "hw/sn76489m.h"
+#elif __cocob__ 
+    #include "../src-generated/modules_cocob.h"
+    #include "hw/6309.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/cocob.h"
+    #include "hw/sn76489m.h"
 #elif __coco3__ 
     #include "../src-generated/modules_coco3.h"
     #include "hw/6809.h"
@@ -6024,18 +6031,37 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco3.h"
     #include "hw/sn76489m.h"
+#elif __coco3b__ 
+    #include "../src-generated/modules_coco3b.h"
+    #include "hw/6309.h"
+    #include "hw/gime.h"
+    #include "hw/pia.h"
+    #include "hw/coco3b.h"
+    #include "hw/sn76489m.h"
 #elif __d32__ 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
     #include "hw/pia.h"
     #include "hw/d32.h"
+#elif __d32b__ 
+    #include "../src-generated/modules_d32b.h"
+    #include "hw/6309.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/d32b.h"
 #elif __d64__ 
     #include "../src-generated/modules_d64.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
     #include "hw/pia.h"
     #include "hw/d64.h"
+#elif __d64b__ 
+    #include "../src-generated/modules_d64b.h"
+    #include "hw/6309.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/d64b.h"
 #elif __pc128op__ 
     #include "../src-generated/modules_pc128op.h"
     #include "hw/6809.h"

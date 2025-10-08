@@ -39,7 +39,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-#if defined(__coco3__)
+#if defined(__coco3__) || defined(__coco3b__)
 
 void flash( Environment * _environment, char * _index, char * _register ) {
 
