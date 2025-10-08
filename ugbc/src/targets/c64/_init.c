@@ -88,8 +88,6 @@ void target_initialization( Environment * _environment ) {
         _environment->compressionForbidden = 1;
 
         banks_init_extended( _environment, bankIds, bankCount, bankSize );
-    } else {
-        banks_init( _environment );
     }
 
     _environment->audioConfig.async = 1;
