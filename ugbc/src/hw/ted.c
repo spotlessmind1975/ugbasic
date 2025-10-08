@@ -2451,21 +2451,13 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
     outline0("JSR TEDPROGPULSE" );
 
 #define     PROGRAM_NOISE( c ) \
-    outline0("LDX #$82" ); \
-    if ( ( c & 0x01 ) ) \
-        outline0("JSR TEDPROGCTR0" ); \
-    if ( ( c & 0x02 ) ) \
-        outline0("JSR TEDPROGCTR1" ); \
+    outline0("JSR TEDPROGNOISE" );
 
 #define     PROGRAM_NOISE_V( c, p ) \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("LDX #$82" ); \
-    outline0("JSR TEDPROGCTR" );
+    outline0("JSR TEDPROGNOISE" );
 
 #define     PROGRAM_NOISE_SV( c ) \
-    outline0("LDX #$82" ); \
-    outline1("LDA %s", ( c == NULL ? "#$3" : c ) ); \
-    outline0("JSR TEDPROGCTR" );
+    outline0("JSR TEDPROGNOISE" );
 
 #define     PROGRAM_SAW( c ) \
     outline0("LDX #$22" ); \
@@ -3238,8 +3230,10 @@ void ted_set_duration_vars( Environment * _environment, char * _channels, char *
     }
     if ( _duration ) {
         outline1("LDX %s", _duration );
+        outline1("LDY %s", address_displacement( _environment, _duration, "1" ) );
     } else {
         outline0("LDX #50" );
+        outline0("LDY #0" );
     }
     
     outline0("JSR TEDPROGDUR");

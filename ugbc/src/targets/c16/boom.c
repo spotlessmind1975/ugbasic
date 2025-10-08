@@ -52,9 +52,11 @@
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
+    _channels = 0x02; // second channel only
+
     ted_set_program( _environment, _channels, IMF_INSTRUMENT_EXPLOSION );
     ted_start( _environment, _channels );
-    ted_set_frequency( _environment, _channels, 1000 );
+    ted_set_frequency( _environment, _channels, 500 );
 
     long durationInTicks = ( _duration / 20 ) & 0xff;
 
@@ -80,34 +82,21 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 </usermanual> */
 void boom_var( Environment * _environment, char * _duration, char * _channels ) {
 
-if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        ted_start_var( _environment, channels->realName );
-        ted_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            ted_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
-        } else {
-            ted_set_duration_vars( _environment, channels->realName, NULL );
-        }
-        if ( ! _environment->audioConfig.async ) {
-            ted_wait_duration_vars( _environment, channels->realName );
-        }        
+    int channels = 0x02; // second channel only
+
+    ted_set_program( _environment, channels, IMF_INSTRUMENT_EXPLOSION );
+    ted_start( _environment, channels );
+    ted_set_frequency( _environment, channels, 500 );
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
+        Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+        ted_set_duration_vars( _environment, NULL, durationInTicks->realName );
     } else {
-        ted_start_var( _environment, NULL );
-        ted_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
-        if ( _duration ) {
-            Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
-            ted_set_duration_vars( _environment, NULL, durationInTicks->realName );
-        } else {
-            ted_set_duration_vars( _environment, NULL, NULL );
-        }
-        if ( ! _environment->audioConfig.async ) {
-            ted_wait_duration_vars( _environment, NULL );
-        }        
+        ted_set_duration_vars( _environment, NULL, NULL );
     }
+    if ( ! _environment->audioConfig.async ) {
+        ted_wait_duration_vars( _environment, NULL );
+    }        
     
 }
 
