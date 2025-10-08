@@ -1300,12 +1300,14 @@ void ted_scroll_text( Environment * _environment, int _direction, int _overlap )
 
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
 
-    outline1("LDA #$%2.2x", ( _direction & 0xff ) );
-    outline0("STA DIRECTION" );
     outline1("LDA #$%2.2x", ( _overlap & 0xff ) );
     outline0("STA PORT" );
+    if ( _direction > 0 ) {
+        outline0("JSR VSCROLLTDOWN");
+    } else {
+        outline0("JSR VSCROLLTUP");
+    }
 
-    outline0("JSR VSCROLLT");
 
 }
 
