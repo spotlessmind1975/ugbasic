@@ -21,11 +21,15 @@ build c128z
 build c64
 build c64reu
 build coco
+build cocob
 build coco3
+build coco3b
 build coleco
 build cpc
 build d32
+build d32b
 build d64
+build d64b
 build gb
 build mo5
 build msx1
