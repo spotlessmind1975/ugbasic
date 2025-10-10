@@ -70,7 +70,7 @@ N2STRINGCD1
   STD   ,X++
   LEAU  -2, U
   CMPU  #0
-  BNE N2STRINGCD1
+  BGT N2STRINGCD1
 
   ; Clear the PWR space.
 
@@ -81,7 +81,7 @@ N2STRINGCD2
   STD   ,X++
   LEAU  -2, U
   CMPU  #0
-  BNE   N2STRINGCD2
+  BGT   N2STRINGCD2
 
   ; Initialize the PWR space with an 1.
 
