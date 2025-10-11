@@ -2715,42 +2715,26 @@ void cpu_math_div_nbit_to_nbit_const( Environment * _environment, char *_source,
 
 void cpu_math_div_32bit_to_16bit_const( Environment * _environment, char *_source, int _destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    cpu_math_div_16bit_to_16bit_const( _environment, address_displacement( _environment, _source, "2" ), _destination,  _other, _other_remainder, _signed );
+    inline( cpu_math_div_32bit_to_16bit )
 
-    // no_inline( cpu_math_div_32bit_to_16bit )
+        MAKE_LABEL
 
-    // embedded( cpu_math_div_32bit_to_16bit, src_hw_6309_cpu_math_div_32bit_to_16bit_asm );
+        char dividendLabel[MAX_TEMPORARY_STORAGE];
+        sprintf(dividendLabel, "%sdiv", label );
 
-    //     outline1("LDD %s", _source );
-    //     outline0("STD CPUMATHDIV32BITTO16DIVISOR" );
-    //     outline1("LDD %s", address_displacement( _environment, _source, "2"));
-    //     outline0("STD CPUMATHDIV32BITTO16DIVISOR+2" );
+        outline1("BRA %s", label );
+        outhead1("%s", label );
+        outline1("fdb $%4.4x", _destination );
+        outline1("LDQ %s", _source );
+        outline1("DIVQ %s", dividendLabel );
 
-    //     outline1("LDD $%4.4x", ( ( _destination >> 2 ) & 0xffff ) );
-    //     outline0("STD CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline1("LDD $%4.4x", ( _destination & 0xffff ) );
-    //     outline0("STD CPUMATHDIV32BITTO16DIVIDEND+2" );
+        if ( _other_remainder ) {
+            outline1("STD %s", _other_remainder );
+        }
 
-    //     outline0("LDX CPUMATHDIV32BITTO16DIVISOR" );
-    //     outline0("LDY CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline0("LDA #4" );
-    //     if ( _signed ) {
-    //         outline0("JSR CPUMATHDIV32BITTO16BIT_SIGNED" );
-    //     } else {
-    //         outline0("JSR CPUMATHDIV32BITTO16BIT" );
-    //     }
+        outline1("STW %s", _other );
 
-    //     if ( _other_remainder ) {
-    //         outline0("LDD ,X" );
-    //         outline1("STD %s", _other_remainder );
-    //         outline0("LDD 2,X" );
-    //         outline1("STD %s", address_displacement( _environment, _other_remainder, "2" ) );
-    //     }
-
-    //     outline0("LDD CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline1("STD %s", _other );
-
-    // done( )
+    no_embedded( cpu_math_div_32bit_to_16bit );
 
 }
 
