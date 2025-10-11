@@ -125,7 +125,7 @@ void d64_sys_call( Environment * _environment, int _destination ) {
 
 void d64_timer_set_status_on( Environment * _environment, char * _timer ) {
     
-    deploy( timer, src_hw_6309_timer_asm);
+    deploy( timer, src_hw_6809_timer_asm);
 
     if ( _timer ) {
         outline1("LDB %s", _timer );
@@ -140,7 +140,7 @@ void d64_timer_set_status_on( Environment * _environment, char * _timer ) {
 
 void d64_timer_set_status_off( Environment * _environment, char * _timer ) {
 
-    deploy( timer, src_hw_6309_timer_asm);
+    deploy( timer, src_hw_6809_timer_asm);
 
     if ( _timer ) {
         outline1("LDB %s", _timer );
@@ -155,7 +155,7 @@ void d64_timer_set_status_off( Environment * _environment, char * _timer ) {
 
 void d64_timer_set_counter( Environment * _environment, char * _timer, char * _counter ) {
 
-    deploy( timer, src_hw_6309_timer_asm);
+    deploy( timer, src_hw_6809_timer_asm);
 
     if ( _counter ) {
         outline1("LDD %s", _counter );
@@ -174,7 +174,7 @@ void d64_timer_set_counter( Environment * _environment, char * _timer, char * _c
 
 void d64_timer_set_init( Environment * _environment, char * _timer, char * _init ) {
 
-    deploy( timer, src_hw_6309_timer_asm);
+    deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD %s", _init );
     outline0("STD <MATHPTR2");
@@ -189,7 +189,7 @@ void d64_timer_set_init( Environment * _environment, char * _timer, char * _init
 
 void d64_timer_set_address( Environment * _environment, char * _timer, char * _address ) {
 
-    deploy( timer, src_hw_6309_timer_asm);
+    deploy( timer, src_hw_6809_timer_asm);
 
     outline1("LDD #%s", _address );
     outline0("STD <MATHPTR2");
