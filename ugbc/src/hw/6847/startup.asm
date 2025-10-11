@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF D32 || D64 || COCO || COCO3
+
 CPUMEMMOVE
     CMPU #0
     BEQ CPUMEMMOVEDONE
@@ -46,7 +48,18 @@ CPUMEMMOVEL1
     BNE CPUMEMMOVEL1
 CPUMEMMOVEDONE
     RTS
-    
+
+@ELSE
+
+CPUMEMMOVE
+    TFR U, W
+    ORCC #$50
+    TFM Y+, X+
+    ANDCC #$AF
+    RTS
+
+@ENDIF
+
 C6847STARTUP
 
     ; (4) Default screen mode is semigraphic-4
