@@ -63,7 +63,7 @@ void generate_bin( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_ASM6809_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_ASM6809EXEC( _environment, "-C", 0x2A00, executableName, listingFileName );
+    BUILD_TOOLCHAIN_ASM6809EXEC( _environment, "-3 -C", 0x2A00, executableName, listingFileName );
 
     if ( _environment->listingFileName ) {
 

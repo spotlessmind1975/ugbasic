@@ -77,6 +77,9 @@ endif
 ifeq ($(target),coco)
   output=dsk
 endif
+ifeq ($(target),cocob)
+  output=dsk
+endif
 ifeq ($(target),coco3)
   output=dsk
 endif
