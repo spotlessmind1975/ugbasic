@@ -35,7 +35,16 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF D32 || D64 || COCO || COCO3
+@IF D32B || D64B || COCOB || COCO3B
+
+CPUMEMMOVE
+    TFR U, W
+    ORCC #$50
+    TFM Y+, X+
+    ANDCC #$AF
+    RTS
+
+@ELSE
 
 CPUMEMMOVE
     CMPU #0
@@ -47,15 +56,6 @@ CPUMEMMOVEL1
     CMPU #$0
     BNE CPUMEMMOVEL1
 CPUMEMMOVEDONE
-    RTS
-
-@ELSE
-
-CPUMEMMOVE
-    TFR U, W
-    ORCC #$50
-    TFM Y+, X+
-    ANDCC #$AF
     RTS
 
 @ENDIF
