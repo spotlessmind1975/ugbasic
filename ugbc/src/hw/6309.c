@@ -4744,49 +4744,13 @@ void cpu_mem_move( Environment * _environment, char *_source, char *_destination
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _size );
-        outline1("BEQ %sdone", label );
-
-        outline1("LDY %s", _source );
-        outline1("LDX %s", _destination );
-
-        outline0("ANDB #$80" );
-        outline1("BEQ %sloop2", label );
-        outline0("LDB #$7F" );
-        outline0("DECB" );
-        outhead1("%s", label );
-        outline0("LDA B,Y" );
-        outline0("STA B,X" );
-        outline0("DECB" );
-        outline0("CMPB #$FF" );
-        outline1("BNE %s", label );
-        outline0("LEAY 127,Y" );
-        outline0("LEAX 127,X" );
-        outline0("LEAY 1,Y" );
-        outline0("LEAX 1,X" );
-
-        outhead1("%sloop2", label );
-        outline1("LDB %s", _size );
-        outline0("ANDB #$7F" );
-        outline1("BEQ %sdone", label );
-        outline0("DECB" );
-        outhead1("%s_2", label );
-        outline0("LDA B,Y" );
-        outline0("STA B,X" );
-        outline0("DECB" );
-        outline0("CMPB #$FF" );
-        outline1("BNE %s_2", label );
-        outhead1("%sdone", label );
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
         outline0("LDA #0" );
         outline1("LDB %s", _size );
-        // outline0("TFR D, U" );
+        outline0("TFR D, W" );
         outline1("LDY %s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4803,8 +4767,7 @@ void cpu_mem_move_16bit( Environment * _environment, char *_source, char *_desti
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD %s", _size );
-        // outline0("TFR D, U" );
+        outline1("LDW %s", _size );
         outline1("LDY %s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4817,49 +4780,13 @@ void cpu_mem_move_direct( Environment * _environment, char *_source, char *_dest
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        outline1("LDB %s", _size );
-        outline1("BEQ %sdone", label );
-
-        outline1("LDY #%s", _source );
-        outline1("LDX #%s", _destination );
-
-        outline0("ANDA #$80" );
-        outline1("BEQ %sloop2", label );
-        outline0("LDB #$7F" );
-        outline0("DECB" );
-        outhead1("%s", label );
-        outline0("LDA B,Y" );
-        outline0("STA B,X" );
-        outline0("DECB" );
-        outline0("CMPB #$FF" );
-        outline1("BNE %s", label );
-        outline0("LEAY 127,Y" );
-        outline0("LEAX 127,X" );
-        outline0("LEAY 1,Y" );
-        outline0("LEAX 1,X" );
-
-        outhead1("%sloop2", label );
-        outline1("LDB %s", _size );
-        outline0("ANDA #$7F" );
-        outline1("BEQ %sdone", label );
-        outline0("DECB" );
-        outhead1("%s_2", label );
-        outline0("LDA B,Y" );
-        outline0("STA B,X" );
-        outline0("DECB" );
-        outline0("CMPB #$FF" );
-        outline1("BNE %s_2", label );
-        outhead1("%sdone", label );
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
         outline0("LDA #0" );
         outline1("LDB %s", _size );
-        // outline0("TFR D, U" );
+        outline0("TFR D, W" );
         outline1("LDY #%s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4872,27 +4799,11 @@ void cpu_mem_move_direct2_size( Environment * _environment, char *_source, char 
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        outline1("LDU #$%4.4x", _size );
-        outline0("CMPU #$0" );
-        outline1("BEQ %sdone", label );
-
-        outline1("LDY %s", _source );
-        outline1("LDX #%s", _destination );
-
-        outhead1("%s", label );
-        outline0("LDA ,Y+" );
-        outline0("STA ,X+" );
-        outline0("LEAU -1, U" );
-        outline0("CMPU #$0" );
-        outline1("BNE %s", label );
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD #$%4.4x", _size );
+        outline1("LDW #$%4.4x", _size );
         outline1("LDY %s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4905,27 +4816,11 @@ void cpu_mem_move_direct2( Environment * _environment, char *_source, char *_des
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        outline1("LDU %s", _size );
-        outline0("CMPU #$0" );
-        outline1("BEQ %sdone", label );
-
-        outline1("LDY %s", _source );
-        outline1("LDX #%s", _destination );
-
-        outhead1("%s", label );
-        outline0("LDA ,Y+" );
-        outline0("STA ,X+" );
-        outline0("LEAU -1, U" );
-        outline0("CMPU #$0" );
-        outline1("BNE %s", label );
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD %s", _size );
+        outline1("LDW %s", _size );
         outline1("LDY %s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4938,52 +4833,11 @@ void cpu_mem_move_size( Environment * _environment, char *_source, char *_destin
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        if ( _size ) {
-
-            outline1("LDY %s", _source );
-            outline1("LDX %s", _destination );
-
-            if ( _size >= 0x7f ) {
-
-                outline0("LDB #$7F" );
-                outline0("DECB" );
-                outhead1("%s", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s", label );
-                outline0("LEAY 127,Y" );
-                outline0("LEAX 127,X" );
-                outline0("LEAY 1,Y" );
-                outline0("LEAX 1,X" );
-
-                _size -= 0x7f;
-
-            }
-
-            if ( _size ) {
-
-                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
-                outline0("DECB" );
-                outhead1("%s_2", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s_2", label );
-
-            }
-
-        }
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD #$%4.4x", _size );
+        outline1("LDW #$%4.4x", _size );
         outline1("LDY %s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -4996,52 +4850,11 @@ void cpu_mem_move_direct_size( Environment * _environment, char *_source, char *
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        if ( _size ) {
-
-            outline1("LDY #%s", _source );
-            outline1("LDX #%s", _destination );
-
-            if ( _size >= 0x7f ) {
-
-                outline0("LDB #$7F" );
-                outline0("DECB" );
-                outhead1("%s", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s", label );
-                outline0("LEAY 127,Y" );
-                outline0("LEAX 127,X" );
-                outline0("LEAY 1,Y" );
-                outline0("LEAX 1,X" );
-
-                _size -= 0x7f;
-
-            }
-
-            if ( _size ) {
-
-                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
-                outline0("DECB" );
-                outhead1("%s_2", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s_2", label );
-
-            }
-
-        }
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD #$%4.4x", _size );
+        outline1("LDW #$%4.4x", _size );
         outline1("LDY #%s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -5054,52 +4867,11 @@ void cpu_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        if ( _size ) {
-
-            outline1("LDY #%s", _source );
-            outline1("LDX %s", _destination );
-
-            if ( _size >= 0x7f ) {
-
-                outline0("LDB #$7F" );
-                outline0("DECB" );
-                outhead1("%s", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s", label );
-                outline0("LEAY 127,Y" );
-                outline0("LEAX 127,X" );
-                outline0("LEAY 1,Y" );
-                outline0("LEAX 1,X" );
-
-                _size -= 0x7f;
-
-            }
-
-            if ( _size ) {
-
-                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
-                outline0("DECB" );
-                outhead1("%s_2", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s_2", label );
-
-            }
-
-        }
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD #$%4.4x", _size );
+        outline1("LDW #$%4.4x", _size );
         outline1("LDY #%s", _source );
         outline1("LDX %s", _destination );
         outline0("JSR DUFFDEVICE" );
@@ -5112,52 +4884,11 @@ void cpu_mem_move_indirect_direct_size( Environment * _environment, char *_sourc
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
 
-    inline( cpu_mem_move )
-
-        MAKE_LABEL
-
-        if ( _size ) {
-
-            outline1("LDY %s", _source );
-            outline1("LDX #%s", _destination );
-
-            if ( _size >= 0x7f ) {
-
-                outline0("LDB #$7F" );
-                outline0("DECB" );
-                outhead1("%s", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s", label );
-                outline0("LEAY 127,Y" );
-                outline0("LEAX 127,X" );
-                outline0("LEAY 1,Y" );
-                outline0("LEAX 1,X" );
-
-                _size -= 0x7f;
-
-            }
-
-            if ( _size ) {
-
-                outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
-                outline0("DECB" );
-                outhead1("%s_2", label );
-                outline0("LDA B,Y" );
-                outline0("STA B,X" );
-                outline0("DECB" );
-                outline0("CMPB #$FF" );
-                outline1("BNE %s_2", label );
-
-            }
-
-        }
+    no_inline( cpu_mem_move )
 
     embedded( cpu_mem_move, src_hw_6309_cpu_mem_move_asm )
 
-        outline1("LDD #$%4.4x", _size );
+        outline1("LDW #$%4.4x", _size );
         outline1("LDY %s", _source );
         outline1("LDX #%s", _destination );
         outline0("JSR DUFFDEVICE" );

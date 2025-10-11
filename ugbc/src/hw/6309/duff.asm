@@ -36,17 +36,14 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 DUFFDEVICE
-    CMPD #0
+    CMPW #0
     BNE DUFFDEVICE0
     RTS
 
 DUFFDEVICE0
-    TFR D, W
-
     ORCC #$50
     TFM Y+, X+
     ANDCC #$AF
-
     RTS
 
 
