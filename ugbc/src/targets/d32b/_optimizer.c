@@ -1318,6 +1318,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " OR* *",  NULL, arg)
     ||  po_buf_match( buf[0], " SBC* *", NULL, arg)
     ||  po_buf_match( buf[0], " SUB* *", NULL, arg)
+    ||  po_buf_match( buf[0], " DIV* *", NULL, arg)
     
     ||  po_buf_match( buf[0], " ADD* <*", NULL, arg)
     ||  po_buf_match( buf[0], " ADC* <*", NULL, arg)
@@ -1328,6 +1329,8 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " OR* <*",  NULL, arg)
     ||  po_buf_match( buf[0], " SBC* <*", NULL, arg)
     ||  po_buf_match( buf[0], " SUB* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " DIVQ* <*", NULL, arg)
+    ||  po_buf_match( buf[0], " DIVD* <*", NULL, arg)
      ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_rd++;
@@ -1354,7 +1357,6 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " ROL <*", arg)
     ||  po_buf_match( buf[0], " ROR <*", arg)
     ||  po_buf_match( buf[0], " TST< *", arg)
-
     ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;

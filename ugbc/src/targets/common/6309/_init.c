@@ -54,7 +54,6 @@ void setup_embedded( Environment * _environment ) {
     _environment->embedded.cpu_math_div2_const_16bit = 1;
     _environment->embedded.cpu_math_mul_16bit_to_32bit = 1;
     _environment->embedded.cpu_math_div_16bit_to_16bit = 1;
-    _environment->embedded.cpu_math_div_32bit_to_16bit = 1;
     _environment->embedded.cpu_random = 1;
     _environment->embedded.cpu_mem_move = 1;
     _environment->embedded.cpu_hex_to_string = 1;

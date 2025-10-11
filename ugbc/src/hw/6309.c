@@ -2535,43 +2535,18 @@ void cpu_store_32bit( Environment * _environment, char *_destination, int _value
 
 void cpu_math_div_32bit_to_16bit( Environment * _environment, char *_source, char *_destination,  char *_other, char * _other_remainder, int _signed ) {
 
-    cpu_math_div_16bit_to_16bit( _environment, address_displacement( _environment, _source, "2" ), _destination,  _other, _other_remainder, _signed );
+    inline( cpu_math_div_32bit_to_16bit )
 
-    // no_inline( cpu_math_div_32bit_to_16bit )
+        outline1("LDQ %s", _source );
+        outline1("DIVQ %s", _destination );
 
-    // embedded( cpu_math_div_32bit_to_16bit, src_hw_6309_cpu_math_div_32bit_to_16bit_asm );
+        if ( _other_remainder ) {
+            outline1("STD %s", _other_remainder );
+        }
 
-    //     outline1("LDD %s", _source );
-    //     outline0("STD CPUMATHDIV32BITTO16DIVISOR" );
-    //     outline1("LDD %s", address_displacement( _environment, _source, "2"));
-    //     outline0("STD CPUMATHDIV32BITTO16DIVISOR+2" );
+        outline1("STW %s", _other );
 
-    //     outline1("LDD %s", _destination );
-    //     outline0("STD CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline1("LDD %s", address_displacement( _environment, _destination, "2"));
-    //     outline0("STD CPUMATHDIV32BITTO16DIVIDEND+2" );
-
-    //     outline0("LDX CPUMATHDIV32BITTO16DIVISOR" );
-    //     outline0("LDY CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline0("LDA #4" );
-    //     outline0("PSHS A, X, Y" );
-    //     if ( _signed ) {
-    //         outline0("JSR CPUMATHDIV32BITTO16BIT_SIGNED" );
-    //     } else {
-    //         outline0("JSR CPUMATHDIV32BITTO16BIT" );
-    //     }
-
-    //     if ( _other_remainder ) {
-    //         outline0("LDD ,X" );
-    //         outline1("STD %s", _other_remainder );
-    //         outline0("LDD 2,X" );
-    //         outline1("STD %s", address_displacement( _environment, _other_remainder, "2" ) );
-    //     }
-
-    //     outline0("LDD CPUMATHDIV32BITTO16DIVIDEND" );
-    //     outline1("STD %s", _other );
-
-    // done( )
+    no_embedded( cpu_math_div_32bit_to_16bit );
 
 }
 
