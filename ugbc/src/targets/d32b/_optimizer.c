@@ -2541,9 +2541,11 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         ++_environment->removedAssemblyLines;
                     }
                 } else if( 
-                        po_buf_match( buf[0], " STA *", v2 ) || 
+                        ( po_buf_match( buf[0], " STA *", v2 ) || 
                         po_buf_match( buf[0], " STB *", v2 ) || 
-                        po_buf_match( buf[0], " STD *", v2 ) )
+                        po_buf_match( buf[0], " STD *", v2 ) ) &&
+                        ( po_buf_match( buf[2], " DIVQ *", v2 ) == NULL && po_buf_match( buf[2], " DIVD *", v2 ) )
+                )
                 {
 
                     // printf(" RULE #3\n");
