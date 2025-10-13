@@ -5687,13 +5687,19 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
     switch( _bits ) {
         case 32:
 			outline1("LDD %s", address_displacement(_environment, _number, "2") );
-            outline0("STD N2STRINGNUMBER+2");
+            outline1("STD N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 2 );
             outline1("LDD %s", _number );
-            outline0("STD N2STRINGNUMBER");
+            outline1("STD N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) );
+            for( int i=(_environment->numberConfig.maxBytes - 4 ) - 2; i>0; i-=2 ) {
+                outline0("LDD #0");
+                outline1("STD N2STRINGNUMBER+%d", i );
+            }
             if ( _signed ) {
                 outline0("STA N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_32bit( _environment, "N2STRINGNUMBER", NULL);
+                char number[MAX_TEMPORARY_STORAGE];
+                sprintf( number, "N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 2 );
+                cpu_complement2_32bit( _environment, number, NULL);
                 outhead1("%spositive", label );
             } else {
                 outline0("CLR N2STRINGNUMBERSIGNED");
@@ -5701,11 +5707,17 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
             break;
         case 16:
             outline1("LDD %s", _number );
-            outline0("STD N2STRINGNUMBER+2");
+            outline1("STD N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 2 );
+            for( int i=(_environment->numberConfig.maxBytes - 4 ); i>0; i-=2 ) {
+                outline0("LDD #0");
+                outline1("STD N2STRINGNUMBER+%d", i );
+            }
             if ( _signed ) {
                 outline0("STA N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_16bit( _environment, "N2STRINGNUMBER+2", NULL);
+                char number[MAX_TEMPORARY_STORAGE];
+                sprintf( number, "N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 2 );
+                cpu_complement2_16bit( _environment, number, NULL);
                 outhead1("%spositive", label );
             }
             outline0("LDD #0");
@@ -5715,11 +5727,17 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         case 8:
             outline1("LDB %s", _number );
             outline0("CLRA");
-            outline0("STD N2STRINGNUMBER+2");
+            outline1("STD N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 2);
+            for( int i=(_environment->numberConfig.maxBytes - 4 ); i>0; i-=2 ) {
+                outline0("LDD #0");
+                outline1("STD N2STRINGNUMBER+%d", i );
+            }
             if ( _signed && _bits == 8 ) {
                 outline0("STB N2STRINGNUMBERSIGNED");
                 outline1("BPL %spositive", label );
-                cpu_complement2_8bit( _environment, "N2STRINGNUMBER+3", NULL);
+                char number[MAX_TEMPORARY_STORAGE];
+                sprintf( number, "N2STRINGNUMBER+%d", (_environment->numberConfig.maxBytes - 4 ) + 3 );
+                cpu_complement2_8bit( _environment, number, NULL);
                 outhead1("%spositive", label );
             }
             outline0("CLRB");
