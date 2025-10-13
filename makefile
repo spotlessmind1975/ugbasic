@@ -197,12 +197,22 @@ Z80APPMAKE = ./modules/z88dk/src/appmake/z88dk-appmake$(EXESUFFIX)
 CPTODSK = ./modules/dsktools/bin/cptodsk$(EXESUFFIX)
 
 #------------------------------------------------ 
-# CPU MOTOROLA 6809
+# CPU MOTOROLA 6809 / HITACHI 6309
 #------------------------------------------------ 
 ASM6809 = ./modules/asm6809/src/asm6809$(EXESUFFIX)
 DECB = ./modules/toolshed/build/unix/decb/decb$(EXESUFFIX)
+
+#------------------------------------------------ 
+# CPU MOTOROLA 6809
+#------------------------------------------------ 
 COCODECB = ./coco_decb.sh
 COCO3DECB = ./coco3_decb.sh
+
+#------------------------------------------------ 
+# CPU HITACHI 6309
+#------------------------------------------------ 
+COCOBDECB = ./cocob_decb.sh
+COCO3BDECB = ./coco3b_decb.sh
 
 #------------------------------------------------ 
 # CPU HITACHI SC61860 
@@ -712,7 +722,7 @@ generated/cocob/asm/%.asm: compiler
 
 generated/cocob/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+	@$(COCOBDECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/cocob/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -735,7 +745,7 @@ generated/coco3/asm/%.asm: compiler
 
 generated/coco3/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+	@$(COCO3DECB) B$(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -758,7 +768,7 @@ generated/coco3b/asm/%.asm: compiler
 
 generated/coco3b/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -3 -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
+	@$(COCO3BDECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3b/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -3 -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
