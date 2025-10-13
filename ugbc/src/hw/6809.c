@@ -3716,7 +3716,7 @@ void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _s
     inline( cpu_math_mul2_const_nbit )
 
         char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-1 );
-        outline1("LDA %s", address_displacement(_environment, _source, offset));
+        outline1("LDA %s", _source );
         outline0("ANDA #$80");
         outline0("TFR A, B");
         while( _steps ) {
@@ -3729,8 +3729,8 @@ void cpu_math_mul2_const_nbit( Environment * _environment, char *_source, int _s
             }
             --_steps;
         }
-        outline1("ORB %s", address_displacement(_environment, _source, offset));
-        outline1("STB %s", address_displacement(_environment, _source, offset));
+        outline1("ORB %s", _source );
+        outline1("STB %s", _source );
 
     no_embedded( cpu_math_mul2_const_nbit )
 
