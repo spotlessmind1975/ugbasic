@@ -3236,7 +3236,7 @@ void cpu_math_add_nbit( Environment * _environment, char *_source, char *_destin
 
         outline0("ANDCC #$FE");
         for( int i=0; i<(_bits>>3); ++i ) {
-            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-i-1 );
             outline1("LDA %s", address_displacement(_environment, _source, offset));
             outline1("ADCA %s", address_displacement(_environment, _destination, offset));
             if ( _other ) {
@@ -3335,7 +3335,7 @@ void cpu_math_sub_nbit( Environment * _environment, char *_source, char *_destin
 
         outline0("ANDCC #$FE");
         for( int i=0; i<(_bits)>>3; ++i ) {
-            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", i );
+            char offset[MAX_TEMPORARY_STORAGE]; sprintf( offset, "%d", (_bits>>3)-i-1 );
             outline1("LDA %s", address_displacement(_environment, _source, offset));
             outline1("SBCA %s", address_displacement(_environment, _destination, offset));
             if ( _other ) {

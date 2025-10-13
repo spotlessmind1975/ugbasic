@@ -26,17 +26,14 @@ REM @include atari,atarixl
 	DIM a AS NUMBER, b AS NUMBER
 
 	' Assign a value to them
-	a = 42: b = 20
-	
-	a = 820
+	a = 100000: b = 100000
 	
 	' Clear the screen and print the sum
 	CLS
 	INK WHITE
-	PRINT a;"+";b;"=";a+b
-	PRINT a;"-";b;"=";a-b
-	PRINT a;"*";b;"=";a*b
-	PRINT a;"/";b;"=";a/b
-		
-	
+	PRINT a;"+";b;"=";
+	PRINT a+b
+	'PRINT a;"-";b;"=";a-b
+	'PRINT a;"*";b;"=";a*b
+	'PRINT a;"/";b;"=";a/b
 	
