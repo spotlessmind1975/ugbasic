@@ -7744,7 +7744,7 @@ Variable * variable_greater_than( Environment * _environment, char * _source, ch
                 case VT_NUMBER:
                     switch( target->type ) {
                         case VT_NUMBER:
-                            cpu_greater_than_memory_size( _environment, source->realName, target->realName, _environment->numberConfig.maxBytes, result->realName, _equal );
+                            cpu_greater_than_nbit( _environment, source->realName, target->realName, result->realName, _equal, _environment->numberConfig.maxBytes << 3 );
                             break;
                         default:                
                             CRITICAL_CANNOT_COMPARE( DATATYPE_AS_STRING[source->type], DATATYPE_AS_STRING[target->type] );        
@@ -7892,8 +7892,6 @@ il numero_di_caratteri specificato è maggiore della lunghezza della stringa,
 
  </usermanual> */
 Variable * variable_string_left( Environment * _environment, char * _string, char * _position ) {
-
-    outline0( "; variable_string_left" );
 
     Variable * string = variable_retrieve( _environment, _string );
     Variable * position = variable_retrieve_or_define( _environment, _position, VT_BYTE, 0 );

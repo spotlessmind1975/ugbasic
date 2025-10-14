@@ -168,7 +168,6 @@ static void cpu_less_than_and_branch_const( Environment * _environment, char *_s
 
     MAKE_LABEL
 
-    outline0("; cpu_less_than_and_branch_const");
     outline0("CLRB");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c #$%4.4x", REG, _destination);
