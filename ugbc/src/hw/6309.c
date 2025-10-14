@@ -3034,6 +3034,15 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
             outhead2("%snext%dx", label, i );
         }
 
+        outhead1("%sbge", label );
+        if ( _equal ) {
+            outline0("LDA #$ff" );
+        } else {
+            outline0("LDA #$00" );
+        }
+        outline1("STA %s", _other );
+        outline1("BRA %sdone", label );
+                
         outhead1("%sbga", label );
         outline0("LDA #$ff" );
         outline1("STA %s", _other );
@@ -3080,6 +3089,15 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
             outhead2("%snext%dx", label, i );
         }
 
+        outhead1("%sbge", label );
+        if ( _equal ) {
+            outline0("LDA #$ff" );
+        } else {
+            outline0("LDA #$00" );
+        }
+        outline1("STA %s", _other );
+        outline1("BRA %sdone", label );
+                
         outhead1("%sbga", label );
         outline0("LDA 0xff" );
         outline1("STA %s", _other );
