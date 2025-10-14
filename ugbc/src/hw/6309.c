@@ -3007,29 +3007,13 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
     inline( cpu_less_than_nbit )
 
-        if ( _equal ) {
-
-            cpu_compare_nbit( _environment, _source, _destination, _other, 1, _bits );
-
-            if ( _other ) {
-                outline1("LDA %s", _other);
-            } else {
-                outline1("LDA %s", _destination);
-            }
-
-            outline0("CMPA #0" );
-            outline1("BEQ %sless", label );
-            outline1("JMP %sdone", label );
-            outhead1("%sless", label );
-
-        }
-
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
-            outline1("LDB %s", address_displacement(_environment, _destination, offset ) );
-            outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
+            outline1("LDA %s", address_displacement(_environment, _destination, offset ) );
+            outline1("LDB %s", address_displacement(_environment, _source, offset ) );
+            outline1("CMPB %s", address_displacement(_environment, _destination, offset ) );
+            outline1("LBCS %sbga", label );
             outline2("BEQ %snext%dx", label, i );
-            outline1("LBCC %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
@@ -3042,7 +3026,7 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
         }
         outline1("STA %s", _other );
         outline1("BRA %sdone", label );
-                
+
         outhead1("%sbga", label );
         outline0("LDA #$ff" );
         outline1("STA %s", _other );
@@ -3050,7 +3034,7 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
         outhead1("%sagb", label );
         outline0("LDA #$00" );
-        outline1("LDA %s", _other );
+        outline1("STA %s", _other );
         outline1("BRA %sdone", label );
 
         outhead1("%sdone", label );
@@ -3067,24 +3051,12 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
 
     inline( cpu_less_than_nbit_const )
 
-        if ( _equal ) {
-
-            cpu_compare_nbit_const( _environment, _source, _destination, _other, 1, _bits );
-
-            outline1("LDA %s", _other);
-            outline0("CMPA #0" );
-            outline1("BEQ %sless", label );
-            outline1("JMP %sdone", label );
-            outhead1("%sless", label );
-
-        }
-
         for( i=0; i<(_bits>>3); ++i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
-            outline1("LDB #$%2.2x", (unsigned char)((_destination>>(i*8))&0xff) );
-            outline1("CMPB %s", address_displacement(_environment, _source, offset ) );
+            outline1("LDB %s", address_displacement(_environment, _source, offset ) );
+            outline1("CMPB #$%2.2x", (unsigned char)((_destination>>(i*8))&0xff) );
+            outline1("LBCS %sbga", label );
             outline2("BEQ %snext%dx", label, i );
-            outline1("LBCC %sbga", label );
             outline1("JMP %sagb", label );
             outhead2("%snext%dx", label, i );
         }
@@ -3097,14 +3069,14 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
         }
         outline1("STA %s", _other );
         outline1("BRA %sdone", label );
-                
+
         outhead1("%sbga", label );
-        outline0("LDA 0xff" );
+        outline0("LDA #$ff" );
         outline1("STA %s", _other );
         outline1("BRA %sdone", label );
 
         outhead1("%sagb", label );
-        outline0("LDA 0x00" );
+        outline0("LDA #$00" );
         outline1("STA %s", _other );
         outline1("BRA %sdone", label );
 
