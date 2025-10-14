@@ -533,7 +533,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " ST* ",v1))
     && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
-    && ( strcmp( v1->str, "D" ) || strcmp( v1->str, "X" ) || strcmp( v1->str, "Y" ) )
+    && ( !strcmp( v1->str, "D" ) || !strcmp( v1->str, "X" ) || !strcmp( v1->str, "Y" ) )
     && (po_buf_match(buf[2], " BLS *", v4) == NULL) 
     && (po_buf_match(buf[2], " BLO *", v4) == NULL) 
     && (po_buf_match(buf[2], " BLE *", v4) == NULL) 
