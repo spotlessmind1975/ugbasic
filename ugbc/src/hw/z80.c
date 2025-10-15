@@ -4063,23 +4063,6 @@ void cpu_less_than_nbit( Environment * _environment, char *_source, char * _dest
 
     inline( cpu_less_than_nbit )
 
-        if ( _equal ) {
-
-            cpu_compare_nbit( _environment, _source, _destination, _other, 1, _bits );
-
-            if ( _other ) {
-                outline1("LD A, (%s)", _other);
-            } else {
-                outline1("LD A, (%s)", _destination);
-            }
-
-            outline0("CP 0" );
-            outline1("JR Z, %sless", label );
-            outline1("JP %sdone", label );
-            outhead1("%sless:", label );
-
-        }
-
         for( i=(_bits>>3)-1; i>-1; --i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
             outline1("LD A, (%s)", address_displacement(_environment, _destination, offset ) );
@@ -4124,18 +4107,6 @@ void cpu_less_than_nbit_const( Environment * _environment, char *_source, int _d
     int i;
 
     inline( cpu_less_than_nbit_const )
-
-        if ( _equal ) {
-
-            cpu_compare_nbit_const( _environment, _source, _destination, _other, 1, _bits );
-
-            outline1("LD A, (%s)", _other);
-            outline0("CP 0" );
-            outline1("JR Z, %sless", label );
-            outline1("JP %sdone", label );
-            outhead1("%sless:", label );
-
-        }
 
         for( i=(_bits>>3)-2; i>-1; --i ) {
             char offset[MAX_TEMPORARY_STORAGE]; sprintf(offset, "%d", i );
@@ -4550,7 +4521,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
         outline1("LD A, (%s)", address_displacement(_environment, _source, offsetMsb));
         outline0("AND $80");
         outline0("LD B, A");
-        outline0("CP $80");
+        outline0("CP $00");
         outline1("JP Z, %snocomplement", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
         outhead1("%snocomplement:", label );
@@ -4568,7 +4539,7 @@ void cpu_math_div2_const_nbit( Environment * _environment, char *_source, int _s
             --_steps;
         }
         outline0("LD A, B");
-        outline0("CP $80");
+        outline0("CP $00");
         outline1("JP Z, %snocomplement2", label );
         cpu_complement2_nbit( _environment, _source, _source, _bits );
         outhead1("%snocomplement2:", label );
