@@ -7084,6 +7084,8 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
         
     deploy_with_vars( numberToString, src_hw_z80_number_to_string_asm, cpu_number_to_string_vars );
 
+    cpu_fill_direct_size_value( _environment, "N2DINV", _environment->numberConfig.maxBytes, 0 );
+
     outline0("LD IXH, 0");
     switch( _bits ) {
         case 8:
