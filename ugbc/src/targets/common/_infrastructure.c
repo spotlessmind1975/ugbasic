@@ -2830,7 +2830,7 @@ static void variable_move_32bit_number( Environment * _environment, Variable * _
     #ifdef CPU_BIG_ENDIAN
         {
             char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 4 );
-            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, offsetAsString ) );
             cpu_move_32bit( _environment, _source->realName, targetRealName );
             cpu_move_8bit( _environment, _source->realName, sign->realName );
             cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
@@ -2864,7 +2864,7 @@ static void variable_move_16bit_number( Environment * _environment, Variable * _
     #ifdef CPU_BIG_ENDIAN
         {
             char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 2 );
-            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, offsetAsString ) );
             cpu_move_16bit( _environment, _source->realName, targetRealName );
             cpu_move_8bit( _environment, _source->realName, sign->realName );
             cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
@@ -2898,7 +2898,7 @@ static void variable_move_8bit_number( Environment * _environment, Variable * _s
     #ifdef CPU_BIG_ENDIAN
         {
             char offsetAsString[MAX_TEMPORARY_STORAGE]; sprintf( offsetAsString, "%d", _environment->numberConfig.maxBytes - 1 );
-            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _source->realName, offsetAsString ) );
+            char targetRealName[MAX_TEMPORARY_STORAGE]; sprintf( targetRealName, "%s", address_displacement(_environment, _target->realName, offsetAsString ) );
             cpu_move_8bit( _environment, _source->realName, targetRealName );
             cpu_move_8bit( _environment, _source->realName, sign->realName );
             cpu_and_8bit_const( _environment, sign->realName, 0x80, sign->realName );
