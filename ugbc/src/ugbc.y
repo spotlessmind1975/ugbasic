@@ -9699,7 +9699,7 @@ target :
         #endif
     }
     | CPU6502 {
-        #if defined(__atari__) || defined(__atarixl__) \
+        #if defined(__atari__) || defined(__atarixl__) || \
             defined(__c128__) || defined(__vic20__)
             $$ = 1;
         #else
