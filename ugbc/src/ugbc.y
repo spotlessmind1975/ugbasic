@@ -9684,7 +9684,7 @@ target :
         #endif
     }
     | CPU6309 {
-        #if defined(__d32b__) || defined(__d64b__) || defined(__coco3b__)
+        #if defined(__d32b__) || defined(__d64b__) || defined(__cocob__) || defined(__coco3b__)
             $$ = 1;
         #else
             $$ = 0;
