@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come recuperare
 REM i limiti degli array.
 REM
-REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx,pccga
+REM @include atari,atarixl,c16,c128,c64,coco,cocob,coco3,coco3b,d32,d32b,d64,d64b,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx,pccga
 
 DIM number(5,4,3)
 

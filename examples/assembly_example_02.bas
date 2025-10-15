@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio spiega come integrare l'assembly
 REM con più righe di assembly.
 REM
-REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,to8,vg5000,vic20,zx,pccga
+REM @include atari,atarixl,c16,c128,c128z,c64,coco,cocob,coco3,coco3b,coleco,cpc,d32,d32b,d64,d64b,mo5,msx1,pc128op,plus4,sc3000,sg1000,to8,vg5000,vic20,zx,pccga
 
 	CLS
 	
@@ -38,6 +38,46 @@ REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1
         INC _x
         DEC _x
     END ASM ON CPU6502
+
+    ON CPU6510 BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM
+
+    BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM ON CPU6510
+
+    ON CPU7501 BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM
+
+    BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM ON CPU7501
+
+    ON CPU8501 BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM
+
+    BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM ON CPU8501
+
+    ON CPU8502 BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM
+
+    BEGIN ASM 
+        INC _x
+        DEC _x
+    END ASM ON CPU8502
 
   '  CPU Z80
     ON CPUZ80 BEGIN ASM 

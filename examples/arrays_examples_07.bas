@@ -9,7 +9,7 @@ REM
 REM Questo piccolo esempio mostra come definire array
 REM con differenti tipi di dato, e come inizializzarli.
 REM
-REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx,pccga
+REM @include atari,atarixl,c16,c128,c64,coco,cocob,coco3,coco3b,d32,d32b,d64,d64b,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx,pccga
 
 DIM integers(4) WITH 42
 PRINT "integers(1) should be 42: ";integers(1)

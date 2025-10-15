@@ -10,7 +10,7 @@ REM
 REM Questo piccolo esempio mostra come utilizzare la primitiva 
 REM ANIMATION / ANIMATE per implementare un'animazione non gestita.
 REM
-REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx,pc128op,to8
+REM @include atari,atarixl,c16,c128,c64,coco,cocob,coco3,coco3b,d32,d32b,d64,d64b,cpc,zx,pc128op,to8
 
 	BITMAP ENABLE(16)
 
