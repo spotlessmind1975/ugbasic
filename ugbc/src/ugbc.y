@@ -110,6 +110,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
 %token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET CPU6309 
+%token CPU6510
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -9698,9 +9699,16 @@ target :
         #endif
     }
     | CPU6502 {
-        #if defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+        #if defined(__atari__) || defined(__atarixl__) \
             defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-            defined( __c64reu__) || defined(__c16__)
+            defined(__c16__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }
+    | CPU6510 {
+        #if defined(__c64__) || defined( __c64reu__)
             $$ = 1;
         #else
             $$ = 0;
