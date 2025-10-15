@@ -7920,14 +7920,12 @@ void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int
                 case 1: case 2: case 3: case 4:
                 case 5: case 6: case 7: case 8:
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)] & (0xff>>(8-_n)) ) );
-                    i = i + 1;
                     break;
                 case 9: case 10: case 11: case 12:
                 case 13: case 14: case 15: case 16:
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+1] & (0xff>>(16-_n)) ) );
-                    i = i + 2;
                     break;
                 case 17: case 18: case 19: case 20:
                 case 21: case 22: case 23: case 24:
@@ -7936,7 +7934,6 @@ void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+1] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+2] & (0xff>>(24-_n)) ) );
-                    i = i + 3;
                     break;
                 case 25: case 26: case 27: case 28:
                 case 29: case 30: case 31: case 32:
@@ -7948,18 +7945,17 @@ void cpu_store_nbit( Environment * _environment, char *_destination, int _n, int
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+2] & (0xff) ) );
                     sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
                     cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+3] & (0xff>>(32-_n)) ) );
-                    i = i + 4;
                     break;
             }
             _n = 0;
         } else {
-            cpu_store_8bit( _environment, destinationAddress, ( _value[i] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+1 );
-            cpu_store_8bit( _environment, destinationAddress, ( _value[i+1] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+1] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+2 );
-            cpu_store_8bit( _environment, destinationAddress, ( _value[i+2] & (0xff) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+2] & (0xff) ) );
             sprintf( destinationAddress, "%s+%d", _destination, i*4+3 );
-            cpu_store_8bit( _environment, destinationAddress, ( _value[i+3] & (0xff>>(32-_n)) ) );
+            cpu_store_8bit( _environment, destinationAddress, ( _value[(i*4)+3] & (0xff>>(32-_n)) ) );
             _n -= 32;
         }
         ++i;
