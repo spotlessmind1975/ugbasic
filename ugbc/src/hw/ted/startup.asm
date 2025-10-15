@@ -463,6 +463,7 @@ TEDSTOP1:
     AND #$DF
     STA $FF11
     PLA
+    RTS
 TEDSTOP1B:
     LDA $FF11
     AND #$BF
