@@ -10057,6 +10057,14 @@ target :
             $$ = 0;
         #endif
     }    
+    |
+    SID {
+        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) 
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
     ;
 
 targets :
