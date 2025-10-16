@@ -10041,6 +10041,14 @@ target :
             $$ = 1;
         #endif
     }    
+    |
+    POKEY {
+        #if defined(__atari__) || defined(__atarixl__) 
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
     ;
 
 targets :
