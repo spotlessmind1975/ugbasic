@@ -59,5 +59,11 @@ void sidz_set_duration_vars( Environment * _environment, char * _channel, char *
 void sidz_wait_duration_vars( Environment * _environment, char * _channel );
 
 void sidz_music( Environment * _environment, char * _music, int _size, int _loop );
+void sidz_player_init( Environment * _environment, int _init_address );
+void sidz_player_play( Environment * _environment, int _play_address );
+
+void sidz_attack_decay_sustain_release( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
+void sidz_wave( Environment * _environment, char * _voice, char * _bits, char * _pulse );
+
 
 #endif

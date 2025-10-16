@@ -32,72 +32,53 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__c128z__)
+
 /**
- * @brief Emit ASM code for <b>BELL ...</b>
+ * @brief Emit ASM code for <b>SHOOT ...</b>
  * 
- * This function emits a code capable of play a bell sound
+ * This function emits a code capable of play a shoot sound.
  * 
  * @param _environment Current calling environment
- * @param _pitch frequency to play
  * @param _channels channels to play on
  */
 /* <usermanual>
-@keyword BELL
+@keyword SHOOT
+
+@english
+This command makes the computer emit an shoot-like sound. It is possible to indicate 
+on which voices the system should emit the sound. If omitted, it will be issued on all.
+
+@italian
+Questo comando fa emettere al computer un suono simile a un colpo. E' possibile
+indicare su quali voci il sistema dovrà emettere il suono. Se omesso, sarà emesso su tutte.
+
+@syntax SHOOT {ON #[channel]}
+
+@example SHOOT
+@example SHOOT ON %001
+
+@target c128
+@target c64
 </usermanual> */
-void bell( Environment * _environment, int _note, int  _duration, int _channels ) {
+void shoot( Environment * _environment, int _channels ) {
 
-    if ( _environment->audioConfig.async ) {
-        CRITICAL_BELL_NOT_ASYNC();
-    }
-
+    sidz_set_program( _environment, _channels, IMF_INSTRUMENT_GUNSHOT );
     sidz_start( _environment, _channels );
-    sidz_set_program( _environment, _channels, IMF_INSTRUMENT_GLOCKENSPIEL );
-    sidz_set_note( _environment, _channels, _note );
-    wait_milliseconds( _environment, _duration );
+    sidz_set_frequency( _environment, _channels, 1000 );
 
-}
+    sidz_set_duration( _environment, _channels, 4 );
 
-/**
- * @brief Emit ASM code for <b>BELL ...</b>
- * 
- * This function emits a code capable of play a bell-like sound.
- * 
- * @param _environment Current calling environment
- * @param _pitch frequency to play
- * @param _channels channels to play on
- */
-/* <usermanual>
-@keyword BELL
-</usermanual> */
-void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync ) {
-
-    if ( _environment->audioConfig.async ) {
-        CRITICAL_BELL_NOT_ASYNC();
-    }
-
-    Variable * note = variable_retrieve_or_define( _environment, _note, VT_WORD, 42 );
-    if ( _channels ) {
-        Variable * channels = variable_retrieve_or_define( _environment, _channels, VT_WORD, 0x07 );
-        sidz_start_var( _environment, channels->realName );
-        sidz_set_program_semi_var( _environment, channels->realName, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sidz_set_note_vars( _environment, channels->realName, note->realName );
-    } else {
-        sidz_start_var( _environment, NULL );
-        sidz_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_GLOCKENSPIEL );
-        sidz_set_note_vars( _environment, NULL, note->realName );
-    }
-
-    if ( _duration ) {
-        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
-        wait_milliseconds_var( _environment, duration->name );
-    } else {
-        wait_milliseconds( _environment, 1500 );
+    if ( ! _environment->audioConfig.async ) {
+        sidz_wait_duration( _environment, _channels );
     }
 
 }
+
+#endif

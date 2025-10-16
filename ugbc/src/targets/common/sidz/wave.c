@@ -32,12 +32,25 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../ugbc.h"
+#include "../../../ugbc.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__c128z__)
+
 void wave( Environment * _environment, char * _voice, char * _bits, char * _pulse ) {
 
+    Variable * voice = variable_retrieve_or_define( _environment, _voice, VT_BYTE, 0x7 );
+    Variable * bits = variable_retrieve_or_define( _environment, _bits, VT_BYTE, 0 );
+    Variable * pulse = NULL;
+    if ( _pulse ) {
+        pulse = variable_retrieve_or_define( _environment, _pulse, VT_WORD, 0 );
+    }
+
+    sidz_wave( _environment, voice->realName, bits->realName, pulse ? pulse->realName : NULL );
+
 }
+
+#endif
