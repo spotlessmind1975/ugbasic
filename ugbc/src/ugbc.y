@@ -10059,7 +10059,7 @@ target :
     }    
     |
     SID {
-        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) 
+        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)  || defined(__c128z__) 
             $$ = 1;
         #else
             $$ = 0;
