@@ -10049,6 +10049,14 @@ target :
             $$ = 0;
         #endif
     }    
+    |
+    TED {
+        #if defined(__c16__) || defined(__plus4__) 
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+    }    
     ;
 
 targets :
