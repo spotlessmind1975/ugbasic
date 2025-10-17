@@ -44,6 +44,6 @@ void cls( Environment * _environment, char * _paper ) {
         paper( _environment, _paper );
     }
 
-    c6847_cls( _environment );
+    c6847b_cls( _environment );
 
 }

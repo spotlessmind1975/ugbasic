@@ -40,6 +40,6 @@
 
 int image_size( Environment * _environment, int _width, int _height ) {
 
-    return c6847_image_size( _environment, _width, _height, _environment->currentMode, 0 );
+    return c6847b_image_size( _environment, _width, _height, _environment->currentMode, 0 );
 
 }

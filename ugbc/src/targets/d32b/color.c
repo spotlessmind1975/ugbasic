@@ -63,10 +63,10 @@ void color( Environment * _environment, int _index, int _shade ) {
     sprintf( shadeAsString, "#$%2.2x", _shade );
 
     if ( _index == 0 ) {
-        c6847_border_color( _environment, shadeAsString );
+        c6847b_border_color( _environment, shadeAsString );
     }
 
-    c6847_background_color( _environment, indexAsString, shadeAsString );
+    c6847b_background_color( _environment, indexAsString, shadeAsString );
 
 }
 
@@ -89,10 +89,10 @@ void color_semivars( Environment * _environment, int _index, char *_shade ) {
     sprintf( indexAsString, "#$%2.2x", _index );
 
     if ( _index == 0 ) {
-        c6847_border_color( _environment, shade->realName );
+        c6847b_border_color( _environment, shade->realName );
     }
 
-    c6847_background_color( _environment, indexAsString, shade->realName );
+    c6847b_background_color( _environment, indexAsString, shade->realName );
 
 }
 
@@ -115,10 +115,10 @@ void color_vars( Environment * _environment, char *_index, char *_shade ) {
 
     cpu_compare_and_branch_8bit_const( _environment, index->realName, 0, label, 0 );
 
-    c6847_border_color( _environment, shade->realName );
+    c6847b_border_color( _environment, shade->realName );
 
     cpu_label( _environment, label );
 
-    c6847_background_color( _environment, index->realName, shade->realName );
+    c6847b_background_color( _environment, index->realName, shade->realName );
 
 }

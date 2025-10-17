@@ -32,7 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__) || defined(__coco__) || defined(__cocob__)
+#if defined(__d32__) || defined(__d64__) || defined(__coco__)
 
 #include "../ugbc.h"
 #include <math.h>

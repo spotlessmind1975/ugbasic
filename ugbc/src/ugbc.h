@@ -1716,6 +1716,8 @@ typedef struct _Deployed {
     int startup2;
     int c6847startup;
     int c6847vars;
+    int c6847bstartup;
+    int c6847bvars;
     int bitmap;
     int vic1vars;
     int vic1startup;
@@ -6020,7 +6022,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
 #elif __cocob__ 
     #include "../src-generated/modules_cocob.h"
     #include "hw/6309.h"
-    #include "hw/6847.h"
+    #include "hw/6847b.h"
     #include "hw/pia.h"
     #include "hw/cocob.h"
     #include "hw/sn76489m.h"
@@ -6047,7 +6049,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
 #elif __d32b__ 
     #include "../src-generated/modules_d32b.h"
     #include "hw/6309.h"
-    #include "hw/6847.h"
+    #include "hw/6847b.h"
     #include "hw/pia.h"
     #include "hw/d32b.h"
 #elif __d64__ 
@@ -6059,7 +6061,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
 #elif __d64b__ 
     #include "../src-generated/modules_d64b.h"
     #include "hw/6309.h"
-    #include "hw/6847.h"
+    #include "hw/6847b.h"
     #include "hw/pia.h"
     #include "hw/d64b.h"
 #elif __pc128op__ 

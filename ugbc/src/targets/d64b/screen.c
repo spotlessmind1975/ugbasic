@@ -44,7 +44,7 @@ Variable * screen_var( Environment * _environment, char * _x, char * _y, int _as
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_BYTE, 0 );
     Variable * c = variable_temporary( _environment, VT_BYTE, "(c)" );
 
-    c6847_screen( _environment, x->realName, y->realName, c->realName );
+    c6847b_screen( _environment, x->realName, y->realName, c->realName );
 
     if ( _as_string ) {
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );

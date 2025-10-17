@@ -62,7 +62,7 @@ void textmap_at( Environment * _environment, int _address ) {
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%4.4x", _address );
 
-    c6847_textmap_at( _environment, addressString );
+    c6847b_textmap_at( _environment, addressString );
 
 }
 
@@ -89,6 +89,6 @@ void textmap_at_var( Environment * _environment, char * _address ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0xc00 );
 
-    c6847_textmap_at( _environment, address->realName );
+    c6847b_textmap_at( _environment, address->realName );
 
 }

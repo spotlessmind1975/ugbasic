@@ -50,8 +50,8 @@
 void double_buffer( Environment * _environment, int _enabled ) {
 
     deploy_preferred( duff, src_hw_6309_duff_asm );
-    deploy( clsGraphic, src_hw_6847_cls_graphic_asm );
-    deploy( doubleBuffer, src_hw_6847_double_buffer_asm );
+    deploy( clsGraphic, src_hw_6847b_cls_graphic_asm );
+    deploy( doubleBuffer, src_hw_6847b_double_buffer_asm );
 
     _environment->program.startingAddress = 0x3400 + 512;
 

@@ -86,7 +86,7 @@ void pmode( Environment * _environment, int _mode, int _start_page ) {
 
         if ( mode ) {
             
-            c6847_screen_mode_enable( _environment, mode );    
+            c6847b_screen_mode_enable( _environment, mode );    
 
             _environment->currentMode = mode->id;
             _environment->currentTileMode = mode->bitmap ? 0 : 1;

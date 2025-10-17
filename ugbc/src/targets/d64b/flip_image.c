@@ -79,28 +79,28 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
         case VT_SEQUENCE:
             if ( !sequence ) {
                 if ( !frame ) {
-                    c6847_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
+                    c6847b_flip_image( _environment, resource, "", "", image->frameSize, image->frameCount, _direction );
                 } else {
-                    c6847_flip_image( _environment, resource, "", frame->realName, image->frameSize, image->frameCount, _direction );
+                    c6847b_flip_image( _environment, resource, "", frame->realName, image->frameSize, image->frameCount, _direction );
                 }
             } else {
                 if ( !frame ) {
-                    c6847_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
+                    c6847b_flip_image( _environment, resource, "", sequence->realName, image->frameSize, image->frameCount, _direction );
                 } else {
-                    c6847_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
+                    c6847b_flip_image( _environment, resource, frame->realName, sequence->realName, image->frameSize, image->frameCount, _direction );
                 }
             }
             break;
         case VT_IMAGES:
             if ( !frame ) {
-                c6847_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
+                c6847b_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
             } else {
-                c6847_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                c6847b_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
             }
             break;
         case VT_IMAGE:
         case VT_TARRAY:
-            c6847_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
+            c6847b_flip_image( _environment, resource, NULL, NULL, 0, 0, _direction );
             break;
         default:
             CRITICAL_FLIP_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );

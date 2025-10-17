@@ -83,7 +83,7 @@ void target_initialization( Environment * _environment ) {
 
     setup_text_variables( _environment );
 
-    c6847_initialization( _environment );
+    c6847b_initialization( _environment );
     cpu_call( _environment, "COCOBAUDIO1STARTUP" );
     sn76489m_initialization( _environment );
 

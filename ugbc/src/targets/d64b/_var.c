@@ -562,9 +562,9 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( duff, src_hw_6309_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6309_msc1_asm );
-    deploy_inplace_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
-    deploy_inplace_preferred( textHScroll, src_hw_6847_hscroll_text_asm );
-    deploy_inplace_preferred( plot, src_hw_6847_plot_asm )
+    deploy_inplace_preferred( vScrollText, src_hw_6847b_vscroll_text_asm );
+    deploy_inplace_preferred( textHScroll, src_hw_6847b_hscroll_text_asm );
+    deploy_inplace_preferred( plot, src_hw_6847b_plot_asm )
 
     outhead0("CODESTART2");
     

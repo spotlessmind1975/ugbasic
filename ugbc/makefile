@@ -147,7 +147,7 @@ ifeq ($(target),coco)
 endif
 ifeq ($(target),cocob)
   cpu=6309
-  video=6847
+  video=6847b
   video2=
   audio=sn76489m
   io=pia
@@ -189,7 +189,7 @@ ifeq ($(target),d32)
 endif
 ifeq ($(target),d32b)
   cpu=6309
-  video=6847
+  video=6847b
   video2=
   audio=
   io=pia
@@ -203,7 +203,7 @@ ifeq ($(target),d64)
 endif
 ifeq ($(target),d64b)
   cpu=6309
-  video=6847
+  video=6847b
   video2=
   audio=
   io=pia
@@ -484,13 +484,21 @@ SOURCES_6809 := $(subst src/hw/6809/,src-generated/6809_,$(MODULES_6809:.asm=.c)
 src-generated/6809_%.c: $(MODULES_6809)
 	@xxd -i $(subst src-generated/6809_,src/hw/6809/,$(@:.c=.asm)) >$@
 
-# Motorola 6847 (for CPU 6809/6309)
+# Motorola 6847 (for CPU 6809)
 
 MODULES_6847 := $(wildcard src/hw/6847/*.asm)
 SOURCES_6847 := $(subst src/hw/6847/,src-generated/6847_,$(MODULES_6847:.asm=.c)) $(FONTS)
 
 src-generated/6847_%.c: $(MODULES_6847)
 	@xxd -i $(subst src-generated/6847_,src/hw/6847/,$(@:.c=.asm)) >$@
+
+# Motorola 6847 (for CPU 6309)
+
+MODULES_6847B := $(wildcard src/hw/6847b/*.asm)
+SOURCES_6847B := $(subst src/hw/6847b/,src-generated/6847b_,$(MODULES_6847B:.asm=.c)) $(FONTS)
+
+src-generated/6847b_%.c: $(MODULES_6847B)
+	@xxd -i $(subst src-generated/6847b_,src/hw/6847b/,$(@:.c=.asm)) >$@
 
 # Motorola 6847 (for CPU Z80)
 
@@ -883,8 +891,8 @@ SOURCES_COCOB := $(subst src/hw/cocob/,src-generated/cocob_,$(MODULES_COCOB:.asm
 src-generated/cocob_%.c: $(MODULES_COCOB)
 	@xxd -i $(subst src-generated/cocob_,src/hw/cocob/,$(@:.c=.asm)) >$@
 
-src-generated/modules_cocob.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) 
-	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) >src-generated/modules_cocob.c
+src-generated/modules_cocob.c: $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) 
+	@cat $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_SN76489M) $(SOURCES_PIA) $(SOURCES_COCOB) $(COCOB) >src-generated/modules_cocob.c
 	@grep "src" src-generated/modules_cocob.c | awk -f modules.awk >src-generated/modules_cocob.h
 	@grep "data" src-generated/modules_cocob.c | awk -f modules.awk >>src-generated/modules_cocob.h
 
@@ -935,8 +943,8 @@ SOURCES_D32B := $(subst src/hw/d32b/,src-generated/d32b_,$(MODULES_D32B:.asm=.c)
 src-generated/d32b_%.c: $(MODULES_D32B)
 	@xxd -i $(subst src-generated/d32b_,src/hw/d32b/,$(@:.c=.asm)) >$@
 
-src-generated/modules_d32b.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_D32B)  $(SOURCES_PIA)
-	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D32B) >src-generated/modules_d32b.c
+src-generated/modules_d32b.c: $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_D32B)  $(SOURCES_PIA)
+	@cat $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_PIA) $(SOURCES_D32B) >src-generated/modules_d32b.c
 	@grep "src" src-generated/modules_d32b.c | awk -f modules.awk >src-generated/modules_d32b.h
 	@grep "data" src-generated/modules_d32b.c | awk -f modules.awk >>src-generated/modules_d32b.h
 
@@ -961,8 +969,8 @@ SOURCES_D64B := $(subst src/hw/d64b/,src-generated/d64b_,$(MODULES_D64B:.asm=.c)
 src-generated/d64b_%.c: $(MODULES_D64B)
 	@xxd -i $(subst src-generated/d64b_,src/hw/d64b/,$(@:.c=.asm)) >$@
 
-src-generated/modules_d64b.c: $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_D64B) $(SOURCES_PIA)
-	@cat $(SOURCES_6309) $(SOURCES_6847) $(SOURCES_PIA) $(SOURCES_D64B) >src-generated/modules_d64b.c
+src-generated/modules_d64b.c: $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_D64B) $(SOURCES_PIA)
+	@cat $(SOURCES_6309) $(SOURCES_6847B) $(SOURCES_PIA) $(SOURCES_D64B) >src-generated/modules_d64b.c
 	@grep "src" src-generated/modules_d64b.c | awk -f modules.awk >src-generated/modules_d64b.h
 	@grep "data" src-generated/modules_d64b.c | awk -f modules.awk >>src-generated/modules_d64b.h
 
@@ -1196,6 +1204,7 @@ SOURCESTEST += $(wildcard src/targets/common/sn76489z/*.c)
 SOURCESTEST += $(wildcard src/targets/common/vic2/*.c)
 SOURCESTEST += $(wildcard src/targets/common/gtia/*.c)
 SOURCESTEST += $(wildcard src/targets/common/6847/*.c)
+SOURCESTEST += $(wildcard src/targets/common/6847b/*.c)
 SOURCESTEST += $(wildcard src/targets/common/tms9918/*.c)
 SOURCESTEST += $(wildcard src/targets/common/cpc/*.c)
 SOURCESTEST += $(wildcard src/targets/common/ef936x/*.c)

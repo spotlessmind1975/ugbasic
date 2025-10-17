@@ -49,6 +49,6 @@ extern char DATATYPE_AS_STRING[][16];
  */
 Variable * get_raster_line( Environment * _environment ) {
 
-    return c6847_get_raster_line( _environment );
+    return c6847b_get_raster_line( _environment );
 
 }
