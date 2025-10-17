@@ -5811,16 +5811,20 @@ get_definition_expression:
                 CRITICAL_GET_NEED_STRING( $2 );
             }
         }
-        Variable * variable = variable_retrieve( _environment, $1 );
-        if ( variable->type == VT_IMAGE ) {
+        Variable * variable = NULL;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        }
+        if ( variable && variable->type == VT_IMAGE ) {
             Variable * zero = variable_temporary( _environment, VT_POSITION, "(zero)" );
             get_image( _environment, $1, zero->name, zero->name, NULL, NULL, NULL, NULL, 1 );
-        } else if ( variable->type == VT_DOJOKA ) {
+        } else if ( variable && variable->type == VT_DOJOKA ) {
             if ( !((struct _Environment *)_environment)->dojoObjectName ) {
                 DOJO_GET_MESSAGE_MISSING_VARIABLE( );
             }
             dojo_get_message_inplace( _environment, $1, ((struct _Environment *)_environment)->dojoChannelName, ((struct _Environment *)_environment)->dojoObjectName );
         } else {
+            variable = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
             wait_key( _environment, 0 );
             Variable * p = variable_retrieve_or_define( _environment, $1, VT_DSTRING, 0 );
             Variable * k = inkey( _environment );
