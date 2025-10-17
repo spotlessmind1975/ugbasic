@@ -32,72 +32,50 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__c128__)
 
 /**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
+ * @brief Emit ASM code for instruction <b>= BANK( )</b>
  * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
+ * This function outputs the ASM code to get the current 
+ * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
+ * @return Current number of the bank selected
  */
 /* <usermanual>
-@keyword BANK ADDRESS
+@keyword BANK (function)
 
 @english
 
-The ''BANK ADDRESS'' function allows you to know the memory address where the swap 
-window with the expanded memory appears, for the given bank. In the case of 
-expansion memories with DMA access, this area does not exist and therefore the
-function returns zero. Exactly the same value returned in case there are no memory expansions.
+The ''BANK'' function allows you to know the currently selected bank. All 
+operations that are performed on the banks, and that do not explicitly indicate 
+the bank to operate on, work with this implicit bank. 
 
 @italian
 
-La funzione ''BANK ADDRESS'' consente di conoscere l'indirizzo di memoria dove 
-appare la finestra di scambio con la memoria espansa, per il dato banco. Nel caso di memorie di 
-espansione con accesso DMA, questa zona non esiste e quindi la funzione restituisce 
-zero. Esattamente lo stesso valore restituito in caso che non vi siano espansioni 
-di memoria.
+La funzione ''BANK'' consente di conoscere il banco di memoria attualmente 
+selezionato. Tutte le operazioni che vengono eseguite sui banchi e che non 
+indicano esplicitamente la banca su cui operare, funzionano con questo banco 
+implicito.
 
-@syntax = BANK ADDRESS(id)
+@syntax = BANK()
 
-@example x = BANK ADDRESS(1)
+@example x = BANK()
 
 @seeAlso BANK
-@seeAlso BANK COUNT (constant)
 @target all
 </usermanual> */
-Variable * bank_get_address( Environment * _environment, int _bank ) {
+Variable * bank_get( Environment * _environment ) {
 
-    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank number)" );
 
-    char * address = banks_get_address( _environment, _bank );
-
-    cpu_addressof_16bit( _environment, address, result->realName );
-
+    variable_move( _environment, "GEORAMBANKSHADOW", result->name );
+    
     return result;
     
-}
-
-/**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
- * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
- * 
- * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
- */
-Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
-
-    return banks_get_address_var( _environment, _bank );
-
 }
 
 #endif

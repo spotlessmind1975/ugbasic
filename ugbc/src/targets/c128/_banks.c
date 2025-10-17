@@ -32,9 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__c128__)
 
 /****************************************************************************
  * CODE SECTION 
@@ -43,45 +43,6 @@
 extern char DATATYPE_AS_STRING[][16];
 
 void banks_generate( Environment * _environment ) {
-    
-    int anyExpansionBank = 0;
-    Bank * bank = _environment->expansionBanks;
-    while( bank ) {
-        outhead1("%s:", bank->name );
-        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
-            int size = bank->space - bank->remains;
-            if ( bank->data ) {
-                out0("    .byte ");
-                int i=0;
-                for (i=0; i<(size-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
-                }
-                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
-            }
-            anyExpansionBank = 1;
-        }
-        bank = bank->next;
-    }
-
-    if ( anyExpansionBank ) {
-
-        int values[MAX_TEMPORARY_STORAGE];
-        char * address[MAX_TEMPORARY_STORAGE];
-
-        Bank * actual = _environment->expansionBanks;
-        int count = 0;
-        while( actual ) {
-            values[count] = actual->id;
-            address[count] = strdup( actual->name );
-            actual = actual->next;
-            ++count;
-        }
-
-        cpu_address_table_build( _environment, "EXPBANKS", values, address, (count-1) );
-
-        cpu_address_table_lookup( _environment, "EXPBANKS", count );
-
-    }
     
 }
 

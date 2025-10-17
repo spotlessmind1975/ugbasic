@@ -103,8 +103,8 @@ Valori inferiori a 4 spostano il contenuto dello schermo a sinistra, mentre valo
 @example SCREEN HORIZONTAL SCROLL 3
 
 @target c128
-@target c64
-@target c64reu
+@target c128
+@target c128reu
 @target coco3
 
 </usermanual> */

@@ -32,9 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__c128__)
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
@@ -76,9 +76,7 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
 
     Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
 
-    char * address = banks_get_address( _environment, _bank );
-
-    cpu_addressof_16bit( _environment, address, result->realName );
+    variable_store( _environment, result->name, 0xde00 );
 
     return result;
     
@@ -96,7 +94,11 @@ Variable * bank_get_address( Environment * _environment, int _bank ) {
  */
 Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
 
-    return banks_get_address_var( _environment, _bank );
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    variable_store( _environment, result->name, 0xde00 );
+    
+    return result;
 
 }
 

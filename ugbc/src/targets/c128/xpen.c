@@ -113,8 +113,8 @@ orizzontale dello schermo o della superficie touch supportata dalla penna.
 
 @example x = XPEN( )
 
-@target c64
-@target c64reu
+@target c128
+@target c128reu
 @target c128
 
 @alias X PEN

@@ -32,71 +32,61 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__atari__) || defined(__atarixl__) || defined(__c128__) || defined(__c128__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
 
 /**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
+ * @brief Emit ASM code for instruction <b>BANK ...</b>
  * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
+ * This function outputs the ASM code to set the current 
+ * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
+ * @param _bank Bank to select
  */
 /* <usermanual>
-@keyword BANK ADDRESS
+@keyword BANK
 
 @english
 
-The ''BANK ADDRESS'' function allows you to know the memory address where the swap 
-window with the expanded memory appears, for the given bank. In the case of 
-expansion memories with DMA access, this area does not exist and therefore the
-function returns zero. Exactly the same value returned in case there are no memory expansions.
+The ''BANK'' command allows you to change the currently selected bank. All 
+operations that are performed on the banks, and that do not explicitly indicate 
+the bank to operate on, work with the implicit bank, which is set by this command. 
+The minimum bank number is zero (''0'') while the maximum is equal to ''BANK COUNT - 1''.
 
 @italian
 
-La funzione ''BANK ADDRESS'' consente di conoscere l'indirizzo di memoria dove 
-appare la finestra di scambio con la memoria espansa, per il dato banco. Nel caso di memorie di 
-espansione con accesso DMA, questa zona non esiste e quindi la funzione restituisce 
-zero. Esattamente lo stesso valore restituito in caso che non vi siano espansioni 
-di memoria.
+Il comando ''BANK'' permette di modificare il banco selezionato attualmente. Tutte
+le operazioni che si svolgono sui banchi, e che non indicano espressamente il banco 
+su cui operare, lavorano con il banco implicito, che viene impostato da questo comando.
+Il numero minimo del banco è zero (''0'') mentre il massimo è pari a ''BANK COUNT - 1''.
 
-@syntax = BANK ADDRESS(id)
+@syntax BANK id
 
-@example x = BANK ADDRESS(1)
+@example BANK #1
 
-@seeAlso BANK
 @seeAlso BANK COUNT (constant)
 @target all
 </usermanual> */
-Variable * bank_get_address( Environment * _environment, int _bank ) {
+void bank_set( Environment * _environment, int _bank ) {
 
-    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
-
-    char * address = banks_get_address( _environment, _bank );
-
-    cpu_addressof_16bit( _environment, address, result->realName );
-
-    return result;
+    variable_store( _environment, "GEORAMBANKSHADOW", _bank );
     
 }
 
 /**
- * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
+ * @brief Emit ASM code for instruction <b>BANK ...</b>
  * 
- * This function outputs the ASM code to get the resident
- * memory address for the given bank.
+ * This function outputs the ASM code to set the current 
+ * expansion bank index.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to get address of
- * @return Current address of the bank selected
+ * @param _bank Bank to select
  */
-Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
-
-    return banks_get_address_var( _environment, _bank );
+void bank_set_var( Environment * _environment, char * _bank ) {
+    
+    variable_move( _environment, _bank, "GEORAMBANKSHADOW" );
 
 }
 

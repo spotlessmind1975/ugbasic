@@ -74,7 +74,7 @@ be loaded was limited by the available RAM.
 On the ''atari'' and ''atarixl'' target, it is not possible to omit
 the number of bytes and the starting address.
 
-On the ''c64'' and ''c128'' target, you cannot indicate
+On the ''c128'' and ''c128'' target, you cannot indicate
 the offset and the size.
 
 @italian

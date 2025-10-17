@@ -32,58 +32,35 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
  */
-/* <usermanual>
-@keyword BANK
-
-@english
-
-The ''BANK'' command allows you to change the currently selected bank. All 
-operations that are performed on the banks, and that do not explicitly indicate 
-the bank to operate on, work with the implicit bank, which is set by this command. 
-The minimum bank number is zero (''0'') while the maximum is equal to ''BANK COUNT - 1''.
-
-@italian
-
-Il comando ''BANK'' permette di modificare il banco selezionato attualmente. Tutte
-le operazioni che si svolgono sui banchi, e che non indicano espressamente il banco 
-su cui operare, lavorano con il banco implicito, che viene impostato da questo comando.
-Il numero minimo del banco è zero (''0'') mentre il massimo è pari a ''BANK COUNT - 1''.
-
-@syntax BANK id
-
-@example BANK #1
-
-@seeAlso BANK COUNT (constant)
-@target all
-</usermanual> */
-void bank_set( Environment * _environment, int _bank ) {
+// @tobe BANK UNCOMPRESS
+void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
  */
-void bank_set_var( Environment * _environment, char * _bank ) {
-    
-}
+void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-#endif
+}

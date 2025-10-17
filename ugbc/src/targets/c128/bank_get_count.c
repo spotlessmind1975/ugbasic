@@ -32,56 +32,63 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__atari__) || defined(__atarixl__) || defined(__plus4__) || defined(__vic20__) || defined(__c16__)
+#if defined(__c128__)
 
-/****************************************************************************
- * CODE SECTION 
- ****************************************************************************/
+/**
+ * @brief Emit ASM code for instruction <b>= BANK COUNT</b>
+ * 
+ * This function outputs the ASM code to get the resident
+ * memory number of banks.
+ * 
+ * @param _environment Current calling environment
+ * @return Current number of banks present.
+ */
+/* <usermanual>
+@keyword BANK COUNT (constant)
 
-extern char DATATYPE_AS_STRING[][16];
+@english
 
-void banks_generate( Environment * _environment ) {
-    
-    int anyExpansionBank = 0;
+This function returns the number of expanded memory banks available to the program. 
+Depending on the target, this number can range from zero to the actual number of banks.
+
+@italian
+
+Questa funzione restituisce il numero di banchi di memoria espansa, disponibili per 
+il programma. A seconda del target, questo numero può andare da zero al numero 
+effettivo di banchi. 
+
+@syntax = BANK COUNT
+
+@example IF BANK COUNT > 0 THEN 
+@example    PRINT "there are banks!"
+@example ENDIF
+
+@usedInExample expansion_bank_01.bas
+@usedInExample expansion_bank_02.bas
+@usedInExample expansion_bank_03.bas
+@usedInExample expansion_bank_04.bas
+@usedInExample expansion_bank_05.bas
+
+@seeAlso BANK
+@seeAlso BANK ADDRESS
+@target all
+</usermanual> */
+Variable * bank_get_count( Environment * _environment ) {
+
+    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank count)" );
+
+    int bankCount = 0;
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
-        outhead1("%s:", bank->name );
-        if ( bank->type == BT_EXPANSION && bank->name && ( bank->space != bank->remains ) ) {
-            int size = bank->space - bank->remains;
-            if ( bank->data ) {
-                out0("    .byte ");
-                int i=0;
-                for (i=0; i<(size-1); ++i ) {
-                    out1("$%2.2x,", (unsigned char)( bank->data[i] & 0xff ) );
-                }
-                outline1("$%2.2x", (unsigned char)( bank->data[(size-1)] & 0xff ) );
-            }
-            anyExpansionBank = 1;
-        }
+        ++bankCount;
         bank = bank->next;
     }
 
-    if ( anyExpansionBank ) {
+    variable_store( _environment, result->name, bankCount );
 
-        int values[MAX_TEMPORARY_STORAGE];
-        char * address[MAX_TEMPORARY_STORAGE];
-
-        Bank * actual = _environment->expansionBanks;
-        int count = 0;
-        while( actual ) {
-            values[count] = actual->id;
-            address[count] = strdup( actual->name );
-            actual = actual->next;
-            ++count;
-        }
-
-        cpu_address_table_build( _environment, "EXPBANKS", values, address, (count-1) );
-
-        cpu_address_table_lookup( _environment, "EXPBANKS", count );
-
-    }
+    return result;
     
 }
 
