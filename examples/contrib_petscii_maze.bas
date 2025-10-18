@@ -6,7 +6,7 @@ REM compiled with BasicBoss, and, finally, directly from ugBASIC.
 REM This code is specific to ugBASIC and serves to provide 
 REM benchmarks of achievable performance.
 REM
-REM @link https://www.facebook.com/groups/2503729026388481/?multi_permalinks=25143380621996666
+REM @url https://www.facebook.com/groups/2503729026388481/?multi_permalinks=25143380621996666
 REM
 REM @italian
 REM VARI ALTRI CONTRIBUTI CALCULATE FIBONACCI
@@ -18,16 +18,19 @@ REM direttamente da ugBASIC. Questo codice è specifico per
 REM ugBASIC, e serve per dare indicazioni di benchmark sulle 
 REM performance che possono essere raggiunte.
 REM
-REM @link https://www.facebook.com/groups/2503729026388481/?multi_permalinks=25143380621996666
+REM @url https://www.facebook.com/groups/2503729026388481/?multi_permalinks=25143380621996666
 REM
-REM @include c16,c128,c64,c64reu,plus4,vic20
+REM @include c16,c128,c64,c64reu,vic20
 
-PROCEDURE example ON C128, C64, C64REU, PLUS4, VIC20
+PROCEDURE example ON C128, C64, C64REU, VIC20
 
 	endAddress = TEXTADDRESS + ROWS*COLUMNS
 	
+	INK WHITE
+	PAPER BLACK
 	CLS
 	POKE &HD018, &H15
+	POKE &HFF13, (PEEK(&HFF13) AND &H07) OR &H14*4
 	
 	slash1# = 77
 	slash2# = 78
@@ -46,9 +49,9 @@ PROCEDURE example ON C128, C64, C64REU, PLUS4, VIC20
 	
 	dauer = (t1 - t0) * 1000 / TPS
 	
-	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms."
+	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms.";
 	
 END PROCEDURE
 
-example[] ON C128, C64, C64REU, PLUS4, VIC20
+example[] ON C128, C64, C64REU, VIC20
 	
