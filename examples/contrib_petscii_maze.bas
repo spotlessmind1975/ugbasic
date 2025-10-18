@@ -39,7 +39,11 @@ PROCEDURE example ON C128, C64, C64REU, VIC20
 	t = TEXTADDRESS
 	DO
 		a# = RANDOM BYTE AND 1
-		IF a#=#0 THEN : POKE t, slash1# : ELSE : POKE t, slash2# : ENDIF
+		IF a#=#0 THEN
+			POKE t, slash1#
+		ELSE
+			POKE t, slash2#
+		ENDIF
 		INC t
 		EXIT IF t = endAddress
 	LOOP
