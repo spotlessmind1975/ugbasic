@@ -113,13 +113,15 @@ void poke_var( Environment * _environment, char * _address, char * _value ) {
 
     if ( variable_exists( _environment, _value ) ) {
         value = variable_retrieve( _environment, _value );
+        if ( VT_BITWIDTH( value->type ) == 8 ) {
+            cpu_poke( _environment, address->realName, value->realName );
+        } else {
+            variable_move( _environment, value->name, realValue->name );
+            cpu_poke( _environment, address->realName, realValue->realName );
+        }
     } else {
-        value = variable_temporary( _environment, VT_BYTE, "(byte)" );
+        cpu_poke_const( _environment, address->realName, 0 );
     }
-
-    variable_move( _environment, value->name, realValue->name );
-
-    cpu_poke( _environment, address->realName, realValue->realName );
 
 }
 
