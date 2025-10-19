@@ -77,6 +77,9 @@ TEDISRSVC:
 @IF deployed.keyboard && !keyboardConfig.sync
     JSR KEYBOARDMANAGER
 @ENDIF
+@IF deployed.timer
+    JSR TIMERMANAGER
+@ENDIF
     PHA
     LDA $FF09
     STA $FF09
