@@ -33,12 +33,13 @@ PROCEDURE example ON C128, C64, C64REU, VIC20
 	
 	slash1# = 77
 	slash2# = 78
+	b1# = 1
 
 	t0 = TIME
 	
 	t = TEXTADDRESS
 	DO
-		a# = RANDOM BYTE AND 1
+		a# = RANDOM BYTE AND b1#
 		POKE t, slash1#+a#
 		INC t
 		EXIT IF t = endAddress
