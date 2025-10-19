@@ -1171,6 +1171,12 @@ static void optim_zAB(Environment * _environment, POBuffer buf[LOOK_AHEAD], int 
         } else if(can_nzA(buf[0])) {
             *zA = 0;
         }
+    } else if ( po_buf_match( buf[0], " ROLD") || 
+                po_buf_match( buf[0], " RORD") ||
+                po_buf_match( buf[0], " LSLD") ||
+                po_buf_match( buf[0], " lSRD") ) {
+        *zA = 0;
+        *zB = 0;
     } else if ( chkLDD(buf[0], "00--", v1) || po_buf_match( buf[0], " LDD #0") || po_buf_match( buf[0], " CLRA") ) {
         *zA = 1;
     }
@@ -1194,6 +1200,12 @@ static void optim_zAB(Environment * _environment, POBuffer buf[LOOK_AHEAD], int 
         } else if(can_nzB(buf[0])) {
             *zB = 0;
         }
+    } else if ( po_buf_match( buf[0], " ROLD") || 
+                po_buf_match( buf[0], " RORD") ||
+                po_buf_match( buf[0], " LSLD") ||
+                po_buf_match( buf[0], " lSRD") ) {
+        *zA = 0;
+        *zB = 0;
     } else if ( chkLDD(buf[0], "--00", v1) || po_buf_match( buf[0], " LDD #0") || po_buf_match( buf[0], " CLRB") ) {
         *zB = 1;
     }
