@@ -73,7 +73,7 @@ POBuffer po_buf_new(int size) {
 /* ensure the buffer can hold len data */
 static POBuffer _buf_cap(POBuffer buf, int len) {
     if(len+1 >= buf->cap) {
-        buf->cap = len + 1 + MAX_TEMPORARY_STORAGE;
+        buf->cap = len + 1 + 2*MAX_TEMPORARY_STORAGE;
         buf->str = realloc(buf->str, buf->cap);
     }
     return buf;
