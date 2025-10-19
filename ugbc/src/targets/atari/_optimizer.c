@@ -248,6 +248,8 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v4 = TMP_BUF;
     POBuffer v5 = TMP_BUF;
     POBuffer v6 = TMP_BUF;
+    POBuffer v7 = TMP_BUF;
+    POBuffer v8 = TMP_BUF;
     
     /* a bunch of rules */
 
@@ -541,6 +543,32 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
     
     //
+
+    if( po_buf_match( buf[0], " LDA *", v1 ) && 
+        po_buf_match( buf[1], " STA *", v2 ) &&
+        po_buf_match( buf[2], " LDA *", v3 ) &&
+        po_buf_match( buf[3], " STA *+1", v4 ) &&
+        po_buf_match( buf[4], " LDA *", v5 ) && 
+        po_buf_match( buf[5], " STA *", v6 ) &&
+        po_buf_match( buf[6], " LDA *+1", v7 ) &&
+        po_buf_match( buf[7], " STA *+1", v8 ) &&
+        strcmp( v2->str, v4->str ) == 0 &&
+        strcmp( v5->str, v7->str ) == 0 &&
+        strcmp( v6->str, v8->str ) == 0 &&
+        strcmp( v2->str, v5->str ) == 0 &&
+        strcmp( v4->str, v7->str ) == 0 ) {
+        optim( buf[1], RULE "(copying 16 bit with temporary)->()", "\tSTA %s", v6->str );
+        optim( buf[3], RULE "(copying 16 bit with temporary)->()", "\tSTA %s+1", v8->str );
+        optim( buf[4], RULE "(copying 16 bit with temporary)->()", NULL );
+        optim( buf[5], RULE "(copying 16 bit with temporary)->()", NULL );
+        optim( buf[6], RULE "(copying 16 bit with temporary)->()", NULL );
+        optim( buf[7], RULE "(copying 16 bit with temporary)->()", NULL );
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+
 
     if( po_buf_match( buf[0], " LDA *", v1 ) && 
         po_buf_match( buf[1], " STA *", v2 ) &&
