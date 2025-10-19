@@ -263,18 +263,18 @@ void poked_var( Environment * _environment, char * _address, char * _value ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
 
-    Variable * realValue = variable_temporary( _environment, VT_DWORD, "(dword)" );
-
-    Variable * value = NULL;
-
     if ( variable_exists( _environment, _value ) ) {
-        value = variable_retrieve( _environment, _value );
+        Variable * value = variable_retrieve( _environment, _value );
+        if ( VT_BITWIDTH( value->type ) == 32 ) {
+            cpu_poked( _environment, address->realName, value->realName );
+        } else {
+            Variable * realValue = variable_temporary( _environment, VT_DWORD, "(dword)" );
+            variable_move( _environment, value->name, realValue->name );
+            cpu_poked( _environment, address->realName, realValue->realName );
+        }
     } else {
-        value = variable_temporary( _environment, VT_DWORD, "(dword)" );
+        cpu_poked_const( _environment, address->realName, 0 );
     }
 
-    variable_move( _environment, value->name, realValue->name );
-
-    cpu_poked( _environment, address->realName, realValue->realName );
 
 }
