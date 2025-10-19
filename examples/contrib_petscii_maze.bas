@@ -49,7 +49,7 @@ PROCEDURE example ON C128, C64, C64REU, VIC20
 	jiffys = (t1 - t0)
 	dauer = jiffys * 1000 / TPS
 	
-	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms (";jiffys;" jiffies)";
+	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms (";jiffys;" j)";
 	
 END PROCEDURE
 
