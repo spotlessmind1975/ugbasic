@@ -107,15 +107,12 @@ void poke_var( Environment * _environment, char * _address, char * _value ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
 
-    Variable * realValue = variable_temporary( _environment, VT_BYTE, "(byte)" );
-
-    Variable * value = NULL;
-
     if ( variable_exists( _environment, _value ) ) {
-        value = variable_retrieve( _environment, _value );
+        Variable * value = variable_retrieve( _environment, _value );
         if ( VT_BITWIDTH( value->type ) == 8 ) {
             cpu_poke( _environment, address->realName, value->realName );
         } else {
+            Variable * realValue = variable_temporary( _environment, VT_BYTE, "(byte)" );
             variable_move( _environment, value->name, realValue->name );
             cpu_poke( _environment, address->realName, realValue->realName );
         }
@@ -191,19 +188,18 @@ void pokew_var( Environment * _environment, char * _address, char * _value ) {
 
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_ADDRESS, 0 );
 
-    Variable * realValue = variable_temporary( _environment, VT_WORD, "(word)" );
-
-    Variable * value = NULL;
-
     if ( variable_exists( _environment, _value ) ) {
-        value = variable_retrieve( _environment, _value );
+        Variable * value = variable_retrieve( _environment, _value );
+        if ( VT_BITWIDTH( value->type ) == 16 ) {
+            cpu_pokew( _environment, address->realName, value->realName );
+        } else {
+            Variable * realValue = variable_temporary( _environment, VT_WORD, "(word)" );
+            variable_move( _environment, value->name, realValue->name );
+            cpu_pokew( _environment, address->realName, realValue->realName );
+        }
     } else {
-        value = variable_temporary( _environment, VT_WORD, "(word)" );
+        cpu_pokew_const( _environment, address->realName, 0 );
     }
-
-    variable_move( _environment, value->name, realValue->name );
-
-    cpu_pokew( _environment, address->realName, realValue->realName );
 
 }
 
