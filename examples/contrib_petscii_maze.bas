@@ -39,20 +39,17 @@ PROCEDURE example ON C128, C64, C64REU, VIC20
 	t = TEXTADDRESS
 	DO
 		a# = RANDOM BYTE AND 1
-		IF a#=#0 THEN
-			POKE t, slash1#
-		ELSE
-			POKE t, slash2#
-		ENDIF
+		POKE t, slash1#+a#
 		INC t
 		EXIT IF t = endAddress
 	LOOP
 
 	t1 = TIME
 	
-	dauer = (t1 - t0) * 1000 / TPS
+	jiffys = (t1 - t0)
+	dauer = jiffys * 1000 / TPS
 	
-	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms.";
+	BOTTOM: CLINE: PRINT "elapsed: ";dauer;" ms (";jiffys;" jiffies)";
 	
 END PROCEDURE
 
