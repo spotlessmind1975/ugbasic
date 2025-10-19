@@ -5138,9 +5138,10 @@ Variable * variable_div( Environment * _environment, char * _source, char * _des
         }
     } 
 
-    // int best = calculate_cast_type_best_fit( _environment, source->type, target->type );
-    // source = variable_cast( _environment, source->name, best );
-    // target = variable_cast( _environment, target->name, best );
+    if ( source->type == VT_FLOAT || target->type == VT_FLOAT ) {
+        source = variable_cast( _environment, source->name, VT_FLOAT );
+        target = variable_cast( _environment, target->name, VT_FLOAT );
+    }
 
     Variable * result = NULL;
     Variable * realTarget = NULL;
