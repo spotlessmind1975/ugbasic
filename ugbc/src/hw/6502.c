@@ -173,13 +173,15 @@ void cpu_poke( Environment * _environment, char * _address, char * _source ) {
 
     inline( cpu_poke )
 
+        MAKE_LABEL
+
         outline1("LDA %s", _address);
-        outline0("STA TMPPTR");
+        outline1("STA %s+1", label);
         outline1("LDA %s", address_displacement(_environment, _address, "1") );
-        outline0("STA TMPPTR+1");
-        outline0("LDY #0");
+        outline1("STA %s+2", label);
         outline1("LDA %s", _source);
-        outline0("STA (TMPPTR),Y");    
+        outhead1("%s:", label);
+        outline0("STA $FFFF");    
 
     no_embedded( cpu_poke );
 
