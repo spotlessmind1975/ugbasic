@@ -1687,7 +1687,9 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                 // 001DEFr 1  8D rr rr     	STA _extractLetters_b2
 
                 } else if ( 
-                        po_buf_match( buf[2], " STA *", v1 ) && po_buf_match( buf[3], " LDA *", v2 ) && po_buf_match( buf[4], " STA *", v3 ) &&
+                        po_buf_match( buf[2], " STA *", v1 ) && 
+                        po_buf_match( buf[3], " LDA *", v2 ) && 
+                        po_buf_match( buf[4], " STA *", v3 ) &&
                         po_buf_cmp( v1, v2 ) == 0
                 ) {
 
@@ -1714,7 +1716,7 @@ static void optim_remove_unused_temporary( Environment * _environment ) {
                         // printf( "found!\n\n" );
                         // printf(" APPLIED #1\n");
                         // optim( buf[0], RULE "unused temporary", NULL );
-                        // optim( buf[2], RULE "unused temporary", NULL );
+                        optim( buf[2], RULE "unused temporary", NULL );
                         optim( buf[3], RULE "unused temporary", NULL );
                         ++_environment->removedAssemblyLines;
                     }
