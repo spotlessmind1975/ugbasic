@@ -254,22 +254,16 @@ PLOT7
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT40
@@ -311,24 +305,17 @@ PLOT8
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT
@@ -364,24 +351,17 @@ PLOT9
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT40
@@ -423,24 +403,17 @@ PLOT10
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT
@@ -476,24 +449,17 @@ PLOT11
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT40
@@ -535,24 +501,17 @@ PLOT12
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT
@@ -588,24 +547,17 @@ PLOT13
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT40
@@ -647,26 +599,18 @@ PLOT14
     LDX BITMAPADDRESS
     LDB <PLOTY
     CLRA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <PLOTX
     CLRA
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     LDY #PLOTORBIT

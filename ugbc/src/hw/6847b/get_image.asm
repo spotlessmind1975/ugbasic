@@ -158,21 +158,15 @@ GETIMAGE7
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMONC
@@ -185,23 +179,16 @@ GETIMAGE7
 GETIMAGE8
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMON
@@ -214,23 +201,16 @@ GETIMAGE9
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMONC
@@ -244,23 +224,16 @@ GETIMAGE10
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMON
@@ -273,23 +246,16 @@ GETIMAGE11
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMONC
@@ -303,23 +269,16 @@ GETIMAGE12
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMON
@@ -332,23 +291,16 @@ GETIMAGE13
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMONC
@@ -362,25 +314,17 @@ GETIMAGE14
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP GETIMAGECOMMON

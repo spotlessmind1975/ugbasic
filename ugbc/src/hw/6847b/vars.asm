@@ -263,26 +263,18 @@ CALCPOS7
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
+    LSLD
     LEAX D, X
 
     RTS
@@ -295,28 +287,19 @@ CALCPOS8
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
     LEAX D, X
 
     RTS
@@ -329,28 +312,19 @@ CALCPOS9
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
+    LSLD
     LEAX D, X
 
     RTS
@@ -363,26 +337,18 @@ CALCPOS10
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
+    LSLD
     LEAX D, X
 
     RTS
@@ -395,28 +361,19 @@ CALCPOS11
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
+    LSLD
     LEAX D, X
 
     RTS
@@ -429,28 +386,19 @@ CALCPOS12
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
     LEAX D, X
 
     RTS
@@ -463,28 +411,19 @@ CALCPOS13
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0
     LDA #0
-    LSLB
-    ROLA
+    LSLD
     LEAX D, X
 
     RTS
@@ -497,22 +436,14 @@ CALCPOS14
     LDX BITMAPADDRESS
     LDB <MATHPTR1
     LDA #0
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDB <MATHPTR0

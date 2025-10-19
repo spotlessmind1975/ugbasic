@@ -189,21 +189,15 @@ PUTIMAGE7
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
@@ -220,23 +214,16 @@ PUTIMAGE7
 PUTIMAGE8
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMON
@@ -253,23 +240,16 @@ PUTIMAGE9
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
@@ -287,23 +267,16 @@ PUTIMAGE10
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMON
@@ -320,23 +293,16 @@ PUTIMAGE11
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
@@ -354,23 +320,16 @@ PUTIMAGE12
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMON
@@ -387,23 +346,16 @@ PUTIMAGE13
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
@@ -421,25 +373,17 @@ PUTIMAGE14
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP PUTIMAGECOMMON

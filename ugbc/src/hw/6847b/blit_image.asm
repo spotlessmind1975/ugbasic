@@ -160,21 +160,15 @@ BLITIMAGE7
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMONC
@@ -187,23 +181,16 @@ BLITIMAGE7
 BLITIMAGE8
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMON
@@ -216,23 +203,16 @@ BLITIMAGE9
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMONC
@@ -246,23 +226,16 @@ BLITIMAGE10
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMON
@@ -275,23 +248,16 @@ BLITIMAGE11
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMONC
@@ -305,23 +271,16 @@ BLITIMAGE12
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMON
@@ -334,23 +293,16 @@ BLITIMAGE13
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMONC
@@ -364,25 +316,17 @@ BLITIMAGE14
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
-    LSLB
-    ROLA
+    LSLD
+    LSLD
+    LSLD
+    LSLD
+    LSLD
     LEAX D, X
 
     LDD <IMAGEX
-    LSRA
-    RORB
-    LSRA
-    RORB
-    LSRA
-    RORB
+    LSRD
+    LSRD
+    LSRD
     LEAX D, X
 
     JMP BLITIMAGECOMMON
