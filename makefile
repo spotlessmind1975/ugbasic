@@ -721,11 +721,11 @@ generated/cocob/asm/%.asm: compiler
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/cocob/asm/,,$(@:.asm=.bas)) ../$@
 
 generated/cocob/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
-	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@$(ASM6809) -3 -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(COCOBDECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/cocob/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
-	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@$(ASM6809) -3 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
 generated/cocob/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/cocob/exeso/,,$(@:.dsk=.bas))
