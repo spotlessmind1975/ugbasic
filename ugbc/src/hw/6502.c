@@ -5169,8 +5169,8 @@ void cpu_random_8bit( Environment * _environment, char * _entropy, char * _resul
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
-            outline0("STA CPURANDOM_ENTROPY" );
-            outline0("JSR CPURANDOM16" );
+            outline0("ADC CPURANDOM_SEED" );
+            outline0("JSR CPURANDOM8" );
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
         }
