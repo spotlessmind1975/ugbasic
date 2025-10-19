@@ -128,7 +128,7 @@ ISVCIRQJ
     STD $00e3
     STA $FFDE
 
-    LDD 12,S
+    LDD 14,S
     STD OLDISVC2
 
     PULS D
@@ -136,7 +136,7 @@ ISVCIRQFAILSAFE
 
     PSHS D
     LDD #ISVCIRQ2
-    STD 12,S
+    STD 14,S
 
     ; Disable interrupts when exiting (*sigh*)
     LDA 2,S
@@ -150,11 +150,13 @@ ISVCIRQFAILSAFE
     ; S     -> CC
     ; S+1   -> A
     ; S+2   -> B
-    ; S+3   -> DP
-    ; S+4   -> X
-    ; S+6   -> Y
-    ; S+8   -> U or S
-    ; S+10  -> PC <--- now it points to ISVCIRQ2
+    ; S+3   -> E
+    ; S+4   -> F
+    ; S+5   -> DP
+    ; S+6   -> X
+    ; S+8   -> Y
+    ; S+10   -> U or S
+    ; S+12  -> PC <--- now it points to ISVCIRQ2
 
     ; JMP [OLDISVC]
 
