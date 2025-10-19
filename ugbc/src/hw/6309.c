@@ -1707,14 +1707,12 @@ void cpu_math_double_16bit( Environment * _environment, char *_source, char *_ot
 
     inline( cpu_math_double_16bit )
 
-        if(_other) {
-            outline1("LDD %s", _source);
-            outline0("LSLB");
-            outline0("ROLA");
+        outline1("LDD %s", _source);
+        outline0("LSLD");
+        if ( _other ) {
             outline1("STD %s", _other);
         } else {
-            outline1("LSL %s", address_displacement(_environment, _source, "1"));
-            outline1("ROL %s",   _source);
+            outline1("STD %s", _source);
         }
 
     no_embedded( cpu_math_double_16bit )
@@ -2454,8 +2452,7 @@ void cpu_math_mul2_const_16bit( Environment * _environment, char *_source, int _
             outline1("BRA %s", label);            
             outhead1("cpu_math_mul2_const_16bit_%d", _steps);            
                 for(i=0; i<_steps; ++i) {
-                    outline0("LSLB" );
-                    outline0("ROLA" );
+                    outline0("LSLD" );
                 }
             outline0("RTS");
             outhead1("%s", label);
@@ -3270,20 +3267,13 @@ void cpu_math_double_32bit( Environment * _environment, char *_source, char *_ot
 
     inline( cpu_math_double_32bit )
 
-        if(_other) {
-            outline1("LDD %s", address_displacement(_environment, _source, "2"));
-            outline0("LSLB");
-            outline0("ROLA");
-            outline1("STD %s", address_displacement(_environment, _other, "2"));
-            outline1("LDD %s", _source);
-            outline0("ROLB");
-            outline0("ROLA");
-            outline1("STD %s", _other);
+        outline1("LDQ %s", _source);
+        outline0("ADDR W,W" );
+        outline0("ROLD");
+        if ( _other ) {
+            outline1("STQ %s", _other);
         } else {
-            outline1("LSL %s", address_displacement(_environment, _source, "3"));
-            outline1("ROL %s", address_displacement(_environment, _source, "2"));
-            outline1("ROL %s", address_displacement(_environment, _source, "1"));
-            outline1("ROL %s",   _source);
+            outline1("STQ %s", _source);
         }
 
     no_embedded( cpu_math_double_32bit )
