@@ -82,7 +82,7 @@
  ****************************************************************************/
 
 #define DIRECT_PAGE     0x2100
-#define LOOK_AHEAD      10
+#define LOOK_AHEAD      16
 #define ALLOW_UNSAFE    1
 #define KEEP_COMMENTS   1
 
@@ -519,6 +519,27 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( ( po_buf_match( buf[0], " BNE *", v4 ) || po_buf_match( buf[0], " BEQ *", v4 ) ) && 
+        po_buf_match( buf[1], " LDA #$ff" ) && 
+        po_buf_match( buf[2], " STA *", v1 ) &&
+        po_buf_match( buf[3], " JMP *", v4 ) &&
+        po_buf_match( buf[4], "*:", v4 ) &&
+        po_buf_match( buf[5], " LDA #$00" ) &&
+        po_buf_match( buf[6], " STA *", v2 ) &&
+        po_buf_match( buf[7], "*:", v4 ) &&
+        po_buf_match( buf[8], " LDA *", v3 ) &&
+        po_buf_match( buf[9], " BEQ *", v4 ) &&
+        strcmp( v1->str, v2->str ) == 0 &&
+        strcmp( v2->str, v3->str ) == 0
+    ) {
+        optim( buf[2], RULE "(STA boolean)->()", NULL );
+        optim( buf[6], RULE "(STA boolean)->()", NULL );
+        optim( buf[8], RULE "(STA boolean)->()", NULL );
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+        ++_environment->removedAssemblyLines;
+    }
+    
     //
 
     if( po_buf_match( buf[0], " LDA *", v1 ) && 
