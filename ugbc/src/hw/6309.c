@@ -5940,8 +5940,7 @@ void cpu_complement2_8bit( Environment * _environment, char * _source, char * _d
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination ) {
 
     outline1( "LDD %s", _source );
-    outline0( "NEGA" );
-    outline0( "NEGB" );
+    outline0( "NEGD" );
     outline0( "SBCA #0" );
     if ( _destination ) {
         outline1( "STD %s", _destination );
@@ -5962,8 +5961,7 @@ void cpu_complement2_32bit( Environment * _environment, char * _source, char * _
     outline1( "STD %s", out );
     
     outline1( "LDD %s", address_displacement(_environment, _source, "2") );
-    outline0( "NEGA" );
-    outline0( "NEGB" );
+    outline0( "NEGD" );
     outline0( "SBCA #0" );
     outline1( "STD %s", address_displacement(_environment, out, "2") );
     
