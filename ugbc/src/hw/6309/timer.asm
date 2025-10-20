@@ -89,11 +89,11 @@ TIMERMANAGERL1
     ; Now we are going to check if the timer is not zero.
     ; If not zero, we must decrement the counter.
     LDX #TIMERCOUNTER
-    LEAX D, X
+    ADDR D, X
     LDY #TIMERINIT
-    LEAY D, Y
+    ADDR D, Y
     LDU #TIMERADDRESS
-    LEAU D, U
+    ADDR D, U
 
     LDD ,X
     CMPD #0
@@ -210,7 +210,7 @@ TIMERSETCOUNTER
     LDX #TIMERCOUNTER
     ASLB
     CLRA
-    LEAX D, X
+    ADDR D, X
     LDD <MATHPTR2
     STD , X
     PULS X
@@ -224,7 +224,7 @@ TIMERSETINIT
     LDX #TIMERINIT
     ASLB
     CLRA
-    LEAX D, X
+    ADDR D, X
     LDD <MATHPTR2
     STD , X
     PULS X
@@ -238,7 +238,7 @@ TIMERSETADDRESS
     LDX #TIMERADDRESS
     ASLB
     CLRA
-    LEAX D, X
+    ADDR D, X
     LDD <MATHPTR2
     STD , X
     PULS X
