@@ -43,12 +43,12 @@ PROTOTHREADGETADDRESS
     LDX #PROTOTHREADLOOP
     LEAX 6, X
     LDA #0
-    ROLB
-    ASLA
-    ROLB
-    ASLA
-    ROLB
-    ASLA
+    ASLB
+    ROLA
+    ASLB
+    ROLA
+    ASLB
+    ROLA
     LEAX D,X
     LDY ,X    
     RTS
@@ -58,11 +58,11 @@ PROTOTHREADGETADDRESS
 PROTOTHREADREGAT
     LDX #PROTOTHREADLOOP
     LDA #0
-    ROLB
-    ASLA
+    ASLB
+    ROLA
     TFR D,X
-    ROLB
-    ASLA
+    ASLB
+    ROLA
     LEAX D,X
     STY ,X    
     RTS
@@ -91,12 +91,12 @@ PROTOTHREADUNREG
     LDX #PROTOTHREADLOOP
     LEAX 6, X
     LDA #0
-    ROLB
-    ASLA
-    ROLB
-    ASLA
-    ROLB
-    ASLA
+    ASLB
+    ROLA
+    ASLB
+    ROLA
+    ASLB
+    ROLA
     LEAX D,X
     LDY #PROTOTHREADVOID
     STY ,X    
