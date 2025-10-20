@@ -3200,18 +3200,14 @@ void cpu_math_add_32bit( Environment * _environment, char *_source, char *_desti
 
         MAKE_LABEL
 
-        outline1("LDD %s", address_displacement(_environment, _source, "2"));
-        outline1("LDX #%s", _destination);
-        outline0("ADDD 2,X");
+        outline1("LDQ %s", _source );
+        outline1("ADDW %s", address_displacement( _environment, _destination, "2" ) );
+        outline1("ADCD %s", _destination );
         if ( _other ) {
-            outline1("STD %s", address_displacement(_environment, _other, "2"));
+            outline1("STQ %s", _other);
         } else {
-            outline0("STD 2,X");
+            outline1("STQ %s", _destination);
         }
-        outline1("LDD %s", _source);
-        outline0("ADCB 1,X");
-        outline0("ADCA ,X");
-        outline1("STD %s", _other ? _other : ",X" );
 
     no_embedded( cpu_math_add_32bit )
 
@@ -3242,15 +3238,10 @@ void cpu_math_add_32bit_const( Environment * _environment, char *_source, int _d
 
         MAKE_LABEL
 
-        outline1("LDD %s", address_displacement(_environment, _source, "2"));
-        outline1("ADDD #$%4.4x", ( _destination & 0xffff ) );
-        outline1("STD %s", address_displacement(_environment, _other, "2"));
-        outline1("LDD %s", _source);
-        outline1("ADDD #$%4.4x", ( ( _destination >> 16 ) & 0xffff ) );
-        if ( ( ( _destination >> 16 ) & 0x8000 ) ) {
-            outline0("ADDD #1" );
-        }
-        outline1("STD %s", _other ? _other : ",X" );
+        outline1("LDQ %s", _source );
+        outline1("ADDW #$%4.4x", (unsigned short)( (_destination >> 16 ) & 0xffff ) );
+        outline1("ADCD #$%4.4x", (unsigned short)( (_destination ) & 0xffff ) );
+        outline1("STQ %s", _other);
 
     no_embedded( cpu_math_add_32bit_const )
 
