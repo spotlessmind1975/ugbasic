@@ -193,12 +193,12 @@ PUTIMAGE7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMONC
 
@@ -218,13 +218,13 @@ PUTIMAGE8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMON
 
@@ -245,12 +245,12 @@ PUTIMAGE9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMONC
 
@@ -271,13 +271,13 @@ PUTIMAGE10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMON
 
@@ -298,12 +298,12 @@ PUTIMAGE11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMONC
 
@@ -324,13 +324,13 @@ PUTIMAGE12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMON
 
@@ -351,12 +351,12 @@ PUTIMAGE13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMONC
 
@@ -378,13 +378,13 @@ PUTIMAGE14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP PUTIMAGECOMMON
 

@@ -85,7 +85,7 @@ VSCROLLGUPYSCR1
     BNE VSCROLLGUPYSCR1
     LDB CURRENTSL
     CLRA
-    LEAX D, X
+    ADDR D, X
     LEAY D, Y
     LEAU -1, U
     CMPU #0
@@ -153,7 +153,7 @@ VSCROLLGDOWNYS31
     NEGB
     NEGA
     SBCA #0
-    LEAX D, X
+    ADDR D, X
     LEAY D, Y
     LEAU -1, U
     CMPU #0

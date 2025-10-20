@@ -164,12 +164,12 @@ BLITIMAGE7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMONC
 
@@ -185,13 +185,13 @@ BLITIMAGE8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMON
 
@@ -208,12 +208,12 @@ BLITIMAGE9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMONC
 
@@ -230,13 +230,13 @@ BLITIMAGE10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMON
 
@@ -253,12 +253,12 @@ BLITIMAGE11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMONC
 
@@ -275,13 +275,13 @@ BLITIMAGE12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMON
 
@@ -298,12 +298,12 @@ BLITIMAGE13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMONC
 
@@ -321,13 +321,13 @@ BLITIMAGE14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP BLITIMAGECOMMON
 

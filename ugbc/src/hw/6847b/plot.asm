@@ -258,13 +258,13 @@ PLOT7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT40
     LDB PLOTCPE
@@ -309,14 +309,14 @@ PLOT8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT
     LDB <PLOTX
@@ -356,13 +356,13 @@ PLOT9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT40
     LDB PLOTCPE
@@ -407,14 +407,14 @@ PLOT10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT
     LDB <PLOTX
@@ -454,13 +454,13 @@ PLOT11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT40
     LDB PLOTCPE
@@ -505,14 +505,14 @@ PLOT12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT
     LDB <PLOTX
@@ -552,13 +552,13 @@ PLOT13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT40
     LDB PLOTCPE
@@ -604,14 +604,14 @@ PLOT14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <PLOTX
     CLRA
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     LDY #PLOTORBIT
     LDB <PLOTX

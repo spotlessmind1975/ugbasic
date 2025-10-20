@@ -162,12 +162,12 @@ GETIMAGE7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMONC
 
@@ -183,13 +183,13 @@ GETIMAGE8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMON
 
@@ -206,12 +206,12 @@ GETIMAGE9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMONC
 
@@ -228,13 +228,13 @@ GETIMAGE10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMON
 
@@ -251,12 +251,12 @@ GETIMAGE11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMONC
 
@@ -273,13 +273,13 @@ GETIMAGE12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMON
 
@@ -296,12 +296,12 @@ GETIMAGE13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMONC
 
@@ -319,13 +319,13 @@ GETIMAGE14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP GETIMAGECOMMON
 

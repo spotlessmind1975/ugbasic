@@ -134,7 +134,7 @@ TEXTATRAWNEXT3
     NEGB
     SBCA #0
     ; ADDD #1
-    LEAX D, X
+    ADDR D, X
     PULS D
 
 TEXTATRAWNEXT

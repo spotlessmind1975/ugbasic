@@ -193,12 +193,12 @@ CLSBOX7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMONC
 
@@ -218,13 +218,13 @@ CLSBOX8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMON
 
@@ -245,12 +245,12 @@ CLSBOX9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMONC
 
@@ -271,13 +271,13 @@ CLSBOX10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMON
 
@@ -298,12 +298,12 @@ CLSBOX11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMONC
 
@@ -324,13 +324,13 @@ CLSBOX12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMON
 
@@ -351,12 +351,12 @@ CLSBOX13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMONC
 
@@ -378,13 +378,13 @@ CLSBOX14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDD <IMAGEX
     LSRD
     LSRD
     LSRD
-    LEAX D, X
+    ADDR D, X
 
     JMP CLSBOXCOMMON
 

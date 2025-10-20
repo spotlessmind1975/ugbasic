@@ -270,12 +270,12 @@ CALCPOS7
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -294,13 +294,13 @@ CALCPOS8
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -320,12 +320,12 @@ CALCPOS9
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -344,12 +344,12 @@ CALCPOS10
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -369,12 +369,12 @@ CALCPOS11
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -393,13 +393,13 @@ CALCPOS12
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -419,12 +419,12 @@ CALCPOS13
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
@@ -444,11 +444,11 @@ CALCPOS14
     LSLD
     LSLD
     LSLD
-    LEAX D, X
+    ADDR D, X
 
     LDB <MATHPTR0
     LDA #0
-    LEAX D, X
+    ADDR D, X
 
     RTS
 
