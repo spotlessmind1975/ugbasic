@@ -6342,9 +6342,9 @@ void cpu6809_float_single_from_double_to_int_array( Environment * _environment, 
     }
 
     value = fabs( _value );
-
     // Step 2: Convert the Integral Portion to Unsigned Binary
     // Convert the integral portion of the floating-point value to unsigned binary (not two's complement). 
+
     // The integral portion is the part of the number before the decimal point. For example, if the 
     // number to convert is -0.75, then 0 is the integral portion, and it's unsigned binary representation 
     // is simply 0. As another example, if the number to convert is 127.99, then the integral portion would 
@@ -6572,6 +6572,16 @@ void cpu6809_float_single_from_double_to_int_array( Environment * _environment, 
     _result[3] = ( right[2] );
     _result[4] = ( right[3] );
 
+    int tmp;
+
+    tmp = _result[0];
+    _result[0] = _result[4];
+    _result[4] = tmp;
+
+    tmp = _result[1];
+    _result[1] = _result[3];
+    _result[3] = tmp;
+    
     // printf( "\n| %f = %2.2x %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3], _result[4] );
 
 }
