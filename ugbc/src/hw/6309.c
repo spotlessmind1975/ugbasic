@@ -6896,6 +6896,16 @@ void cpu_float_single_from_double_to_int_array( Environment * _environment, doub
     _result[3] = ( right[2] );
     _result[4] = ( right[3] );
 
+    int tmp;
+
+    tmp = _result[0];
+    _result[0] = _result[4];
+    _result[4] = tmp;
+
+    tmp = _result[1];
+    _result[1] = _result[3];
+    _result[3] = tmp;
+
     // printf( "\n| %f = %2.2x %2.2x %2.2x %2.2x %2.2x\n\n", _value, _result[0], _result[1], _result[2], _result[3], _result[4] );
 
 }
