@@ -21,6 +21,7 @@
 ;  *
 ;  * http://www.apache.org/licenses/LICENSE-2.0
 ;  *
+
 ;  * Se non richiesto dalla legislazione vigente o concordato per iscritto,
 ;  * il software distribuito nei termini della Licenza è distribuito
 ;  * "COSì COM'è", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
@@ -42,24 +43,21 @@ PROTOTHREADVOID
 PROTOTHREADGETADDRESS
     LDX #PROTOTHREADLOOP
     LEAX 6, X
-    LDA #0
-    LSLD
-    LSLD
-    LSLD
-    ADDR D,X
-    LDY ,X    
+    ASLB
+    ASLB
+    ASLB
+    LDY B,X    
     RTS
 
 
 ; PROTOTHREADREGAT(B,Y)
 PROTOTHREADREGAT
     LDX #PROTOTHREADLOOP
-    LDA #0
-    LSLD
-    TFR D,X
-    LSLD
-    ADDR D,X
-    STY ,X    
+    LEAX 6, X
+    ASLB
+    ASLB
+    ASLB
+    STY B,X    
     RTS
 
 ; PROTOTHREADREG(Y)->B
@@ -85,14 +83,10 @@ PROTOTHREADREGNEXT
 PROTOTHREADUNREG
     LDX #PROTOTHREADLOOP
     LEAX 6, X
-    LDA #0
-    ROLB
-    ASLA
-    ROLB
-    ASLA
-    ROLB
-    ASLA
-    LEAX D,X
+    ASLB
+    ASLB
+    ASLB
+    LEAX B,X
     LDY #PROTOTHREADVOID
     STY ,X    
     RTS
@@ -100,35 +94,23 @@ PROTOTHREADUNREG
 ; PROTOTHREADSAVE(B,A)
 PROTOTHREADSAVE
     LDY #PROTOTHREADLC
-    PSHS A
-    LDA #0
-    LEAY D, Y
-    PULS A
-    STA ,Y
+    STA B,Y
     RTS
 
 ; PROTOTHREADRESTORE(B)->A
 PROTOTHREADRESTORE
     LDY #PROTOTHREADLC
-    LDA #0
-    LEAY D, Y
-    LDA ,Y
+    LDA B,Y
     RTS
 
 ; PROTOTHREADSETSTATE(B,A)
 PROTOTHREADSETSTATE
     LDY #PROTOTHREADST
-    PSHS A
-    LDA #0
-    LEAY D, Y
-    PULS A
-    STA ,Y
+    STA B,Y
     RTS
 
 ; PROTOTHREADGETSTATE(B)->A
 PROTOTHREADGETSTATE
     LDY #PROTOTHREADST
-    LDA #0
-    LEAY D, Y
-    LDA ,Y
+    LDA B,Y
     RTS
