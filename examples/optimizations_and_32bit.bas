@@ -1,14 +1,14 @@
 ﻿REM @english
-REM OPTIMIZATION BENCHMARKS 16 BIT BITWISE AND
+REM OPTIMIZATION BENCHMARKS 32 BIT BITWISE AND
 REM
 REM This example attempts to calculate the time required to 
-REM perform bitwise AND between 16 bit numbers.
+REM perform bitwise AND between 32 bit numbers.
 REM 
 REM @italian
-REM MISURE DI OTTIMIZZAZIONE AND A 16 BIT
+REM MISURE DI OTTIMIZZAZIONE AND A 32 BIT
 REM
 REM Questo esempio cerca di calcolare il tempo necessario per 
-REM svolgere delle operazioni di AND tra bit con numeri a 16 bit.
+REM svolgere delle operazioni di AND tra bit con numeri a 32 bit.
 REM
 REM @include 
 
