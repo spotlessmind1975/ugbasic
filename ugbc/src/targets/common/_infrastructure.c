@@ -12594,6 +12594,8 @@ char * resource_load_asserts( Environment * _environment, char * _filename ) {
     strcat( lookedFilename, "pc1403" );
 #elif __gb__
     strcat( lookedFilename, "gb" );
+#elif __pccga__
+    strcat( lookedFilename, "pccga" );
 #elif __vz200__
     strcat( lookedFilename, "vz200" );
 #endif

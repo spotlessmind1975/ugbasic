@@ -4544,28 +4544,9 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
             CRITICAL_DEBUG_UNSUPPORTED( _number, "unknown");
     }
 
-    outline0("PUSH BX");
-    outline0("CALL N2STRING");
-    outline0("POP BX");
     outline1("MOV SI, [%s]", _string);
-    outline0("MOV AL, BL");
-    outline0("CMP AL, 0");
-    outline1("JZ %spos", label);
-    outline0("MOV AL, '-'");
-    outline0("MOV [SI], AL");
-    outline0("INC SI");
-    outline0("INC CL");
-    outhead1("%spos:", label);
-    outline0("MOV AL, CL");
+    outline0("CALL NUMBERTOSTRINGSIGNED");
     outline1("MOV [%s], AL", _string_size);
-    outhead1("%sloop1:", label );
-    outline0("MOV AL, [DI]");
-    outline0("MOV [SI], AL");
-    outline0("INC SI");
-    outline0("INC DI");
-    outline0("DEC CL");
-    outline0("CMP CL, 0");
-    outline1("JNZ %sloop1", label );
 
 }
 
@@ -5793,7 +5774,7 @@ void cpu_float_single_from_16( Environment * _environment, char * _value, char *
     deploy( fp_vars, src_hw_8086_fp_vars_asm );
 
     outline1( "FILD WORD [%s]", _value );
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
@@ -5802,7 +5783,7 @@ void cpu_float_single_from_8( Environment * _environment, char * _value, char * 
     deploy( fp_vars, src_hw_8086_fp_vars_asm );
 
     outline1( "FILD BYTE [%s]", _value );
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
@@ -5923,7 +5904,12 @@ void cpu_float_single_sin( Environment * _environment, char * _angle, char * _re
 
 void cpu_float_single_cos( Environment * _environment, char * _angle, char * _result ) {
 
-    CRITICAL_UNIMPLEMENTED("COS");
+    deploy( fp_vars, src_hw_8086_fp_vars_asm );
+    deploy( fp_single_cos, src_hw_8086_fp_cos_asm );
+
+    outline1( "FLD DWORD [%s]", _angle );
+    outline0( "CALL FPCOS");
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
@@ -5933,7 +5919,7 @@ void cpu_float_single_tan( Environment * _environment, char * _angle, char * _re
 
     outline1( "FLD DWORD [%s]", _angle );
     outline0( "FTAN");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
