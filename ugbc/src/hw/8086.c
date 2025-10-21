@@ -5812,7 +5812,7 @@ void cpu_float_single_add( Environment * _environment, char * _x, char * _y, cha
     outline1( "FLD DWORD [%s]", _x );
     outline1( "FLD DWORD [%s]", _y );
     outline0( "FADD");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
@@ -5823,7 +5823,7 @@ void cpu_float_single_sub( Environment * _environment, char * _x, char * _y, cha
     outline1( "FLD DWORD [%s]", _x );
     outline1( "FLD DWORD [%s]", _y );
     outline0( "FSUB");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
     
 }
 
@@ -5834,7 +5834,7 @@ void cpu_float_single_mul( Environment * _environment, char * _x, char * _y, cha
     outline1( "FLD DWORD [%s]", _x );
     outline1( "FLD DWORD [%s]", _y );
     outline0( "FMUL");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 
@@ -5845,7 +5845,7 @@ void cpu_float_single_div( Environment * _environment, char * _x, char * _y, cha
     outline1( "FLD DWORD [%s]", _x );
     outline1( "FLD DWORD [%s]", _y );
     outline0( "FDIV");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
     
 }
 
@@ -5892,7 +5892,7 @@ void cpu_float_single_neg( Environment * _environment, char * _value, char * _re
     outline1( "FILD DWORD [%s]", zero->realName );
     outline1( "FLD DWORD [%s]", _value );
     outline0( "FSUB");
-    outline1( "FSTP [%s]", _result );
+    outline1( "FSTP DWORD [%s]", _result );
 
 }
 

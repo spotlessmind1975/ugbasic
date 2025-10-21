@@ -27,3 +27,5 @@
 ;  * implicite. Consultare la Licenza per il testo specifico che regola le
 ;  * autorizzazioni e le limitazioni previste dalla medesima.
 ;  ****************************************************************************/
+
+PI:     dt    3.141592653589793238462

@@ -31,16 +31,16 @@
 FPCOS:
     FPTAN           ; ST(0) now holds tan(x), ST(1) holds 1.0
     FWAIT           ; Ensure FPU operation is complete before proceeding
-    FMUL ST(0), ST(0) ; ST(0) = tan(x) * tan(x) = tan^2(x)
+    FMUL ST0, ST0 ; ST(0) = tan(x) * tan(x) = tan^2(x)
     FWAIT
     FLD1            ; Push 1.0 onto the stack. ST(0) = 1.0, ST(1) = tan^2(x)
     FWAIT
-    FADDP ST(1), ST(0) ; ST(1) = tan^2(x) + 1.0. Pop ST(0). ST(0) now holds 1 + tan^2(x)
+    FADDP ST1, ST0 ; ST(1) = tan^2(x) + 1.0. Pop ST(0). ST(0) now holds 1 + tan^2(x)
     FWAIT
     FSQRT           ; ST(0) = sqrt(1 + tan^2(x))
     FWAIT
     FLD1            ; Push 1.0 onto the stack. ST(0) = 1.0, ST(1) = sqrt(1 + tan^2(x))
     FWAIT
-    FDIVP ST(1), ST(0) ; ST(1) = 1.0 / sqrt(1 + tan^2(x)). Pop ST(0). ST(0) now holds cos(x)
+    FDIVP ST1, ST0 ; ST(1) = 1.0 / sqrt(1 + tan^2(x)). Pop ST(0). ST(0) now holds cos(x)
     FWAIT
     RET
