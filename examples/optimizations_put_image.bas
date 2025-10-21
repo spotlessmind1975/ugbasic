@@ -1,14 +1,14 @@
 ﻿REM @english
-REM OPTIMIZATION BENCHMARKS MULTITASKING
+REM OPTIMIZATION BENCHMARKS FREE SIZE PUT IMAGE
 REM
 REM This example attempts to calculate the time required to 
-REM perform task switching.
+REM draw 2,000 images of 32x16 pixel.
 REM 
 REM @italian
-REM MISURE DI OTTIMIZZAZIONE CONVERTIRE STRINGHE IN VALORI
+REM MISURE DI OTTIMIZZAZIONE PUT IMAGE A DIMENSIONE LIBERA
 REM
 REM Questo esempio cerca di calcolare il tempo necessario per 
-REM svolgere il task switching.
+REM disegnare 2.000 immagini da 32x16 pixel
 REM
 REM @include 
 
