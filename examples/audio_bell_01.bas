@@ -41,5 +41,5 @@ END PROCEDURE
 
     CLS
 
-	example[]
+	example[] ON POKEY, TED, SID
 	
