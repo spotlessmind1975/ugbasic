@@ -4238,12 +4238,10 @@ void cpu_and_32bit( Environment * _environment, char * _left, char * _right, cha
         MAKE_LABEL
 
         outline1("LDD %s", _left );
-        outline1("ANDA %s", _right );
-        outline1("ANDB %s", address_displacement(_environment, _right, "1") );
+        outline1("ANDD %s", _right );
         outline1("STD %s", _result);
         outline1("LDD %s", address_displacement(_environment, _left, "2") );
-        outline1("ANDA %s", address_displacement(_environment, _right, "2") );
-        outline1("ANDB %s", address_displacement(_environment, _right, "3") );
+        outline1("ANDD %s", address_displacement(_environment, _right, "2") );
         outline1("STD %s", address_displacement(_environment, _result, "2"));
 
     no_embedded( cpu_and_16bit )
