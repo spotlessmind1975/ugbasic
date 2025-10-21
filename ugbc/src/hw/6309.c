@@ -4226,8 +4226,7 @@ void cpu_and_16bit( Environment * _environment, char * _left, char * _right, cha
         MAKE_LABEL
 
         outline1("LDD %s", _right );
-        outline1("ANDA %s", _left );
-        outline1("ANDB %s", address_displacement(_environment, _left, "1") );
+        outline1("ANDD %s", _left );
         outline1("STD %s", _result);
 
     no_embedded( cpu_and_16bit )
