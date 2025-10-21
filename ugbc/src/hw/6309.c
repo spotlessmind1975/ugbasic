@@ -1185,8 +1185,7 @@ void cpu_math_div_8bit_to_8bit( Environment * _environment, char *_source, char 
         outline0("LDA #$0" );
         outline0("LDB <TMPPTR+1" );
         outhead1("%sdivide", label );
-        outline0("ASLB" );
-        outline0("ROLA" );
+        outline0("LSLD" );
         outline0("CMPA <TMPPTR");
         outline1("BCS %schkcnt", label );
         outline0("SUBA <TMPPTR" );
@@ -2364,8 +2363,7 @@ void cpu_math_div2_const_16bit( Environment * _environment, char *_source, int _
             outline1("LDX #$%4.4x", _steps );
             outhead1("%sloop", label );
             outline0("ANDCC #$FE" );
-            outline0("ASRA" );
-            outline0("RORB" );
+            outline0("ASRD" );
             outline0("LEAX -1, X");
             outline0("CMPX #0");
             outline1("BNE %sloop", label );
