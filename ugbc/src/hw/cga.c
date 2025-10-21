@@ -1305,13 +1305,63 @@ void cga_cline( Environment * _environment, char * _characters ) {
 
 int cga_image_size( Environment * _environment, int _width, int _height, int _mode ) {
 
+    switch( _mode ) {
+
+        case TILEMAP_MODE_40x25x2:
+        case TILEMAP_MODE_40x25x16:
+        case TILEMAP_MODE_80x25x2:
+        case TILEMAP_MODE_80x25x16:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_640x200x2:
+            break;
+
+        case BITMAP_MODE_320x200x4:
+
+            return 3 + ( ( _width >> 2 ) * _height );
+
+    }
+
+    return 1;
+
 }
 
 static int calculate_images_size( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
+    switch( _mode ) {
+        case TILEMAP_MODE_40x25x2:
+        case TILEMAP_MODE_40x25x16:
+        case TILEMAP_MODE_80x25x2:
+        case TILEMAP_MODE_80x25x16:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_640x200x2:
+            break;
+
+        case BITMAP_MODE_320x200x4:
+            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
+
+    }
+
+    return 0;
+
 }
 
 static int calculate_sequence_size( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
+
+    switch( _mode ) {
+        case TILEMAP_MODE_40x25x2:
+        case TILEMAP_MODE_40x25x16:
+        case TILEMAP_MODE_80x25x2:
+        case TILEMAP_MODE_80x25x16:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_640x200x2:
+            break;
+
+        case BITMAP_MODE_320x200x4:
+            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+
+    }
+
+    return 0;
 
 }
 
@@ -1323,9 +1373,166 @@ Variable * cga_sprite_converter( Environment * _environment, char * _source, int
 
 }
 
+static Variable * cga_image_converter_multicolor_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    RGBi white = { 0xff, 0xff, 0xff, 0xff };
+    RGBi black = { 0x00, 0x00, 0x00, 0x00 };
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 8 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 8 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 4) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[_environment->paletteSelected][0];
+
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_ALTERNATE[0]) / sizeof(RGBi)), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = cga_image_size( _environment, _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_320x200x4 );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height;
+    *(buffer+2) = 0;
+
+    _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; ++image_y) {
+        for (image_x = 0; image_x < _frame_width; ++image_x) {
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            offset = ( image_y * ( _frame_width >> 2 ) ) + ( image_x >> 2 );
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<lastUsedSlotInCommonPalette; ++i ) {
+                    int distance = rgbi_distance(&commonPalette[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = commonPalette[i].index;
+                    }
+                }
+            }
+
+            adilinepixel(colorIndex);
+
+            // printf( "%1.1x", colorIndex );
+
+            bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
+
+            *(buffer + 3 + offset) |= bitmask;
+
+            _source += _depth;
+
+        }
+
+        _source += ( _width - _frame_width ) * _depth;
+
+        // printf("\n" );
+    }
+
+    adilineendbitmap();
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * cga_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
-    return cga_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+    switch( _mode ) {
+
+        case TILEMAP_MODE_40x25x2:
+        case TILEMAP_MODE_40x25x16:
+        case TILEMAP_MODE_80x25x2:
+        case TILEMAP_MODE_80x25x16:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_640x200x2:
+            break;
+
+        case BITMAP_MODE_320x200x4:
+
+            return cga_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+            break;
+
+    }
+
+    WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    return cga_new_image( _environment, 8, 8, BITMAP_MODE_320x200x4 );
 
 }
 
@@ -1343,24 +1550,87 @@ void cga_wait_vbl( Environment * _environment ) {
 
 Variable * cga_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
+    int size = cga_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGE, "(new image)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _width;
+    *(buffer+1) = _height;
+    *(buffer+2) = 0;
+
+    result->valueBuffer = buffer;
+    result->size = size;
+    
     return result;
 
 }
 
 Variable * cga_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = cga_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
     Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
 
+    char * buffer = malloc ( size );
+    memset( buffer, 0, size );
+
+    *(buffer) = _frames;
+    *(buffer+1) = ( _width & 0xff );
+    *(buffer+2) = ( _width >> 8 ) & 0xff;
+    for( int i=0; i<_frames; ++i ) {
+        *(buffer+3+(i*frameSize)) = _width;
+        *(buffer+3+(i*frameSize)+1) = _height;
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size;
+    result->frameCount = _frames;
+    
     return result;
 
 }
 
 Variable * cga_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
+    int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
+    int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
+    int frameSize = cga_image_size( _environment, _width, _height, _mode );
+
+    if ( ! size ) {
+        CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
+    }
+
     Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new sequence)" );
 
+    char * buffer = malloc ( size2 );
+    memset( buffer, 0, size2 );
+
+    *(buffer) = _frames;
+    *(buffer+1) = _width;
+    *(buffer+2) = _sequences;
+    for( int i=0; i<(_frames * _sequences); ++i ) {
+        *(buffer+3+(i*frameSize)) = _width;
+        *(buffer+3+(i*frameSize)+1) = _height;
+    }
+
+    result->valueBuffer = buffer;
+    result->frameSize = frameSize;
+    result->size = size2;
+    result->frameCount = _frames;
+    
     return result;
 
 }
