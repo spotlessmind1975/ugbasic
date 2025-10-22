@@ -2515,6 +2515,11 @@ typedef struct _Environment {
      */
     Label * referredLabels;
 
+    /*
+     * List of stored labels
+     */
+    Label * storedLabels;
+
     int dataNeeded;
 
     int lineNeeded;
@@ -5467,6 +5472,8 @@ void                    label_referred_define_numeric( Environment * _environmen
 void                    label_referred_define_named( Environment * _environment, char * _label );
 int                     label_referred_exists_named( Environment * _environment, char * _label );
 int                     label_referred_exists_numeric( Environment * _environment, int _label );
+void                    label_stored_define_named( Environment * _environment, char * _label );
+int                     label_stored_exists_named( Environment * _environment, char * _label );
 void                    lbottom( Environment * _environment );
 void                    leftw( Environment * _environment, char * _line, char * _column, char * _width, char * _height );
 void                    leftb( Environment * _environment, char * _line, char * _column, char * _width, char * _height );

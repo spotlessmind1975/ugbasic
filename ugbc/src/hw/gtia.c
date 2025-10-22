@@ -1424,7 +1424,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     }
 
     char dliCommonLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( dliCommonLabel, "GTIAINITDLICOMMON%d", _screen_mode->id );
+    sprintf( dliCommonLabel, "GTIAINITDLICOMMON%s%d", label, _screen_mode->id );
 
     cpu_label(_environment, dliCommonLabel);
     if ( _screen_mode->bitmap ) {
@@ -1453,21 +1453,31 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     char dliLabel[MAX_TEMPORARY_STORAGE];
     sprintf( dliLabel, "GTIAINITDLI%d", _screen_mode->id );
 
-    cpu_label(_environment, dliLabel);
-    cpu_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
-    
-    char dliLabel2[MAX_TEMPORARY_STORAGE];
-    sprintf( dliLabel2, "GTIAINITDLIB%d", _screen_mode->id );
-    cpu_label(_environment, dliLabel2);
+    if ( ! label_stored_exists_named( _environment, dliLabel ) ) {
 
-    cpu_call( _environment, dliCommonLabel);
+        cpu_label(_environment, dliLabel);
+        cpu_mem_move_direct_size( _environment, dli->realName, "DLI", dli->size );
+        
+        char dliLabel2[MAX_TEMPORARY_STORAGE];
+        sprintf( dliLabel2, "GTIAINITDLIB%d", _screen_mode->id );
+        cpu_label(_environment, dliLabel2);
 
-    outline0("SEI" );
-    outline0("LDA #<DLI" );
-    outline0("STA $230" );
-    outline0("LDA #>DLI" );
-    outline0("STA $231" );
-    outline0("CLI" );
+        cpu_call( _environment, dliCommonLabel);
+
+        outline0("SEI" );
+        outline0("LDA #<DLI" );
+        outline0("STA $230" );
+        outline0("LDA #>DLI" );
+        outline0("STA $231" );
+        outline0("CLI" );
+
+        label_stored_define_named( _environment, dliLabel );
+        
+    } else {
+
+        cpu_call( _environment, dliLabel);
+
+    }
 
     cpu_return(_environment);
 
@@ -1985,12 +1995,7 @@ void gtia_finalization( Environment * _environment ) {
         while(copperList) {
             if ( !copperList->name ) {
                 anon = 1;
-                if ( copperList->mode == 0 ) {
-                    copperList->mode = _environment->currentMode;
-                    outline0( "JSR COPPERACTIVATE");
-                }
             }
-            outline0( "JSR COPPERACTIVATE");
             char copperlist0Named[MAX_TEMPORARY_STORAGE];
             sprintf( copperlist0Named, "COPPERLIST0000%s", copperList->name ? copperList->name : "" );
             char dliLabel[MAX_TEMPORARY_STORAGE];

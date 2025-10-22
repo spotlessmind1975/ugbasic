@@ -11546,6 +11546,40 @@ void label_referred_define_named( Environment * _environment, char * _label ) {
 
 }
 
+int label_stored_exists_named( Environment * _environment, char * _label ) {
+
+    Label * actual = _environment->storedLabels;
+    while( actual ) {
+        if ( actual->name && !strcmp( actual->name, _label ) ) {
+            return 1;
+        }
+        actual = actual->next;
+    }
+    return 0;
+
+}
+
+void label_stored_define_named( Environment * _environment, char * _label ) {
+    
+    if (label_stored_exists_named( _environment, _label )) {
+        return;
+    }
+
+    Label * label = malloc( sizeof( Label ) );
+    memset( label, 0, sizeof( Label ) );
+    label->name = strdup( _label );
+    Label * last = _environment->storedLabels;
+    if ( last ) {
+        while( last->next ) {
+            last = last->next;
+        }
+        last->next = label;
+    } else {
+        _environment->storedLabels = label;
+    }
+
+}
+
 void const_define_numeric( Environment * _environment, char * _name, int _value ) {
     
     if ( _environment->emptyProcedure ) {
