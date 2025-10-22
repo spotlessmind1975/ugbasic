@@ -146,7 +146,13 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
         result->image->data = stbi_xload(lookedFilename, &result->image->width, &result->image->height, &result->count);
         result->image->depth = 4;
         result->frameWidth = result->image->width;
+        if ( ! result->frameWidth ) {
+            CRITICAL_INVALID_FRAME_WIDTH( _filename );
+        }
         result->frameHeight = result->image->height;
+        if ( ! result->frameHeight ) {
+            CRITICAL_INVALID_FRAME_HEIGHT( _filename );
+        }
         result->horizontal = 1;
         result->vertical = result->count;
         layout_mode = 1;
