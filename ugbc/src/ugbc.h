@@ -3787,6 +3787,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_COPPER_LIST_UNKNOWN( n ) CRITICAL2("E398 - unknown COPPER list using COPPER USE", n );
 #define CRITICAL_INVALID_NUMBER_BYTES( n ) CRITICAL2i("E399 - invalid number of bytes for NUMBER representation", n );
 #define CRITICAL_INVALID_NUMBER_DIGITS( n ) CRITICAL2i("E400 - invalid number of digits for NUMBER representation", n );
+#define CRITICAL_INVALID_FRAME_WIDTH( s ) CRITICAL2("E401 - invalid frame width", s );
+#define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
