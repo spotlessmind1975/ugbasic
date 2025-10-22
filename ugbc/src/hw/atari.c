@@ -420,7 +420,7 @@ void atari_dload( Environment * _environment, char * _filename, char * _offset, 
 
 void atari_dsave( Environment * _environment, char * _filename, char * _offset, char * _address, char * _size ) {
 
-    deploy( dcommon, src_hw_atari_dcommon_asm );
+    deploy_preferred( dcommon, src_hw_atari_dcommon_asm );
     deploy( dsave, src_hw_atari_dsave_asm );
 
     MAKE_LABEL
