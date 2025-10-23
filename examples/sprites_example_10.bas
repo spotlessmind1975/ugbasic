@@ -25,7 +25,9 @@ REM @include c64,c64reu,c128
 	BITMAP ENABLE
 	
 	COLOR BORDER BLACK
-	
+		
+PROCEDURE example ON C64, C64REU, C128
+
 	DIM index AS BYTE
 
 	DIM spaceImage AS IMAGE
@@ -44,8 +46,6 @@ REM @include c64,c64reu,c128
 	DIM alienshipMove(maxAlienships) AS PATH
 	DIM alienshipLX(maxAlienships) AS POSITION, alienshipRX(maxAlienships) AS POSITION
 	DIM alienshipX AS POSITION, alienshipY AS POSITION
-	
-PROCEDURE example ON C64, C64REU, C128
 
 	spaceImage := LOAD IMAGE("space.png")
 		
