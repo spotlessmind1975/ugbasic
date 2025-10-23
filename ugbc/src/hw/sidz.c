@@ -57,7 +57,7 @@ void sidz_finalization( Environment * _environment ) {
 
     if ( !_environment->deployed.sidstartup ) {
         outhead0( "SIDZSTARTUP:" );
-        outline0( "RTS" );
+        outline0( "RET" );
     }
 
 }
