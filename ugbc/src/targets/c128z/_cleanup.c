@@ -79,6 +79,7 @@ void target_finalization( Environment * _environment ) {
     // outhead0("LASTVAR: db $42");
     // outhead0("section code_user");
 
+    vdcz_finalization( _environment );
     sidz_finalization( _environment );
 
     if ( ! _environment->anyProtothread ) {
