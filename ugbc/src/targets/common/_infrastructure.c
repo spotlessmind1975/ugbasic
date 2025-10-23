@@ -1696,6 +1696,8 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_NUMBER ) {
                     int os = VT_OPTIMAL_SHIFT( _environment->numberConfig.maxBytes );
                     size *= ( 1 << os );
+                } else if ( destination->arrayType == VT_TYPE ) {
+                    size *= ( destination->typeType->size );
                 } else {
                     CRITICAL_DATATYPE_UNSUPPORTED("array(1b)", DATATYPE_AS_STRING[destination->arrayType]);
                 }
