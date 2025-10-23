@@ -952,6 +952,8 @@ static unsigned char * dli_build_antic15( Environment * _environment,
     DLI_JVB( dliListCurrent, 0 );
     *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
 
+    *_dli_size = ( dliListCurrent - dliListStart );
+
     return dliListStart;
 
 }
@@ -968,7 +970,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     int currentHeight = 0;
     int scanline = 0;
     int dliListStartOffset;
-    int dliSize;
+    int dliSize = 0;
     int screenMemoryAddress2 = 0;
     int rows = 0;
 
