@@ -70,6 +70,8 @@ void c128_sys_call( Environment * _environment, int _destination ) {
 
     _environment->sysCallUsed = 1;
 
+    deploy_preferred( syscall, src_hw_c128_syscall_asm);
+
     outline0("PHA");
     outline1("LDA #$%2.2x", (_destination & 0xff ) );
     outline0("STA SYSCALL0+1");
