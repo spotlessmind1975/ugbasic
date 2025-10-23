@@ -2357,7 +2357,7 @@ void vdcz_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w
         outline0("LD C, A");
         outline1("LD A, (%s)", address_displacement( _environment, _w, "1" ) );
         outline0("LD IXH, A");
-        outline1("LD A, (%S)", _h);
+        outline1("LD A, (%s)", _h);
         outline0("LD B, A");
         outline0("CALL CLSBOX");
     } else {
