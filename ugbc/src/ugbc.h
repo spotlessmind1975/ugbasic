@@ -1884,6 +1884,7 @@ typedef struct _Deployed {
     int screen;
     int dojo_fujinet_init;
     int center;
+    int syscall;
     
 } Deployed;
 
