@@ -2718,8 +2718,9 @@ void cpu_math_div_32bit_to_16bit_const( Environment * _environment, char *_sourc
         sprintf(dividendLabel, "%sdiv", label );
 
         outline1("BRA %s", label );
-        outhead1("%s", label );
+        outhead1("%s", dividendLabel );
         outline1("fdb $%4.4x", _destination );
+        outhead1("%s", label );
         outline1("LDQ %s", _source );
         outline1("DIVQ %s", dividendLabel );
 
