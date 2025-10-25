@@ -1251,6 +1251,15 @@ void cpc_finalization( Environment * _environment ) {
     if ( _environment->vestigialConfig.clsImplicit ) {
         deploy( clsGraphic, src_hw_cpc_cls_graphic_asm );
     }
+
+    CopperList * copperList = _environment->copperList;
+    if ( copperList ) {
+        while(copperList) {
+            outhead1("COPPERACTIVATE%s:", copperList->name ? copperList->name : "" );
+            outline0("RET");
+            copperList = copperList->next;
+        }    
+    }
     
 }
 
