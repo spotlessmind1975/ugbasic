@@ -12,6 +12,8 @@ REM che stiamo richiedendo di utilizzare la precisione singola.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+OPTION COMPILE ON ALL BUT GB
+
 DEFINE FLOAT PRECISION SINGLE
 
 	CLS

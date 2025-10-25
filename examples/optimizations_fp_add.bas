@@ -12,6 +12,8 @@ REM effettuare calcoli in virgola mobile, in particolare addizioni.
 REM
 REM @include 
 
+OPTION COMPILE ON ALL BUT GB
+
 	CONST maxCounter = 1
 
 	CLS

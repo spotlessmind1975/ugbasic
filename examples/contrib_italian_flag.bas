@@ -22,6 +22,8 @@ REM @url https://www.facebook.com/groups/vintagecomputerclubitalia.it/posts/3134
 REM 
 REM @include cpc,coleco,msx,pc128op,sg1000,sc3000,mo5,to8,coco3,zx
 
+OPTION COMPILE ON CPC, COLECO, MSX, PC128OP, SG1000, SC3000, MO5, TO8, COCO3, ZX
+
 	' Enable colorfull bitmap graphic (up to 16 colors)
 	
 	BITMAP ENABLE(16)

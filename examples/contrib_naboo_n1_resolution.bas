@@ -20,6 +20,8 @@ REM @url http://patsos.de/New_Weblog/?p=671
 REM
 REM @include atari,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,zx
 
+OPTION COMPILE ON ALL BUT GB
+
 DEFINE SCREEN MODE UNIQUE
 
 PROCEDURE example ON ALL BUT VIC20, ATARIXL, PLUS4, C16

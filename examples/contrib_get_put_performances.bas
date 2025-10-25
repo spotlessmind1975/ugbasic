@@ -50,14 +50,7 @@ LOOP
 PRINT "DONE"
 PRINT
 
-DIM fps AS FLOAT, frames AS FLOAT, time AS FLOAT
-DIM pxs AS FLOAT, pixels AS FLOAT
-px = 32 * 32
-frames = counter
-time = 10
-pixels = px * frames
-
-PRINT PEN(WHITE);" FRAMES   : "; frames
-PRINT PEN(WHITE);" PIXELS   : "; pixels
-PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); INT( frames / time )
+PRINT PEN(WHITE);" FRAMES   : "; counter
+PRINT PEN(WHITE);" PIXELS   : "; 32*32*counter
+PRINT PEN(WHITE);" FRAMES/S : "; PEN(YELLOW); counter / 10
 

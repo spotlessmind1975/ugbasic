@@ -12,6 +12,8 @@ REM Simons' BASIC, e come funzionano se ricompilati con ugBASIC.
 REM 
 REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,vic20,zx
 
+OPTION COMPILE ON ALL BUT GB
+
 100 HIRES 0,1 
 105 REPEAT: a$ = INKEY$
 110 x=290.0*RND(1): y=180.0*RND(1) 

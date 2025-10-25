@@ -25,6 +25,8 @@ REM senza rinunciare alle specificità di ognuno.
 REM
 REM @include c64
 
+OPTION COMPILE ON C64
+
 	' We suggest the use the most coloured
 	' resolution (up to 16 colors).
 	
