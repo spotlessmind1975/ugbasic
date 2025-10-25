@@ -568,9 +568,11 @@ generated/c128z/asm/%.asm:
 
 generated/c128z/exe/%.prg:
 	@$(Z80ASM) -D__c128z__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.prg=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.prg=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.prg=.sym)) $(subst /exe/,/asm/,$(@:.prg=.osym))
 	@php sym2c128z.php $(subst /exe/,/asm/,$(@:.prg=.osym)) >$(subst /exe/,/asm/,$(@:.prg=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.prg=.o))
+	@touch $(subst /exe/,/asm/,$(@:.prg=.bin))
 	@mv $(subst /exe/,/asm/,$(@:.prg=.bin)) $@
 	@rm -f $(@:.prg=.bin) $(@:.prg=_*.bin) $(@:.prg=.) $(@:.prg=_*.)
 
@@ -641,9 +643,12 @@ generated/coleco/asm/%.asm:
 
 generated/coleco/exe/%.rom:
 	@$(Z80ASM) -D__coleco__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.rom=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
 	@php sym2coleco.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_code_user.bin))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_data_user.bin))
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
@@ -666,6 +671,7 @@ generated/cpc/asm/%.asm:
 
 generated/cpc/exe/%.dsk:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.dsk=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.dsk=.sym)) $(subst /exe/,/asm/,$(@:.dsk=.osym))
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.dsk=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.dsk=.o))
@@ -676,6 +682,7 @@ generated/cpc/exe/%.dsk:
 
 generated/cpc/exe/%.bin:
 	@$(Z80ASM) -D__cpc__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.bin=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.bin=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.bin=.sym)) $(subst /exe/,/asm/,$(@:.bin=.osym))
 	@php sym2cpc.php $(subst /exe/,/asm/,$(@:.bin=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.bin=.o))
@@ -699,6 +706,7 @@ generated/coco/asm/%.asm: compiler
 
 generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -3 -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@touch $(@:.dsk=.bin)
 	@$(COCODECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -722,6 +730,7 @@ generated/cocob/asm/%.asm: compiler
 
 generated/cocob/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -3 -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@touch $(@:.dsk=.bin)
 	@$(COCOBDECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/cocob/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -745,6 +754,7 @@ generated/coco3/asm/%.asm: compiler
 
 generated/coco3/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@touch $(@:.dsk=.bin)
 	@$(COCO3DECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -768,6 +778,7 @@ generated/coco3b/asm/%.asm: compiler
 
 generated/coco3b/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 	@$(ASM6809) -l $(@:.dsk=.lis) -s $(@:.dsk=.lbl) -3 -C -e 10752 -o $(@:.dsk=.bin) $(subst /exe/,/asm/,$(@:.dsk=.asm))
+	@touch $(@:.dsk=.bin)
 	@$(COCO3BDECB) $(DECB) $(@:.dsk=.bin) $(@:.dsk=) $(@) 
 
 generated/coco3b/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
@@ -854,14 +865,17 @@ generated/gb/asm/%.asm: compiler
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.gb$(UGBCEXESUFFIX) $(OPTIONS) $(subst generated/gb/asm/,,$(@:.asm=.bas)) ../$@ 
 
 generated/gb/exe/%.gb: compiler
-	$(Z80ASM) -l -m=gbz80 -s -g -b $(subst /exe/,/asm/,$(@:.gb=.asm))
+	@$(Z80ASM) -l -m=gbz80 -s -g -b $(subst /exe/,/asm/,$(@:.gb=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.gb=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.gb=.sym)) $(subst /exe/,/asm/,$(@:.gb=.osym))
 	@php sym2gb.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.gb=.o))
+	@touch $(subst /exe/,/asm/,$(@:.gb=_code.bin))
+	@touch $(subst /exe/,/asm/,$(@:.gb=_data.bin))
 	@mv $(subst /exe/,/asm/,$(@:.gb=_code.bin)) $(@:.gb=_code.bin)
 	@mv $(subst /exe/,/asm/,$(@:.gb=_data.bin)) $(@:.gb=_data.bin)
 	@cat $(@:.gb=_code.bin) $(@:.gb=_data.bin) >$(@:.gb=.bin)
-	@$(Z80APPMAKE) +gb -b $(@:.gb=.bin) 
+	@$(Z80APPMAKE) +gb -b $(@:.gb=.bin) 2>/dev/null >/dev/null
 	@rm -f $(@:.gb=.bin) $(@:.gb=_*.bin)
 
 generated/gb/exeso/%.gb: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.gb=.bas))
@@ -901,9 +915,12 @@ generated/msx1/asm/%.asm:
 
 generated/msx1/exe/%.rom:
 	@$(Z80ASM) -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.rom=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
 	@php sym2msx.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.rom=.o))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_code_user.bin))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_data_user.bin))
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@:.rom=.bin)
@@ -954,6 +971,7 @@ generated/pc1403/asm/%.asm:
 
 generated/pc1403/exe/%.ram:
 	@$(AS61860) -gloaxsff $(subst /exe/,/asm/,$(@:.ram=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.ram=.rel))
 	@mv $(subst /exe/,/asm/,$(@:.ram=.rel)) $(@:.ram=.rel)
 	@$(ASLINK) -t $(@:.ram=.rel)
 	@$(COCOBIN2RAM) $(@:.ram=.bin) $(@)
@@ -1023,8 +1041,11 @@ generated/sc3000/asm/%.asm:
 
 generated/sc3000/exe/%.rom:
 	@$(Z80ASM) -D__sc3000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.rom=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
 	@php sym2sc3000.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_code_user.bin))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_data_user.bin))
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
@@ -1045,8 +1066,11 @@ generated/sg1000/asm/%.asm:
 
 generated/sg1000/exe/%.rom:
 	@$(Z80ASM) -D__sg1000__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.rom=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.rom=.sym))
 	@mv $(subst /exe/,/asm/,$(@:.rom=.sym)) $(subst /exe/,/asm/,$(@:.rom=.osym))
 	@php sym2sg1000.php $(subst /exe/,/asm/,$(@:.rom=.osym)) >$(subst /exe/,/asm/,$(@:.rom=.sym))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_code_user.bin))
+	@touch $(subst /exe/,/asm/,$(@:.rom=_data_user.bin))
 	@mv $(subst /exe/,/asm/,$(@:.rom=_code_user.bin)) $(@:.rom=_code_user.bin)
 	@mv $(subst /exe/,/asm/,$(@:.rom=_data_user.bin)) $(@:.rom=_data_user.bin)
 	@cat $(@:.rom=_code_user.bin) $(@:.rom=_data_user.bin) >$(@)
@@ -1131,6 +1155,8 @@ generated/vz200/asm/%.asm:
 
 generated/vz200/exe/%.vz:
 	@$(Z80ASM) -D__vz200__ -l -m -s -g -b $(subst /exe/,/asm/,$(@:.vz=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.vz=.sym))
+	@touch $(subst /exe/,/asm/,$(@:.vz=.bin))
 	@mv $(subst /exe/,/asm/,$(@:.vz=.sym)) $(subst /exe/,/asm/,$(@:.vz=.osym))
 	@php sym2vz200.php $(subst /exe/,/asm/,$(@:.vz=.osym)) >$(subst /exe/,/asm/,$(@:.vz=.sym))
 	@rm -f $(subst /exe/,/asm/,$(@:.vz=.o))
@@ -1152,6 +1178,8 @@ generated/zx/asm/%.asm:
 
 generated/zx/exe/%.tap:
 	@$(Z80ASM) -l -b $(subst /exe/,/asm/,$(@:.tap=.asm))
+	@touch $(subst /exe/,/asm/,$(@:.tap=.lis))
+	@touch $(@:.tap=.bin)
 	@mv $(subst /exe/,/asm/,$(@:.tap=.lis)) $(@:.tap=.lis)
 	@rm -f $(subst /exe/,/asm/,$(@:.tap=.o))
 	@mv $(subst /exe/,/asm/,$(@:.tap=.bin)) $(@:.tap=.bin)
