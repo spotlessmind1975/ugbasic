@@ -451,7 +451,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     ted_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
     if ( !_environment->putImageRefUnsafe ) {
-        outhead1("%sskip", label );
+        outhead1("%sskip:", label );
     }
 
 }
