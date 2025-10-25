@@ -10201,6 +10201,7 @@ option_definitions :
     COMPILE on_targets {
         if ( ! $2 ) {
             printf("OPTION COMPILE does not allow to compile this source code on this target.\n");
+            end_compilation( _environment );
             exit(EXIT_SUCCESS);
         }
     }
