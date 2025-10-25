@@ -24,6 +24,8 @@ REM senza rinunciare alle specificità di ognuno.
 REM
 REM @include atari,c64,c64reu,coleco
 
+OPTION COMPILE ON ATARI, C64, C64REU, COLECO
+
 	' We suggest the use the most coloured
 	' resolution (up to 16 colors).
 	
