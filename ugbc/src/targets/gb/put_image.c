@@ -274,8 +274,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
             } else {
                 outline1("LD A, (%s)", sequence->realName );
-                outline0("PUSH HL" );
-                outline0("POP IX" );
+                outline0("LD (IXR), HL" );
                 cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "10") );
             }
             if ( _frame ) {
@@ -283,8 +282,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
                 } else {
                     outline1("LD A, (%s)", frame->realName );
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
+                    outline0("LD (IXR), HL" );
                     cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
                 }
             }
@@ -297,8 +295,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
                 if ( strlen(_frame) == 0 ) {
 
                 } else {
-                    outline0("PUSH HL" );
-                    outline0("POP IX" );
+                    outline0("LD (IXR), HL" );
                     outline1("LD A, (%s)", frame->realName );
                     cpu_call_indirect( _environment, address_displacement( _environment, image->realName, "8") );
                 }
