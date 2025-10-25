@@ -48,6 +48,9 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
+    variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
+    variable_global( _environment, "DOJOERROR" );
+
     variable_import( _environment, "DLOADERR", VT_BYTE, 0 );
     variable_global( _environment, "DLOADERR" );
     variable_import( _environment, "DSAVEERR", VT_BYTE, 0 );
