@@ -11,6 +11,8 @@ REM reale del sistema di rete di Fujinet.
 REM 
 REM @include coco
 
+OPTION COMPILE ON ATARI, ATARIXL, COCO
+
 CLS
 
 DO

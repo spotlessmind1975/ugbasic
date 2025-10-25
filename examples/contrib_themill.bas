@@ -16,6 +16,8 @@ REM @url https://www.deviantart.com/oliverlindau/art/The-Mill-670453724
 REM
 REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,vic20,zx
 
+OPTION COMPILE ON ALL BUT C16, PLUS4
+
     BITMAP ENABLE(16)
 
     CLS
