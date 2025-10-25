@@ -75,8 +75,7 @@ void target_prepare_finalization( Environment * _environment ) {
 
 void target_finalization( Environment * _environment ) {
 
-    // // tms9918_finalization( _environment );
-    // gb_finalization( _environment );
+    gb_finalization( _environment );
 
     outhead0("section data");
     outhead0("LASTVAR: db $00");
