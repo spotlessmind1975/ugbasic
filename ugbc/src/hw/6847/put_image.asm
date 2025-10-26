@@ -463,7 +463,7 @@ PUTIMAGE2L0
     LDA 2,Y
     STA <IMAGET
 
-@IF vestigialConfig.rchack_acme_1172
+@IF vestigialConfig.rchack_acme_inc_1172
     LEAY 2,Y
 @ELSE
     LEAY 3,Y
@@ -649,7 +649,7 @@ PUTIMAGECL0
     LDA 2,Y
     STA <IMAGEF
 
-@IF vestigialConfig.rchack_acme_1172
+@IF vestigialConfig.rchack_acme_inc_1172
     LEAY 2,Y
 @ELSE
     LEAY 3,Y

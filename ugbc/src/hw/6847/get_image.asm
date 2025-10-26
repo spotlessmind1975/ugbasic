@@ -396,7 +396,7 @@ GETIMAGECOMMON
     STA <IMAGEH
     STA <IMAGEH2
 
-@IF vestigialConfig.rchack_acme_1172
+@IF vestigialConfig.rchack_acme_inc_1172
     LEAY 2,Y
 @ELSE
     LEAY 3,Y

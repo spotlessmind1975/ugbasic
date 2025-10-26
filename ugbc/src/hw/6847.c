@@ -1308,15 +1308,23 @@ int c6847_image_size( Environment * _environment, int _width, int _height, int _
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( ( _width >> 2 ) * _height );
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                return 3 + ( ( _width >> 2 ) * _height );
+            } else {
+                return 2 + ( ( _width >> 2 ) * _height );
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + 2*( ( _width >> 3 ) * _height );
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                if ( _transparent ) {
+                    return 3 + 2*( ( _width >> 3 ) * _height );
+                } else {
+                    return 3 + ( ( _width >> 3 ) * _height );
+                }
             } else {
-                return 3 + ( ( _width >> 3 ) * _height );
+                return 2 + ( ( _width >> 3 ) * _height );
             }
 
     }
@@ -1340,15 +1348,23 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            } else {
+                return 3 + ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + ( 3 + 2* ( ( _width >> 3 ) * _height ) ) * _frames;
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                if ( _transparent ) {
+                    return 3 + ( 3 + 2* ( ( _width >> 3 ) * _height ) ) * _frames;
+                } else {
+                    return 3 + ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames;
+                }
             } else {
-                return 3 + ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames;
+                return 3 + ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames;
             }
 
     }
@@ -1372,15 +1388,23 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            } else {
+                return 3 + ( ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+            if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                if ( _transparent ) {
+                    return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+                } else {
+                    return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;                
+                }
             } else {
-                return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;                
+                return 3 + ( ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
             }
 
     }
@@ -1465,7 +1489,9 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
-    *(buffer+2) = (_transparent_color & 0x0f0000) ? 0x01 : 0x00;
+    if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+        *(buffer+2) = (_transparent_color & 0x0f0000) ? 0x01 : 0x00;
+    }
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -1516,18 +1542,36 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             if ( colorIndex > 0) {
-                *( buffer + offset + 3) |= bitmask;
+                if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                    *( buffer + offset + 3) |= bitmask;
+                } else {
+                    *( buffer + offset + 2) |= bitmask;
+                }
                 // printf("*");
             } else {
-                *( buffer + offset + 3) &= ~bitmask;
+                if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                    *( buffer + offset + 3) &= ~bitmask;
+                } else {
+                    *( buffer + offset + 2) &= ~bitmask;
+                }
                 // printf(" ");
             }
 
             if ( _transparent_color & 0x0f0000 ) {
                 if ( rgb.alpha == 0 ) {
-                    *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
+                    if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                        *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
+                    } else {
+                        *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) |= bitmask;
+                    }
+                    printf("*");
                 } else {
-                    *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
+                    if ( ! _environment->vestigialConfig.rchack_acme_inc_1172 ) {
+                        *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
+                    } else {
+                        *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) &= ~bitmask;
+                    }
+                    printf(" ");
                 }    
             }
 
