@@ -176,6 +176,13 @@ void atari_scancode( Environment * _environment, char * _result ) {
     deploy( keyboard, src_hw_atari_keyboard_asm);
 
     outline0("JSR SCANCODE");
+    if ( _environment->vestigialConfig.rchack_falling_balls_1163 ) {
+        MAKE_LABEL
+        outline0("CMP #$FF");
+        outline1("BNE %s", label );
+        outline0("LDA #0");
+        outhead1("%s:", label );
+    }
     outline1("STA %s", _result );
    
 }
