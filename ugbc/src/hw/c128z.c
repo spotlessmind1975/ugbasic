@@ -158,6 +158,13 @@ void c128z_scancode( Environment * _environment, char * _result ) {
     deploy( keyboard, src_hw_c128z_keyboard_asm);
 
     outline0("CALL SCANCODE");
+    if ( _environment->vestigialConfig.rchack_falling_balls_1163 ) {
+        MAKE_LABEL
+        outline0("CP $FF");
+        outline1("JR NZ, %s", label );
+        outline0("LD A, 0");
+        outhead1("%s:", label );
+    }
     outline1("LD (%s), A", _result );
    
 }
