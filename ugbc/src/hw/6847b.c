@@ -758,10 +758,10 @@ void c6847b_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
     deploy( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
 
-    outline1("LDB %2.2x", (_x & 0xff ) );
-    outline0("STB <PLOTX");
-    outline1("LDB %2.2x", ( _y & 0xff ) );
-    outline0("STB <PLOTY");
+    outline1("LDX %4.4x", (_x & 0xffff ) );
+    outline0("STX <PLOTX");
+    outline1("LDD %4.4x", ( _y & 0xffff ) );
+    outline0("STD <PLOTY");
     if ( _c ) {
         outline1("LDA %2.2x", ( *_c & 0Xff ) );
     } else {
@@ -791,68 +791,14 @@ void c6847b_pset_vars( Environment * _environment, char *_x, char *_y, char * _c
     deploy( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
     
-    switch( VT_BITWIDTH( x->type ) ) {
-        case 32:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+3", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 16:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+1", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 8:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        default:
-            CRITICAL_PLOT_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
-    }
-
-    switch( VT_BITWIDTH( y->type ) ) {
-        case 32:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+3", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 16:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+1", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 8:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        default:
-            CRITICAL_PLOT_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
-    }
-
-    outline1("LDB %s", c->realName );
-    outline0("STB <PLOTCPE");
-    outline0("LDB #1");
-    outline0("STB <PLOTM");
+    outline1("LDX %s", x->realName );
+    outline0("STX <PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD <PLOTY");
+    outline1("LDA %s", c->realName );
+    outline0("STA <PLOTCPE");
+    outline0("LDA #1");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
 
 }
@@ -866,66 +812,12 @@ void c6847b_pget_color_vars( Environment * _environment, char *_x, char *_y, cha
     deploy( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
 
-    switch( VT_BITWIDTH( x->type ) ) {
-        case 32:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+3", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 16:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+1", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 8:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        default:
-            CRITICAL_PLOT_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
-    }
-
-    switch( VT_BITWIDTH( y->type ) ) {
-        case 32:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+3", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 16:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+1", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 8:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        default:
-            CRITICAL_PLOT_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
-    }
-
-    outline0("LDB #3");
-    outline0("STB <PLOTM");
+    outline1("LDD %s", x->realName );
+    outline0("STD <PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD <PLOTY");
+    outline0("LDA #3");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
     outline0("LDA <PLOTM");
     outline1("STA %s", result->realName );    
@@ -1308,15 +1200,23 @@ int c6847b_image_size( Environment * _environment, int _width, int _height, int 
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( ( _width >> 2 ) * _height );
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                return 3 + ( ( _width >> 2 ) * _height );
+            } else {
+                return 2 + ( ( _width >> 2 ) * _height );
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + 2*( ( _width >> 3 ) * _height );
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                if ( _transparent ) {
+                    return 3 + 2*( ( _width >> 3 ) * _height );
+                } else {
+                    return 3 + ( ( _width >> 3 ) * _height );
+                }
             } else {
-                return 3 + ( ( _width >> 3 ) * _height );
+                return 2 + ( ( _width >> 3 ) * _height );
             }
 
     }
@@ -1340,15 +1240,23 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                return 3 + ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            } else {
+                return 3 + ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames;
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + ( 3 + 2* ( ( _width >> 3 ) * _height ) ) * _frames;
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                if ( _transparent ) {
+                    return 3 + ( 3 + 2* ( ( _width >> 3 ) * _height ) ) * _frames;
+                } else {
+                    return 3 + ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames;
+                }
             } else {
-                return 3 + ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames;
+                return 3 + ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames;
             }
 
     }
@@ -1372,15 +1280,23 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
         case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
         case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
         case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
-            return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                return 3 + ( ( 3 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            } else {
+                return 3 + ( ( 2 + ( ( _width >> 2 ) * _height ) ) * _frames ) * _sequences;
+            }
         case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
         case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
         case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
         case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
-            if ( _transparent ) {
-                return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+            if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                if ( _transparent ) {
+                    return 3 + ( ( 3 + 2 * ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
+                } else {
+                    return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;                
+                }
             } else {
-                return 3 + ( ( 3 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;                
+                return 3 + ( ( 2 + ( ( _width >> 3 ) * _height ) ) * _frames ) * _sequences;
             }
 
     }
@@ -1465,7 +1381,9 @@ static Variable * c6847b_image_converter_bitmap_mode_standard( Environment * _en
 
     *(buffer) = _frame_width;
     *(buffer+1) = _frame_height;
-    *(buffer+2) = (_transparent_color & 0x0f0000) ? 0x01 : 0x00;
+    if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+        *(buffer+2) = (_transparent_color & 0x0f0000) ? 0x01 : 0x00;
+    }
 
     _source += ( ( _offset_y * _width ) + _offset_x ) * _depth;
 
@@ -1516,18 +1434,36 @@ static Variable * c6847b_image_converter_bitmap_mode_standard( Environment * _en
             bitmask = 1 << ( 7 - (image_x & 0x7) );
 
             if ( colorIndex > 0) {
-                *( buffer + offset + 3) |= bitmask;
+                if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                    *( buffer + offset + 3) |= bitmask;
+                } else {
+                    *( buffer + offset + 2) |= bitmask;
+                }
                 // printf("*");
             } else {
-                *( buffer + offset + 3) &= ~bitmask;
+                if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                    *( buffer + offset + 3) &= ~bitmask;
+                } else {
+                    *( buffer + offset + 2) &= ~bitmask;
+                }
                 // printf(" ");
             }
 
             if ( _transparent_color & 0x0f0000 ) {
                 if ( rgb.alpha == 0 ) {
-                    *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
+                    if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                        *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) |= bitmask;
+                    } else {
+                        *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) |= bitmask;
+                    }
+                    printf("*");
                 } else {
-                    *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
+                    if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
+                        *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
+                    } else {
+                        *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) &= ~bitmask;
+                    }
+                    printf(" ");
                 }    
             }
 
