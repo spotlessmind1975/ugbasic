@@ -115,9 +115,11 @@ delle variabili.
 </usermanual> */
 void gosub_label( Environment * _environment, char * _label ) {
 
-    label_referred_define_named( _environment, _label );
+    char realLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( realLabel, "lbl%s", _label );
+    label_referred_define_named( _environment, realLabel );
 
-    cpu_call( _environment, _label );
+    cpu_call( _environment, realLabel );
 
 }
 

@@ -116,7 +116,9 @@ void on_gosub_index( Environment * _environment, char * _label ) {
         CRITICAL_INTERNAL_ERROR("on_gosub_index called out of order (2)");
     }
 
-    label_referred_define_named( _environment, _label );
+    char realLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( realLabel, "lbl%s", _label );
+    label_referred_define_named( _environment, realLabel );
 
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");
     

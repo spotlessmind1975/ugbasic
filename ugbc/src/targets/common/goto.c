@@ -114,9 +114,11 @@ leggibile è più facile da mantenere e da modificare nel tempo.
 </usermanual> */
 void goto_label( Environment * _environment, char * _label ) {
 
-    label_referred_define_named( _environment, _label );
+    char realLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( realLabel, "lbl%s", _label );
+    label_referred_define_named( _environment, realLabel );
 
-    cpu_jump( _environment, _label );
+    cpu_jump( _environment, realLabel );
 
 }
 

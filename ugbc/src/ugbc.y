@@ -12827,15 +12827,19 @@ statement2nc:
   }
   | WRITING writing_definition
   | OSP Identifier OP_COLON CSP {
-    label_define_named( _environment, $2 );
-    cpu_label( _environment, $2 );
-    ((Environment *)_environment)->lastDefinedLabel = strdup( $2 );
+    char realLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( realLabel, "lbl%s", $2 );
+    label_define_named( _environment, realLabel );
+    cpu_label( _environment, realLabel );
+    ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
     ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
   | Identifier OP_COLON {
-    label_define_named( _environment, $1 );
-    cpu_label( _environment, $1 );
-    ((Environment *)_environment)->lastDefinedLabel = strdup( $1 );
+    char realLabel[MAX_TEMPORARY_STORAGE];
+    sprintf( realLabel, "lbl%s", $1 );
+    label_define_named( _environment, realLabel );
+    cpu_label( _environment, realLabel );
+    ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
     ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
   } 
   | LOAD String OP_COMMA Integer on_bank_explicit load_flags {
