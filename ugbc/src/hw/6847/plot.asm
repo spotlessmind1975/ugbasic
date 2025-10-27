@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLOTX   EQU $41
+PLOTX   EQU $41 ; $42
 PLOTY   EQU $43
 PLOTM   EQU $45
 PLOTOMA EQU $46
@@ -50,53 +50,56 @@ PLOTCPE  EQU $51
 PLOT
 
 @IF scaleX > 0
-    ASL <PLOTX
+    ASL <PLOTX+1
+    ROL <PLOTX
 @ENDIF
 
 @IF scaleX > 1
-    ASL <PLOTX
+    ASL <PLOTX+1
+    ROL <PLOTX
 @ENDIF
 
 @IF offsetX > 0
 @EMIT offsetX AS offsetX
-    LDA <PLOTX
-    ADDA #offsetX
-    STA <PLOTX
+    LDD <PLOTX
+    ADD #offsetX
+    STD <PLOTX
 @ENDIF
 
 @IF scaleY > 0
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF scaleY > 1
-    ASL <PLOTY
+    ASL <PLOTY+1
+    ROL <PLOTY
 @ENDIF
 
 @IF offsetY > 0
 @EMIT offsetY AS offsetY
-    LDA <PLOTY
-    ADDA #offsetY
-    STA <PLOTY
+    LDD <PLOTY
+    ADD #offsetY
+    STD <PLOTY
 @ENDIF
 
 @IF optionClip
-    LDA <PLOTY
-    LDB CLIPY2+1
-    CMPA CLIPY2+1
-    BLO PLOTCLIP2
+    LDD <PLOTY
+    CMPD CLIPY2
+    BLE PLOTCLIP2
     JMP PLOTP
 PLOTCLIP2
-    CMPA CLIPY1+1
-    BHS PLOTCLIP3
+    CMPD CLIPY1
+    BGE PLOTCLIP3
     JMP PLOTP
 PLOTCLIP3
-    LDA <PLOTX
-    CMPA CLIPX2+1
-    BLO PLOTCLIP4
+    LDD <PLOTX
+    CMPD CLIPX2
+    BLE PLOTCLIP4
     JMP PLOTP
 PLOTCLIP4
-    CMPA CLIPX1+1
-    BHS PLOTCLIP5
+    CMPD CLIPX1
+    BGE PLOTCLIP5
     JMP PLOTP
 PLOTCLIP5
 @ENDIF
@@ -252,8 +255,7 @@ PLOT7
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -264,8 +266,7 @@ PLOT7
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -278,7 +279,7 @@ PLOT7
     LSLB
     LSLB
     LEAY B, Y
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$03
     LEAY B, Y
 
@@ -309,8 +310,7 @@ PLOT8
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -321,8 +321,7 @@ PLOT8
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -332,7 +331,7 @@ PLOT8
     LEAX D, X
 
     LDY #PLOTORBIT
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$07
     LEAY B, Y
 
@@ -362,8 +361,7 @@ PLOT9
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -376,8 +374,7 @@ PLOT9
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -390,7 +387,7 @@ PLOT9
     LSLB
     LSLB
     LEAY B, Y
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$03
     LEAY B, Y
 
@@ -421,8 +418,7 @@ PLOT10
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -433,8 +429,7 @@ PLOT10
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -444,7 +439,7 @@ PLOT10
     LEAX D, X
 
     LDY #PLOTORBIT
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$07
     LEAY B, Y
 
@@ -474,8 +469,7 @@ PLOT11
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -488,8 +482,7 @@ PLOT11
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -502,7 +495,7 @@ PLOT11
     LSLB
     LSLB
     LEAY B, Y
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$03
     LEAY B, Y
 
@@ -533,8 +526,7 @@ PLOT12
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -545,8 +537,7 @@ PLOT12
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -556,7 +547,7 @@ PLOT12
     LEAX D, X
 
     LDY #PLOTORBIT
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$07
     LEAY B, Y
 
@@ -586,8 +577,7 @@ PLOT13
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -600,8 +590,7 @@ PLOT13
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -614,7 +603,7 @@ PLOT13
     LSLB
     LSLB
     LEAY B, Y
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$03
     LEAY B, Y
 
@@ -645,8 +634,7 @@ PLOT14
     STA PLOTNB
 
     LDX BITMAPADDRESS
-    LDB <PLOTY
-    CLRA
+    LDD <PLOTY
     LSLB
     ROLA
     LSLB
@@ -659,8 +647,7 @@ PLOT14
     ROLA
     LEAX D, X
 
-    LDB <PLOTX
-    CLRA
+    LDD <PLOTX
     LSRA
     RORB
     LSRA
@@ -670,7 +657,7 @@ PLOT14
     LEAX D, X
 
     LDY #PLOTORBIT
-    LDB <PLOTX
+    LDB <PLOTX+1
     ANDB #$07
     LEAY B, Y
 

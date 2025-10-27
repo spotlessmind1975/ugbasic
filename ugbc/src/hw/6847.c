@@ -62,8 +62,6 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
-
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -756,12 +754,12 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy_preferred( plot, src_hw_6847_plot_asm );
-
-    outline1("LDB %2.2x", (_x & 0xff ) );
-    outline0("STB <PLOTX");
-    outline1("LDB %2.2x", ( _y & 0xff ) );
-    outline0("STB <PLOTY");
+    deploy( plot, src_hw_6847_plot_asm );
+    
+    outline1("LDX %4.4x", (_x & 0xffff ) );
+    outline0("STX <PLOTX");
+    outline1("LDD %4.4x", ( _y & 0xffff ) );
+    outline0("STD <PLOTY");
     if ( _c ) {
         outline1("LDA %2.2x", ( *_c & 0Xff ) );
     } else {
@@ -791,68 +789,14 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c 
     deploy( c6847vars, src_hw_6847_vars_asm );
     deploy_preferred( plot, src_hw_6847_plot_asm );
     
-    switch( VT_BITWIDTH( x->type ) ) {
-        case 32:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+3", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 16:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+1", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 8:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        default:
-            CRITICAL_PLOT_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
-    }
-
-    switch( VT_BITWIDTH( y->type ) ) {
-        case 32:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+3", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 16:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+1", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 8:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        default:
-            CRITICAL_PLOT_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
-    }
-
-    outline1("LDB %s", c->realName );
-    outline0("STB <PLOTCPE");
-    outline0("LDB #1");
-    outline0("STB <PLOTM");
+    outline1("LDX %s", x->realName );
+    outline0("STX <PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD <PLOTY");
+    outline1("LDA %s", c->realName );
+    outline0("STA <PLOTCPE");
+    outline0("LDA #1");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
 
 }
@@ -864,68 +808,14 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy_preferred( plot, src_hw_6847_plot_asm );
-
-    switch( VT_BITWIDTH( x->type ) ) {
-        case 32:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+3", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 16:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s+1", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        case 8:
-            if ( x->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(x->value&0xff) );
-            } else {
-                outline1("LDB %s", x->realName );
-            }
-            outline0("STB <PLOTX" );
-            break;
-        default:
-            CRITICAL_PLOT_X_UNSUPPORTED( _x, DATATYPE_AS_STRING[x->type]);
-    }
-
-    switch( VT_BITWIDTH( y->type ) ) {
-        case 32:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+3", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 16:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s+1", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        case 8:
-            if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.2x", (unsigned char)(y->value&0xff) );
-            } else {
-                outline1("LDB %s", y->realName );
-            }
-            outline0("STB <PLOTY" );
-            break;
-        default:
-            CRITICAL_PLOT_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
-    }
-
-    outline0("LDB #3");
-    outline0("STB <PLOTM");
+    deploy( plot, src_hw_6847_plot_asm );
+    
+    outline1("LDD %s", x->realName );
+    outline0("STD <PLOTX");
+    outline1("LDD %s", y->realName );
+    outline0("STD <PLOTY");
+    outline0("LDA #3");
+    outline0("STA <PLOTM");
     outline0("JSR PLOT");
     outline0("LDA <PLOTM");
     outline1("STA %s", result->realName );    
