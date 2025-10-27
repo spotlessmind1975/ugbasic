@@ -94,16 +94,16 @@ comandi come ''READ'' e ''DATA'', puoi creare loop che leggono ripetutamente gli
 
 void restore_label( Environment * _environment, char * _label ) {
 
-    char label[MAX_TEMPORARY_STORAGE];
-    if ( _label ) {
-        sprintf( label, "lbl%s", _label );
-    }
-    if ( !_label || label_exists_named( _environment, label ) ) {
+    // char label[MAX_TEMPORARY_STORAGE];
+    // if ( _label ) {
+    //     sprintf( label, "lbl%s", _label );
+    // }
+    if ( !_label || label_exists_named( _environment, _label ) ) {
 
         DataSegment * data;
 
         if ( _label ) {
-            data = data_segment_define_or_retrieve( _environment, label );
+            data = data_segment_define_or_retrieve( _environment, _label );
         } else {
             data = data_segment_define_or_retrieve( _environment, "DATA" );
         }
@@ -120,7 +120,7 @@ void restore_label( Environment * _environment, char * _label ) {
         cpu_addressof_16bit( _environment, data->realName, dataptr->realName );
 #endif
 
-        restore_label_unsafe( _environment, label );
+        restore_label_unsafe( _environment, _label );
 
     } else {
 

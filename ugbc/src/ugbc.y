@@ -2921,7 +2921,7 @@ exponential_less:
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
                 char * label = malloc(MAX_TEMPORARY_STORAGE);
-                sprintf(label, "lbl%s", label );
+                sprintf(label, "lbl%s", $1 );
                 if ( label_exists_named( _environment, label ) ) {
                     $$ = label;
                 } else {
