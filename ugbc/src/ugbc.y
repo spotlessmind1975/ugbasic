@@ -2920,8 +2920,10 @@ exponential_less:
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
-                if ( label_exists_named( _environment, $1 ) ) {
-                    $$ = $1;
+                char * label = malloc(MAX_TEMPORARY_STORAGE);
+                sprintf(label, "lbl%s", label );
+                if ( label_exists_named( _environment, label ) ) {
+                    $$ = label;
                 } else {
                     if ( ((struct _Environment *)_environment)->optionExplicit ) {
                         CRITICAL_VARIABLE_UNDEFINED( $1 );
