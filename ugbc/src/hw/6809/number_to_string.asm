@@ -306,6 +306,6 @@ N2STRING_add1
 
 ; 2^32 is 10 digits long, so 5 BCD bytes are enough
 N2STRING_bcd
-  rzb N2STRINGRESBUFFERSIZE/2       ; converted number in BCD
+  rzb N2STRINGRESBUFFERSIZE       ; converted number in BCD
 N2STRING_pwr
-  rzb N2STRINGRESBUFFERSIZE/2       ; powers of 2 in BCD
+  rzb N2STRINGRESBUFFERSIZE       ; powers of 2 in BCD
