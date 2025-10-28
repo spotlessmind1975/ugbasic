@@ -130,7 +130,7 @@ void on_gosub_index( Environment * _environment, char * _label ) {
 
     cpu_bveq( _environment, variable_compare( _environment, expression->name, index->name )->realName, newLabel );
 
-    cpu_call( _environment, _label );
+    cpu_call( _environment, realLabel );
 
     char newLabel2[MAX_TEMPORARY_STORAGE]; sprintf(newLabel2, "%sfinal", conditional->label );
 

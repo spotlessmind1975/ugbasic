@@ -124,7 +124,7 @@ void on_goto_index( Environment * _environment, char * _label ) {
 
     Variable * expression = variable_retrieve( _environment, conditional->expression->name );
 
-    cpu_bvneq( _environment, variable_compare( _environment, expression->name, index->name )->realName, _label );
+    cpu_bvneq( _environment, variable_compare( _environment, expression->name, index->name )->realName, realLabel );
 
     ++conditional->index;
 
