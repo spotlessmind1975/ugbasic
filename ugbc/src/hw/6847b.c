@@ -1456,14 +1456,14 @@ static Variable * c6847b_image_converter_bitmap_mode_standard( Environment * _en
                     } else {
                         *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) |= bitmask;
                     }
-                    printf("*");
+                    // printf("*");
                 } else {
                     if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
                         *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
                     } else {
                         *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) &= ~bitmask;
                     }
-                    printf(" ");
+                    // printf(" ");
                 }    
             }
 

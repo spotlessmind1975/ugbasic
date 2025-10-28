@@ -754,7 +754,7 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy( plot, src_hw_6847_plot_asm );
+    deploy_preferred( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
     outline0("STX <PLOTX");
@@ -808,7 +808,7 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
     deploy( c6847vars, src_hw_6847_vars_asm );
-    deploy( plot, src_hw_6847_plot_asm );
+    deploy_preferred( plot, src_hw_6847_plot_asm );
     
     outline1("LDD %s", x->realName );
     outline0("STD <PLOTX");
@@ -1454,14 +1454,14 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
                     } else {
                         *( buffer +  ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) |= bitmask;
                     }
-                    printf("*");
+                    // printf("*");
                 } else {
                     if ( ! _environment->vestigialConfig.rchack_acme_1172 ) {
                         *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 3) &= ~bitmask;
                     } else {
                         *( buffer + ( _frame_height * ( _frame_width >> 3 ) ) + offset + 2) &= ~bitmask;
                     }
-                    printf(" ");
+                    // printf(" ");
                 }    
             }
 
