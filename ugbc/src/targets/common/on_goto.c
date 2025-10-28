@@ -115,7 +115,11 @@ void on_goto_index( Environment * _environment, char * _label ) {
     }
 
     char realLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( realLabel, "lbl%s", _label );
+    if (strcmp(_label, "q" ) == 0 && _environment->vestigialConfig.rchack_ostra_1172 ) {
+        sprintf( realLabel, "lbl%s", _label );
+    } else {
+        strcpy( realLabel, _label );
+    }
     label_referred_define_named( _environment, realLabel );
 
     Variable * index = variable_resident( _environment, VT_BYTE, "(index)");

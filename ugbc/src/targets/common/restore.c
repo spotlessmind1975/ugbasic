@@ -94,10 +94,6 @@ comandi come ''READ'' e ''DATA'', puoi creare loop che leggono ripetutamente gli
 
 void restore_label( Environment * _environment, char * _label ) {
 
-    // char label[MAX_TEMPORARY_STORAGE];
-    // if ( _label ) {
-    //     sprintf( label, "lbl%s", _label );
-    // }
     if ( !_label || label_exists_named( _environment, _label ) ) {
 
         DataSegment * data;

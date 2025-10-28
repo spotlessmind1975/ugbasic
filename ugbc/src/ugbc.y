@@ -2920,8 +2920,11 @@ exponential_less:
             }
         } else {
             if ( !variable_exists( _environment, $1 ) ) {
-                char * label = malloc(MAX_TEMPORARY_STORAGE);
-                sprintf(label, "lbl%s", $1 );
+                char * label = $1;
+                if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+                    label = malloc(MAX_TEMPORARY_STORAGE);
+                    sprintf(label, "lbl%s", $1 );
+                }
                 if ( label_exists_named( _environment, label ) ) {
                     $$ = label;
                 } else {
@@ -12830,7 +12833,11 @@ statement2nc:
   | WRITING writing_definition
   | OSP Identifier OP_COLON CSP {
     char realLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( realLabel, "lbl%s", $2 );
+    if (strcmp($2, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+        sprintf( realLabel, "lbl%s", $2 );
+    } else {
+        strcpy( realLabel, $2 );
+    }
     label_define_named( _environment, realLabel );
     cpu_label( _environment, realLabel );
     ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
@@ -12838,7 +12845,11 @@ statement2nc:
   } 
   | Identifier OP_COLON {
     char realLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( realLabel, "lbl%s", $1 );
+    if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+        sprintf( realLabel, "lbl%s", $1 );
+    } else {
+        strcpy( realLabel, $1 );
+    }
     label_define_named( _environment, realLabel );
     cpu_label( _environment, realLabel );
     ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
