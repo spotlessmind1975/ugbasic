@@ -3238,8 +3238,8 @@ void cpu_math_add_32bit_const( Environment * _environment, char *_source, int _d
         MAKE_LABEL
 
         outline1("LDQ %s", _source );
-        outline1("ADDW #$%4.4x", (unsigned short)( (_destination >> 16 ) & 0xffff ) );
-        outline1("ADCD #$%4.4x", (unsigned short)( (_destination ) & 0xffff ) );
+        outline1("ADDW #$%4.4x", (unsigned short)( (_destination ) & 0xffff ) );
+        outline1("ADCD #$%4.4x", (unsigned short)( (_destination >> 16 ) & 0xffff ) );
         outline1("STQ %s", _other);
 
     no_embedded( cpu_math_add_32bit_const )
