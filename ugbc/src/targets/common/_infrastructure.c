@@ -713,7 +713,7 @@ Variable * variable_import( Environment * _environment, char * _name, VariableTy
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
         var->bankAssigned = -1;
-#if defined(cpu6809)
+#if defined(cpu6809)||defined(cpu6309)
         if ( 
             strcmp( _name, "PEN" ) == 0 ||
             strcmp( _name, "XCURSYS" ) == 0 ||
@@ -777,7 +777,7 @@ Variable * variable_export( Environment * _environment, char * _name, VariableTy
         memset( var, 0, sizeof( Variable ) );
         var->name = strdup( _name );
         var->bankAssigned = -1;
-#if defined(cpu6809)
+#if defined(cpu6809)||defined(cpu6309)
         if ( 
             strcmp( _name, "PEN" ) == 0 ||
             strcmp( _name, "XCURSYS" ) == 0 ||
@@ -15387,7 +15387,7 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
         printf( "##### option, otherwise the binary file cannot be created.\n" );
     }
 
-#ifdef cpu6809
+#if defined(cpu6809)||defined(cpu6309)
 
     char executableName[MAX_TEMPORARY_STORAGE];
     BUILD_TOOLCHAIN_ASM6809_GET_EXECUTABLE( _environment, executableName );
