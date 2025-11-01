@@ -56,7 +56,7 @@ stored that will then be "read" and used by other commands.
 
 The ''DATA'' command is usually placed at the beginning of the program or in
 a section dedicated to the definitions of data, but it is not mandatory.
-The ''data1'', ''data2'', ... so on should be replaced witht he data you want to 
+The ''data1'', ''data2'', ... so on should be replaced with the data you want to 
 store inside the program. These can be numbers or text strings. To read the 
 data contained in a ''DATA'' statement, you use the ''READ'' command. 
 This command assigns the values contained in ''DATA'' to variables.
