@@ -38,7 +38,8 @@
 ;--------------
 
 GETIMAGE
-@IF vestigialConfig.doubleBufferSelected
+
+@IF vestigialConfig.doubleBufferSelected 
 
 @ELSE
 
@@ -54,9 +55,7 @@ GETIMAGE
 ; Version active on double buffering ON
 ; ----------------------------------------------
 
-@IF ! vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
-
-GETIMAGEDB
+@IF !vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
     ORCC #$50
 
@@ -72,6 +71,8 @@ GETIMAGEDB
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
+
+GETIMAGEDB
     LDA CURRENTMODE
     CMPA #0
     BNE GETIMAGE0XDB
@@ -106,9 +107,10 @@ GETIMAGE4XDB
     ANDCC #$AF
 
     RTS
+
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 GETIMAGE1DB
 GETIMAGE4DB
@@ -128,7 +130,7 @@ GETIMAGE4DB
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 2 ) )
 
 GETIMAGE0DB
 GETIMAGE2DB
@@ -139,6 +141,7 @@ GETIMAGE2DB
 
     ANDCC #$FE
     LDD <IMAGEY
+    STD <IMAGEY2
     LSLB
     ROLA
     LSLB
@@ -151,6 +154,7 @@ GETIMAGE2DB
 
     ANDCC #$FE
     LDD <IMAGEY
+    STD <IMAGEY2
     LSLB
     ROLA
     LSLB
@@ -179,6 +183,7 @@ GETIMAGE2DB
 
     PULS Y
 
+    ; 128 -> 32768 pixels
     LDD ,Y
     LSRA
     RORB
@@ -186,14 +191,17 @@ GETIMAGE2DB
     RORB
     LSRA
     RORB
-    STB <IMAGEW
+    STD <IMAGEW
+    STD <IMAGEW2
     LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
     LEAY 3,Y
 
-    LDA <IMAGEW
+    ; 128 -> 32768 pixels
+    LDD <IMAGEW
+    PSHS D
     LDB <IMAGEH
     PSHS X,D
 
@@ -201,15 +209,17 @@ GETIMAGE2DB
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( currentMode == 3 )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 GETIMAGE3DB
 
     PSHS Y
 
     CLRA
-    STA <(IMAGEY)
-    LDB <(IMAGEY+1)
+    STA <IMAGEY
+    STA <IMAGEY2
+    LDB <IMAGEY+1
+    STB <IMAGEY2+1
     LSLB
     ROLA
     ADDD #PLOTVBASE
@@ -226,19 +236,22 @@ GETIMAGE3DB
 
     PULS Y
 
+    ; 128 -> 32768 pixels
     LDD ,Y
     LSRA
     RORB
     LSRA
     RORB
-    STB <IMAGEW
+    STD <IMAGEW
+    STD <IMAGEW2
+    PSHS D
     LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
     LEAY 3,Y
 
-    LDA <IMAGEW
+    LDA <(IMAGEW+1)
     LDB <IMAGEH
     PSHS X,D
 
@@ -248,19 +261,37 @@ GETIMAGE3DB
 
 GETIMAGE2YDB
 GETIMAGE2YDEFDB
+    LDA <IMAGEF
+    ANDA #64
+    BNE GETIMAGE2YDEFDBL128
+
+    LDD <IMAGEW
+    CMPD #127
+    LBLE GETIMAGE2YDEFDBW128
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- ORIGINAL VERSION
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBL128
+
     ; LDA BASE_SEGMENT+$c0
     ; ORA #$01
     ; STA BASE_SEGMENT+$c0
 
-@IF TO8
-
-@ELSE
+@IF PC128OP
 
     LEAX $8000,X
 
+@ELSE
+
 @ENDIF
 
-    LDB <IMAGEW
+    LDD <IMAGEW2
+    STD <IMAGEW
+
+GETIMAGE2L1DB000
+    LDB <(IMAGEW+1)
     DECB
 GETIMAGE2L1DB
     LDA B,X
@@ -269,8 +300,46 @@ GETIMAGE2L1DB
     CMPB #0
     BGE GETIMAGE2L1DB
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDU <IMAGEW
+    LEAU -128, U
+    STU <IMAGEW
+    CMPU #0
+    BLE GETIMAGE2L1DB001
+
+    LEAY 128, Y
+    LEAX 128, X
+    JMP GETIMAGE2L1DB000
+
+GETIMAGE2L1DB001
+
+    LDA <IMAGEF
+    ANDA #64
+    CMPA #0
+    BEQ GETIMAGE2L1DBN
+
+    LDA <IMAGEF
+    ANDA #1
+    CMPA #1
+    BEQ GETIMAGE2L1DBN0
+
+    ORA #65
+    STA <IMAGEF
+
+    LDD <IMAGEW2
+    STD <IMAGEW
+    LDB CURRENTSL
+    LEAX B, X
+    JMP GETIMAGE2L1DB000
+
+GETIMAGE2L1DBN0
+    LDA <IMAGEF
+    ANDA #$FE
+    STA <IMAGEF
+
+GETIMAGE2L1DBN
+
+    LDD <IMAGEW2
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -280,32 +349,47 @@ GETIMAGE2L1DB
     CMPB #0
     BEQ GETIMAGECOMMONE2DB
 
-    LDB <IMAGEW
-    DECB
-    JMP GETIMAGE2L1DB
+    LDD <IMAGEW2
+    STD <IMAGEW
+    JMP GETIMAGE2L1DB000
+
+GETIMAGECOMMONE2DBA
+
+GETIMAGECOMMONE2DBAY
+
+    LDD <IMAGEW2
+    LEAY D, Y
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BNE GETIMAGECOMMONE2DBAY
 
 GETIMAGECOMMONE2DB
 
+    LDD <IMAGEY2
+    STD <IMAGEY
+
     PULS X,D
+    STB <IMAGEH
+    PULS D
+    STD <IMAGEW
 
-@IF TO8
-
-    LEAX $2000,X
-
-@ELSE
+@IF PC128OP
 
     LEAX $6000,X
 
+@ELSE
+
+    LEAX $2000,X
+
 @ENDIF
-    
-    STA <IMAGEW
-    STB <IMAGEH
 
     ; LDA BASE_SEGMENT+$c0
     ; ANDA #$fe
     ; STA BASE_SEGMENT+$c0
 
-    LDB <IMAGEW
+GETIMAGE2L12DB000
+    LDB <(IMAGEW+1)
     DECB
 GETIMAGE2L12DB
     LDA B,X
@@ -314,8 +398,46 @@ GETIMAGE2L12DB
     CMPB #0
     BGE GETIMAGE2L12DB
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDU <IMAGEW
+    LEAU -128, U
+    STU <IMAGEW
+    CMPU #0
+    BLE GETIMAGE2L12DB001
+
+    LEAY 128, Y
+    LEAX 128, X
+    JMP GETIMAGE2L12DB000
+
+GETIMAGE2L12DB001
+
+    LDA <IMAGEF
+    ANDA #64
+    CMPA #0
+    BEQ GETIMAGE2L12DBN
+
+    LDA <IMAGEF
+    ANDA #1
+    CMPA #1
+    BEQ GETIMAGE2L12DBN0
+
+    ORA #65
+    STA <IMAGEF
+
+    LDD <IMAGEW2
+    STD <IMAGEW
+    LDB CURRENTSL
+    LEAX B, X
+    JMP GETIMAGE2L12DB000
+
+GETIMAGE2L12DBN0
+    LDA <IMAGEF
+    ANDA #$FE
+    STA <IMAGEF
+
+GETIMAGE2L12DBN
+
+    LDD <IMAGEW2
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -323,13 +445,28 @@ GETIMAGE2L12DB
     DEC <IMAGEH
     LDB <IMAGEH
     CMPB #0
-    BEQ GETIMAGECOMMONE5DB
+    LBEQ GETIMAGECOMMONE5DB
 
-    LDB <IMAGEW
-    DECB
-    JMP GETIMAGE2L12DB
+    LDD <IMAGEW2
+    STD <IMAGEW
+    JMP GETIMAGE2L12DB000
+
+GETIMAGECOMMONE5DBA
+
+GETIMAGECOMMONE5DBAY
+
+    LDD <IMAGEW2
+    LEAY D, Y
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #$0
+    BNE GETIMAGECOMMONE5DBAY
 
 GETIMAGECOMMONE5DB
+
+    LDD <IMAGEY2
+    STD <IMAGEY
+
 ;     LDA CURRENTMODE
 ;     CMPA #3
 ;     BEQ GETIMAGECOMMONE53
@@ -364,17 +501,781 @@ GETIMAGECOMMONEDB
 
     ANDCC #$AF
     
-    RTS
+	RTS
 
 @ENDIF
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w < 128, no double y)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128
+
+    CMPB #1
+    BEQ GETIMAGE2YDEFDBW128EVEN1
+    BNE *+5
+    JMP GETIMAGE2YDEFDBW128EVEN2
+    CMPB #3
+    LBEQ GETIMAGE2YDEFDBW128EVEN3
+    CMPB #4
+    LBEQ GETIMAGE2YDEFDBW128EVEN4
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+
+GETIMAGE2L1DB000W128
+    ; LDB <(IMAGEW+1)
+    DECB
+GETIMAGE2L1DBW128
+    LDA B,X
+    STA B,Y
+    DECB
+    CMPB #0
+    BGE GETIMAGE2L1DBW128
+
+GETIMAGE2L1DBNW128
+
+    LDB <(IMAGEW2+1)
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DBW128
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+    JMP GETIMAGE2L1DB000W128
+
+GETIMAGECOMMONE2DBW128
+
+    LDB <(IMAGEY2+1)
+    STB <(IMAGEY+1)
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+    STD <IMAGEW
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+    LDB <(IMAGEW+1)
+
+GETIMAGE2L12DB000W128
+    DECB
+GETIMAGE2L12DBW128
+    LDA B,X
+    STA B,Y
+    DECB
+    CMPB #0
+    BGE GETIMAGE2L12DBW128
+
+    LDB <(IMAGEW2+1)
+    LEAY B, Y
+
+    LDB CURRENTSL
+    LEAX B, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    LBEQ GETIMAGECOMMONE5DBW128
+
+    LDB <(IMAGEW2+1)
+    STB <(IMAGEW+1)
+    JMP GETIMAGE2L12DB000W128
+
+GETIMAGECOMMONE5DBW128
+
+GETIMAGECOMMONEDBW128
+
+@IF PC128OP
+
+    PSHS D
+    LDA #7
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    ANDCC #$AF
+    
+	RTS
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 1)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN1
+
+    LDA CURRENTSL
+    DECA
+    STA GETIMAGE2L1DBNW128EVEN1DELTA0+2
+    STA GETIMAGE2L1DBNW128EVEN1DELTA1+2
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+GETIMAGE2L1DB000W128EVEN1
+    LDB ,X+
+    STB ,Y+
+
+GETIMAGE2L1DBNW128EVEN1
+
+GETIMAGE2L1DBNW128EVEN1DELTA0
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DBW128EVEN1
+
+    JMP GETIMAGE2L1DB000W128EVEN1
+
+GETIMAGECOMMONE2DBW128EVEN1
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+GETIMAGE2L12DB000W128EVEN1
+    LDB ,X+
+    STB ,Y+
+
+GETIMAGE2L1DBNW128EVEN1DELTA1
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE5DBW128EVEN1
+
+    BRA GETIMAGE2L12DB000W128EVEN1
+
+GETIMAGECOMMONE5DBW128EVEN1
+GETIMAGECOMMONEDBW128EVEN1
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 2)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN2
+
+    LDA CURRENTSL
+    DECA
+    DECA
+    STA GETIMAGE2L1DBNW128EVEN2DELTA0+2
+    STA GETIMAGE2L1DBNW128EVEN2DELTA1+2
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+GETIMAGE2L1DB000W128EVEN2
+    LDD ,X++
+    STD ,Y++
+
+GETIMAGE2L1DBNW128EVEN2
+
+GETIMAGE2L1DBNW128EVEN2DELTA0
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BNE GETIMAGE2L1DB000W128EVEN2
+
+GETIMAGECOMMONE2DBW128EVEN2
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+GETIMAGE2L12DB000W128EVEN2
+    LDD ,X++
+    STD ,Y++
+    
+GETIMAGE2L1DBNW128EVEN2DELTA1
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BNE GETIMAGE2L12DB000W128EVEN2
+
+GETIMAGECOMMONE5DBW128EVEN2
+GETIMAGECOMMONEDBW128EVEN2
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 3, even lines)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN3EVEN
+
+    LDA CURRENTSL
+    DECA
+    DECA
+    DECA
+    STA GETIMAGE2YDEFDBW128EVEN3EVENDELTA0+2
+    STA GETIMAGE2YDEFDBW128EVEN3EVENDELTA1+2
+    STA GETIMAGE2YDEFDBW128EVEN3EVENDELTA2+2
+    STA GETIMAGE2YDEFDBW128EVEN3EVENDELTA3+2
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+GETIMAGE2YDEFDBW128EVEN3EVEN3
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+GETIMAGE2YDEFDBW128EVEN3EVENDELTA0
+    LEAX 42, X
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+GETIMAGE2YDEFDBW128EVEN3EVENDELTA1
+    LEAX 42, X
+
+    DEC <IMAGEH
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DBW128EVEN3EVEN3
+
+    JMP GETIMAGE2YDEFDBW128EVEN3EVEN3
+
+GETIMAGECOMMONE2DBW128EVEN3EVEN3
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+GETIMAGE2L12DB000W128EVEN3EVEN3
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+GETIMAGE2YDEFDBW128EVEN3EVENDELTA2
+    LEAX 42, X
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+GETIMAGE2YDEFDBW128EVEN3EVENDELTA3
+    LEAX 42, X
+
+    DEC <IMAGEH
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONEDBW128EVEN3EVEN
+
+    JMP GETIMAGE2L12DB000W128EVEN3EVEN3
+
+GETIMAGECOMMONE5DBW128EVEN3EVEN
+GETIMAGECOMMONEDBW128EVEN3EVEN
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 3)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN3
+    
+    LSRA
+    BCC GETIMAGE2YDEFDBW128EVEN3EVEN
+
+    LDA CURRENTSL
+    DECA
+    DECA
+    DECA
+    STA GETIMAGE2L1DBNW128EVEN3DELTA0+2
+    STA GETIMAGE2L1DBNW128EVEN3DELTA1+2
+    LDA <IMAGEH
+
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+GETIMAGE2L1DB000W128EVEN3
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+
+GETIMAGE2L1DBNW128EVEN3DELTA0
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DBW128EVEN3
+
+    JMP GETIMAGE2L1DB000W128EVEN3
+
+GETIMAGECOMMONE2DBW128EVEN3
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+GETIMAGE2L12DB000W128EVEN3
+    LDD ,X++
+    STD ,Y++
+    LDA ,X+
+    STA ,Y+
+    
+GETIMAGE2L1DBNW128EVEN3DELTA1
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    LBEQ GETIMAGECOMMONE5DBW128EVEN3
+
+    JMP GETIMAGE2L12DB000W128EVEN3
+
+GETIMAGECOMMONE5DBW128EVEN3
+GETIMAGECOMMONEDBW128EVEN3
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 4)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN4
+
+    LDA CURRENTSL
+    DECA
+    DECA
+    DECA
+    DECA
+    STA GETIMAGE2L1DBNW128EVEN4DELTA0+2
+    STA GETIMAGE2L1DBNW128EVEN4DELTA1+2
+    STA <MATHPTR0
+
+    LDA <IMAGEH
+    CMPA #16
+    BEQ GETIMAGE2YDEFDBW128EVEN4HX
+    CMPA #8
+    BEQ GETIMAGE2YDEFDBW128EVEN4HX
+    CMPA #4
+    BEQ GETIMAGE2YDEFDBW128EVEN4HX
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+GETIMAGE2L1DB000W128EVEN4
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+
+GETIMAGE2L1DBNW128EVEN4
+
+GETIMAGE2L1DBNW128EVEN4DELTA0
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BEQ GETIMAGECOMMONE2DBW128EVEN4
+
+    JMP GETIMAGE2L1DB000W128EVEN4
+
+GETIMAGECOMMONE2DBW128EVEN4
+
+    LDB <(IMAGEY2+1)
+    STB <(IMAGEY+1)
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+GETIMAGE2L12DB000W128EVEN4
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    
+GETIMAGE2L1DBNW128EVEN4DELTA1
+    LEAX 42, X
+
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    LBEQ GETIMAGECOMMONE5DBW128EVEN4
+
+    JMP GETIMAGE2L12DB000W128EVEN4
+
+GETIMAGECOMMONE5DBW128EVEN4
+GETIMAGECOMMONEDBW128EVEN4
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; --- OPTIMIZED VERSION (w = 4, h = 16, 8, 4)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+GETIMAGE2YDEFDBW128EVEN4HX
+
+@IF PC128OP
+
+    LEAX $8000,X
+
+@ELSE
+
+@ENDIF
+
+    CMPA #8
+    BEQ GETIMAGE2L1DB000W128EVEN4H8
+    CMPA #4
+    LBEQ GETIMAGE2L1DB000W128EVEN4H4
+
+GETIMAGE2L1DB000W128EVEN4H16
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+GETIMAGE2L1DB000W128EVEN4H8
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+GETIMAGE2L1DB000W128EVEN4H4
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+
+    LDB <(IMAGEY2+1)
+    STB <(IMAGEY+1)
+
+    PULS X,D
+    STB <IMAGEH
+    PULS D
+
+@IF PC128OP
+
+    LEAX $6000,X
+
+@ELSE
+
+    LEAX $2000,X
+
+@ENDIF
+
+    LDA <IMAGEH
+    CMPA #8
+    BEQ GETIMAGE2L1DB000W128EVEN4H8A
+    CMPA #4
+    LBEQ GETIMAGE2L1DB000W128EVEN4H4A
+
+GETIMAGE2L1DB000W128EVEN4H16A
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+GETIMAGE2L1DB000W128EVEN4H8A
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+GETIMAGE2L1DB000W128EVEN4H4A
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+    LDA <MATHPTR0
+    LEAX A, X
+    LDD ,X++
+    STD ,Y++
+    LDD ,X++
+    STD ,Y++
+
+    JMP GETIMAGECOMMONEDBW128EVENFINAL
+
+GETIMAGECOMMONEDBW128EVENFINAL
+
+@IF PC128OP
+
+    PSHS D
+    LDA #7
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    ANDCC #$AF
+    
+	RTS
 
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
 
-GETIMAGEORIG
+@IF !vestigialConfig.doubleBufferSelected || !vestigialConfig.doubleBuffer
 
-@IF ! vestigialConfig.doubleBufferSelected || ! vestigialConfig.doubleBuffer
+GETIMAGEORIG
 
 @IF vestigialConfig.screenModeUnique
 
@@ -405,7 +1306,7 @@ GETIMAGE4X
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 1) || (currentMode == 4) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 1 ) || ( currentMode == 4 ) )
 
 GETIMAGE1
 GETIMAGE4
@@ -413,7 +1314,7 @@ GETIMAGE4
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( (currentMode == 0) || (currentMode == 2) )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 0 ) || ( currentMode == 2 ) )
 
 GETIMAGE0
 GETIMAGE2
@@ -424,6 +1325,7 @@ GETIMAGE2
 
     ANDCC #$FE
     LDD <IMAGEY
+    STD <IMAGEY2
     LSLB
     ROLA
     LSLB
@@ -436,6 +1338,7 @@ GETIMAGE2
 
     ANDCC #$FE
     LDD <IMAGEY
+    STD <IMAGEY2
     LSLB
     ROLA
     LSLB
@@ -464,21 +1367,24 @@ GETIMAGE2
 
     PULS Y
 
-    LDD ,Y
+    LDA ,Y
+    LDB 1,Y
     LSRA
     RORB
     LSRA
     RORB
     LSRA
     RORB
-    STB <IMAGEW
+    STD <IMAGEW
+    STD <IMAGEW2
     LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
     LEAY 3,Y
 
-    LDA <IMAGEW
+    LDD <IMAGEW
+    PSHS D
     LDB <IMAGEH
     PSHS X,D
 
@@ -486,15 +1392,15 @@ GETIMAGE2
 
 @ENDIF
 
-@IF ! vestigialConfig.screenModeUnique || ( currentMode == 3 )
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 3 ) )
 
 GETIMAGE3
 
     PSHS Y
 
     CLRA
-    STA <(IMAGEY)
-    LDB <(IMAGEY+1)
+    LDB <IMAGEY+1
+    STB <IMAGEY2+1
     LSLB
     ROLA
     ADDD #PLOTVBASE
@@ -505,8 +1411,6 @@ GETIMAGE3
 @ENDIF
     TFR D, X
 
-    CLRA
-    STA <(IMAGEX)
     LDB <(IMAGEX+1)
     LSRB
     LSRB
@@ -514,19 +1418,22 @@ GETIMAGE3
 
     PULS Y
 
-    LDD ,Y
+    LDA ,Y
+    LDB 1,Y
     LSRA
     RORB
     LSRA
     RORB
-    STb <IMAGEW
+    STD <IMAGEW
+    STD <IMAGEW2
     LDA 2,Y
     STA <IMAGEH
     STA <IMAGEH2
 
     LEAY 3,Y
 
-    LDA <IMAGEW
+    LDD <IMAGEW
+    PSHS D
     LDB <IMAGEH
     PSHS X,D
 
@@ -551,7 +1458,10 @@ GETIMAGE2YDEF
 
 @ENDIF
 
-    LDB <IMAGEW
+    LDD <IMAGEW2
+    STD <IMAGEW
+GETIMAGE2L1000
+    LDB <(IMAGEW+1)
     DECB
 GETIMAGE2L1
     LDA B,X
@@ -560,8 +1470,46 @@ GETIMAGE2L1
     CMPB #0
     BGE GETIMAGE2L1
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDU <IMAGEW
+    LEAU -128, U
+    STU <IMAGEW
+    CMPU #0
+    BLE GETIMAGE2L1001
+
+    LEAY 128, Y
+    LEAX 128, X
+    JMP GETIMAGE2L1000
+
+GETIMAGE2L1001
+
+    LDA <IMAGEF
+    ANDA #64
+    CMPA #0
+    BEQ GETIMAGE2L1N
+
+    LDA <IMAGEF
+    ANDA #1
+    CMPA #1
+    BEQ GETIMAGE2L1N0
+
+    ORA #65
+    STA <IMAGEF
+
+    LDD <IMAGEW2
+    STD <IMAGEW
+    LDB CURRENTSL
+    LEAX B, X
+    JMP GETIMAGE2L1000
+
+GETIMAGE2L1N0
+    LDA <IMAGEF
+    ANDA #$FE
+    STA <IMAGEF
+
+GETIMAGE2L1N
+
+    LDD <IMAGEW2
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -571,16 +1519,30 @@ GETIMAGE2L1
     CMPB #0
     BEQ GETIMAGECOMMONE2
 
-    LDB <IMAGEW
-    DECB
-    JMP GETIMAGE2L1
+    LDD <IMAGEW2
+    STD <IMAGEW
+    JMP GETIMAGE2L1000
+
+GETIMAGECOMMONE2A
+
+GETIMAGECOMMONE2AY
+
+    LDD <IMAGEW2
+    LEAY D, Y
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #$0
+    BNE GETIMAGECOMMONE2AY
 
 GETIMAGECOMMONE2
 
-    PULS X,D
+    LDD <IMAGEY2
+    STD <IMAGEY
 
-    STA <IMAGEW
+    PULS X,D
     STB <IMAGEH
+    PULS D
+    STD <IMAGEW
 
 @IF TO8
 
@@ -596,7 +1558,10 @@ GETIMAGECOMMONE2
 
 @ENDIF
 
-    LDB <IMAGEW
+    LDD <IMAGEW2
+    STD <IMAGEW
+GETIMAGE2L12000
+    LDB <(IMAGEW+1)
     DECB
 GETIMAGE2L12
     LDA B,X
@@ -605,8 +1570,46 @@ GETIMAGE2L12
     CMPB #0
     BGE GETIMAGE2L12
 
-    LDB <IMAGEW
-    LEAY B, Y
+    LDU <IMAGEW
+    LEAU -128, U
+    STU <IMAGEW
+    CMPU #0
+    BLE GETIMAGE2L12001
+
+    LEAY 128, Y
+    LEAX 128, X
+    JMP GETIMAGE2L12000
+
+GETIMAGE2L12001
+
+    LDA <IMAGEF
+    ANDA #64
+    CMPA #0
+    BEQ GETIMAGE2L12N
+
+    LDA <IMAGEF
+    ANDA #1
+    CMPA #1
+    BEQ GETIMAGE2L12N0
+
+    ORA #65
+    STA <IMAGEF
+
+    LDD <IMAGEW2
+    STD <IMAGEW
+    LDB CURRENTSL
+    LEAX B, X
+    JMP GETIMAGE2L12000
+
+GETIMAGE2L12N0
+    LDA <IMAGEF
+    ANDA #$FE
+    STA <IMAGEF
+
+GETIMAGE2L12N
+
+    LDD <IMAGEW2
+    LEAY D, Y
 
     LDB CURRENTSL
     LEAX B, X
@@ -616,11 +1619,26 @@ GETIMAGE2L12
     CMPB #0
     BEQ GETIMAGECOMMONE5
 
-    LDB <IMAGEW
-    DECB
-    JMP GETIMAGE2L12
+    LDD <IMAGEW2
+    STD <IMAGEW
+    JMP GETIMAGE2L12000
+
+GETIMAGECOMMONE5A
+
+GETIMAGECOMMONE5AY
+
+    LDD <IMAGEW2
+    LEAY D, Y
+    DEC <IMAGEH
+    LDB <IMAGEH
+    CMPB #0
+    BNE GETIMAGECOMMONE5AY
 
 GETIMAGECOMMONE5
+
+    LDD <IMAGEY2
+    STD <IMAGEY
+
 ;     LDA CURRENTMODE
 ;     CMPA #3
 ;     BEQ GETIMAGECOMMONE53
