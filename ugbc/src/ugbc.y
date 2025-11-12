@@ -9220,9 +9220,11 @@ define_definition :
     }
     | TRANSPARENCY COARSE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 1;        
+        ((struct _Environment *)_environment)->transparencyUsed = 1;
     }
     | TRANSPARENCY PRECISE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 0;        
+        ((struct _Environment *)_environment)->transparencyUsed = 1;
     }
     | DOJO FUJINET  {
         ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
