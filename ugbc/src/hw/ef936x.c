@@ -2034,6 +2034,8 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
         _environment->transparencyUsed = 1;
         outline1("LDD %s", _flags );
         outline0("STD <IMAGET" );
+    } else {
+        outline0("CLR <IMAGEF" );
     }
 
     outline0("JSR PUTIMAGE");
