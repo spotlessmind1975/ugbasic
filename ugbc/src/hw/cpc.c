@@ -193,7 +193,7 @@ void cpc_wait_fire_semivar( Environment * _environment, char * _port, int _relea
         outline0("CALL WAITFIRE");
     } else {
         outline1("LD A, (%s)", _port);
-        outline0("CALL WAITKEYFIREA");
+        outline0("CALL WAITFIREA");
     }
 
 }

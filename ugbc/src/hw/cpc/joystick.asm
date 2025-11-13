@@ -177,6 +177,13 @@ JOYSTICKREAD1:
         JR Z, WAITFIRE
         RET
 
+    WAITFIREA:
+        CP 0
+        JR Z, WAITFIRE0
+        CP 1
+        JR Z, WAITFIRE1
+        RET
+
 @ELSE
 
     JOYSTICKMANAGER:
