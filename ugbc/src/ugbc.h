@@ -4209,114 +4209,249 @@ int embed_scan_string (const char *);
 #define cfg4(s,a,b,c,d)         cfgline4n(0, s, a, b, c, d, 0)
 #define cfg5(s,a,b,c,d,e)       cfgline5n(0, s, a, b, c, d, e, 0)
 
-#define deploy(s,e)  \
-        if ( ! _environment->deployed.s ) { \
-            int ignoreEmptyProcedure = _environment->emptyProcedure; \
-            _environment->emptyProcedure = 0; \
-            cpu_jump( _environment, #s "_after" ); \
-            outembedded0(e); \
-            cpu_label( _environment, #s "_after" ); \
-            _environment->emptyProcedure = ignoreEmptyProcedure; \
+#ifndef _DEBUG
+
+    #define deploy(s,e)  \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+            }
+
+    #define deploy_preferred(s,e)  \
             _environment->deployed.s = 1; \
+
+    #define deploy_deferred(s,e)  \
+            if ( ! _environment->deployed.s ) { \
+                outembeddeddef0(e); \
+                _environment->deployed.s = 1; \
+            }
+
+    #define deploy_inplace(s,e)  \
+            if ( ! _environment->deployed.s ) { \
+                outembedded0(e); \
+            }
+
+    #define deploy_inplace_preferred(s,e)  \
+            if ( _environment->deployed.s ) { \
+                _environment->deployed.s = 0; \
+                deploy_inplace(s,e); \
+                _environment->deployed.s = 1; \
+            }
+
+    #define deploy_with_vars(s,e,v)  \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                v(_environment);\
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+            }
+
+    #define deploy_deferred_with_vars(s,e,v)  \
+            if ( ! _environment->deployed.s ) { \
+                outembeddeddef0(e); \
+                v(_environment);\
+                _environment->deployed.s = 1; \
+            }
+
+    #define deploy_embedded(s,e)  \
+            if ( ! _environment->deployed.embedded.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.embedded.s = 1; \
+            }
+
+    #define deploy_deferred_embedded(s,e)  \
+            if ( ! _environment->deployed.embedded.s ) { \
+                outembeddeddef0(e); \
+                _environment->deployed.embedded.s = 1; \
+            }
+
+    #define deploy_begin(s)  \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreProtothread = _environment->protothread; \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->protothread = 0; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                cpu_label( _environment, "lib_" #s ); \
+
+    #define deploy_end(s)  \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->protothread = ignoreProtothread; \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+            }
+
+    #define inline(s) \
+            _environment->embeddedStats.s++; \
+            if ( !_environment->embedded.s ) {
+
+    #define no_inline(s) \
+            if ( !_environment->embedded.s ) { \
+                CRITICAL_UNABLE_TO_INLINE(#s); \
+
+    #define no_embedded(s) \
+            } else { \
+                CRITICAL_UNABLE_TO_EMBED(#s); \
+            }
+
+    #define embedded(s,e) \
+            } else { \
+                deploy_embedded(s,e) \
+
+    #define done() \
+            }
+
+    #define parse_embedded(p, s) \
+        if ( strcmp( p, #s ) == 0 ) { \
+            _environment->embedded.s = 1; \
         }
 
-#define deploy_preferred(s,e)  \
-        _environment->deployed.s = 1; \
+#else
 
-#define deploy_deferred(s,e)  \
-        if ( ! _environment->deployed.s ) { \
-            outembeddeddef0(e); \
+    #define deploy(s,e)  \
+            printf( "deploy(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_preferred(s,e)  \
+            printf( "deploy_preferred(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
             _environment->deployed.s = 1; \
+            printf( " deployed.%s = 1\n", #s ); \
+
+    #define deploy_deferred(s,e)  \
+            printf( "deploy_deferred(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                outembeddeddef0(e); \
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_inplace(s,e)  \
+            printf( "deploy_inplace(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                outembedded0(e); \
+            }
+
+    #define deploy_inplace_preferred(s,e)  \
+            printf( "deploy_inplace_preferred(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( _environment->deployed.s ) { \
+                _environment->deployed.s = 0; \
+                deploy_inplace(s,e); \
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_with_vars(s,e,v)  \
+            printf( "deploy_with_vars(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                v(_environment);\
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_deferred_with_vars(s,e,v)  \
+            printf( "deploy_deferred_with_vars(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                outembeddeddef0(e); \
+                v(_environment);\
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_embedded(s,e)  \
+            printf( "deploy_embedded(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.embedded.s ) { \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                outembedded0(e); \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.embedded.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_deferred_embedded(s,e)  \
+            printf( "deploy_deferred_embedded(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.embedded.s ) { \
+                outembeddeddef0(e); \
+                _environment->deployed.embedded.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define deploy_begin(s)  \
+            printf( "deploy_begin(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+            if ( ! _environment->deployed.s ) { \
+                int ignoreProtothread = _environment->protothread; \
+                int ignoreEmptyProcedure = _environment->emptyProcedure; \
+                _environment->protothread = 0; \
+                _environment->emptyProcedure = 0; \
+                cpu_jump( _environment, #s "_after" ); \
+                cpu_label( _environment, "lib_" #s );
+
+    #define deploy_end(s)  \
+                printf( "deploy_end(%s) %s:%d\n", #s, __FILE__, __LINE__ ); \
+                cpu_label( _environment, #s "_after" ); \
+                _environment->protothread = ignoreProtothread; \
+                _environment->emptyProcedure = ignoreEmptyProcedure; \
+                _environment->deployed.s = 1; \
+                printf( " deployed.%s = 1\n", #s ); \
+            }
+
+    #define inline(s) \
+            _environment->embeddedStats.s++; \
+            if ( !_environment->embedded.s ) {
+
+    #define no_inline(s) \
+            if ( !_environment->embedded.s ) { \
+                CRITICAL_UNABLE_TO_INLINE(#s); \
+
+    #define no_embedded(s) \
+            } else { \
+                CRITICAL_UNABLE_TO_EMBED(#s); \
+            }
+
+    #define embedded(s,e) \
+            } else { \
+                deploy_embedded(s,e) \
+
+    #define done() \
+            }
+
+    #define parse_embedded(p, s) \
+        if ( strcmp( p, #s ) == 0 ) { \
+            _environment->embedded.s = 1; \
         }
 
-#define deploy_inplace(s,e)  \
-        if ( ! _environment->deployed.s ) { \
-            outembedded0(e); \
-        }
-
-#define deploy_inplace_preferred(s,e)  \
-        if ( _environment->deployed.s ) { \
-            _environment->deployed.s = 0; \
-            deploy_inplace(s,e); \
-            _environment->deployed.s = 1; \
-        }
-
-#define deploy_with_vars(s,e,v)  \
-        if ( ! _environment->deployed.s ) { \
-            int ignoreEmptyProcedure = _environment->emptyProcedure; \
-            _environment->emptyProcedure = 0; \
-            cpu_jump( _environment, #s "_after" ); \
-            outembedded0(e); \
-            v(_environment);\
-            cpu_label( _environment, #s "_after" ); \
-            _environment->emptyProcedure = ignoreEmptyProcedure; \
-            _environment->deployed.s = 1; \
-        }
-
-#define deploy_deferred_with_vars(s,e,v)  \
-        if ( ! _environment->deployed.s ) { \
-            outembeddeddef0(e); \
-            v(_environment);\
-            _environment->deployed.s = 1; \
-        }
-
-#define deploy_embedded(s,e)  \
-        if ( ! _environment->deployed.embedded.s ) { \
-            int ignoreEmptyProcedure = _environment->emptyProcedure; \
-            _environment->emptyProcedure = 0; \
-            cpu_jump( _environment, #s "_after" ); \
-            outembedded0(e); \
-            cpu_label( _environment, #s "_after" ); \
-            _environment->emptyProcedure = ignoreEmptyProcedure; \
-            _environment->deployed.embedded.s = 1; \
-        }
-
-#define deploy_deferred_embedded(s,e)  \
-        if ( ! _environment->deployed.embedded.s ) { \
-            outembeddeddef0(e); \
-            _environment->deployed.embedded.s = 1; \
-        }
-
-#define deploy_begin(s)  \
-        if ( ! _environment->deployed.s ) { \
-            int ignoreProtothread = _environment->protothread; \
-            int ignoreEmptyProcedure = _environment->emptyProcedure; \
-            _environment->protothread = 0; \
-            _environment->emptyProcedure = 0; \
-            cpu_jump( _environment, #s "_after" ); \
-            cpu_label( _environment, "lib_" #s ); \
-
-#define deploy_end(s)  \
-            cpu_label( _environment, #s "_after" ); \
-            _environment->protothread = ignoreProtothread; \
-            _environment->emptyProcedure = ignoreEmptyProcedure; \
-            _environment->deployed.s = 1; \
-        }
-
-#define inline(s) \
-        _environment->embeddedStats.s++; \
-        if ( !_environment->embedded.s ) {
-
-#define no_inline(s) \
-        if ( !_environment->embedded.s ) { \
-            CRITICAL_UNABLE_TO_INLINE(#s); \
-
-#define no_embedded(s) \
-        } else { \
-            CRITICAL_UNABLE_TO_EMBED(#s); \
-        }
-
-#define embedded(s,e) \
-        } else { \
-            deploy_embedded(s,e) \
-
-#define done() \
-        }
-
-#define parse_embedded(p, s) \
-    if ( strcmp( p, #s ) == 0 ) { \
-        _environment->embedded.s = 1; \
-    }
+#endif
 
 #define stats_embedded(s) \
     printf("%s:\t%d\t%s\t\n", #s, _environment->embeddedStats.s, _environment->embedded.s ? "embedded" : "inline" );
