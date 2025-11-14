@@ -2137,7 +2137,6 @@ void vic2_scroll_text( Environment * _environment, int _direction, int _overlap 
 void vic2_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy( textEncodedAt, src_hw_vic2_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -2155,6 +2154,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
             outline0("JSR TEXTATBITMAPMODERAW");
         } else {
             deploy( clsText, src_hw_vic2_cls_text_asm );
+            deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
             deploy_deferred( textEncodedAtTextRaw, src_hw_vic2_text_at_text_raw_asm );
             outline0("JSR TEXTATTILEMODERAW");
         }
@@ -2166,6 +2166,7 @@ void vic2_text( Environment * _environment, char * _text, char * _text_size, int
             outline0("JSR TEXTATBITMAPMODE");
         } else {
             deploy( clsText, src_hw_vic2_cls_text_asm );
+            deploy_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
             deploy_deferred( textEncodedAtText, src_hw_vic2_text_at_text_asm );
             outline0("JSR TEXTATTILEMODE");
         }
