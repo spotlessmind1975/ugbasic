@@ -3846,7 +3846,12 @@ void cpu_less_than_32bit( Environment * _environment, char *_source, char *_dest
         if ( _equal ) {
 
             outhead1("%sdone:", label );
-
+            if ( _other ) {
+                outline1("STA %s", _other);
+            } else {
+                outline1("STA %s", _destination);
+            }
+            
         }
 
     no_embedded( cpu_less_than_32bit )
