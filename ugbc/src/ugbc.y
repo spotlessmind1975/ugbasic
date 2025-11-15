@@ -12488,7 +12488,12 @@ statement2nc:
   | CASE {
       case_equals_label( _environment );  
   } expr {
-      case_equals_var( _environment, $3 );  
+      Variable * expr = variable_retrieve( _environment, $3 );
+      if ( expr->initializedByConstant ) {
+          case_equals( _environment, expr->value );  
+      } else {
+          case_equals_var( _environment, $3 );  
+      }
   }
   | CASE ELSE {
       case_equals_label( _environment );  
