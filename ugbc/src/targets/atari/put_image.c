@@ -57,9 +57,11 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     }
 
     MAKE_LABEL
-    
+
     Variable * image = variable_retrieve( _environment, _image );
 
+    image->usedImage = 1;
+    
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
