@@ -2411,11 +2411,6 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         deploy( flipimagex, src_hw_ef936x_flip_image_x_asm );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            #if defined(__to8__)
-                outline0("LEAY $A000,Y");
-            #else
-                outline0("LEAY $6000,Y");
-            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEX");
@@ -2434,11 +2429,6 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("BEQ %s", label );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            #if defined(__to8__)
-                outline0("LEAY $A000,Y");
-            #else
-                outline0("LEAY $6000,Y");
-            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEX");
@@ -2455,11 +2445,6 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         deploy( flipimagey, src_hw_ef936x_flip_image_y_asm );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            #if defined(__to8__)
-                outline0("LEAY $A000,Y");
-            #else
-                outline0("LEAY $6000,Y");
-            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEY");
@@ -2478,11 +2463,6 @@ void ef936x_flip_image( Environment * _environment, Resource * _image, char * _f
         outline1("BEQ %s", label );
         if ( _image->isAddress && _image->bankNumber != -1 ) {
             outline0("ORCC #$50");
-            #if defined(__to8__)
-                outline0("LEAY $A000,Y");
-            #else
-                outline0("LEAY $6000,Y");
-            #endif
             bank_set( _environment, _image->bankNumber );
         }
         outline0("JSR FLIPIMAGEY");
