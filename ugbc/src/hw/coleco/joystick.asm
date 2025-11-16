@@ -118,7 +118,7 @@ JOYSTICKREAD1:
 
     WAITFIRE0:
         CALL JOYSTICKREAD0
-        AND $10
+        AND $40
         CP 0
         JR Z, WAITFIRE0
         RET
@@ -129,7 +129,7 @@ JOYSTICKREAD1:
 
     WAITFIRE1:
         CALL JOYSTICKREAD1
-        AND $10
+        AND $40
         CP 0
         JR Z, WAITFIRE1
         RET
@@ -187,7 +187,7 @@ JOYSTICKREAD1:
 
     WAITFIRE0:
         LD A, (JOYSTICK0)
-        AND $10
+        AND $40
         CP 0
         JR Z, WAITFIRE0
         RET
@@ -198,7 +198,7 @@ JOYSTICKREAD1:
 
     WAITFIRE1:
         LD A, (JOYSTICK1)
-        AND $10
+        AND $40
         CP 0
         JR Z, WAITFIRE1
         RET
@@ -208,6 +208,7 @@ JOYSTICKREAD1:
         LD B, A
         LD A, (JOYSTICK1)
         OR B
+        AND $40
         CP 0
         JR Z, WAITFIRE
         RET
