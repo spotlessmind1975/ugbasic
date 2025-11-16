@@ -11264,7 +11264,7 @@ ScreenMode * find_screen_mode_by_suggestion( Environment * _environment, int _bi
             } else {
                 screenMode->score -= ( _width ) ? ( abs( _width - screenMode->width ) ) : 0;
                 screenMode->score -= ( _height ) ? ( abs( _height - screenMode->height ) ) : 0;
-                screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) ) : 0;
+                screenMode->score -= ( _colors ) ? ( abs( _colors - screenMode->colors ) * 100 ) : 0;
                 screenMode->score -= ( _tile_width ) ? ( abs( _tile_width - screenMode->tileWidth ) * 10 ) : 0;
                 screenMode->score -= ( _tile_height ) ? ( abs( _tile_height - screenMode->tileHeight ) * 10 ) : 0;
             }
