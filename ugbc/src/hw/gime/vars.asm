@@ -89,8 +89,8 @@ PLOTC   EQU $45
 
 ; PALETTEPAPER               fcb $12, $24, $0b, $07, $3f, $1f, $09, $26
 ; PALETTEPEN                 fcb $00, $12, $00, $3f, $00, $12, $00, $26
-PALETTEPAPER               fcb $00, $00, $00, $00, $00, $00, $00, $00
-PALETTEPEN                 fcb $00, $00, $00, $00, $00, $00, $00, $00
+; PALETTEPAPER               fcb $00, $00, $00, $00, $00, $00, $00, $00
+; PALETTEPEN                 fcb $00, $00, $00, $00, $00, $00, $00, $00
 
 PALETTEPENUNUSED           fcb 0
 PALETTEPAPERUNUSED         fcb 0

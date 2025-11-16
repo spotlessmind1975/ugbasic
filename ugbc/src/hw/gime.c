@@ -1717,6 +1717,30 @@ void gime_initialization( Environment * _environment ) {
 
 void gime_finalization( Environment * _environment ) {
 
+    int i;
+
+    outhead0("PALETTEPAPER");
+    out0("      fdb ");
+
+    RGBi * palette;
+
+    if ( commonPalette ) {
+        palette = commonPalette;
+    } else {
+        palette = SYSTEM_PALETTE;
+    }
+    
+    for( i=0; i<7; ++i ) {
+        out1( "$%2.2x, ", palette[i].hardwareIndex );
+    }
+    outline1( "$%2.2x ", palette[i].hardwareIndex );
+    outhead0("PALETTEPEN");
+    out0("      fdb ");
+    for( i=8; i<14; ++i ) {
+        out1( "$%2.2x, ", palette[i].hardwareIndex );
+    }
+    outline1( "$%2.2x ", palette[i].hardwareIndex );
+
     if ( _environment->vestigialConfig.clsImplicit ) {
         deploy_preferred( clsText, src_hw_gime_cls_text_asm );
     }
