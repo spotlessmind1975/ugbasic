@@ -53,9 +53,9 @@ void wait_vbl( Environment * _environment, char * _raster_line ) {
 
     MAKE_LABEL
     
-    outline0( "LDA $FF02" );
-    outhead1( "%s", label )
-    outline0( "LDA $FF03" );
-    outline1( "BPL %s", label );
+    // outline0( "LDA $FF02" );
+    // outhead1( "%s", label )
+    // outline0( "LDA $FF03" );
+    // outline1( "BPL %s", label );
 
 }
