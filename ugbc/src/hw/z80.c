@@ -517,7 +517,7 @@ void cpu_fill_size_value( Environment * _environment, char * _address, int _byte
             outline0("LD B, A");
         }
 
-        outline1("LD A, $%2.2x", _pattern);
+        outline1("LD A, $%2.2x", (unsigned char)(_pattern&0xff));
         outline1("LD HL, (%s)", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -636,7 +636,7 @@ void cpu_fill_direct_size_value( Environment * _environment, char * _address, in
             outline0("LD B, A");
         }
 
-        outline1("LD A, $%2.2x", _pattern);
+        outline1("LD A, $%2.2x", (unsigned char)(_pattern & 0xff));
         outline1("LD HL, %s", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -681,7 +681,7 @@ void cpu_store_8bit( Environment * _environment, char *_destination, int _value 
 
     inline( cpu_store_8bit )
 
-        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _value & 0xff ) );
         outline1("LD (%s), A", _destination);
 
     no_embedded( cpu_store_8bit )
@@ -711,8 +711,8 @@ void cpu_store_8bit_with_offset( Environment * _environment, char *_destination,
     inline( cpu_store_8bit_with_offset )
 
         outline1("LD DE, %s", _destination);
-        outline1("ADD DE, $%2.2x", ( _offset & 0xff ) );
-        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("ADD DE, $%2.2x", (unsigned char)( _offset & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _value & 0xff ) );
         outline0("LD (DE), A");
 
     no_embedded( cpu_store_8bit_with_offset )
@@ -728,7 +728,7 @@ void cpu_store_8bit_with_offset2( Environment * _environment, char *_destination
         outline0("LD E, A");
         outline0("LD D, 0");
         outline0("ADD HL, DE" );
-        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _value & 0xff ) );
         outline0("LD (HL), A");
 
     no_embedded( cpu_store_8bit_with_offset2 )
@@ -1045,7 +1045,7 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         if ( _signed ) {
 
-            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             outline0("SUB A, B");
@@ -1068,7 +1068,7 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         } else {
 
-            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             outline0("CP B");
@@ -1090,7 +1090,7 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         if ( _signed ) {
 
-            outline1("LD A, $%2.2x", _destination);
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ));
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             if ( _equal ) {
@@ -1102,7 +1102,7 @@ void cpu_less_than_8bit_const( Environment * _environment, char *_source, int _d
 
         } else {
 
-            outline1("LD A, $%2.2x", _destination);
+            outline1("LD A, $%2.2x", (unsigned char)(_destination & 0xff ));
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             if ( _equal ) {
@@ -1126,7 +1126,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
         if ( _signed ) {
 
-            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             outline0("SUB A, B");
@@ -1146,7 +1146,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
         } else {
 
-            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             outline0("CP B");
@@ -1165,7 +1165,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
         if ( _signed ) {
 
-            outline1("LD A, $%2.2x", _destination);
+            outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             if ( _equal ) {
@@ -1180,7 +1180,7 @@ void cpu_less_than_and_branch_8bit_const( Environment * _environment, char *_sou
 
         } else {
 
-            outline1("LD A, $%2.2x", _destination);
+            outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             if ( _equal ) {
@@ -1261,7 +1261,7 @@ void cpu_math_add_8bit_const( Environment * _environment, char *_source, int _de
         outline1("LD A, (%s)", _source );
         outline0("ADD A, B" );
         outline0("LD B, A" );
-        outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
         outline0("ADD A, B" );
         outline1("LD (%s), A", _other );
 
@@ -1517,7 +1517,7 @@ void cpu_math_div2_const_8bit( Environment * _environment, char *_source, int _s
         }
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
-        outline1("LD A, $%2.2x", _steps);
+        outline1("LD A, $%2.2x", (unsigned char)(_steps&0xff));
         outline0("LD C, A");
         if ( _signed ) {
             outline0("CALL CPUDIV2CONST8S");
@@ -1570,7 +1570,7 @@ void cpu_math_mul2_const_8bit( Environment * _environment, char *_source, int _s
 
         outline1("LD A, (%s)", _source);
         outline0("LD B, A");
-        outline1("LD A, $%2.2x", _steps);
+        outline1("LD A, $%2.2x", (unsigned char)(_steps&0xff));
         outline0("LD C, A");
         if ( _signed ) {
             outline0("CALL CPUMUL2CONST8S");
@@ -1597,7 +1597,7 @@ void cpu_math_complement_const_8bit( Environment * _environment, char *_source, 
 
         outline1("LD A, (%s)", _source );
         outline0("LD B, A" );
-        outline1("LD A, $%2.2x", ( _value & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _value & 0xff ) );
         outline0("SUB A, B" );
         outline1("LD (%s), A", _source );
 
@@ -1998,7 +1998,7 @@ void cpu_less_than_16bit_const( Environment * _environment, char *_source, int _
             
         } else {
 
-            outline1("LD A, $%2.2x", ( ( _destination >> 8 ) & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( ( _destination >> 8 ) & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
             outline0("CP B");
@@ -2006,7 +2006,7 @@ void cpu_less_than_16bit_const( Environment * _environment, char *_source, int _
             outline1("JR C, %s", label);
             outline1("JR %s_0", label);
             outhead1("%sl2:", label);
-            outline1("LD A, $%2.2x", ( _destination & 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination & 0xff ) );
             outline0("LD B, A");
             outline1("LD A, (%s)", _source);
             outline0("CP B");
@@ -2752,7 +2752,7 @@ void cpu_math_div2_const_16bit( Environment * _environment, char *_source, int _
         if ( _signed ) {
             if ( _steps ) {
                 outline1("LD HL, (%s)", _source );
-                outline1("LD A, $%2.2x", _steps );
+                outline1("LD A, $%2.2x", (unsigned char)(_steps&0xff) );
                 outline0("LD C, A" );
                 outline0("CALL CPUDIV2CONST16S" );
                 outline1("LD (%s), HL", _source );
@@ -2760,7 +2760,7 @@ void cpu_math_div2_const_16bit( Environment * _environment, char *_source, int _
         } else {
             if ( _steps ) {
                 outline1("LD HL, (%s)", _source );
-                outline1("LD A, $%2.2x", _steps );
+                outline1("LD A, $%2.2x", (unsigned char)(_steps&0xff) );
                 outline0("LD C, A" );
                 outline0("CALL CPUDIV2CONST16U" );
                 outline1("LD (%s), HL", _source );
@@ -3970,7 +3970,7 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
 
             outline1("LD A, (%s)", address_displacement(_environment, _source, "3"));
             outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 24 ) && 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( ( _destination >> 24 ) && 0xff ) );
             outline0("CP B");
             outline1("JR Z, %s_2", label);
             outline1("JR C, %s", label);
@@ -3978,7 +3978,7 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
             outhead1("%s_2:", label);
             outline1("LD A, (%s)", address_displacement(_environment, _source, "2"));
             outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 16 ) && 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( ( _destination >> 16 ) && 0xff ) );
             outline0("CP B");
             outline1("JR Z, %s_1", label);
             outline1("JR C, %s", label);
@@ -3986,7 +3986,7 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
             outhead1("%s_1:", label);
             outline1("LD A, (%s)", address_displacement(_environment, _source, "1"));
             outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( ( _destination >> 8 ) && 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( ( _destination >> 8 ) && 0xff ) );
             outline0("CP B");
             outline1("JR Z, %s_0", label);
             outline1("JR C, %s", label);
@@ -3994,7 +3994,7 @@ void cpu_less_than_32bit_const( Environment * _environment, char *_source, int _
             outhead1("%s_0:", label);
             outline1("LD A, (%s)", _source);
             outline0("LD B, A");
-            outline1("LD A, $%2.2x", ( _destination && 0xff ) );
+            outline1("LD A, $%2.2x", (unsigned char)( _destination && 0xff ) );
             outline0("CP B");
             outline1("JR C, %s", label);
             if ( _equal ) {
@@ -6029,9 +6029,9 @@ void cpu_mem_move_size( Environment * _environment, char *_source, char *_destin
 
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, (%s)", _destination);
-        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
         outline0("LD C, A");
-        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline1("LD B, $%2.2x", (unsigned char)(( _size >> 8 ) & 0xff) );
         outline0("CALL DUFFDEVICE");
 
     }
@@ -6046,9 +6046,9 @@ void cpu_mem_move_direct_size( Environment * _environment, char *_source, char *
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
         outline0("LD C, A");
-        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline1("LD B, $%2.2x", (unsigned char)(( _size >> 8 ) & 0xff) );
         outline0("CALL DUFFDEVICE");
     }
 
@@ -6062,9 +6062,9 @@ void cpu_mem_move_direct_indirect_size( Environment * _environment, char *_sourc
 
         outline1("LD HL, %s", _source);
         outline1("LD DE, (%s)", _destination);
-        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
         outline0("LD C, A");
-        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline1("LD B, $%2.2x", (unsigned char)(( _size >> 8 ) & 0xff) );
         outline0("CALL DUFFDEVICE");
     }
 
@@ -6078,9 +6078,9 @@ void cpu_mem_move_indirect_direct_size( Environment * _environment, char *_sourc
 
         outline1("LD HL, (%s)", _source);
         outline1("LD DE, %s", _destination);
-        outline1("LD A, $%2.2x", ( _size & 0xff ) );
+        outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
         outline0("LD C, A");
-        outline1("LD B, $%2.2x", ( _size >> 8 ) & 0xff );
+        outline1("LD B, $%2.2x", (unsigned char)(( _size >> 8 ) & 0xff) );
         outline0("CALL DUFFDEVICE");
     }
 
@@ -6123,7 +6123,7 @@ void cpu_compare_memory_size( Environment * _environment, char *_source, char *_
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (HL)");
@@ -6186,7 +6186,7 @@ void cpu_less_than_memory_size( Environment * _environment, char *_source, char 
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)",_destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (DE)");
@@ -6252,7 +6252,7 @@ void cpu_greater_than_memory_size( Environment * _environment, char *_source, ch
 
     outline1("LD HL, (%s)", _source);
     outline1("LD DE, (%s)", _destination);
-    outline1("LD A, $%2.2x", ( _size & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
     outline0("LD C, A");
     outhead1("%s:", label );
     outline0("LD A, (DE)");
@@ -6898,7 +6898,7 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
 
         outline1("LD A, (%s)", _source );
         outline0("LD B, A" );
-        outline1("LD A, $%2.2x", _destination );
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff) );
         outline0("XOR A, B" );
         outline0("AND $80" );
         outline0("PUSH AF" );
@@ -6915,16 +6915,16 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
         outhead1("%spos2:", label );
         outline0("LD D, A");
         
-        outline1("LD A, $%2.2x", _destination );
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff) );
         outline0("AND $80" );
         outline0("CP 0" );
         outline1("JR Z,%sposx", label );
-        outline1("LD A, $%2.2x", _destination );
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff) );
         outline0("XOR $FF" );
         outline0("ADC $1" );
         outline1("JMP %sposx2", label );
         outhead1("%sposx:", label );
-        outline1("LD A, $%2.2x", _destination );
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff) );
         outhead1("%sposx2:", label );
         outline0("LD E, A");
 
@@ -6958,7 +6958,7 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
 
         outline1("LD A, (%s)", _source);
         outline0("LD D, A");
-        outline1("LD A, $%2.2x", _destination);
+        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
         outline0("LD E, A");
 
         outline0("XOR A");
@@ -6987,7 +6987,7 @@ void cpu_bit_check( Environment * _environment, char *_value, int _position, cha
     embedded( cpu_bit_check_extended, src_hw_z80_cpu_bit_check_extended_asm );
 
         outline1("LD DE, %s", _value);
-        outline1("LD A, $%2.2x", _position );
+        outline1("LD A, $%2.2x", (unsigned char)(_position&0xff) );
         outline0("CALL CPUBITCHECKEXTENDED" );
 
         if ( _result ) {
@@ -7037,7 +7037,7 @@ void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
             outline0("SRL A" );
         }
         outline1("LD DE, %s", _value );
-        outline1("LD A, $%2.2x", _position);
+        outline1("LD A, $%2.2x", (unsigned char)(_position&0xff));
         outline0("CALL CPUBITINPLACE");
 
     done( )
@@ -7191,16 +7191,16 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
             break;
     }
 
-    outline1("LD A, $%2.2x", ( _bits & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _bits & 0xff ) );
     outline0("CALL BINSTR");
     
     outline1("LD DE, (%s)", _string);
-    outline1("LD A, $%2.2x", ( (_bits) & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( (_bits) & 0xff ) );
     outline0("LD C, A");
     outline0("LD B, 0");
     outline0("LDIR");
 
-    outline1("LD A, $%2.2x", ( _bits & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _bits & 0xff ) );
     outline1("LD HL, %s", _string_size );
     outline0("LD (HL), A" );
 
@@ -7214,7 +7214,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
 
-        outline1("LD A, $%2.2x", _bits);
+        outline1("LD A, $%2.2x", (unsigned char)(_bits&0xff));
         outline0("LD IXL, A");
 
         switch( _bits ) {
@@ -7253,7 +7253,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
         }
 
-        outline1("LD A, $%2.2x", ( _bits >> 2 ) );
+        outline1("LD A, $%2.2x", (unsigned char)(( _bits >> 2 )&0xff) );
         outline1("LD (%s), A", _string_size );
 
     done()
@@ -7288,7 +7288,7 @@ void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
     deploy( dstring,src_hw_z80_dstring_asm );
 
-    outline1( "LD A, $%2.2x", ( _size & 0xff ) );
+    outline1( "LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
     outline0( "LD C, A" );
     outline0( "CALL DSALLOC" );
     outline0( "LD A, B" );
@@ -7334,7 +7334,7 @@ void cpu_dsresize_size( Environment * _environment, char * _index, int _resize )
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD B, A" );
-    outline1( "LD A, $%2.2x", ( _resize & 0xff ) );
+    outline1( "LD A, $%2.2x", (unsigned char)( _resize & 0xff ) );
     outline0( "LD C, A" );
     outline0( "CALL DSRESIZE" );
 
@@ -7583,7 +7583,7 @@ void cpu_protothread_save( Environment * _environment, char * _index, int _step 
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", ( _step & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _step & 0xff ) );
 
     outline0("CALL PROTOTHREADSAVE" );
 
@@ -7608,7 +7608,7 @@ void cpu_protothread_set_state( Environment * _environment, char * _index, int _
 
     outline1("LD A, (%s)", _index );
     outline0("LD B, A" );
-    outline1("LD A, $%2.2x", ( _state & 0xff ) );
+    outline1("LD A, $%2.2x", (unsigned char)( _state & 0xff ) );
 
     outline0("CALL PROTOTHREADSETSTATE" );
 
