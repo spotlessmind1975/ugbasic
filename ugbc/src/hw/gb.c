@@ -594,7 +594,7 @@ void gb_background_color_get_vars( Environment * _environment, char * _index, ch
     outline0("LD D, A");
     outhead1("%snorot:", label);
     outline0("LD A, D");
-    outline1("LD (%S), A", _background_color);
+    outline1("LD (%s), A", _background_color);
 
 }
 

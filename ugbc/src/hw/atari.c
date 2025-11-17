@@ -847,7 +847,7 @@ void atari_dojo_serial_get_response( Environment * _environment, char * _status,
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STX %S", _size );
+        outline1( "STX %s", _size );
     }
 
 }
@@ -867,7 +867,7 @@ void atari_dojo_serial_get_responsed( Environment * _environment, char * _status
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STX %S", _size );
+        outline1( "STX %s", _size );
     }
 
 }
@@ -1059,7 +1059,7 @@ void atari_dojo_fujinet_get_response( Environment * _environment, char * _status
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STX %S", _size );
+        outline1( "STX %s", _size );
     }
 
 }
@@ -1080,7 +1080,7 @@ void atari_dojo_fujinet_get_responsed( Environment * _environment, char * _statu
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STX %S", _size );
+        outline1( "STX %s", _size );
     }
 
 }

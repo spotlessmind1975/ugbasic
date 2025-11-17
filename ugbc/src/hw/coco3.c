@@ -549,7 +549,7 @@ void coco3_dojo_serial_get_response( Environment * _environment, char * _status,
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STB %S", _size );
+        outline1( "STB %s", _size );
     }
 
 }
@@ -566,7 +566,7 @@ void coco3_dojo_serial_get_responsed( Environment * _environment, char * _status
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STB %S", _size );
+        outline1( "STB %s", _size );
     }
 
 }
@@ -738,7 +738,7 @@ void coco3_dojo_fujinet_get_response( Environment * _environment, char * _status
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STB %S", _size );
+        outline1( "STB %s", _size );
     }
 
 }
@@ -756,7 +756,7 @@ void coco3_dojo_fujinet_get_responsed( Environment * _environment, char * _statu
         outline1( "STA %s", _status );
     }
     if ( _size ) {
-        outline1( "STB %S", _size );
+        outline1( "STB %s", _size );
     }
 
 }
