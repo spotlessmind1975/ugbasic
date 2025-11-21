@@ -2749,6 +2749,46 @@ frame_size : {
         ((struct _Environment *)_environment)->frameOriginY = 0;
     } frame_size_definition;
 
+frame_definition :
+    const_expr {
+        ((struct _Environment *)_environment)->currentStrip->frames[((struct _Environment *)_environment)->currentStrip->count++] = $1;
+    }
+    | const_expr {
+        ((struct _Environment *)_environment)->currentStrip->frames[((struct _Environment *)_environment)->currentStrip->count++] = $1;
+    } OP_COMMA frame_definition
+    ;
+
+strip_definition :
+    STRIP {
+        Strip * s = malloc( sizeof( Strip ) );
+        memset(s, 0, sizeof( Strip ) );
+        s->next = ((struct _Environment *)_environment)->currentStrip;
+        ((struct _Environment *)_environment)->currentStrip = s;
+    } OP frame_definition CP;
+
+strips_definition :
+    strip_definition
+    | strip_definition OP_COMMA strips_definition;
+
+strips_definition_optional :
+    | OSP strips_definition CSP {
+
+        Strip * final = NULL;
+        
+        Strip * actual = ((struct _Environment *)_environment)->currentStrip;
+
+        while(actual) {
+            Strip * element = malloc( sizeof( Strip ) );
+            memcpy( element, actual, sizeof( Strip ) );
+            element->next = final;
+            final = element;
+            actual = actual->next;
+        }
+
+        ((struct _Environment *)_environment)->currentStrip = final;
+
+    };
+
 dojo_functions : 
     ERROR {
         $$ = dojo_error( _environment )->name;
@@ -3225,7 +3265,7 @@ exponential_less:
         }
         $$ = sequence->name;
       }
-    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional strips_definition_optional {
         Variable * images = images_load( _environment, 
             $3, NULL, 
             ((struct _Environment *)_environment)->currentMode, 
@@ -3237,6 +3277,7 @@ exponential_less:
         if ( $11 ) {
             images->readonly = $11;
         }
+        images->strips = ((struct _Environment *)_environment)->currentStrip;
         $$ = images->name;
       }
     | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {

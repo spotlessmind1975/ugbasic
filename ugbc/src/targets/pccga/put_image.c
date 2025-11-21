@@ -62,6 +62,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -69,6 +70,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -88,10 +90,36 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             }
             break;
         case VT_IMAGES:
+
+            if ( sequence ) {
+                if ( image->strips ) {
+                    realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                    outline0("PUSH DI");
+                    outline0("PUSH AX");
+                    outline0("PUSH BX");
+                    outline1("MOV DI, %sstrip", image->realName );
+                    outline1("MOV AL, [%s]", sequence->realName );
+                    outline0("MOV AH, 0");
+                    outline0("ADD DI, AX" );
+                    outline0("ADD DI, AX" );
+                    outline0("MOV BX, [DI]");
+                    outline1("MOV AL, [%s]", frame->realName );
+                    outline0("MOV AH, 0" );
+                    outline0("ADD BX, AX" );
+                    outline0("MOV AL, [BX]");
+                    outline1("MOV [%s], AL", realFrame->realName );
+                    outline0("POP BX");
+                    outline0("POP AX");
+                    outline0("POP DI");
+                } else {
+                    CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                }
+            }
+        
             if ( !frame ) {
                 cga_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                cga_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                cga_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:

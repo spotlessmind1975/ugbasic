@@ -64,6 +64,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -71,6 +72,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -169,10 +171,27 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     c6847b_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    c6847b_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    c6847b_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -187,10 +206,28 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 c6847b_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     c6847b_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    c6847b_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    c6847b_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -254,7 +291,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
         outline1("LDA %s", address_displacement( _environment, image->realName, "5") );
         outline1("LBEQ %sskip", label );
     }
-    
+
     // Y = OFFSET
 
     if ( _sequence ) {
@@ -300,7 +337,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip", label );
     }
-
+    
 }
 
 void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {

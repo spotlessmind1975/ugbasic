@@ -63,6 +63,7 @@ extern char DATATYPE_AS_STRING[][16];
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -70,6 +71,7 @@ extern char DATATYPE_AS_STRING[][16];
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -182,10 +184,27 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -213,10 +232,28 @@ extern char DATATYPE_AS_STRING[][16];
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, realFrame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;

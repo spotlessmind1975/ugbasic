@@ -63,6 +63,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
     Variable * flags = variable_retrieve_or_define( _environment, _flags, VT_WORD, 0 );
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -70,6 +71,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -89,6 +91,41 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
             }
             break;
         case VT_IMAGES:
+        
+            if ( sequence ) {
+                if ( image->strips ) {
+                    realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                    // outline0("PUSH HL");
+                    // outline0("PUSH AF");
+                    // outline1("LD HL, %sstrip", image->realName );
+                    // outline1("LD A, (%s)", sequence->realName );
+                    // outline0("SLA A" );
+                    // outline0("LD E, A" );
+                    // outline0("LD D, 0" );
+                    // outline0("ADD HL, DE");
+                    // outline0("LD A, (HL)");
+                    // outline0("LD E, A");
+                    // outline0("INC HL");
+                    // outline0("LD A, (HL)");
+                    // outline0("LD E, A");
+                    // outline0("LD A, (DE)");
+                    // outline0("LD L, A");
+                    // outline0("INC DE");
+                    // outline0("LD A, (DE)");
+                    // outline0("LD H, A");
+                    // outline1("LD A, (%s)", frame->realName );
+                    // outline0("LD E, A" );
+                    // outline0("LD D, 0" );
+                    // outline0("ADD HL, DE");
+                    // outline0("LD A, (HL)");
+                    // outline1("LD (%s), A", realFrame->realName );
+                    // outline0("POP AF");
+                    // outline0("POP HL");
+                } else {
+                    CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                }
+            }
+
             if ( !frame ) {
                 ef9345_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
             } else {

@@ -14406,6 +14406,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     if ( var->offsettingFrames ) {
         offsetting_add_variable_reference( _environment, var->offsettingFrames, var, 0 );
     }
+    var->strips = expr->strips;
     if ( expr->typeType ) {
         var->typeType = expr->typeType;
         var->size = expr->typeType->size;

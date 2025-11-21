@@ -207,6 +207,30 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    Strip * actual = variable->strips;
+                    int i = 0;
+                    while( actual ) {
+                        outhead2("%sstrip%d", variable->realName, i );
+                        for( int j=0; j<actual->count; ++j ) {
+                            outline1( "fcb $%2.2x", actual->frames[j] );
+                        }
+                        actual = actual->next;
+                        ++i;
+                    }
+                    actual = variable->strips;
+                    i = 0;
+                    outhead1("%sstrip", variable->realName );
+                    while( actual ) {
+                        outline2("fdb %sstrip%d", variable->realName, i );
+                        actual = actual->next;
+                        ++i;
+                    }
+                }
+            }
+
         }
         
         variable = variable->next;

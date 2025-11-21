@@ -568,6 +568,7 @@ typedef struct _Resource {
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 #define MAX_BUFFERED_OUTPUT             16
+#define MAX_FRAMES_PER_STRIP            32
 
 #define FONT_SCHEMA_EMBEDDED            0
 #define FONT_SCHEMA_STANDARD            1
@@ -955,6 +956,15 @@ typedef struct _ArrayReference {
 
 } ArrayReference;
 
+typedef struct _Strip {
+
+    int     frames[MAX_FRAMES_PER_STRIP];
+    int     count;
+
+    struct _Strip * next;
+
+} Strip;
+
 /**
  * @brief Structure of a single variable
  */
@@ -1196,6 +1206,8 @@ typedef struct _Variable {
     Offsetting * offsettingSequences;
 
     SIDFILE * sidFile;
+
+    Strip   *   strips;
 
     /**
      *
@@ -3253,6 +3265,8 @@ typedef struct _Environment {
 
     int chainUsed;
 
+    Strip   *   currentStrip;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3792,6 +3806,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_INVALID_NUMBER_DIGITS( n ) CRITICAL2i("E399 - invalid number of digits for NUMBER representation", n );
 #define CRITICAL_INVALID_FRAME_WIDTH( s ) CRITICAL2("E400 - invalid frame width", s );
 #define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
+#define CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( s ) CRITICAL2("E402 - cannot use STRIP with PUT IMAGE using ATLAS without STRIP", s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

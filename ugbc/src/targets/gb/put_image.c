@@ -65,13 +65,17 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+        realFrame = frame;
     }
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -172,10 +176,40 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PUSH HL");
+                        outline0("PUSH AF");
+                        outline1("LD HL, %sstrip", image->realName );
+                        outline1("LD A, (%s)", sequence->realName );
+                        outline0("SLA A" );
+                        outline0("LD E, A" );
+                        outline0("LD D, 0" );
+                        outline0("ADD HL, DE");
+                        outline0("LD A, (HL)");
+                        outline0("LD E, A");
+                        outline0("INC HL");
+                        outline0("LD A, (HL)");
+                        outline0("LD D, A");
+                        outline0("LD HL, (DE)");
+                        outline1("LD A, (%s)", frame->realName );
+                        outline0("LD E, A" );
+                        outline0("LD D, 0" );
+                        outline0("ADD HL, DE");
+                        outline0("LD A, (HL)");
+                        outline1("LD (%s), A", realFrame->realName );
+                        outline0("POP AF");
+                        outline0("POP HL");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     gb_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    gb_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    gb_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -190,10 +224,41 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 gb_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PUSH HL");
+                        outline0("PUSH AF");
+                        outline1("LD HL, %sstrip", image->realName );
+                        outline1("LD A, (%s)", sequence->realName );
+                        outline0("SLA A" );
+                        outline0("LD E, A" );
+                        outline0("LD D, 0" );
+                        outline0("ADD HL, DE");
+                        outline0("LD A, (HL)");
+                        outline0("LD E, A");
+                        outline0("INC HL");
+                        outline0("LD A, (HL)");
+                        outline0("LD E, A");
+                        outline0("LD HL, (DE)");
+                        outline1("LD A, (%s)", frame->realName );
+                        outline0("LD E, A" );
+                        outline0("LD D, 0" );
+                        outline0("ADD HL, DE");
+                        outline0("LD A, (HL)");
+                        outline1("LD (%s), A", realFrame->realName );
+                        outline0("POP AF");
+                        outline0("POP HL");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     gb_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    gb_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    gb_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;

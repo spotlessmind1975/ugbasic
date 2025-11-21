@@ -66,6 +66,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -73,6 +74,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -171,10 +173,34 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline1("LDA %s", sequence->realName);
+                        outline0("ASL");
+                        outline0("TAY");
+                        outline1("LDA #<%sstrip", image->realName);
+                        outline0("STA TMPPTR");
+                        outline1("LDA #>%sstrip", image->realName);
+                        outline0("STA TMPPTR+1");
+                        outline0("LDA (TMPPTR),Y" );
+                        outline0("STA TMPPTR2");
+                        outline0("INY" );
+                        outline0("LDA (TMPPTR),Y" );
+                        outline0("STA TMPPTR2+1");
+                        outline1("LDA (%s)", frame->realName );
+                        outline0("TAY" );
+                        outline0("LDA (TMPPTR2),Y" );
+                        outline1("STA %s", realFrame->realName );
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    vic2_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -189,10 +215,35 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline1("LDA %s", sequence->realName);
+                        outline0("ASL");
+                        outline0("TAY");
+                        outline1("LDA #<%sstrip", image->realName);
+                        outline0("STA TMPPTR");
+                        outline1("LDA #>%sstrip", image->realName);
+                        outline0("STA TMPPTR+1");
+                        outline0("LDA (TMPPTR),Y" );
+                        outline0("STA TMPPTR2");
+                        outline0("INY" );
+                        outline0("LDA (TMPPTR),Y" );
+                        outline0("STA TMPPTR2+1");
+                        outline1("LDA (%s)", frame->realName );
+                        outline0("TAY" );
+                        outline0("LDA (TMPPTR2),Y" );
+                        outline1("STA %s", realFrame->realName );
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     vic2_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, resource, x1->name, y1->name, realFrame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;

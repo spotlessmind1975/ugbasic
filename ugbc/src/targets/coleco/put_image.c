@@ -62,6 +62,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
     Variable * y1 = variable_retrieve_or_define( _environment, _y1, VT_POSITION, 0 );
+    Variable * realFrame = frame;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
@@ -69,6 +70,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -88,10 +90,45 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             }
             break;
         case VT_IMAGES:
+
+            if ( sequence ) {
+                if ( image->strips ) {
+                    realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                    outline0("PUSH HL");
+                    outline0("PUSH AF");
+                    outline1("LD HL, %sstrip", image->realName );
+                    outline1("LD A, (%s)", sequence->realName );
+                    outline0("SLA A" );
+                    outline0("LD E, A" );
+                    outline0("LD D, 0" );
+                    outline0("ADD HL, DE");
+                    outline0("LD A, (HL)");
+                    outline0("LD E, A");
+                    outline0("INC HL");
+                    outline0("LD A, (HL)");
+                    outline0("LD E, A");
+                    outline0("LD A, (DE)");
+                    outline0("LD L, A");
+                    outline0("INC DE");
+                    outline0("LD A, (DE)");
+                    outline0("LD H, A");
+                    outline1("LD A, (%s)", frame->realName );
+                    outline0("LD E, A" );
+                    outline0("LD D, 0" );
+                    outline0("ADD HL, DE");
+                    outline0("LD A, (HL)");
+                    outline1("LD (%s), A", realFrame->realName );
+                    outline0("POP AF");
+                    outline0("POP HL");
+                } else {
+                    CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                }
+            }
+
             if ( !frame ) {
                 tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
             } else {
-                tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                tms9918_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags );
             }
             break;
         case VT_IMAGE:
