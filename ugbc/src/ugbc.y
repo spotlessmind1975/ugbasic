@@ -10683,7 +10683,7 @@ flip_definition:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         flip_image_vars_direction( _environment, $2, calculatedFrame->name, NULL, $6 );
     }
-    | IMAGE expr SEQUENCE expr frame expr flip_image_flags {
+    | IMAGE expr sequence_or_strip expr frame expr flip_image_flags {
         flip_image_vars_direction( _environment, $2, $6, $4, $7 );
     }
     | IMAGE expr frame expr flip_image_flags {
@@ -10698,7 +10698,7 @@ flip_definition:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $3, $6 );
         flip_image_vars_direction( _environment, $3, calculatedFrame->name, NULL, $1 );
     }
-    | flip_image_flags IMAGE expr SEQUENCE expr frame expr {
+    | flip_image_flags IMAGE expr sequence_or_strip expr frame expr {
         flip_image_vars_direction( _environment, $3, $7, $5, $1 );
     }
     | flip_image_flags IMAGE expr frame expr {
@@ -10713,7 +10713,7 @@ flip_definition:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         flip_image_vars_indirection( _environment, $2, calculatedFrame->name, NULL, $7 );
     }
-    | IMAGE expr SEQUENCE expr frame expr DIRECTION expr {
+    | IMAGE expr sequence_or_strip expr frame expr DIRECTION expr {
         flip_image_vars_indirection( _environment, $2, $6, $4, $8 );
     }
     | IMAGE expr frame expr DIRECTION expr {
@@ -10728,7 +10728,7 @@ flip_definition:
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $4, $7 );
         flip_image_vars_indirection( _environment, $4, calculatedFrame->name, NULL, $2 );
     }
-    | DIRECTION expr IMAGE expr SEQUENCE expr frame expr {
+    | DIRECTION expr IMAGE expr sequence_or_strip expr frame expr {
         flip_image_vars_indirection( _environment, $4, $8, $6, $2 );
     }
     | DIRECTION expr IMAGE expr frame expr {
