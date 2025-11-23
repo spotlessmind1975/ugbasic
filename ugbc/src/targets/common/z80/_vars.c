@@ -139,7 +139,7 @@ void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips
     int maxId = 0;
     Strip * actual = _strips;
     while( actual ) {
-        if ( maxId < actual->id ) {
+        if ( maxId <= actual->id ) {
             maxId = actual->id+1;
         }
         actual = actual->next;
@@ -153,6 +153,7 @@ void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips
                 for( int j=0; j<actual->count; ++j ) {
                     outline1( "db $%2.2x", actual->frames[j] );
                 }
+                break;
             }
             actual = actual->next;
         }
