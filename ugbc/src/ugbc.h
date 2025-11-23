@@ -958,6 +958,7 @@ typedef struct _ArrayReference {
 
 typedef struct _Strip {
 
+    int     id;
     int     frames[MAX_FRAMES_PER_STRIP];
     int     count;
 
@@ -3265,6 +3266,7 @@ typedef struct _Environment {
 
     int chainUsed;
 
+    int currentStripMaxId;
     Strip   *   currentStrip;
 
     /* --------------------------------------------------------------------- */
@@ -5072,6 +5074,7 @@ int banks_get_default_resident( Environment * _environment, int _bank );
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
+void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips );
 
 char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size, int * _count );
 

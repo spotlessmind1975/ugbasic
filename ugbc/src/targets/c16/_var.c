@@ -281,26 +281,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
             if( variable->type == VT_IMAGES ) {
                 if ( variable->strips ) {
-                    Strip * actual = variable->strips;
-                    int i = 0;
-                    while( actual ) {
-                        outhead2("%sstrip%d:", variable->realName, i );
-                        for( int j=0; j<actual->count; ++j ) {
-                            outline1( ".byte $%2.2x", actual->frames[j] );
-                        }
-                        actual = actual->next;
-                        ++i;
-                    }
-                    actual = variable->strips;
-                    i = 0;
-                    outhead1("%sstrip:", variable->realName );
-                    while( actual ) {
-                        outline2(".word %sstrip%d", variable->realName, i );
-                        actual = actual->next;
-                        ++i;
-                    }
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
                 }
             }
+
             
         }
         variable = variable->next;
@@ -443,26 +427,10 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
 
             if( _variable->type == VT_IMAGES ) {
                 if ( _variable->strips ) {
-                    Strip * actual = _variable->strips;
-                    int i = 0;
-                    while( actual ) {
-                        outhead2("%sstrip%d:", _variable->realName, i );
-                        for( int j=0; j<actual->count; ++j ) {
-                            outline1( ".byte $%2.2x", actual->frames[j] );
-                        }
-                        actual = actual->next;
-                        ++i;
-                    }
-                    actual = _variable->strips;
-                    i = 0;
-                    outhead1("%sstrip:", _variable->realName );
-                    while( actual ) {
-                        outline2(".word %sstrip%d", _variable->realName, i );
-                        actual = actual->next;
-                        ++i;
-                    }
+                    vars_emit_strips( _environment, _variable->realName, _variable->strips );
                 }
             }
+
 
             break;
         }

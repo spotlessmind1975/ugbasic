@@ -204,6 +204,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_period
 %type <string> optional_field
 %type <string> on_flash_address
+%type <integer> strip_definition_id_optional
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -2758,11 +2759,27 @@ frame_definition :
     } OP_COMMA frame_definition
     ;
 
+strip_definition_id_optional : 
+    {
+        $$ = -1;
+    }
+    | ID const_expr {
+        $$ = $2;
+    };
+
 strip_definition :
-    STRIP {
+    STRIP strip_definition_id_optional {
         Strip * s = malloc( sizeof( Strip ) );
         memset(s, 0, sizeof( Strip ) );
         s->next = ((struct _Environment *)_environment)->currentStrip;
+        if ( $2 == -1 ) {
+            s->id = ((struct _Environment *)_environment)->currentStripMaxId++;
+        } else {
+            s->id = $2;
+            if ( $2 > ((struct _Environment *)_environment)->currentStripMaxId ) {
+                ((struct _Environment *)_environment)->currentStripMaxId = $2+1;
+            }
+        }
         ((struct _Environment *)_environment)->currentStrip = s;
     } OP frame_definition CP;
 

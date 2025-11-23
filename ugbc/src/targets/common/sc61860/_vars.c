@@ -121,4 +121,8 @@ void vars_emit_number( Environment * _environment, char * _name, int _value ) {
     }
 }
 
+void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips ) {
+
+}
+
 #endif

@@ -134,4 +134,48 @@ void vars_emit_number( Environment * _environment, char * _name, int _value ) {
     }
 }
 
+void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips ) {
+
+    int maxId = 0;
+    Strip * actual = _strips;
+    while( actual ) {
+        if ( maxId < actual->id ) {
+            maxId = actual->id+1;
+        }
+        actual = actual->next;
+    }
+    int i=0;
+    for( i=0; i<maxId; ++i ) {
+        Strip * actual = _strips;
+        while( actual ) {
+            if ( actual->id == i ) {
+                outhead2("%sstrip%d:", _name, i );
+                for( int j=0; j<actual->count; ++j ) {
+                    outline1( "db $%2.2x", actual->frames[j] );
+                }
+            }
+            actual = actual->next;
+        }
+    }
+    
+    actual = _strips;
+    i = 0;
+    outhead1("%sstrip:", _name );
+
+    for( i=0; i<maxId; ++i ) {
+        Strip * actual = _strips;
+        while( actual ) {
+            if ( actual->id == i ) {
+                outline2("defw %sstrip%d", _name, i );
+                break;
+            }
+            actual = actual->next;
+        }
+        if ( ! actual ) {
+            outline0("defw $0000" );
+        }
+    }
+
+}
+
 #endif
