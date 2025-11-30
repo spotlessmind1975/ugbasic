@@ -234,7 +234,7 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         if ( ! _environment->descriptors ) {
             // printf("On demand allocating...\n");
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
-            _environment->descriptors->count = 0;
+            _environment->descriptors->count = (width/8)*(height/8);
             _environment->descriptors->first = 128;
             _environment->descriptors->firstFree = _environment->descriptors->first;
             _environment->descriptors->lastFree = 255;
