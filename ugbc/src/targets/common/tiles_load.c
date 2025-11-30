@@ -232,10 +232,9 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         descriptors = _environment->tilesets[tileset->value];
     } else {
         if ( ! _environment->descriptors ) {
-            // printf("On demand allocating...\n");
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
             _environment->descriptors->count = (width/8)*(height/8);
-            _environment->descriptors->first = 128;
+            _environment->descriptors->first = 0;
             _environment->descriptors->firstFree = _environment->descriptors->first;
             _environment->descriptors->lastFree = 255;
         }
@@ -265,10 +264,54 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
     for( z=0; z<a; ++z ) {
         for (y=0; y<(height>>3);++y) {
             for (x=0; x<(width>>3);++x) {
-                Variable * realImage = image_converter( _environment, source, width, height, depth, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
+                // Variable * realImage = image_converter( _environment, source, width, height, depth, x*8, y*8, 8, 8, BITMAP_MODE_DEFAULT, 0, _flags );
+
+                unsigned char * realSource = source + (y*8) * width * depth + (x*8) * depth;
+
+                unsigned char fontData[8];
+                memset( fontData, 0, 8 );
+
+                for( int yy = 0; yy < 8; ++yy ) {
+                    for( int xx = 0; xx < 8; ++xx ) {
+
+                        RGBi rgb;
+
+                        // Take the color of the pixel
+                        rgb.red = *realSource;
+                        rgb.green = *(realSource + 1);
+                        rgb.blue = *(realSource + 2);
+                        if ( depth > 3 ) {
+                            rgb.alpha = *(realSource + 3);
+                        } else {
+                            rgb.alpha = 255;
+                        }
+                        if ( rgb.alpha == 0 ) {
+                            rgb.red = 0;
+                            rgb.green = 0;
+                            rgb.blue = 0;
+                        }
+
+                        // Calculate the offset starting from the tile surface area
+                        // and the bit to set.
+                        int offset = yy;
+                        int bitmask = 1 << ( 7 - (xx & 0x7) );
+
+                        if ( ( rgb.alpha < 255 ) || ( rgb.red + rgb.green + rgb.blue ) == 0 ) {
+                            *( fontData + offset ) |= bitmask;
+                        } else {
+                            *( fontData + offset ) &= ~bitmask;
+                        }
+
+                        realSource += depth;
+
+                    }
+
+                    realSource += ( width - 8 ) * depth;
+
+                }
 
                 if ( _index == -1 ) {
-                    int tile = tile_allocate( descriptors, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE );
+                    int tile = tile_allocate( descriptors, fontData );
 
                     if ( firstTile == -1 ) {
                         firstTile = tile;
@@ -281,12 +324,12 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
                     _index = -1;
 
                 } else {
-                    memcpy( descriptors->data[_index].data, realImage->valueBuffer + IMAGE_WIDTH_SIZE + IMAGE_HEIGHT_SIZE, 8 );
+                    memcpy( descriptors->data[_index].data, fontData, 8 );
                     descriptors->descriptor[_index] = calculate_tile_descriptor( &descriptors->data[_index] );
                     ++_index;
                 }
 
-                variable_delete( _environment, realImage->name );
+                // variable_delete( _environment, realImage->name );
                 
             }
         }
