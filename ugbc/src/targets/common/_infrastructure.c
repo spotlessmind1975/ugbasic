@@ -12859,7 +12859,7 @@ int calculate_exact_tile( TileDescriptor * _tile, TileDescriptors * _tiles ) {
 
 int tile_allocate( TileDescriptors * _tiles, char * _data ) {
 
-    if ( _tiles->firstFree == _tiles->lastFree ) {
+    if ( _tiles->firstFree > _tiles->lastFree ) {
         return -1;
     }
 
