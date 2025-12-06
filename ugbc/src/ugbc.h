@@ -1952,6 +1952,7 @@ typedef struct _Deployed {
     int flash;
     int chain;
     int syscall;
+    int gprint;
     
 } Deployed;
 
@@ -5527,6 +5528,7 @@ void                    gosub_label( Environment * _environment, char * _label )
 void                    gosub_number( Environment * _environment, int _number );
 void                    goto_label( Environment * _environment, char * _label );
 void                    goto_number( Environment * _environment, int _number );
+void                    gprint( Environment * _environment, char * _atlas, char * _text, char * _x, char * _y );
 void                    graphic( Environment * _environment );
 void                    gr_locate( Environment * _environment, char * _x, char * _y );
 
