@@ -75,6 +75,8 @@ TEXTATRAWGO
     CMPA #0
     LBEQ TEXTATRAWGOORIG
 
+    JMP TEXTATRAWGODB
+    
 ; ----------------------------------------------
 ; Version active on double buffering ON
 ; ----------------------------------------------
@@ -86,49 +88,8 @@ TEXTATRAWGO
 ; **********************************************************************************
 ; **********************************************************************************
 
-TEXTATRAWGODB
-    
-    LDY TEXTADDRESS
-    STY <COPYOFTEXTADDRESS
+TEXTATRAWDBBMDRAW
 
-    LDY <TEXTPTR
-    LDA <XCURSYS
-    STA <MATHPTR2
-    LDA <YCURSYS
-    STA <MATHPTR3
-
-    JSR TEXTATCALCPOS
-
-    PSHS D
-    TFR X, D
-    ADDD BITMAPADDRESS
-    TFR D, X
-    PULS D
-
-TEXTATRAWDBCOMMON
-
-    ANDCC #$FE
-    LDA _PEN
-    ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR5
-    LDA _PAPER
-    ANDA #$0F
-    ORA <MATHPTR5
-    STA <MATHPTR5
-
-    LDB <TEXTSIZE
-    LDY <TEXTPTR
-TEXTATRAWDBBMLOOP2
-
-    LDA ,Y
-    STA <SCREENCODE
-    DECB
-
-    JSR TEXTATRAWDECODE
     PSHS D,Y,X
 
     ORCC #$50
@@ -283,6 +244,54 @@ TEXTATRAWDBBMSP0E
 
     PULS D,Y,X
 
+    RTS
+
+TEXTATRAWGODB
+    
+    LDY TEXTADDRESS
+    STY <COPYOFTEXTADDRESS
+
+    LDY <TEXTPTR
+    LDA <XCURSYS
+    STA <MATHPTR2
+    LDA <YCURSYS
+    STA <MATHPTR3
+
+    JSR TEXTATCALCPOS
+
+    PSHS D
+    TFR X, D
+    ADDD BITMAPADDRESS
+    TFR D, X
+    PULS D
+
+TEXTATRAWDBCOMMON
+
+    ANDCC #$FE
+    LDA _PEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA _PAPER
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA <MATHPTR5
+
+    LDB <TEXTSIZE
+    LDY <TEXTPTR
+TEXTATRAWDBBMLOOP2
+
+    LDA ,Y
+    STA <SCREENCODE
+    DECB
+
+    JSR TEXTATRAWDECODE
+
+    JSR TEXTATRAWDBBMDRAW
+
     LDA CURRENTMODE
     CMPA #3
     BEQ TEXTATRAWDBBMSP0E3
@@ -367,85 +376,8 @@ TEXTATRAWDBBMEND
 ; **********************************************************************************
 ; **********************************************************************************
 
-; ----------------------------------------------
-; Version active on double buffering OFF
-; ----------------------------------------------
-
-TEXTATRAWGOORIG
-
-    LDY TEXTADDRESS
-    STY <COPYOFTEXTADDRESS
-    LDA #0
-    STA <TABSTODRAW
-
-    LDY <TEXTPTR
-    LDA CURRENTMODE
-    CMPA #0
-    BNE TEXTATRAW0X
-    JMP TEXTATRAW0
-TEXTATRAW0X
-    CMPA #1
-    BNE TEXTATRAW1X
-    JMP TEXTATRAW1
-TEXTATRAW1X
-    CMPA #2
-    BNE TEXTATRAW2X
-    JMP TEXTATRAW2
-TEXTATRAW2X
-    CMPA #3
-    BNE TEXTATRAW3X
-    JMP TEXTATRAW3
-TEXTATRAW3X
-    CMPA #4
-    BNE TEXTATRAW4X
-    JMP TEXTATRAW4
-TEXTATRAW4X
-    RTS
+TEXTATRAWBMSP0DRAW
     
-TEXTATRAWBITMAPMODE
-
-TEXTATRAW0
-TEXTATRAW1
-TEXTATRAW2
-TEXTATRAW3
-TEXTATRAW4
-
-    LDA <XCURSYS
-    STA <MATHPTR2
-    LDA <YCURSYS
-    STA <MATHPTR3
-
-    JSR TEXTATCALCPOS
-
-    JMP TEXTATRAWCOMMON
-
-TEXTATRAWCOMMON
-
-    ANDCC #$FE
-    LDA _PEN
-    ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR5
-    LDA _PAPER
-    ANDA #$0F
-    ORA <MATHPTR5
-    STA <MATHPTR5
-
-    LDB <TEXTSIZE
-    LDY <TEXTPTR
-TEXTATRAWBMLOOP2
-
-    LDA ,Y
-    STA <SCREENCODE
-    DECB
-
-    JSR TEXTATRAWDECODE
-
-TEXTATRAWBMSP0
-
     PSHS D,Y,X
 
     LDU #0
@@ -776,6 +708,87 @@ TEXTATRAWBMSP03L1X
 TEXTATRAWBMSP0E
 
     PULS D,Y,X
+
+; ----------------------------------------------
+; Version active on double buffering OFF
+; ----------------------------------------------
+
+TEXTATRAWGOORIG
+
+    LDY TEXTADDRESS
+    STY <COPYOFTEXTADDRESS
+    LDA #0
+    STA <TABSTODRAW
+
+    LDY <TEXTPTR
+    LDA CURRENTMODE
+    CMPA #0
+    BNE TEXTATRAW0X
+    JMP TEXTATRAW0
+TEXTATRAW0X
+    CMPA #1
+    BNE TEXTATRAW1X
+    JMP TEXTATRAW1
+TEXTATRAW1X
+    CMPA #2
+    BNE TEXTATRAW2X
+    JMP TEXTATRAW2
+TEXTATRAW2X
+    CMPA #3
+    BNE TEXTATRAW3X
+    JMP TEXTATRAW3
+TEXTATRAW3X
+    CMPA #4
+    BNE TEXTATRAW4X
+    JMP TEXTATRAW4
+TEXTATRAW4X
+    RTS
+    
+TEXTATRAWBITMAPMODE
+
+TEXTATRAW0
+TEXTATRAW1
+TEXTATRAW2
+TEXTATRAW3
+TEXTATRAW4
+
+    LDA <XCURSYS
+    STA <MATHPTR2
+    LDA <YCURSYS
+    STA <MATHPTR3
+
+    JSR TEXTATCALCPOS
+
+    JMP TEXTATRAWCOMMON
+
+TEXTATRAWCOMMON
+
+    ANDCC #$FE
+    LDA _PEN
+    ANDA #$0F
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR5
+    LDA _PAPER
+    ANDA #$0F
+    ORA <MATHPTR5
+    STA <MATHPTR5
+
+    LDB <TEXTSIZE
+    LDY <TEXTPTR
+TEXTATRAWBMLOOP2
+
+    LDA ,Y
+    STA <SCREENCODE
+    DECB
+
+    JSR TEXTATRAWDECODE
+
+TEXTATRAWBMSP0
+
+    JSR TEXTATRAWBMSP0DRAW
 
     LDA CURRENTMODE
     CMPA #3
