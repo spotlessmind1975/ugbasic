@@ -127,6 +127,8 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
             cpu_addressof_16bit( _environment, text->realName, address->realName );
             cpu_store_8bit( _environment, size->realName, 1 );
             break;            
+        default:
+            CRITICAL_PRINT_UNSUPPORTED( _text, DATATYPE_AS_STRING[text->type]);
     }
 
     Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
@@ -151,7 +153,7 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
         put_image( _environment, _atlas, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
 
         variable_add_inplace( _environment, dx->name, atlas->frameWidth );
-        
+
         cpu_inc_16bit( _environment, address->realName );
 
     //         INC i
