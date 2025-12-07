@@ -101,72 +101,90 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
     MAKE_LABEL
 
-    char doneLabel[MAX_TEMPORARY_STORAGE];
-    sprintf( doneLabel, "%sdone", label );
+    Variable * paramAtlas = variable_define( _environment, "gprint_atlas", VT_IMAGEREF, 0 );
+    Variable * paramAddress = variable_define( _environment, "gprint_address", VT_ADDRESS, 0 );
+    Variable * paramSize = variable_define( _environment, "gprint_size", VT_BYTE, 0 );
+    Variable * paramFrameWidth = variable_define( _environment, "gprint_frame_width", VT_BYTE, 0 );
 
-    // PROCEDURE print[ text AS STRING, x AS BYTE, y AS BYTE ]
-    //     SHARED letters
-    //     len = LEN(text)
+    deploy_begin( gprint )
+
+        char doneLabel[MAX_TEMPORARY_STORAGE];
+        sprintf( doneLabel, "%sdone", label );
+
+        // PROCEDURE print[ text AS STRING, x AS BYTE, y AS BYTE ]
+        //     SHARED letters
+        //     len = LEN(text)
+
+        Variable * letter = variable_temporary( _environment, VT_BYTE, "(text size)" );
+
+        Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+        Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx)" );
+        Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+
+        cpu_compare_and_branch_8bit_const( _environment, paramSize->realName, 0, doneLabel, 1 );
+
+        variable_move( _environment, x->name, dx->name );
+        
+        //     i = 0: DO
+
+        Variable * i = variable_temporary( _environment, VT_BYTE, "(i)");
+        cpu_store_8bit( _environment, i->realName, 0 );
+
+        cpu_label( _environment, label );
+
+        //         PUT IMAGE letters FRAME ASC(MID$(text,i))-64 AT x+i*4,y
+
+            cpu_move_8bit_indirect2( _environment, paramAddress->realName, letter->realName );
+
+            put_image( _environment, paramAtlas->name, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
+
+            variable_add_inplace_vars( _environment, dx->name, paramFrameWidth->name );
+
+            cpu_inc_16bit( _environment, paramAddress->realName );
+
+        //         INC i
+
+            cpu_inc( _environment, i->realName );
+
+        //     LOOP UNTIL i = len	
+
+        cpu_compare_and_branch_8bit( _environment, i->realName, paramSize->realName, label, 0 );
+            
+        cpu_label( _environment, doneLabel );
+
+        // END PROCEDURE
+
+    deploy_end( gprint )
 
     Variable * atlas = variable_retrieve( _environment, _atlas );
-    Variable * text = variable_retrieve( _environment, _text );
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text address)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(text size)" );
-    Variable * letter = variable_temporary( _environment, VT_BYTE, "(text size)" );
 
+    if ( atlas->type == VT_IMAGEREF ) {
+        variable_move( _environment, atlas->name, paramAtlas->name );
+    } else {
+        variable_move( _environment, image_ref( _environment, atlas->name )->name, paramAtlas->name );
+    }
+
+    Variable * text = variable_retrieve( _environment, _text );
     switch( text->type ) {
         case VT_STRING:
-            cpu_move_8bit( _environment, text->realName, size->realName );
-            cpu_addressof_16bit( _environment, text->realName, address->realName );
-            cpu_inc_16bit( _environment, address->realName );
+            cpu_move_8bit( _environment, text->realName, paramSize->realName );
+            cpu_addressof_16bit( _environment, text->realName, paramAddress->realName );
+            cpu_inc_16bit( _environment, paramAddress->realName );
             break;
         case VT_DSTRING:
-            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, text->realName, paramAddress->realName, paramSize->realName );
             break;
         case VT_CHAR:
-            cpu_addressof_16bit( _environment, text->realName, address->realName );
-            cpu_store_8bit( _environment, size->realName, 1 );
+            cpu_addressof_16bit( _environment, text->realName, paramAddress->realName );
+            cpu_store_8bit( _environment, paramSize->realName, 1 );
             break;            
         default:
             CRITICAL_PRINT_UNSUPPORTED( _text, DATATYPE_AS_STRING[text->type]);
     }
 
-    Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
-    Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx)" );
-    Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+    variable_store( _environment, paramFrameWidth->name, atlas->frameWidth );
 
-    cpu_compare_and_branch_8bit_const( _environment, size->realName, 0, doneLabel, 1 );
-
-    variable_move( _environment, x->name, dx->name );
+    cpu_call( _environment, "lib_gprint" );
     
-    //     i = 0: DO
-
-    Variable * i = variable_temporary( _environment, VT_BYTE, "(i)");
-    cpu_store_8bit( _environment, i->realName, 0 );
-
-    cpu_label( _environment, label );
-
-    //         PUT IMAGE letters FRAME ASC(MID$(text,i))-64 AT x+i*4,y
-
-        cpu_move_8bit_indirect2( _environment, address->realName, letter->realName );
-
-        put_image( _environment, _atlas, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
-
-        variable_add_inplace( _environment, dx->name, atlas->frameWidth );
-
-        cpu_inc_16bit( _environment, address->realName );
-
-    //         INC i
-
-        cpu_inc( _environment, i->realName );
-
-    //     LOOP UNTIL i = len	
-
-    cpu_compare_and_branch_8bit( _environment, i->realName, size->realName, label, 0 );
-        
-    cpu_label( _environment, doneLabel );
-
-    // END PROCEDURE
-
 }
 
