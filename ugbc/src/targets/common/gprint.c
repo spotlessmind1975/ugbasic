@@ -178,6 +178,8 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
         Variable * paramAddress = variable_define( _environment, "gprint_address", VT_ADDRESS, 0 );
         Variable * paramSize = variable_define( _environment, "gprint_size", VT_BYTE, 0 );
         Variable * paramFrameWidth = variable_define( _environment, "gprint_frame_width", VT_BYTE, 0 );
+        Variable * paramX = variable_define( _environment, "gprint_x", VT_POSITION, 0 );
+        Variable * paramY = variable_define( _environment, "gprint_y", VT_POSITION, 0 );
 
         deploy_begin( gprint )
 
@@ -256,6 +258,12 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
         }
 
         variable_store( _environment, paramFrameWidth->name, atlas->frameWidth );
+
+        Variable * x = variable_retrieve( _environment, _x );
+        Variable * y = variable_retrieve( _environment, _y );
+
+        variable_move( _environment, x->name, paramX->name );
+        variable_move( _environment, y->name, paramY->name );
 
         cpu_call( _environment, "lib_gprint" );
 
