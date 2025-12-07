@@ -50,6 +50,10 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
+    if ( banks_any_used( _environment ) && _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+        CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( );
+    }
+
     deploy( clsGraphic, src_hw_ef936x_cls_asm );
     deploy( doubleBuffer, src_hw_ef936x_double_buffer_asm );
 
@@ -58,6 +62,11 @@ void double_buffer( Environment * _environment, int _enabled ) {
         _environment->doubleBufferEnabled = _enabled;
 
         if ( _enabled ) {
+
+            int allowed[] = { 6, 5, 4 };
+
+            banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
+
             if ( _environment->deployed.scroll ) {
                 cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLLVOID" );
                 cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLL" );
