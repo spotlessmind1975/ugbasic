@@ -3270,6 +3270,8 @@ typedef struct _Environment {
     int currentStripMaxId;
     Strip   *   currentStrip;
 
+    int gprintInline;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
