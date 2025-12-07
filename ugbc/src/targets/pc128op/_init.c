@@ -48,7 +48,7 @@ void target_initialization( Environment * _environment ) {
 
     cpu_init( _environment );
 
-    int allowed[] = { 6, 5, 4 };
+    int allowed[] = { 6, 5, 4, 3, 2 };
 
     banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
 
