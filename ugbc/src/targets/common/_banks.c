@@ -42,6 +42,8 @@ extern char DATATYPE_AS_STRING[][16];
 
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size ) {
     
+    _environment->expansionBanks = NULL;
+
     for(int i=0; i<_allowed_count; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
         bank->address = 0x0;
@@ -64,6 +66,8 @@ void banks_init_extended( Environment * _environment, int * _allowed, int _allow
 }
 
 void banks_init( Environment * _environment ) {
+    
+    _environment->expansionBanks = NULL;
     
     for(int i=-1; i<BANK_COUNT; ++i) {
         Bank * bank = malloc( sizeof( Bank ) );
