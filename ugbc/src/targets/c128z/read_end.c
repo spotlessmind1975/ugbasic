@@ -46,9 +46,9 @@ Variable * read_end( Environment * _environment ) {
 
     Variable * readEnd = variable_temporary( _environment, VT_BYTE, "(flag)" );
     
+    outline0("AND A");
     outline0("LD HL, (DATAPTR)");
     outline0("LD DE, DATAPTRE");
-    outline0("SCF");
     outline0("SBC HL, DE");
     outline0("LD A, H");
     outline0("OR L");
