@@ -227,6 +227,8 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
                 
             cpu_label( _environment, doneLabel );
 
+            cpu_return( _environment );
+            
             // END PROCEDURE
 
         deploy_end( gprint )
