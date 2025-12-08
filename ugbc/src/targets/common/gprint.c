@@ -192,9 +192,9 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
             Variable * letter = variable_temporary( _environment, VT_BYTE, "(text size)" );
 
-            Variable * x = variable_retrieve_or_define( _environment, _x, VT_POSITION, 0 );
+            Variable * x = variable_retrieve( _environment, paramX->name );
             Variable * dx = variable_temporary( _environment, VT_POSITION, "(dx)" );
-            Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
+            Variable * y = variable_retrieve( _environment, paramY->name );
 
             cpu_compare_and_branch_8bit_const( _environment, paramSize->realName, 0, doneLabel, 1 );
 
@@ -228,7 +228,7 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
             cpu_label( _environment, doneLabel );
 
             cpu_return( _environment );
-            
+
             // END PROCEDURE
 
         deploy_end( gprint )
