@@ -10968,13 +10968,13 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
             CRITICAL_BIN_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
             break;
         case 32:
-            variable_store_string( _environment, result->name, "                                " );
+            variable_store_string( _environment, result->name, "00000000000000000000000000000000" );
             break;
         case 16:
-            variable_store_string( _environment, result->name, "                " );
+            variable_store_string( _environment, result->name, "0000000000000000" );
             break;
         case 8:
-            variable_store_string( _environment, result->name, "        " );
+            variable_store_string( _environment, result->name, "00000000" );
             break;
     }
 
