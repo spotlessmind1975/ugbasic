@@ -46,19 +46,16 @@ Variable * read_end( Environment * _environment ) {
 
     Variable * readEnd = variable_temporary( _environment, VT_BYTE, "(flag)" );
     
-    outline0("AND A");
-    outline0("LD HL, (DATAPTR)");
-    outline0("LD DE, DATAPTRE");
-    outline0("SBC HL, DE");
-    outline0("LD A, H");
-    outline0("OR L");
-    outline1("JR Z, %send", label);
-    outline0("LD A, 0");
-    outline1("LD (%s), A", readEnd->realName);
+    outline0("CLC");
+    outline0("MOV AX, [DATAPTR]");
+    outline0("CMP AX, 0");
+    outline1("JZ %send", label);
+    outline0("MOV AL, 0");
+    outline1("MOV [%s], AL", readEnd->realName);
     outline1("JMP %sdone", label);
     outhead1("%send:", label);
-    outline0("LD A, $ff");
-    outline1("LD (%s), A", readEnd->realName);
+    outline0("MOV AL, 0xff");
+    outline1("MOV [%s], AL", readEnd->realName);
     outhead1("%sdone:", label);
 
     return readEnd;
