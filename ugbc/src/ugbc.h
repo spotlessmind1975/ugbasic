@@ -3792,6 +3792,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_INVALID_NUMBER_DIGITS( n ) CRITICAL2i("E399 - invalid number of digits for NUMBER representation", n );
 #define CRITICAL_INVALID_FRAME_WIDTH( s ) CRITICAL2("E400 - invalid frame width", s );
 #define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
+#define CRITICAL_CANNOT_FLIP( s ) CRITICAL2("E402 - cannot FLIP this variable", s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5980,6 +5981,7 @@ Variable *              variable_direct_assign( Environment * _environment, char
 Variable *              variable_div( Environment * _environment, char * _source, char * _dest, char * _remainder );
 Variable *              variable_div_const( Environment * _environment, char * _source, int _dest, char * _remainder );
 Variable *              variable_div2_const( Environment * _environment, char * _source, int _bits, char * _remainder );
+Variable *              variable_flip( Environment * _environment, char * _variable  );
 Variable *              variable_sr_const( Environment * _environment, char * _source, int _bits );
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );

@@ -58,3 +58,13 @@ CPUFLIPX:
     JR NZ, CPUFLIPX
 
     RET
+
+CPUFLIP8:
+    LD B, 8
+    LD L, A
+CPUFLIP8L1:
+    RL L
+    RRA
+    DJNZ CPUFLIP8L1
+    RET
+    

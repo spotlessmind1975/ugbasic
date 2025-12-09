@@ -7242,6 +7242,24 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    no_inline( cpu_flip )
+
+    embedded( cpu_flip, src_hw_6502_cpu_flip_asm );
+
+        outline1("LDA %s", _source);
+        outline0("JSR CPUFLIP8");
+        if ( _destination ) {
+            outline1("STA %s", _destination);
+        } else {
+            outline1("STA %s", _source);
+        }
+        
+    done( )
+
+}
+
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )

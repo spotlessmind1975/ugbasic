@@ -9482,15 +9482,18 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
 
 @english
 The ''FLIP'' function  simply reverses the order of the characters 
-held in the parameter.
+held in the parameter (if a string) or the order of the bits (if a (SIGNED) BYTE).
 
 @italian
 La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri 
-contenuti nel parametro.
+contenuti nel parametro (se è una stringa) oppure l'ordine dei bit (
+nel caso di (SIGNED) BYTE)
 
-@syntax = FLIP( string )
+@syntax = FLIP( variable )
 
 @example x = FLIP( "test" )
+@example DIM y AS BYTE = 42
+@example x = FLIP( y )
 
 @usedInExample strings_flip_01.bas
 
@@ -9527,6 +9530,31 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
     cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
 
     cpu_flip( _environment, address->realName, size->realName, address2->realName );
+
+    return result;
+    
+}
+
+Variable * variable_flip( Environment * _environment, char * _variable  ) {
+
+    Variable * variable = variable_retrieve( _environment, _variable );
+
+    switch( variable->type ) {
+        case VT_DSTRING:
+        case VT_STRING:
+            return variable_string_flip( _environment, _variable );
+        default:
+    }
+
+    Variable * result = variable_temporary( _environment, variable->type, "(tmp)");
+
+    switch ( VT_BITWIDTH( variable->type ) ) {
+        case 8:
+            cpu_flip_8bit( _environment, variable->realName, result->realName );
+            break;
+        default:
+            CRITICAL_CANNOT_FLIP( _variable );
+    }
 
     return result;
     

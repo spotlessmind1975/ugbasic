@@ -250,6 +250,7 @@ void cpu_lowercase( Environment * _environment, char *_source, char *_size, char
 void cpu_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size );
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void cpu_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );

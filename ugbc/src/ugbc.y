@@ -3531,7 +3531,7 @@ exponential_less:
         $$ = variable_string_space( _environment, $3 )->name;
     }
     | FLIP OP expr CP {
-        $$ = variable_string_flip( _environment, $3 )->name;
+        $$ = variable_flip( _environment, $3 )->name;
     }
     | CHR OP expr CP {
         $$ = variable_string_chr( _environment, $3 )->name;

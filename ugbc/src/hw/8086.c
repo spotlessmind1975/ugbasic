@@ -3854,6 +3854,26 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    no_inline( cpu_flip )
+
+    embedded( cpu_flip, src_hw_8086_cpu_flip_asm );
+
+        outline1("MOV SI, [%s]", _source);
+        outline0("MOV AL, [SI]");
+        outline0("CALL CPUFLIP8");
+        if ( _destination ) {
+            outline1("MOV DI, [%s]", _destination);
+            outline0("MOV [DI], BL");
+        } else {
+            outline0("MOV [SI], BL");
+        }
+
+    done( )
+
+}
+
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )

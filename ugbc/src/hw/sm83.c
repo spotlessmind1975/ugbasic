@@ -5353,6 +5353,24 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    no_inline( cpu_flip )
+
+    embedded( cpu_flip, src_hw_sm83_cpu_flip_asm );
+
+        outline1("LD A, (%s)", _source );
+        outline0("CALL CPUFLIP8");
+        if ( _destination ) {
+            outline1("LD (%s), A", _destination );
+        } else {
+            outline1("LD (%s), A", _source );
+        }
+
+    done(  )
+
+}
+
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )

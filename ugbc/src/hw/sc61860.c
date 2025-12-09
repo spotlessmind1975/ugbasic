@@ -5221,9 +5221,9 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
-void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
 
-    CRITICAL_UNIMPLEMENTED( "sc61860_flip" );
+    CRITICAL_UNIMPLEMENTED( "sc61860_flip_8bit" );
 
     // no_inline( cpu_flip )
 

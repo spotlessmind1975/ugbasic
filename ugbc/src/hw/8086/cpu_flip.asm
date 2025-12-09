@@ -55,3 +55,23 @@ CPUFLIPX:
     JNZ CPUFLIPX
 
     RET
+
+CPUFLIP8:
+    MOV BL, 0
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    SHR AL, 1
+    SHL BL, 1
+    RET
