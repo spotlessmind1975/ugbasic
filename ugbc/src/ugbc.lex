@@ -233,6 +233,7 @@ INCLUDE             BEGIN(incl);
 
 "#["[a-fA-F0-9]+"]" { yylval.string = strdup(yytext+2); yylval.string[strlen(yylval.string)-1] = 0; RETURN(BufferDefinitionHex,1); }
 "#["[a-fA-F0-9]+ { yylval.string = strdup(yytext+2); RETURN(BufferDefinitionHex,1); }
+"["[a-fA-F0-9]+ { yylval.string = strdup(yytext+2); RETURN(BufferDefinitionHex,1); }
 
 [\x0d] { }
 _[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
