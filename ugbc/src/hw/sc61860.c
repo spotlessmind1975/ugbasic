@@ -6237,7 +6237,7 @@ void cpu_bits_to_string_vars( Environment * _environment ) {
     
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     CRITICAL_UNIMPLEMENTED( "sc61860_bits_to_string" );
 

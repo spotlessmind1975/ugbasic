@@ -38,6 +38,17 @@
 ; A : number of bits
 BINTOSTR:
 
+    PHA
+    TAY
+
+    LDA BINTOSTRDIGIT0+1
+BINTOSTRXZ:
+    STA (TMPPTR2), Y
+    DEY
+    BNE BINTOSTRXZ
+
+    PLA
+
     ; Save the actual number of bits to convert.
 
     PHA
@@ -93,6 +104,7 @@ BINTOSTRONE:
 
     ; Write a 1 on the output string.
 
+BINTOSTRDIGIT1:
     LDA #'1'
     STA (TMPPTR2), Y
 
@@ -121,6 +133,7 @@ BINTOSTRZERO:
 
     ; Write a 0 on the output string.
 
+BINTOSTRDIGIT0:
     LDA #'0'
     STA (TMPPTR2), Y
 

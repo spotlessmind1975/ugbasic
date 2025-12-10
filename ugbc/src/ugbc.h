@@ -5959,7 +5959,7 @@ void                    variable_array_fill_random( Environment * _environment, 
 void                    variable_array_fill_incremental( Environment * _environment, char * _name, int _min, int _count );
 void                    variable_array_shuffle( Environment * _environment, char * _name, int _rounds );
 Variable *              variable_array_type( Environment * _environment, char *_name, VariableType _type );
-Variable *              variable_bin( Environment * _environment, char * _value, char * _digits );
+Variable *              variable_bin( Environment * _environment, char * _value, char * _digits, char * _zero, char * _one );
 Variable *              variable_bit( Environment * _environment, char * _value, char * _position );
 Variable *              variable_cast( Environment * _environment, char * _source, VariableType _type );
 void                    variable_cleanup( Environment * _Environment );

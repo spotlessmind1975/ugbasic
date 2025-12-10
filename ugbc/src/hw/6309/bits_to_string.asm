@@ -36,6 +36,14 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 BINSTR
+    PSHS D
+    LDY #BINSTRBUF
+    LDA (BINSTRO0+1)
+BINSTRXZ
+    STA ,Y+
+    DECB
+    BNE BINSTRXZ
+    PULS D
     LDY #BINSTRBUF
     DECB
 BINSTRL

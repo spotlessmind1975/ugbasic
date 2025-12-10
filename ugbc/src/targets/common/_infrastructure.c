@@ -10978,7 +10978,7 @@ basano su operazioni a livello di bit.
 @alias BIN
  </usermanual> */
 
-Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
+Variable * variable_bin( Environment * _environment, char * _value, char * _digits, char * _zero, char * _one ) {
 
     MAKE_LABEL
 
@@ -10989,6 +10989,17 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     }
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
+
+    Variable * zero = NULL;
+    if ( _zero ) {
+        Variable * realZero = variable_retrieve( _environment, _zero );
+        zero = variable_string_asc( _environment, realZero->name );
+    }
+    Variable * one = NULL;
+    if ( _one ) {
+        Variable * realOne = variable_retrieve( _environment, _one );
+        one = variable_string_asc( _environment, realOne->name );
+    }
 
     switch( VT_BITWIDTH( originalValue->type ) ) {
         case 1:
@@ -11015,7 +11026,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    cpu_bits_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+    cpu_bits_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ), (zero?zero->realName:NULL), (one?one->realName:NULL) );
 
     if ( digits ) {
         Variable * result2 = variable_temporary( _environment, VT_DSTRING, "(padding/truncating)" );

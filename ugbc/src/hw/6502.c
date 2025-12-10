@@ -7428,11 +7428,25 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     MAKE_LABEL
 
     deploy( bitsToString, src_hw_6502_bits_to_string_asm );
+
+    if ( _zero ) {
+        outline1("LDA %s", _zero);
+    } else {
+        outline0("LDA #'0'" );
+    }
+    outline0("STA BINTOSTRDIGIT0+1" );
+
+    if ( _one ) {
+        outline1("LDA %s", _one);
+    } else {
+        outline0("LDA #'1'" );
+    }
+    outline0("STA BINTOSTRDIGIT1+1" );
 
     outline1("LDA #<%s", _number);
     outline0("STA TMPPTR");

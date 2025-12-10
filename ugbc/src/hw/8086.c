@@ -4573,12 +4573,28 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 void cpu_bits_to_string_vars( Environment * _environment ) {
 
     // variable_import( _environment, "BINSTRBUF", VT_BUFFER, 32 );
-    
+    variable_import( _environment, "BINTOSTRDIGIT0", VT_BYTE, '0' );
+    variable_import( _environment, "BINTOSTRDIGIT1", VT_BYTE, '1' );
 }
 
 void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
 
     deploy_with_vars( bitsToString,src_hw_8086_bits_to_string_asm, cpu_bits_to_string_vars );
+
+    if ( _zero ) {
+        outline1("MOV AL, [%s]", zero->realName);
+    } else {
+        outline0("MOV AL, '0'" );
+    }
+    outline0("MOV [BINTOSTRDIGIT0], AL" );
+
+    if ( _one ) {
+        Variable * one = variable_retrieve( _environment, _one );
+        outline1("MOV AL, [%s]", one->realName);
+    } else {
+        outline0("MOV AL, '1'" );
+    }
+    outline0("MOV [BINTOSTRDIGIT1], AL" );
 
     switch( _bits ) {
         case 32:

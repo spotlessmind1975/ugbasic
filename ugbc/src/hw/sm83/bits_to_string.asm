@@ -36,6 +36,18 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 BINSTR:
+    PUSH BC
+    PUSH AF
+    LD HL, BINSTRBUF
+    LD C, 31
+    LD A, (BINTOSTRDIGIT0)
+BINSTRXZ:
+    LD (HL), A
+    INC HL
+    DEC B
+    JR NZ, BINSTRXZ
+    POP AF
+    POP BC
     LD HL, BINSTRBUF
     ADD HL, 31
 BINSTRL:

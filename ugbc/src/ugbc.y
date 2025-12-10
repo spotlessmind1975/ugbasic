@@ -3519,13 +3519,19 @@ exponential_less:
         $$ = variable_string_str( _environment, $3 )->name;
     }
     | OP_PERC2 OP expr CP {
-        $$ = variable_bin( _environment, $3, NULL )->name;
+        $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name;
     }
     | BIN OP expr CP {
-        $$ = variable_bin( _environment, $3, NULL )->name;
+        $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name;
     }
     | BIN OP expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5 )->name;
+        $$ = variable_bin( _environment, $3, $5, NULL, NULL )->name;
+    }
+    | BIN OP expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_bin( _environment, $3, $5, NULL, $7 )->name;
+    }
+    | BIN OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
+        $$ = variable_bin( _environment, $3, $5, $9, $7 )->name;
     }
     | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;

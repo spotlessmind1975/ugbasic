@@ -6083,9 +6083,23 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     deploy( bitsToString, src_hw_6809_bits_to_string_asm );
+
+    if ( _zero ) {
+        outline1("LDA %s", _zero);
+    } else {
+        outline0("LDA #'0'" );
+    }
+    outline0("STA BINSTRO0+1" );
+
+    if ( _one ) {
+        outline1("LDA %s", _one);
+    } else {
+        outline0("LDA #'1'" );
+    }
+    outline0("STA BINSTRO1+1" );
 
     switch( _bits ) {
         case 32:

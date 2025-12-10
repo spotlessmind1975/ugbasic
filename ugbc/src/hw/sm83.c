@@ -6808,12 +6808,27 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 void cpu_bits_to_string_vars( Environment * _environment ) {
 
     variable_import( _environment, "BINSTRBUF", VT_BUFFER, 32 );
-    
+    variable_import( _environment, "BINTOSTRDIGIT0", VT_BYTE, '0' );
+    variable_import( _environment, "BINTOSTRDIGIT1", VT_BYTE, '1' );
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     deploy_with_vars( bitsToString,src_hw_sm83_bits_to_string_asm, cpu_bits_to_string_vars );
+
+    if ( _zero ) {
+        outline1("LD A, (%s)", _zero);
+    } else {
+        outline0("LD A, '0'" );
+    }
+    outline0("LD (BINTOSTRDIGIT0), A" );
+
+    if ( _one ) {
+        outline1("LD A, (%s)", _one);
+    } else {
+        outline0("LD A, '1'" );
+    }
+    outline0("LD (BINTOSTRDIGIT1), A" );
 
     switch( _bits ) {
         case 32:
