@@ -36,6 +36,18 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 BINSTR:
+    PUSH BC
+    PUSH AF
+    LD HL, BINSTRBUF
+    LD C, 32
+    LD A, (BINTOSTRDIGIT0)
+BINSTRXZ:
+    LD (HL), A
+    INC HL
+    DEC C
+    JR NZ, BINSTRXZ
+    POP AF
+    POP BC
     LD HL, BINSTRBUF
     ADD HL, 31
 BINSTRL:
@@ -47,14 +59,14 @@ BINSTRL:
     JMP BINSTRO0
 BINSTRO0:
     PUSH AF
-    LD A, '0'
+    LD A, (BINTOSTRDIGIT0)
     LD (HL), A
     DEC HL
     POP AF
     JMP BINSTRO
 BINSTRO1:
     PUSH AF
-    LD A, '1'
+    LD A, (BINTOSTRDIGIT1)
     LD (HL), A
     DEC HL
     POP AF

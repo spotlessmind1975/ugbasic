@@ -3854,6 +3854,26 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    no_inline( cpu_flip )
+
+    embedded( cpu_flip, src_hw_8086_cpu_flip_asm );
+
+        outline1("MOV SI, [%s]", _source);
+        outline0("MOV AL, [SI]");
+        outline0("CALL CPUFLIP8");
+        if ( _destination ) {
+            outline1("MOV DI, [%s]", _destination);
+            outline0("MOV [DI], BL");
+        } else {
+            outline0("MOV [SI], BL");
+        }
+
+    done( )
+
+}
+
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )
@@ -4553,12 +4573,27 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 void cpu_bits_to_string_vars( Environment * _environment ) {
 
     // variable_import( _environment, "BINSTRBUF", VT_BUFFER, 32 );
-    
+    variable_import( _environment, "BINTOSTRDIGIT0", VT_BYTE, '0' );
+    variable_import( _environment, "BINTOSTRDIGIT1", VT_BYTE, '1' );
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     deploy_with_vars( bitsToString,src_hw_8086_bits_to_string_asm, cpu_bits_to_string_vars );
+
+    if ( _zero ) {
+        outline1("MOV AL, [%s]", _zero);
+    } else {
+        outline0("MOV AL, '0'" );
+    }
+    outline0("MOV [BINTOSTRDIGIT0], AL" );
+
+    if ( _one ) {
+        outline1("MOV AL, [%s]", _one);
+    } else {
+        outline0("MOV AL, '1'" );
+    }
+    outline0("MOV [BINTOSTRDIGIT1], AL" );
 
     switch( _bits ) {
         case 32:

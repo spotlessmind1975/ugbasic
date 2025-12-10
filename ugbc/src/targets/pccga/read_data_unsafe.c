@@ -50,37 +50,26 @@ void read_data_unsafe( Environment * _environment, char * _variable ) {
     }
 
     if ( VT_BITWIDTH( variable->type ) > 1 ) {
-        outline0( "LD HL, (DATAPTR)" );
+        outline0( "MOV SI, [DATAPTR" );
         switch( VT_BITWIDTH( variable->type ) ) {
             case 32:
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", variable->realName );
-                outline0( "INC HL" );
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", address_displacement( _environment, variable->realName, "1" ) );
-                outline0( "INC HL" );
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", address_displacement( _environment, variable->realName, "2" ) );
-                outline0( "INC HL" );
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", address_displacement( _environment, variable->realName, "3" ) );
-                outline0( "INC HL" );
+                outline0( "MOV AX, [SI]" );
+                outline1( "MOV [%s], AX", variable->realName );
+                outline0( "INC SI" );
+                outline0( "INC SI" );
+                outline0( "MOV AX, [SI]" );
+                outline1( "MOV [%s], AX", address_displacement( _environment, variable->realName, "2" ) );
                 break;
             case 16:
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", variable->realName );
-                outline0( "INC HL" );
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", address_displacement( _environment, variable->realName, "1" ) );
-                outline0( "INC HL" );
+                outline0( "MOV AX, [SI]" );
+                outline1( "MOV [%s], AX", variable->realName );
                 break;
             case 8:
-                outline0( "LD A, (HL)" );
-                outline1( "LD (%s), A", variable->realName );
-                outline0( "INC HL" );
+                outline0( "MOV AL, [SI]" );
+                outline1( "MOV [%s], AL", variable->realName );
                 break;
         }
-        outline0( "LD (DATAPTR), HL" );
+        outline0( "MOV [DATAPTR], SI" );
     } else {
         
         MAKE_LABEL

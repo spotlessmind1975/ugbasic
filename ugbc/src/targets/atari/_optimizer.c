@@ -753,6 +753,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "PUTIMAGE^"))   return 0;
     if(po_buf_match(name, "GETIMAGE^"))   return 0;
     if(po_buf_match(name, "BANK^"))   return 0;
+    if(po_buf_match(name, "BINTO^"))  return 0;
     if(po_buf_match(name, "SYS^"))   return 0;
     if(po_buf_match(name, "SID^"))   return 0;
     if(po_buf_match(name, "SIO^"))   return 0;

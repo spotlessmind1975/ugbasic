@@ -250,6 +250,7 @@ void cpu_lowercase( Environment * _environment, char *_source, char *_size, char
 void cpu_convert_string_into_8bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu_convert_string_into_16bit( Environment * _environment, char * _string, char * _len, char * _value );
 void cpu_fill_indirect( Environment * _environment, char * _address, char * _size, char * _pattern, int _size_size );
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination );
 void cpu_move_8bit_indirect( Environment * _environment, char *_source, char * _value );
 void cpu_move_8bit_indirect2( Environment * _environment, char * _value, char *_source );
@@ -267,7 +268,7 @@ void cpu_bit_check_extended( Environment * _environment, char * _value, char * _
 void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _position, int * _bit );
 void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, char * _bit );
 void cpu_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one );
 void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index );

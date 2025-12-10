@@ -9482,15 +9482,18 @@ Variable * variable_string_space( Environment * _environment, char * _repetition
 
 @english
 The ''FLIP'' function  simply reverses the order of the characters 
-held in the parameter.
+held in the parameter (if a string) or the order of the bits (if a (SIGNED) BYTE).
 
 @italian
 La funzione ''FLIP'' inverte semplicemente l'ordine dei caratteri 
-contenuti nel parametro.
+contenuti nel parametro (se è una stringa) oppure l'ordine dei bit (
+nel caso di (SIGNED) BYTE)
 
-@syntax = FLIP( string )
+@syntax = FLIP( variable )
 
 @example x = FLIP( "test" )
+@example DIM y AS BYTE = 42
+@example x = FLIP( y )
 
 @usedInExample strings_flip_01.bas
 
@@ -9530,6 +9533,33 @@ Variable * variable_string_flip( Environment * _environment, char * _string  ) {
 
     return result;
     
+}
+
+Variable * variable_flip( Environment * _environment, char * _variable  ) {
+
+    Variable * variable = variable_retrieve( _environment, _variable );
+
+    switch( variable->type ) {
+        case VT_DSTRING:
+        case VT_STRING:
+            return variable_string_flip( _environment, _variable );
+        default: {
+            Variable * result = variable_temporary( _environment, variable->type, "(tmp)");
+
+            switch ( VT_BITWIDTH( variable->type ) ) {
+                case 8:
+                    cpu_flip_8bit( _environment, variable->realName, result->realName );
+                    break;
+                default:
+                    CRITICAL_CANNOT_FLIP( _variable );
+            }
+
+            return result;
+    
+        }
+
+    }
+
 }
 
 /**
@@ -10886,7 +10916,8 @@ data internally. It decode from the most significant to the least significant.
 
 It is also possible to indicate the number of digits to be represented. 
 If this parameter is omitted, the minimum number of digits for that data 
-format (8, 16 or 32 digits) will be used.
+format (8, 16 or 32 digits) will be used. Moreover, you can use a different
+set of symbols instead of "0" and "1", by using the last two parameters.
 
 This command is essential for those who want to delve deeper into how 
 computers work at a lower level. Infact, this command allows you to 
@@ -10905,7 +10936,9 @@ al meno significativo. È anche possibile indicare il numero di cifre
 da rappresentare.
 
 Se questo parametro viene omesso, verrà utilizzato il numero minimo 
-di cifre per quel formato di dati (8, 16 o 32 cifre).
+di cifre per quel formato di dati (8, 16 o 32 cifre). Inoltre,
+puoi utilizzare un differente insieme di simboli invece di "0" e
+"1", utilizzando gli ultimi due parametri.
 
 Questo comando è essenziale per coloro che desiderano approfondire 
 il funzionamento dei computer a un livello inferiore. Infatti, 
@@ -10914,10 +10947,11 @@ un numero, il che è utile in alcune applicazioni come la grafica
 o le comunicazioni. Inoltre, molti algoritmi di crittografia si 
 basano su operazioni a livello di bit.
 
-@syntax = BIN( value [, digits] )
+@syntax = BIN( value [, digits] [, zero, one ] )
 
 @example x = BIN(42)
 @example z = BIN(42, 5)
+@example k = BIN(255, 5, " ", "*"): REM k = "********"
 
 @target all
 @verified
@@ -10945,12 +10979,12 @@ basano su operazioni a livello di bit.
 
 @italian
 
-@syntax = BIN$( value [, digits] )
+@syntax = BIN$( value [, digits] [, zero, one] )
 
 @alias BIN
  </usermanual> */
 
-Variable * variable_bin( Environment * _environment, char * _value, char * _digits ) {
+Variable * variable_bin( Environment * _environment, char * _value, char * _digits, char * _zero, char * _one ) {
 
     MAKE_LABEL
 
@@ -10961,6 +10995,17 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     }
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
+
+    Variable * zero = NULL;
+    if ( _zero ) {
+        Variable * realZero = variable_retrieve( _environment, _zero );
+        zero = variable_string_asc( _environment, realZero->name );
+    }
+    Variable * one = NULL;
+    if ( _one ) {
+        Variable * realOne = variable_retrieve( _environment, _one );
+        one = variable_string_asc( _environment, realOne->name );
+    }
 
     switch( VT_BITWIDTH( originalValue->type ) ) {
         case 1:
@@ -10987,7 +11032,7 @@ Variable * variable_bin( Environment * _environment, char * _value, char * _digi
     cpu_dswrite( _environment, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
 
-    cpu_bits_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+    cpu_bits_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ), (zero?zero->realName:NULL), (one?one->realName:NULL) );
 
     if ( digits ) {
         Variable * result2 = variable_temporary( _environment, VT_DSTRING, "(padding/truncating)" );

@@ -7242,6 +7242,24 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
 
 }
 
+void cpu_flip_8bit( Environment * _environment, char * _source, char * _destination ) {
+
+    no_inline( cpu_flip )
+
+    embedded( cpu_flip, src_hw_6502_cpu_flip_asm );
+
+        outline1("LDA %s", _source);
+        outline0("JSR CPUFLIP8");
+        if ( _destination ) {
+            outline1("STA %s", _destination);
+        } else {
+            outline1("STA %s", _source);
+        }
+        
+    done( )
+
+}
+
 void cpu_flip( Environment * _environment, char * _source, char * _size, char * _destination ) {
 
     no_inline( cpu_flip )
@@ -7410,11 +7428,25 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     MAKE_LABEL
 
     deploy( bitsToString, src_hw_6502_bits_to_string_asm );
+
+    if ( _zero ) {
+        outline1("LDA %s", _zero);
+    } else {
+        outline0("LDA #'0'" );
+    }
+    outline0("STA BINTOSTRDIGIT0+1" );
+
+    if ( _one ) {
+        outline1("LDA %s", _one);
+    } else {
+        outline0("LDA #'1'" );
+    }
+    outline0("STA BINTOSTRDIGIT1+1" );
 
     outline1("LDA #<%s", _number);
     outline0("STA TMPPTR");

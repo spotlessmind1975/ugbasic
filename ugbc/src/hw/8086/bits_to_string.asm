@@ -38,12 +38,23 @@
 ; AX:BX - number to convert to bits
 ; DI - string where to put the bits
 BINSTR:
+    PUSH DI
+    PUSH AX
+    MOV AH, 32
+BINSTRXZ:
+    MOV [DI], AL
+    INC DI
+    DEC AH
+    CMP AH, 0
+    JNZ BINSTRXZ
+    POP AX
+    POP DI
     MOV DX, 31
     ADD DI, 31
 BINSTRL:
     SHR AX, 1
     ROR BX, 1
-    JC, BINSTRO1
+    JC BINSTRO1
     JP BINSTRO0
 BINSTRO0:
     MOV CL, '0'
