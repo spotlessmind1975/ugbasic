@@ -6376,7 +6376,7 @@ void cpu_dstring_vars( Environment * _environment ) {
     int space = _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space;
 
     outhead1("stringscount                  equ %d", count );
-    outhead1("stringsspace                  equ %d", space );
+    outhead1("stringsspace                  equ %d", (space-1) );
     outhead0("MAXSTRINGS                    equ stringscount" );
     outhead0("DESCRIPTORS                   rzb stringscount*4");
     outhead0("WORKING                       rzb stringsspace" );
