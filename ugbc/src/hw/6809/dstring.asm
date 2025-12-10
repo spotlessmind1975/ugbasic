@@ -270,6 +270,7 @@ DSMALLOC
     PSHS  D
 
     LDD FREE_STRING
+    ORCC #$01
     SUBB  ,S
     SBCA  #0
     STD   FREE_STRING
