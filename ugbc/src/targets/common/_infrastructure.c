@@ -10916,7 +10916,8 @@ data internally. It decode from the most significant to the least significant.
 
 It is also possible to indicate the number of digits to be represented. 
 If this parameter is omitted, the minimum number of digits for that data 
-format (8, 16 or 32 digits) will be used.
+format (8, 16 or 32 digits) will be used. Moreover, you can use a different
+set of symbols instead of "0" and "1", by using the last two parameters.
 
 This command is essential for those who want to delve deeper into how 
 computers work at a lower level. Infact, this command allows you to 
@@ -10935,7 +10936,9 @@ al meno significativo. È anche possibile indicare il numero di cifre
 da rappresentare.
 
 Se questo parametro viene omesso, verrà utilizzato il numero minimo 
-di cifre per quel formato di dati (8, 16 o 32 cifre).
+di cifre per quel formato di dati (8, 16 o 32 cifre). Inoltre,
+puoi utilizzare un differente insieme di simboli invece di "0" e
+"1", utilizzando gli ultimi due parametri.
 
 Questo comando è essenziale per coloro che desiderano approfondire 
 il funzionamento dei computer a un livello inferiore. Infatti, 
@@ -10944,10 +10947,11 @@ un numero, il che è utile in alcune applicazioni come la grafica
 o le comunicazioni. Inoltre, molti algoritmi di crittografia si 
 basano su operazioni a livello di bit.
 
-@syntax = BIN( value [, digits] )
+@syntax = BIN( value [, digits] [, zero, one ] )
 
 @example x = BIN(42)
 @example z = BIN(42, 5)
+@example k = BIN(255, 5, " ", "*"): REM k = "********"
 
 @target all
 @verified
@@ -10975,7 +10979,7 @@ basano su operazioni a livello di bit.
 
 @italian
 
-@syntax = BIN$( value [, digits] )
+@syntax = BIN$( value [, digits] [, zero, one] )
 
 @alias BIN
  </usermanual> */
