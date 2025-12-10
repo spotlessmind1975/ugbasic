@@ -4577,20 +4577,19 @@ void cpu_bits_to_string_vars( Environment * _environment ) {
     variable_import( _environment, "BINTOSTRDIGIT1", VT_BYTE, '1' );
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     deploy_with_vars( bitsToString,src_hw_8086_bits_to_string_asm, cpu_bits_to_string_vars );
 
     if ( _zero ) {
-        outline1("MOV AL, [%s]", zero->realName);
+        outline1("MOV AL, [%s]", _zero);
     } else {
         outline0("MOV AL, '0'" );
     }
     outline0("MOV [BINTOSTRDIGIT0], AL" );
 
     if ( _one ) {
-        Variable * one = variable_retrieve( _environment, _one );
-        outline1("MOV AL, [%s]", one->realName);
+        outline1("MOV AL, [%s]", _one);
     } else {
         outline0("MOV AL, '1'" );
     }
