@@ -12448,6 +12448,11 @@ statement2nc:
       goto_number( _environment, $4 );
       end_if_then( _environment );  
   }
+  | IF expr GOTO Identifier {
+      if_then( _environment, $2 );
+      goto_label( _environment, $4 );
+      end_if_then( _environment );  
+  }
   | IF expr THEN Integer {
       if_then( _environment, $2 );
       goto_number( _environment, $4 );
