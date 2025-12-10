@@ -5751,7 +5751,7 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
 
 }
 
-void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one ) {
 
     deploy( bitsToString, src_hw_6309_bits_to_string_asm );
 
