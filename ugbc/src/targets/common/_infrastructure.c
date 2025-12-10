@@ -9543,21 +9543,23 @@ Variable * variable_flip( Environment * _environment, char * _variable  ) {
         case VT_DSTRING:
         case VT_STRING:
             return variable_string_flip( _environment, _variable );
-        default:
-    }
+        default: {
+            Variable * result = variable_temporary( _environment, variable->type, "(tmp)");
 
-    Variable * result = variable_temporary( _environment, variable->type, "(tmp)");
+            switch ( VT_BITWIDTH( variable->type ) ) {
+                case 8:
+                    cpu_flip_8bit( _environment, variable->realName, result->realName );
+                    break;
+                default:
+                    CRITICAL_CANNOT_FLIP( _variable );
+            }
 
-    switch ( VT_BITWIDTH( variable->type ) ) {
-        case 8:
-            cpu_flip_8bit( _environment, variable->realName, result->realName );
-            break;
-        default:
-            CRITICAL_CANNOT_FLIP( _variable );
-    }
-
-    return result;
+            return result;
     
+        }
+
+    }
+
 }
 
 /**
