@@ -9379,6 +9379,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
 
     MAKE_LABEL
 
+    char zeroLabel[MAX_TEMPORARY_STORAGE]; sprintf( zeroLabel, "%szero", label );
+
     Variable * string = variable_retrieve( _environment, _string );
     Variable * stringAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * stringLen = variable_temporary( _environment, VT_BYTE, "(len)" );
@@ -9387,6 +9389,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
     Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+
+    cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, zeroLabel, 1 );
 
     switch( string->type ) {
         case VT_STRING: {
@@ -9416,6 +9420,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     cpu_dec( _environment, copyOfRepetitions->realName );
     cpu_compare_and_branch_8bit_const( _environment, copyOfRepetitions->realName, 0, label, 0 );
 
+    cpu_label( _environment, zeroLabel );
+    
     return result;
     
 }
