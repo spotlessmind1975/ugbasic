@@ -1211,7 +1211,7 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             break;
     }
 
-    cpu_call( _environment, "GIMERESETPALETTE" );
+    // cpu_call( _environment, "GIMERESETPALETTE" );
     cpu_call( _environment, "GIMERAM" );
 
     if (_environment->vestigialConfig.clsImplicit ) {
