@@ -3528,10 +3528,10 @@ exponential_less:
         $$ = variable_bin( _environment, $3, $5, NULL, NULL )->name;
     }
     | BIN OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, NULL, $7 )->name;
+        $$ = variable_bin( _environment, $3, NULL, $5, $7 )->name;
     }
     | BIN OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, $9, $7 )->name;
+        $$ = variable_bin( _environment, $3, $5, $7, $9 )->name;
     }
     | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;
