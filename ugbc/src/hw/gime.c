@@ -1666,6 +1666,9 @@ void gime_initialization( Environment * _environment ) {
 
     outline0("JSR GIMESTARTUP");
 
+    cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+    cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
+
     variable_import( _environment, "XGR", VT_POSITION, 0 );
     variable_global( _environment, "XGR" );
     variable_import( _environment, "YGR", VT_POSITION, 0 );
@@ -1704,6 +1707,7 @@ void gime_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
     _environment->screenShades = 16;
     _environment->screenColors = 16;
+    _environment->currentTileMode = 1;
 
     _environment->fontConfig.schema = FONT_SCHEMA_ASCII;
 
