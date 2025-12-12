@@ -14049,6 +14049,12 @@ int main( int _argc, char *_argv[] ) {
                             if ( strcmp(p, "CLS_IMPLICIT" ) == 0 ) {
                                 ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
                             }
+                            if ( strstr(p, "STRING_COUNT=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.count = atoi(p+13);
+                            }
+                            if ( strstr(p, "STRING_SPACE=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.space = atoi(p+13);
+                            }
                             p = strtok(NULL, ",");
                         }
                     }
