@@ -232,6 +232,9 @@
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
+#define DSTRING_DEFAULT_COUNT           255
+#define DSTRING_DEFAULT_SPACE           1024
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void zx_initialization( Environment * _environment );

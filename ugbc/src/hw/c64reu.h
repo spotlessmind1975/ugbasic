@@ -45,6 +45,9 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
+#define DSTRING_DEFAULT_COUNT           255
+#define DSTRING_DEFAULT_SPACE           1024
+
 void c64reu_xpen( Environment * _environment, char * _destination );
 void c64reu_ypen( Environment * _environment, char * _destination );
 

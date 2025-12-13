@@ -159,6 +159,9 @@
 
 #define MAX_AUDIO_CHANNELS      1
 
+#define DSTRING_DEFAULT_COUNT           127
+#define DSTRING_DEFAULT_SPACE           1024
+
 void vz200_wait_key( Environment * _environment, int _release );
 void vz200_wait_fire( Environment * _environment, int _port, int _release );
 void vz200_wait_fire_semivar( Environment * _environment, char * _port, int _release );

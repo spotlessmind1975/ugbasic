@@ -169,6 +169,9 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
+#define DSTRING_DEFAULT_COUNT           32
+#define DSTRING_DEFAULT_SPACE           128
+
 void coleco_wait_fire( Environment * _environment, int _port, int _release );
 void coleco_wait_fire_semivar( Environment * _environment, char * _port, int _release );
 void coleco_wait_key_or_fire( Environment * _environment, int _port, int _release );

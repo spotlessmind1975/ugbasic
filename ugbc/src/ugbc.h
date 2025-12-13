@@ -565,8 +565,6 @@ typedef struct _Resource {
 #define MAX_PROCEDURES                  4096
 #define MAX_RESIDENT_SHAREDS            128
 #define PROTOTHREAD_DEFAULT_COUNT       16
-#define DSTRING_DEFAULT_COUNT           255
-#define DSTRING_DEFAULT_SPACE           1024
 #define MAX_BUFFERED_OUTPUT             16
 
 #define FONT_SCHEMA_EMBEDDED            0

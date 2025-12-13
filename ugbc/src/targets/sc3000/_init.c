@@ -46,13 +46,6 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
-    if ( !_environment->dstring.count ) {
-        _environment->dstring.count = 16;
-    }
-    if ( !_environment->dstring.count ) {
-        _environment->dstring.space = 128;
-    }
-
     variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 1 );
     variable_global( _environment, "PPIKEYBOARD" );   
 

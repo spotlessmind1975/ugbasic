@@ -43,6 +43,9 @@
 
 #define MAX_AUDIO_CHANNELS  1
 
+#define DSTRING_DEFAULT_COUNT           32
+#define DSTRING_DEFAULT_SPACE           512
+
 void cocob_xpen( Environment * _environment, char * _destination );
 void cocob_ypen( Environment * _environment, char * _destination );
 void cocob_spen( Environment * _environment, char * _destination );
