@@ -2766,7 +2766,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     int colorBackground = 0;
 
-    if ( _flags & FLAG_EXACT == 0 ) {
+    if ( (_flags & FLAG_EXACT) == 0 ) {
         int colorCount[16];
         memset(colorCount, 0, 16 * sizeof( int ) );
         char * tmpSource = _source;
