@@ -2271,7 +2271,7 @@ void vic2_initialization( Environment * _environment ) {
     reset_screen_mode_selected( _environment );
 
     if (_environment->vestigialConfig.clsImplicit ) {
-        vic2_cls( _environment, NULL );
+        vic2_cls( _environment );
     }
 }
 
