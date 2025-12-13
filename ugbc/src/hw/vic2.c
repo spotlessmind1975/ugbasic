@@ -2803,6 +2803,24 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
             }
         }
 
+    } else {
+        char * tmpSource = _source;
+        RGBi rgb;
+        rgb.red = *tmpSource;
+        rgb.green = *(tmpSource + 1);
+        rgb.blue = *(tmpSource + 2);
+        if ( _depth > 3 ) {
+            rgb.alpha = *(tmpSource + 3);
+        } else {
+            rgb.alpha = 255;
+        }
+        if ( rgb.alpha == 0 ) {
+            rgb.red = 0;
+            rgb.green = 0;
+            rgb.blue = 0;
+        }
+        RGBi * systemColor = vic2_image_nearest_system_color( &rgb );
+        colorBackground = rgb.index; 
     }
 
     vic2_image_converter_tiles_multicolor( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width, colorBackground );
