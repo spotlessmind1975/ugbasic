@@ -255,6 +255,9 @@
 #define DOUBLE_BUFFER_PAGE_0        0
 #define DOUBLE_BUFFER_PAGE_1        1
 
+#define DSTRING_DEFAULT_COUNT           32
+#define DSTRING_DEFAULT_SPACE           256
+
 void gb_wait_vbl( Environment * _environment, char * _raster_line );
 void gb_screen_on_off( Environment * _environment, int _on_off );
 

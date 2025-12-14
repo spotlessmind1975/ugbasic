@@ -148,6 +148,9 @@
 
 #define MAX_AUDIO_CHANNELS  4
 
+#define DSTRING_DEFAULT_COUNT           255
+#define DSTRING_DEFAULT_SPACE           1024
+
 void atari_xpen( Environment * _environment, char * _destination );
 void atari_ypen( Environment * _environment, char * _destination );
 

@@ -158,6 +158,9 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
+#define DSTRING_DEFAULT_COUNT           16
+#define DSTRING_DEFAULT_SPACE           128
+
 void sc3000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sc3000_wait_fire( Environment * _environment, int _port, int _release );
 void sc3000_wait_fire_semivar( Environment * _environment, char * _port, int _release );

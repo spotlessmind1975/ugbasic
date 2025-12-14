@@ -340,8 +340,8 @@ static int calculate_cast_type_best_fit( Environment * _environment, int _type1,
         return VT_NUMBER;
     } else {
         if ( VT_SIGNED( _type1 ) != VT_SIGNED( _type2 ) ) {
-            int bits1 = VT_BITWIDTH( _type1 ) + VT_SIGNED( _type1 );
-            int bits2 = VT_BITWIDTH( _type2 ) + VT_SIGNED( _type2 );
+            int bits1 = VT_BITWIDTH( _type1 ) - VT_SIGNED( _type1 );
+            int bits2 = VT_BITWIDTH( _type2 ) - VT_SIGNED( _type2 );
             int type = 0;
             if ( bits1 < bits2 ) {
                 type = _type2;
@@ -350,16 +350,7 @@ static int calculate_cast_type_best_fit( Environment * _environment, int _type1,
             } else {
                 return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
             }
-            switch( type ) {
-                case VT_BYTE:
-                case VT_SBYTE:
-                    return VT_SWORD;
-                case VT_WORD:
-                case VT_SWORD:
-                    return VT_SDWORD;
-                default:
-                    return  VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
-            }
+            return type;
         } else {
             if ( VT_SIGNED( _type1 ) || VT_SIGNED( _type2 ) ) {
                 return VT_SIGN( VT_MAX_BITWIDTH_TYPE( _type1, _type2 ) );
@@ -4553,6 +4544,7 @@ void variable_xor_inplace_mt( Environment * _environment, char * _source, char *
 Variable * variable_sub( Environment * _environment, char * _source, char * _dest ) {
     Variable * source = variable_retrieve( _environment, _source );
     Variable * target = variable_retrieve( _environment, _dest );
+
     Variable * result;
     if ( 
             ( source->type == VT_STRING || source->type == VT_DSTRING ) &&
@@ -9379,6 +9371,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
 
     MAKE_LABEL
 
+    char zeroLabel[MAX_TEMPORARY_STORAGE]; sprintf( zeroLabel, "%szero", label );
+
     Variable * string = variable_retrieve( _environment, _string );
     Variable * stringAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * stringLen = variable_temporary( _environment, VT_BYTE, "(len)" );
@@ -9387,6 +9381,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
     Variable * resultAddress = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * resultLen = variable_temporary( _environment, VT_BYTE, "(len)" );
+
+    cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, zeroLabel, 1 );
 
     switch( string->type ) {
         case VT_STRING: {
@@ -9416,6 +9412,8 @@ Variable * variable_string_dup( Environment * _environment, char * _string, char
     cpu_dec( _environment, copyOfRepetitions->realName );
     cpu_compare_and_branch_8bit_const( _environment, copyOfRepetitions->realName, 0, label, 0 );
 
+    cpu_label( _environment, zeroLabel );
+    
     return result;
     
 }

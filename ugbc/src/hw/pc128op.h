@@ -247,6 +247,9 @@
 
 #define EF936X_COMPONENT_BITMASK     0
 
+#define DSTRING_DEFAULT_COUNT           127
+#define DSTRING_DEFAULT_SPACE           1024
+
 void pc128op_xpen( Environment * _environment, char * _destination );
 void pc128op_ypen( Environment * _environment, char * _destination );
 

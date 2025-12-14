@@ -139,6 +139,9 @@
 
 #define MAX_AUDIO_CHANNELS  2
 
+#define DSTRING_DEFAULT_COUNT           128
+#define DSTRING_DEFAULT_SPACE           512
+
 void c16_xpen( Environment * _environment, char * _destination );
 void c16_ypen( Environment * _environment, char * _destination );
 

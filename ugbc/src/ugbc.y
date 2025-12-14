@@ -3586,10 +3586,10 @@ exponential_less:
         $$ = variable_bin( _environment, $3, $5, NULL, NULL )->name;
     }
     | BIN OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, NULL, $7 )->name;
+        $$ = variable_bin( _environment, $3, NULL, $5, $7 )->name;
     }
     | BIN OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, $9, $7 )->name;
+        $$ = variable_bin( _environment, $3, $5, $7, $9 )->name;
     }
     | SPACE OP expr CP {
         $$ = variable_string_space( _environment, $3 )->name;
@@ -12523,6 +12523,11 @@ statement2nc:
       goto_number( _environment, $4 );
       end_if_then( _environment );  
   }
+  | IF expr GOTO Identifier {
+      if_then( _environment, $2 );
+      goto_label( _environment, $4 );
+      end_if_then( _environment );  
+  }
   | IF expr THEN Integer {
       if_then( _environment, $2 );
       goto_number( _environment, $4 );
@@ -13922,7 +13927,7 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:FfG:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
         switch (opt) {
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
@@ -14112,6 +14117,22 @@ int main( int _argc, char *_argv[] ) {
                     break;
                 case 's':
                     _environment->sandbox = 1;
+                    break;
+                case 'g': {
+                        char * p = strtok(optarg, ",");
+                        while(p) {
+                            if ( strcmp(p, "CLS_IMPLICIT" ) == 0 ) {
+                                ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
+                            }
+                            if ( strstr(p, "STRING_COUNT=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.count = atoi(p+13);
+                            }
+                            if ( strstr(p, "STRING_SPACE=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.space = atoi(p+13);
+                            }
+                            p = strtok(NULL, ",");
+                        }
+                    }
                     break;
                 case 'e': {
                     char * p = strtok(optarg, ",");

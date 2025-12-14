@@ -143,6 +143,9 @@
 
 #define MAX_AUDIO_CHANNELS  3
 
+#define DSTRING_DEFAULT_COUNT           255
+#define DSTRING_DEFAULT_SPACE           1024
+
 void vic20_xpen( Environment * _environment, char * _destination );
 void vic20_ypen( Environment * _environment, char * _destination );
 void vic20_wait_key_or_fire( Environment * _environment, int _port, int _release );

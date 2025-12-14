@@ -164,6 +164,9 @@
 
 #define EF936X_COMPONENT_BITMASK     1
 
+#define DSTRING_DEFAULT_COUNT           127
+#define DSTRING_DEFAULT_SPACE           1024
+
 void to8_xpen( Environment * _environment, char * _destination );
 void to8_ypen( Environment * _environment, char * _destination );
 void to8_inkey( Environment * _environment, char * _pressed, char * _key );
