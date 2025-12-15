@@ -10205,11 +10205,14 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
                 Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
 
+                cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+                cpu_dsfree( _environment, dstring->realName );
+
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
                 Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
                 Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
                 Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-
+                
                 cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
                 cpu_dsalloc( _environment, size->realName, dstring->realName );
                 cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
