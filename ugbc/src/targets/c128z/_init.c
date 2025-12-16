@@ -46,7 +46,44 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
-    banks_init( _environment );
+        int bankCount = 0;
+    int * bankIds = NULL;
+    int bankSize = 0x4000;
+
+    // 512 kB	0–31	$00–$1f
+    // 1024 kB	0–63	$00–$3f
+    // 2048 kB	0–127	$00–$7f
+    // 4096 kB	0–255	$00–$ff
+
+    switch( _environment->ramSize ) {
+        case 512:
+            bankCount = 32;
+            break;
+        case 1024:
+            bankCount = 64;
+            break;
+        case 2048:
+            bankCount = 128;
+            break;
+        case 4096:
+            bankCount = 256;
+            break;
+        default:
+            bankCount = 0;
+            break;
+    }
+
+    if ( bankCount ) {
+        bankIds = malloc( sizeof( int ) * bankCount );
+        
+        for( int i=0; i<bankCount; ++i ) {
+            bankIds[i] = bankCount-i-1;
+        }
+
+        _environment->compressionForbidden = 1;
+
+        banks_init_extended( _environment, bankIds, bankCount, bankSize );
+    }
 
     // _environment->audioConfig.async = 1;
 
@@ -100,6 +137,13 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
     variable_global( _environment, "DOJOERROR" );
+
+    variable_import( _environment, "GEORAMBANKSHADOW", VT_BYTE, 0 );
+    variable_global( _environment, "GEORAMBANKSHADOW" );
+    variable_import( _environment, "GEORAMSWAPSHADOW", VT_BYTE, 0 );
+    variable_global( _environment, "GEORAMSWAPSHADOW" );
+    variable_import( _environment, "GEORAMPAGESHADOW", VT_BYTE, 0 );
+    variable_global( _environment, "GEORAMPAGESHADOW" );
 
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );

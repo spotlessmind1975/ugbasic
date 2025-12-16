@@ -32,34 +32,35 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
  */
-void bank_set( Environment * _environment, int _bank ) {
+// @tobe BANK UNCOMPRESS
+void bank_uncompress_semi_var( Environment * _environment, int _bank, int _address1, char * _address2 ) {
 
 }
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to uncompress data from
+ * a specific bank into the RAM.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank bank from uncompress from
+ * @param _address1 address to uncompress from (0 based)
+ * @param _address2 address to write to (RAM)
  */
-void bank_set_var( Environment * _environment, char * _bank ) {
-    
-}
+void bank_uncompress_vars( Environment * _environment, char * _bank, char * _address1, char * _address2 ) {
 
-#endif
+}

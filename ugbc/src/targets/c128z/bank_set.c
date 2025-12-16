@@ -32,9 +32,9 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#if defined(__c128z__)
 
 /**
  * @brief Emit ASM code for instruction <b>BANK ...</b>
@@ -47,6 +47,8 @@
  */
 void bank_set( Environment * _environment, int _bank ) {
 
+    variable_store( _environment, "GEORAMBANKSHADOW", _bank );
+    
 }
 
 /**
@@ -60,6 +62,8 @@ void bank_set( Environment * _environment, int _bank ) {
  */
 void bank_set_var( Environment * _environment, char * _bank ) {
     
+    variable_move( _environment, _bank, "GEORAMBANKSHADOW" );
+
 }
 
 #endif

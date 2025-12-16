@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK READ ...</b>
@@ -48,15 +46,34 @@
  * @param _address2 address to write to (RAM)
  * @param _size size of memory to read/write
  */
+
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
-    Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    variable_store( _environment, realAddress->realName, 0 );
-    cpu_math_add_16bit( _environment, realAddress->realName, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
+    deploy( bank, src_hw_c128z_bank_asm );
 
-    cpu_mem_move_indirect_direct_size( _environment, realAddress->realName, _address2, _size );
+    outline1("LD HL, $%4.4x", (unsigned char) ( _address1 & 0xffff ) );
+    outline1("LD DE, %s", _address2 );
+
+    switch( _size ) {
+        case 1:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD1");
+            break;
+        case 2:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD2");
+            break;
+        case 4:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD4");
+            break;
+        default:
+            outline1("LD BC, $%4.4x", (unsigned short) (_size&0xffff) );
+            outline0("CALL BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
 
 }
 
@@ -74,48 +91,108 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    deploy( bank, src_hw_c128z_bank_asm );
+
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
-    cpu_mem_move( _environment, realAddress->realName, address2->realName, size->realName );
+    outline1("LD HL, (%s)", address1->realName );
+    outline1("LD DE, (%s)", address2->realName );
+    outline1("LD BC, (%s)", size->realName );
+    outline1("LD A, (%s)", bank->realName );
+    outline0("CALL BANKREAD");
+
+    outline0("; end bank read");
 
 }
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
-    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    deploy( bank, src_hw_c128z_bank_asm );
 
-    cpu_mem_move_direct2( _environment, realAddress->realName, address2->realName, size->realName );
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
+
+    outline1("LD HL, (%s)", address1->realName );
+    outline1("LD DE, %s", address2->realName );
+    outline1("LD BC, (%s)", size->realName );
+    outline1("LD A, (%s)", bank->realName );
+    outline0("CALL BANKREAD");
+
+    outline0("; end bank read");
 
 }
 
 void bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
-    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
-    Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
+    deploy( bank, src_hw_c128z_bank_asm );
 
-    cpu_mem_move_direct2_size( _environment, realAddress->realName, address2->realName, _size );
+    Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
+    Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
+    Variable * address2 = variable_retrieve( _environment, _address2 );
+
+    outline1("LD HL, (%s)", address1->realName );
+
+    outline1("LD DE, %s", address2->realName );
+
+    switch( _size ) {
+        case 1:
+            outline1("LD A, (%s)", bank->realName );
+            outline0("CALL BANKREAD1");
+            break;
+        case 2:
+            outline1("LD A, (%s)", bank->realName );
+            outline0("CALL BANKREAD2");
+            break;
+        case 4:
+            outline1("LD A, (%s)", bank->realName );
+            outline0("CALL BANKREAD4");
+            break;
+        default:
+            outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
+            outline1("LD A, (%s)", bank->realName );
+            outline0("CALL BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
 
 }
 
 void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
+    deploy( bank, src_hw_c128z_bank_asm );
+
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_mem_move_direct2_size( _environment, realAddress->realName, address2->realName, _size );
+    outline1("LD HL, (%s)", address1->realName );
+    outline1("LD DE, %s", address2->realName );
+
+    switch( _size ) {
+        case 1:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD1");
+            break;
+        case 2:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD2");
+            break;
+        case 4:
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD4");
+            break;
+        default:
+            outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
+            outline1("LD A, $%2.2x", _bank );
+            outline0("CALL BANKREAD");
+            break;
+
+    }
+    outline0("; end bank read");
 
 }
-
-#endif

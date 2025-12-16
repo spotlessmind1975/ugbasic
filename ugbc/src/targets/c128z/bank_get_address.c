@@ -32,34 +32,48 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__msx1__) || defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#if defined(__c128z__)
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
  */
-void bank_set( Environment * _environment, int _bank ) {
+Variable * bank_get_address( Environment * _environment, int _bank ) {
 
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    variable_store( _environment, result->name, 0xde00 );
+
+    return result;
+    
 }
 
 /**
- * @brief Emit ASM code for instruction <b>BANK ...</b>
+ * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
  * 
- * This function outputs the ASM code to set the current 
- * expansion bank index.
+ * This function outputs the ASM code to get the resident
+ * memory address for the given bank.
  * 
  * @param _environment Current calling environment
- * @param _bank Bank to select
+ * @param _bank Bank to get address of
+ * @return Current address of the bank selected
  */
-void bank_set_var( Environment * _environment, char * _bank ) {
+Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
+
+    Variable * result = variable_temporary( _environment, VT_ADDRESS, "(bank address)" );
+
+    variable_store( _environment, result->name, 0xde00 );
     
+    return result;
+
 }
 
 #endif
