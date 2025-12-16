@@ -2095,6 +2095,7 @@ void vic2_cls( Environment * _environment ) {
 void vic2_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w, char * _h ) {
 
     if ( _environment->currentMode == 2 || _environment->currentMode == 3 ) {
+        deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
         deploy( clsBox, src_hw_vic2_cls_box_asm );
 
         outline1("LDA %s", _x1);
