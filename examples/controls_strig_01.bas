@@ -10,7 +10,9 @@ REM Questo esempio leggerà lo stato del pulsante FIRE di un joystick.
 REM
 REM @include atari
 
-OPTION COMPILE ON ATARI
+OPTION COMPILE ON ATARI,C128
+
+DEFINE JOYSTICK SYNC
 
     CLS
 
@@ -35,7 +37,7 @@ OPTION COMPILE ON ATARI
 				PRINT " ";
 			ENDIF
 			INC i
-		LOOP UNTIL i = 8
+		LOOP UNTIL i = 4
 		PRINT "|";
 		INC j
 		i = 0
@@ -46,7 +48,7 @@ OPTION COMPILE ON ATARI
 				PRINT " ";
 			ENDIF
 			INC i
-		LOOP UNTIL i = 4
+		LOOP UNTIL i = 2
 		PRINT "|"
 		IF j = 301 THEN 
 			IF k < 10 THEN

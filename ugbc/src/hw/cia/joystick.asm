@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+JFIRELATCH:     .BYTE $00, $00
+
 @IF joystickConfig.values
 
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -103,57 +105,138 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK SYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   X = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
+
+        TXA
+        
+        ; Is the button odd? So we can read directly
+        ; the fire button.
+
+        LSR
+        BCS JFIRE
+
+        TAX
+
+        ; Load the latch value.
+
+        LDA JFIRELATCH, X
+
+        ; Check if latch is not zero.
+        
+        BEQ STRIGNONE
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LDA #$FF
+
+        ; Reset the latch.
+        PHA
+        LDA #0
+        STA JFIRELATCH, X
+        PLA
+        
+    STRIGNONE:
+        RTS
+
+    JOYSTICKREAD:
+        CPX #0
+        BNE JOYSTICKREAD1
+        BEQ JOYSTICKREAD0
+        
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   X = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        ; Load the STRIG register from the hardware port.
+
+        JSR JOYSTICKREAD
+
+        ; Isolate the FIRE bit.
+
+        AND #$10
+
+        ; Update the FIRE latch.
+
+        PHA
+        ORA JFIRELATCH, X
+        STA JFIRELATCH, X
+        PLA
+
+        ; Done.
+
+        RTS
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   X = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $FF FIRE was pressed
+    ;
+    JFIRE:
+        JSR JFIREX
+        BEQ JFIRENONE
+        LDA #$FF
+    JFIRENONE:
+        RTS
+
+
     ; Wait for any fire is pressed on JOY(0)
 
     WAITFIRE0:
-        JSR JOYSTICKREAD0
-        AND #$10
+        JSR JFIRE
         BEQ WAITFIRE0
-        CPX #0
+        CPY #0
         BEQ WAITFIRE0D
     WAITFIRE0L1:
-        JSR JOYSTICKREAD0
-        AND #$10
+        JSR JFIRE
         BNE WAITFIRE0L1
     WAITFIRE0D:
         RTS
 
     WAITFIREA:
-        CMP #0
+        CPX #0
         BEQ WAITFIRE0
 
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
-        JSR JOYSTICKREAD1
-        AND #$10
+        JSR JFIRE
         BEQ WAITFIRE1
-        CPX #0
+        CPY #0
         BEQ WAITFIRE1D
     WAITFIRE1L1:
-        JSR JOYSTICKREAD1
-        AND #$10
+        JSR JFIRE
         BNE WAITFIRE1L1
     WAITFIRE1D:
         RTS
 
     ; Wait for any fire is pressed, for any joystick.
     WAITFIRE:
-        JSR JOYSTICKREAD0
-        AND #$10
+        LDX #0
+        JSR JFIRE
         STA MATHPTR0
-        JSR JOYSTICKREAD1
-        AND #$10
+        LDX #1
+        JSR JFIRE
         ORA MATHPTR0
         BEQ WAITFIRE
-        CPX #0
+        CPY #0
         BEQ WAITFIRED
     WAITFIREL1:
-        JSR JOYSTICKREAD0
-        AND #$10
+        LDX #0
+        JSR JFIRE
         STA MATHPTR0
-        JSR JOYSTICKREAD1
-        AND #$10
+        LDX #1
+        JSR JFIRE
         ORA MATHPTR0
         BNE WAITFIREL1
     WAITFIRED:
@@ -170,10 +253,89 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK ASYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-; Dedicated storage space for JOY(0) and JOY(1)
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   X = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
 
-JOYSTICK0:      .BYTE   $0
-JOYSTICK1:      .BYTE   $0
+        TXA
+        
+        ; Is the button odd? So we can read directly
+        ; the fire button.
+
+        LSR
+        BCS JFIRE
+
+        TAX
+
+        ; Load the latch value.
+
+        LDA JFIRELATCH, X
+
+        ; Check if latch is not zero.
+        
+        BEQ STRIGNONE
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LDA #$FF
+
+        ; Reset the latch.
+        PHA
+        LDA #0
+        STA JFIRELATCH, X
+        PLA
+        
+    STRIGNONE:
+        RTS
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   X = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        ; Load the STRIG register from the hardware port.
+
+        LDA JOYSTICK0, X
+
+        ; Isolate the FIRE bit.
+
+        AND #$10
+
+        ; Update the FIRE latch.
+
+        PHA
+        ORA JFIRELATCH, X
+        STA JFIRELATCH, X
+        PLA
+
+        ; Done.
+
+        RTS
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   X = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $FF FIRE was pressed
+    ;
+    JFIRE:
+        JSR JFIREX
+        BEQ JFIRENONE
+        LDA #$FF
+    JFIRENONE:
+        RTS
+
+    ; Dedicated storage space for JOY(0) and JOY(1)
+
+    JOYSTICK0:      .BYTE   $0
+    JOYSTICK1:      .BYTE   $0
 
     ; IRQ service for joystick
 
@@ -218,33 +380,29 @@ JOYSTICK1:      .BYTE   $0
     ; Wait for any fire is pressed on JOY(0)
 
     WAITFIRE0:
-        LDA JOYSTICK0
-        AND #$10
+        JSR JFIRE
         BEQ WAITFIRE0
-        CPX #0
+        CPY #0
         BEQ WAITFIRE0D
     WAITFIRE0L1:
-        LDA JOYSTICK0
-        AND #$10
+        JSR JFIRE
         BNE WAITFIRE0L1
     WAITFIRE0D:
         RTS
 
-    WAITFIREA:
-        CMP #0
+    WAITFIREX:
+        CPX #0
         BEQ WAITFIRE0
 
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
-        LDA JOYSTICK1
-        AND #$10
+        JSR JFIRE
         BEQ WAITFIRE1
-        CPX #0
+        CPY #0
         BEQ WAITFIRE1D
     WAITFIRE1L1:
-        LDA JOYSTICK1
-        AND #$10
+        JSR JFIRE
         BNE WAITFIRE1L1
     WAITFIRE1D:
         RTS
@@ -255,34 +413,34 @@ JOYSTICK1:      .BYTE   $0
 
         ; Read dedicated storage for JOY(0)
 
-        LDA JOYSTICK0
-        AND #$10
+        LDX #0
+        JSR JFIRE
         STA MATHPTR0
 
         ; Read dedicated storage for JOY(1)
 
-        LDA JOYSTICK1
-        AND #$10
+        LDX #1
+        JSR JFIRE
         ORA MATHPTR0
 
         ; If both are zero, recheck again.
         BEQ WAITFIRE
 
-        CPX #0
+        CPY #0
         BEQ WAITFIRED
 
     WAITFIREDL1:
     
         ; Read dedicated storage for JOY(0)
 
-        LDA JOYSTICK0
-        AND #$10
+        LDX #0
+        JSR JFIRE
         STA MATHPTR0
 
         ; Read dedicated storage for JOY(1)
 
-        LDA JOYSTICK1
-        AND #$10
+        LDX #1
+        JSR JFIRE
         ORA MATHPTR0
 
         ; If both are zero, recheck again.
