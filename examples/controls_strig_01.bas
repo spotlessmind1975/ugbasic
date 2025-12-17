@@ -10,7 +10,7 @@ REM Questo esempio leggerà lo stato del pulsante FIRE di un joystick.
 REM
 REM @include atari,atarixl,c128,c128z,c16
 
-OPTION COMPILE ON ATARI,ATARIXL,C128,C128Z,C16
+OPTION COMPILE ON ATARI,ATARIXL,C128,C128Z,C16,C64,C64REU
 
 'DEFINE JOYSTICK SYNC
 
