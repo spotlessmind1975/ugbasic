@@ -119,9 +119,8 @@ JOYSTICKREAD1:
         ; the fire button.
 
         LSR
-        BCS JFIRE
-
         TAX
+        BCS JFIRE
 
         ; Load the latch value.
 
@@ -148,7 +147,7 @@ JOYSTICKREAD1:
         CPX #0
         BNE JOYSTICKREAD1
         BEQ JOYSTICKREAD0
-        
+
     ; Read the FIRE button for a specific joystick
     ;
     ;   X = joystick number
@@ -267,9 +266,9 @@ JOYSTICKREAD1:
         ; the fire button.
 
         LSR
+        TAX
         BCS JFIRE
 
-        TAX
 
         ; Load the latch value.
 

@@ -8,9 +8,9 @@ REM CONTROLLI DI I/O FUNZIONE STRIG
 REM
 REM Questo esempio leggerà lo stato del pulsante FIRE di un joystick.
 REM
-REM @include atari,atarixl,c128, 
+REM @include atari,atarixl,c128,c128z,c16
 
-OPTION COMPILE ON ATARI,ATARIXL,C128,C128Z
+OPTION COMPILE ON ATARI,ATARIXL,C128,C128Z,C16
 
 'DEFINE JOYSTICK SYNC
 

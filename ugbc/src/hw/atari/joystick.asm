@@ -51,9 +51,8 @@ STRIG:
     ; the fire button.
 
     LSR
-    BCS JFIRE
-
     TAX
+    BCS JFIRE
 
     ; Load the latch value.
 

@@ -90,7 +90,7 @@ void c16_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_c16_joystick_asm );
 
-    outline1("LDX #$%2.2x", _release );
+    outline1("LDY #$%2.2x", _release );
 
     switch( _port ) {
         case -1:
@@ -112,12 +112,12 @@ void c16_wait_fire_semivar( Environment * _environment, char * _port, int _relea
 
     deploy( joystick, src_hw_c16_joystick_asm );
 
-    outline1("LDX #$%2.2x", _release );
+    outline1("LDY #$%2.2x", _release );
 
     if ( ! _port ) {
         outline0("JSR WAITFIRE");
     } else {
-        outline1("LDA %s", _port );
+        outline1("LDX %s", _port );
         outline0("JSR WAITFIREA");
     }
    
