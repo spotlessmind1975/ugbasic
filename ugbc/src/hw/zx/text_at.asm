@@ -178,6 +178,7 @@ LIBPRINTUDG8:
     SLA A
     SLA A
     SLA A
+    SLA A
     OR A, B    
     POP BC
     OR A, B
