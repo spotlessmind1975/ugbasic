@@ -107,6 +107,7 @@ CLS:
     SLA A
     SLA A
     SLA A
+    SLA A
     OR A, B
     CALL LIBCLS
     RET
