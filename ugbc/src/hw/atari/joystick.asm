@@ -35,6 +35,88 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+JFIRELATCH:     .BYTE $00, $00, $00, $00
+
+; Read the FIRE button's latch for a specific joystick
+;
+;   X = joystick button id
+;   A = $00 FIRE was not pressed
+;       $ff FIRE was pressed
+;
+STRIG:
+
+    TXA
+    
+    ; Is the button odd? So we can read directly
+    ; the fire button.
+
+    LSR
+    BCS JFIRE
+
+    TAX
+
+    ; Load the latch value.
+
+    LDA JFIRELATCH, X
+
+    ; Check if latch is not zero.
+    
+    BEQ STRIGNONE
+
+    ; TRUE, the joystick fire was pressed in the past.
+
+    LDA #$FF
+
+    ; Reset the latch.
+    PHA
+    LDA #0
+    STA JFIRELATCH, X
+    PLA
+    
+STRIGNONE:
+    RTS
+
+; Read the FIRE button for a specific joystick
+;
+;   X = joystick number
+;   A = $00 FIRE was not pressed
+;       $01 FIRE was pressed
+;
+JFIREX:
+
+    ; Load the STRIG register from the hardware port.
+
+    LDA $D010, X
+
+    ; Isolate the FIRE bit.
+
+    AND #$01
+    EOR #$01
+
+    ; Update the FIRE latch.
+
+    PHA
+    ORA JFIRELATCH, X
+    STA JFIRELATCH, X
+    PLA
+
+    ; Done.
+
+    RTS
+
+; Read the FIRE button for a specific joystick
+;
+;   X = joystick number
+;   A = $00 FIRE was not pressed
+;       $FF FIRE was pressed
+;
+JFIRE:
+    JSR JFIREX
+    BEQ JFIRENONE
+    LDA #$FF
+JFIRENONE:
+    RTS
+
 ; Read the joystick port.
 ;  X = port number
 ;  A = value read
@@ -50,56 +132,59 @@ JOYSTICK:
     RTS
 
 JOYSTICK0:
+    LDX #0
     LDA $D300
+    EOR #$FF
     AND #$0F
     ASL
     STA MATHPTR0
-    LDA $D010
-    AND #$01
+    JSR JFIREX
     ORA MATHPTR0
     STA MATHPTR0
     JMP JOYSTICKDONE
 
 JOYSTICK1:
+    LDX #1
     LDA $D300
+    EOR #$FF
     AND #$F0
     LSR
     LSR
     LSR
     STA MATHPTR0
-    LDA $D011
-    AND #$01
+    JSR JFIREX
     ORA MATHPTR0
     STA MATHPTR0
     JMP JOYSTICKDONE
 
 JOYSTICK2:
+    LDX #2
     LDA $D301
+    EOR #$FF
     AND #$0F
     ASL
     STA MATHPTR0
-    LDA $D012
-    AND #$01
+    JSR JFIREX
     ORA MATHPTR0
     STA MATHPTR0
     JMP JOYSTICKDONE
 
 JOYSTICK3:
+    LDX #3
     LDA $D301
+    EOR #$FF
     AND #$F0
     LSR
     LSR
     LSR
     STA MATHPTR0
-    LDA $D013
-    AND #$01
+    JSR JFIREX
     ORA MATHPTR0
     STA MATHPTR0
     JMP JOYSTICKDONE
 
 JOYSTICKDONE:
     LDA MATHPTR0
-    EOR #$ff
     AND #$1f
 
 @IF joystickConfig.values
@@ -131,64 +216,48 @@ JOYSTICKNOFIRE:
     RTS
 
 WAITFIREX:
-    LDA $D010,X
-    AND #$01
-    EOR #$01
+    JSR JFIREX
     BEQ WAITFIREX
     CPY #0
     BEQ WAITFIREXD
 WAITFIREXL1:
-    LDA $D010,X
-    AND #$01
-    EOR #$01
+    JSR JFIREX
     BNE WAITFIREXL1
 WAITFIREXD:
     RTS
 
 WAITFIRE:
-    LDA $D010
-    AND #$01
-    EOR #$01
+    LDX #0
+    JSR JFIREX
     STA MATHPTR0
-    LDA $D011
-    AND #$01
-    EOR #$01
+    LDX #1
+    JSR JFIREX
     ORA MATHPTR0
-    LDA MATHPTR0
     STA MATHPTR0
-    LDA $D012
-    AND #$01
-    EOR #$01
+    LDX #2
+    JSR JFIREX
     ORA MATHPTR0
-    LDA MATHPTR0
     STA MATHPTR0
-    LDA $D013
-    AND #$01
-    EOR #$01
+    LDX #3
+    JSR JFIREX
     ORA MATHPTR0
     BEQ WAITFIRE
     CPY #0
     BEQ WAITFIRED
 WAITFIREL1:
-    LDA $D010
-    AND #$01
-    EOR #$01
+    LDX #0
+    JSR JFIREX
     STA MATHPTR0
-    LDA $D011
-    AND #$01
-    EOR #$01
+    LDX #1
+    JSR JFIREX
     ORA MATHPTR0
-    LDA MATHPTR0
     STA MATHPTR0
-    LDA $D012
-    AND #$01
-    EOR #$01
+    LDX #2
+    JSR JFIREX
     ORA MATHPTR0
-    LDA MATHPTR0
     STA MATHPTR0
-    LDA $D013
-    AND #$01
-    EOR #$01
+    LDX #3
+    JSR JFIREX
     ORA MATHPTR0
     BNE WAITFIREL1
 WAITFIRED:

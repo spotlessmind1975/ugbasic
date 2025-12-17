@@ -5592,6 +5592,8 @@ int                     is_do_loop( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    jmove( Environment * _environment, char * _port, char * _x, char * _y, char * _minx, char * _maxx, char * _miny, char *_maxy, char * _xstep, char * _ystep  );
+Variable *              jfire( Environment * _environment, int _port );
+Variable *              jfire_vars( Environment * _environment, char * _port );
 Variable *              joy( Environment * _environment, int _port );
 Variable *              joydir( Environment * _environment, int _port );
 Variable *              joydir_semivars( Environment * _environment, char * _port );
@@ -5890,6 +5892,8 @@ void                    sprite_at_vars( Environment * _environment, char * _spri
 Variable *              sqroot( Environment * _environment, char * _value );
 void                    stop_animation( Environment * _environment, char * _prefix );
 void                    stop_movement( Environment * _environment, char * _prefix );
+Variable *              strig( Environment * _environment, int _port );
+Variable *              strig_vars( Environment * _environment, char * _port );
 StaticString *          string_reserve( Environment * _environment, char * _value );
 Variable *              strptr( Environment * _environment, char * _name );
 void                    suspend_vars( Environment * _environment, char * _thread );
