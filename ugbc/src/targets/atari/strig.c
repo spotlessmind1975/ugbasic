@@ -66,7 +66,7 @@ Variable * strig_vars( Environment * _environment, char * _port ) {
         jfireResultType = VT_BYTE;
     }
 
-    Variable * port = variable_retrieve( _environment, _port );
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 )t, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, jfireResultType, "(result of J*)" );
 
     outline1( "LDX %s", port->realName );

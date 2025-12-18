@@ -38,9 +38,9 @@
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * jfire( Environment * _environment, int _port ) {
+Variable * strig( Environment * _environment, int _port ) {
 
-    deploy( joystick, src_hw_cia_joystick_asm);
+    deploy( joystick, src_hw_pia_joystick_asm);
 
     int jfireResultType = VT_SBYTE;
     if ( _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
@@ -49,17 +49,18 @@ Variable * jfire( Environment * _environment, int _port ) {
 
     Variable * result = variable_temporary( _environment, jfireResultType, "(result of J*)" );
 
-    outline1( "LDX #%d", _port );
-    outline0( "JSR JFIRE" );
+    outline1( "LDB #%d", _port );
+    outline0( "STB <PORT");
+    outline0( "JSR STRIG" );
     outline1( "STA %s", result->realName );
 
     return result;
 
 }
 
-Variable * jfire_vars( Environment * _environment, char * _port ) {
+Variable * strig_vars( Environment * _environment, char * _port ) {
 
-    deploy( joystick, src_hw_cia_joystick_asm);
+    deploy( joystick, src_hw_pia_joystick_asm);
 
     int jfireResultType = VT_SBYTE;
     if ( _environment->vestigialConfig.rchack_pick_the_star_1163 ) {
@@ -69,8 +70,9 @@ Variable * jfire_vars( Environment * _environment, char * _port ) {
     Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * result = variable_temporary( _environment, jfireResultType, "(result of J*)" );
 
-    outline1( "LDX %s", port->realName );
-    outline0( "JSR JFIRE" );
+    outline1( "LDB %s", port->realName );
+    outline0( "STB <PORT");
+    outline0( "JSR STRIG" );
     outline1( "STA %s", result->realName );
 
     return result;
