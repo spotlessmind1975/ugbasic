@@ -40,7 +40,7 @@
  
     MAKE_LABEL
 
-    Variable * port = variable_retrieve( _environment, _port );
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * channel = NULL;
     if ( _channel ) {
         channel = variable_retrieve_or_define( _environment, _channel, VT_BYTE, 0 );

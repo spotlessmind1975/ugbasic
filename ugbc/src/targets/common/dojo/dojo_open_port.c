@@ -99,7 +99,7 @@ Variable * dojo_open_port( Environment * _environment, char * _port ) {
 
     MAKE_LABEL
 
-    Variable * port = variable_retrieve( _environment, _port );
+    Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(size)" );
 
