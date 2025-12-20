@@ -406,7 +406,14 @@ Variable * image_ref( Environment * _environment, char * _image ) {
             CRITICAL_IMAGEREF_ON_NON_IMAGE( _image );
     }
 
+    // FRAME WIDTH
+    outline1( "LDA #$%2.2x", image->frameWidth );
+    outline1( "STA %s+12", imageRef->realName );
 
+    // FRAME WIDTH
+    outline1( "LDA #$%2.2x", image->frameHeight );
+    outline1( "STA %s+13", imageRef->realName );
+    
     return imageRef;
 
 }

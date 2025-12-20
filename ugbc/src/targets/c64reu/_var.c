@@ -150,7 +150,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 12,0", variable->realName);
+                        outhead1("%s: .res 14,0", variable->realName);
                     }
                     break;
                 case VT_PATH:
@@ -404,7 +404,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_IMAGEREF:
             outhead1("%s:", _variable->realName );
-            outline0(" .res 12, 0" );
+            outline0(" .res 14, 0" );
             break;
         case VT_PATH:
             outhead1("%s:", _variable->realName );
