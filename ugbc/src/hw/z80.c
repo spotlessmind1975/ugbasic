@@ -7295,6 +7295,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD HL, %s", _string );
@@ -7306,6 +7307,7 @@ void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _size );
@@ -7318,6 +7320,7 @@ void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, $%2.2x", (unsigned char)( _size & 0xff ) );
@@ -7330,6 +7333,7 @@ void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 void cpu_dsfree( Environment * _environment, char * _index ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7340,6 +7344,7 @@ void cpu_dsfree( Environment * _environment, char * _index ) {
 
 void cpu_dswrite( Environment * _environment, char * _index ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7350,6 +7355,7 @@ void cpu_dswrite( Environment * _environment, char * _index ) {
 
 void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7362,6 +7368,7 @@ void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 void cpu_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7374,6 +7381,7 @@ void cpu_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 void cpu_dsgc( Environment * _environment ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline0( "CALL DSGC" );
@@ -7382,6 +7390,7 @@ void cpu_dsgc( Environment * _environment ) {
 
 void cpu_dsinit( Environment * _environment ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     outline0( "CALL DSINIT" );
@@ -7390,6 +7399,7 @@ void cpu_dsinit( Environment * _environment ) {
 
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
+    deploy( duff, src_hw_z80_duff_asm );
     deploy( dstring,src_hw_z80_dstring_asm );
 
     if ( _address || _size ) {
@@ -7407,6 +7417,20 @@ void cpu_dsdescriptor( Environment * _environment, char * _index, char * _addres
             outline1( "LD (%s), A", address_displacement(_environment, _address, "1") );
         }
     }
+
+}
+
+void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) {
+
+    deploy( duff, src_hw_z80_duff_asm );
+    deploy( dstring,src_hw_z80_dstring_asm );
+
+    outline1( "LD A, (%s)", _copy );
+    outline0( "LD B, A");
+    outline1( "LD A, (%s)", _original );
+    outline0( "CALL DSASSIGN" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _copy );
 
 }
 

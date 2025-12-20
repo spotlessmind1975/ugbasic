@@ -130,7 +130,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
     } else if ( _variable->type == VT_DSTRING ) {
         neededSpace = 1;
     } else if ( _variable->type == VT_IMAGEREF ) {
-        neededSpace = 12;
+        neededSpace = 14;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -1075,7 +1075,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_DOJOKA ) {
         size *= 4;
     } else if ( var->arrayType == VT_IMAGEREF ) {
-        size *= 16; // real: 12
+        size *= 16; // real: 14
     } else if ( var->arrayType == VT_PATH ) {
         size *= 16; // real: 16
     } else if ( var->arrayType == VT_VECTOR2 ) {
@@ -1671,7 +1671,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_DOJOKA ) {
                     size *= 4;
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
-                    size *= 16; // Real: 12
+                    size *= 16; // Real: 14
                 } else if ( destination->arrayType == VT_PATH ) {
                     size *= 16; // Real: 16
                 } else if ( destination->arrayType == VT_VECTOR2 ) {
@@ -3356,15 +3356,18 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_DSTRING:
                             switch( target->type ) {
                                 case VT_DSTRING: {
-                                    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
-                                    cpu_dsfree( _environment, target->realName );
-                                    cpu_dsalloc( _environment, sourceSize->realName, target->realName );
-                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
-                                    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
+                                    
+                                    // Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    // Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    // Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    // Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    // cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+                                    // cpu_dsfree( _environment, target->realName );
+                                    // cpu_dsalloc( _environment, sourceSize->realName, target->realName );
+                                    // cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    // cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
+
+                                    cpu_dsassign( _environment, source->realName, target->realName );
                                     break;
                                 }
                                 default:
@@ -3468,7 +3471,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGEREF:
                             switch( target->type ) {
                                 case VT_IMAGEREF: {
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 12 );
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                                     break;
                                 }
                                 default:
@@ -3829,15 +3832,16 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
         case 0:
             switch( target->type ) {
                 case VT_DSTRING: {
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                    cpu_dsfree( _environment, target->realName );
-                    cpu_dsalloc( _environment, size->realName, target->realName );
-                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                    cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
+                    // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    // Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    // cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
+                    // cpu_dsfree( _environment, target->realName );
+                    // cpu_dsalloc( _environment, size->realName, target->realName );
+                    // cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+                    // cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
+                    cpu_dsassign( _environment, source->realName, target->realName );
                     break;
                 }
                 case VT_SPRITE:
@@ -3967,9 +3971,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_IMAGEREF: {
                     if ( target->size == 0 ) {
-                        target->size = 12;
+                        target->size = 14;
                     }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 12 );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                     break;
                 }
                 case VT_PATH: {
@@ -10206,17 +10210,20 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
 
                 cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
-                cpu_dsfree( _environment, dstring->realName );
+                // cpu_dsfree( _environment, dstring->realName );
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-                Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                // Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
                 
-                cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
-                cpu_dsalloc( _environment, size->realName, dstring->realName );
-                cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
-                cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                // cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
+                // cpu_dsalloc( _environment, size->realName, dstring->realName );
+                // cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+                // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                
+                cpu_dsassign( _environment, _value->realName, dstring->realName );
+
                 cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
 
                 }
@@ -10357,21 +10364,25 @@ void variable_move_array_string( Environment * _environment, char * _array, char
             cpu_move_8bit( _environment, string->realName, size->realName );
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
+            cpu_dsfree( _environment, dstring->realName );
+            cpu_dsalloc( _environment, size->realName, dstring->realName );
+            cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+            cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
             break;
         case VT_DSTRING:
-            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            // cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            // cpu_dsfree( _environment, dstring->realName );
+            // cpu_dsalloc( _environment, size->realName, dstring->realName );
+            // cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+            // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+            cpu_dsassign( _environment, string->realName, dstring->realName );
             break;
         default:
             CRITICAL_LOWER_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_dsfree( _environment, dstring->realName );
-    cpu_dsalloc( _environment, size->realName, dstring->realName );
-    cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
-    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
     cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
     cpu_store_8bit( _environment, dstring->realName, 0 );
-
 }
 
 // @bit2: ok
@@ -10620,7 +10631,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, 12 * 8, offset->realName, _result->realName );
+                    cpu_move_nbit_indirect2( _environment, 14 * 8, offset->realName, _result->realName );
 
                     break;
 

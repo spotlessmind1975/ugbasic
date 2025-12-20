@@ -561,3 +561,38 @@ DSINIT:
     LD (FREE_STRING), HL
     POP HL
     RET
+
+; DSASSIGN(A) -> B
+DSASSIGN:
+    PUSH AF
+    CALL DSFREE
+    POP AF
+    LD B, A
+    CALL DSDESCRIPTOR
+    LD HL, (IXR)
+    LD A, (HL)
+    LD C, A
+    INC HL
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    PUSH DE
+    CALL DSALLOC
+    PUSH BC
+    CALL DSDESCRIPTOR
+    LD HL, (IXR)
+    INC HL
+    LD A, (HL)
+    LD E, A
+    INC HL
+    LD A, (HL)
+    LD D, A
+    POP BC
+    POP HL
+    PUSH BC
+    LD B, 0
+    CALL DUFFDEVICE
+    POP BC
+    RET
