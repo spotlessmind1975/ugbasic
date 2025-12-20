@@ -71,7 +71,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s: EQU 0x%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: times 14 db 0", variable->realName);
+                        outhead1("%s: times 12 db 0", variable->realName);
                     }
                     break;
                 case VT_PATH:
