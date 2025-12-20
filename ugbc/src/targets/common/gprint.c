@@ -111,6 +111,11 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
         //     len = LEN(text)
 
         Variable * atlas = variable_retrieve( _environment, _atlas );
+        Variable * atlasFrameWidth = NULL;
+        if ( atlas->type == VT_IMAGEREF ) {
+            atlasFrameWidth = variable_temporary( _environment, VT_BYTE, "(frame width)");
+            cpu_move_8bit( _environment, address_displacement( _environment, atlas->realName, "12" ), atlasFrameWidth->realName );
+        }
         Variable * text = variable_retrieve( _environment, _text );
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(text address)" );
         Variable * size = variable_temporary( _environment, VT_BYTE, "(text size)" );
@@ -154,7 +159,11 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
             put_image( _environment, _atlas, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
 
-            variable_add_inplace( _environment, dx->name, atlas->frameWidth );
+            if ( atlas->type == VT_IMAGEREF ) {
+                variable_add_inplace_vars( _environment, dx->name, atlasFrameWidth->name );
+            } else {
+                variable_add_inplace( _environment, dx->name, atlas->frameWidth );
+            }
 
             cpu_inc_16bit( _environment, address->realName );
 
@@ -259,7 +268,11 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
                 CRITICAL_PRINT_UNSUPPORTED( _text, DATATYPE_AS_STRING[text->type]);
         }
 
-        variable_store( _environment, paramFrameWidth->name, atlas->frameWidth );
+        if ( atlas->type == VT_IMAGEREF ) {
+            cpu_move_8bit( _environment, address_displacement( _environment, atlas->realName, "12" ), paramFrameWidth->realName );
+        } else {
+            variable_store( _environment, paramFrameWidth->name, atlas->frameWidth );
+        }
 
         Variable * x = variable_retrieve( _environment, _x );
         Variable * y = variable_retrieve( _environment, _y );
