@@ -90,6 +90,8 @@ CLINEY equ $4c
 
 BITSTOCONVERT equ $4a
 
+PORT equ $4a
+
 XCURSYS equ $4d
 YCURSYS equ $4e
 
