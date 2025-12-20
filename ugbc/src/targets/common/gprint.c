@@ -183,11 +183,17 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
         MAKE_LABEL
 
+        variable_global( _environment, "gprint_atlas" );
         Variable * paramAtlas = variable_define( _environment, "gprint_atlas", VT_IMAGEREF, 0 );
+        variable_global( _environment, "gprint_address" );
         Variable * paramAddress = variable_define( _environment, "gprint_address", VT_ADDRESS, 0 );
+        variable_global( _environment, "gprint_size" );
         Variable * paramSize = variable_define( _environment, "gprint_size", VT_BYTE, 0 );
+        variable_global( _environment, "gprint_frame_width" );
         Variable * paramFrameWidth = variable_define( _environment, "gprint_frame_width", VT_BYTE, 0 );
+        variable_global( _environment, "gprint_x" );
         Variable * paramX = variable_define( _environment, "gprint_x", VT_POSITION, 0 );
+        variable_global( _environment, "gprint_y" );
         Variable * paramY = variable_define( _environment, "gprint_y", VT_POSITION, 0 );
 
         deploy_begin( gprint )
@@ -222,7 +228,9 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
                 put_image( _environment, paramAtlas->name, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
 
+                outline0(";variable_add_inplace_vars");
                 variable_add_inplace_vars( _environment, dx->name, paramFrameWidth->name );
+                outline0(";variable_add_inplace_vars");
 
                 cpu_inc_16bit( _environment, paramAddress->realName );
 
