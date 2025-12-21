@@ -81,6 +81,8 @@ VIC2STARTUP:
     STA $01
 @ENDIF
 
+@IF !descriptors
+
     LDA #$D0
     STA $FC
     LDY #$00
@@ -98,6 +100,8 @@ VIC2STARTUPL1:
     INC $FE
     DEX
     BNE VIC2STARTUPL1
+
+@ENDIF
 
     LDA #0
     STA $FD
