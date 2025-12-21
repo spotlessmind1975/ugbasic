@@ -135,7 +135,7 @@ void linker_setup( Environment * _environment ) {
     cfgline0("RODATA:   load = MAIN,     type = ro,  optional = yes;");
     cfgline0("DATA:     load = MAIN,     type = rw,  optional = yes;");
     cfgline0("BSS:      load = MAIN,     type = bss, optional = yes, define = yes;");
-    cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $A000;");
+    cfgline0("UDCCHAR:  load = MAIN, type = overwrite,  optional = yes, start = $9800;");
 
     actual = _environment->memoryAreas;
     while( actual ) {
