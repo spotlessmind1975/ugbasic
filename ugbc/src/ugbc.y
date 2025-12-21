@@ -9448,6 +9448,7 @@ define_definition :
     }
     | FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
+        font_descriptors_init( _environment, 0 );
     }
     | JOYSTICK VALUES DEFAULT {
         ((struct _Environment *)_environment)->joystickConfig.values = 0;

@@ -2124,8 +2124,8 @@ typedef struct _TileDescriptors {
     int                 lastFree;
     int                 count;
 
-    TileDescriptor *    descriptor[256];
-    TileData            data[256];
+    TileDescriptor *    descriptor[512];
+    TileData            data[512];
 
 } TileDescriptors;
 
