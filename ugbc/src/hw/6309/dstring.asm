@@ -309,14 +309,18 @@ DSASSIGN
     PULS D
     TFR A, B
     JSR DSDESCRIPTOR
-    TFR X, Y
-    LDA ,Y
+    LDD 1,X
+    STD <MATHPTR0
+    LDA ,X
+    STA <MATHPTR2
     JSR DSALLOC
     PSHS D
     JSR DSDESCRIPTOR
+    LDY <MATHPTR0
+    LDD 1, X
+    TFR D, X
     CLRA
-    LDB ,Y
-    TFR D, W
+    LDB <MATHPTR2
     JSR DUFFDEVICE
     PULS D
     RTS
