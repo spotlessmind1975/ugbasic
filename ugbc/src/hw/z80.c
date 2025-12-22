@@ -7238,7 +7238,7 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 

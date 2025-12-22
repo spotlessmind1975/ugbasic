@@ -9218,7 +9218,7 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
         case 32:
         case 16:
         case 8:
-            cpu_hex_to_string_size( _environment, VT_BITWIDTH( originalValue->type ), 0, size->realName );
+            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ), 0, size->realName );
             break;
     }
 
