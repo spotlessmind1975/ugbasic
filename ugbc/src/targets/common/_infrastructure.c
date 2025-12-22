@@ -15834,11 +15834,11 @@ char * file_read_csv( Environment * _environment, char * _filename, VariableType
         *_count = 0;
         Constant * first = constants;
         while( first ) {
-            first = first->next;
             if ( first ) {
                 *_size += VT_BITWIDTH(_type) >> 3;
                 ++*_count;    
             }
+            first = first->next;
         }
     
         char * buffer = malloc( *_size ), * ptr = buffer;
