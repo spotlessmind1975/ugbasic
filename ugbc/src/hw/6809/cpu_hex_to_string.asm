@@ -35,6 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+H2STRINGCALCSIZE
+    ADDA #2
+    MUL
+    RTS
+
 H2STRING
     CMPB #0
     BNE H2STRINGA

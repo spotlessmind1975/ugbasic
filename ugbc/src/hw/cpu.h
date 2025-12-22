@@ -269,7 +269,8 @@ void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
 void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, char * _bit );
 void cpu_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
 void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one );
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _bits );
+void cpu_hex_to_string_size( Environment * _environment, int _bits, int _separator, char * _string_size );
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index );
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index );

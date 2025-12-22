@@ -7238,7 +7238,23 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_hex_to_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_z80_cpu_math_mul_8bit_to_16bit_asm );
+
+    outline1("LD A, $%2.2x", (unsigned char)(_bits>>3) );
+    outline0("LD IYL, A");
+    outline1("LD A, $%2.2x", 2 + (_separator?1:0));
+    outline0("LD IXL, A");
+    outline0("CALL CPUMUL8B8T16U");
+    outline0("LD A, L");
+    outline1("LD (%s), A", _string_size);
+
+}
+
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _bits ) {
 
     MAKE_LABEL
 
@@ -7246,47 +7262,10 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
 
-        outline1("LD A, $%2.2x", (unsigned char)(_bits&0xff));
-        outline0("LD IXL, A");
-
-        switch( _bits ) {
-            case 8:
-                outline1("LD A, (%s)", _number );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline1("LD DE, (%s)", _string );
-
-                outline0("CALL H2STRING" );
-                break;
-            case 16:
-
-                outline1("LD HL, (%s)", _number );
-                outline1("LD DE, (%s)", _string );
-
-                outline0("CALL H2STRING" );
-                break;
-
-            case 32:
-
-                outline1("LD HL, (%s)", address_displacement(_environment, _number, "2") );
-                outline1("LD DE, (%s)", _string );
-
-                outline0("CALL H2STRING" );
-
-                outline1("LD HL, (%s)", _number );
-                outline1("LD DE, (%s)", _string );
-                outline0("INC DE" );
-                outline0("INC DE" );
-                outline0("INC DE" );
-                outline0("INC DE" );
-
-                outline0("CALL H2STRING" );
-                break;
-
-        }
-
-        outline1("LD A, $%2.2x", (unsigned char)(( _bits >> 2 )&0xff) );
-        outline1("LD (%s), A", _string_size );
+        outline1("LD C, $%2.2x", (unsigned char)(_bits>>3));
+        outline1("LD HL, %s", _number );
+        outline1("LD DE, (%s)", _string );
+        outline0("CALL H2STRING" );
 
     done()
 

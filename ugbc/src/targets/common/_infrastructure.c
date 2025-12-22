@@ -9208,19 +9208,17 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
 
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+
     switch( VT_BITWIDTH( originalValue->type ) ) {
         case 0:
         case 1:
             CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
             break;
         case 32:
-            variable_store_string( _environment, result->name, "        " );
-            break;
         case 16:
-            variable_store_string( _environment, result->name, "    " );
-            break;
         case 8:
-            variable_store_string( _environment, result->name, "  " );
+            cpu_hex_to_string_size( _environment, VT_BITWIDTH( originalValue->type ), 0, size->realName );
             break;
     }
 
@@ -9229,11 +9227,10 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     char truncateLabel[MAX_TEMPORARY_STORAGE]; sprintf(truncateLabel, "%strunc", label); 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of hex)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
-    cpu_dswrite( _environment, result->realName );
-    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
 
-    cpu_hex_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+    cpu_hex_to_string( _environment, originalValue->realName, address->realName, VT_BITWIDTH( originalValue->type ) );
 
     return result;
     

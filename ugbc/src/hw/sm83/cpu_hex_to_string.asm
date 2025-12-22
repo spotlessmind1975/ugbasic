@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2024 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -35,35 +35,70 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;
-; Input: HL = number to convert, DE = location of ASCII string
-; Output: ASCII string at (DE)
+; Input: 
+;       HL = memory area to convert
+;       C = size of memory area to convert
+; Output:
+;       DE = location of ASCII string
 
 H2STRING:
+    LD A, C
+    CP 0
+    JR NZ, H2STRINGA
+    RET
+
+H2STRINGA:
+    LD B, 0
+    PUSH HL
+    LD HL, DE
+    ADD HL, BC
+    ADD HL, BC
+    LD DE, HL
+    POP HL
+    DEC DE
+    DEC C
+H2STRINGL1:
+    LD A, (HL)
+    CALL H2STRINGBYTE
     LD A, (IXLR)
-    CP $8
-    JR Z, H2STRING8
-    LD A, H
-    CALL H2STRINGN1
-    LD A, H
-    CALL H2STRINGN2
-H2STRING8:
-    LD A, L
-    CALL H2STRINGN1
-    LD A, L
-    JR H2STRINGN2
+    LD (DE), A
+    DEC DE
+    LD A, (IXHR)
+    LD (DE), A
+    DEC DE
+    INC HL
+H2STRINGL1A:
+    DEC C
+    LD A, C
+    CP $FF
+    JR NZ, H2STRINGL1
+    RET
 
-H2STRINGN1:
-    RRA
-    RRA
-    RRA
-    RRA
-
-H2STRINGN2:
-    OR  $F0
-    DAA
-    ADD A, $A0
-    ADC A, $40
-
-    LD (DE),A
-    INC DE
+H2STRINGBYTE:
+    PUSH AF
+    SRL A
+    SRL A
+    SRL A
+    SRL A
+    CP $0a
+    JR NC, HEX2STRINGA    
+HEX2STRING0:
+    ADD 48
+    LD (IXHR), A
+    JR HEX2STRINGLSB
+HEX2STRINGA:
+    ADD 55
+    LD (IXHR), A
+HEX2STRINGLSB:
+    POP AF
+    AND $0F
+    CP $0A
+    JR NC, HEX2STRINGA2
+HEX2STRING02:
+    ADD 48
+    LD (IXLR), A
+    RET
+HEX2STRINGA2:
+    ADD 55
+    LD (IXLR), A
     RET
