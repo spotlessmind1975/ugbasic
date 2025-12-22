@@ -7833,4 +7833,30 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
 
 }
 
+void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+
+    deploy( encrypt, src_hw_6809_encrypt_asm );
+
+    outline1("LDX %s", _data );
+    outline1("LDU %s", _key );
+    outline1("LDY %s", _output );
+    outline1("LDB %s", _size );
+    outline0("JSR ENCRYPT" );
+
+}
+
+void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result ) {
+
+    deploy( decrypt, src_hw_6809_decrypt_asm );
+
+    outline1("LDX %s", _data );
+    outline1("LDU %s", _key );
+    outline1("LDY %s", _output );
+    outline1("LDB %s", _size );
+    outline0("JSR DECRYPT" );
+    cpu_ztoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
 #endif

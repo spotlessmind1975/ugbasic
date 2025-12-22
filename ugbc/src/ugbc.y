@@ -110,7 +110,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
 %token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET CPU6309 
-%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG
+%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG ENCRYPT DECRYPT
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3470,6 +3470,12 @@ exponential_less:
     }
     | TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
         $$ = tilemap_index_vars( _environment, $4, $6, $8, $10 )->name;
+    }
+    | ENCRYPT OP expr OP_COMMA expr CP {
+        $$ = encrypt( _environment, $3, $5 )->name;
+    }
+    | DECRYPT OP expr OP_COMMA expr CP {
+        $$ = decrypt( _environment, $3, $5 )->name;
     }
     | LEFT OP expr OP_COMMA expr CP {
         $$ = variable_string_left( _environment, $3, $5 )->name;

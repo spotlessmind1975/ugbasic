@@ -374,4 +374,7 @@ void cpu_f32log10( char * _x, char * _result );
 void cpu_f32mul( char * _x, char * _y, char * _result );
 void cpu_f32sub( char * _x, char * _y, char * _result );
 
+void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output );
+void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result );
+
 #endif

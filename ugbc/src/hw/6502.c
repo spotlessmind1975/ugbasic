@@ -9483,4 +9483,50 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
    
 }
 
+void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+
+    deploy( encrypt, src_hw_6502_encrypt_asm );
+
+    outline1("LDA %s", _data );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _data, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _key );
+    outline0("STA TMPPTR2" );
+    outline1("LDA %s", address_displacement( _environment, _key, "1" ) );
+    outline0("STA TMPPTR2+1" );
+    outline1("LDA %s", _output );
+    outline0("STA MATHPTR4" );
+    outline1("LDA %s", address_displacement( _environment, _output, "1" ) );
+    outline0("STA MATHPTR4+1" );
+    outline1("LDA %s", _size );
+    outline0("STA MATHPTR6" );
+    outline0("JSR ENCRYPT" );
+
+}
+
+void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result ) {
+
+    deploy( decrypt, src_hw_6502_decrypt_asm );
+
+    outline1("LDA %s", _data );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _data, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _key );
+    outline0("STA TMPPTR2" );
+    outline1("LDA %s", address_displacement( _environment, _key, "1" ) );
+    outline0("STA TMPPTR2+1" );
+    outline1("LDA %s", _output );
+    outline0("STA MATHPTR4" );
+    outline1("LDA %s", address_displacement( _environment, _output, "1" ) );
+    outline0("STA MATHPTR4+1" );
+    outline1("LDA %s", _size );
+    outline0("STA MATHPTR6" );
+    outline0("JSR DECRYPT" );
+    cpu_ztoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
 #endif

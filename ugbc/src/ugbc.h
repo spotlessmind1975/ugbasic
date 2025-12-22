@@ -1951,6 +1951,8 @@ typedef struct _Deployed {
     int chain;
     int syscall;
     int gprint;
+    int encrypt;
+    int decrypt;
     
 } Deployed;
 
@@ -5346,6 +5348,7 @@ DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _
 void                    data_string( Environment * _environment, char * _value );
 void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
+Variable *              decrypt( Environment * _environment, char * _data, char * _key );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size );
@@ -5423,6 +5426,7 @@ void                    dojo_get_message_inplace( Environment * _environment, ch
 void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    else_if_then_label( Environment * _environment );
+Variable *              encrypt( Environment * _environment, char * _data, char * _key );
 void                    end( Environment * _environment );
 void                    end_copper( Environment * _environment );  
 void                    end_for( Environment * _environment );
@@ -5853,6 +5857,7 @@ Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type, int _big_endian );
 Variable *              serial_write( Environment * _environment, char * _data );
 Variable *              serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian );
+char *                  serialize( Environment * _environment, char * _data, char * _key );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
