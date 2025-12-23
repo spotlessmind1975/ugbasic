@@ -3677,7 +3677,28 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                         target->valueBuffer = malloc( source->size );
                                         memset( target->valueBuffer, 0, source->size );
                                     }
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+
+                                    Type * type = source->typeType;
+                                    Field * first = type->first;
+                                    while( first ) {
+                                        if ( first->type == VT_DSTRING ) {
+                                            break;
+                                        }
+                                        first = first->next;
+                                    }
+
+                                    if ( !first ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        first = type->first;
+                                        while( first ) {
+                                            Variable * value = variable_temporary( _environment, first->type, "(field)" );
+                                            variable_move_from_type_inplace( _environment, source->name, first->name, value->name );
+                                            variable_move_type( _environment, target->name, first->name, value->name );
+                                            first = first->next;
+                                        }
+                                    }
+
                                     break;
                                 default:
                                     CRITICAL_CANNOT_CAST( source->typeType->name, DATATYPE_AS_STRING[target->type]);
@@ -15975,7 +15996,22 @@ void variable_move_from_type_inplace( Environment * _environment, char * _type, 
             break;
         case 1:
         case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            switch( field->type ) {
+                case VT_SPRITE:
+                    cpu_move_8bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+                    break;
+                case VT_MSPRITE:
+                    cpu_move_16bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+                    break;
+                case VT_DSTRING: {
+                    Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                    cpu_move_8bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), dstring->realName );
+                    cpu_dsassign( _environment, dstring->realName, result->realName );
+                    break;
+                }
+                default:
+                    CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            }
     }
 
 }
@@ -16008,6 +16044,9 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
         case 1:
         case 0: {
             switch( field->type ) {
+                case VT_DSTRING:
+                    cpu_dsassign( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
                 case VT_SPRITE:
                     cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
                     break;
@@ -16071,6 +16110,13 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(type element)");
+                        cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    };
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                         break;
@@ -16100,6 +16146,14 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, value->name, 1 );
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    };
                     case VT_MSPRITE:
                         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
@@ -16198,6 +16252,12 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                        cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+                        cpu_dsassign( _environment, dstring->realName, result->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
                         break;
@@ -16227,6 +16287,13 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
                 case 1:
                 case 0:
                     switch( field->type ) {
+                        case VT_DSTRING: {
+                            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, dstring->name, 1 );
+                            cpu_dsassign( _environment, dstring->realName, result->realName );
+                            break;
+                        }
                         case VT_MSPRITE:
                             cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                             bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
@@ -16294,6 +16361,12 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                        cpu_move_16bit_indirect2( _environment, offset->realName, dstring->realName);
+                        cpu_dsassign( _environment, dstring->realName, result->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
                         break;
@@ -16323,6 +16396,13 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
                 case 1:
                 case 0:
                     switch( field->type ) {
+                        case VT_DSTRING: {
+                            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, dstring->name, 1 );
+                            cpu_dsassign( _environment, dstring->realName, result->realName );
+                            break;
+                        }
                         case VT_MSPRITE:
                             cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                             bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
@@ -16422,6 +16502,12 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)");
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                         break;
@@ -16451,6 +16537,13 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)");
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, dstring->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
