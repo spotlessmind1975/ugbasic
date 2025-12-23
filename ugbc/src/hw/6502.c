@@ -7479,7 +7479,7 @@ void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, 
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _bits ) {
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _size ) {
 
     MAKE_LABEL
 
@@ -7487,7 +7487,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_6502_cpu_hex_to_string_asm );
 
-        outline1("LDX #$%2.2x", ( _bits >> 3 ) );
+        outline1("LDX #$%2.2x", (unsigned char)( _size ) );
         outline1("LDA #<%s", _number );
         outline0("STA TMPPTR" );
         outline1("LDA #>%s", _number );

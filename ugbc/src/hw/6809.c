@@ -6154,7 +6154,7 @@ void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, 
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _bits ) {
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _size ) {
 
     MAKE_LABEL
 
@@ -6162,7 +6162,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
 
-        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 3 ) );
+        outline1("LDB #$%2.2x", (unsigned char)( _size ) );
         outline1("LDX #%s", _number );
         outline1("LDY %s", _string );
         
