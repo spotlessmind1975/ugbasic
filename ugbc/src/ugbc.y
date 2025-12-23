@@ -217,8 +217,19 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %left OF IS
 %right HAS BIT
 %left AND OR OP_EQUAL OP_DISEQUAL OP_LT OP_LTE OP_GT OP_GTE
+%left OSP
 
 %%
+
+buffer_definition_prefix :
+    OSP
+    | OP_HASH OSP;
+
+buffer_definition_suffix:
+    CSP;
+
+buffer_definition_suffix_optional :
+    | buffer_definition_suffix;
 
 const_instrument :
     EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
@@ -3109,12 +3120,12 @@ exponential_less:
     | OP STRING CP Identifier {
         $$ = variable_cast( _environment, $4, VT_DSTRING )->name;
       }
-    | BufferDefinitionHex { 
-        $$ = parse_buffer_definition( _environment, $1, VT_BUFFER, 1 )->name;
+    | OSP BufferDefinitionHex { 
+        $$ = parse_buffer_definition( _environment, $2, VT_BUFFER, 1 )->name;
       }
-    | OP IMAGE CP BufferDefinitionHex { 
+    | OP IMAGE CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size, 1 );
+        char * buffer = parse_buffer( _environment, $5, &size, 1 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
     | OP IMAGE CP RawString { 
@@ -3132,9 +3143,9 @@ exponential_less:
         }
         $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
       }      
-    | OP images_or_atlas CP BufferDefinitionHex { 
+    | OP images_or_atlas CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
         int size;
-        char * buffer = parse_buffer( _environment, $4, &size, 1 );
+        char * buffer = parse_buffer( _environment, $5, &size, 1 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
     | OP images_or_atlas CP RawString { 
@@ -7395,35 +7406,8 @@ const_array_definitions :
 text_or_csv : 
     TEXT | CSV;
 
-array_assign:
-    {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-            }
-            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-            }
-            int i=0;
-            for( i=0; i<((struct _Environment *)_environment)->arrayDimensions; ++i ) {
-                if ( ((struct _Environment *)_environment)->arrayDimensionsEach[i] <= 0 ) {
-                    CRITICAL_ARRAY_MISSING_SIZE( ((struct _Environment *)_environment)->currentArray->name );
-                }
-            }
-        }
-    }
-    | WITH const_expr {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray->value = $2;
-            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-            }
-            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-            }
-        }
-    }
-    | OP_ASSIGN BufferDefinitionHex {
+array_assign_buffer :
+ buffer_definition_prefix BufferDefinitionHex {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             int size = ( strlen( $2 ) ) / 2;
             if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
@@ -7455,7 +7439,123 @@ array_assign:
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
         }
+    } buffer_definition_suffix_optional
+    | OGP const_array_definitions CGP {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            if ( currentArray->size < 0 ) {
+                int size = 0;
+                Constant * first = currentArray->arrayInitialization;
+                while( first ) {
+                    first = first->next;
+                    ++size;
+                }
+                if ( currentArray->arrayType == VT_FLOAT ) {
+                    currentArray->size = ( size * ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 ) );
+                } else {
+                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
+                }
+                currentArray->arrayDimensionsEach[0] = size;
+            }
+            char * buffer = malloc( currentArray->size ), * ptr = buffer;
+            int i=0;
+            Constant * initializationValues = currentArray->arrayInitialization;
+            while(initializationValues) {
+                switch( VT_BITWIDTH(currentArray->arrayType) ) {
+                    case 8:
+                        *ptr = (initializationValues->value) & 0xff;
+                        ++ptr;
+                        break;
+                    case 16:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 2;
+                        break;
+                    case 32:
+                        #ifdef CPU_BIG_ENDIAN
+                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
+                            *(ptr+3) = ( initializationValues->value ) & 0xff;
+                        #else
+                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
+                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
+                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
+                            *ptr = ( initializationValues->value ) & 0xff;
+                        #endif
+                        ptr += 4;
+                        break;
+                    default: {
+                        int result[16];
+                        if ( currentArray->arrayType == VT_FLOAT ) {
+                            switch( currentArray->arrayPrecision ) {
+                                case FT_FAST:
+                                    cpu_float_fast_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                    break;
+                                case FT_SINGLE:
+                                    cpu_float_single_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
+                                    break;
+                            }
+
+                            memcpy( ptr, &result, VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                        }
+                        ptr += ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
+                        break;
+                    }
+                }
+                initializationValues = initializationValues->next;
+            }
+            if ( ( ptr - buffer ) != currentArray->size ) {
+                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
+            }
+            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
+            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
+            ((struct _Environment *)_environment)->currentArray = NULL;
+        }
+    };
+
+array_assign:
+    {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
+            int i=0;
+            for( i=0; i<((struct _Environment *)_environment)->arrayDimensions; ++i ) {
+                if ( ((struct _Environment *)_environment)->arrayDimensionsEach[i] <= 0 ) {
+                    CRITICAL_ARRAY_MISSING_SIZE( ((struct _Environment *)_environment)->currentArray->name );
+                }
+            }
+        }
     }
+    | WITH const_expr {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            ((struct _Environment *)_environment)->currentArray->value = $2;
+            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+            }
+            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+            }
+        }
+    }
+    | OP_ASSIGN {
+        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+            currentArray->arrayInitialization = NULL;
+            if ( VT_BITWIDTH( currentArray->arrayType ) == 0 && currentArray->arrayType != VT_FLOAT ) {
+                CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
+            }
+        }
+    } OP_HASH array_assign_buffer
     | OP_ASSIGN LOAD String AS text_or_csv {
 
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
@@ -7601,106 +7701,20 @@ array_assign:
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
         }
-    }
-    | OP_ASSIGN {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-            currentArray->arrayInitialization = NULL;
-            if ( VT_BITWIDTH( currentArray->arrayType ) == 0 && currentArray->arrayType != VT_FLOAT ) {
-                CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
-            }
-        }
-    } OP_HASH OGP const_array_definitions CGP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-            if ( currentArray->size < 0 ) {
-                int size = 0;
-                Constant * first = currentArray->arrayInitialization;
-                while( first ) {
-                    first = first->next;
-                    ++size;
-                }
-                if ( currentArray->arrayType == VT_FLOAT ) {
-                    currentArray->size = ( size * ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 ) );
-                } else {
-                    currentArray->size = ( size * ( VT_BITWIDTH( currentArray->arrayType ) / 8 ) );
-                }
-                currentArray->arrayDimensionsEach[0] = size;
-            }
-            char * buffer = malloc( currentArray->size ), * ptr = buffer;
-            int i=0;
-            Constant * initializationValues = currentArray->arrayInitialization;
-            while(initializationValues) {
-                switch( VT_BITWIDTH(currentArray->arrayType) ) {
-                    case 8:
-                        *ptr = (initializationValues->value) & 0xff;
-                        ++ptr;
-                        break;
-                    case 16:
-                        #ifdef CPU_BIG_ENDIAN
-                            *ptr = ( initializationValues->value >> 8 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value ) & 0xff;
-                        #else
-                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                            *ptr = ( initializationValues->value ) & 0xff;
-                        #endif
-                        ptr += 2;
-                        break;
-                    case 32:
-                        #ifdef CPU_BIG_ENDIAN
-                            *ptr = ( initializationValues->value >> 24 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value >> 16 ) & 0xff;
-                            *(ptr+2) = ( initializationValues->value >> 8 ) & 0xff;
-                            *(ptr+3) = ( initializationValues->value ) & 0xff;
-                        #else
-                            *(ptr+3) = ( initializationValues->value >> 24 ) & 0xff;
-                            *(ptr+2) = ( initializationValues->value >> 16 ) & 0xff;
-                            *(ptr+1) = ( initializationValues->value >> 8 ) & 0xff;
-                            *ptr = ( initializationValues->value ) & 0xff;
-                        #endif
-                        ptr += 4;
-                        break;
-                    default: {
-                        int result[16];
-                        if ( currentArray->arrayType == VT_FLOAT ) {
-                            switch( currentArray->arrayPrecision ) {
-                                case FT_FAST:
-                                    cpu_float_fast_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
-                                    break;
-                                case FT_SINGLE:
-                                    cpu_float_single_from_double_to_int_array( _environment, initializationValues->valueFloating, result );
-                                    break;
-                            }
-
-                            memcpy( ptr, &result, VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
-                        }
-                        ptr += ( VT_FLOAT_BITWIDTH( currentArray->arrayPrecision ) / 8 );
-                        break;
-                    }
-                }
-                initializationValues = initializationValues->next;
-            }
-            if ( ( ptr - buffer ) != currentArray->size ) {
-                CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( currentArray->name, currentArray->size, (int)(ptr-buffer));
-            }
-            ((struct _Environment *)_environment)->currentArray->valueBuffer = buffer;
-            ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
-            ((struct _Environment *)_environment)->currentArray = NULL;
-        }
     };
 
 array_reassign:
-    BufferDefinitionHex {
-        int size = ( strlen( $1 ) - 3 ) / 2;
+    buffer_definition_prefix BufferDefinitionHex {
+        int size = ( strlen( $2 ) - 3 ) / 2;
         if ( size != ((struct _Environment *)_environment)->currentArray->size ) {
             CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->size, size );
         }
         char * buffer = malloc( size );
         char hexdigits[3];
         int i = 0, c = 0, j = 0;
-        for( i = 2, c = strlen( $1 ); i<(c-2); i += 2 ) {
-            hexdigits[0] = $1[i];
-            hexdigits[1] = $1[i+1];
+        for( i = 2, c = strlen( $2 ); i<(c-2); i += 2 ) {
+            hexdigits[0] = $2[i];
+            hexdigits[1] = $2[i+1];
             hexdigits[2] = 0;
             buffer[j] = strtol(hexdigits,0,16);
             ++j;
@@ -7709,11 +7723,8 @@ array_reassign:
         variable_store_buffer( _environment, var->name, buffer, size, 0 );
         cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
-    }
-    | {
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        currentArray->arrayInitialization = NULL;
-    } OP_HASH OGP const_array_definitions CGP {
+    } buffer_definition_suffix_optional
+    | OP_HASH OGP const_array_definitions CGP {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         int size = currentArray->size;
         char * buffer = malloc( currentArray->size ), * ptr = buffer;
@@ -13382,6 +13393,10 @@ statement2nc:
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
+
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+
   } array_reassign 
   | ARRAY Identifier {
       
@@ -13391,6 +13406,9 @@ statement2nc:
           CRITICAL_NOT_ARRAY( $2 );
       }
       ((struct _Environment *)_environment)->currentArray = var;
+        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+        currentArray->arrayInitialization = NULL;
+
   } array_reassign
   | Identifier OP_PERIOD Identifier OP_ASSIGN expr {
         variable_move_type( _environment, $1, $3, $5 );
