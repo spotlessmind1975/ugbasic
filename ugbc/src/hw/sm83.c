@@ -6880,13 +6880,29 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
     deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_sm83_cpu_math_mul_8bit_to_16bit_asm );
 
-    outline1("LD A, $%2.2x", (unsigned char)(_bits>>3) );
+    outline1("LD A, (%s)", _size );
+    outline0("LD (IYLR), A");
+    outline1("LD A, $%2.2x", 2 + (_separator?1:0));
+    outline0("LD (IXLR), A");
+    outline0("CALL CPUMUL8B8T16U");
+    outline0("LD A, L");
+    outline1("LD (%s), A", _string_size);
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_sm83_cpu_math_mul_8bit_to_16bit_asm );
+
+    outline1("LD A, $%2.2x", (unsigned char)(_size&0xff) );
     outline0("LD (IYLR), A");
     outline1("LD A, $%2.2x", 2 + (_separator?1:0));
     outline0("LD (IXLR), A");
@@ -6907,7 +6923,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
         outline1("LD C, $%2.2x", (unsigned char)(_bits>>3));
         outline1("LD HL, (%s)", _string );
         outline0("LD DE, HL");
-        outline1("LD HL, %s", _number );
+        outline1("LD HL, (%s)", _number );
         outline0("CALL H2STRING" );
 
     done()

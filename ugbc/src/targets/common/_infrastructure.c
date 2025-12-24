@@ -9229,6 +9229,7 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
 
+    Variable * originalAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
 
     switch( VT_BITWIDTH( originalValue->type ) ) {
@@ -9239,7 +9240,8 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
         case 32:
         case 16:
         case 8:
-            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ), 0, size->realName );
+            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ) >> 3, 0, size->realName );
+            cpu_addressof_16bit( _environment, originalValue->realName, originalAddress->realName );
             break;
     }
 
@@ -9251,7 +9253,7 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
 
-    cpu_hex_to_string( _environment, originalValue->realName, address->realName, VT_BITWIDTH( originalValue->type ) );
+    cpu_hex_to_string( _environment, originalAddress->realName, address->realName, VT_BITWIDTH( originalValue->type ) >> 3 );
 
     return result;
     

@@ -7463,13 +7463,29 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
     deploy_embedded(cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm);
 
-    outline1("LDA #$%2.2x", (unsigned char)(_bits>>3));
+    outline1("LDA %s", _size);
+    outline0("STA CPUMATHMUL8BITTO16BIT_SOURCE");
+    outline1("LDA #$%2.2x", 2+(_separator?1:0));
+    outline0("STA CPUMATHMUL8BITTO16BIT_DESTINATION");
+    outline0("JSR CPUMATHMUL8BITTO16BIT")
+    outline0("LDA CPUMATHMUL8BITTO16BIT_OTHER");
+    outline1("STA %s", _string_size );
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy_embedded(cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm);
+
+    outline1("LDA #$%2.2x", (unsigned char)(_size & 0xff));
     outline0("STA CPUMATHMUL8BITTO16BIT_SOURCE");
     outline1("LDA #$%2.2x", 2+(_separator?1:0));
     outline0("STA CPUMATHMUL8BITTO16BIT_DESTINATION");
@@ -7488,9 +7504,9 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
     embedded( cpu_hex_to_string, src_hw_6502_cpu_hex_to_string_asm );
 
         outline1("LDX #$%2.2x", (unsigned char)( _size ) );
-        outline1("LDA #<%s", _number );
+        outline1("LDA %s", _number );
         outline0("STA TMPPTR" );
-        outline1("LDA #>%s", _number );
+        outline1("LDA %s", address_displacement( _environment, _number, "1" ) );
         outline0("STA TMPPTR+1" );
         outline1("LDA %s", _string );
         outline0("STA TMPPTR2" );

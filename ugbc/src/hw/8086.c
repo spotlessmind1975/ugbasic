@@ -4619,11 +4619,24 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
-    outline1("MOV AL, $%2.2x", (unsigned char)(_bits>>3) );
+    outline1("MOV AL, [%s]", _size );
+    outline0("MOV AH, 0" );
+    outline1("MOV BL, 0X%2.2x", 2 + (_separator?1:0));
+    outline0("MOV BH, 0" );
+    outline0("IMUL BX" );
+    outline1("MOV [%s], AL", _string_size );
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    outline1("MOV AL, $%2.2x", (unsigned char)(_size&0xff) );
     outline0("MOV AH, 0" );
     outline1("MOV BL, 0X%2.2x", 2 + (_separator?1:0));
     outline0("MOV BH, 0" );
@@ -4641,8 +4654,8 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
     embedded( cpu_hex_to_string, src_hw_8086_cpu_hex_to_string_asm );
 
         outline1("MOV CL, 0x%2.2x", (unsigned char)(_size));
-        outline1("MOV SI, %s", _number );
-        outline1("MOV DI, (%s)", _string );
+        outline1("MOV SI, [%s]", _number );
+        outline1("MOV DI, [%s]", _string );
         outline0("CALL H2STRING" );
 
     done()

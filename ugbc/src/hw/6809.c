@@ -6137,7 +6137,7 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
@@ -6146,7 +6146,24 @@ void cpu_hex_to_string_calc_string_size( Environment * _environment, int _bits, 
     embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
 
         outline1("LDA #$%2.2x", _separator?1:0 );
-        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 3 ) );
+        outline1("LDB %s", _size );
+        outline0("JSR H2STRINGCALCSIZE" );
+        outline1("STB %s", _string_size );
+
+    done()
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
+
+        outline1("LDA #$%2.2x", _separator?1:0 );
+        outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
         outline0("JSR H2STRINGCALCSIZE" );
         outline1("STB %s", _string_size );
 
@@ -6163,7 +6180,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
     embedded( cpu_hex_to_string, src_hw_6809_cpu_hex_to_string_asm );
 
         outline1("LDB #$%2.2x", (unsigned char)( _size ) );
-        outline1("LDX #%s", _number );
+        outline1("LDX %s", _number );
         outline1("LDY %s", _string );
         
         outline0("JSR H2STRING" );
