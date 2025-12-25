@@ -5857,7 +5857,7 @@ Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type, int _big_endian );
 Variable *              serial_write( Environment * _environment, char * _data );
 Variable *              serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian );
-char *                  serialize( Environment * _environment, char * _data, char * _key );
+Variable *              serialize( Environment * _environment, char * _data, char * _key );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
@@ -6016,7 +6016,7 @@ Variable *              variable_sr_const( Environment * _environment, char * _s
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_greater_than_const( Environment * _environment, char * _source, int _dest, int _equal );
-Variable *              variable_hex( Environment * _environment, char * _value );
+Variable *              variable_hex( Environment * _environment, char * _value, int _separator );
 Variable *              variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );

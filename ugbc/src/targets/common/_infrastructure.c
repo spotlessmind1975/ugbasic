@@ -3651,7 +3651,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                         cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
                                     // #endif
                                     cpu_dsfree( _environment, target->realName );
-                                    cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, target->realName );
+                                    cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name, 0 )->realName, target->realName );
                                     break;
                                 }
                                 case VT_DWORD: {
@@ -9040,7 +9040,7 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
                             cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
                         #endif
                         cpu_dsfree( _environment, result->realName );
-                        cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, result->realName );
+                        cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name, 0 )->realName, result->realName );
                         value = NULL;
                     }
                     break;
@@ -9220,7 +9220,7 @@ lunghezza della stringa restituita dipende dalla dimensione (in byte) di ''expre
 
 @target all
  </usermanual> */
-Variable * variable_hex( Environment * _environment, char * _value ) {
+Variable * variable_hex( Environment * _environment, char * _value, int _separator ) {
 
     MAKE_LABEL
 
@@ -9230,18 +9230,36 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
 
     Variable * originalAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * originalSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
     Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
 
     switch( VT_BITWIDTH( originalValue->type ) ) {
-        case 0:
-        case 1:
-            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
+        case 0: {
+            switch( originalValue->type ) {
+                case VT_STRING: {
+                    cpu_move_8bit( _environment, originalValue->realName, originalSize->realName );
+                    cpu_addressof_16bit( _environment, originalValue->realName, originalAddress->realName );
+                    cpu_inc_16bit( _environment, originalAddress->realName );
+                    cpu_hex_to_string_calc_string( _environment, originalSize->realName, _separator, size->realName );
+                    break;
+                }
+                case VT_DSTRING: {
+                    cpu_dsdescriptor( _environment, originalValue->realName, originalAddress->realName, originalSize->realName );
+                    cpu_hex_to_string_calc_string( _environment, originalSize->realName, _separator, size->realName );
+                    break;
+                }
+            }
             break;
+        }            
         case 32:
         case 16:
         case 8:
-            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ) >> 3, 0, size->realName );
+            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ) >> 3, _separator, size->realName );
+            cpu_store_8bit( _environment, originalSize->realName, VT_BITWIDTH( originalValue->type ) >> 3 );
             cpu_addressof_16bit( _environment, originalValue->realName, originalAddress->realName );
+            break;
+        default:
+            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
             break;
     }
 
@@ -9253,7 +9271,7 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     cpu_dsalloc( _environment, size->realName, result->realName );
     cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
 
-    cpu_hex_to_string( _environment, originalAddress->realName, address->realName, VT_BITWIDTH( originalValue->type ) >> 3 );
+    cpu_hex_to_string( _environment, originalAddress->realName, address->realName, originalSize->realName, _separator );
 
     return result;
     

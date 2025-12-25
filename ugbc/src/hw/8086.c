@@ -4645,7 +4645,7 @@ void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, 
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _size ) {
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _size, int _separator ) {
 
     MAKE_LABEL
 
@@ -4653,7 +4653,8 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_8086_cpu_hex_to_string_asm );
 
-        outline1("MOV CL, 0x%2.2x", (unsigned char)(_size));
+        outline1("MOV BL, 0x%2.2x", (unsigned char)(_separator));
+        outline1("MOV CL, [%s]", _size );
         outline1("MOV SI, [%s]", _number );
         outline1("MOV DI, [%s]", _string );
         outline0("CALL H2STRING" );

@@ -47,7 +47,27 @@ H2STRING:
     JR NZ, H2STRINGA
     RET
 
+H2STRINGSEP:
+    LD A, IYH
+    CP 0
+    JR Z, H2STRINGSEPDONE
+    DEC IYL
+    LD A, IYL
+    CP 0
+    JR NZ, H2STRINGSEPDONE
+    LD A, '-'
+    LD (DE), A
+    DEC DE
+    LD A, IYH
+    LD IYL, A
+H2STRINGSEPDONE:
+    RET
+
 H2STRINGA:
+    LD A, B
+    LD IYL, A
+    LD IYH, A
+
     LD B, 0
     PUSH HL
     LD HL, DE
@@ -55,7 +75,6 @@ H2STRINGA:
     ADD HL, BC
     LD DE, HL
     POP HL
-    DEC DE
     DEC C
 H2STRINGL1:
     LD A, (HL)
@@ -63,9 +82,11 @@ H2STRINGL1:
     LD A, IXL
     LD (DE), A
     DEC DE
+    CALL H2STRINGSEP
     LD A, IXH
     LD (DE), A
     DEC DE
+    CALL H2STRINGSEP
     INC HL
 H2STRINGL1A:
     DEC C

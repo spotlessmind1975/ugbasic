@@ -7238,7 +7238,7 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string_calc_string( Environment * _environment, int _size, int _separator, char * _string_size ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
@@ -7270,7 +7270,7 @@ void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, 
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, int _size ) {
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _size, int _separator ) {
 
     MAKE_LABEL
 
@@ -7278,7 +7278,9 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_z80_cpu_hex_to_string_asm );
 
-        outline1("LD C, $%2.2x", (unsigned char)(_size));
+        outline1("LD A, (%s)", _size);
+        outline0("LD C, A");
+        outline1("LD B, $%2.2x", (unsigned char)(_separator * 3));
         outline1("LD HL, (%s)", _number );
         outline1("LD DE, (%s)", _string );
         outline0("CALL H2STRING" );

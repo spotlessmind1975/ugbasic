@@ -110,7 +110,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
 %token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET CPU6309 
-%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG ENCRYPT DECRYPT
+%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG ENCRYPT DECRYPT SERIALIZE UNSERIALIZE
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3585,10 +3585,16 @@ exponential_less:
         $$ = variable_string_lower( _environment, $3 )->name;
     }
     | HEX OP expr CP {
-        $$ = variable_hex( _environment, $3 )->name;
+        $$ = variable_hex( _environment, $3, 0 )->name;
+    }
+    | SERIALIZE OP expr CP {
+        $$ = serialize( _environment, $3, NULL )->name;
+    }
+    | SERIALIZE OP expr OP_COMMA expr CP {
+        $$ = serialize( _environment, $3, $5 )->name;
     }
     | OP_DOLLAR2 OP expr CP {
-        $$ = variable_hex( _environment, $3 )->name;
+        $$ = variable_hex( _environment, $3, 0 )->name;
     }
     | STR OP expr CP {
         $$ = variable_string_str( _environment, $3 )->name;

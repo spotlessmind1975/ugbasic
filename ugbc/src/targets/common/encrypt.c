@@ -118,7 +118,7 @@ Variable * encrypt( Environment * _environment, char * _data, char * _key ) {
             break;
         };
         case VT_BUFFER: {
-            cpu_store_8bit( _environment, key->realName, key->size );
+            cpu_store_8bit( _environment, keySize->realName, key->size );
             cpu_addressof_16bit( _environment, key->realName, keyAddress->realName );
             break;
         };
