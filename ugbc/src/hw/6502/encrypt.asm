@@ -43,7 +43,16 @@
 ;       TMMPTR2: address of the key (must be equal to the area to encrypt)
 ;       MATHPTR45: address of the destination area encrypted
 ;       MATHPTR6: size of the memory area to encrypt
+;       MATHPTR7: size of the key encrypt
 ENCRYPT:
+    LDA MATHPTR7
+    CMP MATHPTR6
+    BEQ ENCRYPTLS 
+    BCC ENCRYPTLS 
+    LDA MATHPTR6
+    STA MATHPTR7
+ENCRYPTLS:
+    STA MATHPTR3
     SEI
     LDA #0
     STA MATHPTR0
@@ -61,6 +70,19 @@ ENCRYPTL2:
     LDA (TMPPTR), Y
     EOR (TMPPTR2), Y
     STA (MATHPTR4), Y
+    DEC MATHPTR3
+    LDA MATHPTR3
+    BNE ENCRYPTL2A
+    LDA MATHPTR7
+    STA MATHPTR3
+    SEC
+    LDA TMPPTR2
+    SBC MATHPTR3
+    STA TMPPTR2
+    LDA TMPPTR2+1
+    SBC #0
+    STA TMPPTR2+1
+ENCRYPTL2A:
     INY
     CPY MATHPTR6
     BNE ENCRYPTL2

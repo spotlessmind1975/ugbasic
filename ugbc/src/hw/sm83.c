@@ -457,7 +457,12 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, (%s)", _address);
 
         if ( _bytes_width == 8 ) {
@@ -500,7 +505,12 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, (%s)", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -580,7 +590,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
         outline0("LD C, A");
         outline1("LD A, (%s+1)", _bytes);
         outline0("LD B, A");
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
         outline1("LD HL, %s", _address);
         outline0("CALL CPUFILL16");
 
@@ -619,7 +633,12 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, %s", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -8391,7 +8410,7 @@ void cpu_float_single_exp( Environment * _environment, char * _value, char * _re
 
 }
 
-void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
     deploy( encrypt, src_hw_sm83_encrypt_asm );
 
@@ -8400,8 +8419,10 @@ void cpu_encrypt( Environment * _environment, char * _data, char * _size, char *
     outline1("LD HL, (%s)", _key );
     outline0("LD (IXR), HL" );
     outline1("LD HL, (%s)", _data );
-    outline1("LD A, (%s)", _size );
+    outline1("LD A, (%s)", _data_size );
     outline0("LD C, A" );
+    outline1("LD A, (%s)", _key_size );
+    outline0("LD B, A" );
     outline0("CALL ENCRYPT" );
 
 }
@@ -8415,8 +8436,10 @@ void cpu_decrypt( Environment * _environment, char * _data, char * _size, char *
     outline1("LD HL, (%s)", _key );
     outline0("LD (IXR), HL" );
     outline1("LD HL, (%s)", _data );
-    outline1("LD A, (%s)", _size );
+    outline1("LD A, (%s)", _data_size );
     outline0("LD C, A" );
+    outline1("LD A, (%s)", _key_size );
+    outline0("LD B, A" );
     outline0("CALL DECRYPT" );
     cpu_ztoa( _environment );
     outline1("LD (%s), A", _result );

@@ -137,7 +137,7 @@ Variable * decrypt( Environment * _environment, char * _data, char * _key ) {
     cpu_dsalloc( _environment, keySize->realName, output->realName );
     cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
 
-    cpu_decrypt( _environment, dataAddress->realName, keySize->realName, keyAddress->realName, outputAddress->realName, result->realName );
+    cpu_decrypt( _environment, dataAddress->realName, dataSize->realName, keyAddress->realName, keySize->realName, outputAddress->realName, result->realName );
 
     return output;
     

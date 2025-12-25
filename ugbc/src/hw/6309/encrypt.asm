@@ -42,8 +42,17 @@
 ;       X: address of the memory area to encrypt
 ;       U: address of the key (must be equal to the area to encrypt)
 ;       Y: address of the destination area encrypted
+;       A: size of the key
 ;       B: size of the memory area to encrypt
 ENCRYPT
+    STA <MATHPTR6
+    STA <MATHPTR7
+    CMPB <MATHPTR7
+    BEQ ENCRYPTLS 
+    BCC ENCRYPTLS 
+    STB <MATHPTR7
+    STB <MATHPTR6
+ENCRYPTLS:
     CLRA
     STA <MATHPTR0
     PSHS D, X
@@ -54,12 +63,21 @@ ENCRYPTL1
     DECB
     BNE ENCRYPTL1
     PULS D, X
+    PSHS U
 ENCRYPTL2
     LDA ,X+
     EORA ,U+
     STA ,Y+
+    DEC <MATHPTR7
+    BNE ENCRYPTL2A
+    PULS U
+    PSHS U
+    LDA <MATHPTR6
+    STA <MATHPTR7
+ENCRYPTL2A
     DECB
     BNE ENCRYPTL2
     LDA <MATHPTR0
     STA ,Y
+    PULS U
     RTS

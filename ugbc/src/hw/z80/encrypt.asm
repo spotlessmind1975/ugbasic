@@ -41,9 +41,19 @@
 ; Input:
 ;       HL: address of the memory area to encrypt
 ;       IX: address of the key (must be equal to the area to encrypt)
+;       B: size of the key
 ;       DE: address of the destination area encrypted
 ;       C: size of the memory area to encrypt
 ENCRYPT:
+    LD A, B
+    CP C
+    JR Z, ENCRYPTLS
+    JR C, ENCRYPTLS
+    LD B, C
+    LD A, B
+ENCRYPTLS:
+    LD IYL, A
+    LD IYH, A
     LD B, 0
     PUSH HL
     PUSH DE
@@ -66,6 +76,24 @@ ENCRYPTL2:
     LD (DE), A
     INC HL
     INC IX
+    DEC IYL
+    LD A, IYL
+    CP 0
+    JR NZ, ENCRYPTL2A
+    PUSH HL
+    PUSH DE
+    LD HL, IX
+    LD A, IYH
+    LD E, A
+    LD D, 0
+    AND A, A
+    SBC HL, DE
+    LD IX, HL
+    POP DE
+    POP HL
+    LD A, IYH
+    LD IYL, A
+ENCRYPTL2A:
     INC DE
     DEC C
     LD A, C

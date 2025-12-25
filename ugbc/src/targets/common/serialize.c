@@ -49,12 +49,24 @@
 
 @english
 
+The ''SERIALIZE'' statement converts the binary contents of a variable (numeric, string, 
+or array) into a formatted text sequence. The result is an easily readable and 
+transcriptable string, where each byte is separated by a hyphen, making it ideal for 
+"save codes" or dynamically generated activation keys. If a ''key'' is provided, the output
+data will be encrypted before processing.
+
 @italian
+
+L'istruzione ''SERIALIZE'' converte il contenuto binario di una variabile (numerica, stringa
+o array) in una sequenza di testo formattata. Il risultato è una stringa facilmente leggibile e
+trascrivibile, in cui ogni byte è separato da un trattino, rendendola ideale per
+"codici di salvataggio" o chiavi di attivazione generate dinamicamente. Se viene fornita una ''key'', 
+i dati di output verranno crittografati prima dell'elaborazione.
 
 @syntax = SERIALIZE( data[, key] )
 
 @example DIM p(4) AS INTEGER
-@example PRINT SERIALIZE( p )
+@example PRINT SERIALIZE( p, "SECRET" )
 
 @target all
 </usermanual> */

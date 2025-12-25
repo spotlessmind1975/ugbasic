@@ -40,10 +40,16 @@
 ;
 ; Input:
 ;       SI: address of the memory area to encrypt
-;       DX: address of the key (must be equal to the area to encrypt)
+;       DX: address of the key
 ;       DI: address of the destination area encrypted
 ;       CL: size of the memory area to encrypt
+;       CH: size of the key
 ENCRYPT:
+    CMP CH, CL
+    JZ ENCRYPTLS
+    JC ENCRYPTLS
+    MOV CH, CL
+ENCRYPTLS:
     MOV BL, 0
     PUSH SI
     PUSH DX
@@ -59,16 +65,29 @@ ENCRYPTL1:
     POP CX
     POP DX
     POP SI
+    PUSH SI
+    MOV BL, CH
 ENCRYPTL2:
-    MOV AL, [DX]
-    XOR [SI]
+    PUSH DI
+    MOV DI, DX
+    MOV AL, [DI]
+    POP DI
+    XOR AL, [SI]
     MOV [DI], AL
     INC SI
     INC DX
     INC DI
+    DEC BL
+    CMP BL, 0
+    JNZ ENCRYPTL2A
+    POP SI
+    PUSH SI
+    MOV BL, CH
+ENCRYPTL2A:
     DEC CL
     CMP CL, 0
     JNZ ENCRYPTL2
     MOV AL, BL
     MOV [DI], AL
+    POP SI
     RET

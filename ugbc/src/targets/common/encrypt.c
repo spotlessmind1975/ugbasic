@@ -135,7 +135,7 @@ Variable * encrypt( Environment * _environment, char * _data, char * _key ) {
     cpu_dsalloc( _environment, dataSize->realName, output->realName );
     cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
 
-    cpu_encrypt( _environment, dataAddress->realName, keySize->realName, keyAddress->realName, outputAddress->realName );
+    cpu_encrypt( _environment, dataAddress->realName, dataSize->realName, keyAddress->realName, keySize->realName, outputAddress->realName );
 
     return output;
 

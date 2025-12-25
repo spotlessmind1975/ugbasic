@@ -329,7 +329,11 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline1("MOV CX, [%s]", _bytes);
         }
 
-        outline1("MOV AL, [%s]", _pattern);
+        if ( _pattern ) {
+            outline1("MOV AL, [%s]", _pattern);
+        } else {
+            outline0("MOV AL, 0");
+        }
         outline1("MOV BX, [%s]", _address);
 
         if ( _bytes_width == 8 ) {
@@ -370,7 +374,12 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
             outline1("MOV CH, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
         }
 
-        outline1("MOV AL, [%s]", _pattern);
+        if ( _pattern ) {
+            outline1("MOV AL, [%s]", _pattern);
+        } else {
+            outline0("MOV AL, 0");
+        }
+
         outline1("MOV BX, [%s]", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -445,7 +454,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
     embedded( cpu_fill, src_hw_8086_cpu_fill_asm );
 
         outline1("MOV CX, [%s]", _bytes);
-        outline1("MOV AL, [%s]", _pattern);
+        if ( _pattern ) {
+            outline1("MOV AL, [%s]", _pattern);
+        } else {
+            outline0("MOV AL, 0");
+        }
         outline1("MOV BX, %s", _address);
         outline0("CALL CPUFILL16");
 
@@ -482,7 +495,12 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
             outline1("MOV CH, 0x%2.2x", (unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
         }
 
-        outline1("MOV AL, [%s]", _pattern);
+        if ( _pattern ) {
+            outline1("MOV AL, [%s]", _pattern);
+        } else {
+            outline0("MOV AL, 0");
+        }
+
         outline1("MOV BX, %s", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -4663,26 +4681,28 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 }
 
-void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
     deploy( encrypt, src_hw_8086_encrypt_asm );
 
     outline1("MOV SI, (%s)", _data );
     outline1("MOV DX, (%s)", _key );
     outline1("MOV DI, (%s)", _output );
-    outline1("MOV CL, (%s)", _size );
+    outline1("MOV CH, (%s)", _key_size );
+    outline1("MOV CL, (%s)", _data_size );
     outline0("CALL ENCRYPT" );
 
 }
 
-void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result ) {
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
 
     deploy( decrypt, src_hw_8086_decrypt_asm );
 
     outline1("MOV SI, (%s)", _data );
     outline1("MOV DX, (%s)", _key );
     outline1("MOV DI, (%s)", _output );
-    outline1("MOV CL, (%s)", _size );
+    outline1("MOV CH, (%s)", _key_size );
+    outline1("MOV CL, (%s)", _data_size );
     outline0("CALL DECRYPT" );
     cpu_ztoa( _environment );
     outline1("MOV [%s], AL", _result );

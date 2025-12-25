@@ -417,7 +417,11 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
         if ( _bytes_width == 8 ) {
 
             outline1("LDY %s", _bytes);
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }
             outline0("JSR CPUFILL8");
 
         } else {
@@ -427,7 +431,11 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
             outline0("STA MATHPTR0+1");
 
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }
             outline0("JSR CPUFILL16");
 
         }
@@ -463,14 +471,22 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
         outline0("STA TMPPTR+1");
         if ( _bytes < 256 ) {
             outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }
             outline0("JSR CPUFILL8");
         } else {
             outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
             outline0("STA MATHPTR0");
             outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
             outline0("STA MATHPTR0+1");
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }
             outline0("JSR CPUFILL16");
         }
 
@@ -550,7 +566,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
         outline0("STA MATHPTR0");
         outline1("LDA %s", address_displacement(_environment, _bytes, "1"));
         outline0("STA MATHPTR0+1");
-        outline1("LDA %s", _pattern);
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }        
         outline0("JSR CPUFILL16");
 
     done()
@@ -585,14 +605,22 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
 
         if ( _bytes < 256 ) {
             outline1("LDX #$%2.2x", (unsigned char)( _bytes & 0xff ) );
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }
             outline0("JSR CPUFILL8");
         } else {
             outline1("LDA #$%2.2x", (unsigned char)( _bytes & 0xff ) );
             outline0("STA MATHPTR0");
             outline1("LDA #$%2.2x", ( unsigned char) ( ( _bytes >> 8 ) & 0xff ) );
             outline0("STA MATHPTR0+1");
-            outline1("LDA %s", _pattern);
+            if ( _pattern ) {
+                outline1("LDA %s", _pattern );
+            } else {
+                outline0("LDA #0");
+            }            
             outline0("JSR CPUFILL16");
         }
 
@@ -7224,7 +7252,11 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
             outline0("STA MATHPTR0+1");
         }
 
-        outline1("LDA %s", _pattern);
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }
         outline0("STA TMPPTR2");
         outline1("LDA %s", address_displacement(_environment, _pattern, "1"));
         outline0("STA TMPPTR2+1");
@@ -9513,7 +9545,7 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
    
 }
 
-void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
     deploy( encrypt, src_hw_6502_encrypt_asm );
 
@@ -9529,13 +9561,15 @@ void cpu_encrypt( Environment * _environment, char * _data, char * _size, char *
     outline0("STA MATHPTR4" );
     outline1("LDA %s", address_displacement( _environment, _output, "1" ) );
     outline0("STA MATHPTR4+1" );
-    outline1("LDA %s", _size );
+    outline1("LDA %s", _data_size );
     outline0("STA MATHPTR6" );
+    outline1("LDA %s", _key_size );
+    outline0("STA MATHPTR7" );
     outline0("JSR ENCRYPT" );
 
 }
 
-void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result ) {
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size,  char * _key, char * _key_size, char * _output, char * _result ) {
 
     deploy( decrypt, src_hw_6502_decrypt_asm );
 
@@ -9551,8 +9585,10 @@ void cpu_decrypt( Environment * _environment, char * _data, char * _size, char *
     outline0("STA MATHPTR4" );
     outline1("LDA %s", address_displacement( _environment, _output, "1" ) );
     outline0("STA MATHPTR4+1" );
-    outline1("LDA %s", _size );
+    outline1("LDA %s", _data_size );
     outline0("STA MATHPTR6" );
+    outline1("LDA %s", _key_size );
+    outline0("STA MATHPTR7" );
     outline0("JSR DECRYPT" );
     cpu_ztoa( _environment );
     outline1("STA %s", _result );

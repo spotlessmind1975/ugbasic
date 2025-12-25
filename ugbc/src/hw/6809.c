@@ -540,7 +540,11 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline0("JSR CPUFILL16");
         }
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }        
         outline1("LDX %s", _address);
 
     done( )
@@ -566,9 +570,13 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDX %s", _pattern );
+        } else {
+            outline0("LDX #0");
+        }        
         outline1("LDX %s", _address);
-        outline1("LDY #$%4.4x", _bytes );
+        outline1("LDB #$%4.4x", _bytes );
         if ( _bytes < 256 ) {
             outline0("JSR CPUFILL8");
         } else {
@@ -630,7 +638,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }
         outline1("LDX #%s", _address);
         outline1("LDY %s", _bytes);
         outline0("JSR CPUFILL16");
@@ -658,7 +670,11 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
 
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }    
         outline1("LDX #%s", _address);
         outline1("LDY #$%4.4x", _bytes);
 
@@ -7865,26 +7881,28 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
 
 }
 
-void cpu_encrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output ) {
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
     deploy( encrypt, src_hw_6809_encrypt_asm );
 
     outline1("LDX %s", _data );
     outline1("LDU %s", _key );
     outline1("LDY %s", _output );
-    outline1("LDB %s", _size );
+    outline1("LDA %s", _key_size );
+    outline1("LDB %s", _data_size );
     outline0("JSR ENCRYPT" );
 
 }
 
-void cpu_decrypt( Environment * _environment, char * _data, char * _size, char * _key, char * _output, char * _result ) {
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
 
     deploy( decrypt, src_hw_6809_decrypt_asm );
 
     outline1("LDX %s", _data );
     outline1("LDU %s", _key );
     outline1("LDY %s", _output );
-    outline1("LDB %s", _size );
+    outline1("LDA %s", _key_size );
+    outline1("LDB %s", _data_size );
     outline0("JSR DECRYPT" );
     cpu_ztoa( _environment );
     outline1("STA %s", _result );
