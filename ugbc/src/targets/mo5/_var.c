@@ -628,6 +628,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_inplace_preferred( clsGraphic, src_hw_ef936x_cls_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );

@@ -876,6 +876,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( clsBox, src_hw_ef936x_cls_box_asm )
+    deploy_inplace_preferred( clsGraphic, src_hw_ef936x_cls_asm );
     if ( _environment->keyboardFullSupport || ! _environment->keyboardConfig.sync ) {
         deploy_inplace_preferred( keyboard, src_hw_pc128op_keyboard_asm );
     } else {
