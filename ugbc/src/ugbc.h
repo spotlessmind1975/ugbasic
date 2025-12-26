@@ -1953,6 +1953,7 @@ typedef struct _Deployed {
     int gprint;
     int encrypt;
     int decrypt;
+    int hex2bin;
     
 } Deployed;
 
@@ -3814,6 +3815,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_CANNOT_FLIP( s ) CRITICAL2("E402 - cannot FLIP this variable", s );
 #define CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( s ) CRITICAL2("E403 - cannot use STRIP with PUT IMAGE using ATLAS without STRIP", s );
 #define CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( ) CRITICAL("E404 - cannot enable DOUBLE BUFFER after loading resources" );
+#define CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( s ) CRITICAL2("E405 - cannot DECRYPT on this kind of variable", s );
+#define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E406 - data type not supported for HEX2BIN", v, s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5348,8 +5351,9 @@ DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _
 void                    data_string( Environment * _environment, char * _value );
 void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
-Variable *              decrypt( Environment * _environment, char * _data, char * _key );
+Variable *              decrypt( Environment * _environment, char * _data, char * _key, char * _var );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
+Variable *              deserialize( Environment * _environment, char * _data, char * _key, char * _var );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
@@ -6017,6 +6021,7 @@ void                    variable_global( Environment * _environment, char * _pat
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_greater_than_const( Environment * _environment, char * _source, int _dest, int _equal );
 Variable *              variable_hex( Environment * _environment, char * _value, int _separator );
+Variable *              variable_hex2bin( Environment * _environment, char * _value, char * _variable );
 Variable *              variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );

@@ -117,13 +117,13 @@ Variable * encrypt( Environment * _environment, char * _data, char * _key ) {
             cpu_inc_16bit( _environment, keyAddress->realName );
             break;
         };
+        case VT_TARRAY:
+        case VT_TYPE:
         case VT_BUFFER: {
             cpu_store_8bit( _environment, keySize->realName, key->size );
             cpu_addressof_16bit( _environment, key->realName, keyAddress->realName );
             break;
         };
-        case VT_TARRAY:
-        case VT_TYPE:
         case VT_DSTRING: {
             cpu_dsdescriptor( _environment, key->realName, keyAddress->realName, keySize->realName );
             break;

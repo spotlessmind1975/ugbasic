@@ -110,7 +110,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token REGISTER SUM VCENTER VHCENTER VCENTRE VHCENTRE BOTTOM JMOVE LBOTTOM RANGE FWIDTH FHEIGHT PLOTR INKB ADDC
 %token ENDPROC EXITIF VIRTUALIZED BY COARSE PRECISE VECTOR ROTATE SPEN CSV ENDTYPE ALPHA BITMAPADDRESS COPPER STORE ENDCOPPER
 %token VZ200 FCIRCLE FELLIPSE RECT TRIANGLE C16 PCCGA CPU8086 FLASH CHAIN NUMBER DIGITS RESET CPU6309 
-%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG ENCRYPT DECRYPT SERIALIZE UNSERIALIZE
+%token CPU6510 CPU7501 CPU8501 CPU8502 COMPILE GPRINT INLINE STRIG ENCRYPT DECRYPT SERIALIZE DESERIALIZE HEX2BIN
 
 %token A B C D E F G H I J K L M N O P Q R S T U V X Y W Z
 %token F1 F2 F3 F4 F5 F6 F7 F8
@@ -3482,11 +3482,14 @@ exponential_less:
     | TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
         $$ = tilemap_index_vars( _environment, $4, $6, $8, $10 )->name;
     }
+    | HEX2BIN OP expr TO expr CP {
+        $$ = variable_hex2bin( _environment, $3, $5 )->name;
+    }
     | ENCRYPT OP expr OP_COMMA expr CP {
         $$ = encrypt( _environment, $3, $5 )->name;
     }
-    | DECRYPT OP expr OP_COMMA expr CP {
-        $$ = decrypt( _environment, $3, $5 )->name;
+    | DECRYPT OP expr OP_COMMA expr TO Identifier CP {
+        $$ = decrypt( _environment, $3, $5, $7 )->name;
     }
     | LEFT OP expr OP_COMMA expr CP {
         $$ = variable_string_left( _environment, $3, $5 )->name;
@@ -3592,6 +3595,12 @@ exponential_less:
     }
     | SERIALIZE OP expr OP_COMMA expr CP {
         $$ = serialize( _environment, $3, $5 )->name;
+    }
+    | DESERIALIZE OP expr TO Identifier CP {
+        $$ = deserialize( _environment, $3, NULL, $5 )->name;
+    }
+    | DESERIALIZE OP expr OP_COMMA expr TO Identifier CP {
+        $$ = deserialize( _environment, $3, $5, $7 )->name;
     }
     | OP_DOLLAR2 OP expr CP {
         $$ = variable_hex( _environment, $3, 0 )->name;

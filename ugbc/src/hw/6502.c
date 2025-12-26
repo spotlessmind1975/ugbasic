@@ -9595,4 +9595,23 @@ void cpu_decrypt( Environment * _environment, char * _data, char * _data_size,  
 
 }
 
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result ) {
+
+    deploy( hex2bin, src_hw_6502_hex2bin_asm );
+
+    outline1("LDA %s", _value_address );
+    outline0("STA TMPPTR" );
+    outline1("LDA %s", address_displacement( _environment, _value_address, "1" ) );
+    outline0("STA TMPPTR+1" );
+    outline1("LDA %s", _variable_address );
+    outline0("STA HEX2BINADDR+1" );
+    outline1("LDA %s", address_displacement( _environment, _variable_address, "1" ) );
+    outline0("STA HEX2BINADDR+2" );
+    outline1("LDX %s", _value_size );
+    outline1("LDY %s", _variable_size );
+    outline0("JSR HEX2BIN" );
+    outline1("STA %s", _result );
+
+}
+
 #endif

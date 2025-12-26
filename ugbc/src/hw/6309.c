@@ -7576,4 +7576,17 @@ void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, c
 
 }
 
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result ) {
+
+    deploy( hex2bin, src_hw_6309_hex2bin_asm );
+
+    outline1("LDX %s", _value_address );
+    outline1("LDA %s", _value_size );
+    outline1("LDY %s", _variable_address );
+    outline1("LDB %s", _variable_size );
+    outline0("JSR HEX2BIN" );
+    outline1("STA %s", _result );
+
+}
+
 #endif

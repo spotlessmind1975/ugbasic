@@ -9749,4 +9749,19 @@ void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, c
 
 }
 
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result ) {
+
+    deploy( hex2bin, src_hw_z80_hex2bin_asm );
+
+    outline1("LD HL, (%s)", _value_address );
+    outline1("LD DE, (%s)", _variable_address );
+    outline1("LD A, (%s)", _value_size );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _variable_size );
+    outline0("LD B, A" );
+    outline0("CALL HEX2BIN" );
+    outline1("LD (%s), A", _result );
+
+}
+
 #endif

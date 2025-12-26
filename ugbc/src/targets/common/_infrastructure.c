@@ -9278,6 +9278,95 @@ Variable * variable_hex( Environment * _environment, char * _value, int _separat
 }
 
 /**
+ * @brief Emit code for <b>= HEX2BIN( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value  Number to convert to hexadecimal
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword HEX2BIN
+
+@english
+
+The ''HEX2BIN'' command is a fundamental function for low-level data manipulation. 
+Its purpose is to interpret a readable string (consisting of hexadecimal characters) 
+and convert it to its original binary representation (a byte array or "buffer").
+It takes a string like ''48454C4C4F'' and converts it to the binary buffer 
+containing the corresponding byte values.
+
+@italian
+
+Il comando ''HEX2BIN'' è una funzione fondamentale per la manipolazione di dati a basso livello.
+Il suo scopo è interpretare una stringa leggibile (composta da caratteri esadecimali)
+e convertirla nella sua rappresentazione binaria originale (un array di byte o "buffer").
+Accetta una stringa come ''48454C4C4F'' e la converte nel buffer binario
+contenente i valori di byte corrispondenti.
+
+@syntax = HEX2BIN(expression TO var)
+
+@example DIM v AS INTEGER
+@example IF HEX2BIB("002A" TO v) THEN: PRINT "OK!": ENDIF
+
+@target all
+ </usermanual> */
+Variable * variable_hex2bin( Environment * _environment, char * _value, char * _variable ) {
+
+    MAKE_LABEL
+
+    Variable * value = variable_retrieve( _environment, _value );
+    Variable * variable = variable_retrieve( _environment, _variable );
+
+    Variable * valueAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * valueSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+    Variable * variableAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * variableSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of hex)" );
+
+    switch( value->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, value->realName, valueSize->realName );
+            cpu_addressof_16bit( _environment, value->realName, valueAddress->realName );
+            cpu_inc_16bit( _environment, valueAddress->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, value->realName, valueAddress->realName, valueSize->realName );
+            break;
+        }
+        default:
+            CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( _value, DATATYPE_AS_STRING[value->type]);
+    }
+
+    if ( VT_BITWIDTH( variable->type ) ) {
+        cpu_store_8bit( _environment, variableSize->realName, VT_BITWIDTH( variable->type ) >> 3 );
+        cpu_addressof_16bit( _environment, variable->realName, variableAddress->realName );
+    } else {
+        switch( variable->type ) {
+            case VT_TARRAY:
+            case VT_TYPE:
+            case VT_BUFFER: {
+                cpu_store_8bit( _environment, variableSize->realName, variable->size );
+                cpu_addressof_16bit( _environment, variable->realName, variableAddress->realName );
+                break;
+            };
+            case VT_DSTRING: {
+                cpu_dsdescriptor( _environment, variable->realName, variableAddress->realName, variableSize->realName );
+                break;
+            };
+            case VT_STRING:
+                CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( _variable, DATATYPE_AS_STRING[variable->type] );
+        }
+    }
+
+    cpu_hex_to_bin( _environment, valueAddress->realName, valueSize->realName, variableAddress->realName, variableSize->realName, result->realName );
+
+    return result;
+    
+}
+
+/**
  * @brief Emit code for <b>= STRING( ..., ... )</b>
  *
  * @param _environment Current calling environment

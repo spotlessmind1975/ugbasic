@@ -72,17 +72,17 @@ buffer, per fungere da sigillo di attendibilità.
 
 Si noti che la dimensione della chiave deve essere uguale alla dimensione dei dati.
 
-@syntax = DECRYPT( data, key )
+@syntax = DECRYPT( data, key TO var )
 
 @example DIM params(2) AS INTEGER
-@example data = DECRYPT( ENCRYPT( params, "OKOK" ), "OKOK")
+@example IF DECRYPT( ENCRYPT( params, "OKOK" ), "OKOK" TO params) THEN: PRINT "OK!": ENDIF
 
 </usermanual> */
-Variable * decrypt( Environment * _environment, char * _data, char * _key ) {
+Variable * decrypt( Environment * _environment, char * _data, char * _key, char * _var ) {
 
     Variable * data = variable_retrieve( _environment, _data );
     Variable * key = variable_retrieve( _environment, _key );
-    Variable * output = variable_temporary( _environment, VT_DSTRING, "(result)" );
+    Variable * output = variable_retrieve( _environment, _var );
     Variable * result = variable_temporary( _environment, VT_SBYTE, "(result)");
 
     Variable * dataAddress = variable_temporary( _environment, VT_ADDRESS, "(address of data)");
@@ -120,26 +120,40 @@ Variable * decrypt( Environment * _environment, char * _data, char * _key ) {
             cpu_inc_16bit( _environment, keyAddress->realName );
             break;
         };
+        case VT_TARRAY:
+        case VT_TYPE:
         case VT_BUFFER: {
             cpu_store_8bit( _environment, key->realName, key->size );
             cpu_addressof_16bit( _environment, key->realName, keyAddress->realName );
             break;
         };
-        case VT_TARRAY:
-        case VT_TYPE:
         case VT_DSTRING: {
             cpu_dsdescriptor( _environment, key->realName, keyAddress->realName, keySize->realName );
             break;
         };
     }
 
-    cpu_dsfree( _environment, output->realName );
-    cpu_dsalloc( _environment, keySize->realName, output->realName );
-    cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
+    switch( output->type ) {
+        case VT_TARRAY:
+        case VT_TYPE:
+        case VT_BUFFER: {
+            cpu_store_8bit( _environment, dataSize->realName, output->size );
+            cpu_addressof_16bit( _environment, output->realName, outputAddress->realName );
+            break;
+        };
+        case VT_DSTRING: {
+            cpu_dsfree( _environment, output->realName );
+            cpu_dsalloc( _environment, keySize->realName, output->realName );
+            cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
+            break;
+        };
+        default:
+            CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( _var );
+    }
 
     cpu_decrypt( _environment, dataAddress->realName, dataSize->realName, keyAddress->realName, keySize->realName, outputAddress->realName, result->realName );
 
-    return output;
+    return result;
     
 }
 
