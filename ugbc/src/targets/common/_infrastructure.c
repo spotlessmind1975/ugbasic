@@ -9592,11 +9592,13 @@ comandi, puoi creare semplici tabelle con colonne allineate. Puoi anche utilizza
  </usermanual> */
 Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
     
-    Variable * space = variable_temporary( _environment, VT_STRING, "(space)");
+    Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );    
+    Variable * spaces = variable_temporary( _environment, VT_DSTRING, "(space)");
     
-    variable_store_string( _environment, space->name, " " );
+    cpu_dsalloc( _environment, repetitions->realName, spaces->realName );
+    cpu_dsfill_value( _environment, spaces->realName, 32 );
 
-    return variable_string_string( _environment, space->name, _repetitions  );
+    return spaces;
     
 }
 

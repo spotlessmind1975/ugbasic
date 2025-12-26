@@ -413,3 +413,19 @@ DSASSIGN:
     CALL DUFFDEVICE
     POP BC
     RET
+
+; DSFILL(B,A)
+DSFILL:
+    PUSH AF
+    CALL DSDESCRIPTOR
+    LD A, (IX)
+    LD B, A
+    LD E, (IX+1)
+    LD D, (IX+2)
+    POP AF
+DSFILL1:
+    LD (DE), A
+    INC DE
+    DEC B
+    JR NZ, DSFILL1
+    RET

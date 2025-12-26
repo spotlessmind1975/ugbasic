@@ -274,7 +274,9 @@ void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, in
 void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size );
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index );
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value );
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index );
+void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu_dsfree( Environment * _environment, char * _index );
 void cpu_dswrite( Environment * _environment, char * _index );
 void cpu_dsresize( Environment * _environment, char * _index, char * _size );
@@ -287,7 +289,6 @@ void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 void cpu_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
 void cpu_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value  );
-void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_32bit( Environment * _environment, char * _source, char * _destination );

@@ -9614,4 +9614,16 @@ void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _
 
 }
 
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value ) {
+
+    deploy_preferred( duff, src_hw_6502_duff_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
+
+    outline1( "LDX %s", _string );
+    outline1( "LDA #$%2.2x", (unsigned char)(_value&0xff) );
+    outline0( "JSR DSFILL" );
+
+}
+
+
 #endif

@@ -8462,4 +8462,16 @@ void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _
 
 }
 
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value ) {
+
+    deploy_preferred( duff, src_hw_sm83_duff_asm );
+    deploy( dstring, src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _string );
+    outline0( "LD B, A" );
+    outline1( "LD A, $%2.2x", (unsigned char)(_value&0xff) );
+    outline0( "CALL DSFILL" );
+
+}
+
 #endif

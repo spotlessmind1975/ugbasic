@@ -324,3 +324,19 @@ DSASSIGN
     JSR DUFFDEVICE
     PULS D
     RTS
+
+; DSFILL(B,A)
+DSFILL
+    PSHS A
+    JSR DSDESCRIPTOR
+    CLRA
+    LDB ,X
+    TFR D, U    
+    PULS A
+    LDY 1,X
+DSFILL1
+    STA ,Y+
+    LEAU -1, U
+    CMPU #0
+    BNE DSFILL1
+    RTS
