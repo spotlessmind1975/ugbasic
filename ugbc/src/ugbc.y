@@ -4941,13 +4941,28 @@ wait_definition_simple:
 
 wait_definition_expression:
     expr CYCLES parallel_optional {
-      wait_cycles_var( _environment, $1, $3 );
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            wait_cycles( _environment, expr->value, $3 );
+        } else {
+            wait_cycles_var( _environment, $1, $3 );
+        }
     }
     | expr ticks {
-      wait_ticks_var( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            wait_ticks( _environment, expr->value );
+        } else {
+            wait_ticks_var( _environment, $1 );
+        }
     }
     | expr milliseconds {
-      wait_milliseconds_var( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            wait_milliseconds( _environment, expr->value );
+        } else {
+            wait_milliseconds_var( _environment, $1 );
+        }
     }
     | FIRE OP expr CP release {
         wait_fire_semivar( _environment, $3, $5 );
