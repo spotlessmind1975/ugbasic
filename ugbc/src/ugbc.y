@@ -3334,12 +3334,14 @@ exponential_less:
         $$ = $1;
       }
     | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
-        $$ = variable_temporary( _environment, VT_COLOR, "(color)" )->name;
+        Variable * rgb = variable_temporary( _environment, VT_COLOR, "(color)" );
         if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
-            variable_store( _environment, $$, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
+            variable_store( _environment, rgb->name, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
         } else {
-            variable_store( _environment, $$, 0 );
+            variable_store( _environment, rgb->name, 0 );
         }
+        rgb->initializedByConstant = 1;
+        $$ = rgb->name;
     }
     | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
         $$ = distance( _environment, $3, $5, $7, $9 )->name;
@@ -4825,7 +4827,13 @@ color_definition_expression :
         if ( ((Environment *)_environment)->dialect == DI_TSB ) {
             color_tsb( _environment, $1, $3, NULL );
         } else {
-            color_vars( _environment, $1, $3 );
+            Variable * index = variable_retrieve( _environment, $1 );
+            Variable * value = variable_retrieve( _environment, $3 );
+            if ( !index->initializedByConstant || !value->initializedByConstant) {
+                color_vars( _environment, $1, $3 );
+            } else {
+                color( _environment, index->value, value->value );
+            }
         }
       } else {
         Variable * index = variable_retrieve( _environment, $1 );
