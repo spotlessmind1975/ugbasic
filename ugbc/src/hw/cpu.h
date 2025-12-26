@@ -274,6 +274,7 @@ void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, in
 void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size );
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index );
+void cpu_dsfill( Environment * _environment, char * _string, char * _value );
 void cpu_dsfill_value( Environment * _environment, char * _string, int _value );
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index );
 void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
