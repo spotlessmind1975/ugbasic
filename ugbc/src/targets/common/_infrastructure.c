@@ -3711,6 +3711,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     if ( source->size > 255 ) {
                                         CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE( source->name, target->name );
                                     }
+                                    outline1("; LINE: %d", __LINE__);
                                     cpu_dsfree( _environment, target->realName );
                                     cpu_dsalloc_size( _environment, source->size, target->realName );
                                     Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
@@ -10492,6 +10493,7 @@ void variable_move_array_string( Environment * _environment, char * _array, char
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
             cpu_dsfree( _environment, dstring->realName );
+            outline1("; LINE: %d", __LINE__);
             cpu_dsalloc( _environment, size->realName, dstring->realName );
             cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
             cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
@@ -10714,16 +10716,19 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                     cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                    // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    // Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                    // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
 
-                    cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
-                    cpu_dsfree( _environment, _result->realName );
-                    cpu_dsalloc( _environment, size->realName, _result->realName );
-                    cpu_dsdescriptor( _environment, _result->realName, address2->realName, size2->realName );
-                    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                    // cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+                    // cpu_dsfree( _environment, _result->realName );
+                    // outline1("; LINE: %d", __LINE__);
+                    // cpu_dsalloc( _environment, size->realName, _result->realName );
+                    // cpu_dsdescriptor( _environment, _result->realName, address2->realName, size2->realName );
+                    // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+
+                    cpu_dsassign( _environment, dstring->realName, _result->realName );
 
                     break;
                 }
