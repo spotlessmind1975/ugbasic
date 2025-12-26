@@ -831,6 +831,8 @@ void ef936x_initialization( Environment * _environment ) {
     
     screen_mode( _environment, 0 );
 
+    reset_screen_mode_selected( _environment );
+    
 }
 
 extern RGBi * commonPalette;
