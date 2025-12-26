@@ -5503,15 +5503,15 @@ void cpu_fill_indirect( Environment * _environment, char * _address, char * _siz
             outline1("LDB %s", _size);
             outline0("LDA #0");
         }
-        outline0("LEAY D,Y");
+        outline0("TFR D,Y");
         outline1("LDX %s", _pattern );
         outline0("LDA ,X" );
         outline1("LDX %s", _address);
         outhead1("%s", label);
         outhead1("%sinner", label);
-        outline0("DECB");
-        outline0("STA B,X");
-        outline0("CMPB #$ff");
+        outline0("STA ,X+");
+        outline0("LEAY -1, Y");
+        outline0("CMPY #$ffff");
         outline1("BNE %sinner", label);
 
     no_embedded( cpu_fill_indirect )
