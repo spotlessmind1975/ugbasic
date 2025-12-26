@@ -1082,8 +1082,6 @@ PUTIMAGECOMMONEDB
     
 	RTS
 
-@ENDIF
-
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; --- OPTIMIZED VERSION (w < 128, no double y)
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1847,6 +1845,8 @@ PUTIMAGECOMMONEDBW128EVENFINAL
     ANDCC #$AF
     
 	RTS
+
+@ENDIF
 
 ; ----------------------------------------------
 ; Version active on double buffering OFF
