@@ -133,24 +133,29 @@ Variable * decrypt( Environment * _environment, char * _data, char * _key, char 
         };
     }
 
-    switch( output->type ) {
-        case VT_TARRAY:
-        case VT_TYPE:
-        case VT_BUFFER: {
-            cpu_store_8bit( _environment, dataSize->realName, output->size );
-            cpu_addressof_16bit( _environment, output->realName, outputAddress->realName );
-            break;
-        };
-        case VT_DSTRING: {
-            cpu_dsfree( _environment, output->realName );
-            cpu_dsalloc( _environment, keySize->realName, output->realName );
-            cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
-            break;
-        };
-        default:
-            CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( _var );
+    if ( VT_BITWIDTH( output->type ) ) {
+        cpu_store_8bit( _environment, dataSize->realName, output->size );
+        cpu_addressof_16bit( _environment, output->realName, outputAddress->realName );
+    } else {
+        switch( output->type ) {
+            case VT_TARRAY:
+            case VT_TYPE:
+            case VT_BUFFER: {
+                cpu_store_8bit( _environment, dataSize->realName, output->size );
+                cpu_addressof_16bit( _environment, output->realName, outputAddress->realName );
+                break;
+            };
+            case VT_DSTRING: {
+                cpu_dsfree( _environment, output->realName );
+                cpu_dsalloc( _environment, keySize->realName, output->realName );
+                cpu_dsdescriptor( _environment, output->realName, outputAddress->realName, NULL );
+                break;
+            };
+            default:
+                CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( _var );
+        }
     }
-
+    
     cpu_decrypt( _environment, dataAddress->realName, dataSize->realName, keyAddress->realName, keySize->realName, outputAddress->realName, result->realName );
 
     return result;
