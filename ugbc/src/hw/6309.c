@@ -7591,8 +7591,8 @@ void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _
 
 void cpu_dsfill( Environment * _environment, char * _string, char * _value ) {
 
-    deploy_preferred( duff, src_hw_6809_duff_asm );
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _string );
     outline1( "LDA %s", _value );
@@ -7602,8 +7602,8 @@ void cpu_dsfill( Environment * _environment, char * _string, char * _value ) {
 
 void cpu_dsfill_value( Environment * _environment, char * _string, int _value ) {
 
-    deploy_preferred( duff, src_hw_6809_duff_asm );
-    deploy( dstring, src_hw_6809_dstring_asm );
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _string );
     outline1( "LDA #$%2.2x", (unsigned char)(_value&0xff) );

@@ -8464,8 +8464,8 @@ void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _
 
 void cpu_dsfill( Environment * _environment, char * _string, char * _value ) {
 
-    deploy_preferred( duff, src_hw_z80_duff_asm );
-    deploy( dstring, src_hw_z80_dstring_asm );
+    deploy_preferred( duff, src_hw_sm83_duff_asm );
+    deploy( dstring, src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _string );
     outline0( "LD B, A" );
