@@ -93,7 +93,13 @@ static void cpu_compare_const( Environment * _environment, char *_source, int _d
 
     outline0("CLRB");
     outline2("LD%c %s",  REG, _source);
-    outline2("CMP%c #$%2.2x", REG, _destination);
+    if ( _destination ) {
+        if ( _bits==16 ) {
+            outline2("CMP%c #$%4.4x", REG, _destination);
+        } else {
+            outline2("CMP%c #$%2.2x", REG, _destination);
+        }
+    }
 
     if(_positive) {
         outline1("BNE %s", label);
