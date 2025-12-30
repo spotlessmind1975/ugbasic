@@ -50,36 +50,40 @@
 </usermanual> */
 void double_buffer( Environment * _environment, int _enabled ) {
 
-    if ( banks_any_used( _environment ) && _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
-        CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( );
-    }
+    if ( !_environment->vestigialConfig.doubleBufferSelected || _environment->vestigialConfig.doubleBuffer ) {
 
-    deploy_preferred( clsGraphic, src_hw_ef936x_cls_asm );
-    deploy( doubleBuffer, src_hw_ef936x_double_buffer_asm );
-
-    if ( _environment->doubleBufferEnabled != _enabled ) {
-
-        _environment->doubleBufferEnabled = _enabled;
-
-        if ( _enabled ) {
-
-            int allowed[] = { 6, 5, 4 };
-
-            banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
-
-            if ( _environment->deployed.scroll ) {
-                cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLLVOID" );
-                cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLL" );
-            }
-            outline0("JSR DOUBLEBUFFERINIT")
-        } else {
-            if ( _environment->deployed.scroll ) {
-                cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLL" );
-                cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLLVOID" );
-            }
-            outline0("JSR DOUBLEBUFFERCLEANUP")
+        if ( banks_any_used( _environment ) && _environment->currentMode == BITMAP_MODE_BITMAP_16 ) {
+            CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( );
         }
 
-    };
+        deploy_preferred( clsGraphic, src_hw_ef936x_cls_asm );
+        deploy( doubleBuffer, src_hw_ef936x_double_buffer_asm );
+
+        if ( _environment->doubleBufferEnabled != _enabled ) {
+
+            _environment->doubleBufferEnabled = _enabled;
+
+            if ( _enabled ) {
+
+                int allowed[] = { 6, 5, 4 };
+
+                banks_init_extended( _environment, allowed, sizeof( allowed ) / sizeof( int ), BANK_SIZE );
+
+                if ( _environment->deployed.scroll ) {
+                    cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLLVOID" );
+                    cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLL" );
+                }
+                outline0("JSR DOUBLEBUFFERINIT")
+            } else {
+                if ( _environment->deployed.scroll ) {
+                    cpu_set_callback( _environment, "SCREENSCROLLEMBED", "SCREENSCROLL" );
+                    cpu_set_callback( _environment, "ONSWITCHTILEMAP", "SCREENSCROLLVOID" );
+                }
+                outline0("JSR DOUBLEBUFFERCLEANUP")
+            }
+
+        };
+
+    }
 
 }
