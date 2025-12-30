@@ -199,7 +199,7 @@ static inline int _eq(char pat, char txt) {
     return (pat<=' ') ? (txt<=' ') : (_toUpper(pat)==_toUpper(txt));
 }
 
-#define TMP_BUF_POOL 32
+#define TMP_BUF_POOL 128
 static struct tmp_buf_pool {
     POBuffer buf;
     void *key1;
@@ -329,4 +329,39 @@ int po_buf_is_hex(POBuffer _s) {
         ++s;
     }
     return 1;
+}
+
+POVariable * variables;
+
+void po_var_init( ) {
+    variables = NULL;
+}
+
+POVariable * po_var_register( char * _name ) {
+    POVariable * variable = malloc( sizeof( POVariable ) );
+    memset( variable, 0, sizeof( POVariable ) );
+    variable->name = strdup( _name );
+    variable->next = variables;
+    variables = variable;
+    return variable;
+}
+
+POVariable * po_var_find( char * _name ) {
+    POVariable * variable = variables;
+    while( variable ) {
+        if ( strcmp( _name, variable->name ) == 0 ) {
+            return variable;
+        }
+        variable = variable->next;
+    }
+    return NULL;
+}
+
+POVariable * po_var_lookup( char * _name ) {
+    POVariable * variable = po_var_find( _name );
+    if ( variable ) {
+        return variable;
+    } else {
+        return po_var_register( _name );
+    }
 }

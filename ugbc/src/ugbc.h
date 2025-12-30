@@ -296,6 +296,15 @@ struct _POBuffer {
 
 typedef struct _POBuffer *POBuffer;
 
+struct _POVariable {
+    char *name; /* actual string */
+    int nb_read;
+    int nb_write;
+    struct _POVariable * next;
+};
+
+typedef struct _POVariable POVariable;
+
 /**
  * @brief Gamma correction type (for some palettes)
  * 
@@ -5103,6 +5112,11 @@ void tmp_buf_clr(void *key1);
 POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...);
 int po_buf_strcmp(POBuffer _s, POBuffer _t);
 int po_buf_is_hex(POBuffer _s);
+
+void po_var_init( );
+POVariable * po_var_register( char * _name );
+POVariable * po_var_find( char * _name );
+POVariable * po_var_lookup( char * _name );
 
 #define TMP_BUF         tmp_buf(__FILE__, __LINE__)
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
