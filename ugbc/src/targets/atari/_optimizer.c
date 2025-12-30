@@ -700,10 +700,11 @@ static void vars_clear(void) {
 
 /* gets (or creates) an entry for a variable from the data-base */
 struct var *vars_get(POBuffer _name) {
+
+    int i = 0;
+
     char *name = _name->str;
     struct var *ret = NULL;
-    int i;
-
     char *s=strchr(name,'+');
     if(s) *s='\0';
     
@@ -978,36 +979,37 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         struct var *v = vars_get(tmp);
         v->size = 1;
         v->init = strdup(isZero(arg->str) ? "1-1" : arg->str);
-        //printf( "%s detecting (size=%d)\n", v->name, v->size);
+        // printf( "%s detecting (size=%d)\n", v->name, v->size);
     }
 
     if( po_buf_match(buf[0], "*: .word *", tmp, arg) && vars_ok(tmp) && strchr(arg->str,',')==NULL ) {
         struct var *v = vars_get(tmp);
         v->size = 2;
         v->init = strdup(arg->str);
+        // printf( "%s detecting (size=%d)\n", v->name, v->size);
     }
 
     if( po_buf_match(buf[0], "*: .res *,*", tmp, arg, arg2) && vars_ok(tmp) ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = strdup( arg2->str );
-        //printf( "sizing %s size = %d\n", v->name, v->size );
+        // printf( "1) sizing %s size = %d\n", v->name, v->size );
     } else if( po_buf_match(buf[0], "*: .res *,*", tmp, arg, arg2) && vars_ok(tmp) ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = strdup( arg2->str );
-        //printf( "sizing %s size = %d\n", v->name, v->size );
+        // printf( "2) sizing %s size = %d\n", v->name, v->size );
     } else if( po_buf_match(buf[0], "*: .res *", tmp, arg) && vars_ok(tmp) ) {
         struct var *v = vars_get(tmp);
         v->size = atoi( arg->str );
         v->init = NULL;
-        //printf( "sizing %s size = %d\n", v->name, v->size );
+        // printf( "3) sizing %s size = %d\n", v->name, v->size );
     }
 
     if( po_buf_match(buf[0], " * *",   tmp, arg) ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         // printf( "%s checking (%d:%d)\n", v->name, v->offset, v->size);
-        if ( (v->offset > -2) ) {
+        if ( (v->offset != -3) ) {
             // printf( "%s candidate for inlining\n", v->name);
             v->offset = -1; /* candidate for inlining */
         }
@@ -1099,7 +1101,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     || po_buf_match( buf[0], "*: .res ", var)
     ) if(vars_ok(var)) {
         struct var *v = vars_get(var);
-        // printf( "try inlined: %s\n", v->name );
+        // printf( "try inlined: %s (%d)\n", v->name, v->size );
         // printf( " offset: %d\n", v->offset );
         if ( v->offset==-2  ) {
             // printf( " INLINED!\n" );
@@ -1180,9 +1182,9 @@ static void vars_relocate(Environment * _environment, POBuffer buf[LOOK_AHEAD]) 
     /* inlined */
    if(po_buf_match( buf[0], " * *", op, var) && vars_ok(var) && strstr( buf[0]->str, "#<") == NULL && strstr( buf[0]->str, "#>") == NULL ) {
         struct var *v = vars_get(var);
-        //printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
+        // printf( "%s rechecking (offset=%d, size=%d, chg_reg2=%d)\n", v->name, v->offset, v->size, chg_reg2(buf[0]) );
         if( v->offset == -1 && v->size == 1 && chg_reg2(op) ) {
-            //printf( "%s trying to inline\n", v->name);
+            // printf( "%s trying to inline\n", v->name);
             if ( strstr( var->str, "+" ) == NULL ) {
                 v->offset = -2;
                 v->flags |= NO_REMOVE;
@@ -1498,7 +1500,7 @@ static int optim_remove_locally_unused_temporary( Environment * _environment ) {
 
             while( !feof(fileAsm) ) {
 
-                po_buf_cpy(buf[0], buf[1]);
+                po_buf_cpy(buf[0], buf[1]->str);
                 po_buf_fgets(buf[1], fileAsm );
 
                 POBuffer result = po_buf_match(buf[1], " * *+1", v3, v4 );
@@ -1607,14 +1609,13 @@ static int optim_remove_locally_unused_temporary( Environment * _environment ) {
                 if ( ! result ) result = po_buf_match(buf[1], " * *", v1, v2 );
 
                 if ( v2->str ) {
-                    printf( " checking %s (%s)\n",  buf[0]->str, v2->str );
+                    // printf( " checking %s (%s)\n",  buf[0]->str, v2->str );
                     POVariable * variable = po_var_find( v2->str );
                     if ( variable ) {
-                        printf( " found (r=%d, w=%d)!\n", variable->nb_read, variable->nb_write );
+                        // printf( " found (r=%d, w=%d)!\n", variable->nb_read, variable->nb_write );
                         if ( 
                             (!variable->nb_read && variable->nb_write) ||
                             (variable->nb_read && !variable->nb_write) ) {
-                            printf( " commented!!\n" );
                             optim( buf[0], RULE "locally unused temporary", NULL );
                             ++changes;
                         }
