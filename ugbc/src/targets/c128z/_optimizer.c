@@ -237,6 +237,13 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
 		optim( buf[2], RULE "(LD A, x; LD (x), A; LD A, x)->(LD A, x; LD (x), A)", NULL );
     }
 
+    if( po_buf_match(buf[0], " LD HL, $*", v1)
+    &&  po_buf_match(buf[1], " LD A, $*", v2)
+    && (strtol(v1->str, NULL, 16) == strtol(v2->str, NULL, 16))
+        ) {
+        optim(buf[0], RULE "(LD HL, LD A, same value)->(LD A)", NULL );
+    }
+
     // ;Instead of
     // ld a,$42
     // ld (hl),a
