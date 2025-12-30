@@ -279,12 +279,10 @@ void cpu_ctoa( Environment * _environment ) {
 
     inline( cpu_ctoa )
 
-        outline1("BCS %syes", label );
         outline0("LDA #0");
-        outline1("JMP %s", label );
-        outhead1("%syes", label );
-        outline0("LDA #$ff");
-        outhead1("%s", label );
+        outline0("ROLA");
+        outline0("EORA #$FF");
+        outline0("ADDA #1");
 
     no_embedded( cpu_ctoa );
 

@@ -277,7 +277,8 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "DUFFDEVICE"))  return 0;
     if(po_buf_match(name, "_TAB"))  return 0;
     if(po_buf_match(name, "ISV"))  return 0;
-    
+    if(po_buf_match(name, "BINTO^"))  return 0;
+
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;
     if(po_buf_match(name, "XCUR"))    return 1;
@@ -436,7 +437,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 
     if ( _isZero(po_buf_match(buf[0], " LD* #*", v1, v2) )
-    &&   strchr("AB", _toUpper(*v1->str)) ) {
+    &&   strchr("AB", _toUpper(*v1->str))
+    && ( !po_buf_match(buf[1], " ROL*", v3) || (*v1->str != *v3->str) )
+    ) {
         optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*v1->str));
     }
 
@@ -892,6 +895,7 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if( po_buf_match(buf[0], " LDB *", v1)
     &&  po_buf_match(buf[1], " LDB *", v2)
+    &&  strstr( v2->str, "," ) == NULL
         ) {
         optim(buf[0], RULE "(LDB,LDB)->(LDB)", NULL );
         ++_environment->removedAssemblyLines;
@@ -904,6 +908,21 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ) {
         optim(buf[0], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", " CLRA" );
         optim(buf[1], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDD #$*", v1)
+    &&  po_buf_match(buf[1], " LDB #$*", v2)
+    && (strtol(v1->str, NULL, 16) == strtol(v2->str, NULL, 16))
+        ) {
+        optim(buf[0], RULE "(LDD#,LDB#, same value)->(LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDB #$*", v1)
+    &&  po_buf_match(buf[1], " LDD #$*", v2)
+        ) {
+        optim(buf[0], RULE "(LDB#,LDD#)->(LDD)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
