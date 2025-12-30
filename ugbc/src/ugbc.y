@@ -1679,9 +1679,16 @@ factor:
             variable_store_float( _environment, zero->name, 0 );
             $$ = variable_sub( _environment, zero->name, expr->name )->name;
         } else {
-            Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
-            variable_store( _environment, zero->name, 0 );
-            $$ = variable_sub( _environment, zero->name, expr->name )->name;
+            if ( expr->initializedByConstant ) {
+                Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+                variable_store( _environment, zero->name, -expr->value );
+                $$ = zero->name;
+                zero->initializedByConstant = 1;
+            } else {
+                Variable * zero = variable_temporary( _environment, VT_SIGN( expr->type ), "(zero)" );
+                variable_store( _environment, zero->name, 0 );
+                $$ = variable_sub( _environment, zero->name, expr->name )->name;
+            }
         }
       }
       ;
@@ -7114,10 +7121,19 @@ limits:
 
 add_definition :
     Identifier optional_field OP_COMMA expr {
-        if ( $2 ) {
-            variable_add_inplace_type_vars( _environment, $1, $2, $4 );
-        } else {
-            variable_add_inplace_vars( _environment, $1, $4 );
+        Variable * expr = variable_retrieve( _environment, $4 );
+        if ( expr->initializedByConstant ) {
+            if ( $2 ) {
+                variable_add_inplace_type( _environment, $1, $2, expr->value );
+            } else {
+                variable_add_inplace( _environment, $1, expr->value );
+            }
+        } else {            
+            if ( $2 ) {
+                variable_add_inplace_type_vars( _environment, $1, $2, $4 );
+            } else {
+                variable_add_inplace_vars( _environment, $1, $4 );
+            }
         }
     }
     | Identifier optional_field OP_COMMA OP_HASH const_expr {
