@@ -580,8 +580,8 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
         if ( _pattern ) {
             outline1("LDA %s", _pattern );
         } else {
-            outline0("LDA #0");
-        }
+            outline0("LDX #0");
+        }        
         outline1("LDX %s", _address);
         outline1("LDY #$%4.4x", _bytes );
         if ( _bytes < 256 ) {

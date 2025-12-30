@@ -577,12 +577,12 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
     embedded( cpu_fill, src_hw_6809_cpu_fill_asm );
 
         if ( _pattern ) {
-            outline1("LDX %s", _pattern );
+            outline1("LDA %s", _pattern );
         } else {
             outline0("LDX #0");
         }        
         outline1("LDX %s", _address);
-        outline1("LDB #$%4.4x", _bytes );
+        outline1("LDY #$%4.4x", _bytes );
         if ( _bytes < 256 ) {
             outline0("JSR CPUFILL8");
         } else {
