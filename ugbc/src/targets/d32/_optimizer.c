@@ -437,7 +437,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 
     if ( _isZero(po_buf_match(buf[0], " LD* #*", v1, v2) )
-    &&   strchr("AB", _toUpper(*v1->str)) ) {
+    &&   strchr("AB", _toUpper(*v1->str))
+    && ( !po_buf_match(buf[1], " ROL*", v3) || (*v1->str != *v3->str) )
+    ) {
         optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*v1->str));
     }
 
