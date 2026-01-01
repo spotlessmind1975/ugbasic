@@ -590,6 +590,10 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->putImageSafe;
         } else if ( strcmp( $1, "getImageSafe" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->getImageSafe;
+        } else if ( strcmp( $1, "stackStartAddress" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->stackStartAddress;
+        } else if ( strcmp( $1, "stackSize" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->stackSize;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;
@@ -793,6 +797,10 @@ embed2:
             }
         } else if ( strcmp( $3, "scaleX" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleX );
+        } else if ( strcmp( $3, "stackSize" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->stackSize );
+        } else if ( strcmp( $3, "stackStartAddress" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->stackStartAddress );
         } else if ( strcmp( $3, "scaleY" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleY );
         } else if ( strcmp( $3, "offsetX" ) == 0 ) {

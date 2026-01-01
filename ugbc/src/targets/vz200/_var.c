@@ -574,4 +574,10 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
+    outhead0("CODESTART:")
+    outline1("LD SP, $%4.4x", _environment->stackStartAddress);
+    cpu_call( _environment, "VARINIT" );
+    outline0("CALL PROTOTHREADINIT" );
+    outline0("JP CODEEND");
+    
 }

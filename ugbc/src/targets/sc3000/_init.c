@@ -134,20 +134,25 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    outhead0("SECTION code_user");
-    outhead0("ORG $0000");
-    outhead0("SECTION data_user");
-    outhead0("ORG $C000");
-    outhead0("SECTION code_user");
+    // outhead0("SECTION code_user");
+    // outhead0("ORG $0000");
+    // outhead0("SECTION data_user");
+    // outhead0("ORG $C000");
+    // outhead0("SECTION code_user");
 
-    deploy_inplace(startup,src_hw_sc3000_startup_asm);
-    deploy_deferred(startup,src_hw_sc3000_startup2_asm);
+    // deploy_inplace(startup,src_hw_sc3000_startup_asm);
+    // deploy_deferred(startup,src_hw_sc3000_startup2_asm);
 
-    outhead0("CODESTART:")
+    // outhead0("CODESTART:")
+    
+    // outline0("CALL VARINIT2");
+    // cpu_call( _environment, "VARINIT" );
 
-    outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
-   cpu_init( _environment );
+    cpu_init( _environment );
+    _environment->program.startingAddress = 0x305;
+    _environment->stackStartAddress = 0xc700;
+    _environment->stackSize = _environment->stackStartAddress - _environment->program.startingAddress;
+
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SC3000STARTUP");
     outline0("CALL SC3000STARTUP2" );
@@ -160,7 +165,7 @@ void target_initialization( Environment * _environment ) {
     // outline0("call	CheckIf60Hz");
     // outline0("ld		(VDP60HZ),a				; save it, 00/01 = 50/60 Hz		");
 
-   cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
+    cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
     variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );

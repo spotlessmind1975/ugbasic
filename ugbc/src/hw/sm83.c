@@ -114,6 +114,9 @@ void cpu_init( Environment * _environment ) {
     variable_import( _environment, "HLP", VT_WORD, 0 );
     variable_global( _environment, "HLP" );
 
+    _environment->stackSize = 0xfffe - 0xff80;
+    _environment->stackStartAddress = 0xfffe;
+
 }
 
 void cpu_nop( Environment * _environment ) {

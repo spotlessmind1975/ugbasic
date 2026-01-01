@@ -44,6 +44,9 @@
 
 void cpu_init( Environment * _environment ) {
 
+    _environment->stackSize = 0xffff;
+    _environment->stackStartAddress = 0x0000;
+
     char duffDevice[38] = {
         // +00
         0x18, 0x00, 0xED, 0xA0, 0xED, 0xA0, 0xED, 0xA0,

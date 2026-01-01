@@ -9219,7 +9219,16 @@ audio_source :
     };
 
 define_definition :
-    CHAIN {
+    STACK const_expr {
+        ((struct _Environment *)_environment)->stackSize = $2;
+    }
+    | STACK SIZE const_expr {
+        ((struct _Environment *)_environment)->stackSize = $3;
+    }
+    | STACK START const_expr {
+        ((struct _Environment *)_environment)->stackStartAddress = $3;
+    }
+    | CHAIN {
         ((struct _Environment *)_environment)->chainUsed = 1;
     }
     | SET LINE {
