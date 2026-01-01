@@ -47,6 +47,7 @@ void target_initialization( Environment * _environment ) {
     _environment->joystickConfig.notEmulated = 1;
 
     cpu_init( _environment );
+    _environment->stackSize = 256;
 
     int allowed[] = { 6, 5, 4, 3, 2 };
 
