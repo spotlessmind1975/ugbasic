@@ -559,9 +559,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("ORG $2800");
     outline0("JMP CODESTART" );
     if ( ( _environment->program.startingAddress - 0x2800 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) - 512 - 3 );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) - _environment->stackSize - 3 );
     }
-    outhead0("IRQSTACKBEGIN rzb 510");
+    outhead1("IRQSTACKBEGIN rzb %d", _environment->stackSize - 2 );
     outhead0("IRQSTACKEND fcb $00, 00");
     outhead0("CODESTART");
     outline0("LDS #IRQSTACKEND");

@@ -42,8 +42,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    _environment->program.startingAddress = 0x100;
-
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
     _environment->audioConfig.async = 1;
@@ -125,10 +123,14 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
+    _environment->stackStartAddress = 0xc000;
+
     outhead0("CODESTART:")
-    outline0("LD SP, $C000");
+    outline1("LD SP, $%4.4x", _environment->stackStartAddress );
 
     cpu_init( _environment );
+    _environment->program.startingAddress = 0x100;
+    _environment->stackSize = _environment->stackStartAddress - _environment->program.startingAddress;
 
     // outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );

@@ -761,7 +761,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("LDS #STACK");
     outline0("JMP CODESTART2");
     outhead0("STACK");
-    outline0("rzb 256");
+    outline1("rzb %d", _environment->stackSize);
     outhead0("STACKEND");
 
     Bank * bank = _environment->expansionBanks;

@@ -146,7 +146,9 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL COLECOSTARTUP2");
 
-   cpu_init( _environment );
+    cpu_init( _environment );
+    _environment->program.startingAddress = 0x73b8;
+    _environment->stackSize = 128;
 
     outline0("CALL PROTOTHREADINIT" );
 

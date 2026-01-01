@@ -3282,6 +3282,10 @@ typedef struct _Environment {
 
     int gprintInline;
     
+    int stackSize;
+
+    int stackStartAddress;
+
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

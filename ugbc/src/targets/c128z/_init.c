@@ -156,9 +156,9 @@ void target_initialization( Environment * _environment ) {
     // deploy_inplace( startup, src_hw_c128z_startup_asm);
     // deploy_deferred( startup, src_hw_c128z_startup2_asm);
 
-    outhead0("CODESTART:")
+    // outhead0("CODESTART:")
 
-   cpu_init( _environment );
+    cpu_init( _environment );
 
     // outline0("CALL VARINIT2");
     cpu_call( _environment, "VARINIT" );
