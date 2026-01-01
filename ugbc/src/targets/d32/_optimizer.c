@@ -302,6 +302,8 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "CURRENTMODE"))   return 1;
     if(po_buf_match(name, "BITMAPADDRESS"))   return 1;
     if(po_buf_match(name, "COLORMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "DATAPTR"))   return 1;
+    if(po_buf_match(name, "DOJOERROR"))   return 1;
 
     return 0;
 }
