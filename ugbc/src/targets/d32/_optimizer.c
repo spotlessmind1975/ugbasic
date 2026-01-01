@@ -306,6 +306,12 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v4 = TMP_BUF;
     POBuffer v5 = TMP_BUF;
 
+    if ( po_buf_match( buf[0], " CLRA" )
+    &&   po_buf_match( buf[1], " ANDA") ) {
+        optim( buf[1], RULE "(CLEAR*,?,AND*)->(CLEAR*)", NULL);
+        ++_environment->removedAssemblyLines;
+    }
+
     /* move B stuff after A stuff */
     if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0]) && strstr(v1->str, "BASE_SEGMENT" ) == NULL
     &&  sets_flag(buf[1], 'A') 
@@ -2705,6 +2711,7 @@ void target_peephole_optimizer( Environment * _environment ) {
                 --optimization_limit_count;
             };
             optim_pass(_environment, buf, DEADVARS);
+            optim_remove_unused_temporary( _environment );
         } while(change&&optimization_limit_count);
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);
