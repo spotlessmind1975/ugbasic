@@ -439,7 +439,6 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
-    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
@@ -812,7 +811,6 @@ void ef936x_initialization( Environment * _environment ) {
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
-    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
