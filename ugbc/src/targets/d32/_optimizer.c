@@ -292,6 +292,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "FREE_"))   return 1;
     if(po_buf_match(name, "CONSOLE"))   return 1;
     if(po_buf_match(name, "ORIGIN"))   return 1;
+    if(po_buf_match(name, "RESOLUTION"))   return 1;
 
     return 0;
 }
