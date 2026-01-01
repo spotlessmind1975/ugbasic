@@ -37,6 +37,8 @@
 
 BANKSHADOWPREV     fcb     $0
 
+@IF bankAccessOptimization.readn
+
 ; Move data from bank to main memory.
 ;
 ; B : number of bank 
@@ -82,6 +84,10 @@ BANKREAD
 
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.read1
+
 ; Move data (1 byte) from bank to main memory.
 ;
 ; B : number of bank 
@@ -110,6 +116,10 @@ BANKREAD1
 
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.read2
+
 ; Move data (2 bytes) from bank to main memory.
 ;
 ; B : number of bank 
@@ -137,6 +147,10 @@ BANKREAD2
     ANDCC #$AF
 
     RTS
+
+@ENDIF
+
+@IF bankAccessOptimization.read4
 
 ; Move data (4 bytes) from bank to main memory.
 ;
@@ -167,6 +181,8 @@ BANKREAD4
     ANDCC #$AF
 
     RTS
+
+@ENDIF
 
 ; Uncompress directly the data from bank.
 ;
@@ -203,6 +219,8 @@ BANKUNCOMPRESS
     LDD #$FFFF
 
     RTS
+
+@IF bankAccessOptimization.writen
 
 ; Move data to bank from main memory.
 ;
@@ -244,6 +262,10 @@ BANKWRITE
 
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.write1
+
 ; Move data (1 byte) to bank from main memory.
 ;
 ; Y : address from memory 
@@ -275,6 +297,10 @@ BANKWRITE1
 
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.write2
+
 ; Move data (2 bytes) to bank from main memory.
 ;
 ; Y : address from memory 
@@ -305,6 +331,10 @@ BANKWRITE2
     ANDCC #$AF
 
     RTS
+
+@ENDIF
+
+@IF bankAccessOptimization.write4
 
 ; Move data (4 bytes) to bank from main memory.
 ;
@@ -338,3 +368,5 @@ BANKWRITE4
     ANDCC #$AF
 
     RTS
+
+@ENDIF

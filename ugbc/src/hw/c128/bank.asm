@@ -83,6 +83,8 @@ BANKREADGBNSKIPPAGE:
 BANKREADGBHDONE:
     RTS
 
+@IF bankAccessOptimization.read1
+
 ; Read 1 byte from geoRAM to memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -94,6 +96,10 @@ BANKREAD1:
     LDA #0
     STA MATHPTR1
     JMP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.read2
 
 ; Read 2 byte(s) from geoRAM to memory
 ; A : bank
@@ -107,6 +113,10 @@ BANKREAD2:
     STA MATHPTR1
     JMP BANKREADG
 
+@ENDIF
+
+@IF bankAccessOptimization.read4
+
 ; Read 4 byte(s) from geoRAM to memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -118,6 +128,10 @@ BANKREAD4:
     LDA #0
     STA MATHPTR1
     JMP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.readn
 
 ; Read n byte(s) from geoRAM to memory
 ; A : bank
@@ -132,7 +146,9 @@ BANKREAD:
     JMP BANKREADG
 BANKREADX:
     RTS
-    
+
+@ENDIF
+
 ; General write data to geoRAM from memory
 ; TMPPTR: source memory address (0...64KB)
 ; A : bank
@@ -179,6 +195,8 @@ BANKWRITEGBNSKIPPAGE:
 BANKWRITEGBHDONE:
     RTS
 
+@IF bankAccessOptimization.write1
+
 ; Write 1 byte(s) to geoRAM from memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -190,6 +208,10 @@ BANKWRITE1:
     LDA #0
     STA MATHPTR1
     JMP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.write2
 
 ; Write 2 byte(s) to geoRAM from memory
 ; A : bank
@@ -203,6 +225,10 @@ BANKWRITE2:
     STA MATHPTR1
     JMP BANKWRITEG
 
+@ENDIF
+
+@IF bankAccessOptimization.write4
+
 ; Write 4 byte(s) to geoRAM from memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -214,6 +240,10 @@ BANKWRITE4:
     LDA #0
     STA MATHPTR1
     JMP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.writen
 
 ; Write n byte(s) to geoRAM from memory
 ; A : bank
@@ -228,3 +258,6 @@ BANKWRITE:
     JMP BANKWRITEG
 BANKWRITEX:
     RTS
+
+@ENDIF
+

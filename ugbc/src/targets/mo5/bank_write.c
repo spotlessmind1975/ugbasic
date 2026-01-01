@@ -85,16 +85,20 @@ void bank_write_semi_var( Environment * _environment, char * _address2, int _ban
     switch( _size ) {
         case 1:
             outline0("JSR BANKWRITE1");
+            _environment->bankAccessOptimization.write1 = 1;
             break;
         case 2:
             outline0("JSR BANKWRITE2");
+            _environment->bankAccessOptimization.write2 = 1;
             break;
         case 4:
             outline0("JSR BANKWRITE4");
+            _environment->bankAccessOptimization.write4 = 1;
             break;
         default:
             outline1("LDD #$%4.4x", _size );
             outline0("JSR BANKWRITE");
+            _environment->bankAccessOptimization.writen = 1;
             break;
 
     }
@@ -143,16 +147,20 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
     switch( _size ) {
         case 1:
             outline0("JSR BANKWRITE1");
+            _environment->bankAccessOptimization.write1 = 1;
             break;
         case 2:
             outline0("JSR BANKWRITE2");
+            _environment->bankAccessOptimization.write2 = 1;
             break;
         case 4:
             outline0("JSR BANKWRITE4");
+            _environment->bankAccessOptimization.write4 = 1;
             break;
         default:
             outline1("LDD #$%4.4x", _size );
             outline0("JSR BANKWRITE");
+            _environment->bankAccessOptimization.writen = 1;
             break;
 
     }

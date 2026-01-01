@@ -851,6 +851,8 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART");
 
+    deploy_inplace_preferred( bank, src_hw_c64_bank_asm );
+
     if ( _environment->chainUsed ) {
         _environment->sysCallUsed = 1;
         deploy_preferred( syscall, src_hw_c64_syscall_asm);

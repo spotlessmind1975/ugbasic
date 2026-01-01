@@ -48,7 +48,7 @@
  */
 void bank_write_vars( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -68,7 +68,7 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
 
 void bank_write_vars_direct( Environment * _environment, char * _address1, char * _bank, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -88,7 +88,7 @@ void bank_write_vars_direct( Environment * _environment, char * _address1, char 
 
 void bank_write_vars_bank_direct_size( Environment * _environment, char * _address1, int _bank, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
@@ -100,19 +100,23 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
         case 1:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKWRITE1");
+            _environment->bankAccessOptimization.write1 = 1;
             break;
         case 2:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKWRITE2");
+            _environment->bankAccessOptimization.write2 = 1;
             break;
         case 4:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKWRITE4");
+            _environment->bankAccessOptimization.write4 = 1;
             break;
         default:
             outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKWRITE");
+            _environment->bankAccessOptimization.write = 1;
             break;
 
     }

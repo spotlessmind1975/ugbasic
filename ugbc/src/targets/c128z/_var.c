@@ -435,6 +435,7 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace( startup, src_hw_c128z_startup_asm);
     deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
+    deploy_inplace_preferred( bank, src_hw_c128z_bank_asm );
     deploy( startup, src_hw_c128z_startup2_asm);
 
     generate_cgoto_address_table( _environment );

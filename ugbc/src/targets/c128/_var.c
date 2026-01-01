@@ -894,6 +894,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dload, src_hw_c128_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_c128_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
+    deploy_inplace_preferred( bank, src_hw_c128_bank_asm );
 
     // outhead0(".segment \"CODE\"" );
 

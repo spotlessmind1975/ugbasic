@@ -464,6 +464,26 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "bankAccessOptimization" ) == 0 ) {
+            if ( strcmp( $3, "read1" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read1;
+            } else if ( strcmp( $3, "read2" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read2;
+            } else if ( strcmp( $3, "read4" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read4;
+            } else if ( strcmp( $3, "readn" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.readn;
+            } else if ( strcmp( $3, "write1" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read1;
+            } else if ( strcmp( $3, "write2" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read2;
+            } else if ( strcmp( $3, "write4" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read4;
+            } else if ( strcmp( $3, "writen" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.readn;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "fontConfig" ) == 0 ) {
             if ( strcmp( $3, "schema" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->fontConfig.schema;

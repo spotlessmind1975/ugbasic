@@ -599,6 +599,7 @@ void variable_cleanup( Environment * _environment ) {
                 outhead1("BANKREADBANK%2.2xXS", bank->id );
                 outline1("LDB #$%2.2x", bank->id );
                 outline0("JMP BANKREAD" );
+                _environment->bankAccessOptimization.readn = 1;
             }
             bank = bank->next;
         }

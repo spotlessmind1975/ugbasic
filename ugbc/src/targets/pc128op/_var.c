@@ -778,6 +778,7 @@ void variable_cleanup( Environment * _environment ) {
             outline1("LDB #$%2.2x", bank->id );
             // outline0("LEAY $6000,Y" );
             outline0("JMP BANKREAD" );
+            _environment->bankAccessOptimization.readn = 1;
 
             outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
             outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );

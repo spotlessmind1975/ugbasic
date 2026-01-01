@@ -113,6 +113,8 @@ BANKREADGBNSKIPPAGE:
 BANKREADGBHDONE:
     RET
 
+@IF bankAccessOptimization.read1
+
 ; Read 1 byte from geoRAM to memory
 ; A : bank
 ; HL: source memory address
@@ -121,6 +123,10 @@ BANKREAD1:
     LD (BANKREADGB+1), A
     LD BC, 1
     JP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.read2
 
 ; Read 2 byte(s) from geoRAM to memory
 ; A : bank
@@ -131,6 +137,10 @@ BANKREAD2:
     LD BC, 2
     JP BANKREADG
 
+@ENDIF
+
+@IF bankAccessOptimization.read4
+
 ; Read 4 byte(s) from geoRAM to memory
 ; A : bank
 ; HL: source memory address
@@ -139,6 +149,10 @@ BANKREAD4:
     LD (BANKREADGB+1), A
     LD BC, 4
     JP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.readn
 
 ; Read n byte(s) from geoRAM to memory
 ; A : bank
@@ -154,7 +168,9 @@ BANKREAD:
     JP BANKREADG
 BANKREADX:
     RET
-    
+
+@ENDIF
+
 ; General write data to geoRAM from memory
 ; HL: source memory address (0...64KB)
 ; DE: destination memory address (0...16KB)
@@ -196,6 +212,8 @@ BANKWRITEGBNSKIPPAGE:
 BANKWRITEGBHDONE:
     RET
 
+@IF bankAccessOptimization.write1
+
 ; Write 1 byte(s) to geoRAM from memory
 ; A : bank
 ; HL: source memory address
@@ -204,6 +222,10 @@ BANKWRITE1:
     LD (BANKWRITEGB+1), A
     LD BC, 1
     JP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.write2
 
 ; Write 2 byte(s) to geoRAM from memory
 ; A : bank
@@ -214,6 +236,10 @@ BANKWRITE2:
     LD BC, 2
     JP BANKWRITEG
 
+@ENDIF
+
+@IF bankAccessOptimization.write4
+
 ; Write 4 byte(s) to geoRAM from memory
 ; A : bank
 ; HL: source memory address
@@ -222,6 +248,10 @@ BANKWRITE4:
     LD (BANKWRITEGB+1), A
     LD BC, 4
     JP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.writen
 
 ; Write n byte(s) to geoRAM from memory
 ; A : bank
@@ -236,3 +266,5 @@ BANKWRITE:
     JP BANKWRITEG
 BANKWRITEX:
     RET
+
+@ENDIF

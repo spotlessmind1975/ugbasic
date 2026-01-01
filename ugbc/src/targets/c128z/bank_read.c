@@ -49,7 +49,7 @@
 
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     outline1("LD HL, $%4.4x", (unsigned char) ( _address1 & 0xffff ) );
     outline1("LD DE, %s", _address2 );
@@ -58,14 +58,17 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
         case 1:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LD BC, $%4.4x", (unsigned short) (_size&0xffff) );
@@ -91,7 +94,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -110,7 +113,7 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -129,7 +132,7 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
 
 void bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -143,19 +146,23 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
         case 1:
             outline1("LD A, (%s)", bank->realName );
             outline0("CALL BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LD A, (%s)", bank->realName );
             outline0("CALL BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LD A, (%s)", bank->realName );
             outline0("CALL BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
             outline1("LD A, (%s)", bank->realName );
             outline0("CALL BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -165,7 +172,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
 
 void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c128z_bank_asm );
+    deploy_preferred( bank, src_hw_c128z_bank_asm );
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
@@ -177,19 +184,23 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
         case 1:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
