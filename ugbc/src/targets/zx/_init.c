@@ -133,21 +133,18 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
     variable_global( _environment, "DOJOERROR" );
 
-    // outhead0("ORG 32768");
+    outhead0("org 32768");
 
-    // outhead0("CODESTART:");
+    outhead0("CODESTART:");
 
-    cpu_init( _environment );
-    _environment->program.startingAddress = 0x8000;
-    _environment->stackStartAddress = 0x7fe8;
-    _environment->stackSize = _environment->stackStartAddress - 0x4000;
+   cpu_init( _environment );
 
     deploy_deferred( startup, src_hw_zx_startup_asm);
-    // outline0("CALL ZXSTARTUP");
+    outline0("CALL ZXSTARTUP");
 
-    // cpu_call( _environment, "VARINIT" );
-    // outline0("CALL PROTOTHREADINIT" );
-    // outline0("CALL ZXSTARTUP2" );
+    cpu_call( _environment, "VARINIT" );
+    outline0("CALL PROTOTHREADINIT" );
+    outline0("CALL ZXSTARTUP2" );
 
     setup_text_variables( _environment );
 

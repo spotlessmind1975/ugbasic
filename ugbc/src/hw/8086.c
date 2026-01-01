@@ -44,9 +44,6 @@
 
 void cpu_init( Environment * _environment ) {
 
-    _environment->stackSize = 0xffff;
-    _environment->stackStartAddress = 0x0000;
-
 }
 
 void cpu_nop( Environment * _environment ) {

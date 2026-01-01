@@ -3251,10 +3251,6 @@ typedef struct _Environment {
 
     int chainUsed;
 
-    int stackSize;
-
-    int stackStartAddress;
-
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */

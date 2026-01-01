@@ -46,8 +46,6 @@
 
 void cpu_init( Environment * _environment ) {
 
-    _environment->stackSize = 256;
-    
 }
 
 void cpu_nop( Environment * _environment ) {

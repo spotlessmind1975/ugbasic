@@ -688,9 +688,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("STA $FFDF");
     outline0("JMP CODESTART")
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - _environment->stackSize );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 );
     }
-    outhead1("IRQSTACK0 rzb %d", _environment->stackSize );
+    outhead0("IRQSTACK0 rzb 512");
     outhead0("IRQSTACK");
     outhead0("COCO3STARTUP2")
     if (_environment->dojoOnVirtualizedFujiNet ) {

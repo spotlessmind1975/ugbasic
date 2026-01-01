@@ -44,8 +44,6 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
-    _environment->program.startingAddress = 0x145;
-
     _environment->audioConfig.async = 1;
 
     variable_import( _environment, "PPIKEYBOARD", VT_BYTE, 0 );
@@ -118,23 +116,21 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    // outhead0("SECTION code_user");
-    // outhead0("ORG $0000");
-    // outhead0("SECTION data_user");
-    // outhead0("ORG $C000");
-    // outhead0("SECTION code_user");
+    outhead0("SECTION code_user");
+    outhead0("ORG $0000");
+    outhead0("SECTION data_user");
+    outhead0("ORG $C000");
+    outhead0("SECTION code_user");
 
-    // deploy_inplace(startup,src_hw_sg1000_startup_asm);
-    // deploy_deferred(startup,src_hw_sg1000_startup2_asm);
+    deploy_inplace(startup,src_hw_sg1000_startup_asm);
+    deploy_deferred(startup,src_hw_sg1000_startup2_asm);
 
-    // outhead0("CODESTART:")
+    outhead0("CODESTART:")
     
-    // outline0("CALL VARINIT2");
-    // cpu_call( _environment, "VARINIT" );
+    outline0("CALL VARINIT2");
+    cpu_call( _environment, "VARINIT" );
 
-    cpu_init( _environment );
-    _environment->stackStartAddress = 0xc700;
-    _environment->stackSize = _environment->stackStartAddress - _environment->program.startingAddress;
+   cpu_init( _environment );
 
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL SG1000STARTUP");

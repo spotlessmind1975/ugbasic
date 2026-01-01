@@ -98,6 +98,8 @@ void target_finalization( Environment * _environment ) {
     // outline0("RET");
 
     // outhead0("CODEEND:");
+
+    buffered_prepend_output( _environment );
     
 }
 

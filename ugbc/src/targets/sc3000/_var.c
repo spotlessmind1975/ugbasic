@@ -198,7 +198,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
 
                     } else {
                         outhead0("section data_user");
-                    }                
+                    }
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
@@ -318,6 +318,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         } else {
                             outhead0("section code_user");
                         }
+
                     }
 
                     break;
@@ -399,8 +400,8 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline0( "dw $ffff, DATAPTRE" );
         }
-    }  
-        
+    }    
+    
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
@@ -424,7 +425,7 @@ void variable_cleanup( Environment * _environment ) {
                     actualVariable = actualVariable->next;
                 }
                 outhead1("fs%4.4xoffsetsequence:", actual->size );
-                outhead1("fs%4.4xoffsetframe:", actual->size );                   
+                outhead1("fs%4.4xoffsetframe:", actual->size );                    
                 outline0("LD L, A" );
                 outline0("LD H, 0" );
                 outline0("ADD HL, HL" );
@@ -469,7 +470,7 @@ void variable_cleanup( Environment * _environment ) {
     generate_cgoto_address_table( _environment );
 
     banks_generate( _environment );
-    
+
     Constant * c = _environment->constants;
     while( c ) {
         if ( c->valueString ) {
@@ -565,7 +566,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
         outhead0("DATAPTRE:");
     }
-        
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
@@ -610,22 +611,5 @@ void variable_cleanup( Environment * _environment ) {
         outline0("RET" );
     }
 
-    buffered_push_output( _environment );
-
-    outhead0("SECTION code_user");
-    outhead0("ORG $0000");
-    outhead0("SECTION data_user");
-    outhead0("ORG $C000");
-    outhead0("SECTION code_user");
-
-    deploy_inplace(startup,src_hw_sg1000_startup_asm);
-    deploy_inplace(startup,src_hw_sg1000_startup2_asm);
-
-    outhead0("CODESTART:")
-    
-    outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
-
-    buffered_prepend_output( _environment );
 
 }

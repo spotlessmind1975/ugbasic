@@ -120,15 +120,13 @@ void target_initialization( Environment * _environment ) {
     bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
     bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
 
-    // outhead0("CODESTART:")
+    outhead0("CODESTART:")
 
     cpu_init( _environment );
-    _environment->stackStartAddress = 0xfe92;
-    _environment->stackSize = 256;
 
     // outline0("CALL VARINIT2");
-    // cpu_call( _environment, "VARINIT" );
-    // outline0("CALL PROTOTHREADINIT" );
+    cpu_call( _environment, "VARINIT" );
+    outline0("CALL PROTOTHREADINIT" );
 
     setup_text_variables( _environment );
 

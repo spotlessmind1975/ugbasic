@@ -42,9 +42,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    cpu_init( _environment );
     _environment->program.startingAddress = 0x2a00;
-    _environment->stackSize = 512;
+
+    cpu_init( _environment );
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xe000, 0xff00 );
 

@@ -550,7 +550,6 @@ void variable_cleanup( Environment * _environment ) {
         outline0("DEFW $0");
 
         outhead0("CODESTART:")
-        outline1("LD SP, $%4.4x", _environment->stackStartAddress );
         
         outline0("CALL $0138");
         outline0("RRCA");

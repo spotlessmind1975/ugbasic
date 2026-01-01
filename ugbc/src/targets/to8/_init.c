@@ -45,7 +45,6 @@ void target_initialization( Environment * _environment ) {
     _environment->program.startingAddress = 0x6400;
 
     cpu_init( _environment );
-    _environment->stackSize = 256;
 
     int * bankIds = NULL;
     int bankMax = 0;

@@ -561,7 +561,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outline1("ORG $%4.4x", _environment->program.startingAddress);
     outhead0("CODESTART");
-    outline1("LDS #$%4.4x", _environment->stackStartAddress);
+    outline0("LDS #$A000");
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
