@@ -14,8 +14,8 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,sg1000,sc3
 
     CLS
 
-    b = #[48454c4c4f]
-    c = #[574f524c440a]
+    b = [48454c4c4f]
+    c = [574f524c440a]
 
     PRINT "b = ";b
     PRINT "c = ";c

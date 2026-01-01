@@ -75,7 +75,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
         default:
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
-            _environment->bankAccessOptimization.read = 1;
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
