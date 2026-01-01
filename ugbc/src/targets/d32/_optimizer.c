@@ -290,6 +290,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "XGR"))     return 1;
     if(po_buf_match(name, "YGR"))     return 1;
     if(po_buf_match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CONSOLE"))   return 1;
 
     return 0;
 }
@@ -1532,7 +1533,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
-    
+
     /* unread */
     if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
