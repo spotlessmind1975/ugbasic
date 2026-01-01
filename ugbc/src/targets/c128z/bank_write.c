@@ -116,7 +116,7 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
             outline1("LD BC, $%4.4x", (unsigned short) ( _size & 0xffff ) );
             outline1("LD A, $%2.2x", _bank );
             outline0("CALL BANKWRITE");
-            _environment->bankAccessOptimization.write = 1;
+            _environment->bankAccessOptimization.writen = 1;
             break;
 
     }
