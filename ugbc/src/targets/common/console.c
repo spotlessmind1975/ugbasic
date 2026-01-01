@@ -40,33 +40,44 @@
 
 void console_init( Environment * _environment ) {
 
-    _environment->activeConsole.x1 = 0;
-    _environment->activeConsole.y1 = 0;
-    _environment->activeConsole.x2 = _environment->screenTilesWidth-1;
-    _environment->activeConsole.y2 = _environment->screenTilesHeight-1;
-    _environment->activeConsole.width = _environment->screenTilesWidth;
-    _environment->activeConsole.height = _environment->screenTilesHeight;
+    if ( 
+        _environment->activeConsole.x1 || 
+        _environment->activeConsole.y1 ||
+        (_environment->activeConsole.x2 != _environment->screenTilesWidth-1) ||
+        (_environment->activeConsole.y2 != _environment->screenTilesHeight-1) ||
+        (_environment->activeConsole.width != _environment->screenTilesWidth) ||
+        (_environment->activeConsole.height != _environment->screenTilesHeight)
+      ) {
 
-    for( int i=0; i<MAX_CONSOLES; ++i ) {
-        _environment->activeConsole.id = i;
-        memcpy( &_environment->consoles[i], &_environment->activeConsole, sizeof( Console ) );
-    }
+        _environment->activeConsole.x1 = 0;
+        _environment->activeConsole.y1 = 0;
+        _environment->activeConsole.x2 = _environment->screenTilesWidth-1;
+        _environment->activeConsole.y2 = _environment->screenTilesHeight-1;
+        _environment->activeConsole.width = _environment->screenTilesWidth;
+        _environment->activeConsole.height = _environment->screenTilesHeight;
 
-    _environment->activeConsole.id = 0;
+        for( int i=0; i<MAX_CONSOLES; ++i ) {
+            _environment->activeConsole.id = i;
+            memcpy( &_environment->consoles[i], &_environment->activeConsole, sizeof( Console ) );
+        }
 
-    variable_store( _environment, "XCURSYS", _environment->activeConsole.x1 );
-    variable_store( _environment, "YCURSYS", _environment->activeConsole.y1 );
+        _environment->activeConsole.id = 0;
 
-    console_calculate( _environment );
+        variable_store( _environment, "XCURSYS", _environment->activeConsole.x1 );
+        variable_store( _environment, "YCURSYS", _environment->activeConsole.y1 );
 
-    variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
-    variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
-    variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
-    variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
-    variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
-    variable_store( _environment, "CONSOLEH", _environment->activeConsole.height );
-    
-    console_calculate( _environment );
+        console_calculate( _environment );
+
+        variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
+        variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
+        variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
+        variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
+        variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
+        variable_store( _environment, "CONSOLEH", _environment->activeConsole.height );
+        
+        console_calculate( _environment );
+
+      }
 
 }
 
