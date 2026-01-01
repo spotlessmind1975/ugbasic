@@ -293,6 +293,12 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "CONSOLE"))   return 1;
     if(po_buf_match(name, "ORIGIN"))   return 1;
     if(po_buf_match(name, "RESOLUTION"))   return 1;
+    if(po_buf_match(name, "TILEMAPVISIBLE"))   return 1;
+    if(po_buf_match(name, "DOUBLEBUFFERENABLED"))   return 1;
+    if(po_buf_match(name, "LINE"))   return 1;
+    if(po_buf_match(name, "XSCROLL"))   return 1;
+    if(po_buf_match(name, "YSCROLL"))   return 1;
+    if(po_buf_match(name, "BLIT"))   return 1;
 
     return 0;
 }

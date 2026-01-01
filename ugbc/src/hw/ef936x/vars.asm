@@ -40,7 +40,7 @@ PLOTC2DEST equ $4F ; $25
 
 XGR    fdb 0
 YGR    fdb 0
-LINE   fcb $ff, $ff
+LINE   fdb $ffff
 
 CLIPX1    fdb 0
 CLIPY1    fdb 0
