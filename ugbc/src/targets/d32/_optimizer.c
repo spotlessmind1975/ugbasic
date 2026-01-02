@@ -945,6 +945,15 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " LDD *", v1) && po_buf_match(buf[1], " LDD *", v2 ) ) {
+        optim(buf[0], RULE "(LDD,LDD)->(LDD)", NULL );
+    }
+
+    if( po_buf_match(buf[0], " CLRA") && po_buf_match(buf[1], " CLRB" ) && po_buf_match(buf[2], " LDD *", v1 ) ) {
+        optim(buf[0], RULE "(CLRA,CLRB,LDD)->(LDD)", NULL );
+        optim(buf[1], RULE "(CLRA,CLRB,LDD)->(LDD)", NULL );
+    }
+
     if( po_buf_match(buf[0], " LDD #0000") || po_buf_match(buf[0], " LDD #$0000") ) {
         optim(buf[0], RULE "(LDD#0000)->(CLRA, CLRB)", "\tCLRA\n\tCLRB" );
     }
