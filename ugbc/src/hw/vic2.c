@@ -1222,6 +1222,8 @@ void console_calculate_vars( Environment * _environment ) {
 
     deploy( console, src_hw_vic2_console_asm );
 
+    _environment->dynamicConsole = 1;
+
     outline0( "JSR CONSOLECALCULATE" );
 
 }

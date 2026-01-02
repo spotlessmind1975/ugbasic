@@ -614,6 +614,8 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->stackStartAddress;
         } else if ( strcmp( $1, "stackSize" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->stackSize;
+        } else if ( strcmp( $1, "dynamicConsole" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->dynamicConsole;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;

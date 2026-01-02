@@ -772,6 +772,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+    
     if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
         outline0( "JSR CONSOLECALCULATE" );
     }

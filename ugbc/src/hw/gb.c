@@ -758,6 +758,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     outline0( "CALL CONSOLECALCULATE" );
 
 }
