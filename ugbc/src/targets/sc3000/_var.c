@@ -625,8 +625,8 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("ORG $C000");
     outhead0("SECTION code_user");
 
-    deploy_inplace(startup,src_hw_sg1000_startup_asm);
-    deploy_inplace(startup,src_hw_sg1000_startup2_asm);
+    deploy_inplace(startup,src_hw_sc3000_startup_asm);
+    deploy_inplace(startup,src_hw_sc3000_startup2_asm);
 
     outhead0("CODESTART:")
     
