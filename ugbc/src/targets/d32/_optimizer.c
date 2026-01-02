@@ -964,6 +964,18 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         optim(buf[0], RULE "(LDD#,LDB#)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
     }
 
+    if( po_buf_match(buf[0], " LDD #$*", v1)
+    &&  po_buf_match(buf[1], " CLRB")
+        ) {
+        optim(buf[0], RULE "(LDD#,CLRB)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
+    }
+
+    if( po_buf_match(buf[0], " CLRB", v1)
+    &&  po_buf_match(buf[1], " LDD")
+        ) {
+        optim(buf[0], RULE "(CLRB,LDD)->(LDD)", NULL );
+    }
+
     if( po_buf_match(buf[0], " CLRA")
     &&  po_buf_match(buf[1], " LDD *", v1)
         ) {
