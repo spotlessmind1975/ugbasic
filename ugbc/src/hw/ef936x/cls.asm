@@ -70,7 +70,9 @@ CLS2
     LDU #0
     LEAU B,U
     TFR A,B
+@IF ( !vestigialConfig.screenModeUnique )
     BRA CLSG
+@ENDIF
 @ENDIF
 
 
@@ -82,7 +84,9 @@ CLS3
     MUL
     TFR B,A
     TFR D,U
+@IF ( !vestigialConfig.screenModeUnique )
     BRA CLSG
+@ENDIF
 @ENDIF
 
 @IF ( ! vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 4 ) )
