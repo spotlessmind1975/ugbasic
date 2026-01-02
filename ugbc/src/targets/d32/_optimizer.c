@@ -939,8 +939,6 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[1], " LDB #$*", v3, v2)
         ) {
         optim(buf[0], RULE "(LDD#,LDB#)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
-        optim(buf[1], RULE "(LDD#,LDB#)->(LDA)", NULL );
-        ++_environment->removedAssemblyLines;
     }
 
     if( po_buf_match(buf[0], " CLRA")
