@@ -861,7 +861,7 @@ void variable_cleanup( Environment * _environment ) {
         if ( bank->address ) {
             outline1("fcb $%2.2x", bank->id);
         } else {
-            outline0("fcb $ff");
+            break;
         }
 
         bank = bank->next;
