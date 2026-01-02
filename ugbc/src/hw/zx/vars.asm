@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -142,7 +142,7 @@ ROWSADDRESS:
     DEFW 19488
     DEFW 19744
     DEFW 20000
-    DEFW 20256
+    DEFW 20266
     DEFW 18496
     DEFW 18752
     DEFW 19008
