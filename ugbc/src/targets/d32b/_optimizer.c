@@ -925,6 +925,16 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( po_buf_match(buf[0], " LDY #$*", v1)
+    &&  po_buf_match(buf[1], " LEAY *,Y", v2)
+        ) {
+        long address = strtol( v1->str, NULL, 16 );
+        long offset = strtol( v2->str, NULL, 16 );
+        optim(buf[0], RULE "(LDY#,LEAY+)->(LDY#+)", "\tLDY #$%4.4x", (unsigned int)(address+offset) );
+        optim(buf[1], RULE "(LDY#,LEAY+)->(LDY#+)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
     if( po_buf_match(buf[0], " LDD #$0000")
     &&  po_buf_match(buf[1], " STD *", v1)
     &&  po_buf_match(buf[2], " LDB *", v2)
