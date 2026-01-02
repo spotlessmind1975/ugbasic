@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -727,9 +727,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("ORG $2A00" );
     outline0("JMP CODESTART");
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - _environment->stackSize - 3 );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 - 3 );
     }
-    outhead1("IRQSTACKBEGIN rzb %d", _environment->stackSize - 2 );
+    outhead0("IRQSTACKBEGIN rzb 510");
     outhead0("IRQSTACKEND fcb $00, 00");
     outhead0("CODESTART");
     outline0("LDS #IRQSTACKEND");

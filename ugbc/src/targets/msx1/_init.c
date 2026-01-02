@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -229,9 +229,7 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
-    cpu_init( _environment );
-    _environment->program.startingAddress = 0x4010;
-    _environment->stackSize = 0xf08e - _environment->program.startingAddress;
+   cpu_init( _environment );
 
     deploy_preferred( startup, src_hw_msx1_startup_asm);
 

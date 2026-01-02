@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -581,10 +581,4 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
-    outhead0("CODESTART:")
-    outline1("LD SP, $%4.4x", _environment->stackStartAddress);
-    cpu_call( _environment, "VARINIT" );
-    outline0("CALL PROTOTHREADINIT" );
-    outline0("JP CODEEND");
-    
 }

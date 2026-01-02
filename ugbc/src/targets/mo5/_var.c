@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -568,7 +568,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outline1("ORG $%4.4x", _environment->program.startingAddress);
     outhead0("CODESTART");
-    outline1("LDS #$%4.4x", _environment->stackStartAddress);
+    outline0("LDS #$A000");
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );

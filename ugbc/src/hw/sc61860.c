@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -951,9 +951,6 @@ void cpu_nop( Environment * _environment ) {
 }
 
 void cpu_init( Environment * _environment ) {
-
-    _environment->stackSize = 0x005b - 0x000c;
-    _environment->stackStartAddress = 0x005b;
 
 }
 

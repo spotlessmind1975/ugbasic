@@ -9332,16 +9332,7 @@ audio_source :
     };
 
 define_definition :
-    STACK const_expr {
-        ((struct _Environment *)_environment)->stackSize = $2;
-    }
-    | STACK SIZE const_expr {
-        ((struct _Environment *)_environment)->stackSize = $3;
-    }
-    | STACK START const_expr {
-        ((struct _Environment *)_environment)->stackStartAddress = $3;
-    }
-    | CHAIN {
+    CHAIN {
         ((struct _Environment *)_environment)->chainUsed = 1;
     }
     | SET LINE {
@@ -13735,7 +13726,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("--------------------------------------------------\n");
     printf("ugBASIC Compiler v%s [target: %s]\n", version, target);
     printf("--------------------------------------------------\n");
-    printf("Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)\n\n");
+    printf("Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
     printf("you may not use this program except in compliance with the License.\n\n");
 

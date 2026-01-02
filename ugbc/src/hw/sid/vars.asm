@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ SIDFREQTABLE:
     .word 0,		0,		0,		268,	284,	301,	318,	337,	358,	379
     .word 401,	425,	451,	477,	506,	536,	568,	602,	637,	675
     .word 716,	758,	803,	851,	902,	955,	1012,	1072,	1136,	1204
-    .word 1275,	1351,	1432,	1517,	1607,	1703,	1804,	1911,	2025,	2145
+    .word 1275,	1351,	1432,	1517,	1607,	1703,	1804,	1911,	2026,	2145
     .word 2273,	2408,	2551,	2703,	2864,	3034,	3215,	3406,	3608,	3823
     .word 4050,	4291,	4547,	4817,	5103,	5407,	5728,	6069,	6430,	6812
     .word 7217,	7647,	8101,	8583,	9094,	9634,	10207,	10814,	11457,	12139

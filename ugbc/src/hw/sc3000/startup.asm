@@ -1,7 +1,7 @@
 ; /*****************************************************************************
 ;  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
 ;  *****************************************************************************
-;  * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+;  * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
 ;  *
 ;  * Licensed under the Apache License, Version 2.0 (the "License");
 ;  * you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ sc_ppi_a         	= $DC
 sc_ppi_b         	= $DD
 sc_ppi_c         	= $DE
 sc_ppi_control   	= $DF
+
+INITIAL_STACK    	= $C700
 
 PPI_Setting         = 0x92
 PPI_PortC           = 0xDE
@@ -123,10 +125,8 @@ COLD_RESET1:
 
 		DEFS 7
 
-@EMIT stackStartAddress AS initialStack
-
 RAM_TEST:
-		ld		sp, initialStack
+		ld		sp, INITIAL_STACK
 
 		ld		hl, $55aa
     	push	hl

@@ -1,7 +1,7 @@
 /*****************************************************************************
  * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
  *****************************************************************************
- * Copyright 2021-2025 Marco Spedaletti (asimov@mclink.it)
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -695,9 +695,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("STA $FFDF");
     outline0("JMP CODESTART")
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - _environment->stackSize );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 );
     }
-    outhead1("IRQSTACK0 rzb %d", _environment->stackSize );
+    outhead0("IRQSTACK0 rzb 512");
     outhead0("IRQSTACK");
     outhead0("COCO3BSTARTUP2")
     if (_environment->dojoOnVirtualizedFujiNet ) {
