@@ -936,10 +936,10 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 
     if( po_buf_match(buf[0], " LDD #$*", v1)
-    &&  po_buf_match(buf[1], " LDB #$*", v2)
-    && (strtol(v1->str, NULL, 16) == strtol(v2->str, NULL, 16))
+    &&  po_buf_match(buf[1], " LDB #$*", v3, v2)
         ) {
-        optim(buf[0], RULE "(LDD#,LDB#, same value)->(LDB)", NULL );
+        optim(buf[0], RULE "(LDD#,LDB#)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
+        optim(buf[1], RULE "(LDD#,LDB#)->(LDA)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
