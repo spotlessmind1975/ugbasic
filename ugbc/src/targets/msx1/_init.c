@@ -229,7 +229,9 @@ void target_initialization( Environment * _environment ) {
     cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
-   cpu_init( _environment );
+    cpu_init( _environment );
+    _environment->program.startingAddress = 0x4010;
+    _environment->stackSize = 0xf08e - _environment->program.startingAddress;
 
     deploy_preferred( startup, src_hw_msx1_startup_asm);
 

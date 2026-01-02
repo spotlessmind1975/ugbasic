@@ -43,6 +43,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 void target_initialization( Environment * _environment ) {
 
     _environment->program.startingAddress = 0x2800;
+    _environment->stackSize = 512;
 
     cpu_init( _environment );
 

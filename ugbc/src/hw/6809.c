@@ -61,6 +61,9 @@ do { /* x-y+128<0 or 127-x+y<0 */                                            \
 
 void cpu_init( Environment * _environment ) {
 
+    _environment->stackSize = 0xffff;
+    _environment->stackStartAddress = 0x0000;
+
 }
 
 /* Helper for 8/16 bits comparison */
