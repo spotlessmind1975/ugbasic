@@ -51,6 +51,8 @@
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
+    deploy( vbl, src_hw_ef936x_vbl_asm);
+
     if ( _raster_line ) {
         Variable * rasterLine = variable_retrieve_or_define( _environment, _raster_line, VT_WORD, 0 );
         outline1("LDD %s", rasterLine->realName );
