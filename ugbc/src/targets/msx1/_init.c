@@ -232,6 +232,7 @@ void target_initialization( Environment * _environment ) {
     cpu_init( _environment );
     _environment->program.startingAddress = 0x4010;
     _environment->stackSize = 0xf08e - _environment->program.startingAddress;
+    _environment->stackStartAddress = 0xf08e;
 
     deploy_preferred( startup, src_hw_msx1_startup_asm);
 
