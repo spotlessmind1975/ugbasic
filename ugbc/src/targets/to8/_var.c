@@ -593,24 +593,39 @@ void variable_cleanup( Environment * _environment ) {
                 }
             }
             if ( actual->variables ) {
-                OffsettingVariable * actualVariable = actual->variables;
-                while( actualVariable ) {
-                    if ( actualVariable->sequence ) {
-                        outhead1("%soffsetsequence", actualVariable->variable->realName );
-                    } else {
-                        outhead1("%soffsetframe", actualVariable->variable->realName );
+                if ( actual->count == 1 ) {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
                     }
-                    actualVariable = actualVariable->next;
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline0("RTS");
+                } else {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
+                    }
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline1("LDX #OFFSETS%4.4x", actual->size );
+                    outline0("LDA #0" );
+                    outline0("ABX" );
+                    outline0("ABX" );
+                    outline0("LDD ,X" );
+                    outline0("LEAY D, Y" );
+                    outline0("RTS");
                 }
-                outhead1("fs%4.4xoffsetsequence", actual->size );
-                outhead1("fs%4.4xoffsetframe", actual->size );                      
-                outline1("LDX #OFFSETS%4.4x", actual->size );
-                outline0("LDA #0" );
-                outline0("ABX" );
-                outline0("ABX" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-                outline0("RTS");
             }
             actual = actual->next;
         }
