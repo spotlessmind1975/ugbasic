@@ -197,7 +197,9 @@ BANKLOADL2
 
     ANDCC #$AF
 
+@IF dataSegment
     JSR DATAPREPARATION
+@ENDIF
 
 @IF sysCallUsed
 
