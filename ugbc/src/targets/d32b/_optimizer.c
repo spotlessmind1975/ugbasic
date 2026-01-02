@@ -290,6 +290,24 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "XGR"))     return 1;
     if(po_buf_match(name, "YGR"))     return 1;
     if(po_buf_match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CONSOLE"))   return 1;
+    if(po_buf_match(name, "ORIGIN"))   return 1;
+    if(po_buf_match(name, "RESOLUTION"))   return 1;
+    if(po_buf_match(name, "TILEMAPVISIBLE"))   return 1;
+    if(po_buf_match(name, "DOUBLEBUFFERENABLED"))   return 1;
+    if(po_buf_match(name, "LINE"))   return 1;
+    if(po_buf_match(name, "XSCROLL"))   return 1;
+    if(po_buf_match(name, "YSCROLL"))   return 1;
+    if(po_buf_match(name, "BLIT"))   return 1;
+    if(po_buf_match(name, "CURRENTMODE"))   return 1;
+    if(po_buf_match(name, "BITMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "COLORMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "DATAPTR"))   return 1;
+    if(po_buf_match(name, "DOJOERROR"))   return 1;
+    if(po_buf_match(name, "XCURSYS"))   return 1;
+    if(po_buf_match(name, "YCURSYS"))   return 1;
+    if(po_buf_match(name, "<XCURSYS"))   return 1;
+    if(po_buf_match(name, "<YCURSYS"))   return 1;
 
     return 0;
 }
@@ -305,6 +323,12 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v3 = TMP_BUF;
     POBuffer v4 = TMP_BUF;
     POBuffer v5 = TMP_BUF;
+
+    if ( po_buf_match( buf[0], " CLRA" )
+    &&   po_buf_match( buf[1], " ANDA") ) {
+        optim( buf[1], RULE "(CLEAR*,?,AND*)->(CLEAR*)", NULL);
+        ++_environment->removedAssemblyLines;
+    }
 
     /* move B stuff after A stuff */
     if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0]) && strstr(v1->str, "BASE_SEGMENT" ) == NULL
@@ -911,14 +935,24 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
-    if( po_buf_match(buf[0], " LDD #$*", v1)
-    &&  po_buf_match(buf[1], " LDB #$*", v2)
-    && (strtol(v1->str, NULL, 16) == strtol(v2->str, NULL, 16))
+    if( po_buf_match(buf[0], " LDD #0000")
         ) {
-        optim(buf[0], RULE "(LDD#,LDB#, same value)->(LDB)", NULL );
-        ++_environment->removedAssemblyLines;
+        optim(buf[0], RULE "(LDD#0000)->(CLRD)", "\tCLRD" );
     }
 
+    if( po_buf_match(buf[0], " LDD #$*", v1)
+    &&  po_buf_match(buf[1], " LDB #$*", v3, v2)
+        ) {
+        optim(buf[0], RULE "(LDD#,LDB#)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
+    }
+
+    if( po_buf_match(buf[0], " CLRA")
+    &&  po_buf_match(buf[1], " LDD *", v1)
+        ) {
+        optim(buf[0], RULE "(CLRA,LDD)->(LDD)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+    
     if( po_buf_match(buf[0], " LDB #$*", v1)
     &&  po_buf_match(buf[1], " LDD #$*", v2)
         ) {
@@ -1388,6 +1422,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " ROL <*", arg)
     ||  po_buf_match( buf[0], " ROR <*", arg)
     ||  po_buf_match( buf[0], " TST< *", arg)
+
     ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
@@ -1540,7 +1575,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
-    
+
     /* unread */
     if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
@@ -2721,6 +2756,7 @@ void target_peephole_optimizer( Environment * _environment ) {
                 --optimization_limit_count;
             };
             optim_pass(_environment, buf, DEADVARS);
+            optim_remove_unused_temporary( _environment );
         } while(change&&optimization_limit_count);
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);
