@@ -870,19 +870,35 @@ static unsigned char * dli_build( Environment * _environment,
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
-    if ( _copper_list && copperUsedLines[0] ) {
-        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+    if ( _environment->horizontalScrollOff ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        }
     } else {
-        DLI_LMS_VHSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        }
     }
 
     *_screen_memory_offset = dliListCurrent - dliListStart - 2;
 
     for( int i=1; i<_rows; ++i ) {
-        if ( _copper_list && copperUsedLines[i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, _mode );
+        if ( _environment->horizontalScrollOff ) {
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, _mode );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, _mode );
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, _mode );
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, _mode );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, _mode );
+            }
         }
     }
 
@@ -916,20 +932,36 @@ static unsigned char * dli_build_antic15( Environment * _environment,
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
 
-    if ( _copper_list && copperUsedLines[0] ) {
-        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+    if ( _environment->horizontalScrollOff ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        }
     } else {
-        DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        }
     }
 
     *_screen_memory_offset = dliListCurrent - dliListStart - 2;
 
     for( int i=1; i<96; ++i ) {
-        // 8	\Display ANTIC mode 15 for second mode line
-        if ( _copper_list && copperUsedLines[i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        if ( _environment->horizontalScrollOff ) {
+            // 8	\Display ANTIC mode 15 for second mode line
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+            }
         }
     }
 
@@ -937,15 +969,27 @@ static unsigned char * dli_build_antic15( Environment * _environment,
 
     _environment->frameBufferStart2 = screenMemoryAddress2;
     
-    DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    if ( _environment->horizontalScrollOff ) {
+        DLI_LMS_VSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    }
 
     *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
 
     for( int i=0; i<94; ++i ) {
-        if ( _copper_list && copperUsedLines[96+i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        if ( _environment->horizontalScrollOff ) {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );                    
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            }
         }
     }
 
@@ -1721,12 +1765,8 @@ void gtia_vertical_scroll( Environment * _environment, char * _displacement ) {
 
 void gtia_horizontal_scroll( Environment * _environment, char * _displacement ) {
 
-    outline1("LDY %s", _displacement );
-    outline0("LDA #<XSCROLLOFFSET" );
-    outline0("STA TMPPTR" );
-    outline0("LDA #>XSCROLLOFFSET" );
-    outline0("STA TMPPTR+1" );
-    outline0("LDA (TMPPTR),Y" );
+    outline1("LDA %s", _displacement );
+    outline0("AND #$0f" );
     outline0("STA $D404" );
 
 }

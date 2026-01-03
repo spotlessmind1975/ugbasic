@@ -81,6 +81,8 @@ PLOT4HI:
 
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) || ( currentMode == 9 ) )
 
+@IF horizontalScrollOff
+
 PLOT4VBASELO:
     .byte <(GTIAFBS+(0*10)),<(GTIAFBS+(1*10)),<(GTIAFBS+(2*10)),<(GTIAFBS+(3*10))
     .byte <(GTIAFBS+(4*10)),<(GTIAFBS+(5*10)),<(GTIAFBS+(6*10)),<(GTIAFBS+(7*10))
@@ -108,6 +110,38 @@ PLOT4VBASEHI:
     .byte >(GTIAFBS+(36*10)),>(GTIAFBS+(37*10)),>(GTIAFBS+(38*10)),>(GTIAFBS+(39*10))
     .byte >(GTIAFBS+(40*10)),>(GTIAFBS+(41*10)),>(GTIAFBS+(42*10)),>(GTIAFBS+(43*10))
     .byte >(GTIAFBS+(44*10)),>(GTIAFBS+(45*10)),>(GTIAFBS+(46*10)),>(GTIAFBS+(47*10))
+
+@ELSE
+
+PLOT4VBASELO:
+    .byte <(GTIAFBS+(0*12)),<(GTIAFBS+(1*12)),<(GTIAFBS+(2*12)),<(GTIAFBS+(3*12))
+    .byte <(GTIAFBS+(4*12)),<(GTIAFBS+(5*12)),<(GTIAFBS+(6*12)),<(GTIAFBS+(7*12))
+    .byte <(GTIAFBS+(8*12)),<(GTIAFBS+(9*12)),<(GTIAFBS+(10*12)),<(GTIAFBS+(11*12))
+    .byte <(GTIAFBS+(12*12)),<(GTIAFBS+(13*12)),<(GTIAFBS+(14*12)),<(GTIAFBS+(15*12))
+    .byte <(GTIAFBS+(16*12)),<(GTIAFBS+(17*12)),<(GTIAFBS+(18*12)),<(GTIAFBS+(19*12))
+    .byte <(GTIAFBS+(20*12)),<(GTIAFBS+(21*12)),<(GTIAFBS+(22*12)),<(GTIAFBS+(23*12))
+    .byte <(GTIAFBS+(24*12)),<(GTIAFBS+(25*12)),<(GTIAFBS+(26*12)),<(GTIAFBS+(27*12))
+    .byte <(GTIAFBS+(28*12)),<(GTIAFBS+(29*12)),<(GTIAFBS+(30*12)),<(GTIAFBS+(31*12))
+    .byte <(GTIAFBS+(32*12)),<(GTIAFBS+(33*12)),<(GTIAFBS+(34*12)),<(GTIAFBS+(35*12))
+    .byte <(GTIAFBS+(36*12)),<(GTIAFBS+(37*12)),<(GTIAFBS+(38*12)),<(GTIAFBS+(39*12))
+    .byte <(GTIAFBS+(40*12)),<(GTIAFBS+(41*12)),<(GTIAFBS+(42*12)),<(GTIAFBS+(43*12))
+    .byte <(GTIAFBS+(44*12)),<(GTIAFBS+(45*12)),<(GTIAFBS+(46*12)),<(GTIAFBS+(47*12))
+
+PLOT4VBASEHI:
+    .byte >(GTIAFBS+(0*12)),>(GTIAFBS+(1*12)),>(GTIAFBS+(2*12)),>(GTIAFBS+(3*12))
+    .byte >(GTIAFBS+(4*12)),>(GTIAFBS+(5*12)),>(GTIAFBS+(6*12)),>(GTIAFBS+(7*12))
+    .byte >(GTIAFBS+(8*12)),>(GTIAFBS+(9*12)),>(GTIAFBS+(10*12)),>(GTIAFBS+(11*12))
+    .byte >(GTIAFBS+(12*12)),>(GTIAFBS+(13*12)),>(GTIAFBS+(14*12)),>(GTIAFBS+(15*12))
+    .byte >(GTIAFBS+(16*12)),>(GTIAFBS+(17*12)),>(GTIAFBS+(18*12)),>(GTIAFBS+(19*12))
+    .byte >(GTIAFBS+(20*12)),>(GTIAFBS+(21*12)),>(GTIAFBS+(22*12)),>(GTIAFBS+(23*12))
+    .byte >(GTIAFBS+(24*12)),>(GTIAFBS+(25*12)),>(GTIAFBS+(26*12)),>(GTIAFBS+(27*12))
+    .byte >(GTIAFBS+(28*12)),>(GTIAFBS+(29*12)),>(GTIAFBS+(30*12)),>(GTIAFBS+(31*12))
+    .byte >(GTIAFBS+(32*12)),>(GTIAFBS+(33*12)),>(GTIAFBS+(34*12)),>(GTIAFBS+(35*12))
+    .byte >(GTIAFBS+(36*12)),>(GTIAFBS+(37*12)),>(GTIAFBS+(38*12)),>(GTIAFBS+(39*12))
+    .byte >(GTIAFBS+(40*12)),>(GTIAFBS+(41*12)),>(GTIAFBS+(42*12)),>(GTIAFBS+(43*12))
+    .byte >(GTIAFBS+(44*12)),>(GTIAFBS+(45*12)),>(GTIAFBS+(46*12)),>(GTIAFBS+(47*12))
+
+@ENDIF
 
 @ENDIF
 
