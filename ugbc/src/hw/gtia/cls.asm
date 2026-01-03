@@ -103,7 +103,7 @@ CLSANTIC8X:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
 
 CLSANTIC8:
-    LDA #25
+    LDA #240
     STA TMPPTR
     LDA #0
     STA TMPPTR+1
@@ -215,8 +215,6 @@ CLSG:
 CLSGY:
     STA (COPYOFBITMAPADDRESS),Y
     INY
-    BNE CLSGY
-    INC COPYOFBITMAPADDRESS+1
     DEX
     BNE CLSGY
     LDX TMPPTR+1
