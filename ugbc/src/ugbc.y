@@ -9332,7 +9332,13 @@ audio_source :
     };
 
 define_definition :
-    STACK const_expr {
+    HORIZONTAL SCROLL ON {
+        ((struct _Environment *)_environment)->horizontalScrollOff = 0;
+    }
+    | HORIZONTAL SCROLL OFF {
+        ((struct _Environment *)_environment)->horizontalScrollOff = 1;
+    }
+    | STACK const_expr {
         ((struct _Environment *)_environment)->stackSize = $2;
     }
     | STACK SIZE const_expr {

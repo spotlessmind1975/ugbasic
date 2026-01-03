@@ -3303,6 +3303,8 @@ typedef struct _Environment {
     int stackStartAddress;
 
     int dynamicConsole;
+
+    int horizontalScrollOff;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
