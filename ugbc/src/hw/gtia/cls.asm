@@ -157,10 +157,17 @@ CLSANTIC10:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
 
 CLSANTIC11:
-    LDA #7
+@IF horizontalScrollOff
+    LDA #$80
     STA TMPPTR
-    LDA #128
+    LDA #7
     STA TMPPTR+1
+@ELSE
+    LDA #$e0
+    STA TMPPTR
+    LDA #7
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF

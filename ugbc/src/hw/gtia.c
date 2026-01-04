@@ -1123,7 +1123,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
 
-            calculate_frame_buffer( _environment, 1920 );
+            calculate_frame_buffer( _environment, 1920 + (1-_environment->horizontalScrollOff)*96 );
 
             rows = 96;
 
