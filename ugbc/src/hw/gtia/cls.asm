@@ -122,14 +122,14 @@ CLSANTIC8:
 
 CLSANTIC9:
 @IF horizontalScrollOff
-    LDA #1
+    LDA #$60
     STA TMPPTR
-    LDA #224
+    LDA #$1
     STA TMPPTR+1
 @ELSE
-    LDA #40
+    LDA #$40
     STA TMPPTR
-    LDA #2
+    LDA #$2
     STA TMPPTR+1
 @ENDIF
     JMP CLSG
