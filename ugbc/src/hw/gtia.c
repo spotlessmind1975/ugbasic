@@ -1054,7 +1054,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
         case BITMAP_MODE_ANTIC8:
 
-            calculate_frame_buffer( _environment, 240 );
+            calculate_frame_buffer( _environment, 240 + (1-_environment->horizontalScrollOff)*2*20 );
 
             rows = 24;
 
@@ -1079,7 +1079,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
 
-            calculate_frame_buffer( _environment, 480 );
+            calculate_frame_buffer( _environment, 480 + (1-_environment->horizontalScrollOff)*2*48 );
 
             rows = 48;
 

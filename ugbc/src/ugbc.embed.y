@@ -819,6 +819,8 @@ embed2:
             } else {
                 vars_emit_constant_integer( _environment, $5, 0xff );
             }
+        } else if ( strcmp( $3, "horizontalScrollOff" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->horizontalScrollOff );
         } else if ( strcmp( $3, "scaleX" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleX );
         } else if ( strcmp( $3, "stackSize" ) == 0 ) {
