@@ -125,9 +125,9 @@ CLSANTIC9:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 CLSANTIC10:
-    LDA #3
+    LDA #$80
     STA TMPPTR
-    LDA #3
+    LDA #4
     STA TMPPTR+1
     JMP CLSG
 
@@ -136,9 +136,9 @@ CLSANTIC10:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
 
 CLSANTIC11:
-    LDA #7
+    LDA #$80
     STA TMPPTR
-    LDA #128
+    LDA #7
     STA TMPPTR+1
     JMP CLSG
 
@@ -155,14 +155,24 @@ CLSANTIC13:
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) || ( currentMode == 14 ) || ( currentMode == 15 ) )
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 12 )
+
+CLSANTIC12:
+    LDA #0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+    JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) || ( currentMode == 15 ) )
 
 CLSANTIC15:
-CLSANTIC12:
 CLSANTIC14:
-    LDA #30
-    STA TMPPTR
     LDA #0
+    STA TMPPTR
+    LDA #$f
     STA TMPPTR+1
     JMP CLSG
 
