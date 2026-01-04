@@ -610,7 +610,7 @@ PLOTANTIC11PGETC:
 
 ;;;;;;;;;;;;;;;;;;;
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 13 ) )
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 13 )
 
 PLOTANTIC13:
 
@@ -874,9 +874,9 @@ PLOTANTIC12PGETX:
 PLOTANTIC12PGETCX:
 
     LDA PLOTCPE
-    CMP $2C5
+    CMP $2C4
     BEQ PLOTANTIC12B1
-@INLINE PALETTEPRESERVE2C5 [PLOTCPE], [#$0]
+@INLINE PALETTEPRESERVE2C4 [PLOTCPE], [#$0]
 
 PLOTANTIC12B1:
     LDA #<PLOTORBIT21

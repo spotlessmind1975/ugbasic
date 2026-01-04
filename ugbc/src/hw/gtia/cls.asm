@@ -183,15 +183,39 @@ CLSANTIC13:
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 12 ) || ( currentMode == 14 ) || ( currentMode == 15 ) )
+@IF !vestigialConfig.screenModeUnique || ( currentMode == 12 )
+
+CLSANTIC12:
+@IF horizontalScrollOff
+    LDA #0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+@ELSE
+    LDA #$c0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+@ENDIF
+    JMP CLSG
+
+@ENDIF
+
+@IF !vestigialConfig.screenModeUnique || ( ( currentMode == 14 ) || ( currentMode == 15 ) )
 
 CLSANTIC15:
-CLSANTIC12:
 CLSANTIC14:
-    LDA #30
-    STA TMPPTR
+@IF horizontalScrollOff
     LDA #0
+    STA TMPPTR
+    LDA #$f
     STA TMPPTR+1
+@ELSE
+    LDA #$c0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF

@@ -821,7 +821,11 @@ static void calculate_frame_buffer( Environment * _environment, int _size_requir
     if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - _size_required ) ) {
         _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - _size_required );
     }
-    _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+    if ( _size_required > 1024 ) {
+        _environment->frameBufferStart = ( _environment->frameBufferStart >> 12 ) << 12;
+    } else {
+        _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -911,6 +915,97 @@ static unsigned char * dli_build( Environment * _environment,
     *_dli_size = ( dliListCurrent - dliListStart );
 
     return dliListStart; 
+}
+
+static unsigned char * dli_build_antic12( Environment * _environment, 
+        CopperList * _copper_list,
+        int * _screen_memory_offset, int * _dlilist_start_offset,
+        int * _screen_memory_offset2, int * _dli_size ) {
+
+    int * copperUsedLines = NULL;
+    if ( _copper_list ) {
+        copperUsedLines = calculate_scanlines_for_copper_list( _copper_list );
+    }
+
+    unsigned char * dliListStart = malloc( DLI_COUNT );
+    unsigned char * dliListCurrent = dliListStart;
+
+    memset( dliListStart, 0, DLI_COUNT );
+
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+
+    if ( _environment->horizontalScrollOff ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, 12, _environment->frameBufferStart );
+        }
+    } else {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, 12, _environment->frameBufferStart );
+        }
+    }
+
+    *_screen_memory_offset = dliListCurrent - dliListStart - 2;
+
+    for( int i=1; i<96; ++i ) {
+        if ( _environment->horizontalScrollOff ) {
+            // 8	\Display ANTIC mode 12 for second mode line
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 12 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 12 );
+            }
+        } else {
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 12 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 12 );
+            }
+        }
+    }
+
+    int screenMemoryAddress2 = _environment->frameBufferStart + 4096;
+
+    _environment->frameBufferStart2 = screenMemoryAddress2;
+    
+    if ( _environment->horizontalScrollOff ) {
+        DLI_LMS_VSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    }
+
+    *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
+
+    for( int i=0; i<94; ++i ) {
+        if ( _environment->horizontalScrollOff ) {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );                    
+            }
+        } else {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            }
+        }
+    }
+
+    DLI_IRQ( dliListCurrent, 15 );
+
+    DLI_JVB( dliListCurrent, 0 );
+    *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
+
+    *_dli_size = ( dliListCurrent - dliListStart );
+
+    return dliListStart;
+
 }
 
 static unsigned char * dli_build_antic15( Environment * _environment, 
@@ -1206,7 +1301,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x192, 2 colors
         case BITMAP_MODE_ANTIC12:
 
-            calculate_frame_buffer( _environment, 3840 );
+            calculate_frame_buffer( _environment, 3840 + (1-_environment->horizontalScrollOff)*192 );
 
             rows = 192;
 
@@ -1426,6 +1521,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
     if ( _screen_mode->id == BITMAP_MODE_ANTIC15 ) {
         dliListStart = dli_build_antic15( _environment, 
+            copperList,
+            &screenMemoryOffset, &dliListStartOffset,
+            &screenMemoryOffset2, &dliSize );
+    } else if ( _screen_mode->id == BITMAP_MODE_ANTIC12 ) {
+        dliListStart = dli_build_antic12( _environment, 
             copperList,
             &screenMemoryOffset, &dliListStartOffset,
             &screenMemoryOffset2, &dliSize );
