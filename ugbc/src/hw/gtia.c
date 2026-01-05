@@ -2987,10 +2987,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 }
             }
 
-            if ( _environment->debugImageLoad ) {
-                printf("%1.1x", colorIndex );
-            }
-
             adilinepixel(colorIndex);
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
@@ -3003,25 +2999,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
-    }
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].index, commonPalette[0].description );
-        } else {
-            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
-        }
-        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].index, commonPalette[1].description );
-        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].index, commonPalette[2].description );
-        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].index, commonPalette[3].description );
-        printf("\n" );
-        printf("\n" );
     }
 
     adilineendbitmap();

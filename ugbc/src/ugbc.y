@@ -14123,7 +14123,6 @@ int main( int _argc, char *_argv[] ) {
                     _environment->exeFileName = strdup(optarg);
                     break;
                 case 'd':
-                    _environment->debugImageLoad = 1;
                     break;
                 case 'r':
                     _environment->removeComments = 1;

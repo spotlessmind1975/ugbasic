@@ -1403,17 +1403,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 if ( colorIndexes[xx] != colorBackground ) {
                     adilinepixel(colorForeground);
                     *( buffer + offset + 3) |= bitmask;
-                    if ( _environment->debugImageLoad ) {
-                        printf( "%1.1x", colorForeground );
-                    }
-                    // printf("*");
                 } else {
                     adilinepixel(colorBackground);
                     *( buffer + offset + 3) &= ~bitmask;
-                    // printf(" ");
-                    if ( _environment->debugImageLoad ) {
-                        printf( "%1.1x", colorBackground );
-                    }
                 }
 
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
@@ -1426,22 +1418,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
     }
 
     adilineendbitmap();
 
-    // for(i=0; i<4; ++i ) {
-    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
-    // }
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-        printf("\n" );
-    }
-    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;

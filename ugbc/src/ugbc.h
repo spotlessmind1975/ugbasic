@@ -2952,11 +2952,6 @@ typedef struct _Environment {
      */
     TileDescriptors * tilesets[MAX_TILESETS];
 
-    /**
-     * Debug during LOAD IMAGE.
-     */
-    int debugImageLoad;
-    
     int bankedLoadDefault;
     
     /**

@@ -1040,10 +1040,6 @@ Variable * ef9345_sprite_converter( Environment * _environment, char * _source, 
 
     //         colorIndex = i;
 
-    //         if ( _environment->debugImageLoad ) {
-    //             printf( "%1.1x", ( palette[colorIndex].index & 0x0f ) );
-    //         }
-
     //         bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
     //         *(buffer + 2 + offset) |= bitmask;
 
@@ -1053,32 +1049,10 @@ Variable * ef9345_sprite_converter( Environment * _environment, char * _source, 
 
     //     _source += 3 * ( _width - image_x );
 
-    //     if ( _environment->debugImageLoad ) {
-    //         printf("\n" );
-    //     }
     // }
 
     // *(buffer + 2 + ( ( _width >> 3 ) * _height )) = _color->index | ( _color->index << 4 );
 
-    // if ( _environment->debugImageLoad ) {
-    //     printf("\n" );
-    
-    //     printf("PALETTE:\n" );
-    //     for( i=0; i<colorUsed; ++i ) {
-    //         printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
-    //     }
-    //     // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-    //     //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-    //     // } else {
-    //     //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-    //     // }
-    //     // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-    //     // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-    //     // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-    //     // printf("\n" );
-    //     // printf("\n" );
-    // }
-    
     // variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
     return result;
