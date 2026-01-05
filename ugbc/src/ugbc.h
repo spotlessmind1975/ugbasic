@@ -4761,7 +4761,7 @@ char * strcopy( char * _dest, char * _source );
         if ( p ) { \
             *p = 0; \
         } \
-        sprintf( labelsFileName, "-g -Ln \"%s.lbl\"", tmpFileName ); \
+        sprintf( labelsFileName, "%s.lbl", tmpFileName ); \
     } else { \
         strcopy( labelsFileName, "" ); \
     }
@@ -4775,9 +4775,15 @@ char * strcopy( char * _dest, char * _source );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, labelsFileName, listingFileName, additionalParameters ) \
+    char labelsParam[MAX_TEMPORARY_STORAGE]; \
+    if ( strlen( labelsFileName ) > 0 ) { \
+        sprintf( labelsParam, "-g -Ln \"%s\"", labelsFileName ); \
+    } else { \
+        memset( labelsParam, 0, MAX_TEMPORARY_STORAGE ); \
+    } \
     sprintf( commandLine, "\"%s\" %s %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
-        labelsFileName, \
+        labelsParam, \
         listingFileName, \
         _environment->exeFileName, \
         additionalParameters, \
