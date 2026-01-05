@@ -44,15 +44,18 @@ void generate_prg( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
+    char labelsFileName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
+    BUILD_TOOLCHAIN_CC65_GET_LABELS_FILE( _environment, labelsFileName );
+
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, listingFileName, "" );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, labelsFileName, listingFileName, "" );
 
     char objectFileName[MAX_TEMPORARY_STORAGE];
     strcopy( objectFileName, _environment->asmFileName );

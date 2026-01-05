@@ -13751,7 +13751,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t<source>     Input filename with ugBASIC source code\n" );
     printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
     printf("\t-a           Show statistics on assembly listing generated\n" );
-    printf("\t-d           Enable debugging of LOAD IMAGE\n" );
+    printf("\t-d           Enable support for debugger\n" );
     printf("\t-F           Enable DOJO over FujiNet\n" );
     printf("\t-f           Enable DOJO over virtualized FujiNet\n" );
     printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
@@ -14123,6 +14123,7 @@ int main( int _argc, char *_argv[] ) {
                     _environment->exeFileName = strdup(optarg);
                     break;
                 case 'd':
+                    _environment->enableDebugger = 1;
                     break;
                 case 'r':
                     _environment->removeComments = 1;
