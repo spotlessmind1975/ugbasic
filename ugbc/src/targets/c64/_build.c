@@ -57,38 +57,6 @@ void generate_prg( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_EXEC( _environment, "c64", executableName, labelsFileName, listingFileName, "" );
 
-    if ( _environment->enableDebugger ) {
-        int i = 0;
-        FILE * fh = fopen(labelsFileName, "a+" );
-        for(i=0; i<BANK_TYPE_COUNT; ++i) {
-            Bank * actual = _environment->banks[i];
-            while( actual ) {
-                if ( actual->type == BT_VARIABLES ) {
-                    Variable * variable = _environment->variables;
-                    while( variable ) {
-                        fprintf( fh, "ug %d %d %s\n", variable->type, variable->size, variable->realName);
-                        variable = variable->next;
-                    }
-                } else if ( actual->type == BT_TEMPORARY ) {
-                    for( int j=0; j< (_environment->currentProcedure+1); ++j ) {
-                        Variable * variable = _environment->tempVariables[j];
-                        while( variable ) {
-                            fprintf( fh, "ug %d %d %s\n", variable->type, variable->size, variable->realName);
-                            variable = variable->next;
-                        }
-                    }
-                    
-                    Variable * variable = _environment->tempResidentVariables;
-                    while( variable ) {
-                        fprintf( fh, "ug %d %d %s\n", variable->type, variable->size, variable->realName);
-                        variable = variable->next;
-                    }
-                }
-                actual = actual->next;
-            }
-        }    
-        fclose(fh);
-    }
     char objectFileName[MAX_TEMPORARY_STORAGE];
     strcopy( objectFileName, _environment->asmFileName );
     char * p = strstr(objectFileName, ".asm");
