@@ -4761,7 +4761,7 @@ char * strcopy( char * _dest, char * _source );
         if ( p ) { \
             *p = 0; \
         } \
-        sprintf( labelsFileName, "-g -Ln \"%s.lbl\"", tmpFileName ); \
+        sprintf( labelsFileName, "-g -Ln \"%s.lbl\"", p ); \
     } else { \
         strcopy( labelsFileName, "" ); \
     }
