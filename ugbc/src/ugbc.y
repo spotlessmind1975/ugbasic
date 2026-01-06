@@ -13607,25 +13607,13 @@ statement:
             outline1("; P:%d", producedLines); 
             adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
 
-            char labelLineNumber[MAX_TEMPORARY_STORAGE];
-            sprintf(labelLineNumber, "compiledline0" );
-            cpu_label(_environment, labelLineNumber); 
-
             ((Environment *)_environment)->yylineno = yylineno;
 
             ((Environment *)_environment)->previousProducedAssemblyLines = 
             ((Environment *)_environment)->producedAssemblyLines; 
         }
 
-        if ( ((Environment *)_environment)->lastyylineno < ((Environment *)_environment)->yylineno ) {
-            char labelLineNumber[MAX_TEMPORARY_STORAGE];
-            sprintf(labelLineNumber, "compiledline%d", ((Environment *)_environment)->yylineno );
-            cpu_label(_environment, labelLineNumber); 
-            ((Environment *)_environment)->lastyylineno = ((Environment *)_environment)->yylineno;
-        }
-
         outline1("; L:%d", ((Environment *)_environment)->yylineno);   
-
     } 
     statement2;
 
@@ -13676,15 +13664,7 @@ statements_complex:
 
 program : 
   statements_complex 
-  { /*printf( "  %d:\n", yylineno ); ++yylineno; ((Environment *)_environment)->yylineno = yylineno; */ 
-        if ( ((Environment *)_environment)->lastyylineno < yylineno ) {
-            char labelLineNumber[MAX_TEMPORARY_STORAGE];
-            sprintf(labelLineNumber, "compiledline%d", ((Environment *)_environment)->yylineno );
-            cpu_label(_environment, labelLineNumber); 
-            ((Environment *)_environment)->lastyylineno = yylineno;
-        }
-        outline1("; L:%d", yylineno);
-   }
+  { /*printf( "  %d:\n", yylineno ); ++yylineno; ((Environment *)_environment)->yylineno = yylineno; */ outline1("; L:%d", yylineno); }
   emit_additional_info;
 
 %%
