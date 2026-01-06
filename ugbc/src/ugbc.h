@@ -2955,9 +2955,7 @@ typedef struct _Environment {
     TileDescriptors * tilesets[MAX_TILESETS];
 
     int bankedLoadDefault;
-
-    int enableDebugger;
-
+    
     /**
      * Default type for variables.
      */
@@ -4753,21 +4751,6 @@ char * strcopy( char * _dest, char * _source );
         sprintf(executableName, "%s", "cl65" ); \
     }
 
-#define BUILD_TOOLCHAIN_CC65_GET_LABELS_FILE( _environment, labelsFileName ) \
-    memset( labelsFileName, 0, MAX_TEMPORARY_STORAGE ); \
-    if ( _environment->enableDebugger ) { \
-        char tmpFileName[MAX_TEMPORARY_STORAGE]; \
-        memset( tmpFileName, 0, MAX_TEMPORARY_STORAGE ); \
-        strcpy( tmpFileName, _environment->exeFileName ); \
-        char * p = strchr( tmpFileName, '.' ); \
-        if ( p ) { \
-            *p = 0; \
-        } \
-        sprintf( labelsFileName, "%s.lbl", tmpFileName ); \
-    } else { \
-        strcopy( labelsFileName, "" ); \
-    }
-
 #define BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName ) \
     memset( listingFileName, 0, MAX_TEMPORARY_STORAGE ); \
     if ( _environment->listingFileName ) { \
@@ -4776,16 +4759,9 @@ char * strcopy( char * _dest, char * _source );
         strcopy( listingFileName, "" ); \
     }
 
-#define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, labelsFileName, listingFileName, additionalParameters ) \
-    char labelsParam[MAX_TEMPORARY_STORAGE]; \
-    if ( strlen( labelsFileName ) > 0 ) { \
-        sprintf( labelsParam, "-g -Ln \"%s\"", labelsFileName ); \
-    } else { \
-        memset( labelsParam, 0, MAX_TEMPORARY_STORAGE ); \
-    } \
-    sprintf( commandLine, "\"%s\" %s %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+#define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
         executableName, \
-        labelsParam, \
         listingFileName, \
         _environment->exeFileName, \
         additionalParameters, \

@@ -44,7 +44,6 @@ void target_linkage( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
-    char labelsFileName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     BUILD_SAFE_REMOVE( _environment, _environment->exeFileName );
@@ -53,11 +52,9 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_CC65_GET_EXECUTABLE( _environment, executableName );
 
-    BUILD_TOOLCHAIN_CC65_GET_LABELS_FILE( _environment, labelsFileName );
-
     BUILD_TOOLCHAIN_CC65_GET_LISTING_FILE( _environment, listingFileName );
 
-    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "plus4", executableName, labelsFileName, listingFileName, "-u __EXEHDR__" );
+    BUILD_TOOLCHAIN_CC65_EXEC( _environment, "plus4", executableName, listingFileName, "-u __EXEHDR__" );
 
      if ( _environment->listingFileName ) {
 
