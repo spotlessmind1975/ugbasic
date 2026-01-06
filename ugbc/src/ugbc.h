@@ -2494,8 +2494,6 @@ typedef struct _Environment {
      */
     char * parsedLine;
 
-    int lastyylineno;
-
     /**
      * Current line number in the BAS file.
      */
