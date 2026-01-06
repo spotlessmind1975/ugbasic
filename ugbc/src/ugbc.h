@@ -4759,7 +4759,7 @@ char * strcopy( char * _dest, char * _source );
         char tmpFileName[MAX_TEMPORARY_STORAGE]; \
         memset( tmpFileName, 0, MAX_TEMPORARY_STORAGE ); \
         strcpy( tmpFileName, _environment->exeFileName ); \
-        char * p = strrchr( tmpFileName, '.' ); \
+        char * p = strchr( tmpFileName, '.' ); \
         if ( p ) { \
             *p = 0; \
         } \
