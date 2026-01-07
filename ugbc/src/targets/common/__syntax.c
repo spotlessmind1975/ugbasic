@@ -6802,3 +6802,73 @@ target, il comando avrà un effetto diverso.
 @example RESET
 
 </usermanual> */
+
+/* <usermanual>
+@keyword FAST
+
+@english
+
+The ''FAST'' command (opposite of ''SLOW'') instructs the computer to dedicate 
+100% of the microprocessor's resources to executing the ugBASIC program's 
+calculations, completely suspending video signal generation or other functions 
+that are typically handled.
+
+In the default state (''SLOW''), and in some home computers, the CPU spends a 
+portion of its processing power generating the video and only the remainder 
+executing the program. With the ''FAST'' command, this balance was disrupted, 
+in favor of processing. In other home computers, the CPU is set to run at a 
+slower clock rate to ensure greater compatibility, and this command increases it.
+
+Once executed, processing speed increases. However, the screen may go black or 
+begin to flicker, and execution speed increases.
+
+@italian
+
+Il comando ''FAST'' (opposto di ''SLOW'') istruisce il computer a dedicare il 100% 
+delle risorse del microprocessore all'esecuzione dei calcoli del programma ugBASIC, 
+sospendendo completamente la generazione del segnale video, o di altre funzionalità 
+che vengono in genere gestite.
+
+Nello stato predefinito (''SLOW''), e in alcuni home computer, la CPU spende una 
+quota parte della sua potenza di calcolo a generare il video e solo il restante a 
+eseguire il programma. Con il comando ''FAST'', questo equilibrio veniva spezzato, 
+in favore dell'elaborazione. In altri home computer, la CPU viene fatta lavorare a 
+una frequenza di lavoro più lenta, per garantire maggiore compatibilità, e questo 
+comando l'aumenta.
+
+Una volta mandato in esecuzione, la velocità di elaborazione aumenta. Tuttavia, 
+lo schermo può diventare nero o iniziare a sfarfallare, e la velocità di 
+esecuzione aumenta. 
+
+@syntax FAST
+
+@example FAST
+
+</usermanual> */
+
+/* <usermanual>
+@keyword SLOW
+
+@english
+
+The ''SLOW'' command returns the computer to its standard operating mode, in 
+which the CPU divides its time between program execution and other functions, 
+such as creating video. When the computer is in ''SLOW'' mode, each second's 
+time is divided into several functions, or the CPU operates at the lowest but 
+most compatible frequency.
+
+@italian
+
+Il comando ''SLOW'' riporta il computer alla sua modalità operativa standard, 
+in cui la CPU divide il suo tempo tra l'esecuzione del programma e altre 
+funzionalità, come la creazione dell'immagine video. Quando il computer è in 
+modalità ''SLOW'', il tempo di ogni singolo secondo viene diviso in varie 
+funzionalità, oppure la CPU funziona con il regime di frequenza più basso 
+ma più compatibile.
+
+@syntax SLOW
+
+@example SLOW
+
+</usermanual> */
+

@@ -38,55 +38,18 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
-
-void target_initialization( Environment * _environment ) {
-
-    cpu_init( _environment );
-    _environment->program.startingAddress = 0x2800;
-    _environment->stackSize = 512;
-
-    banks_init( _environment );
-
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0c00 );
-    variable_global( _environment, "BITMAPADDRESS" );
-    variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
-    variable_global( _environment, "COLORMAPADDRESS" );
-    variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0400 );
-    variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
-    variable_global( _environment, "EMPTYTILE" );    
-    variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
-    variable_global( _environment, "DATAPTR" );
-
-    bank_define( _environment, "VARIABLES", BT_VARIABLES, 0x5000, NULL );
-    bank_define( _environment, "TEMPORARY", BT_TEMPORARY, 0x5100, NULL );
-    variable_import( _environment, "FREE_STRING", VT_WORD, DSTRING_DEFAULT_SPACE );
-    variable_global( _environment, "FREE_STRING" );    
-
-    // outline0("ORG $2800");
-    // outhead0("CODESTART");
-    // outline0("LDS #$8000");
-
-    deploy( vars, src_hw_d32b_vars_asm);
-    deploy_deferred( startup, src_hw_d32b_startup_asm);
-    bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
-
-    outline0( "JSR D32BSTARTUP" );
-
-    setup_text_variables( _environment );
-
-    c6847b_initialization( _environment );
-
-    cpu_call( _environment, "VARINIT" );
-
-    if ( _environment->tenLinerRulesEnforced ) {
-        shell_injection( _environment );
-        cpu_call( _environment, "VARINIT" );
-    }
-
-}
-
-void interleaved_instructions( Environment * _environment ) {
+/**
+ * @brief Emit ASM code for <b>FAST</b>
+ * 
+ * @param _environment Current calling environment
+ */
+/* <usermanual>
+@keyword FAST
+@target c128
+</usermanual> */
+void fast( Environment * _environment ) {
+   
+    outline0("LDA #$01");
+    outline0("STA $D030");
 
 }

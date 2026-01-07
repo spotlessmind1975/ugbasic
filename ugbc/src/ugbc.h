@@ -5505,6 +5505,7 @@ void                    fade_in_color_vars( Environment * _environment, char * _
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 void                    fade_out( Environment * _environment, char * _period  );
+void                    fast( Environment * _environment );
 void                    fcircle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    fellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
@@ -5899,6 +5900,7 @@ void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
 void                    slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination );
+void                    slow( Environment * _environment );
 void                    sound( Environment * _environment, int _freq, int _duration, int _channels );
 void                    sound_vars( Environment * _environment, char * _freq, char * _duration, char * _channels );
 void                    sound_off( Environment * _environment, int _channels );
