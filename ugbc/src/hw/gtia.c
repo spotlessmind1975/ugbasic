@@ -874,7 +874,13 @@ static unsigned char * dli_build( Environment * _environment,
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
-    if ( _environment->horizontalScrollOff ) {
+    if ( _environment->horizontalScrollOff || 
+        ( 
+            (_mode == TILEMAP_MODE_ANTIC2) || (_mode == TILEMAP_MODE_ANTIC3) ||
+            (_mode == TILEMAP_MODE_ANTIC4) || (_mode == TILEMAP_MODE_ANTIC6) ||
+            (_mode == TILEMAP_MODE_ANTIC7) 
+        )
+     ) {
         if ( _copper_list && copperUsedLines[0] ) {
             DLI_LMS_VSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
         } else {
@@ -891,7 +897,12 @@ static unsigned char * dli_build( Environment * _environment,
     *_screen_memory_offset = dliListCurrent - dliListStart - 2;
 
     for( int i=1; i<_rows; ++i ) {
-        if ( _environment->horizontalScrollOff ) {
+        if ( _environment->horizontalScrollOff || 
+        ( 
+            (_mode == TILEMAP_MODE_ANTIC2) || (_mode == TILEMAP_MODE_ANTIC3) ||
+            (_mode == TILEMAP_MODE_ANTIC4) || (_mode == TILEMAP_MODE_ANTIC6) ||
+            (_mode == TILEMAP_MODE_ANTIC7) 
+        ) ) {
             if ( _copper_list && copperUsedLines[i] ) {
                 DLI_MODE_VSCROLL_IRQ( dliListCurrent, _mode );
             } else {
