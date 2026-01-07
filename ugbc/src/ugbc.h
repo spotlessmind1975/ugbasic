@@ -1963,6 +1963,7 @@ typedef struct _Deployed {
     int encrypt;
     int decrypt;
     int hex2bin;
+    int cpuspeed;
     
 } Deployed;
 
@@ -5364,6 +5365,7 @@ void                    copper_wait( Environment * _environment, int _line );
 void                    copper_move( Environment * _environment, int _address1, int _address2, VariableType _VariableType );
 void                    copper_store( Environment * _environment, int _address, int _value, VariableType _VariableType );
 void                    copper_use( Environment * _environment, char * _name );
+void                    cpuspeed( Environment * _environment, char * _value );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
 Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
