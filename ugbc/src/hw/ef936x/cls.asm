@@ -174,6 +174,50 @@ CLSGORIG
 @ELSE
     PULS D
 @ENDIF
+
+@IF clsSlow
+
+    LDX BITMAPADDRESS
+    LDD #BASE_SEGMENT
+    TFR A,DP
+    LDD #CURRENTFRAMESIZE
+    TFR D,Y
+
+@IF TO8
+    LDA <$C3
+    ANDA #$FE
+    STA <$C3
+@ELSE
+    LDA <$C0
+    ANDA #$FE
+    STA <$C0
+@ENDIF
+
+CLSGL1
+
+@IF TO8
+    INC <$C3
+@ELSE
+    INC <$C0
+@ENDIF
+
+    STU , X
+
+@IF TO8
+    DEC <$C3
+@ELSE
+    DEC <$C0
+@ENDIF
+
+    STU , X++
+    LEAY -2, Y
+
+CLSGL2
+    CMPY #0
+    BNE CLSGL1
+
+@ELSE
+
     LDX BITMAPADDRESS
     LEAX 10,X
     PSHS D,U
@@ -233,6 +277,9 @@ CLSGL1
 CLSGL2
     CMPX #$5555
     BLO CLSGL1
+
+@ENDIF
+
     PULS DP,PC
 
 @ENDIF
