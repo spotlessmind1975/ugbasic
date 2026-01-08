@@ -3187,6 +3187,8 @@ typedef struct _Environment {
 
     int clsCalledOnce;
 
+    int clsSlow;
+
     int keyboardFullSupport;
 
     char * optionalX;

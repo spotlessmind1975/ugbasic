@@ -9485,6 +9485,12 @@ define_definition :
     | CLS EXPLICIT {
         ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0;
     }
+    | CLS FAST {
+        ((struct _Environment *)_environment)->clsSlow = 0;
+    }
+    | CLS SLOW {
+        ((struct _Environment *)_environment)->clsSlow = 1;
+    }
     | JOYSTICK SYNC {
         ((struct _Environment *)_environment)->joystickConfig.sync = 1;
     }
