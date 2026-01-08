@@ -1625,9 +1625,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
         outline0("SEI" );
         outline0("LDA #<DLI" );
-        outline0("STA $230" );
+        outline0("STA $0230" );
+        outline0("STA $D402" );
         outline0("LDA #>DLI" );
-        outline0("STA $231" );
+        outline0("STA $0231" );
+        outline0("STA $D403" );
         outline0("CLI" );
 
         label_stored_define_named( _environment, dliLabel );

@@ -71,7 +71,6 @@ void linker_setup( Environment * _environment ) {
     cfgline0("TRAILER:	start = $0000, size = $0006, file = %O;");
 
     MemoryArea * actual = _environment->memoryAreas;
-    actual = _environment->memoryAreas;
     while( actual ) {
         if ( actual->type == MAT_RAM  ) {
             cfgline3("RAM%3.3x:     file = \"\", start = $%4.4x,     size = $%4.4x;", actual->id, (unsigned short)actual->start, (unsigned short)(actual->end - actual->start) );
@@ -106,6 +105,17 @@ void linker_setup( Environment * _environment ) {
     cfgline0("DATA:     load = MAIN,     type = rw;");
     cfgline0("ZPSAVE:   load = MAIN,     type = bss, define = yes, optional = yes;");
     cfgline0("BSS:      load = MAIN,     type = bss, define = yes;");
+    
+    actual = _environment->memoryAreas;
+    actual = _environment->memoryAreas;
+    while( actual ) {
+        if ( actual->type == MAT_RAM ) {
+            cfgline3("MA%3.3x:  load = RAM%3.3x, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->id, actual->start);
+        } else {
+            cfgline2("MA%3.3x:  load = MAIN, type = overwrite,  optional = yes, start = $%4.4x;", actual->id, actual->start);
+        }        
+        actual = actual->next;
+    }
     cfgline0("HEAP:     load = MAIN,     type = bss, optional = yes; # must sit just below stack");
     cfgline0("ZEROPAGE: load = ZP,      type = zp;");
     cfgline0("AUTOSTRT: load = TRAILER,	type = ro;");

@@ -47,9 +47,9 @@ RASTERAT:
     LDA TMPPTR+1
     STA $201
 
-    LDA $0230
+    LDA $D403
     STA TMPPTR
-    LDA $0231
+    LDA $D404
     STA TMPPTR+1
 
     CLC
