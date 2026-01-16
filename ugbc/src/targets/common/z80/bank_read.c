@@ -52,7 +52,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
 
     char * bankAddress = banks_get_address( _environment, _bank );
     Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    variable_store( _environment, realAddress->realName, 0 );
+    variable_store( _environment, realAddress->name, 0 );
     cpu_math_add_16bit( _environment, realAddress->realName, bankAddress, realAddress->realName );
     cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
 
