@@ -1521,7 +1521,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "PATTERNADDRESS" );    
     Variable * palette = variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
     variable_global( _environment, "PALETTE" ); 
-    palette->readonly = 1;
+    // palette->readonly = 1;
 
     char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
     variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
