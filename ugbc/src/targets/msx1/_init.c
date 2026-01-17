@@ -74,7 +74,7 @@ void target_initialization( Environment * _environment ) {
             break;
     }
 
-    if ( bankMax != -1 ) {
+    if ( bankMax > 2 ) {
 
         bankIds = malloc( sizeof( int ) * (bankMax-2) );
         
@@ -90,6 +90,9 @@ void target_initialization( Environment * _environment ) {
     banks_generate( _environment );
 
     _environment->audioConfig.async = 1;
+
+    variable_import( _environment, "A8BANK", VT_BYTE, 4 );
+    variable_global( _environment, "A8BANK" );
 
     variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
     variable_global( _environment, "DOJOERROR" );
