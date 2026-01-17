@@ -32,34 +32,41 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
+#include "../../ugbc.h"
 
-#if defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+/****************************************************************************
+ * CODE SECTION 
+ ****************************************************************************/
 
-/**
- * @brief Emit ASM code for instruction <b>= BANK COUNT</b>
- * 
- * This function outputs the ASM code to get the resident
- * memory number of banks.
- * 
- * @param _environment Current calling environment
- * @return Current number of banks present.
- */
-Variable * bank_get_count( Environment * _environment ) {
+extern char DATATYPE_AS_STRING[][16];
 
-    Variable * result = variable_temporary( _environment, VT_BYTE, "(bank count)" );
-
-    int bankCount = 0;
+void banks_generate( Environment * _environment ) {
+    
+    int anyExpansionBank = 0;
     Bank * bank = _environment->expansionBanks;
     while( bank ) {
-        ++bankCount;
+        outhead2("%s EQU $%4.4x", bank->name, bank->baseAddress );
         bank = bank->next;
     }
 
-    variable_store( _environment, result->name, bankCount );
+    if ( anyExpansionBank ) {
 
-    return result;
+        int values[MAX_TEMPORARY_STORAGE];
+        char * address[MAX_TEMPORARY_STORAGE];
+
+        Bank * actual = _environment->expansionBanks;
+        int count = 0;
+        while( actual ) {
+            values[count] = actual->id;
+            address[count] = strdup( actual->name );
+            actual = actual->next;
+            ++count;
+        }
+
+        cpu_address_table_build( _environment, "EXPBANKS", values, address, (count-1) );
+
+        cpu_address_table_lookup( _environment, "EXPBANKS", count );
+
+    }
     
 }
-
-#endif

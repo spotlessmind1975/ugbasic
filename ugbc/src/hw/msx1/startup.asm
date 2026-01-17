@@ -95,6 +95,15 @@ MSX1STARTUP:
 
     DI
 
+    LD A, 0
+	LD ($6000), A
+	LD A, 1
+	LD ($6800), A
+	LD A, 2
+	LD ($7000), A
+	LD A, 3
+	LD ($7800), A
+
     ; LD HL, ($fd9f+1)
     ; LD DE, HL
     ; LD HL, ISRSVC2

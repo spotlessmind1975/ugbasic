@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK COUNT</b>
@@ -61,5 +59,3 @@ Variable * bank_get_count( Environment * _environment ) {
     return result;
     
 }
-
-#endif

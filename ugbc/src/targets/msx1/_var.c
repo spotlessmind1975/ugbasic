@@ -196,7 +196,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
-                        outhead1("%s: db $0", variable->realName );
+                        outhead2("%s EQU $%4.4x", variable->realName, variable->absoluteAddress );
                     } else {
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
@@ -492,8 +492,6 @@ void variable_cleanup( Environment * _environment ) {
     
     generate_cgoto_address_table( _environment );
     
-    banks_generate( _environment );
-
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {

@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK READ ...</b>
@@ -50,11 +48,12 @@
  */
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
+    outline0( "LD HL, $7800" );
+    outline1( "LD A, $%2.2x", _bank );
+    outline0( "LD (HL), A" );
+
     Variable * realAddress = variable_temporary( _environment, VT_ADDRESS, "(ADDRESS)" );
-    variable_store( _environment, realAddress->name, 0 );
-    cpu_math_add_16bit( _environment, realAddress->realName, bankAddress, realAddress->realName );
-    cpu_math_add_16bit_const( _environment, realAddress->realName, _address1, realAddress->realName );
+    variable_store( _environment, realAddress->name, _address1 );
 
     cpu_mem_move_indirect_direct_size( _environment, realAddress->realName, _address2, _size );
 
@@ -74,48 +73,54 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    outline0( "LD HL, $7800" );
+    outline1( "LD A, (%s)", _bank );
+    outline0( "LD (HL), A" );
+
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
 
-    cpu_mem_move( _environment, realAddress->realName, address2->realName, size->realName );
+    cpu_mem_move( _environment, address1->realName, address2->realName, size->realName );
 
 }
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    outline0( "LD HL, $7800" );
+    outline1( "LD A, (%s)", _bank );
+    outline0( "LD (HL), A" );
+
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * size = variable_retrieve_or_define( _environment, _size, VT_WORD, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_mem_move_direct2( _environment, realAddress->realName, address2->realName, size->realName );
+    cpu_mem_move_direct2( _environment, address1->realName, address2->realName, size->realName );
 
 }
 
 void bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size ) {
 
-    Variable * bankAddress = banks_get_address_var( _environment, _bank );
+    outline0( "LD HL, $7800" );
+    outline1( "LD A, (%s)", _bank );
+    outline0( "LD (HL), A" );
+
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress->name, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_mem_move_direct2_size( _environment, realAddress->realName, address2->realName, _size );
+    cpu_mem_move_direct2_size( _environment, address1->realName, address2->realName, _size );
 
 }
 
 void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size ) {
 
-    char * bankAddress = banks_get_address( _environment, _bank );
+    outline0( "LD HL, $7800" );
+    outline1( "LD A, $%2.2x", _bank );
+    outline0( "LD (HL), A" );
+
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
-    Variable * realAddress = variable_add( _environment, bankAddress, address1->name );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
-    cpu_mem_move_direct2_size( _environment, realAddress->realName, address2->realName, _size );
+    cpu_mem_move_direct2_size( _environment, address1->realName, address2->realName, _size );
 
 }
-
-#endif

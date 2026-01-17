@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>BANK UNCOMPRESS ...</b>
@@ -91,5 +89,3 @@ void bank_uncompress_vars( Environment * _environment, char * _bank, char * _add
     cpu_msc1_uncompress_indirect_indirect( _environment, realAddress->realName, address2->realName );
     
 }
-
-#endif

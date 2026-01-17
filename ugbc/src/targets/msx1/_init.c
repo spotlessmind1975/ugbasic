@@ -44,7 +44,50 @@ void target_initialization( Environment * _environment ) {
 
     // MEMORY_AREA_DEFINE( MAT_RAM, 0xd000, 0xdff0 );
 
-    banks_init( _environment );
+    // banks_init( _environment );
+
+    int * bankIds = NULL;
+    int bankMax = 0;
+    int bankCount = 0;
+
+    switch( _environment->ramSize ) {
+        case 128:
+            bankMax=16; /* 0...15 = 16 banks */
+            break;
+        case 256:
+            bankMax=32; /* 0...31 = 32 banks */
+            break;
+        case 512:
+            bankMax=64; /* 0...63 = 64 banks */
+            break;
+        case 1024:
+            bankMax=128; /* 0...127 = 128 banks */
+            break;
+        case 2048:
+            bankMax=256; /* 0...255 = 256 banks */
+            break;
+        case 0:
+            bankMax=-1; 
+            break;
+        default:
+            CRITICAL_INVALID_RAM_SIZE( _environment->ramSize );
+            break;
+    }
+
+    if ( bankMax != -1 ) {
+
+        bankIds = malloc( sizeof( int ) * (bankMax-2) );
+        
+        for( int i=2; i<bankMax; ++i ) {
+            bankIds[i-2] = 4 + bankMax - ( i ) - 1;
+            ++bankCount;
+        }
+
+        banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
+
+    }
+
+    banks_generate( _environment );
 
     _environment->audioConfig.async = 1;
 

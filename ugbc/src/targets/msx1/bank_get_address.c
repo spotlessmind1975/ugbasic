@@ -32,9 +32,7 @@
  * INCLUDE SECTION 
  ****************************************************************************/
 
-#include "../../../ugbc.h"
-
-#if defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || defined(__sg1000__) || defined(__vg5000__) || defined(__zx__) || defined(__vz200__)
+#include "../../ugbc.h"
 
 /**
  * @brief Emit ASM code for instruction <b>= BANK ADDRESS( )</b>
@@ -73,5 +71,3 @@ Variable * bank_get_address_var( Environment * _environment, char * _bank ) {
     return banks_get_address_var( _environment, _bank );
 
 }
-
-#endif

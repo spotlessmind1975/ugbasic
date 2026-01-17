@@ -169,6 +169,7 @@ void generate_rom( Environment * _environment ) {
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
     char binaryName[MAX_TEMPORARY_STORAGE];
+    char bankName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
     char * p;
@@ -184,6 +185,36 @@ void generate_rom( Environment * _environment ) {
     int binaryFileSize = file_get_size( _environment, binaryName );
     if ( binaryFileSize > 32768 ) {
         CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM( binaryFileSize - 32768 );
+    }
+    if ( binaryFileSize < 16384 ) {
+        FILE * fh = fopen( binaryName, "ab" );
+        while( binaryFileSize < 0x4000 ) {
+            fputc( 0xFF, fh );
+            ++binaryFileSize;
+        }
+        fclose(fh);
+    }
+
+    Bank * bank = _environment->expansionBanks;
+    int bankId = 2;
+    while( bank ) {
+        strcopy( bankName, _environment->asmFileName );
+        p = strstr( bankName, ".asm" );
+        if ( p ) {
+            *p = 0;
+        }
+        char temp[MAX_TEMPORARY_STORAGE];
+        sprintf(temp, "%s_BANK_%02X.bin", bankName, bankId );
+        strcpy( bankName, temp );
+        int bankSize = bank->space;
+        FILE * fh = fopen( bankName, "wb" );
+        fwrite( bank->data, 1, bankSize, fh );
+        fclose( fh );
+        bank = bank->next;
+        ++bankId;
+    }
+    if ( _environment->outputGeneratedFiles ) {
+        printf( "%s\n", _environment->exeFileName );
     }
 
     BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
