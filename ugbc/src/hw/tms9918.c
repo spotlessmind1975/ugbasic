@@ -2765,7 +2765,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
                 outline1("LD A, (%s)", _sequence );
                 outline0("PUSH HL" );
                 outline0("POP IX" );
-                outline1("CALL OFFSETS%4.4X", _frame_count * _frame_size );
+                outline1("CALL fs%4.4Xoffsetsequence", _frame_count * _frame_size );
             }
             if ( _frame ) {
                 if ( strlen(_frame) == 0 ) {
@@ -2774,7 +2774,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
                     outline1("LD A, (%s)", _frame );
                     outline0("PUSH HL" );
                     outline0("POP IX" );
-                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                    outline1("CALL fs%4.4Xoffsetframe", _frame_size );
                 }
             }
 
@@ -2789,7 +2789,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
                     outline0("PUSH HL" );
                     outline0("POP IX" );
                     outline1("LD A, (%s)", _frame );
-                    outline1("CALL OFFSETS%4.4X", _frame_size );
+                    outline1("CALL fs%4.4Xoffsetframe", _frame_size );
                 }
             }
 
