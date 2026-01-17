@@ -69,6 +69,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+        realFrame = frame;
     }
     Variable * sequence = NULL;
     if ( _sequence) {
@@ -172,7 +173,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
-                                if ( sequence ) {
+                if ( sequence ) {
                     if ( image->strips ) {
                         realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
                         outline0("PUSH HL");
