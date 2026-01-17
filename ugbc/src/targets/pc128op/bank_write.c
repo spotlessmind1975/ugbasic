@@ -65,6 +65,7 @@ void bank_write_vars( Environment * _environment, char * _address1, char * _bank
     outline1("LDB %s", bank->realName );
     outline1("LDX %s", address2->realName );
     outline0("JSR BANKWRITE");
+    _environment->bankAccessOptimization.writen = 1;
     outline0("; end bank write");
 
 }
@@ -124,6 +125,7 @@ void bank_write_vars_direct( Environment * _environment, char * _address1, char 
     outline1("LDB %s", bank->realName );
     outline1("LDX %s", address2->realName );
     outline0("JSR BANKWRITE");
+    _environment->bankAccessOptimization.writen = 1;
     outline0("; end bank write");
 
 }
