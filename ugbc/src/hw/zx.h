@@ -120,9 +120,9 @@
 
 #define KEY_SPACE                  35
 
-#define KEY_M                      36
-#define KEY_N                      37
-#define KEY_B                      38
+#define KEY_M                      37
+#define KEY_N                      38
+#define KEY_B                      39
 
 #define KEY_ASTERISK			    0
 #define KEY_AT						0
