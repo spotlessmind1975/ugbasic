@@ -138,7 +138,11 @@ LIBCHARADDRESSDOWN:
 ;
 LIBPRINTCHAR:
     PUSH BC
+@IF descriptors
+    LD DE, UDCCHAR			; Address of character set
+@ELSE
     LD DE, 0x3C00			; Address of character set in ROM
+@ENDIF
     PUSH HL
     LD B, 0				    ; Get index into character set
     LD C, A

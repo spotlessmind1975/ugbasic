@@ -542,6 +542,8 @@ void zx_initialization( Environment * _environment ) {
 
     console_init( _environment );
 
+    font_descriptors_init( _environment, 1 );
+
     if (_environment->vestigialConfig.clsImplicit ) {
         zx_cls( _environment, NULL, NULL );
     }

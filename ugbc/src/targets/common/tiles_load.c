@@ -232,12 +232,20 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         descriptors = _environment->tilesets[tileset->value];
     } else {
         if ( ! _environment->descriptors ) {
+            int count = (width/8)*(height/8);
+            if ( count < (_index+1) ) {
+                count = (_index+1);
+            }
             _environment->descriptors = malloc( sizeof( TileDescriptors ) );
             memset( _environment->descriptors, 0, sizeof( TileDescriptors ) );
-            _environment->descriptors->count = (width/8)*(height/8);
+            _environment->descriptors->count = count;
             _environment->descriptors->first = 0;
             _environment->descriptors->firstFree = _environment->descriptors->first;
             _environment->descriptors->lastFree = 255;
+        } else {
+            if ( _environment->descriptors->count < (_index+1) ) {
+                _environment->descriptors->count = (_index+1);
+            }
         }
         descriptors = _environment->descriptors;
     }

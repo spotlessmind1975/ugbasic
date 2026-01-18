@@ -493,6 +493,19 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
+    if ( _environment->descriptors ) {
+        outhead0("UDCCHAR:" );
+        int i=0,j=0;
+        for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
+            outline1("; $%2.2x ", i);
+            out0("DEFB " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+    }
+
     buffered_push_output( _environment );
 
     outhead0("ORG 32768");
