@@ -232,16 +232,17 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
         descriptors = _environment->tilesets[tileset->value];
     } else {
         if ( ! _environment->descriptors ) {
-            int count = (width/8)*(height/8);
-            if ( count < (_index+1) ) {
-                count = (_index+1);
+            font_descriptors_init( _environment, 0 );
+            if ( _environment->fontConfig.optimized ) {
+                int count = (width/8)*(height/8);
+                if ( count < (_index+1) ) {
+                    count = (_index+1);
+                }
+                _environment->descriptors->count = count;
+                _environment->descriptors->first = 0;
+                _environment->descriptors->firstFree = _environment->descriptors->first;
+                _environment->descriptors->lastFree = 255;
             }
-            _environment->descriptors = malloc( sizeof( TileDescriptors ) );
-            memset( _environment->descriptors, 0, sizeof( TileDescriptors ) );
-            _environment->descriptors->count = count;
-            _environment->descriptors->first = 0;
-            _environment->descriptors->firstFree = _environment->descriptors->first;
-            _environment->descriptors->lastFree = 255;
         } else {
             if ( _environment->descriptors->count < (_index+1) ) {
                 _environment->descriptors->count = (_index+1);
@@ -306,9 +307,9 @@ Variable * tiles_load( Environment * _environment, char * _filename, int _flags,
                         int bitmask = 1 << ( 7 - (xx & 0x7) );
 
                         if ( ( rgb.alpha < 255 ) || ( rgb.red + rgb.green + rgb.blue ) == 0 ) {
-                            *( fontData + offset ) |= bitmask;
-                        } else {
                             *( fontData + offset ) &= ~bitmask;
+                        } else {
+                            *( fontData + offset ) |= bitmask;
                         }
 
                         realSource += depth;

@@ -2064,6 +2064,7 @@ typedef struct _VestigialConfig {
 typedef struct _FontConfig {
 
     int schema;
+    int optimized;
 
 } FontConfig;
 
