@@ -45,6 +45,13 @@ LIBPRINTSTRING:
     LD A, C
     CP 0
     RET Z
+    LD A, (CONSOLEX2)
+    LD B, A
+    LD A, (XCURSYS)
+    CP B
+    JR C, LIBPRINTSTRINGGO
+    JR LIBPRINTSTRINGLF
+LIBPRINTSTRINGGO:
     ; LD L, (IX+0)			    ; Fetch the X coordinate
     ; INC IX				    ; Increase HL to the next memory location
     ; LD H,(IX+0)			    ; Fetch the Y coordinate
