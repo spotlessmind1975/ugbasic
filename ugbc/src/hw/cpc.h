@@ -34,15 +34,15 @@
 #include "../ugbc.h"
 
 #define KEY_NONE					255
-#define KEY_0						'0'
-#define KEY_1						72
+#define KEY_0						32
+#define KEY_1						64
 #define KEY_2						65
 #define KEY_3						57
-#define KEY_4						64
+#define KEY_4						56
 #define KEY_5						49
-#define KEY_6						56
+#define KEY_6						48
 #define KEY_7						41
-#define KEY_8						48
+#define KEY_8						40
 #define KEY_9						33
 #define KEY_A						69
 #define KEY_ASTERISK				0xfe
@@ -79,7 +79,7 @@
 #define KEY_L						36
 #define KEY_LEFT_ARROW				0xfe
 #define KEY_LEFT_SHIFT				21
-#define KEY_M						29
+#define KEY_M						38
 #define KEY_MINUS					0xfe
 #define KEY_N						46
 #define KEY_O						34
@@ -87,7 +87,7 @@
 #define KEY_PERIOD					39
 #define KEY_PLUS					32
 #define KEY_POUND					0xfe
-#define KEY_Q						69
+#define KEY_Q						67
 #define KEY_R						50
 #define KEY_RETURN					18
 #define KEY_RIGHT_SHIFT				21
@@ -99,11 +99,11 @@
 #define KEY_T						51
 #define KEY_U						42
 #define KEY_UP_ARROW				8
-#define KEY_V						5
-#define KEY_W						71
+#define KEY_V						55
+#define KEY_W						59
 #define KEY_X						63
 #define KEY_Y						43
-#define KEY_Z						59
+#define KEY_Z						71
 #define KEY_BACKSLASH               19
 #define KEY_SQUARE_OPEN             0xfe
 #define KEY_SQUARE_CLOSED           0xfe
