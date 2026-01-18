@@ -188,7 +188,7 @@ void generate_rom( Environment * _environment ) {
     }
     if ( binaryFileSize < 16384 ) {
         FILE * fh = fopen( binaryName, "ab" );
-        while( binaryFileSize < 0x4000 ) {
+        while( binaryFileSize < 0x8000 ) {
             fputc( 0xFF, fh );
             ++binaryFileSize;
         }
