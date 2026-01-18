@@ -198,6 +198,7 @@ void generate_rom( Environment * _environment ) {
     Bank * bank = _environment->expansionBanks;
     int bankId = 2;
     while( bank ) {
+        Bank * bank2 = bank->next;
         strcopy( bankName, _environment->asmFileName );
         p = strstr( bankName, ".asm" );
         if ( p ) {
@@ -209,8 +210,9 @@ void generate_rom( Environment * _environment ) {
         int bankSize = bank->space;
         FILE * fh = fopen( bankName, "wb" );
         fwrite( bank->data, 1, bankSize, fh );
+        fwrite( bank2->data, 1, bankSize, fh );
         fclose( fh );
-        bank = bank->next;
+        bank = bank2->next;
         ++bankId;
     }
     if ( _environment->outputGeneratedFiles ) {
