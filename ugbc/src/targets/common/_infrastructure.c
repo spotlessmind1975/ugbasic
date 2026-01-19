@@ -10354,7 +10354,13 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, ch
                 // cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
                 // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
                 
-                cpu_dsassign( _environment, value->realName, dstring->realName );
+                if ( value->type == VT_STRING ) {
+                    cpu_dsassign_string( _environment, value->realName, dstring->realName );
+                } else if ( value->type == VT_DSTRING ) {
+                    cpu_dsassign( _environment, value->realName, dstring->realName );
+                } else {
+                    CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[value->type], DATATYPE_AS_STRING[_array->arrayType] );
+                }
 
                 cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
 
@@ -16267,7 +16273,15 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
                         Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
                         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                         bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, value->name, 1 );
-                        cpu_dsassign( _environment, value->realName, dstring->realName );
+
+                        if ( value->type == VT_STRING ) {
+                            cpu_dsassign_string( _environment, value->realName, dstring->realName );
+                        } else if ( value->type == VT_DSTRING ) {
+                            cpu_dsassign( _environment, value->realName, dstring->realName );
+                        } else {
+                            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[value->type], DATATYPE_AS_STRING[array->arrayType] );
+                        }
+
                         bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
                         break;
                     };

@@ -283,6 +283,7 @@ void cpu_dswrite( Environment * _environment, char * _index );
 void cpu_dsresize( Environment * _environment, char * _index, char * _size );
 void cpu_dsresize_size( Environment * _environment, char * _index, int _size );
 void cpu_dsassign( Environment * _environment, char * _original, char * _copy );
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy );
 void cpu_dsgc( Environment * _environment );
 void cpu_dsinit( Environment * _environment );
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );

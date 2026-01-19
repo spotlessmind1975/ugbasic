@@ -6006,6 +6006,18 @@ void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) 
 
 }
 
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
+
+    outline1( "LDY #%s", _string );
+    outline1( "LDB %s", _copy );
+    outline0( "JSR DSASSIGNSTR" );
+    outline1( "STB %s", _copy );
+
+}
+
 void cpu_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
     outline1("LDX %s", _destination);

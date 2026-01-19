@@ -7687,6 +7687,21 @@ void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) 
 
 }
 
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy( duff, src_hw_6502_duff_asm );
+    deploy( dstring, src_hw_6502_dstring_asm );
+
+    outline1( "LDX %s", _copy );
+    outline1( "LDA #<%s", _string );
+    outline0( "STA DSADDRLO" );
+    outline1( "LDA #>%s", _string );
+    outline0( "STA DSADDRHI" );
+    outline0( "JSR DSASSIGNSTR" );
+    outline1( "STX %s", _copy );
+    
+}
+
 void cpu_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset ) {
 
     outline1("LDY #$%2.2x", _offset);

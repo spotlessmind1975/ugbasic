@@ -7098,6 +7098,20 @@ void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) 
 
 }
 
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy( duff, src_hw_sm83_duff_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _copy );
+    outline0( "LD B, A");
+    outline1( "LD HL, %s", _string );
+    outline0( "CALL DSASSIGNSTR" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _copy );
+    
+}
+
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("LD HL, (%s)", _value);

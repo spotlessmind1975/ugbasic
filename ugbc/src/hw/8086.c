@@ -4837,6 +4837,18 @@ void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) 
 
 }
 
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy( duff, src_hw_8086_duff_asm );
+    deploy( dstring,src_hw_8086_dstring_asm );
+
+    outline1( "MOV SI, %s", _string );
+    outline1( "MOV BL, [%s]", _copy );
+    outline0( "CALL DSASSIGNSTR" );
+    outline1( "MOV [%s], BL", _copy );
+
+}
+
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
 
     outline1("MOV DI, [%s]", _value);
