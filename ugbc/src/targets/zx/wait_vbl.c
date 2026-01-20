@@ -47,6 +47,6 @@
  */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    ZX_wait_vbl( _environment, _raster_line );
+    zx_wait_vbl( _environment, _raster_line );
 
 }

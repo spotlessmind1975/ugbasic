@@ -513,9 +513,9 @@ void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
     variable_global( _environment, "CONSOLESA" );
-    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 192 );
     variable_global( _environment, "CONSOLEHB" );
-    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 32 );
     variable_global( _environment, "CONSOLEWB" );
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
@@ -529,6 +529,7 @@ void zx_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
     _environment->consoleTilesHeight = _environment->screenTilesHeight;
+    _environment->currentModeBW = 1;
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
@@ -1528,6 +1529,7 @@ int zx_palette_extract( Environment * _environment, char * _data, int _width, in
 void zx_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
     deploy_preferred( vars,src_hw_zx_vars_asm);
+    deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
     deploy( textHScrollLine, src_hw_zx_hscroll_line_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
@@ -1668,7 +1670,7 @@ void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
     deploy( vbl, src_hw_zx_vbl_asm);
 
     if ( ! _raster_line ) {
-        outline0("LD HL, 12096");
+        outline0("LD HL, 15624");
         outline0("CALL WAITVBL");
     } else {
         Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 192 );
