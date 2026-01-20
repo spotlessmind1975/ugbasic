@@ -389,6 +389,8 @@ void variable_cleanup( Environment * _environment ) {
 
     banks_generate( _environment );
         
+    deploy_inplace_preferred( vars,src_hw_zx_vars_asm);
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {

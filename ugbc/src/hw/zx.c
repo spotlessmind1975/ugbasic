@@ -137,7 +137,7 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
     outline1("LD IXL, $%2.2x", ( _overlap & 0xff ) );
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( vScroll,src_hw_zx_vscroll_asm );
 
     outline0("CALL VSCROLL");
@@ -146,7 +146,7 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
 
 void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );
     deploy( textEncodedAt, src_hw_zx_text_at_asm );
     deploy( cls, src_hw_zx_cls_asm );
@@ -170,7 +170,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
 
 void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( cls, src_hw_zx_cls_asm );
 
     if ( _pen ) {
@@ -613,7 +613,7 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
 }
 
@@ -1175,7 +1175,7 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
     MAKE_LABEL
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( putimage, src_hw_zx_put_image_asm );
 
     if ( _frame_size ) {
@@ -1201,7 +1201,7 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
 void zx_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( blitimage, src_hw_zx_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1255,7 +1255,7 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
 
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size = zx_image_size( _environment, _width, _height, _mode );
 
@@ -1281,7 +1281,7 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
 
 Variable * zx_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
     int frameSize = zx_image_size( _environment, _width, _height, _mode );
@@ -1315,7 +1315,7 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
 
 Variable * zx_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
@@ -1352,7 +1352,7 @@ void zx_get_image( Environment * _environment, char * _image, char * _x, char * 
     
     MAKE_LABEL
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( getimage, src_hw_zx_get_image_asm );
 
     zx_load_image_address_to_other_register( _environment, "HL", _image, _sequence, _frame, _frame_size, _frame_count );
@@ -1374,7 +1374,7 @@ void zx_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void zx_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1399,7 +1399,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -1437,7 +1437,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1465,7 +1465,7 @@ void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
 
 void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _x );
@@ -1482,7 +1482,7 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 
 void zx_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tileset );
@@ -1527,7 +1527,7 @@ int zx_palette_extract( Environment * _environment, char * _data, int _width, in
 
 void zx_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( textHScrollLine, src_hw_zx_hscroll_line_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
@@ -1541,7 +1541,7 @@ void zx_hscroll_line( Environment * _environment, int _direction, int _overlap )
 
 void zx_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
 
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
