@@ -320,4 +320,6 @@ void zx_calculate_sequence_frame_offset( Environment * _environment, char * _off
 void zx_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
 void zx_joystick( Environment * _environment, int _joystick, char * _result );
 
+void zx_wait_vbl( Environment * _environment, char * _raster_line );
+
 #endif

@@ -1662,4 +1662,28 @@ void zx_put_key(  Environment * _environment, char *_string, char * _size ) {
 
 }
 
+void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
+
+    deploy_preferred( vars, src_hw_zx_vars_asm );
+    deploy( vbl, src_hw_zx_vbl_asm);
+
+    if ( ! _raster_line ) {
+        outline0("LD HL, 12096");
+        outline0("CALL WAITVBL");
+    } else {
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 192 );
+        outline1("LD A, %s", raster_line->realName);
+        outline0("SL A" );
+        outline0("SL A" );
+        outline0("SL A" );
+        outline0("SL A" );
+        outline0("SL A" );
+        outline0("SL A" );
+        outline0("LD L, A" );
+        outline0("LD H, 0" );
+        outline0("CALL WAITVBL");
+    }
+
+}
+
 #endif
