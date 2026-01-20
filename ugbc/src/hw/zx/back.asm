@@ -37,7 +37,8 @@
 
 BACK:
     LD HL, (COLORMAPADDRESS)
-    LD A, (_PAPER)
+    CALL CALCULATECOLOR
+    LD A, IXH
     AND $0F
     SLA A
     SLA A

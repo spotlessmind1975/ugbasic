@@ -167,26 +167,7 @@ LIBPRINTCHAR:
 ;
 LIBPRINTUDG8:
     PUSH IX
-    LD A, (_PAPER)
-    AND $07
-    SLA A
-    SLA A
-    SLA A
-    LD B, A
-    PUSH BC
-    LD A, (_PEN)
-    AND $07
-    LD B, A
-    LD A, (_PEN)
-    AND $08
-    SLA A
-    SLA A
-    SLA A
-    SLA A
-    OR A, B    
-    POP BC
-    OR A, B
-    LD IXH, A
+    CALL CALCULATECOLOR
     LD B, 8 			    ; Loop counter
 LIBPRINTUDG82:
     LD A, (DE)			    ; Get the byte from the ROM into A

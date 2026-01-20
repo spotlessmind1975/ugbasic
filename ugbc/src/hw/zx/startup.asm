@@ -53,7 +53,7 @@ ZXSTARTUP:
     LD I, A
     IM 2
     EI
-
+    
     LD A, 0
     LD ($5C08), A
 

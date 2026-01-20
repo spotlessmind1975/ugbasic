@@ -134,9 +134,14 @@ HSCROLLSCREENL1:
     INC HL
 
     LD A, (CONSOLEW)
+    DEC A
     LD C, A
     LD B, 0
     LDIR
+    PUSH IX
+    LD A, 0
+    LD (DE), A
+    POP IX
 
     POP HL
 
@@ -179,9 +184,15 @@ HSCROLLSCREENL1:
     INC HL
 
     LD A, (CONSOLEW)
+    DEC A
     LD C, A
     LD B, 0
     LDIR
+    PUSH IX
+    CALL CALCULATECOLOR
+    LD A, IXH
+    POP IX
+    LD (DE), A
 
     POP HL
 
@@ -278,7 +289,7 @@ HSCROLLSCREENRL1:
     LDDR
 
     POP DE
-    LD A, (EMPTYTILE)
+    LD A, 0
     LD (DE), A
 
     POP HL
