@@ -133,6 +133,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
     variable_global( _environment, "DOJOERROR" );
 
+    variable_import( _environment, "VBLSYNC", VT_BYTE, 0 );
+    variable_global( _environment, "VBLSYNC" );
+
     // outhead0("ORG 32768");
 
     // outhead0("CODESTART:");

@@ -37,112 +37,27 @@
 
 HSCROLLLINE:
     PUSH AF
-
-    LD HL, ROWSADDRESS
-
-    LD A, B
-    SLA A
-    SLA A
-    SLA A
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    ADD HL, DE
-
+    CALL CALCULATECOLOR
+    LD A, IXH
+    LD IYH, A
     POP AF
-
     CP $80
     JP C, HSCROLLLINER
-
 HSCROLLLINEL:
-
-    LD BC, 8
-
-HSCROLLLINEL1:
-
-    PUSH BC
-    PUSH HL
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD DE, HL
-
-    LD HL, DE
-
-    INC HL
-
-    LD A, (CONSOLEWB)
-    LD C, A
-    LD B, 0
-    LDIR
-
-    POP HL
-    POP BC
-
-    INC HL
-    INC HL
-    DEC C
-    JP NZ, HSCROLLLINEL1
-
+    LD A, (CONSOLEHB)
+    PUSH AF
+    LD A, 8
+    LD (CONSOLEHB), A
+    CALL HSCROLLSCREENL
+    POP AF
+    LD (CONSOLEHB), A
     RET
-
 HSCROLLLINER:
-
-    LD BC, $8
-
-HSCROLLLINER1:
-
-    PUSH BC
-    PUSH HL
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD DE, HL
-
-    PUSH DE
-
-    LD HL, DE
-    LD A, (CONSOLEWB)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD DE, HL
-    DEC HL
-
-    LD A, (CONSOLEWB)
-    LD B, A
-    LD C, 0
-    LDDR
-
-    POP DE
-    LD (DE), 0
-
-    POP HL
-    POP BC
-
-    INC HL
-    INC HL
-    DEC C
-    JP NZ, HSCROLLLINER1
-
-    RET    
+    LD A, (CONSOLEHB)
+    PUSH AF
+    LD A, 8
+    LD (CONSOLEHB), A
+    CALL HSCROLLSCREENL
+    POP AF
+    LD (CONSOLEHB), A
+    RET

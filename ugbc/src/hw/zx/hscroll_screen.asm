@@ -73,292 +73,220 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 HSCROLLSCREEN:
+    PUSH AF
+    CALL CALCULATECOLOR
+    LD A, IXH
+    LD IYH, A
+    POP AF
+
     CP $80
     JP C, HSCROLLSCREENR
 
+HSCROLLSCREENL:
+    LD A, (CONSOLEY1)
+    LD B, A
+    LD A, (CONSOLEX1)
+    LD D, A
+    LD C, D
+    LD A, (CONSOLEWB)
+    LD D, A
     LD A, (CONSOLEHB)
-    LD C, A
-    LD B, 0
-    LD HL, ROWSADDRESS
-
-    LD A, (CONSOLEY1)
-    LD E, A
-    LD D, 0
-    SLA E
-    RL D
-    SLA E
-    RL D
-    SLA E
-    RL D
-    SLA E
-    RL D
+    SRL A
+    SRL A
+    SRL A
+    LD H, A
+    LD E, H
+    LD A, E
+    OR A
+    RET Z
+    LD A, D
+    OR A
+    RET Z
+    SUB 2
+    INC A
+    EX AF, AF'
+    PUSH IX
+    LD IXL, E
+    LD L, B
+    LD H, 0
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    LD A, L
+    ADD A, C
+    LD L, A
+    LD DE, 22528
     ADD HL, DE
-
-    PUSH HL
-    POP IX
-
-    LD HL, COLRADDRESS
-
-    LD A, (CONSOLEY1)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    ADD HL, DE
-
-    PUSH HL
-    POP IY
-
-HSCROLLSCREENL1:
-
+HSCROLLSCREENLL1:
     PUSH BC
-
-    PUSH IX
-    POP HL
-
     PUSH HL
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
+    LD A, B
+    AND %00011000
+    LD H, A
+    LD A, B
+    AND %00000111
+    RRCA
+    RRCA
+    RRCA
+    ADD A, C
+    LD L, A
+    LD DE, 16384
     ADD HL, DE
-    LD DE, HL
-
-    INC HL
-
-    LD A, (CONSOLEW)
-    DEC A
-    LD C, A
     LD B, 0
+    EX AF, AF'
+    LD IXH, 7
+HSCROLLSCREENLL2:
+    PUSH HL
+    JR C, HSCROLLSCREENLL3
+    LD D, H
+    LD E, L
+    INC HL
+    LD C, A
+    LDIR 
+    EX DE, HL
+HSCROLLSCREENLL3:
+    LD (HL), B
+    POP HL
+    INC H
+    DEC IXH
+    JP NZ, HSCROLLSCREENLL2
+    JR C, HSCROLLSCREENLL4
+    LD D, H
+    LD E, L
+    INC HL
+    LD C, A
     LDIR
-    PUSH IX
-    LD A, 0
-    LD (DE), A
-    POP IX
-
+    EX DE, HL
+HSCROLLSCREENLL4:
+    LD (HL), B
     POP HL
-
+    JR C, HSCROLLSCREENLL5
+    LD D, H
+    LD E, L
     INC HL
-    INC HL
-
-    PUSH HL
-    POP IX
-
-    POP BC
-    
-    DEC C
-
-    LD A, C
-    AND $7
-    CP 0
-    JR NZ, HSCROLLSCREENL1
-
-    PUSH BC
-
-    PUSH IY
+    LD C, A
+    PUSH DE
+    LDIR
+    DEC HL
+    LD B, IYH
+    LD (HL), B
+    LD B, 0
     POP HL
-
-    PUSH HL
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
+HSCROLLSCREENLL5:
+    EX AF, AF'
+    LD DE, 32
     ADD HL, DE
-    LD DE, HL
-
-    INC HL
-
-    LD A, (CONSOLEW)
-    DEC A
-    LD C, A
-    LD B, 0
-    LDIR
-    PUSH IX
-    CALL CALCULATECOLOR
-    LD A, IXH
-    POP IX
-    LD (DE), A
-
-    POP HL
-
-    INC HL
-    INC HL
-
-    PUSH HL
-    POP IY
-
     POP BC
-    
-    LD A, C
-    CP 0
-    JR NZ, HSCROLLSCREENL1
-
+    INC B
+    DEC IXL
+    JP NZ, HSCROLLSCREENLL1
+    POP IX
     RET
 
 HSCROLLSCREENR:
-
-    ; text
-
+    LD A, (CONSOLEY1)
+    LD B, A
     LD A, (CONSOLEHB)
+    SRL A
+    SRL A
+    SRL A
+    LD H, A
+    LD A, (CONSOLEX1)
+    LD D, A
+    LD A, (CONSOLEWB)
+    ADD A, D
+    DEC A
     LD C, A
-    LD B, 0
-    LD HL, ROWSADDRESS
-
-    LD A, (CONSOLEY1)
-    LD E, A
-    LD D, 0
-    SLA E
-    RL D
-    SLA E
-    RL D
-    SLA E
-    RL D
-    SLA E
-    RL D
-    ADD HL, DE
-
-    PUSH HL
-    POP IX
-
-    ; text
-
-    LD HL, COLRADDRESS
-
-    LD A, (CONSOLEY1)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    ADD HL, DE
-
-    PUSH HL
-    POP IY
-
-HSCROLLSCREENRL1:
-
-    PUSH BC
-
+    LD A, (CONSOLEWB)
+    LD D, A
+    LD E, H
+    LD A, E
+    OR A
+    RET Z
+    LD A, D
+    OR A
+    RET Z
+    SUB 2
+    INC A
+    EX AF, AF'
     PUSH IX
-    POP HL
-
-    PUSH HL
-
-    ; text
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-    
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
+    LD IXL, E
+    LD L, B
+    LD H, 0
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    ADD HL, HL
+    LD A, L
+    ADD A, C
+    LD L, A
+    LD DE, 22528
     ADD HL, DE
-    LD DE, HL
-
-    PUSH DE
-
-    LD HL, DE
-    LD A, (CONSOLEW)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD DE, HL
-    DEC HL
-
-    LD A, (CONSOLEW)
-    LD C, A
-    LD B, 0
-    LDDR
-
-    POP DE
-    LD A, 0
-    LD (DE), A
-
-    POP HL
-    POP BC
-
-    INC HL
-    INC HL
-
-    PUSH HL
-    POP IX
-
-    ; color
-
-    DEC C
-    LD A, C
-    AND $07
-    JR NZ, HSCROLLSCREENRL1
-
+HSCROLLSCREENRL1:
     PUSH BC
-
-    PUSH IY
-    POP HL
-
     PUSH HL
-
-    LD A, (HL)
-    LD E, A
-    INC HL
-    LD A, (HL)
-    LD D, A
-    INC HL
-    
-    LD HL, DE
-    LD A, (CONSOLEX1)
-    LD E, A
-    LD D, 0
+    LD A, B
+    AND %00011000
+    LD H, A
+    LD A, B
+    AND %00000111
+    RRCA
+    RRCA
+    RRCA
+    ADD A, C
+    LD L, A
+    LD DE, 16384
     ADD HL, DE
-    LD DE, HL
-
-    PUSH DE
-
-    LD HL, DE
-    LD A, (CONSOLEW)
-    LD E, A
-    LD D, 0
-    ADD HL, DE
-    LD DE, HL
-    DEC HL
-
-    LD A, (CONSOLEW)
-    LD C, A
     LD B, 0
-    LDDR
-
-    POP DE
-    LD (DE), 0
-
-    POP HL
-    POP BC
-
-    INC HL
-    INC HL
-
+    EX AF, AF'
+    LD IXH, 7    
+HSCROLLSCREENRL2:
     PUSH HL
-    POP IY
-
-    LD A, C
-    CP 0
+    JR C, HSCROLLSCREENRL3
+    LD D, H
+    LD E, L
+    DEC HL
+    LD C, A
+    LDDR
+    EX DE, HL
+HSCROLLSCREENRL3:
+    LD (HL), B
+    POP HL
+    INC H
+    DEC IXH
+    JP NZ, HSCROLLSCREENRL2
+    JR C, HSCROLLSCREENRL4
+    LD D, H
+    LD E, L
+    DEC HL
+    LD C, A
+    LDDR
+    EX DE, HL
+HSCROLLSCREENRL4:
+    LD (HL), B
+    POP HL
+    JR C, HSCROLLSCREENRL5
+    LD D, H
+    LD E, L
+    DEC HL
+    LD C, A
+    PUSH DE
+    LDDR
+    INC HL
+    LD B, IYH
+    LD (HL), B
+    LD B, 0
+    POP HL    
+HSCROLLSCREENRL5:
+    EX AF, AF'
+    LD DE, 32
+    ADD HL, DE
+    POP BC
+    INC B
+    DEC IXL
     JP NZ, HSCROLLSCREENRL1
-
-    RET    
-
+    POP IX
+    RET

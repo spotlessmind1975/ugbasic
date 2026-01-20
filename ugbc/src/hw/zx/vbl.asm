@@ -36,11 +36,15 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 WAITVBL:
+    LD A, 1
+    LD (VBLSYNC), A
     LD BC, 43
     HALT
+    DI
 WAITVBL1:
-    SBC HL, BC          ; -15
-    LD A, H             ;  -4
-    CP $FF              ;  -7
-    JR NZ, WAITVBL1     ; -17
+    SBC HL, BC
+    LD A, H
+    CP $FF
+    JR NZ, WAITVBL1
+    EI
     RET
