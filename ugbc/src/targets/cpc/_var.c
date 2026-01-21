@@ -471,6 +471,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vScrollTextDown, src_hw_cpc_vscroll_text_down_asm );
     deploy_inplace_preferred( vScrollTextUp, src_hw_cpc_vscroll_text_up_asm );
     deploy_inplace_preferred( cpcvars, src_hw_cpc_vars_asm);
+    deploy_inplace_preferred( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm )
     deploy_inplace_preferred( dload, src_hw_cpc_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_cpc_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_cpc_chain_asm );
