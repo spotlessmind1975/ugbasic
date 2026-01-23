@@ -294,9 +294,6 @@ CONSOLECALCULATE:
     LD (CONSOLEHB), A
     
     LD A, (CONSOLEW)
-    SLA A
-    SLA A
-    SLA A
     LD (CONSOLEWB), A
 
     RET
