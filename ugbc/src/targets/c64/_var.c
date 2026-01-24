@@ -897,6 +897,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dload, src_hw_c64_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_c64_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_c64_chain_asm );
+    deploy_inplace_preferred( console, src_hw_vic2_console_asm );
 
     // Moved here for banking reasons.
 

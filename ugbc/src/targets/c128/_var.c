@@ -867,7 +867,7 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("CHAINEDSTART:");
         outline0("JMP CODESTART");
     }
-
+    
     if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
         int lastAddress = 0;
         SIDFILE * actual = _environment->sidFiles;
@@ -895,6 +895,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dsave, src_hw_c128_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
     deploy_inplace_preferred( bank, src_hw_c128_bank_asm );
+    deploy_inplace_preferred( console, src_hw_vic2_console_asm );
 
     // outhead0(".segment \"CODE\"" );
 
