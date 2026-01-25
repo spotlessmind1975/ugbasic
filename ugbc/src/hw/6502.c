@@ -5207,6 +5207,7 @@ void cpu_random_8bit( Environment * _environment, char * _entropy, char * _resul
         if ( _result ) {
             outline1("LDA %s", _entropy );
             outline0("ADC CPURANDOM_SEED" );
+            outline0("STA CPURANDOM_SEED" );
             outline0("JSR CPURANDOM8" );
             outline0("LDA CPURANDOM_SEED" );
             outline1("STA %s", _result );
@@ -5224,6 +5225,7 @@ void cpu_random_16bit( Environment * _environment, char * _entropy, char * _resu
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
+            outline0("ADC CPURANDOM_ENTROPY" );
             outline0("STA CPURANDOM_ENTROPY" );
             outline0("JSR CPURANDOM16" );
             outline0("LDA CPURANDOM_SEED" );
@@ -5244,6 +5246,7 @@ void cpu_random_32bit( Environment * _environment, char * _entropy, char * _resu
 
         if ( _result ) {
             outline1("LDA %s", _entropy );
+            outline0("ADC CPURANDOM_ENTROPY" );
             outline0("STA CPURANDOM_ENTROPY" );
             outline0("JSR CPURANDOM32" );
             outline0("LDA CPURANDOM_SEED" );
