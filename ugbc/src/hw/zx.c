@@ -1674,13 +1674,13 @@ void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
         outline0("CALL WAITVBL");
     } else {
         Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 192 );
-        outline1("LD A, %s", raster_line->realName);
-        outline0("SL A" );
-        outline0("SL A" );
-        outline0("SL A" );
-        outline0("SL A" );
-        outline0("SL A" );
-        outline0("SL A" );
+        outline1("LD A, (%s)", raster_line->realName);
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
         outline0("LD L, A" );
         outline0("LD H, 0" );
         outline0("CALL WAITVBL");
