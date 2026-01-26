@@ -54,6 +54,8 @@
 </usermanual> */
 void play( Environment * _environment, int _note, int _delay, int _channels ) {
 
+    zx_set_note( _environment, _channels, _note, _delay );
+
 }
 
 /**
@@ -68,5 +70,9 @@ void play( Environment * _environment, int _note, int _delay, int _channels ) {
  * @param _channels channels to play on
  */
 void play_vars( Environment * _environment, char * _note, char * _delay, char * _channels ) {
+
+    Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 42 );
+    Variable * delay = variable_retrieve_or_define( _environment, _note, VT_WORD, 1000 );
+    zx_set_note_vars( _environment, NULL, note->realName, delay->realName );
 
 }

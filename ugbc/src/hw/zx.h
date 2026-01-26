@@ -322,4 +322,10 @@ void zx_joystick( Environment * _environment, int _joystick, char * _result );
 
 void zx_wait_vbl( Environment * _environment, char * _raster_line );
 
+void zx_set_pitch( Environment * _environment, int _channel, int _pitch, int _duration );
+void zx_set_note( Environment * _environment, int _channel, int _note, int _duration );
+
+void zx_set_pitch_vars( Environment * _environment, char * _channel, char * _pitch, char * _duration );
+void zx_set_note_vars( Environment * _environment, char * _channel, char * _note, char * _duration );
+
 #endif

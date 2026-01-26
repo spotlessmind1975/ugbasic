@@ -51,6 +51,8 @@
 </usermanual> */
 void boom( Environment * _environment, int _duration, int _channels ) {
 
+    zx_set_pitch( _environment, _channels, 0xf000, _duration );
+
 }
 
 /**
@@ -65,6 +67,12 @@ void boom( Environment * _environment, int _duration, int _channels ) {
 @keyword BOOM
 </usermanual> */
 void boom_var( Environment * _environment, char * _duration, char * _channels ) {
+
+    Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1000 );
+
+    char param[MAX_TEMPORARY_STORAGE];
+    sprintf( param, "$f000" );
+    zx_set_pitch_vars( _environment, _channels, param, duration->realName );
 
 }
 

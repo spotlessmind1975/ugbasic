@@ -52,6 +52,8 @@
 </usermanual> */
 void bell( Environment * _environment, int _note, int _duration, int _channels ) {
 
+    zx_set_note( _environment, _channels, _note, _duration );
+
 }
 
 /**
@@ -67,5 +69,14 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
 @keyword BELL
 </usermanual> */
 void bell_vars( Environment * _environment, char * _note, char * _duration, char * _channels, int _sync ) {
+
+    Variable * note = variable_retrieve_or_define( _environment, _note, VT_BYTE, 42 );
+
+    if ( _duration ) {
+        Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1000 );
+        zx_set_note_vars( _environment, NULL, note->realName, duration->realName );
+    } else {
+        zx_set_note_vars( _environment, NULL, note->realName, NULL );
+    }
 
 }
