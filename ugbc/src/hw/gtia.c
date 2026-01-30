@@ -205,11 +205,11 @@ void gtia_background_color( Environment * _environment, int _index, int _backgro
             outline1("LDA #$%2.2x", _background_color );
             switch( _index ) {
                 case 0:
-                    outline0("STA $02C5" )
+                    outline0("STA $02C6" )
                     outline0("STA $D017" )
                     break;
                 case 1:
-                    outline0("STA $02C6" )
+                    outline0("STA $02C5" )
                     outline0("STA $D018" )
                     break;
             }
@@ -345,11 +345,11 @@ void gtia_background_color_vars( Environment * _environment, char * _index, char
             outline1("LDA %s", _background_color );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
-            outline0("STA $02C5" )
+            outline0("STA $02C6" )
             outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
             outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
@@ -492,11 +492,11 @@ void gtia_background_color_semivars( Environment * _environment, int _index, cha
             outline1("LDA %s", _background_color );
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
-            outline0("STA $02C5" )
+            outline0("STA $02C6" )
             outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
-            outline0("STA $02C6")
+            outline0("STA $02C5")
             outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
@@ -636,11 +636,11 @@ void gtia_background_color_get_vars( Environment * _environment, char * _index, 
             outline0("TAX");
             outline0("CPX #0" );
             outline1("BNE %snc0", label );
-            outline0("LDA $02C5" )
+            outline0("LDA $02C6" )
             outline0("STA $D017" )
             outline1("JMP %scdone", label )
             outhead1("%snc0:", label);
-            outline0("LDA $02C6")
+            outline0("LDA $02C5")
             outline0("STA $D018" )
             outhead1("%scdone:", label);
             break;
