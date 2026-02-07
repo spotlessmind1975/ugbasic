@@ -956,7 +956,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // Let's enable monocolor graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11111011");
+            outline0("AND #%01111011");
             outline0("ORA #%00100000");
             outline0("STA $D011" );
             outline0("LDA $D016" );
@@ -999,7 +999,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             // Let's enable multicolor graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11111000");
+            outline0("AND #%01111000");
             outline0("ORA #%00101011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
@@ -1029,7 +1029,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11011000");
+            outline0("AND #%01011000");
             outline0("ORA #%00001011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
@@ -1074,7 +1074,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11011000");
+            outline0("AND #%01011000");
             outline0("ORA #%00001011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
@@ -1118,7 +1118,7 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->currentModeBW = 0;
             // Let's disable graphics!
             outline0("LDA $D011" );
-            outline0("AND #%11011111");
+            outline0("AND #%01011111");
             outline0("ORA #%01001011");
             outline0("STA $D011" );
             outline0("LDA $D016" );
@@ -1249,7 +1249,7 @@ void vic2_bitmap_disable( Environment * _environment ) {
 
     // Let's disable graphics!
     outline0("LDA $D011" );
-    outline0("AND #%11011111");
+    outline0("AND #%01011111");
     outline0("STA $D011" );
     outline0("LDA $D016" );
     outline0("AND #%11101111");
@@ -1434,7 +1434,7 @@ void vic2_screen_on( Environment * _environment ) {
 void vic2_screen_off( Environment * _environment ) {
     
     outline0("LDA $D011" );
-    outline0("AND #%11101111");
+    outline0("AND #%01101111");
     outline0("STA $D011" );
 
 }
@@ -1452,7 +1452,7 @@ void vic2_screen_rows( Environment * _environment, char * _rows ) {
     outline1("JMP %s_2", label);
     outhead1("%s:", label );
     outline0("LDA $D011" );
-    outline0("AND #%11110111");
+    outline0("AND #%01110111");
     outline0("STA $D011" );
     outline1("JMP %s_2", label);
     outhead1("%s_2:", label );
@@ -2005,7 +2005,7 @@ void vic2_tiles_at( Environment * _environment, char * _address ) {
 void vic2_vertical_scroll( Environment * _environment, char * _displacement ) {
 
     outline0("LDA $D011" );
-    outline0("AND #%11111000");
+    outline0("AND #%01111000");
     outline1("ORA %s", _displacement );
     outline0("STA $D011" );
 
