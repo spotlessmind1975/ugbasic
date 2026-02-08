@@ -1904,13 +1904,16 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
             outline0("LEAY 3,y" );
             if ( strlen(_sequence) == 0 ) {
             } else {
-                outline1("LDB %s", _sequence );
+
+                Variable * sequence = variable_retrieve( _environment, _sequence );
+                outline1("LDB %s", sequence->realName );
                 outline1("JSR %soffsetsequence", _source->realName );
             }
             if ( _frame ) {
                 if ( strlen(_frame) == 0 ) {
                 } else {
-                    outline1("LDB %s", _frame );
+                    Variable * frame = variable_retrieve( _environment, _frame );
+                    outline1("LDB %s", frame->realName );
                     outline1("JSR %soffsetframe", _source->realName );
                 }
             }
@@ -1919,7 +1922,8 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
                 outline0("LEAY 3,y" );
                 if ( strlen(_frame) == 0 ) {
                 } else {
-                    outline1("LDB %s", _frame );
+                    Variable * frame = variable_retrieve( _environment, _frame );
+                    outline1("LDB %s", frame->realName );
                     outline1("JSR %soffsetframe", _source->realName );
                 }
             }
