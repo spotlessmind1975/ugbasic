@@ -67,6 +67,7 @@ extern char DATATYPE_AS_STRING[][16];
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+        realFrame = frame;
     }
     Variable * sequence = NULL;
     if ( _sequence) {
