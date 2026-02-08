@@ -133,9 +133,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 if ( _environment->residentDetectionEnabled ) {
@@ -251,9 +253,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 if ( _environment->residentDetectionEnabled ) {
@@ -327,9 +331,11 @@ extern char DATATYPE_AS_STRING[][16];
                     // bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
                      if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKUNCOMPRESS%2.2xXSDR", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     } else {
                         outline1("LDY #%s", bankWindowName );
                         outline1("JSR BANKUNCOMPRESS%2.2xXS", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     };                    
                 } else {
                     // bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
@@ -337,9 +343,11 @@ extern char DATATYPE_AS_STRING[][16];
                     outline1("LDU #$%4.4x", image->size );
                     if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     } else {
                         outline1("LDX #%s", bankWindowName );
                         outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     };            
                 }
                 if ( _environment->residentDetectionEnabled ) {
@@ -452,6 +460,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDY %s+6", image->realName );
     outline1("LDU %s+2", image->realName );
     outline0("JSR BANKUNCOMPRESS");
+    _environment->bankAccessOptimization.readn = 1;
 
     cpu_jump( _environment, labelDecompressionDone );
 
