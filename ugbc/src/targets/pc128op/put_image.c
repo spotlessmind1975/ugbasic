@@ -106,13 +106,13 @@ extern char DATATYPE_AS_STRING[][16];
                     if ( !frame ) {
                         ef936x_calculate_sequence_frame_offset_regy(_environment, "", "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, "", frame->name, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !_frame ) {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, "", image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->name, "", image->frameSize, image->frameCount );
                     } else {
-                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        ef936x_calculate_sequence_frame_offset_regy(_environment, sequence->name, frame->name, image->frameSize, image->frameCount );
                     }
                 }
 
