@@ -223,7 +223,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %%
 
 buffer_definition_prefix :
-    OSP
+    | OSP
     | OP_HASH OSP;
 
 buffer_definition_suffix:
@@ -7495,7 +7495,7 @@ array_assign_buffer :
             ((struct _Environment *)_environment)->currentArray = NULL;
         }
     } buffer_definition_suffix_optional
-    | OGP const_array_definitions CGP {
+    | OP_HASH OGP const_array_definitions CGP {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
             if ( currentArray->size < 0 ) {
@@ -7610,7 +7610,7 @@ array_assign:
                 CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
             }
         }
-    } OP_HASH array_assign_buffer
+    } array_assign_buffer
     | OP_ASSIGN LOAD String AS text_or_csv {
 
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
@@ -13375,6 +13375,26 @@ statement2nc:
       }
   }
   | LET let_definition
+  | Identifier OP_ASSIGN OP_HASH OSP BufferDefinitionHex CSP {
+    Variable * variable = NULL;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, VT_BUFFER, 0 );
+        }
+        Variable * buffer = parse_buffer_definition( _environment, $5, VT_BUFFER, 1 );
+        variable_move( _environment, buffer->name, variable->name );
+  }
+  | Identifier OP_ASSIGN BufferDefinitionHex {
+    Variable * variable = NULL;
+        if ( variable_exists( _environment, $1 ) ) {
+            variable = variable_retrieve( _environment, $1 );
+        } else {
+            variable = variable_define( _environment, $1, VT_BUFFER, 0 );
+        }
+        Variable * buffer = parse_buffer_definition( _environment, $3, VT_BUFFER, 1 );
+        variable_move( _environment, buffer->name, variable->name );
+  }
   | Identifier OP_ASSIGN expr {
         Variable * expr = variable_retrieve( _environment, $3 );
         Variable * variable;
