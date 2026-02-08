@@ -13,15 +13,15 @@ REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
 
     BITMAP ENABLE (160,200,16)
+    '
+    DOUBLE BUFFER ON
+    '
     'Palette
     PALETTE RGB(0,0,0),RGB(255,0,0),RGB(255,255,0),RGB(255,255,0), _
         RGB(0,0,255),RGB(255,0,255),RGB(0,255,255),RGB(255,255,255), _
         RGB(187,187,187),RGB(221,119,119),RGB(119,221,119)
     '
     tile1 := LOAD IMAGE("drop.png")
-    '
-    DOUBLE BUFFER ON
-    '
     CLS BLACK
     PUT IMAGE tile1 AT 80, 100
     SCREEN SWAP
