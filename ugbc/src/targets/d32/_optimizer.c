@@ -1370,13 +1370,16 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
-
-    if( po_buf_match( buf[0], " * #*",  NULL, arg)
+    
+    if( po_buf_match( buf[0], " * #(*+1)", NULL, arg)
     ||  po_buf_match( buf[0], " * [*]", NULL, arg)
-    ||  po_buf_match( buf[0], " * <*", NULL, arg) ) if(vars_ok(arg)) {
-        struct var *v = vars_get(arg);
-        v->flags |= NO_REMOVE/*|NO_DP*/;
-        v->nb_rd++;
+    ||  po_buf_match( buf[0], " * <*", NULL, arg)
+    ||  po_buf_match( buf[0], " * #*",  NULL, arg) ) {
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->flags |= NO_REMOVE/*|NO_DP*/;
+            v->nb_rd++;
+        }
     }
 
     if( po_buf_match( buf[0], " LDX #*",  arg)
