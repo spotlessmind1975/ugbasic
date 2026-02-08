@@ -2063,6 +2063,20 @@ typedef struct _CpuOptimization {
 
 } CpuOptimization;
 
+typedef struct _BankAccessOptimization {
+
+    int read1;
+    int read2;
+    int read4;
+    int readn;
+
+    int write1;
+    int write2;
+    int write4;
+    int writen;
+
+} BankAccessOptimization;
+
 typedef struct _Macro {
 
     char * name;
@@ -3232,6 +3246,8 @@ typedef struct _Environment {
     Constant * currentFieldsValues;
 
     CpuOptimization cpuOptimization;
+
+    BankAccessOptimization bankAccessOptimization;
 
     int putImageRefUnsafe;
 
