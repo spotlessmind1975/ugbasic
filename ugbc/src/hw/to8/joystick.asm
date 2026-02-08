@@ -36,6 +36,89 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+JFIRELATCH  fcb     $00
+
+; Read the FIRE button's latch for a specific joystick
+;
+;   B = joystick button id
+;   A = $00 FIRE was not pressed
+;       $ff FIRE was pressed
+;
+STRIG
+
+    LSRB
+    
+    ; Is the button odd? So we can read directly
+    ; the fire button.
+
+    BCS JFIRE
+
+    ; Load the latch value.
+
+    LDX #JFIRELATCH
+    LDA B, X
+
+    ; Check if latch is not zero.
+    
+    BEQ STRIGNONE
+
+    ; TRUE, the joystick fire was pressed in the past.
+
+    LDA #$FF
+
+    ; Reset the latch.
+    LDA #0
+    STA B, X
+    
+STRIGNONE
+    RTS
+
+; Read the FIRE button for a specific joystick
+;
+;   B = joystick number
+;   A = $00 FIRE was not pressed
+;       $01 FIRE was pressed
+;
+JFIREX
+
+    ; Load the STRIG register from the hardware port.
+
+    LDA #' '
+    JSR KEYSTATE
+    BCC JFIREX0DONE
+    LDA #$1
+
+JFIREX0
+
+    ; Update the FIRE latch.
+
+    PSHS D
+
+    ORA JFIRELATCH
+    STA JFIRELATCH
+
+    PULS D
+
+JFIREX0DONE:
+    CMPA #0
+    
+    ; Done.
+
+    RTS
+
+; Read the FIRE button for a specific joystick
+;
+;   X = joystick number
+;   A = $00 FIRE was not pressed
+;       $FF FIRE was pressed
+;
+JFIRE
+    JSR JFIREX
+    BEQ JFIRENONE
+    LDA #$FF
+JFIRENONE
+    RTS
+
 JOYSTICK
     CMPA #0
     BNE JOYSTICK1

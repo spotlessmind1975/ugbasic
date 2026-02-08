@@ -57,7 +57,6 @@ Variable * strig( Environment * _environment, int _port ) {
         deploy( joystick, src_hw_to8_joystick_asm );
 
         outline1( "LDB #%d", _port );
-        outline0( "STB <PORT");
         outline0( "JSR STRIG" );
         outline1( "STA %s", result->realName );
 
@@ -87,7 +86,6 @@ Variable * strig_vars( Environment * _environment, char * _port ) {
         deploy( joystick, src_hw_to8_joystick_asm );
 
         outline1( "LDB %s", port->realName );
-        outline0( "STB <PORT");
         outline0( "JSR STRIG" );
         outline1( "STA %s", result->realName );
 
