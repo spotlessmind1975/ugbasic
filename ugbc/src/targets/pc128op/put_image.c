@@ -298,7 +298,7 @@ extern char DATATYPE_AS_STRING[][16];
                 if ( !frame ) {
                     ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, _x1, _y1, realFrame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, frame->name, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
