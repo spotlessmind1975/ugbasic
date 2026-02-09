@@ -189,6 +189,134 @@ PLOT1
 ; 64 x 32 elements is available in the display area. The element area is four
 ; dot-clocks wide by six lines high.
 PLOT2
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT2E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT2D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT2G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT2C                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT2E
+    CLR <PLOTCPE
+PLOT2D
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    PSHS D
+    CLR ,-S
+    INC ,S
+    ANDA #$1f
+    LSRA
+    BCS PLOT2S2
+    LSL ,S
+    LSL ,S
+PLOT2S2       
+    ANDB #$3f
+    LSRB
+    BCS PLOT2S3
+    LSL ,S
+PLOT2S3       
+    PSHS B
+    LDB #32
+    MUL
+    ADDD TEXTADDRESS
+    TFR D,X
+    LDB ,S+
+    ABX
+    LDB <PLOTCPE
+    BMI PLOT2CLEAR
+    LDA #$10
+    MUL
+    BRA PLOT3SKIP
+    LDB ,X
+    BPL PLOT2S4
+    ANDB #$70
+    FCB $21
+PLOT2S4
+    CLRB
+PLOT3SKIP
+    PSHS B
+    LDA ,X
+    BMI PLOT2S5
+    CLRA
+PLOT2S5       
+    ANDA #$0F
+    ORA 1,S
+    ORA ,S++
+    ORA #$80
+    STA ,X
+    PULS D,PC
+
+PLOT2CLEAR
+    LDB ,X
+    BPL PLOT2S6
+    ANDB #$70
+    FCB $21
+PLOT2S6
+    CLRB
+PLOT3SKIP2
+    PSHS B
+    LDA ,X
+    BMI PLOT2S7
+    CLRA
+PLOT2S7
+    LDB 1,S
+    LSRB
+    LDU #PLOT2MASK
+    ANDA B,U
+    ORA ,S++
+    ORA #$80
+    STA ,X
+    PULS D,PC
+PLOT2MASK
+    FCB %00001110, %00001101, %00001011, %00001011, %00000111
+
+PLOT2G
+    JSR PLOT2G
+    CMPB #0
+    BEQ PLOT2G0
+    LDB #$FF
+PLOT2G0
+    RTS
+    
+PLOT2C
+    CLR ,-S
+    INC ,S
+    ANDA #$1f
+    LSRA
+    BCS PLOT2S8
+    LSL ,S
+    LSL ,S
+PLOT2S8       
+    ANDB #$3f
+    LSRB
+    BCS PLOT2S9
+    LSL ,S
+PLOT2S9       
+    PSHS B
+    LDB #32
+    MUL
+    ADDD TEXTADDRESS
+    TFR D,X
+    LDB ,S+
+    ABX
+    LDB #$FF
+    LDA ,X
+    BPL PLOT2DONE
+    ANDA ,S+
+    BEQ PLOT2S10
+    LDB ,X
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    ANDB #7
+PLOT2S10
+    INCB
+PLOT2DONE
     RTS
 
 @ENDIF
@@ -274,7 +402,7 @@ PLOT7
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -382,7 +510,7 @@ PLOT9
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -490,7 +618,7 @@ PLOT11
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -598,7 +726,7 @@ PLOT13
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -671,7 +799,7 @@ PLOT14
 
     JSR PLOTPREPARE
 
-    LDA PLOTCPE
+    LDA <PLOTCPE
     CMPA #4
     BEQ PLOT14B
 
