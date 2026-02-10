@@ -742,6 +742,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( startup, src_hw_cocob_startup_asm);
     deploy_inplace_preferred( vScrollText, src_hw_6847b_vscroll_text_asm );
     deploy_inplace_preferred( textHScroll, src_hw_6847b_hscroll_text_asm );
+    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm );
     deploy_inplace_preferred( plot, src_hw_6847b_plot_asm )
 
     outhead0("CODESTART2");
