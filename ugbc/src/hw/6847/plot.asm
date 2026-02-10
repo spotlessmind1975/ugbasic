@@ -230,14 +230,14 @@ PLOT2S3
     BMI PLOT2CLEAR
     LDA #$10
     MUL
-    BRA PLOT3SKIP
+    BRA PLOT2SKIP
     LDB ,X
     BPL PLOT2S4
     ANDB #$70
     FCB $21
 PLOT2S4
     CLRB
-PLOT3SKIP
+PLOT2SKIP
     PSHS B
     LDA ,X
     BMI PLOT2S5
@@ -257,7 +257,7 @@ PLOT2CLEAR
     FCB $21
 PLOT2S6
     CLRB
-PLOT3SKIP2
+PLOT2SKIP2
     PSHS B
     LDA ,X
     BMI PLOT2S7
@@ -328,7 +328,134 @@ PLOT2DONE
 ; Six bits are used to generate this map and two data bits may be used to select 
 ; one of four colors in the display box. A 512 byte display memory is required. 
 ; The element area is four dot-clocks wide by four lines high.
+
+PLOT3YTMP   FCB 0, 86
+PLOT3XTMP       FCB         0
+PLOT3CTMP       FCB         0
+                FCB         0,3
+PLOT3MASK       FCB         160,144,136,132,130,129
+                FCB         223,239,247,251,253,254
+
 PLOT3
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT3E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT3D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT3G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT3C                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT3E
+    CLR <PLOTCPE
+PLOT3D
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    STA PLOT3YTMP
+    STB PLOT3XTMP
+    LDA <PLOTCPE
+    STA PLOT3CTMP
+
+    LDU #PLOT3MASK
+    LDD -6,U
+    MUL
+    STB -2,U
+    CLRB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB -4,U
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,X
+
+    LDD -2,U
+    MUL
+    LDB -4,U
+    LSRB
+    ROLA
+    LDB ,X
+    BMI PLOT3L1
+    LDB #128
+    STB ,X
+PLOT3L1     
+    LDB -3,U
+    BNE PLOT3L2
+    ADDA #6
+    LDB ,X
+    ANDB A,U
+    STB ,X
+    RTS
+
+PLOT3L2     
+    DECB
+    BNE PLOT3L3
+    LDB #191
+    ANDB ,X
+    BRA PLOT3L4
+PLOT3L3     
+    LDB #64
+    ORB ,X
+PLOT3L4
+    ORB A,U
+    STB ,X
+    RTS
+
+PLOT3Y2TEMP      FCB         0,86
+PLOT3X2TEMP      FCB         0
+                 FCB         0,3
+PLOT3MASK2       FCB         32,16,8,4,2,1
+
+PLOT3G
+    JSR PLOT3G
+    CMPB #0
+    BEQ PLOT3G0
+    LDB #$FF
+PLOT3G0
+    RTS
+    
+PLOT3C
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    STA PLOT3Y2TEMP
+    STB PLOT3X2TEMP
+    LDU #PLOT3MASK2
+    LDD -5,U
+    MUL
+    STB -2,U
+    CLRB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB -3,U
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,X
+    LDD -2,U
+    MUL
+    LDB -3,U
+    LSRB
+    ROLA
+    LDB ,X
+    BMI PLOT3L5
+    LDB #255
+    BRA PLOT3L6
+PLOT3L5     
+    ANDB A,U
+    BEQ PLOT3L6
+    LDB ,X
+    ANDB #64
+    BEQ PLOT3L7
+    LDB #1
+PLOT3L7
+    INCB
+PLOT3L6
     RTS
 
 @ENDIF
