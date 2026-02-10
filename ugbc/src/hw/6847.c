@@ -283,7 +283,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
 
     _screen_mode->selected = 1;
 
-    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
@@ -753,7 +753,7 @@ void c6847_textmap_at( Environment * _environment, char * _address ) {
 
 void c6847_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
     deploy_preferred( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %4.4x", (_x & 0xffff ) );
@@ -786,7 +786,7 @@ void c6847_pset_vars( Environment * _environment, char *_x, char *_y, char * _c 
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
     deploy_preferred( plot, src_hw_6847_plot_asm );
     
     outline1("LDX %s", x->realName );
@@ -807,7 +807,7 @@ void c6847_pget_color_vars( Environment * _environment, char *_x, char *_y, char
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
-    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
     deploy_preferred( plot, src_hw_6847_plot_asm );
     
     outline1("LDD %s", x->realName );
@@ -1014,7 +1014,7 @@ void c6847_text( Environment * _environment, char * _text, char * _text_size, in
 
 void c6847_initialization( Environment * _environment ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
     deploy( c6847startup, src_hw_6847_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
