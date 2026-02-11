@@ -3807,6 +3807,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_INVALID_FRAME_WIDTH( s ) CRITICAL2("E400 - invalid frame width", s );
 #define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
 #define CRITICAL_CANNOT_FLIP( s ) CRITICAL2("E402 - cannot FLIP this variable", s );
+#define CRITICAL_CANNOT_DGR_ON_EMBEDDED_FONT( ) CRITICAL("E403 - cannot use DGR without custom font" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

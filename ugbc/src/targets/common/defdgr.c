@@ -119,6 +119,8 @@ void defdgr_vars( Environment * _environment, char * _character, char * _b0, cha
         cpu_move_8bit_indirect_with_offset( _environment, b6->realName, address->realName, 6);    
         cpu_move_8bit_indirect_with_offset( _environment, b7->realName, address->realName, 7 );    
 
+    } else {
+        CRITICAL_CANNOT_DGR_ON_EMBEDDED_FONT();
     }
 
 }
