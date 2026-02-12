@@ -6607,13 +6607,16 @@ void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 
     inline( cpu_move_8bit_with_offset )
 
+        MAKE_LABEL
+
         outline1("LDA %s", _value);
-        outline0("STA TMPPTR");
+        outline1("STA %s+1", label);
         outline1("LDA %s", address_displacement(_environment, _value, "1"));
-        outline0("STA TMPPTR+1");
+        outline1("STA %s+2", label);
         outline1("LDA %s", _source);
         outline1("LDY #$%2.2x", (_offset & 0xff ) );
-        outline0("STA (TMPPTR),Y");
+        outhead1("%s:", label );
+        outline0("STA $FF00,Y");
 
     no_embedded( cpu_move_8bit_with_offset )
 
