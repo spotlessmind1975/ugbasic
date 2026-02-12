@@ -98,7 +98,7 @@ void defdgr_vars( Environment * _environment, char * _character, char * _b0, cha
         Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
 
         Variable * offset = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
-        variable_sl_const( _environment, offset->name, 3 );
+        Variable * newOffset = variable_sl_const( _environment, offset->name, 3 );
         Variable * b0 = variable_retrieve_or_define( _environment, _b0, VT_BYTE, 0 );
         Variable * b1 = variable_retrieve_or_define( _environment, _b1, VT_BYTE, 0 );
         Variable * b2 = variable_retrieve_or_define( _environment, _b2, VT_BYTE, 0 );
@@ -109,7 +109,7 @@ void defdgr_vars( Environment * _environment, char * _character, char * _b0, cha
         Variable * b7 = variable_retrieve_or_define( _environment, _b7, VT_BYTE, 0 );
 
         cpu_addressof_16bit( _environment, "UDCCHAR", address->realName );
-        cpu_math_add_16bit( _environment, address->realName, offset->realName, address->realName );
+        cpu_math_add_16bit( _environment, address->realName, newOffset->realName, address->realName );
         cpu_move_8bit_indirect_with_offset( _environment, b0->realName, address->realName, 0 );    
         cpu_move_8bit_indirect_with_offset( _environment, b1->realName, address->realName, 1 );    
         cpu_move_8bit_indirect_with_offset( _environment, b2->realName, address->realName, 2 );    
