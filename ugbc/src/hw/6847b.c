@@ -62,8 +62,6 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
-
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -285,7 +283,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
 
     _screen_mode->selected = 1;
 
-    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm );
 
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
@@ -755,7 +753,7 @@ void c6847b_textmap_at( Environment * _environment, char * _address ) {
 
 void c6847b_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
 
     outline1("LDX %4.4x", (_x & 0xffff ) );
@@ -788,7 +786,7 @@ void c6847b_pset_vars( Environment * _environment, char *_x, char *_y, char * _c
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
     
     outline1("LDX %s", x->realName );
@@ -809,7 +807,7 @@ void c6847b_pget_color_vars( Environment * _environment, char *_x, char *_y, cha
     Variable * y = variable_retrieve_or_define( _environment, _y, VT_POSITION, 0 );
     Variable * result = variable_retrieve_or_define( _environment, _result, VT_BYTE, 0 );
 
-    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm );
     deploy_preferred( plot, src_hw_6847b_plot_asm );
 
     outline1("LDD %s", x->realName );
@@ -978,7 +976,7 @@ void c6847b_scroll_text( Environment * _environment, int _direction, int _overla
 
 void c6847b_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
     deploy( textEncodedAt, src_hw_6847b_text_at_asm );
 
     outline1("LDY %s", _text);
@@ -1016,7 +1014,7 @@ void c6847b_text( Environment * _environment, char * _text, char * _text_size, i
 
 void c6847b_initialization( Environment * _environment ) {
 
-    deploy_preferred( c6847vars, src_hw_6847_vars_asm );
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm );
     deploy( c6847bstartup, src_hw_6847b_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
@@ -1714,7 +1712,7 @@ static void c6847b_load_image_address_to_register( Environment * _environment, c
 
 void c6847b_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
     deploy( blitimage, src_hw_6847b_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1766,7 +1764,7 @@ void c6847b_blit_image( Environment * _environment, char * _sources[], int _sour
 
 void c6847b_put_image( Environment * _environment, Resource * _source, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
     deploy( putimage, src_hw_6847b_put_image_asm );
 
     if ( _source->isAddress ) {
@@ -1908,7 +1906,7 @@ Variable * c6847b_new_sequence( Environment * _environment, int _sequences, int 
 
 void c6847b_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
     deploy( getimage, src_hw_6847b_get_image_asm );
 
     outline1("LDY #%s", _image );
@@ -2067,7 +2065,7 @@ void c6847b_calculate_sequence_frame_offset( Environment * _environment, char * 
 
 void c6847b_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
 
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         c6847b_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
