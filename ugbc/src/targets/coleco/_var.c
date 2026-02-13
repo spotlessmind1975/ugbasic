@@ -615,6 +615,7 @@ void variable_cleanup( Environment * _environment ) {
         outline0("CALL VDPWRITE" );
         outline0("RET" );
     } else {
+        outhead0("UDCCHAR: EQU $8000" );
         outhead0("TMS9918AUDCCHAR01:" );
         outline0("RET" );
         outhead0("TMS9918AUDCCHAR23:" );

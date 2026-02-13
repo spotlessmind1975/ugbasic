@@ -533,6 +533,8 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
+    } else {
+        outhead0("UDCCHAR EQU $E000");
     }
 
     if ( _environment->bitmaskNeeded ) {
@@ -564,7 +566,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( vScrollText, src_hw_6847_vscroll_text_asm );
     deploy_inplace_preferred( textHScroll, src_hw_6847_hscroll_text_asm );
-    deploy_inplace_preferred( c6847bvars, src_hw_6847b_vars_asm );
+    deploy_inplace_preferred( c6847vars, src_hw_6847_vars_asm );
     deploy_inplace_preferred( plot, src_hw_6847_plot_asm )
 
     outhead0("CODESTART2");

@@ -144,13 +144,13 @@ extern char DATATYPE_AS_STRING[][16];
                     if ( !frame ) {
                         ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->name, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, sequence->name, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -216,7 +216,7 @@ extern char DATATYPE_AS_STRING[][16];
                 if ( !frame ) {
                     ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, _x1, _y1, frame->realName, NULL, image->frameSize, 0, _flags );
+                    ef936x_put_image( _environment, resource, _x1, _y1, frame->name, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;

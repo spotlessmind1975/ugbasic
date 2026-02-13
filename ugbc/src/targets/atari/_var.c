@@ -699,6 +699,7 @@ void variable_cleanup( Environment * _environment ) {
         outline0("STA $2F4" );
         outline0("RTS" );
     } else {
+        outhead0("UDCCHAR = $E000" );
         outhead0("GTIAUDCCHAR:" );
         outline0("RTS" );
     }

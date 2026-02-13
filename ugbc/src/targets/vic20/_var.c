@@ -589,6 +589,7 @@ void variable_cleanup( Environment * _environment ) {
         }
         outline0("$00");
     } else {
+        outhead0("UDCCHAR = $8000");
         outhead0("TILESETSLOTUSED: .res 256, $00 ");
         outhead0("TILESETSLOTATTRIBUTE: .res 256, $00 ");
     }

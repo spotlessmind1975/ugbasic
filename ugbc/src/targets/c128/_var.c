@@ -763,7 +763,9 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
-    }    
+    } else {
+        outhead0("UDCCHAR = $9800");
+    }
 
     if ( _environment->memoryAreas ) {
         MemoryArea * memoryArea = _environment->memoryAreas;
