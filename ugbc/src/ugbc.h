@@ -3845,10 +3845,11 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_INVALID_FRAME_WIDTH( s ) CRITICAL2("E400 - invalid frame width", s );
 #define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
 #define CRITICAL_CANNOT_FLIP( s ) CRITICAL2("E402 - cannot FLIP this variable", s );
-#define CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( s ) CRITICAL2("E403 - cannot use STRIP with PUT IMAGE using ATLAS without STRIP", s );
-#define CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( ) CRITICAL("E404 - cannot enable DOUBLE BUFFER after loading resources" );
-#define CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( s ) CRITICAL2("E405 - cannot DECRYPT on this kind of variable", s );
-#define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E406 - data type not supported for HEX2BIN", v, s );
+#define CRITICAL_CANNOT_DGR_ON_EMBEDDED_FONT( ) CRITICAL("E403 - cannot use DGR without custom font" );
+#define CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( s ) CRITICAL2("E404 - cannot use STRIP with PUT IMAGE using ATLAS without STRIP", s );
+#define CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( ) CRITICAL("E405 - cannot enable DOUBLE BUFFER after loading resources" );
+#define CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( s ) CRITICAL2("E406 - cannot DECRYPT on this kind of variable", s );
+#define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E407 - data type not supported for HEX2BIN", v, s );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

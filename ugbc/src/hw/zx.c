@@ -771,7 +771,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                         colorIndex = 0;
 
                         int minDistance = 9999;
-                        for( int index = 0; index <16; ++index ) {
+                        for( int index = 0; index <8; ++index ) {
                             int distance = rgbi_distance(&SYSTEM_PALETTE[index], &rgb );
                             if ( distance < minDistance ) {
                                 minDistance = distance;
@@ -779,7 +779,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
                             }
                         }
 
-                        // printf( "%2.2x%2.2x%2.2x = %d ", rgb.red, rgb.green, rgb.blue, colorIndex );
+                        // printf( "%2.2x%2.2x%2.2x = %d\n", rgb.red, rgb.green, rgb.blue, colorIndex );
                         
                         ++colorIndexCount[colorIndex];
 

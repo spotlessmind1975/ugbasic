@@ -978,7 +978,7 @@ void c6847_scroll_text( Environment * _environment, int _direction, int _overlap
 
 void c6847_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm);
     deploy( textEncodedAt, src_hw_6847_text_at_asm );
 
     outline1("LDY %s", _text);
@@ -1714,7 +1714,7 @@ static void c6847_load_image_address_to_register( Environment * _environment, ch
 
 void c6847_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm);
     deploy( blitimage, src_hw_6847_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1766,7 +1766,7 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
 
 void c6847_put_image( Environment * _environment, Resource * _source, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
 
     if ( _source->isAddress ) {
@@ -1908,7 +1908,7 @@ Variable * c6847_new_sequence( Environment * _environment, int _sequences, int _
 
 void c6847_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm);
     deploy( getimage, src_hw_6847_get_image_asm );
 
     outline1("LDY #%s", _image );
@@ -2067,7 +2067,7 @@ void c6847_calculate_sequence_frame_offset( Environment * _environment, char * _
 
 void c6847_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    deploy( c6847vars, src_hw_6847_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847_vars_asm);
 
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         c6847_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );

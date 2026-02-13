@@ -645,6 +645,7 @@ void variable_cleanup( Environment * _environment ) {
         // outline0("STA $FF07" );
         outline0("RTS" );
     } else {
+        outhead0("UDCCHAR = $C000");
         outhead0("TEDUDCCHAR:" );
         outline0("RTS" );
     }

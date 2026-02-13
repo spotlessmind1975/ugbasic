@@ -692,6 +692,8 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
+    } else {
+        outhead0("UDCCHAR: EQU $E000");
     }
 
     if ( _environment->descriptors ) {
