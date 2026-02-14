@@ -9592,13 +9592,13 @@ define_definition :
         ((struct _Environment *)_environment)->numberConfig.maxDigits = $3;
     }
     | STRING COUNT const_expr {
-        if ( $3 <= 0 ) {
+        if ( $3 <= 0 || $3 > 255 ) {
             CRITICAL_INVALID_STRING_COUNT( $3 );
         }
         ((struct _Environment *)_environment)->dstring.count = $3;
     }
     | STRING SPACE const_expr {
-        if ( $3 <= 0 ) {
+        if ( $3 <= 0 || $3 > 32767 ) {
             CRITICAL_INVALID_STRING_SPACE( $3 );
         }
         ((struct _Environment *)_environment)->dstring.space = $3;
