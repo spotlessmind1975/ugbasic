@@ -125,7 +125,35 @@ PUTIMAGE1
 ; 64 x 32 elements is available in the display area. The element area is four
 ; dot-clocks wide by six lines high.
 PUTIMAGE2
-    RTS
+
+    LDA #32
+    STA PUTIMAGECOMMONCWIDTH+1
+
+    LDX TEXTADDRESS
+    LDB <(IMAGEY+1)
+
+    LSLB
+    LSLB
+    ADDB <(IMAGEY+1)
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    CLRA
+    LEAX D, X
+
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    JMP PUTIMAGECOMMONC
 
 @ENDIF
 
@@ -186,6 +214,9 @@ PUTIMAGE6
 ; colors. A 1K x 8 display memory is required. Each pixel equals 
 ; four dot-clocks by three scan lines.
 PUTIMAGE7
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -250,6 +281,9 @@ PUTIMAGE8
 ; colors. A 2K x 8 display memory is required. Each pixel equals
 ; two dot-clocks by three scan lines.
 PUTIMAGE9
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -318,6 +352,9 @@ PUTIMAGE10
 ; dot-clocks by two scan lines.
 PUTIMAGE11
 
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
+
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -384,6 +421,9 @@ PUTIMAGE12
 ;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
 ;  by one scan line.
 PUTIMAGE13
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -640,6 +680,7 @@ PUTIMAGECOMMONC
     LSRA
     CMPA #0
     BNE PUTIMAGECL0
+PUTIMAGECOMMONCWIDTH
     LDA #64
 PUTIMAGECL0
     STA <IMAGEW
