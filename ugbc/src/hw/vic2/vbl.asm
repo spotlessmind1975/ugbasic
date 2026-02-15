@@ -35,14 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VBL:
-    CMP #$FA
-    LDA $D012
-VBL2:
-    CMP $d012
-    BNE VBL2
-    RTS
-
 VBLLINE:
     STA MATHPTR0
 VBLLINEL1:
@@ -51,6 +43,7 @@ VBLLINEL1:
     BNE VBLLINEL1
     RTS
 
+VBL:
 WAITVBL:
     LDA $D011
     AND #$80
