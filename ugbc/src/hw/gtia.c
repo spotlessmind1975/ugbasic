@@ -2684,7 +2684,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -2868,7 +2868,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {

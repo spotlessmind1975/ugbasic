@@ -3389,6 +3389,12 @@ int yyerror ( Environment * _ignored, const char * _message );
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
+    #define CRITICAL3ii( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
+        sprintf(errorMessage, "%s (%d, %d) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
     #define CRITICAL4si( s, v, d1, d2 ) { \
         char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d, %d) FILE: %s LINE: %d", s, v, d1, d2, __FILE__, __LINE__ ); \
@@ -3423,6 +3429,12 @@ int yyerror ( Environment * _ignored, const char * _message );
     #define CRITICAL3i( s, v1, v2 ) { \
         char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d)", s, v1, v2 ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3ii( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
+        sprintf(errorMessage, "%s (%d, %d)", s, v1, v2 ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
@@ -3497,8 +3509,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );
 #define CRITICAL_UNDEFINED_CONSTANT( c ) CRITICAL2("E061 - use of an undefined constant", c );
 #define CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( c ) CRITICAL2("E062 - use of an wrong type constant (numeric expected, string used)", c );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( w ) CRITICAL2i("E063 - invalid width for image, must be multiple of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h ) CRITICAL2i("E064 - invalid height for image, must be multiple of 8 pixels", h );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( w, m ) CRITICAL3ii("E063 - invalid width for image, must be a multiple of modulo pixels", w, m );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h, m ) CRITICAL3ii("E064 - invalid height for image, must be a multiple of modulo pixels", h, m );
 #define CRITICAL_BIN_UNSUPPORTED( v, t ) CRITICAL3("E065 - BIN unsupported for variable of given datatype", v, t );
 #define CRITICAL_MUL2_INVALID_STEPS( v ) CRITICAL2("E066 - invalid steps for multiplication by 2", v );
 #define CRITICAL_UNABLE_TO_EMBED( v ) CRITICAL2("E067 - unable to embed library, only inline available", v );
@@ -3517,8 +3529,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_LOCAL_VARIABLE_OUTSIDE_PROCEDURE( c )  CRITICAL2("E079 - cannot define LOCAL vars outside PARALLEL PROCEDURE", c );
 #define CRITICAL_OR_UNSUPPORTED( v, t ) CRITICAL3("E080 - Bitwise OR unsupported for variable of given datatype", v, t );
 #define CRITICAL_NOT_UNSUPPORTED( v, t ) CRITICAL3("E081 - Bitwise NOT unsupported for variable of given datatype", v, t );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E082 - invalid width for framed image, must be multiple of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E083 - invalid height for framed image, must be multiple of 8 pixels", h );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( w, m ) CRITICAL3ii("E082 - invalid width for framed image, must be multiple of modulo pixels", w, m );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( h, m ) CRITICAL3ii("E083 - invalid height for framed image, must be multiple of modulo pixels", h, m );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( x ) CRITICAL2i("E084 - invalid offset x for image, must be >= 0 and < width", x );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( y ) CRITICAL2i("E085 - invalid offset y for image, must be >= 0 and < height", y );
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E086 - invalid frame width, not multiple of width", w );
@@ -5604,10 +5616,10 @@ Variable *              image_load( Environment * _environment, char * _filename
 Variable *              image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 int                     image_size( Environment * _environment, int _width, int _height );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
-void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x, int _modulo_y );
 void                    image_converter_asserts_free( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
-void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
-void                    image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x );
+void                    image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_y );
 Variable *              image_extract( Environment * _environment, char * _images, int _frame, int * _sequence );
 char *                  image_extract_subimage( Environment * _environment, char * _source, int _width, int _height, int _frame_width, int _frame_height, int _x, int _y, int _depth );
 Variable *              image_get_height( Environment * _environment, char * _image );
