@@ -12641,15 +12641,22 @@ void variable_array_shuffle( Environment * _environment, char * _name, int _roun
 
 }
 
-void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x, int _modulo_y ) {
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
     }
 
+    if ( _modulo_x == 0 ) {
+        _modulo_x = 8;
+    }
 
-    if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    if ( _modulo_y == 0 ) {
+        _modulo_y = 8;
+    }
+
+    if ( (*_frame_width % _modulo_x) && !_environment->freeImageWidth ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( _width, _modulo_x );
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
@@ -12660,12 +12667,12 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
         *_frame_height = _height;
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height, _modulo_y );
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height, _modulo_y );
     }
 
     if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
@@ -12695,7 +12702,7 @@ void image_converter_asserts_free( Environment * _environment, int _width, int _
 }
 
 
-void image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_y ) {
 
     // if ( _width % 8 ) {
     //     CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
@@ -12703,6 +12710,10 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
+    }
+
+    if ( _modulo_y == 0 ) {
+        _modulo_y = 8;
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
@@ -12714,11 +12725,11 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
     }
 
     if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height, _modulo_y );
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height, _modulo_y );
     }
 
     if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
@@ -12727,14 +12738,18 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
 
 }
 
-void image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x ) {
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
     }
 
+    if ( _modulo_x == 0 ) {
+        _modulo_x = 8;
+    }
+
     if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width, _modulo_x );
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
