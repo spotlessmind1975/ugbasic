@@ -186,6 +186,9 @@ VIC2STARTUPL1:
 
 @IF vestigialConfig.doubleBufferSelected || vestigialConfig.doubleBuffer
 
+; SCREEN 0 IS AT $8400
+; SCREEN 1 IS AT $8800
+
 DOUBLEBUFFERINIT:
 
     JSR COPYTILEMAP01
@@ -252,7 +255,7 @@ SWITCHTILEMAP:
 SWITCHTILEMAP0:
     LDA $d018
     AND #$0f
-    ORA #$20
+    ORA #$10
     STA $d018
     JSR ONSWITCHTILEMAP
     LDA #0
@@ -267,7 +270,7 @@ SWITCHTILEMAP0:
 SWITCHTILEMAP1:
     LDA $d018
     AND #$0f
-    ORA #$10
+    ORA #$20
     STA $d018
     JSR ONSWITCHTILEMAP
     LDA #1
