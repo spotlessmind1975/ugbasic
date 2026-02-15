@@ -116,7 +116,7 @@ PUTIMAGE1
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) || (currentMode == 3) )
 
 ; The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
 ; element in the standard 8 x 12 dot box. Three data bits may be used to select
@@ -125,6 +125,13 @@ PUTIMAGE1
 ; 64 x 32 elements is available in the display area. The element area is four
 ; dot-clocks wide by six lines high.
 PUTIMAGE2
+
+; The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
+; 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
+; Six bits are used to generate this map and two data bits may be used to select 
+; one of four colors in the display box. A 512 byte display memory is required. 
+; The element area is four dot-clocks wide by four lines high.
+PUTIMAGE3
 
     LDA #32
     STA PUTIMAGECOMMONCWIDTH+1
@@ -154,18 +161,6 @@ PUTIMAGE2
     LEAX D, X
 
     JMP PUTIMAGECOMMONC
-
-@ENDIF
-
-@IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
-
-; The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
-; 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
-; Six bits are used to generate this map and two data bits may be used to select 
-; one of four colors in the display box. A 512 byte display memory is required. 
-; The element area is four dot-clocks wide by four lines high.
-PUTIMAGE3
-    RTS
 
 @ENDIF
 

@@ -68,6 +68,16 @@ static RGBi SYSTEM_PALETTE_SG4[9] =
         }
 ;
 
+static RGBi SYSTEM_PALETTE_SG6[4] =
+        // SEMIGRAPHICS 4
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0x00, 0x00, 0xff, 1, "UNUSED" },        
+            { 0x00, 0x00, 0xff, 0xff, 2, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 3, "RED" }
+        }
+;
+
 static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
 
 static RGBi * commonPalette;
@@ -1208,8 +1218,8 @@ int c6847_image_size( Environment * _environment, int _width, int _height, int _
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
             break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
-                return 3 + ( ( _width >> 3 ) * ( _height / 12 ) );
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return 3 + ( ( _width >> 3 ) * ( _height / 12 ) );
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
@@ -1250,8 +1260,8 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
             break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
-                return 3 + ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames;
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return 3 + ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
@@ -1292,8 +1302,8 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
             break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
-                return 3 + ( ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames ) * _sequences;
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+                return 3 + ( ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames ) * _sequences;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
@@ -1338,7 +1348,7 @@ static Variable * c6847_image_converter_bitmap_mode_standard( Environment * _env
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -1521,7 +1531,7 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -1823,7 +1833,7 @@ static Variable * c6847_image_converter_sg4( Environment * _environment, char * 
         }
     }
     
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 12 );
 
     RGBi * palette = malloc_palette( MAX_PALETTE );
     
@@ -1915,6 +1925,268 @@ static Variable * c6847_image_converter_sg4( Environment * _environment, char * 
 
 }
 
+static int sg6_blocks[256][6] = {
+{0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0},
+{0,0,0,0,0,0}, {1,0,0,0,0,0}, {0,1,0,0,0,0}, {1,1,0,0,0,0}, {0,0,1,0,0,0}, {1,0,1,0,0,0}, {0,1,1,0,0,0}, {1,1,1,0,0,0}, {0,0,0,1,0,0}, {1,0,0,1,0,0}, {0,1,0,1,0,0}, {1,1,0,1,0,0}, {0,0,1,1,0,0}, {1,0,1,1,0,0}, {0,1,1,1,0,0}, {1,1,1,1,0,0}, {0,0,0,0,1,0}, {1,0,0,0,1,0}, {0,1,0,0,1,0}, {1,1,0,0,1,0}, {0,0,1,0,1,0}, {1,0,1,0,1,0}, {0,1,1,0,1,0}, {1,1,1,0,1,0}, {0,0,0,1,1,0}, {1,0,0,1,1,0}, {0,1,0,1,1,0}, {1,1,0,1,1,0}, {0,0,1,1,1,0}, {1,0,1,1,1,0}, {0,1,1,1,1,0}, {1,1,1,1,1,0}, {0,0,0,0,0,1}, {1,0,0,0,0,1}, {0,1,0,0,0,1}, {1,1,0,0,0,1}, {0,0,1,0,0,1}, {1,0,1,0,0,1}, {0,1,1,0,0,1}, {1,1,1,0,0,1}, {0,0,0,1,0,1}, {1,0,0,1,0,1}, {0,1,0,1,0,1}, {1,1,0,1,0,1}, {0,0,1,1,0,1}, {1,0,1,1,0,1}, {0,1,1,1,0,1}, {1,1,1,1,0,1}, {0,0,0,0,1,1}, {1,0,0,0,1,1}, {0,1,0,0,1,1}, {1,1,0,0,1,1}, {0,0,1,0,1,1}, {1,0,1,0,1,1}, {0,1,1,0,1,1}, {1,1,1,0,1,1}, {0,0,0,1,1,1}, {1,0,0,1,1,1}, {0,1,0,1,1,1}, {1,1,0,1,1,1}, {0,0,1,1,1,1}, {1,0,1,1,1,1}, {0,1,1,1,1,1}, {1,1,1,1,1,1},
+{0,0,0,0,0,0}, {2,0,0,0,0,0}, {0,2,0,0,0,0}, {2,2,0,0,0,0}, {0,0,2,0,0,0}, {2,0,2,0,0,0}, {0,2,2,0,0,0}, {2,2,2,0,0,0}, {0,0,0,2,0,0}, {2,0,0,2,0,0}, {0,2,0,2,0,0}, {2,2,0,2,0,0}, {0,0,2,2,0,0}, {2,0,2,2,0,0}, {0,2,2,2,0,0}, {2,2,2,2,0,0}, {0,0,0,0,2,0}, {2,0,0,0,2,0}, {0,2,0,0,2,0}, {2,2,0,0,2,0}, {0,0,2,0,2,0}, {2,0,2,0,2,0}, {0,2,2,0,2,0}, {2,2,2,0,2,0}, {0,0,0,2,2,0}, {2,0,0,2,2,0}, {0,2,0,2,2,0}, {2,2,0,2,2,0}, {0,0,2,2,2,0}, {2,0,2,2,2,0}, {0,2,2,2,2,0}, {2,2,2,2,2,0}, {0,0,0,0,0,2}, {2,0,0,0,0,2}, {0,2,0,0,0,2}, {2,2,0,0,0,2}, {0,0,2,0,0,2}, {2,0,2,0,0,2}, {0,2,2,0,0,2}, {2,2,2,0,0,2}, {0,0,0,2,0,2}, {2,0,0,2,0,2}, {0,2,0,2,0,2}, {2,2,0,2,0,2}, {0,0,2,2,0,2}, {2,0,2,2,0,2}, {0,2,2,2,0,2}, {2,2,2,2,0,2}, {0,0,0,0,2,2}, {2,0,0,0,2,2}, {0,2,0,0,2,2}, {2,2,0,0,2,2}, {0,0,2,0,2,2}, {2,0,2,0,2,2}, {0,2,2,0,2,2}, {2,2,2,0,2,2}, {0,0,0,2,2,2}, {2,0,0,2,2,2}, {0,2,0,2,2,2}, {2,2,0,2,2,2}, {0,0,2,2,2,2}, {2,0,2,2,2,2}, {0,2,2,2,2,2}, {2,2,2,2,2,2},
+{0,0,0,0,0,0}, {3,0,0,0,0,0}, {0,3,0,0,0,0}, {3,3,0,0,0,0}, {0,0,3,0,0,0}, {3,0,3,0,0,0}, {0,3,3,0,0,0}, {3,3,3,0,0,0}, {0,0,0,3,0,0}, {3,0,0,3,0,0}, {0,3,0,3,0,0}, {3,3,0,3,0,0}, {0,0,3,3,0,0}, {3,0,3,3,0,0}, {0,3,3,3,0,0}, {3,3,3,3,0,0}, {0,0,0,0,3,0}, {3,0,0,0,3,0}, {0,3,0,0,3,0}, {3,3,0,0,3,0}, {0,0,3,0,3,0}, {3,0,3,0,3,0}, {0,3,3,0,3,0}, {3,3,3,0,3,0}, {0,0,0,3,3,0}, {3,0,0,3,3,0}, {0,3,0,3,3,0}, {3,3,0,3,3,0}, {0,0,3,3,3,0}, {3,0,3,3,3,0}, {0,3,3,3,3,0}, {3,3,3,3,3,0}, {0,0,0,0,0,3}, {3,0,0,0,0,3}, {0,3,0,0,0,3}, {3,3,0,0,0,3}, {0,0,3,0,0,3}, {3,0,3,0,0,3}, {0,3,3,0,0,3}, {3,3,3,0,0,3}, {0,0,0,3,0,3}, {3,0,0,3,0,3}, {0,3,0,3,0,3}, {3,3,0,3,0,3}, {0,0,3,3,0,3}, {3,0,3,3,0,3}, {0,3,3,3,0,3}, {3,3,3,3,0,3}, {0,0,0,0,3,3}, {3,0,0,0,3,3}, {0,3,0,0,3,3}, {3,3,0,0,3,3}, {0,0,3,0,3,3}, {3,0,3,0,3,3}, {0,3,3,0,3,3}, {3,3,3,0,3,3}, {0,0,0,3,3,3}, {3,0,0,3,3,3}, {0,3,0,3,3,3}, {3,3,0,3,3,3}, {0,0,3,3,3,3}, {3,0,3,3,3,3}, {0,3,3,3,3,3}, {3,3,3,3,3,3},
+};
+
+static int c6847_image_converter_sg6_block( Environment * _environment, char * _source, int _width, int _depth ) {
+
+    int x, y, i;
+
+    int block[8][12];
+    int sampled_block[2][3];
+    int sg6_blocks_distance[256];
+
+    memset(block, 0, 8 * 12 * sizeof(int));
+
+    for (y = 0; y < 12; ++y) {
+        for (x = 0; x < 8; ++x) {
+
+            RGBi rgb;
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // printf( " | %2.2x%2.2x%2.2x = ", rgb.red, rgb.green, rgb.blue );
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<sizeof(SYSTEM_PALETTE_SG6)/sizeof(RGBi); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE_SG6[i], &rgb );
+                    // printf( " <---> (%d) = %d; ", i, distance );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE_SG6[i].index;
+                    }
+                }
+            }
+
+            block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+            _source += _depth;
+
+        }
+
+        // printf( "\n" );
+
+        _source += ( _width - 8 ) * _depth;
+
+    }
+
+    for (y = 0; y < 3; ++y) {
+        for (x = 0; x < 2; ++x) {
+
+            int y2, x2;
+            int colorCount[4];
+
+            memset( colorCount, 0, 4 * sizeof( int ) );
+
+            for( y2 = 0; y2 < 4; ++y2 ) {
+                for( x2 = 0; x2 < 4; ++x2 ) {
+                    colorCount[block[4*x+x2][4*y+y2]]++;
+                }
+            }
+
+            int colorCountMax = 0;
+            int colorIndex = 0;
+
+            for( i = 0; i<4; ++i ) {
+                if ( colorCount[i] > colorCountMax ) {
+                    colorCountMax = colorCount[i];
+                    colorIndex = i;
+                }
+            }
+
+            sampled_block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+        }
+
+        // printf( "\n" );
+
+    }
+
+    int min_sg6_block_distance = 9999;
+    int min_sg6_block_number = 0;
+
+    for( i=0; i<256; ++i ) {
+        int absoluteDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg6_blocks[i][5] ) +
+                pow2( sampled_block[1][0] - sg6_blocks[i][4] ) +
+                pow2( sampled_block[0][1] - sg6_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[0][2] - sg6_blocks[i][1] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) 
+            );
+
+        int diagonalDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg6_blocks[i][5] ) +
+                pow2( sampled_block[0][1] - sg6_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) 
+            ) +
+            (int)sqrt( 
+                pow2( sampled_block[1][0] - sg6_blocks[i][4] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) +
+                pow2( sampled_block[0][2] - sg6_blocks[i][1] )
+            )
+            ;
+
+        // printf( "%d) absDis = %d, diagDis = %d, * = %d, min = %d\n", i, absoluteDistance, diagonalDistance, (absoluteDistance * diagonalDistance), min_sg6_block_distance );
+
+        if ( (absoluteDistance * diagonalDistance) < min_sg6_block_distance ) {
+            min_sg6_block_distance = (absoluteDistance * diagonalDistance);
+            min_sg6_block_number = i;
+        }
+
+    }
+
+    // printf( "--> %d\n", min_sg6_block_number );
+
+    return 0x80 | min_sg6_block_number;
+
+}
+
+static Variable * c6847_image_converter_sg6( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 2 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 2 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 2 ) {
+            _height = ( ( ( _height - 1 ) / 12 ) - 1 ) * 12;
+        }
+        if ( _frame_height % 2 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 12 ) - 1 ) * 12;
+        }
+    }
+    
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 12 );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 5) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_SG6[0];
+
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi)), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = c6847_image_size( _environment, _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6, 0 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6 );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height / 12;
+    *(buffer+2) = 0;
+
+    _source += ( ( _offset_y * (_width>>3) ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; image_y+=12) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+            
+            // printf( "\n\nx = %d, y = %d\n", image_x, image_y );
+
+            offset = ( ( image_y / 12 ) * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+
+            int colorIndex = c6847_image_converter_sg6_block( _environment, _source, _width, _depth );
+
+            // printf( "%d\n", offset );
+            *(buffer + 3 + offset) = colorIndex;
+
+            adilinepixel(colorIndex);
+
+            _source += 8 * _depth;
+
+        }
+
+        _source += 12 * _width * _depth;
+        _source -= _frame_width * _depth;
+
+        // printf("\n" );
+    }
+
+    adilineendbitmap();
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * c6847_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
@@ -1926,6 +2198,9 @@ Variable * c6847_image_converter( Environment * _environment, char * _data, int 
 
             break;
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return c6847_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
