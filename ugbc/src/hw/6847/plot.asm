@@ -468,7 +468,109 @@ PLOT3L6
 ; A 2048 byte display memory is required. A density of 64 x 64 elements is 
 ; available in the display area. The element area is four dot-clocks wide 
 ; by three lines high.
+
+PLOT4PY      FCB 0,0
+PLOT4PX      FCB 0
+PLOT4PC      FCB 0
+PLOT4TMP    FCB 0
+
 PLOT4
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT4E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT4D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT4G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT4PC                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT4E
+    CLR <PLOTCPE
+PLOT4D
+    LDB <PLOTX+1
+    LDA <PLOTY
+    STA PLOT4PY
+    STB PLOT4PX
+    LDA <PLOTCPE
+    STA PLOT4PC
+
+PLOT4BG
+    LDD PLOT4PY
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB PLOT4PX
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,U
+    LDA ,U
+    BMI PLOT4LPX
+    LDA #128
+    STA ,U
+PLOT4LPX     
+    LDA PLOT4PX
+    LSRA
+    LDA #5
+    BCS PLOT4LPY
+    LSLA
+PLOT4LPY		
+    LDB PLOT4PC
+    BNE PLOT4LPZ
+    COMA
+    ANDA ,U
+    STA ,U
+    RTS
+PLOT4LPZ     
+    ORA ,U
+    ANDA #15
+    STA PLOT4TMP
+    ADDB #7
+    LSLB
+    LSLB
+    LSLB
+    LSLB
+    ADDB PLOT4TMP
+    STB ,U
+    RTS
+
+PLOT4G
+    STA PLOT4PY
+    STB PLOT4PX
+
+    LDD PLOT4PY
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB PLOT4PX
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,U
+    LDB ,U
+    BMI PLOT4LPK
+    LDB #255
+    RTS
+PLOT4LPK		
+    LDB PLOT4PX
+    LSRB
+    LDB #5
+    BCS PLOT4LPK2
+    LSLB
+PLOT4LPK2		
+    ANDB ,U
+    BEQ PLOT4LPK3
+    LDB ,U
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    SUBB #7
+PLOT4LPK3
     RTS
 
 @ENDIF

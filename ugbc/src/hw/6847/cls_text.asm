@@ -106,14 +106,31 @@ CLS3L1
 CLS3ADDRESS
     CMPX #$FFFF
     BNE CLS3L1
-    RTS
-
+        RTS
+    
 CLS3COLORS
     FCB $3f, $7f, $Bf, $ff
 
+CLS4
+    LDB _PAPER
+    LDX #CLS4COLORS
+    LDA B,X
+    LDB B,X
+    LDX TEXTADDRESS
+    LEAU $0800,X
+    STU CLS4L1+1
+CLS4L0       
+    STD ,X++
+CLS4L1
+    CMPX #$FFFF
+    BNE CLS4L0
+    RTS
+
+CLS4COLORS
+    FCB $80, $8F, $9F, $AF, $BF, $CF, $DF, $EF, $FF
+
 CLS0
 CLS1
-CLS4
 CLS5
 CLS6
 CLST2
