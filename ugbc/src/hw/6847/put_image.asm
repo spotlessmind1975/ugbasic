@@ -173,10 +173,37 @@ PUTIMAGE3
 ; available in the display area. The element area is four dot-clocks wide 
 ; by three lines high.
 PUTIMAGE4
-    RTS
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
+
+    LDX TEXTADDRESS
+    LDB <(IMAGEY+1)
+
+    LSLB
+    LSLB
+    ADDB <(IMAGEY+1)
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    CLRA
+    LEAX D, X
+
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    JMP PUTIMAGECOMMONC
 
 @ENDIF
-
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 5) )
 
 ; The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
