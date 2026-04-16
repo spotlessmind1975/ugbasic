@@ -30,70 +30,7 @@ extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
 extern char * importPath;
-
-#if defined(__atari__) 
-    char targetName[] = "atari";
-#elif defined(__atarixl__) 
-    char targetName[] = "atarixl";
-#elif defined(__c64__)
-    char targetName[] = "c64";
-#elif defined(__plus4__)
-    char targetName[] = "plus4";
-#elif defined(__c16__)
-    char targetName[] = "c16";
-#elif defined(__zx__)
-    char targetName[] = "zx";
-#elif defined(__coco__)
-    char targetName[] = "coco";
-#elif defined(__cocob__)
-    char targetName[] = "cocob";
-#elif defined(__coco3__)
-    char targetName[] = "coco3";
-#elif defined(__coco3b__)
-    char targetName[] = "coco3b";
-#elif defined(__d32__)
-    char targetName[] = "d32";
-#elif defined(__d32b__)
-    char targetName[] = "d32b";
-#elif defined(__d64__)
-    char targetName[] = "d64";
-#elif defined(__d64b__)
-    char targetName[] = "d64b";
-#elif defined(__gb__)
-    char targetName[] = "gb";
-#elif defined(__pc128op__)
-    char targetName[] = "pc128op";
-#elif defined(__to8__)
-    char targetName[] = "to8";
-#elif defined(__mo5__)
-    char targetName[] = "mo5";
-#elif defined(__vic20__)
-    char targetName[] = "vic20";
-#elif defined(__msx1__)
-    char targetName[] = "msx1";
-#elif defined(__coleco__)
-    char targetName[] = "coleco";
-#elif defined(__pccga__)
-    char targetName[] = "pccga";
-#elif defined(__sc3000__)
-    char targetName[] = "sc3000";
-#elif defined(__sg1000__)
-    char targetName[] = "sg1000";
-#elif defined(__cpc__)
-    char targetName[] = "cpc";
-#elif defined(__c128__)
-    char targetName[] = "c128";
-#elif defined(__c128z__)
-    char targetName[] = "c128z";
-#elif defined(__vg5000__)
-    char targetName[] = "vg5000";
-#elif defined(__c64reu__)
-    char targetName[] = "c64reu";
-#elif defined(__pc1403__)
-    char targetName[] = "pc1403";
-#elif defined(__vz200__)
-    char targetName[] = "vz200";
-#endif
+extern char targetName[];
 
 static char * translate_spaces( char * _original ) {
 

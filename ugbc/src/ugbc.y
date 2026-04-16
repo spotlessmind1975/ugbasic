@@ -6,10 +6,6 @@
  ************ BISON CONFIGURATION (PARSER GENERATOR)
  *****************************************************************************/
 
-/////////////////////////
-// EXTERNAL DEFINTIONS //
-/////////////////////////
-
 /*!
    This variable keeps track of the current line number when reading the input file.
    Instead of having to manually count each newline character (\n), we instructed 
@@ -28,6 +24,16 @@
    structure with the `%locations` in Bison.
  */
 extern int yylineno;
+
+/*!
+   This variable keeps track of the current column number when reading the input file.
+ */
+int yycolno;
+
+/*!
+   This variable keeps track of the current byte position when reading the input file.
+ */
+int yyposno;
 
 /*!
    This variable keeps track of the concatenated line number when reading the 
@@ -59,21 +65,76 @@ extern int yyconcatlineno;
   */
 int yydebug = 0;
 
-int yylex();
-int yyerror(Environment *, const char *);
-
-
-int yycolno;
-int yyposno;
-
-char * filenamestacked[256];
-int yylinenostacked[256];
-int yycolnostacked[256];
-int yyposnostacked[256];
+/*!
+  This variable contains the level of nested INCLUDED files, i.e. the
+  last empty position on the stacked files.
+  */
 int stacked = 0;
+
+/*!
+  This variable contains the list of file names of files included recursively.
+  When a file is included with the `INCLUDE` command, its name is inserted 
+  into this stack, from top to bottom. Conversely, when the file is finished 
+  reading, its name is popped from the stack, which empties.
+  */
+char * filenamestacked[256];
+
+/*!
+   This variable keeps track of the current line number when reading the input file
+   of files included recursively. When a file is included with the `INCLUDE` command, 
+   its actual line number is inserted into this stack, from top to bottom.
+   Conversely, when the file is finished reading, its name is popped from the stack, 
+   which empties..
+ */
+int yylinenostacked[256];
+
+/*!
+   This variable keeps track of the current column number when reading the input file
+   of files included recursively. When a file is included with the `INCLUDE` command, 
+   its actual line number is inserted into this stack, from top to bottom.
+   Conversely, when the file is finished reading, its name is popped from the stack, 
+   which empties..
+ */
+int yycolnostacked[256];
+
+/*!
+   This variable keeps track of the current byte position when reading the input file
+   of files included recursively. When a file is included with the `INCLUDE` command, 
+   its actual line number is inserted into this stack, from top to bottom.
+   Conversely, when the file is finished reading, its name is popped from the stack, 
+   which empties.
+ */
+int yyposnostacked[256];
+
+/*!
+   This variable holds the name of the folder containing the set of definitions 
+   to be used with the IMPORT DECLARES command. Executing this statement loads the 
+   relevant ugBASIC file for the target in question from this location.
+ */
 char * importPath;
 
 char * asmSnippet = NULL;
+
+
+/*!
+  This function is the scanner. Its job is to read a stream of input characters 
+  and group them into meaningful units called "tokens". Imagine reading a sentence: 
+  yylex() is the one that recognizes that "int" is a keyword, "x" is a variable, 
+  and "=" is an operator. It populates some key global variables: `yytext`,
+  a string (character array) containing the actual text just recognized (e.g., 
+  if it recognizes a number, `yytext` will contain `"123"`); `yyleng`: the 
+  length of the string contained in `yytext`; finally, `yylval` used to pass 
+  the token's "value" to the parser (e.g., the actual numeric value of a string).
+  */
+int yylex();
+
+/*!
+  `yyerror()` is a syntactic error handling function. The parser (`yyparse()`) 
+  automatically calls `yyerror()` whenever it encounters a token that doesn't 
+  meet the defined grammatical rules. Information about where the error occurred 
+  is added.
+  */
+int yyerror(Environment *, const char *);
 
 int yywrap() { return 1; }
  
