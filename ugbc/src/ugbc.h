@@ -6226,6 +6226,25 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/gtia.h"
     #include "hw/pokey.h"
     #include "hw/atari.h"
+#elif defined(__c128__)
+    #include "../src-generated/modules_c128.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/sid.h"
+    #include "hw/cia.h"
+    #include "hw/c128.h"
+    #include "outputs/d64.h"
+#elif defined(__c128z__)
+    #include "../src-generated/modules_c128z.h"
+    #include "hw/z80.h"
+    #include "hw/vdcz.h"
+    #include "hw/sidz.h"
+    #include "hw/c128z.h"
+#elif defined(__c16__)
+    #include "../src-generated/modules_c16.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/c16.h"
 #elif defined(__c64__) 
     #include "../src-generated/modules_c64.h"
     #include "hw/6502.h"
@@ -6234,15 +6253,14 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/c64.h"
     #include "hw/cia.h"
     #include "outputs/d64.h"
-#elif defined(__plus4__)
-    #include "../src-generated/modules_plus4.h"
+#elif defined(__c64reu__)
+    #include "../src-generated/modules_c64reu.h"
     #include "hw/6502.h"
-    #include "hw/ted.h"
-    #include "hw/plus4.h"
-#elif defined(__zx__)
-    #include "../src-generated/modules_zx.h"
-    #include "hw/z80.h"
-    #include "hw/zx.h"
+    #include "hw/vic2.h"
+    #include "hw/sid.h"
+    #include "hw/cia.h"
+    #include "hw/c64reu.h"
+    #include "outputs/d64.h"
 #elif defined(__coco__)
     #include "../src-generated/modules_coco.h"
     #include "hw/6809.h"
@@ -6271,6 +6289,17 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco3b.h"
     #include "hw/sn76489m.h"
+#elif defined(__coleco__)
+    #include "../src-generated/modules_coleco.h"
+    #include "hw/z80.h"
+    #include "hw/coleco.h"
+    #include "hw/tms9918.h"
+    #include "hw/sn76489z.h"
+#elif defined(__cpc__)
+    #include "../src-generated/modules_cpc.h"
+    #include "hw/z80.h"
+    #include "hw/cpc.h"
+    #include "hw/ay8910.h"
 #elif defined(__d32__) 
     #include "../src-generated/modules_d32.h"
     #include "hw/6809.h"
@@ -6295,40 +6324,41 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/6847b.h"
     #include "hw/pia.h"
     #include "hw/d64b.h"
-#elif defined(__pc128op__) 
-    #include "../src-generated/modules_pc128op.h"
-    #include "hw/6809.h"
-    #include "hw/ef936x.h"
-    #include "hw/pc128op.h"
-    #include "hw/sn76489m.h"
-#elif defined(__to8__) 
-    #include "../src-generated/modules_to8.h"
-    #include "hw/6809.h"
-    #include "hw/ef936x.h"
-    #include "hw/to8.h"
+#elif defined(__gb__)
+    #include "../src-generated/modules_gb.h"
+    #include "hw/sm83.h"
+    #include "hw/gb.h"
 #elif defined(__mo5__) 
     #include "../src-generated/modules_mo5.h"
     #include "hw/6809.h"
     #include "hw/ef936x.h"
     #include "hw/mo5.h"
-#elif defined(__vic20__)
-    #include "../src-generated/modules_vic20.h"
-    #include "hw/6502.h"
-    #include "hw/vic1.h"
-    #include "hw/vic20.h"
-    #include "outputs/d64.h"
 #elif defined(__msx1__)
     #include "../src-generated/modules_msx1.h"
     #include "hw/z80.h"
     #include "hw/msx1.h"
     #include "hw/tms9918.h"
     #include "hw/ay8910.h"
-#elif defined(__msx1__)
-    #include "../src-generated/modules_coleco.h"
-    #include "hw/z80.h"
-    #include "hw/coleco.h"
-    #include "hw/tms9918.h"
-    #include "hw/sn76489z.h"
+#elif defined(__pc128op__) 
+    #include "../src-generated/modules_pc128op.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/pc128op.h"
+    #include "hw/sn76489m.h"
+#elif defined(__pc1403__)
+    #include "../src-generated/modules_pc1403.h"
+    #include "hw/sc61860.h"
+    #include "hw/pc1403.h"
+#elif defined(__pccga__)
+    #include "../src-generated/modules_pccga.h"
+    #include "hw/8086.h"
+    #include "hw/cga.h"
+    #include "hw/pccga.h"
+#elif defined(__plus4__)
+    #include "../src-generated/modules_plus4.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/plus4.h"
 #elif defined(__sc3000__)
     #include "../src-generated/modules_sc3000.h"
     #include "hw/z80.h"
@@ -6341,61 +6371,31 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/sg1000.h"
     #include "hw/tms9918.h"
     #include "hw/sn76489z.h"
-#elif defined(__cpc__)
-    #include "../src-generated/modules_cpc.h"
-    #include "hw/z80.h"
-    #include "hw/cpc.h"
-    #include "hw/ay8910.h"
-#elif defined(__c128__)
-    #include "../src-generated/modules_c128.h"
-    #include "hw/6502.h"
-    #include "hw/vic2.h"
-    #include "hw/sid.h"
-    #include "hw/cia.h"
-    #include "hw/c128.h"
-    #include "outputs/d64.h"
-#elif defined(__c128z__)
-    #include "../src-generated/modules_c128z.h"
-    #include "hw/z80.h"
-    #include "hw/vdcz.h"
-    #include "hw/sidz.h"
-    #include "hw/c128z.h"
+#elif defined(__to8__) 
+    #include "../src-generated/modules_to8.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/to8.h"
 #elif defined(__vg5000__)
     #include "../src-generated/modules_vg5000.h"
     #include "hw/z80.h"
     #include "hw/vg5000.h"
     #include "hw/ef9345.h"
-#elif defined(__c64reu__)
-    #include "../src-generated/modules_c64reu.h"
+#elif defined(__vic20__)
+    #include "../src-generated/modules_vic20.h"
     #include "hw/6502.h"
-    #include "hw/vic2.h"
-    #include "hw/sid.h"
-    #include "hw/cia.h"
-    #include "hw/c64reu.h"
+    #include "hw/vic1.h"
+    #include "hw/vic20.h"
     #include "outputs/d64.h"
-#elif defined(__pc1403__)
-    #include "../src-generated/modules_pc1403.h"
-    #include "hw/sc61860.h"
-    #include "hw/pc1403.h"
-#elif defined(__gb__)
-    #include "../src-generated/modules_gb.h"
-    #include "hw/sm83.h"
-    #include "hw/gb.h"
 #elif defined(__vz200__)
     #include "../src-generated/modules_vz200.h"
     #include "hw/z80.h"
     #include "hw/vz200.h"
     #include "hw/6847z.h"
-#elif defined(__c16__)
-    #include "../src-generated/modules_c16.h"
-    #include "hw/6502.h"
-    #include "hw/ted.h"
-    #include "hw/c16.h"
-#elif defined(__pccga__)
-    #include "../src-generated/modules_pccga.h"
-    #include "hw/8086.h"
-    #include "hw/cga.h"
-    #include "hw/pccga.h"
+#elif defined(__zx__)
+    #include "../src-generated/modules_zx.h"
+    #include "hw/z80.h"
+    #include "hw/zx.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN
