@@ -17,6 +17,7 @@ int yyconcatlineno;
     return b; \
 }
 
+char * import_file_name( char * _import_path );
 char * strcopy( char * _dest, char * _source );
 char * strcopy( char * _dest, char * _source );
 
@@ -62,25 +63,14 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
 
 "IMPORT DECLARES"        BEGIN(impt);
 <impt>[ \t\n\r]*     { /* eat the white spaces */
-    char * importDeclaresFilename = malloc(1024);
-    if ( importPath ) {
-        sprintf(importDeclaresFilename, "%s/%s.bas", importPath, targetName);
-    } else {
-        sprintf(importDeclaresFilename, "../../imports/%s.bas", targetName);
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            sprintf(importDeclaresFilename, "../imports/%s.bas", targetName);
-        }        
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
+    char * importDeclaresFilename = import_file_name( importPath );
+    if ( !importDeclaresFilename ) {
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d)\n", yylineno, (yycolno+1), (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
         }
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            if ( stacked == 0 ) {
-                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
-            } else {
-                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
-            }
-            exit(EXIT_FAILURE);
-        }
+        exit(EXIT_FAILURE);
     }
     yyin = fopen( importDeclaresFilename, "rt" );
     if ( ! yyin ) {

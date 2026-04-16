@@ -5071,6 +5071,8 @@ char * strcopy( char * _dest, char * _source );
         BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }
 
+char * import_file_name( char * _import_path );
+
 void setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );

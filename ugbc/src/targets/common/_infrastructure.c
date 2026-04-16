@@ -17182,4 +17182,22 @@ CopperList * find_copper_list( Environment * _environment, char * _name ) {
 
 char * import_file_name( char * _import_path ) {
 
+    char * importDeclaresFilename = malloc(MAX_TEMPORARY_STORAGE);
+    if ( _import_path ) {
+        sprintf(importDeclaresFilename, "%s/%s.bas", _import_path, targetName);
+    } else {
+        sprintf(importDeclaresFilename, "../../imports/%s.bas", targetName);
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "../imports/%s.bas", targetName);
+        }        
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
+        }
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            return NULL;
+        }
+    }
+
+    return importDeclaresFilename;
+    
 }
