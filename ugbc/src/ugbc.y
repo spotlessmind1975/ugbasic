@@ -1,6 +1,8 @@
 %{
 
 #include "../src/ugbc.h"
+#include <math.h>
+#include <errno.h>
 
 /*****************************************************************************
  ************ BISON CONFIGURATION (PARSER GENERATOR)
@@ -169,11 +171,16 @@ char * asmSnippet = NULL;
   */
 extern char DATATYPE_AS_STRING[][16];
 
+/*!
+   In technical terms, it's an array (or list) of constant strings. Each string 
+   represents the description of the generated format. This variable has three 
+   main purposes in the compiler workflow: the compiler uses this array to rename 
+   output files based on the source filename; òets the compiler know which output 
+   "stages" the user has requested; finally, before writing a file, the system 
+   checks whether the desired extension is one of the "managed" or supported types 
+   on the target architecture.
+  */
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
-
-
-#include <math.h>
-#include <errno.h>
 
 %}
 
