@@ -184,20 +184,32 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %}
 
+  /* Enable code generator to print out debugging info, if needed. */
 %debug
 
-%parse-param {void * _environment}
+  /* Enable additional parameter on all calls (yyerror, too).
+     Typization is not important. */
+%parse-param { void * _environment }
 
   /* Enable `YYLTYPE` structure with the `%locations` in Bison. */
 %locations
 
+  /* Ask BISON to be more verbose when it meets a syntax error. */
 %define parse.error verbose
 
+  /* So, "program" is the root of the BNF. */
 %start program
 
+  /* This is the payload for each matched element: */
 %union {
+
+      /* Integer values (8, 16 and 32 bit).*/
     int integer;
+
+      /* Literal values (strings and dynamic symbols).*/
     char * string;
+
+      /* Floating point values (bitwide varying).*/
     double floating;
 }
 
