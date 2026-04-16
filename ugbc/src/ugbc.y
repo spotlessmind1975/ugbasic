@@ -2,11 +2,40 @@
 
 #include "../src/ugbc.h"
 
-int yylex();
-int yyerror(Environment *, const char *);
-int yydebug=0;
+/*****************************************************************************
+ ************ BISON CONFIGURATION (PARSER GENERATOR)
+ *****************************************************************************/
+
+/////////////////////////
+// EXTERNAL DEFINTIONS //
+/////////////////////////
+
 extern int yylineno;
 extern int yyconcatlineno;
+ 
+/*!
+  In Bison, the yydebug variable is the primary tool for runtime debugging 
+  of the generated parser. When enabled, it allows you to see exactly what's 
+  happening "under the hood" as the parser parses the input.
+
+  Normally, a Bison parser operates silently: it reads tokens and reduces the 
+  rules. If there's an error, you only receive a generic "syntax error".
+  When yydebug is enabled (1), the parser prints a detailed log to standard 
+  error (stderr), including when a token is read and pushed onto the stack 
+  (shifts), when a sequence of symbols is transformed into a non-terminal 
+  according to a grammatical rule (reductions) and the evolution of parser 
+  states (stack state).
+
+  This variable is a global integer variable (of type int). To enable 
+  logging, you must set it to a non-zero value (usually 1). This value is 
+  driven by "-y" command line parameter (-y0 or -y1) Inside the Bison definition, 
+  we defined the %debug macro to include the code needed for tracing support.
+  */
+int yydebug = 0;
+
+int yylex();
+int yyerror(Environment *, const char *);
+
 
 int yycolno;
 int yyposno;
@@ -29,6 +58,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 #include <errno.h>
 
 %}
+
+%debug
 
 %parse-param {void * _environment}
 
@@ -14075,8 +14106,11 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y:")) != -1) {
         switch (opt) {
+                case 'y':
+                    yydebug = atoi( optarg );
+                    break;
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
                 case 'a':
@@ -14577,8 +14611,6 @@ int main( int _argc, char *_argv[] ) {
     filenamestacked[0] = strdup( _environment->sourceFileName );
 
     begin_compilation( _environment );
-
-    yydebug = 1;
 
     yyparse (_environment);
 
