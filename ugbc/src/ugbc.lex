@@ -1,8 +1,14 @@
+  /* cfr. yylineno variable inside ugbc.y */
+%option yylineno
+
 %{
 
 #include <stdio.h>
 #include <string.h>
 #include "ugbc.tab.h" /* The tokens */
+
+  /* cfr. yyconcatlineno variable inside ugbc.y */
+int yyconcatlineno;
 
 #define RETURN(b, c)    \
 {\
@@ -88,8 +94,6 @@ extern char * importPath;
 #elif defined(__vz200__)
     char targetName[] = "vz200";
 #endif
-
-int yyconcatlineno;
 
 static char * translate_spaces( char * _original ) {
 

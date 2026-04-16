@@ -10,9 +10,35 @@
 // EXTERNAL DEFINTIONS //
 /////////////////////////
 
+/*!
+   This variable keeps track of the current line number when reading the input file.
+   Instead of having to manually count each newline character (\n), we instructed 
+   Flex to automatically update this variable whenever it encounters a newline.
+   In Bison, we ensured that Flex supports and exports it by using the command
+   `%option yylineno` option in the definitions section.
+
+   Since the variable is defined in the Flex-generated code, we declare it as 
+   `extern` in Bison's C section to access it. Without this variable, when Bison 
+   encounters a syntax error, the `yyerror` function would simply return a terse 
+   "syntax error." With this variable, we can provide much more precise feedback 
+   to the user. If we reuse the same parser to parse multiple files sequentially, 
+   we reset `yylineno = 1;` before starting to parse a new file. Currently, this 
+   variable only counts rows. If we need to know exactly which column an ​​error 
+   is in (e.g., "line 10, character 5"), we use the more complex `YYLTYPE` 
+   structure with the `%locations` in Bison.
+ */
 extern int yylineno;
+
+/*!
+   This variable keeps track of the concatenated line number when reading the 
+   input file. In BASIC, logical lines, with commands, parameters, and so on, 
+   can be written across multiple physical lines if the last character is an 
+   underscore. This variable keeps track of the line number within the set of 
+   linked lines. Therefore, this number resets to zero whenever a new line 
+   begins, unless the previous line ends with an underscore.
+ */
 extern int yyconcatlineno;
- 
+
 /*!
   In Bison, the yydebug variable is the primary tool for runtime debugging 
   of the generated parser. When enabled, it allows you to see exactly what's 
@@ -63,6 +89,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %parse-param {void * _environment}
 
+  /* Enable `YYLTYPE` structure with the `%locations` in Bison. */
 %locations
 
 %define parse.error verbose
