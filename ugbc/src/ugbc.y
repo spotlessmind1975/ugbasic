@@ -5,7 +5,6 @@
 int yylex();
 int yyerror(Environment *, const char *);
 int yydebug=0;
-int errors=0;
 extern int yylineno;
 extern int yyconcatlineno;
 
@@ -14580,7 +14579,7 @@ int main( int _argc, char *_argv[] ) {
     begin_compilation( _environment );
 
     yydebug = 1;
-    errors = 0;
+
     yyparse (_environment);
 
     end_compilation( _environment );

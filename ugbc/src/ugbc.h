@@ -4775,12 +4775,11 @@ char * strcopy( char * _dest, char * _source );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \
         additionalParameters, \
-        target, \
         _environment->configurationFileName, \
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
