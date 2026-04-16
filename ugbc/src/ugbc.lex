@@ -30,7 +30,11 @@ extern int yycolnostacked[];
 extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
+
+  /* See importPath in ugbc.y */
 extern char * importPath;
+
+  /* See targetName in _infrastructure */
 extern char targetName[];
 
 static char * translate_spaces( char * _original ) {
