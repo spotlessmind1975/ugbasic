@@ -379,6 +379,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_key_scancode_function_digit
 %type <integer> const_modula 
 %type <integer> const_note
+%type <integer> const_note_single
+%type <integer> const_octave 
 %type <integer> const_term 
 %type <integer> datatype 
 %type <integer> direct_integer
@@ -400,8 +402,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flags1 
 %type <integer> memory_video
 %type <integer> music_type
-%type <integer> note 
-%type <integer> octave 
 %type <integer> on_bank_explicit
 %type <integer> on_bank_implicit 
 %type <integer> on_targets
@@ -552,7 +552,25 @@ ticks:
  ============ CONSTANT VALUES / SYMBOLS
  ============================================================================*/
 
-note : 
+/*
+    Constant float value.
+*/
+
+const_expr_floating:
+    Float { $$ = $1; } | 
+    IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP { $$ = ( $3 ) ? $5 : $7; }
+
+/*
+    Musical notation in international standard, used in modern music, jazz, 
+    and computer music (such as the MIDI protocol). This system uses the first 
+    seven letters of the alphabet. To distinguish, for example, a very low "C" 
+    from a very high one, a number is added immediately after the letter. This 
+    system is called "Scientific Notation". The number indicates the octave it 
+    belongs to. In the IMF/MIDI protocol each "Letter + Number" combination 
+    corresponds to a fixed numeric value (the MIDI Note Number).
+*/
+
+const_note_single: 
     A { $$ = 9; } |
     B { $$ = 11; } |
     C { $$ = 0; } |
@@ -561,12 +579,12 @@ note :
     F { $$ = 5; } |
     G { $$ = 7; };
 
-octave :
+const_octave:
     Integer { $$ = $1; };
 
-const_note :
-    note { $$ = $1 + ( 4 * 12 ); } |
-    note octave { $$ = $1 + ( $2 * 12 ); } |
+const_note:
+    const_note_single { $$ = $1 + ( 4 * 12 ); } |
+    const_note_single const_octave { $$ = $1 + ( $2 * 12 ); } |
     F1 { $$ = 5 + ( 1 * 12 ); } |
     F2 { $$ = 5 + ( 2 * 12 ); } |
     F3 { $$ = 5 + ( 3 * 12 ); } |
@@ -575,8 +593,8 @@ const_note :
     F6 { $$ = 5 + ( 6 * 12 ); } |
     F7 { $$ = 5 + ( 7 * 12 ); } |
     F8 { $$ = 5 + ( 8 * 12 ); } |
-    note OP_HASH octave { $$ = ( $1 + 1 ) + ( $3 * 12 ); } |
-    CONST octave { $$ = ( 0 + 1 ) + ( $2 * 12 ); };
+    const_note_single OP_HASH const_octave { $$ = ( $1 + 1 ) + ( $3 * 12 ); } |
+    CONST const_octave { $$ = ( 0 + 1 ) + ( $2 * 12 ); };
 
 /* 
     This is the list of instruments supported by IMF. This list is the same
@@ -587,7 +605,7 @@ const_note :
     to 128 different instruments, grouped into 16 families.
 */
 
-const_instrument :
+const_instrument:
     ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
     ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
     ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
@@ -729,18 +747,6 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
-
-const_expr_floating :
-    Float {
-        $$ = $1;
-    }
-    | IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP {
-        if ( $3 ) {
-            $$ = $5;
-        } else {
-            $$ = $7;
-        }
-      };
 
 const_expr_string_const:
     Z OP const_expr CP {
