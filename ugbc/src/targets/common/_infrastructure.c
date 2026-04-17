@@ -17246,7 +17246,8 @@ StaticString * static_string_find_by_value( Environment * _environment, char * _
     return actual;
 }
 
-StaticString * static_string_create( Environment * _environment, int _size, char _value ) {
+StaticString * static_string_create_filled( Environment * _environment, int _size, char _value ) {
+
     StaticString * result = malloc( sizeof( StaticString ) );
     memset( result, 0, sizeof( StaticString ) );
     result->id = UNIQUE_ID;
@@ -17255,11 +17256,29 @@ StaticString * static_string_create( Environment * _environment, int _size, char
     result->size = _size;
 
     StaticString * storedStaticString = static_string_find_by_value( _environment, result->value, result->size );
-    if ( !storedStaticString ) {
+    if ( storedStaticString ) {
         return storedStaticString;
+    } else {
+        result->next = _environment->strings;
+        _environment->strings = result;
+        return result;
     }
 
-    result->next = _environment->strings;
-    _environment->strings = result;
-    return result;
+}
+
+StaticString * static_string_create( Environment * _environment, char * _value, int _size ) {
+    StaticString * result = malloc( sizeof( StaticString ) );
+    memset( result, 0, sizeof( StaticString ) );
+    result->id = UNIQUE_ID;
+    result->value = malloc( _size );
+    memcpy( result->value, _value, _size );
+    result->size = _size;
+    StaticString * storedStaticString = static_string_find_by_value( _environment, _value, _size );
+    if ( storedStaticString ) {
+        return storedStaticString;
+    } else {
+        result->next = _environment->strings;
+        _environment->strings = result;
+        return result;
+    }
 }

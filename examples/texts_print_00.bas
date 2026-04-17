@@ -1,1 +1,2 @@
-CONST STRING x = Z(20)
+CONST STRING x = "pippero" + "plutero"
+CONST STRING y = "pipperoplutero"
