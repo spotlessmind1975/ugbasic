@@ -319,14 +319,31 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token WOODBLOCK WORD WRITE WRITING X XCURS XGR XGRAPHIC XOR XPEN XTEXT XY
 %token XYLOPHONE Y YCURS YELLOW YGR YGRAPHIC YIELD YPEN YTEXT YX Z ZX 
 
+/* Literal identifier (without spaces). */
 %token <string> Identifier
+
+/* Literal identifier (with spaces). */
 %token <string> IdentifierSpaced
+
+/* Strings between double quotes. */
 %token <string> String
-%token <integer> Integer
-%token <string> BufferDefinitionHex
+
+/* Strings between double quotes, prefixed by "#". */
 %token <string> RawString
+
+/* Integer numbers (8, 16, 32 bit). */
+%token <integer> Integer
+
+/* Explicit buffer definition using #[ operator. */
+%token <string> BufferDefinitionHex
+
+/* Floating point numbers. */
 %token <floating> Float
+
+/* CPU registers (CPU dependent). */
 %token <string> Register
+
+/* ASM code snippet. */
 %token <string> AsmSnippet
 
 %type <string> expr term modula factor exponential exponential_less expr_math expr_math2
