@@ -539,13 +539,14 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  *****************************************************************************/
 
 /*============================================================================
- ============ SYNONYMS ON KEYWORDS
+ ============ KEYWORDS ALIAS
  ============================================================================*/
 
-frame: FRAME | TILE;
-ticks: TICK | TICKS;
 filesize: FILEX SIZE | FILESIZE | FSIZE;
 float_or_single: FLOAT | SINGLE;
+frame: FRAME | TILE;
+images_or_atlas: IMAGES | ATLAS;
+ticks: TICK | TICKS;
 
 /*============================================================================
  ============ CONSTANT VALUES / SYMBOLS
@@ -861,7 +862,7 @@ const_color_enumeration:
       YELLOW { $$ = COLOR_YELLOW; } | 
       YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
 
-image_load_flag :
+image_load_flag:
     COMPRESSED { $$ = FLAG_COMPRESSED; } | 
     EXACT { $$ = FLAG_EXACT; } |
     FLIP X { $$ = FLAG_FLIP_X; } | 
@@ -870,7 +871,7 @@ image_load_flag :
     FLIP YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
     OVERLAYED { $$ = FLAG_OVERLAYED; };
 
-tile_load_flag :
+tile_load_flag:
     FLIP X { $$ = FLAG_FLIP_X; } | 
     FLIP XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
     FLIP Y { $$ = FLAG_FLIP_Y; } | 
@@ -881,15 +882,139 @@ tile_load_flag :
     ROLL YX { $$ = FLAG_ROLL_Y | FLAG_ROLL_X; } | 
     TRANSPARENT { $$ = FLAG_TRANSPARENCY; };
 
-put_image_flag :
+put_image_flag:
     DOUBLE Y { $$ = FLAG_DOUBLE_Y; } |
     WITH TRANSPARENCY { $$ = FLAG_TRANSPARENCY; };
 
-blit_image_flag :
+blit_image_flag:
     DOUBLE Y { $$ = FLAG_DOUBLE_Y; };
 
-load_flag :
+load_flag:
     COMPRESSED { $$ = FLAG_COMPRESSED; };
+
+images_load_flag:
+    COMPRESSED { $$ = FLAG_COMPRESSED; } | 
+    EXACT { $$ = FLAG_EXACT; } | 
+    FLIP X { $$ = FLAG_FLIP_X; } | 
+    FLIP XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    FLIP Y { $$ = FLAG_FLIP_Y; } | 
+    FLIP YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    OVERLAYED { $$ = FLAG_OVERLAYED; } | 
+    ROLL X { $$ = FLAG_ROLL_X; } | 
+    ROLL XY { $$ = FLAG_ROLL_Y | FLAG_ROLL_X; } | 
+    ROLL Y { $$ = FLAG_ROLL_Y; } | 
+    ROLL YX { $$ = FLAG_ROLL_Y | FLAG_ROLL_X; };
+
+sequence_load_flag:
+    COMPRESSED { $$ = FLAG_COMPRESSED; } | 
+    EXACT { $$ = FLAG_EXACT; } |
+    FLIP X { $$ = FLAG_FLIP_X; } | 
+    FLIP XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    FLIP Y { $$ = FLAG_FLIP_Y; } | 
+    FLIP YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    OVERLAYED { $$ = FLAG_OVERLAYED; };
+
+put_image_flags1:
+    put_image_flag { $$ = $1; } | 
+    put_image_flag put_image_flags1 { $$ = $1 | $2; };
+
+blit_image_flags1:
+    blit_image_flag { $$ = $1; } | 
+    blit_image_flag blit_image_flags1 { $$ = $1 | $2; };
+
+image_load_flags1:
+    image_load_flag { $$ = $1; } | 
+    image_load_flag image_load_flags1 { $$ = $1 | $2; };
+
+load_flags1:
+    load_flag { $$ = $1; } | 
+    load_flag load_flags1 { $$ = $1 | $2; };
+
+tile_load_flags1:
+    tile_load_flag { $$ = $1; } | 
+    tile_load_flag tile_load_flags1 { $$ = $1 | $2; };
+
+images_load_flags1:
+    images_load_flag { $$ = $1; } | 
+    images_load_flag images_load_flags1 { $$ = $1 | $2; };
+
+sequence_load_flags1:
+    sequence_load_flag { $$ = $1; } | 
+    sequence_load_flag sequence_load_flags1 { $$ = $1 | $2; };
+
+using_transparency: 
+    { $$ = 0x00; }  | 
+    TRANSPARENCY { $$ = 0x0f0000 | COLOR_BLACK; } | 
+    TRANSPARENCY const_color_enumeration { $$ = 0x0f0000 | $2; };
+
+using_opacity: 
+    { $$ = 0x00; }  | 
+    OPACITY { $$ = 0xf00000 | ( COLOR_BLACK << 8 ); } | 
+    OPACITY const_color_enumeration { $$ = 0xf00000 | ( $2 << 8 ); };
+
+using_background:
+    {
+        $$ = -1;    
+    } 
+    | BACKGROUND const_color_enumeration {
+        $$ = $2;
+    };
+
+tile_load_flags:
+    {
+        $$ = 0;    
+    } 
+    | tile_load_flags1 {
+        $$ = $1;
+    };
+
+image_load_flags:
+    {
+        $$ = 0;    
+    } 
+    | image_load_flags1 {
+        $$ = $1;
+    };
+
+put_image_flags:
+    {
+        $$ = 0;    
+    } 
+    | put_image_flags1 {
+        $$ = $1;
+    };
+
+blit_image_flags:
+    {
+        $$ = 0;    
+    } 
+    | blit_image_flags1 {
+        $$ = $1;
+    };
+
+load_flags:
+    {
+        $$ = 0;    
+    } 
+    | load_flags1 {
+        $$ = $1;
+    };
+
+images_load_flags:
+    {
+        $$ = 0;    
+    } 
+    | images_load_flags1 {
+        $$ = $1;
+    };
+
+sequence_load_flags:
+    {
+        $$ = 0;    
+    } 
+    | sequence_load_flags1 {
+        $$ = $1;
+    };
 
 /*============================================================================
  ============ CONSTANT FACTORS
@@ -1641,210 +1766,9 @@ expr:
 
 
 
-images_or_atlas :
-    IMAGES | ATLAS;
 
-images_load_flag :
-    FLIP X {
-        $$ = FLAG_FLIP_X;
-    }
-    | FLIP Y {
-        $$ = FLAG_FLIP_Y;
-    }
-    | FLIP XY {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | FLIP YX {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | COMPRESSED {
-        $$ = FLAG_COMPRESSED;
-    }
-    | OVERLAYED {
-        $$ = FLAG_OVERLAYED;
-    }
-    | EXACT {
-        $$ = FLAG_EXACT;
-    }
-    | ROLL X {
-        $$ = FLAG_ROLL_X;
-    }
-    | ROLL Y {
-        $$ = FLAG_ROLL_Y;
-    }
-    | ROLL XY {
-        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
-    }
-    | ROLL YX {
-        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
-    };
 
-sequence_load_flag :
-    FLIP X {
-        $$ = FLAG_FLIP_X;
-    }
-    | FLIP Y {
-        $$ = FLAG_FLIP_Y;
-    }
-    | FLIP XY {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | FLIP YX {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | COMPRESSED {
-        $$ = FLAG_COMPRESSED;
-    }
-    | OVERLAYED {
-        $$ = FLAG_OVERLAYED;
-    }
-    | EXACT {
-        $$ = FLAG_EXACT;
-    };
-
-put_image_flags1 :
-    put_image_flag {
-        $$ = $1;
-    }
-    | put_image_flag put_image_flags1 {
-        $$ = $1 | $2;
-    };
-
-blit_image_flags1 :
-    blit_image_flag {
-        $$ = $1;
-    }
-    | blit_image_flag blit_image_flags1 {
-        $$ = $1 | $2;
-    };
-
-image_load_flags1 :
-    image_load_flag {
-        $$ = $1;
-    }
-    | image_load_flag image_load_flags1 {
-        $$ = $1 | $2;
-    };
-
-load_flags1 :
-    load_flag {
-        $$ = $1;
-    }
-    | load_flag load_flags1 {
-        $$ = $1 | $2;
-    };
-
-tile_load_flags1 :
-    tile_load_flag {
-        $$ = $1;
-    }
-    | tile_load_flag tile_load_flags1 {
-        $$ = $1 | $2;
-    };
-
-images_load_flags1 :
-    images_load_flag {
-        $$ = $1;
-    }
-    | images_load_flag images_load_flags1 {
-        $$ = $1 | $2;
-    };
-
-sequence_load_flags1 :
-    sequence_load_flag {
-        $$ = $1;
-    }
-    | sequence_load_flag sequence_load_flags1 {
-        $$ = $1 | $2;
-    };
-
-using_transparency :
-    {
-        $$ = 0x00;
-    } 
-    | TRANSPARENCY {
-        $$ = 0x0f0000 | COLOR_BLACK;
-    }
-    | TRANSPARENCY const_color_enumeration {
-        $$ = 0x0f0000 | $2;
-    };
-
-using_opacity :
-    {
-        $$ = 0x00;
-    } 
-    | OPACITY {
-        $$ = 0xf00000 | ( COLOR_BLACK << 8 );
-    }
-    | OPACITY const_color_enumeration {
-        $$ = 0xf00000 | ( $2 << 8 );
-    };
-
-using_background :
-    {
-        $$ = -1;    
-    } 
-    | BACKGROUND const_color_enumeration {
-        $$ = $2;
-    };
-
-tile_load_flags :
-    {
-        $$ = 0;    
-    } 
-    | tile_load_flags1 {
-        $$ = $1;
-    };
-
-image_load_flags :
-    {
-        $$ = 0;    
-    } 
-    | image_load_flags1 {
-        $$ = $1;
-    };
-
-put_image_flags :
-    {
-        $$ = 0;    
-    } 
-    | put_image_flags1 {
-        $$ = $1;
-    };
-
-blit_image_flags :
-    {
-        $$ = 0;    
-    } 
-    | blit_image_flags1 {
-        $$ = $1;
-    };
-
-load_flags :
-    {
-        $$ = 0;    
-    } 
-    | load_flags1 {
-        $$ = $1;
-    };
-
-images_load_flags :
-    {
-        $$ = 0;    
-    } 
-    | images_load_flags1 {
-        $$ = $1;
-    };
-
-sequence_load_flags :
-    {
-        $$ = 0;    
-    } 
-    | sequence_load_flags1 {
-        $$ = $1;
-    };
-
-on_bank_explicit :
+on_bank_explicit:
     {
         $$ = 0;
     }
@@ -1870,7 +1794,7 @@ on_bank_explicit :
         $$ = -1;
     };
 
-on_bank_implicit :
+on_bank_implicit:
     {
         $$ = ((struct _Environment *)_environment)->bankedLoadDefault;
     }
@@ -1884,7 +1808,7 @@ on_bank_implicit :
         $$ = $3;
     };
 
-sprite_flag :
+sprite_flag:
     MULTICOLOR {
         $$ = SPRITE_FLAG_MULTICOLOR;
     }
@@ -1907,7 +1831,7 @@ sprite_flag :
         $$ = SPRITE_FLAG_TRANSPARENCY_COLOR | ( $3 & 0x000f );
     };
 
-sprite_flags1 :
+sprite_flags1:
     sprite_flag {
         $$ = $1;
     }
@@ -1916,7 +1840,7 @@ sprite_flags1 :
     }
     ;
 
-sprite_flags :
+sprite_flags:
     {
         $$ = 0;    
     } 
@@ -2077,7 +2001,7 @@ color_enumeration:
         $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PEACH )->name;
       };
 
-key_scancode_alphadigit :
+key_scancode_alphadigit:
     Integer {
         switch( $1 ) {
             case 0:
@@ -2192,7 +2116,7 @@ key_scancode_alphadigit :
     }
     ;
 
-const_key_scancode_alphadigit :
+const_key_scancode_alphadigit:
       "0" {
         $$ = key_constant( _environment, KEY_0 );
     }
@@ -2303,7 +2227,7 @@ const_key_scancode_alphadigit :
     }
     ;
 
-key_scancode_function_digit :
+key_scancode_function_digit:
       F1 {
         $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F1 ) )->name;
     }
@@ -2329,7 +2253,7 @@ key_scancode_function_digit :
         $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F8 ) )->name;
     };
 
-const_key_scancode_function_digit :
+const_key_scancode_function_digit:
       F1 {
         $$ = key_constant( _environment, KEY_F1 );
     }
@@ -2355,7 +2279,7 @@ const_key_scancode_function_digit :
         $$ = key_constant( _environment, KEY_F8 );
     };
 
-key_scancode_definition : 
+key_scancode_definition: 
       NONE {
         $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_NONE ) )->name;
     }
@@ -2462,7 +2386,7 @@ key_scancode_definition :
         $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SPACE ) )->name;
     };
 
-const_key_scancode_definition : 
+const_key_scancode_definition: 
       NONE {
         $$ = key_constant( _environment, KEY_NONE );
     }
@@ -2569,13 +2493,13 @@ const_key_scancode_definition :
         $$ = key_constant( _environment, KEY_SPACE );        
     };
 
-load_image  : LOAD IMAGE | IMAGE LOAD;
-load_images : LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
-load_sequence : LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
-load_tileset  : LOAD TILESET | TILESET LOAD;
-load_tilemap  : LOAD TILEMAP | TILEMAP LOAD;
+load_image : LOAD IMAGE | IMAGE LOAD;
+load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
+load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
+load_tileset : LOAD TILESET | TILESET LOAD;
+load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
 
-frame_offset : 
+frame_offset: 
     OFFSET OP const_expr OP_COMMA const_expr CP {
         ((struct _Environment *)_environment)->frameOffsetX = $3;
         ((struct _Environment *)_environment)->frameOffsetY = $5;
@@ -2587,7 +2511,7 @@ frame_offset :
     }
     ;
 
-frame_origin : 
+frame_origin: 
     ORIGIN OP const_expr OP_COMMA const_expr CP {
         ((struct _Environment *)_environment)->frameOriginX = $3;
         ((struct _Environment *)_environment)->frameOriginY = $5;
@@ -2599,30 +2523,30 @@ frame_origin :
     }
     ;
 
-frame_size_explicit :
+frame_size_explicit:
     FRAME SIZE OP const_expr OP_COMMA const_expr CP frame_offset frame_origin {
         ((struct _Environment *)_environment)->frameWidth = $4;
         ((struct _Environment *)_environment)->frameHeight = $6;
     };
 
-frame_size_auto : 
+frame_size_auto: 
     FRAME SIZE AUTO {
         ((struct _Environment *)_environment)->frameWidth = -1;
         ((struct _Environment *)_environment)->frameHeight = -1;
     };
 
-frame_size_definition :
+frame_size_definition:
       frame_size_auto 
     | frame_size_explicit;
 
-frame_size : {
+frame_size: {
         ((struct _Environment *)_environment)->frameOffsetX = 0;
         ((struct _Environment *)_environment)->frameOffsetY = 0;
         ((struct _Environment *)_environment)->frameOriginX = 0;
         ((struct _Environment *)_environment)->frameOriginY = 0;
     } frame_size_definition;
 
-frame_definition :
+frame_definition:
     const_expr {
         ((struct _Environment *)_environment)->currentStrip->frames[((struct _Environment *)_environment)->currentStrip->count++] = $1;
     }
@@ -2631,7 +2555,7 @@ frame_definition :
     } OP_COMMA frame_definition
     ;
 
-strip_definition_id_optional : 
+strip_definition_id_optional: 
     {
         $$ = -1;
     }
@@ -2639,7 +2563,7 @@ strip_definition_id_optional :
         $$ = $2;
     };
 
-strip_definition :
+strip_definition:
     STRIP strip_definition_id_optional {
         Strip * s = malloc( sizeof( Strip ) );
         memset(s, 0, sizeof( Strip ) );
@@ -2655,11 +2579,11 @@ strip_definition :
         ((struct _Environment *)_environment)->currentStrip = s;
     } OP frame_definition CP;
 
-strips_definition :
+strips_definition:
     strip_definition
     | strip_definition OP_COMMA strips_definition;
 
-strips_definition_optional :
+strips_definition_optional:
     | OSP strips_definition CSP {
 
         Strip * final = NULL;
@@ -2678,7 +2602,7 @@ strips_definition_optional :
 
     };
 
-dojo_functions : 
+dojo_functions: 
     ERROR {
         $$ = dojo_error( _environment )->name;
     }
@@ -2735,7 +2659,7 @@ dojo_functions :
     }
     ;
 
-fujinet_functions : 
+fujinet_functions: 
     BYTES {
         $$ = fujinet_get_bytes_waiting( _environment )->name;
     }
@@ -4680,13 +4604,13 @@ bank_definition_with_payload:
       bank_define( _environment, $2, BT_CODE, $4, $6 );
   };
 
-bank_expansion_definition_simple :
+bank_expansion_definition_simple:
     OP_HASH const_expr {
         bank_set( _environment, $2 );
     }
     ;
 
-bank_expansion_definition_expression :
+bank_expansion_definition_expression:
     expr {
         bank_set_var( _environment, $1 );
     }
@@ -4761,12 +4685,12 @@ color_definition_simple:
       color_sprite( _environment, $2, $4 );
   };
 
-next_animation_definition : 
+next_animation_definition: 
     Identifier {
         next_animation( _environment, $1 );
     };
     
-color_definition_expression :
+color_definition_expression:
   expr OP_COMMA expr OP_COMMA expr {
       color_tsb( _environment, $1, $3, $5 );
   }
@@ -4842,7 +4766,7 @@ milliseconds:
     | MILLISECOND
     | MILLISECONDS;
 
-release :
+release:
     {
         $$ = 0;
     }
@@ -4976,7 +4900,7 @@ fade_in_palette:
         fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
     } OP_COMMA fade_in_palette;
 
-optional_period : {
+optional_period: {
     $$ = NULL;
     }
     | PERIOD Identifier {
@@ -5246,14 +5170,14 @@ sprite_definition:
     } sprite_definition_expression
   | sprite_definition_all_simple;
 
-optional_integer : 
+optional_integer: 
     Integer {
         $$ = $1;
     } | {
         $$ = 0;
     };
 
-bitmap_enable_resolution : 
+bitmap_enable_resolution: 
     {
         bitmap_enable( _environment, 0, 0, 0 );
     }
@@ -5340,7 +5264,7 @@ text_definition_expression:
 text_definition:
     text_definition_expression;
 
-tilemap_enable_resolution : 
+tilemap_enable_resolution: 
       {
         tilemap_enable( _environment, 0, 0, 0, 0, 0 );
     }
@@ -5481,18 +5405,18 @@ graphics_definition_simple:
 graphics_definition:
     graphics_definition_simple;
 
-as_datatype_mandatory : 
+as_datatype_mandatory: 
     AS datatype {
         $$ = $2;
     };
 
-as_datatype : 
+as_datatype: 
     {
         $$ = ((struct _Environment *)_environment)->defaultVariableType;
     }
     | as_datatype_mandatory;
 
-as_datatype_suffix :
+as_datatype_suffix:
       OP_AT {
         $$ = VT_SBYTE;
     }
@@ -5519,7 +5443,7 @@ as_datatype_suffix :
     }
     ;
 
-as_datatype_suffix_optional : 
+as_datatype_suffix_optional: 
     {
         $$ = 0;
     }
@@ -5785,7 +5709,7 @@ fellipse_definition_expression:
 fellipse_definition:
     fellipse_definition_expression;
 
-get_message_definition_params : {
+get_message_definition_params: {
         ((struct _Environment *)_environment)->dojoChannelName = NULL;
         ((struct _Environment *)_environment)->dojoObjectName = NULL;
     } | OP_COMMA expr  {
@@ -5904,7 +5828,7 @@ padding_tile:
         $$ = $2;
     };
 
-put_action : 
+put_action: 
     PSET {
         $$ = 0;   
     }
@@ -6138,7 +6062,7 @@ blit_binary_op:
     }
     ;
 
-blit_operand :
+blit_operand:
     SOURCE {
         $$ = 1;
     }
@@ -6150,7 +6074,7 @@ blit_operand :
     }
     ;
 
-blit_sources :
+blit_sources:
     Identifier {
         ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
     }
@@ -6159,7 +6083,7 @@ blit_sources :
     } OP_COMMA blit_sources
     ;
 
-blit_expression :
+blit_expression:
     OP blit_operand CP {
         // Take a free register for operand
         int operand = cpu_blit_alloc_register( _environment );
@@ -6207,7 +6131,7 @@ blit_expression :
     }
     ;
 
-blit_compounded :
+blit_compounded:
     blit_expression {
         // outline2( "; R%2.2x -> R%2.2x", $1, $1 );
         // Pass result register
@@ -6244,12 +6168,12 @@ blit_compounded :
     }
     ;
 
-op_assign : 
+op_assign: 
     OP_ASSIGN 
     | OP_ASSIGN_DIRECT
     ;
 
-blit_definition_define_expression : 
+blit_definition_define_expression: 
     Identifier AS {
         //printf( "\n\n%s\n", $1 );
         blit_define_begin_compound( _environment, $1 );  
@@ -6262,15 +6186,15 @@ blit_definition_define_expression :
       }
     ;
 
-sequence_or_strip : 
+sequence_or_strip: 
     SEQUENCE | STRIP
     ;
 
-image_or_images : 
+image_or_images: 
     IMAGE | IMAGES | ATLAS
     ;
 
-bitmap_or_bitmaps : 
+bitmap_or_bitmaps: 
     BITMAP | BITMAPS
     ;
 
@@ -6369,7 +6293,7 @@ move_definition_expression:
 move_definition:
     move_definition_expression;
 
-line_mode : 
+line_mode: 
     {
         $$ = 0;
     }
@@ -6380,7 +6304,7 @@ line_mode :
         $$ = 1;
     };
 
-box_mode : 
+box_mode: 
     {
         $$ = 0;
     }
@@ -6493,7 +6417,7 @@ draw_optional_string2:
         gr_locate( _environment, $2, $4 );
     };
 
-draw_optional_string :
+draw_optional_string:
     {
         draw_string( _environment, ((Environment *)_environment)->optionalX );
     }
@@ -6637,7 +6561,7 @@ rec_definition_expression:
 rec_definition:
     rec_definition_expression;
 
-console_definition_simple :
+console_definition_simple:
     OFF {
         console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth-1, ((struct _Environment *)_environment)->screenTilesHeight-1 );
     }
@@ -6658,7 +6582,7 @@ console_definition_simple :
     }
     ;
 
-console_definition_expression :
+console_definition_expression:
     expr OP_COMMA expr TO expr OP_COMMA expr {
         console_vars( _environment, $1, $3, $5, $7 );
     }
@@ -6918,7 +6842,7 @@ timer_number:
         $$ = $1;
     };
 
-every_definition :
+every_definition:
       expr ticks timer_number_comma GOSUB Identifier on_targets {
         if ( $6 ) {
           every_ticks_gosub( _environment, $1, $5, $3 );
@@ -6940,7 +6864,7 @@ every_definition :
         }
     };
 
-after_definition :
+after_definition:
       expr ticks timer_number_comma GOSUB Identifier on_targets {
         if ( $6 ) {
           every_ticks_gosub( _environment, $1, $5, $3 );
@@ -6954,7 +6878,7 @@ after_definition :
         }
     };
 
-clamp_optional : {
+clamp_optional: {
         $$ = 0;
     }
     | CLAMP {
@@ -6973,7 +6897,7 @@ limits:
         ((struct _Environment *)_environment)->clamp = $5;
     };
 
-add_definition :
+add_definition:
     Identifier optional_field OP_COMMA expr {
         Variable * expr = variable_retrieve( _environment, $4 );
         if ( expr->initializedByConstant ) {
@@ -7037,7 +6961,7 @@ add_definition :
     }
     ;
 
-addc_definition :
+addc_definition:
     Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr  {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
@@ -7074,7 +6998,7 @@ addc_definition :
         parser_array_cleanup( _environment );
     }
 
-xor_definition :
+xor_definition:
     Identifier OP_COMMA expr {
         variable_xor_inplace_vars( _environment, $1, $3 );
     }
@@ -7086,7 +7010,7 @@ xor_definition :
     }
     ;
 
-swap_definition :
+swap_definition:
     Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
         if ( $2 != $5 ) {
             CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( $1, $4 );
@@ -7095,17 +7019,17 @@ swap_definition :
     }
     ;
 
-perc :
+perc:
     |
     OP_PERC;
 
-mul_definition :
+mul_definition:
     Identifier perc OP_COMMA expr {
         variable_move( _environment, variable_mul( _environment, $1, $4 )->name, $1 );
     }
     ;
 
-div_definition :
+div_definition:
     Identifier perc OP_COMMA expr {
         variable_move( _environment, variable_div( _environment, $1, $4, NULL )->name, $1 );
     }
@@ -7127,7 +7051,7 @@ div_definition :
     }
     ;
 
-dimensions :
+dimensions:
     {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = -1;
           ++((struct _Environment *)_environment)->arrayDimensions;
@@ -7142,7 +7066,7 @@ dimensions :
     }
     ;
 
-datatype : 
+datatype: 
     BIT {
         $$ = VT_BIT;
     }
@@ -7263,7 +7187,7 @@ datatype :
         ((struct _Environment *)_environment)->currentType = type;
     };
 
-const_array_definition :
+const_array_definition:
     const_expr {
         Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
         Constant * first = currentArray->arrayInitialization;
@@ -7303,7 +7227,7 @@ const_array_definitions1:
         
     } OP_COMMA const_array_definitions1;
 
-const_array_definitions : 
+const_array_definitions: 
     {
 
     }
@@ -7311,10 +7235,10 @@ const_array_definitions :
 
     };
 
-text_or_csv : 
+text_or_csv: 
     TEXT | CSV;
 
-array_assign_buffer :
+array_assign_buffer:
  buffer_definition_prefix BufferDefinitionHex {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             int size = ( strlen( $2 ) ) / 2;
@@ -7680,7 +7604,7 @@ array_reassign:
         ((struct _Environment *)_environment)->currentArray = NULL;
     };    
 
-readonly_optional : 
+readonly_optional: 
     {
         $$ = 0;
     }
@@ -7691,7 +7615,7 @@ readonly_optional :
         $$ = 1;
     };
 
-dim_definition :
+dim_definition:
     Identifier datatype {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
           memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
@@ -7926,13 +7850,13 @@ dim_definition :
     }
     ;
 
-dim_definitions :
+dim_definitions:
       var_definition
     | dim_definition
     | dim_definition OP_COMMA dim_definitions
     ;
 
-fill_definition_optional_base :
+fill_definition_optional_base:
     {
         $$ = 0;
     }
@@ -7940,7 +7864,7 @@ fill_definition_optional_base :
         $$ = $1;
     };
 
-fill_definition_optional_min :
+fill_definition_optional_min:
     {
         $$ = 0;
     }
@@ -7948,7 +7872,7 @@ fill_definition_optional_min :
         $$ = $2;
     };
 
-fill_definition_optional_max :
+fill_definition_optional_max:
     {
         $$ = 0;
     }
@@ -7956,7 +7880,7 @@ fill_definition_optional_max :
         $$ = $2;
     };
 
-fill_definition_optional_count :
+fill_definition_optional_count:
     {
         $$ = 0;
     }
@@ -7964,7 +7888,7 @@ fill_definition_optional_count :
         $$ = $2;
     };
 
-fill_definition_array :
+fill_definition_array:
     Identifier {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, 0 );
@@ -8015,20 +7939,20 @@ fill_definition_array :
     }
     ;
 
-fill_definitions_array :
+fill_definitions_array:
     fill_definition_array
     | fill_definition_array OP_COMMA fill_definitions_array;
     
-fill_definitions :
+fill_definitions:
     fill_definitions_array
     ;
 
-fill_screen_definition : 
+fill_screen_definition: 
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         fill( _environment, $1, $3, $5, $7, $9, $11 );
     };
 
-shuffle_definition_optional_rounds : 
+shuffle_definition_optional_rounds: 
     {
         $$ = 128;
     }
@@ -8036,17 +7960,17 @@ shuffle_definition_optional_rounds :
         $$ = $2;
     };
 
-shuffle_definition_array :
+shuffle_definition_array:
     Identifier shuffle_definition_optional_rounds {
         variable_array_shuffle( _environment, $1, $2 );
     };
 
 
-shuffle_definition :
+shuffle_definition:
       shuffle_definition_array
     | shuffle_definition_array OP_COMMA shuffle_definition;
 
-indexes :
+indexes:
       expr {
         Variable * expr = variable_retrieve( _environment, $1 );
         if ( expr->initializedByConstant ) {
@@ -8071,7 +7995,7 @@ indexes :
     }
     ;
 
-parameters : 
+parameters: 
     Identifier as_datatype_mandatory {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
@@ -8102,7 +8026,7 @@ parameters :
     }
     ;
 
-parameters_expr : 
+parameters_expr: 
     |
     Identifier OP_DOLLAR {
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
@@ -8142,7 +8066,7 @@ parameters_expr :
     }
     ;
 
-values : 
+values: 
       expr {
             Variable * v = variable_retrieve( _environment, $1 );
             if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
@@ -8165,7 +8089,7 @@ values :
     }
     ;
 
-asmio : 
+asmio: 
     Register {
         $$ = cpu_register_decode( _environment, $1 );
     }
@@ -8180,7 +8104,7 @@ asmio :
     }
     ;
 
-values_asmios :
+values_asmios:
       asmio OP_ASSIGN expr {
           ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
           ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
@@ -8204,7 +8128,7 @@ values_asmios :
     }
     ;
 
-parameters_asmios :
+parameters_asmios:
       Identifier as_datatype ON asmio {
           ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
           ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
@@ -8246,7 +8170,7 @@ parameters_asmios :
 
     ;
 
-return_parameter_asmios2 : 
+return_parameter_asmios2: 
     asmio as_datatype {
           ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $1;
           ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $2;
@@ -8255,11 +8179,11 @@ return_parameter_asmios2 :
     }
     ;
 
-return_parameter_asmios : 
+return_parameter_asmios: 
     | RETURN return_parameter_asmios2;
     ;
 
-return_values_asmios2 : 
+return_values_asmios2: 
     Identifier OP_ASSIGN asmio {
           ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
           ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
@@ -8272,11 +8196,11 @@ return_values_asmios2 :
     }
     ;
 
-return_values_asmios : 
+return_values_asmios: 
     | RETURN return_values_asmios2;
     ;
 
-print_buffer_definition :
+print_buffer_definition:
     OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
@@ -8308,7 +8232,7 @@ print_buffer_definition :
   } print_buffer_definition
   ;
 
-print_buffer_raw_definition :
+print_buffer_raw_definition:
     OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
@@ -8340,7 +8264,7 @@ print_buffer_raw_definition :
   } print_buffer_raw_definition
   ;
 
-print_definition :
+print_definition:
     SPC OP expr CP {
         spc( _environment, $3 );
     }
@@ -8384,7 +8308,7 @@ print_definition :
   } print_definition
   ;
 
-gprint_definition :
+gprint_definition:
     expr WITH expr {
         gprint( _environment, $3, $1, "XGR", "YGR" );
     }
@@ -8393,7 +8317,7 @@ gprint_definition :
     }
   ;
 
-writing_mode_definition : 
+writing_mode_definition: 
       REPLACE {
           $$ = variable_temporary( _environment, VT_BYTE, "(writing REPLACE)" )->name;
           variable_store( _environment, $$, WRITING_REPLACE );
@@ -8416,7 +8340,7 @@ writing_mode_definition :
     }
     ;
 
-writing_part_definition :
+writing_part_definition:
       NORMAL {
           $$ = variable_temporary( _environment, VT_BYTE, "(writing NORMAL)" )->name;
           variable_store( _environment, $$, WRITING_NORMAL );
@@ -8439,18 +8363,18 @@ writing_part_definition :
     }
     ;
 
-writing_definition : 
+writing_definition: 
     writing_mode_definition OP_COMMA writing_part_definition {
         writing( _environment, $1, $3 );
     }
     ;
 
-milliseconds_optional :
+milliseconds_optional:
     |
     milliseconds
     ;
 
-sound_definition_argument :
+sound_definition_argument:
     OP_HASH const_expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
@@ -8470,11 +8394,11 @@ sound_definition_argument :
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     };
 
-sound_definition_arguments :
+sound_definition_arguments:
     sound_definition_argument
     | sound_definition_argument OP_SEMICOLON sound_definition_arguments;
 
-sound_definition : 
+sound_definition: 
     sound_definition_arguments ON OP_HASH const_expr {
         Variable * channel;
         if ( ((struct _Environment *)_environment)->atLeastOneSoundNoteDurationSymbolic ) {
@@ -8553,7 +8477,7 @@ sound_definition :
     }
     ;
 
-instrument_definition_simple :
+instrument_definition_simple:
     OP_HASH const_expr ON OP_HASH const_expr {
         instrument( _environment, $2, $5 );
     }
@@ -8562,7 +8486,7 @@ instrument_definition_simple :
     }
     ;
 
-instrument_definition_expression :
+instrument_definition_expression:
     OP_HASH const_expr ON expr {
         instrument_semi_var( _environment, $2, $4 );
     }
@@ -8571,12 +8495,12 @@ instrument_definition_expression :
     }
     ;
 
-instrument_definition : 
+instrument_definition: 
     instrument_definition_simple
     | instrument_definition_expression
     ;
 
-music_type :
+music_type:
     {
         $$ = MUSIC_TYPE_AUTO;
     }
@@ -8628,7 +8552,7 @@ music_definition:
     music_definition_expression
     ;
 
-play_definition_simple : 
+play_definition_simple: 
     OP_HASH const_expr {
         play( _environment, $2, 0, 0xffff );
     }
@@ -8652,7 +8576,7 @@ play_definition_simple :
     }
     ;
 
-play_definition_expression : 
+play_definition_expression: 
     expr {
         Variable * var = variable_retrieve_or_define( _environment, $1, VT_DWORD, 0 );
         if ( var->type == VT_STRING || var->type == VT_DSTRING ) {
@@ -8678,12 +8602,12 @@ play_definition_expression :
     }
     ;
 
-play_definition : 
+play_definition: 
     play_definition_simple
     | play_definition_expression
     ;
 
-volume_definition_simple : 
+volume_definition_simple: 
     OP_HASH const_expr {
         volume( _environment, $2, 0xffff );
     }
@@ -8698,7 +8622,7 @@ volume_definition_simple :
     }
     ;
 
-volume_definition_expression : 
+volume_definition_expression: 
     expr {
         volume_vars( _environment, $1, NULL );
     }
@@ -8710,12 +8634,12 @@ volume_definition_expression :
     }
     ;
 
-volume_definition : 
+volume_definition: 
     volume_definition_simple
     | volume_definition_expression
     ;
 
-bell_definition_simple : 
+bell_definition_simple: 
     {
         bell( _environment, 400, 1500, 0xffff );
     } 
@@ -8733,7 +8657,7 @@ bell_definition_simple :
     }
     ;
 
-bell_definition_expression : 
+bell_definition_expression: 
     expr {
         bell_vars( _environment, $1, NULL, NULL, 0 );
     }
@@ -8748,12 +8672,12 @@ bell_definition_expression :
     }
     ;
 
-bell_definition : 
+bell_definition: 
     bell_definition_simple
     | bell_definition_expression
     ;
 
-boom_definition_simple : 
+boom_definition_simple: 
     {
         boom( _environment, 1500, 0xffff );
     }
@@ -8774,7 +8698,7 @@ boom_definition_simple :
     }
     ;
 
-boom_definition_expression : 
+boom_definition_expression: 
     expr {
         boom_var( _environment, $1, NULL );
     }
@@ -8792,12 +8716,12 @@ boom_definition_expression :
     }
     ;
 
-boom_definition : 
+boom_definition: 
     boom_definition_simple
     | boom_definition_expression
     ;
 
-shoot_definition_simple : 
+shoot_definition_simple: 
     {
         shoot( _environment, 0xffff );
     }
@@ -8806,11 +8730,11 @@ shoot_definition_simple :
     }
     ;
 
-shoot_definition : 
+shoot_definition: 
     shoot_definition_simple
     ;
 
-locate_definition : 
+locate_definition: 
      OP_COMMA expr {
         locate( _environment, NULL, $2 );
     }
@@ -8822,13 +8746,13 @@ locate_definition :
     }
     ;
 
-gr_locate_definition : 
+gr_locate_definition: 
     optional_x OP_COMMA optional_y {
         gr_locate( _environment, $1, $3 );
     }
     ;
 
-cmove_definition : 
+cmove_definition: 
      OP_COMMA expr {
         cmove( _environment, NULL, $2 );
     }
@@ -8840,7 +8764,7 @@ cmove_definition :
     }
     ;
 
-hscroll_definition : 
+hscroll_definition: 
     LEFT {
         text_hscroll_line( _environment, -1, 0 );
     }
@@ -8855,7 +8779,7 @@ hscroll_definition :
     }
     ;
 
-vscroll_definition : 
+vscroll_definition: 
       SCREEN UP {
         text_vscroll_screen( _environment, -1, 0 );
     }
@@ -8864,7 +8788,7 @@ vscroll_definition :
     }
     ;
     
-input_definition2 :
+input_definition2:
       Identifier as_datatype_suffix_optional {
         VariableType vt = $2;
         if ( vt == 0 ) {
@@ -8889,7 +8813,7 @@ input_definition2 :
       } OP_COMMA input_definition2
     ;
 
-op_comma_or_semicolon : 
+op_comma_or_semicolon: 
     OP_COMMA {
         $$ = 0;
     }
@@ -8897,7 +8821,7 @@ op_comma_or_semicolon :
         $$ = 1;
     };
 
-read_safeness :
+read_safeness:
     SAFE {
         $$ = 1;
     }
@@ -8908,7 +8832,7 @@ read_safeness :
         $$ = ((struct _Environment *)_environment)->optionReadSafe;
     };
 
-optional_field : 
+optional_field: 
     {
         $$ = NULL;
     }
@@ -8916,7 +8840,7 @@ optional_field :
         $$ = $2;
     };
 
-read_definition_single :
+read_definition_single:
      read_safeness Identifier as_datatype_suffix_optional {
         if ( $3 ) {
             if ( !variable_exists( _environment, $2 ) ) {
@@ -8986,11 +8910,11 @@ read_definition_single :
     }
     ;
 
-read_definition :
+read_definition:
     read_definition_single
     | read_definition_single OP_COMMA read_definition;
 
-input_definition :
+input_definition:
     String op_comma_or_semicolon Identifier as_datatype_suffix_optional {
         VariableType vt = $4;
         if ( vt == 0 ) {
@@ -9087,7 +9011,7 @@ input_definition :
     }  input_definition2
   ;
 
-poke_definition : 
+poke_definition: 
     expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
         Variable * address = variable_retrieve( _environment, $1 );
@@ -9103,7 +9027,7 @@ poke_definition :
       poke_var( _environment, $1, $3 );
     };
 
-pokew_definition : 
+pokew_definition: 
     expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
         Variable * address = variable_retrieve( _environment, $1 );
@@ -9119,7 +9043,7 @@ pokew_definition :
       pokew_var( _environment, $1, $3 );
     };
 
-poked_definition : 
+poked_definition: 
     expr OP_COMMA expr {
       if ( ((struct _Environment *)_environment)->insideCopperList ) {
         Variable * address = variable_retrieve( _environment, $1 );
@@ -9135,7 +9059,7 @@ poked_definition :
       poked_var( _environment, $1, $3 );
     };
 
-font_schema : 
+font_schema: 
     ALPHA {
         $$ = FONT_SCHEMA_ALPHA;
     }
@@ -9153,7 +9077,7 @@ font_schema :
     } 
     ;
 
-precision : 
+precision: 
     FAST {
         $$ = FT_FAST;
     }
@@ -9162,7 +9086,7 @@ precision :
     }
     ;
 
-audio_source :
+audio_source:
     SN76489 {
         $$ = ADN_SN76489;
     }
@@ -9185,7 +9109,7 @@ audio_source :
         $$ = ADN_VIC1;
     };
 
-define_definition :
+define_definition:
     HORIZONTAL SCROLL ON {
         ((struct _Environment *)_environment)->horizontalScrollOff = 0;
     }
@@ -9585,7 +9509,7 @@ define_definition :
     }
     ;
 
-configure_name :
+configure_name:
     GMC {
         $$ = HN_GMC;
     }
@@ -9593,7 +9517,7 @@ configure_name :
         $$ = HN_SN76489;
     };
 
-option_name :
+option_name:
     SLOT {
         $$ = HPN_SLOT;
     }
@@ -9601,7 +9525,7 @@ option_name :
         $$ = HPN_ADDRESS;
     };
 
-configure_set_static_option :
+configure_set_static_option:
     option_name OP_ASSIGN const_expr {
         OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
         memset( actual, 0, sizeof( OptionParameterValue ) );
@@ -9611,14 +9535,14 @@ configure_set_static_option :
         ((struct _Environment *)_environment)->optionParameters = actual;
     };
 
-configure_set_static_options :
+configure_set_static_options:
     configure_set_static_option
     | configure_set_static_option OP_COMMA configure_set_static_options;
 
-static_optional :
+static_optional:
     STATIC | ;
 
-configure_static_definitions :
+configure_static_definitions:
     static_optional configure_name {
         ((struct _Environment *)_environment)->optionParameters = NULL;
     } SET configure_set_static_options {
@@ -9629,7 +9553,7 @@ configure_static_definitions :
         }
     };
 
-configure_set_dynamic_option :
+configure_set_dynamic_option:
     option_name OP_ASSIGN expr {
         OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
         memset( actual, 0, sizeof( OptionParameterValue ) );
@@ -9639,11 +9563,11 @@ configure_set_dynamic_option :
         ((struct _Environment *)_environment)->optionParameters = actual;
     };
 
-configure_set_dynamic_options :
+configure_set_dynamic_options:
     configure_set_dynamic_option
     | configure_set_dynamic_option OP_COMMA configure_set_dynamic_options;
 
-configure_dynamic_definitions :
+configure_dynamic_definitions:
     DYNAMIC configure_name {
         ((struct _Environment *)_environment)->optionParameters = NULL;
     } SET configure_set_dynamic_options {
@@ -9654,21 +9578,21 @@ configure_dynamic_definitions :
         }
     };
 
-configure_definitions :
+configure_definitions:
     configure_static_definitions
     | configure_dynamic_definitions;
 
-system : {
+system: {
         $$ = 0;
     }
     | SYSTEM {
         $$ = 1;
     };
 
-procedure : 
+procedure: 
     PROCEDURE | PROC;
 
-declare_definition :
+declare_definition:
   system procedure Identifier AT const_expr on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->returns = 0;
@@ -9702,11 +9626,11 @@ declare_definition :
   }
   ;
 
-define_definitions :
+define_definitions:
       define_definition
     | define_definition OP_COMMA define_definitions;
 
-target : 
+target: 
     CPUZ80 {
         #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
             defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
@@ -10116,7 +10040,7 @@ target :
     }    
     ;
 
-targets :
+targets:
      target {
          $$ = $1;
      }
@@ -10138,10 +10062,10 @@ on_targets:
         $$ = $2;
     }
     | ON ALL BUT targets {
-        $$ = ( $4 ) ? 0 : 1;
+        $$ = ( $4 ) ? 0: 1;
     };
 
-scroll_definition_hdirection :
+scroll_definition_hdirection:
     LEFT {
         $$ = -1;
     }
@@ -10150,7 +10074,7 @@ scroll_definition_hdirection :
         $$ = 1;
     };
 
-scroll_definition_vdirection :
+scroll_definition_vdirection:
     UP {
         $$ = -1;
     }
@@ -10159,7 +10083,7 @@ scroll_definition_vdirection :
         $$ = 1;
     };
 
-scroll_definition : 
+scroll_definition: 
       scroll_definition_hdirection scroll_definition_vdirection {
         scroll( _environment, $1, $2 );
     }
@@ -10190,7 +10114,7 @@ use_definition:
         use_tileset( _environment, $2 );
     };
 
-memory_video :
+memory_video:
     {
         $$ = 0;
     }
@@ -10201,7 +10125,7 @@ memory_video :
         $$ = 1;
     };
 
-const_instruction :
+const_instruction:
     CONST
     | SHARED CONST
     | CONST SHARED
@@ -10209,7 +10133,7 @@ const_instruction :
     | CONST GLOBAL
     ;
 
-option_explicit : 
+option_explicit: 
     {
         $$ = 1;
     }
@@ -10220,7 +10144,7 @@ option_explicit :
         $$ = 0;
     };
 
-option_clip : 
+option_clip: 
     {
         $$ = 1;
     }
@@ -10231,7 +10155,7 @@ option_clip :
         $$ = 0;
     };
 
-option_read : 
+option_read: 
     SAFE {
         $$ = 1;
     }
@@ -10242,7 +10166,7 @@ option_read :
         $$ = 1;
     };
 
-option_definitions :
+option_definitions:
     COMPILE on_targets {
         if ( ! $2 ) {
             printf("OPTION COMPILE does not allow to compile this source code on this target.\n");
@@ -10323,7 +10247,7 @@ option_definitions :
         ((struct _Environment *)_environment)->optionClip = $2;
     };
 
-origin_direction :
+origin_direction:
     {
         $$ = 1;
     }
@@ -10334,7 +10258,7 @@ origin_direction :
         $$ = -1;
     };
 
-origin_definitions :
+origin_definitions:
     expr OP_COMMA expr origin_direction {
         ((struct _Environment *)_environment)->originUsed = 1;
         variable_move( ((struct _Environment *)_environment), $1, "ORIGINX" );
@@ -10343,7 +10267,7 @@ origin_definitions :
     }
     ;
 
-resolution_definitions :
+resolution_definitions:
     expr OP_COMMA expr {
         ((struct _Environment *)_environment)->resolutionUsed = 1;
         variable_move( ((struct _Environment *)_environment), $1, "RESOLUTIONX" );
@@ -10351,18 +10275,18 @@ resolution_definitions :
     }
     ;
 
-out_definition : 
+out_definition: 
     expr OP_COMMA expr {
         out_var( _environment, $1, $3 );
     }
     ;
 
-tile_definition : 
+tile_definition: 
     LOAD String TO Integer tile_load_flags {
         tile_load( _environment, $2, $5, NULL, $4 );
     };
 
-sys_definition :
+sys_definition:
     expr on_targets {
         if ( $2 ) {
             sys_var( _environment, $1 );
@@ -10391,7 +10315,7 @@ sys_definition :
     }
     ;
 
-exec_definition :
+exec_definition:
     sys_definition
     | IdentifierSpaced {
         if (  ((struct _Environment *)_environment)->optionExecAsGosub ) {
@@ -10401,7 +10325,7 @@ exec_definition :
         }
     };
 
-data_definition_single :
+data_definition_single:
     const_expr {
         if ( ((struct _Environment *)_environment)->currentType ) {
             Constant * c = malloc( sizeof( Constant ) );
@@ -10439,7 +10363,7 @@ data_definition_single :
         data_string( _environment, $2 );
     };
 
-data_definition_data :
+data_definition_data:
     data_definition_single {
         if ( ((struct _Environment *)_environment)->currentType ) {
             if ( ((struct _Environment *)_environment)->currentField != ((struct _Environment *)_environment)->currentType->first ) {
@@ -10485,7 +10409,7 @@ data_definition_data :
     }
     ;
 
-data_definition :
+data_definition:
     {
         ((struct _Environment *)_environment)->currentType = NULL;
         ((struct _Environment *)_environment)->currentField = NULL;
@@ -10502,7 +10426,7 @@ data_definition :
 
     } data_definition_data;
 
-clear_definition : 
+clear_definition: 
     const_expr {
         if ( $1 <= 0 ) {
             CRITICAL_INVALID_STRING_SPACE( $1 );
@@ -10513,7 +10437,7 @@ clear_definition :
     }
     ;
 
-pmode_definition :
+pmode_definition:
     expr OP_COMMA expr {
         Variable * expr1 = variable_retrieve( _environment, $1 );
         if ( ! expr1->initializedByConstant ) {
@@ -10531,7 +10455,7 @@ pmode_definition :
 
     ;
 
-paint_definition :
+paint_definition:
     expr OP_COMMA expr OP_COMMA expr  {
         Variable * color = sbpen_get( _environment, $5 );
         paint_vars( _environment, $1, $3, color->name, NULL );
@@ -10550,12 +10474,12 @@ paint_definition :
     }    
     ;
 
-border_definition :
+border_definition:
     expr {
         color_border_var( _environment, $1 );
     };
 
-dsave_to_offset :
+dsave_to_offset:
     {
         $$ = NULL;
     }
@@ -10564,7 +10488,7 @@ dsave_to_offset :
         $$ = $2;
     };
 
-dsave_from_address :
+dsave_from_address:
     {
         $$ = NULL;
     }
@@ -10573,7 +10497,7 @@ dsave_from_address :
         $$ = $2;
     };
 
-dsave_size_size :
+dsave_size_size:
     {
         $$ = NULL;
     }
@@ -10582,12 +10506,12 @@ dsave_size_size :
         $$ = $2;
     };
 
-dsave_definition :
+dsave_definition:
     expr dsave_to_offset dsave_from_address dsave_size_size {
         dsave( _environment, $1, $2, $3, $4 );
     };
 
-dload_to_bank :
+dload_to_bank:
     {
         $$ = NULL;
     }
@@ -10596,7 +10520,7 @@ dload_to_bank :
         $$ = $2;
     };
 
-dload_from_offset :
+dload_from_offset:
     {
         $$ = NULL;
     }
@@ -10605,7 +10529,7 @@ dload_from_offset :
         $$ = $2;
     };
 
-dload_to_address :
+dload_to_address:
     {
         $$ = NULL;
     }
@@ -10614,7 +10538,7 @@ dload_to_address :
         $$ = $2;
     };
 
-dload_size_size :
+dload_size_size:
     {
         $$ = NULL;
     }
@@ -10623,17 +10547,17 @@ dload_size_size :
         $$ = $2;
     };
 
-dload_definition :
+dload_definition:
     expr dload_from_offset dload_to_address dload_to_bank dload_size_size {
         dload( _environment, $1, $2, $3, $4, $5 );
     };
 
-chain_definition :
+chain_definition:
     expr {
         chain( _environment, $1 );
     };
 
-to_variable : 
+to_variable: 
     {
         $$ = NULL;
     }
@@ -10641,7 +10565,7 @@ to_variable :
         $$ = $2;
     };
 
-defdgr_definition :
+defdgr_definition:
     OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 );
     }
@@ -10649,7 +10573,7 @@ defdgr_definition :
         defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 );
     };
 
-optional_step :
+optional_step:
     {
         $$ = NULL;
     }
@@ -10657,7 +10581,7 @@ optional_step :
         $$ = $2;
     };
 
-flip_image_flags :
+flip_image_flags:
     X {
         $$ = FLAG_FLIP_X;
     }
@@ -10733,7 +10657,7 @@ flip_definition:
     }
     ;
 
-thread_identifiers :
+thread_identifiers:
     expr {
         Variable * array = variable_retrieve( _environment, $1 );
         if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
@@ -10763,7 +10687,7 @@ thread_identifiers :
         }
     };
 
-kill_definition : {
+kill_definition: {
         ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
         memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
     } thread_identifiers on_targets {
@@ -10774,7 +10698,7 @@ kill_definition : {
       }
     };
 
-stop_definition : 
+stop_definition: 
     Identifier {
         stop_animation( _environment, $1 );
     }
@@ -10785,7 +10709,7 @@ stop_definition :
         stop_movement( _environment, $2 );
     };
 
-spawn_definition :
+spawn_definition:
   Identifier on_targets {
       if ( $2 ) {
         ((struct _Environment *)_environment)->parameters = 0;
@@ -10857,15 +10781,15 @@ spawn_definition :
       }
   };
 
-hires_definition_expression :
+hires_definition_expression:
     expr OP_COMMA expr {
         hires( _environment, $1, $3 );
     };
 
-hires_definition : 
+hires_definition: 
     hires_definition_expression;
 
-multi_definition_expression :
+multi_definition_expression:
     expr OP_COMMA expr OP_COMMA expr {
         bitmap_enable( _environment, 0, 0, 32 );
         sbpen_set( _environment, 1, $1 );
@@ -10876,20 +10800,20 @@ multi_definition_expression :
         bitmap_enable( _environment, 0, 0, 32 );
     };
 
-multi_definition : 
+multi_definition: 
     multi_definition_expression;
 
-mod_definition_expression :
+mod_definition_expression:
     expr OP_COMMA expr {
         sbpen_set( _environment, 1, $1 );
         sbpen_set( _environment, 0, $3 );
         paper( _environment, $3 );
     };
 
-mod_definition : 
+mod_definition: 
     mod_definition_expression;
 
-keyget_definition :
+keyget_definition:
     Identifier as_datatype_suffix_optional {
         if ( $2 != 0 ) {
             if ( $2 != VT_STRING && $2 != VT_DSTRING ) {
@@ -10902,7 +10826,7 @@ keyget_definition :
         variable_move( _environment, k->name, p->name );
     };
 
-at_definition :
+at_definition:
     OP Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional CP {
         if ( ($3 != 0) && ($6 != 0) && ($3 != $6) ) {
             CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$3], DATATYPE_AS_STRING[$6] );
@@ -10940,18 +10864,18 @@ at_definition :
         variable_swap( _environment, $1, $4 );
     };
 
-nrm_definition :
+nrm_definition:
     {
         tilemap_enable( _environment, 0, 0, 0, 0, 0 );
         cls( _environment, NULL );
     };
 
-char_definition :
+char_definition:
     mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         char_at( _environment, $1, $3, $5, $7, $9 );
     };
 
-center_definition : 
+center_definition: 
   expr OP_SEMICOLON {
       center( _environment, $1, 0, NULL);
   }
@@ -10967,7 +10891,7 @@ center_definition :
   }
   ;
 
-vcenter_definition : 
+vcenter_definition: 
   expr OP_SEMICOLON {
       vcenter( _environment, $1, 0 );
   }
@@ -10978,7 +10902,7 @@ vcenter_definition :
       vcenter( _environment, $1, 1 );
   };
 
-vhcenter_definition : 
+vhcenter_definition: 
   expr OP_SEMICOLON {
       vhcenter( _environment, $1, 0, NULL);
   }
@@ -10989,17 +10913,17 @@ vhcenter_definition :
       vhcenter( _environment, $1, 1, $3 );
   };
 
-insert_definition : 
+insert_definition: 
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         insert( _environment, $1, $3, $5, $7, $9, $11 );
     };
 
-envelope_definition :
+envelope_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         envelope( _environment, $1, $3, $5, $7, $9 );
     }
 
-pause_definition :
+pause_definition:
     expr {
         pause_seconds( _environment, NULL, $1 );
     }
@@ -11007,27 +10931,27 @@ pause_definition :
         pause_seconds( _environment, $1, $3 );
     };
 
-suspend_definition :
+suspend_definition:
     expr {
         suspend_vars( _environment, $1 );
     };
 
-freeze_definition :
+freeze_definition:
     Identifier {
         freeze_vars( _environment, $1 );
     };
 
-resume_definition :
+resume_definition:
     expr {
         resume_vars( _environment, $1 );
     };
 
-unfreeze_definition :
+unfreeze_definition:
     Identifier {
         unfreeze_vars( _environment, $1 );
     };
 
-wave_definition :
+wave_definition:
     expr OP_COMMA expr {
         wave( _environment, $1, $3, NULL );
     }
@@ -11035,12 +10959,12 @@ wave_definition :
         wave( _environment, $1, $3, $5 );
     }
 
-cset_definition : 
+cset_definition: 
     expr {
         cset( _environment, $1 );
     };
 
-rot_definition :
+rot_definition:
     expr {
         rot( _environment, $1, NULL );
     }    
@@ -11084,7 +11008,7 @@ key_definition:
     ((struct _Environment *)_environment)->keyboardConfig.release = release;
   };
 
-check_definition :
+check_definition:
     Identifier {
 
     }
@@ -11092,7 +11016,7 @@ check_definition :
 
     };
 
-mob_definition :
+mob_definition:
     ON  {
         for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
             sprite_enable( _environment, i );
@@ -11111,13 +11035,13 @@ mob_definition :
     }
     ;
 
-cmob_definition :
+cmob_definition:
     expr OP_COMMA expr {
         color_sprite_semi_vars( _environment, 0, $1 );
         color_sprite_semi_vars( _environment, 1, $3 );
     };
 
-dojo_definition :
+dojo_definition:
     PUT Identifier OP_COMMA expr OP_COMMA expr {
         Variable * id = variable_retrieve( _environment, $2 );
         if ( id->type != VT_DOJOKA ) {
@@ -11155,7 +11079,7 @@ dojo_definition :
     }
     ;
 
-fujinet_definition :
+fujinet_definition:
     DEVICE expr {
         Variable * expr = variable_retrieve( _environment, $2 );
         if ( expr->initializedByConstant ) {
@@ -11196,7 +11120,7 @@ fujinet_definition :
     }
     ;
 
-raw_optional : 
+raw_optional: 
     {
         $$ = ((struct _Environment *)_environment)->printRaw;
     }
@@ -11204,7 +11128,7 @@ raw_optional :
         $$ = 1;
     };
 
-optional_by :
+optional_by:
     {
         $$ = NULL;
     }
@@ -11212,7 +11136,7 @@ optional_by :
         $$ = $2;
     };
 
-optional_clamp : 
+optional_clamp: 
     {
         $$ = NULL;
     }
@@ -11222,7 +11146,7 @@ optional_clamp :
         $$ = trueValue->name;
     };
 
-travel_definition_array_first :
+travel_definition_array_first:
     Identifier optional_field {
         if ( $2 ) {
             ((struct _Environment *)_environment)->travelX = $1;
@@ -11244,7 +11168,7 @@ travel_definition_array_first :
         parser_array_cleanup( _environment );        
     };
 
-travel_definition_array_second :
+travel_definition_array_second:
     Identifier optional_field {
         ((struct _Environment *)_environment)->travelY = $1;
         ((struct _Environment *)_environment)->travelYF = $2;
@@ -11260,10 +11184,10 @@ travel_definition_array_second :
         parser_array_cleanup( _environment );        
     };
 
-travel_definition_array : 
+travel_definition_array: 
     travel_definition_array_first OP_COMMA travel_definition_array_second;
 
-travel_definition :
+travel_definition:
     Identifier TO travel_definition_array optional_by optional_clamp {
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
@@ -11384,7 +11308,7 @@ travel_definition :
     }
     ;
 
-travel_function :
+travel_function:
     OP Identifier TO travel_definition_array optional_by optional_clamp CP {
         char * x;
         if ( ((struct _Environment *)_environment)->travelXAR ) {
@@ -11507,7 +11431,7 @@ travel_function :
     }
     ;
 
-animation_type :
+animation_type:
       SIMPLE {
       ((struct _Environment *)_environment)->animationType = AT_SIMPLE;
     }
@@ -11518,7 +11442,7 @@ animation_type :
       ((struct _Environment *)_environment)->animationType = AT_LOOP;
     };
 
-optional_delay : 
+optional_delay: 
     {
         ((struct _Environment *)_environment)->animationDelay = 20;
     }
@@ -11528,7 +11452,7 @@ optional_delay :
     };
 
 
-optional_ease_in_delay : 
+optional_ease_in_delay: 
     {
         ((struct _Environment *)_environment)->animationEaseInDelay = 20;
     }
@@ -11537,7 +11461,7 @@ optional_ease_in_delay :
         ((struct _Environment *)_environment)->animationEaseInDelay = $2;
     };
 
-optional_ease_in : 
+optional_ease_in: 
     {
         ((struct _Environment *)_environment)->animationEaseInFrames = 0;
         ((struct _Environment *)_environment)->animationEaseInDelay = 0;
@@ -11547,7 +11471,7 @@ optional_ease_in :
         ((struct _Environment *)_environment)->animationEaseInFrames = $2;
     };
 
-optional_ease_out_delay : 
+optional_ease_out_delay: 
     {
         ((struct _Environment *)_environment)->animationEaseOutDelay = 20;
     }
@@ -11556,7 +11480,7 @@ optional_ease_out_delay :
         ((struct _Environment *)_environment)->animationEaseOutDelay = $2;
     };
 
-optional_ease_out : 
+optional_ease_out: 
     {
         ((struct _Environment *)_environment)->animationEaseOutFrames = 0;
         ((struct _Environment *)_environment)->animationEaseOutDelay = 0;
@@ -11566,7 +11490,7 @@ optional_ease_out :
         ((struct _Environment *)_environment)->animationEaseOutFrames = $2;
     };
 
-optional_next_animation :
+optional_next_animation:
     {
         $$ = NULL;
         ((struct _Environment *)_environment)->animationNextWithEaseIn = 0;
@@ -11582,7 +11506,7 @@ optional_next_animation :
         ((struct _Environment *)_environment)->animationNextWithEaseIn = 1;
     };
 
-optional_wait_vbl :
+optional_wait_vbl:
     {
         ((struct _Environment *)_environment)->animationWaitVbl = 0;
     }
@@ -11591,7 +11515,7 @@ optional_wait_vbl :
         ((struct _Environment *)_environment)->animationWaitVbl = 1;
     };
 
-optional_preserve_background :
+optional_preserve_background:
     {
         ((struct _Environment *)_environment)->animationPreserveBackground = 0;
     }
@@ -11600,7 +11524,7 @@ optional_preserve_background :
         ((struct _Environment *)_environment)->animationPreserveBackground = 1;
     };
 
-optional_reverse : 
+optional_reverse: 
     {
         ((struct _Environment *)_environment)->animationReverse = 0;
     }
@@ -11609,12 +11533,12 @@ optional_reverse :
         ((struct _Environment *)_environment)->animationReverse = 1;
     };
 
-animation_definition :
+animation_definition:
     optional_reverse animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
         animation( _environment, $3, $5, $10, $11 );
     };
 
-animate_definition :
+animate_definition:
     Identifier WITH Identifier {
         animate_semivars( _environment, $1, $3, NULL, NULL );
     }
@@ -11624,7 +11548,7 @@ animate_definition :
     }    
     ;
 
-movement_direction :
+movement_direction:
     LEFT {
         ((struct _Environment *)_environment)->movementDeltaX = -1;
         ((struct _Environment *)_environment)->movementDeltaY = 0;
@@ -11650,7 +11574,7 @@ movement_direction :
         ((struct _Environment *)_environment)->movementDeltaY = 2;
     };
 
-optional_movement_delay :
+optional_movement_delay:
     {
         ((struct _Environment *)_environment)->movementDelay = 20;
     }
@@ -11659,7 +11583,7 @@ optional_movement_delay :
         ((struct _Environment *)_environment)->movementDelay = $2;
     };
 
-movement_definition :
+movement_definition:
     Identifier movement_direction WITH expr optional_movement_delay USING Identifier {
         movement( _environment, $1, $4, $7 );
     }
@@ -11668,7 +11592,7 @@ movement_definition :
     }
 ;
 
-mmob_definition : 
+mmob_definition: 
     expr OP_COMMA expr OP_COMMA expr {
 
         mmob( _environment, $1, $3, $5, NULL, NULL, NULL, NULL );
@@ -11690,62 +11614,62 @@ mmob_definition :
 
     };
 
-upw_definition :
+upw_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         upw( _environment, $1, $3, $5, $7 );
     };
 
-upb_definition :
+upb_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         upb( _environment, $1, $3, $5, $7 );
     };
 
-downw_definition :
+downw_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         downw( _environment, $1, $3, $5, $7 );
     };
 
-downb_definition :
+downb_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         downb( _environment, $1, $3, $5, $7 );
     };
 
-leftw_definition :
+leftw_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         leftw( _environment, $1, $3, $5, $7 );
     };
 
-leftb_definition :
+leftb_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         leftb( _environment, $1, $3, $5, $7 );
     };
 
-rightw_definition :
+rightw_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         rightw( _environment, $1, $3, $5, $7 );
     };
 
-rightb_definition :
+rightb_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         rightb( _environment, $1, $3, $5, $7 );
     };
 
-memload_definition :
+memload_definition:
     {
         memload( _environment );
     };
 
-memsave_definition :
+memsave_definition:
     {
         memsave( _environment );
     };
 
-mempos_definition :
+mempos_definition:
     expr OP_COMMA expr {
         mempos( _environment, $1, $3 );
     };
 
-memor_definition :
+memor_definition:
     expr  {
         memor( _environment, $1, NULL, NULL );
     }
@@ -11753,7 +11677,7 @@ memor_definition :
         memor( _environment, $1, $3, $5 );
     };
 
-memdef_definition :
+memdef_definition:
     expr  {
         memdef( _environment, $1, NULL, NULL, NULL );
     }
@@ -11770,22 +11694,22 @@ memdef_definition :
         memdef( _environment, $1, $3, $5, $7 );
     };
 
-memlen_definition :
+memlen_definition:
     expr {
         memlen( _environment, $1 );
     };
 
-memrestore_definition :
+memrestore_definition:
     expr {
         memrestore( _environment, $1 );
     };
 
-memcont_definition :
+memcont_definition:
     expr {
         memcont( _environment, $1 );
     };
 
-memclr_definition :
+memclr_definition:
     expr OP_COMMA expr {
         memclr( _environment, $1, $3, NULL );
     }
@@ -11793,19 +11717,19 @@ memclr_definition :
         memclr( _environment, $1, $3, $5 );
     };
 
-scale_definitions :
+scale_definitions:
     const_expr OP_COMMA const_expr {
         ((struct _Environment *)_environment)->scaleX = $1;
         ((struct _Environment *)_environment)->scaleY = $3;
     };
 
-offset_definitions :
+offset_definitions:
     const_expr OP_COMMA const_expr {
         ((struct _Environment *)_environment)->offsetX = $1;
         ((struct _Environment *)_environment)->offsetY = $3;
     };
 
-const_definition :
+const_definition:
   STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             Constant * c1 = constant_find( _environment, $4 );
@@ -11877,11 +11801,11 @@ const_definition :
         }
   };
 
-const_definitions :
+const_definitions:
     const_definition
     | const_definition OP_COMMA const_definitions;
 
-positive_const_definition :
+positive_const_definition:
   Identifier OP_ASSIGN const_expr {
         if ( !((Environment *)_environment)->emptyProcedure ) {
             if ( $3 < 0 ) {
@@ -11891,11 +11815,11 @@ positive_const_definition :
         }
   };
 
-positive_const_definitions :
+positive_const_definitions:
     positive_const_definition
     | positive_const_definition OP_COMMA positive_const_definitions;
 
-serial_function :
+serial_function:
     READ OP expr CP {
         $$ = serial_read( _environment, $3 )->name;
     }
@@ -11916,7 +11840,7 @@ serial_function :
         $$ = serial_write_type( _environment, $3, $4, $6 )->name;
     };
 
-optional_endianess :
+optional_endianess:
     {
         $$ = 0;
     } | LITTLE ENDIAN {
@@ -11925,7 +11849,7 @@ optional_endianess :
         $$ = 1;
     };
 
-serial_definition :
+serial_definition:
     WRITE expr {
         serial_write( _environment, $2 );
     }
@@ -11934,7 +11858,7 @@ serial_definition :
         serial_write_type( _environment, $3, $4, $6 );
     };
 
-jmove_definition :
+jmove_definition:
     expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr   {
         jmove( _environment, $1, $3, $5, $7, $9, $7, $9, NULL, NULL );
     }
@@ -11961,7 +11885,7 @@ jmove_definition :
     }
     ;
 
-array_assignment :
+array_assignment:
     OP_ASSIGN expr {
         ((struct _Environment *)_environment)->currentFieldName = NULL;
         ((struct _Environment *)_environment)->currentExpression = $2;
@@ -11971,7 +11895,7 @@ array_assignment :
         ((struct _Environment *)_environment)->currentExpression = $4;
     };
 
-let_definition :
+let_definition:
     Identifier OP_ASSIGN Identifier {
         parser_array_init( _environment );
     }
@@ -12100,7 +12024,7 @@ on_flash_address:
         $$ = $2;
     };
 
-flash_definition_couples :
+flash_definition_couples:
     flash_definition_couple
     | flash_definition_couple OP_COMMA flash_definition_couples;
 
