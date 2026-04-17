@@ -544,7 +544,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 frame: FRAME | TILE;
 ticks: TICK | TICKS;
-filesize:  FILEX SIZE | FILESIZE | FSIZE;
+filesize: FILEX SIZE | FILESIZE | FSIZE;
+float_or_single: FLOAT | SINGLE;
 
 /*============================================================================
  ============ CONSTANT VALUES / SYMBOLS
@@ -1388,51 +1389,24 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
-float_or_single :
-    FLOAT | SINGLE
-    ;
+/*============================================================================
+ ============ CASTING
+ ============================================================================*/
 
 casting :
-    OP BIT CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_BIT )->name;
-    }
-    | OP BYTE CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_BYTE )->name;
-      }
-    | OP SIGNED BYTE OP exponential_less { 
-        $$ = variable_cast( _environment, $5, VT_SBYTE )->name;
-      }
-    | OP SBYTE OP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_SBYTE )->name;
-      }
-    | OP WORD CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_WORD )->name;
-      }
-    | OP SIGNED WORD CP exponential_less { 
-        $$ = variable_cast( _environment, $5, VT_SWORD )->name;
-      }
-    | OP float_or_single CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_FLOAT )->name;
-      }
-    | OP NUMBER CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_NUMBER )->name;
-      }
-    | OP DWORD CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_DWORD )->name;
-      }
-    | OP SIGNED DWORD CP exponential_less { 
-        $$ = variable_cast( _environment, $5, VT_SDWORD )->name;
-      }
-    | OP POSITION CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_POSITION )->name;
-      }
-    | OP COLOR CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_COLOR )->name;
-      }
-    | OP COLOUR CP exponential_less { 
-        $$ = variable_cast( _environment, $4, VT_COLOR )->name;
-      }
-    ;
+    OP BIT CP exponential_less { $$ = variable_cast( _environment, $4, VT_BIT )->name; } |
+    OP BYTE CP exponential_less { $$ = variable_cast( _environment, $4, VT_BYTE )->name; } |
+    OP COLOR CP exponential_less { $$ = variable_cast( _environment, $4, VT_COLOR )->name; } | 
+    OP COLOUR CP exponential_less { $$ = variable_cast( _environment, $4, VT_COLOR )->name; } |
+    OP DWORD CP exponential_less { $$ = variable_cast( _environment, $4, VT_DWORD )->name; } | 
+    OP float_or_single CP exponential_less { $$ = variable_cast( _environment, $4, VT_FLOAT )->name; } |
+    OP NUMBER CP exponential_less { $$ = variable_cast( _environment, $4, VT_NUMBER )->name; } | 
+    OP POSITION CP exponential_less { $$ = variable_cast( _environment, $4, VT_POSITION )->name; } | 
+    OP SBYTE OP exponential_less { $$ = variable_cast( _environment, $4, VT_SBYTE )->name; } | 
+    OP SIGNED BYTE OP exponential_less { $$ = variable_cast( _environment, $5, VT_SBYTE )->name; }| 
+    OP SIGNED DWORD CP exponential_less { $$ = variable_cast( _environment, $5, VT_SDWORD )->name; } | 
+    OP SIGNED WORD CP exponential_less { $$ = variable_cast( _environment, $5, VT_SWORD )->name; } | 
+    OP WORD CP exponential_less { $$ = variable_cast( _environment, $4, VT_WORD )->name; };
 
 expr : 
     expr_math
