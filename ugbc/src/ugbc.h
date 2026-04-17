@@ -3890,7 +3890,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 #define WARNING_DLOAD_IGNORED_FILENAME( f ) WARNING2("W010 - filename for DLOAD is ignored", f );
 
-#define CHECK_POWEROF2_INVALID_MULTIPLACTOR2( value ) \
+#define CHECK_POWEROF2_INVALID_MULTIPLICATOR2( value ) \
     if ( log2(value) != (int)log2(value) ) { \
         CRITICAL_INVALID_MULTIPLICATOR2(value); \
     }
@@ -3898,6 +3898,31 @@ int yyerror ( Environment * _ignored, const char * _message );
     if ( value == 0 ) { \
         CRITICAL_DIVISION_BY_ZERO(); \
     }
+
+#define RGBCONVERT( r, g, b ) \
+    ( ((Environment *)_environment)->currentRgbConverterFunction ) ? \
+        ((Environment *)_environment)->currentRgbConverterFunction( r, g, b ) : \
+        0;
+
+#define SCREENCOLORS( ) \
+    ((Environment *)_environment)->screenColors;
+#define SCREENSHADES( ) \
+    ((Environment *)_environment)->screenShades;
+#define SCREENWIDTH( value ) \
+    ((Environment *)_environment)->screenWidth;
+#define SCREENHEIGHT( value ) \
+    ((Environment *)_environment)->screenHeight;
+#define SCREENTILES( value ) \
+    ((Environment *)_environment)->screenTiles;
+
+#define XTEXT( value ) \
+    value / ((Environment *)_environment)->fontWidth;
+#define YTEXT( value ) \
+    value / ((Environment *)_environment)->fontHeight;    
+#define XGRAPHIC( value ) \
+    value / ((Environment *)_environment)->fontWidth;
+#define YGRAPHIC( value ) \
+    value / ((Environment *)_environment)->fontHeight;    
 
 int assemblyLineIsAComment( char * _buffer );
 const char* strstrcase( const char* _x, const char* _y );
