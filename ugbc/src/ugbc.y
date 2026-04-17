@@ -827,40 +827,96 @@ const_instrument:
 */
 
 const_color_enumeration:
-      BLACK { $$ = COLOR_BLACK; } | 
-      BLUE { $$ = COLOR_BLUE; } | 
-      BROWN { $$ = COLOR_BROWN; } | 
-      CYAN { $$ = COLOR_CYAN; } | 
-      DARK BLUE { $$ = COLOR_DARK_BLUE; } | 
-      DARK GRAY { $$ = COLOR_DARK_GREY; } | 
-      DARK GREEN { $$ = COLOR_DARK_GREEN; } | 
-      DARK GREY { $$ = COLOR_DARK_GREY; } | 
-      DARK RED { $$ = COLOR_DARK_RED; } | 
-      DARK WHITE { $$ = COLOR_DARK_WHITE; } | 
-      GOLD { $$ = COLOR_GOLD; } | 
-      GRAY { $$ = COLOR_GREY; } | 
-      GREEN { $$ = COLOR_GREEN; } | 
-      GREY { $$ = COLOR_GREY; } | 
-      LAVENDER { $$ = COLOR_LAVENDER; } | 
-      LIGHT BLUE { $$ = COLOR_LIGHT_BLUE; } | 
-      LIGHT GRAY { $$ = COLOR_LIGHT_GREY; } | 
-      LIGHT GREEN { $$ = COLOR_LIGHT_GREEN; } | 
-      LIGHT GREY { $$ = COLOR_LIGHT_GREY; } | 
-      LIGHT RED { $$ = COLOR_LIGHT_RED; } | 
-      LIGHT WHITE { $$ = COLOR_LIGHT_WHITE; } | 
-      MAGENTA { $$ = COLOR_MAGENTA; } | 
-      OLIVE GREEN { $$ = COLOR_OLIVE_GREEN; } | 
-      ORANGE { $$ = COLOR_ORANGE; } | 
-      PEACH { $$ = COLOR_PEACH; } |
-      PINK { $$ = COLOR_PINK; } | 
-      PURPLE { $$ = COLOR_PURPLE; } | 
-      RED { $$ = COLOR_RED; } | 
-      TAN { $$ = COLOR_TAN; } | 
-      TURQUOISE { $$ = COLOR_TURQUOISE; } | 
-      VIOLET { $$ = COLOR_VIOLET; } | 
-      WHITE { $$ = COLOR_WHITE; } |
-      YELLOW { $$ = COLOR_YELLOW; } | 
-      YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
+    BLACK { $$ = COLOR_BLACK; } | 
+    BLUE { $$ = COLOR_BLUE; } | 
+    BROWN { $$ = COLOR_BROWN; } | 
+    CYAN { $$ = COLOR_CYAN; } | 
+    DARK BLUE { $$ = COLOR_DARK_BLUE; } | 
+    DARK GRAY { $$ = COLOR_DARK_GREY; } | 
+    DARK GREEN { $$ = COLOR_DARK_GREEN; } | 
+    DARK GREY { $$ = COLOR_DARK_GREY; } | 
+    DARK RED { $$ = COLOR_DARK_RED; } | 
+    DARK WHITE { $$ = COLOR_DARK_WHITE; } | 
+    GOLD { $$ = COLOR_GOLD; } | 
+    GRAY { $$ = COLOR_GREY; } | 
+    GREEN { $$ = COLOR_GREEN; } | 
+    GREY { $$ = COLOR_GREY; } | 
+    LAVENDER { $$ = COLOR_LAVENDER; } | 
+    LIGHT BLUE { $$ = COLOR_LIGHT_BLUE; } | 
+    LIGHT GRAY { $$ = COLOR_LIGHT_GREY; } | 
+    LIGHT GREEN { $$ = COLOR_LIGHT_GREEN; } | 
+    LIGHT GREY { $$ = COLOR_LIGHT_GREY; } | 
+    LIGHT RED { $$ = COLOR_LIGHT_RED; } | 
+    LIGHT WHITE { $$ = COLOR_LIGHT_WHITE; } | 
+    MAGENTA { $$ = COLOR_MAGENTA; } | 
+    OLIVE GREEN { $$ = COLOR_OLIVE_GREEN; } | 
+    ORANGE { $$ = COLOR_ORANGE; } | 
+    PEACH { $$ = COLOR_PEACH; } |
+    PINK { $$ = COLOR_PINK; } | 
+    PURPLE { $$ = COLOR_PURPLE; } | 
+    RED { $$ = COLOR_RED; } | 
+    TAN { $$ = COLOR_TAN; } | 
+    TURQUOISE { $$ = COLOR_TURQUOISE; } | 
+    VIOLET { $$ = COLOR_VIOLET; } | 
+    WHITE { $$ = COLOR_WHITE; } |
+    YELLOW { $$ = COLOR_YELLOW; } | 
+    YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
+
+/* 
+    This is the list of keystrokes.
+*/
+
+const_key_scancode_alphadigit:
+    "0" { $$ = key_constant( _environment, KEY_0 ); } | 
+    "1" { $$ = key_constant( _environment, KEY_1 ); } | 
+    "2" { $$ = key_constant( _environment, KEY_2 ); } | 
+    "3" { $$ = key_constant( _environment, KEY_3 ); } | 
+    "4" { $$ = key_constant( _environment, KEY_4 ); } | 
+    "5" { $$ = key_constant( _environment, KEY_5 ); } | 
+    "6" { $$ = key_constant( _environment, KEY_6 ); } | 
+    "7" { $$ = key_constant( _environment, KEY_7 ); } | 
+    "8" { $$ = key_constant( _environment, KEY_8 ); } | 
+    "9" { $$ = key_constant( _environment, KEY_9 ); } | 
+    A { $$ = key_constant( _environment, KEY_A ); } | 
+    B { $$ = key_constant( _environment, KEY_B ); } | 
+    C { $$ = key_constant( _environment, KEY_C ); } |
+    D { $$ = key_constant( _environment, KEY_D ); } | 
+    E { $$ = key_constant( _environment, KEY_E ); } | 
+    F { $$ = key_constant( _environment, KEY_F ); } | 
+    G { $$ = key_constant( _environment, KEY_G ); } | 
+    H { $$ = key_constant( _environment, KEY_H ); } | 
+    I { $$ = key_constant( _environment, KEY_I ); } | 
+    J { $$ = key_constant( _environment, KEY_J ); } | 
+    K { $$ = key_constant( _environment, KEY_K ); } |
+    L { $$ = key_constant( _environment, KEY_L ); } | 
+    M { $$ = key_constant( _environment, KEY_M ); } | 
+    N { $$ = key_constant( _environment, KEY_N ); } | 
+    O { $$ = key_constant( _environment, KEY_O ); } | 
+    P { $$ = key_constant( _environment, KEY_P ); } | 
+    Q { $$ = key_constant( _environment, KEY_Q ); } | 
+    R { $$ = key_constant( _environment, KEY_R ); } | 
+    S { $$ = key_constant( _environment, KEY_S ); } | 
+    T { $$ = key_constant( _environment, KEY_T ); } | 
+    U { $$ = key_constant( _environment, KEY_U ); } | 
+    V { $$ = key_constant( _environment, KEY_V ); } | 
+    W { $$ = key_constant( _environment, KEY_W ); } | 
+    X { $$ = key_constant( _environment, KEY_X ); } |
+    Y { $$ = key_constant( _environment, KEY_Y ); } | 
+    Z { $$ = key_constant( _environment, KEY_Z ); };
+
+const_key_scancode_function_digit:
+    F1 { $$ = key_constant( _environment, KEY_F1 ); } | 
+    F2 { $$ = key_constant( _environment, KEY_F2 ); } | 
+    F3 { $$ = key_constant( _environment, KEY_F3 ); } | 
+    F4 { $$ = key_constant( _environment, KEY_F4 ); } | 
+    F5 { $$ = key_constant( _environment, KEY_F5 ); } | 
+    F6 { $$ = key_constant( _environment, KEY_F6 ); } | 
+    F7 { $$ = key_constant( _environment, KEY_F7 ); } | 
+    F8 { $$ = key_constant( _environment, KEY_F8 ); };
+
+/* 
+    Various flags.
+*/
 
 image_load_flag:
     COMPRESSED { $$ = FLAG_COMPRESSED; } | 
@@ -983,6 +1039,39 @@ images_load_flags:
 sequence_load_flags:
     { $$ = 0; } | 
     sequence_load_flags1 { $$ = $1; };
+
+sprite_flag:
+    COMPRESS HORIZONTAL { $$ = SPRITE_FLAG_COMPRESS_HORIZONTAL; } | 
+    COMPRESS VERTICAL { $$ = SPRITE_FLAG_COMPRESS_VERTICAL; } | 
+    EXPAND HORIZONTAL { $$ = SPRITE_FLAG_EXPAND_HORIZONTAL; } | 
+    EXPAND VERTICAL { $$ = SPRITE_FLAG_EXPAND_VERTICAL; } | 
+    IGNORE COLOR const_expr { $$ = SPRITE_FLAG_TRANSPARENCY_COLOR | ( $3 & 0x000f ); } |
+    MONOCOLOR { $$ = SPRITE_FLAG_MONOCOLOR; } | 
+    MULTICOLOR { $$ = SPRITE_FLAG_MULTICOLOR; };
+
+sprite_flags1:
+    sprite_flag { $$ = $1; } | 
+    sprite_flag sprite_flags1 { $$ = $1 | $2; };
+
+sprite_flags:
+    { $$ = 0; }  | 
+    sprite_flags1 { $$ = $1; };
+
+on_bank_explicit:
+    { $$ = 0; } | 
+    BANKED { $$ = 1; } | 
+    BANKED OP const_expr CP { $$ = $3; } | 
+    FOR BANK READ { $$ = -1; } | 
+    FOR BANK WRITE { $$ = -1; } | 
+    FOR READ BANK { $$ = -1; } | 
+    FOR WRITE BANK { $$ = -1; } |
+    UNBANKED { $$ = 0; };
+
+on_bank_implicit:
+    { $$ = ((struct _Environment *)_environment)->bankedLoadDefault; } | 
+    BANKED { $$ = 1; } | 
+    BANKED OP const_expr CP { $$ = $3; } |
+    UNBANKED { $$ = 0; };
 
 /*============================================================================
  ============ CONSTANT FACTORS
@@ -1502,6 +1591,225 @@ const_expr:
     NOT const_expr { $$ = ( ! $2 ); } ;
 
 /*============================================================================
+ ============ ENUMERATIONS (CONSTANTS USING VARIABLES)
+ ============================================================================*/
+
+color_enumeration:
+    BLACK { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLACK)->name; } | 
+    BLUE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLUE )->name; } | 
+    BROWN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BROWN )->name; } |
+    CYAN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_CYAN )->name; } | 
+    DARK BLUE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_BLUE )->name; } | 
+    DARK GRAY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name; } | 
+    DARK GREEN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREEN )->name; } | 
+    DARK GREY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name; } | 
+    DARK RED { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_RED )->name; } | 
+    DARK WHITE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_WHITE )->name; } | 
+    GOLD { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GOLD )->name; } | 
+    GRAY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name; } |
+    GREEN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREEN )->name; } | 
+    GREY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name; } | 
+    LAVENDER { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LAVENDER )->name; } | 
+    LIGHT BLUE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_BLUE )->name; } | 
+    LIGHT GRAY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name; } | 
+    LIGHT GREEN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREEN )->name; } | 
+    LIGHT GREY { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name; } | 
+    LIGHT RED { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_RED )->name; } | 
+    LIGHT WHITE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_WHITE )->name; } | 
+    MAGENTA { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_MAGENTA )->name; } | 
+    OLIVE GREEN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_OLIVE_GREEN )->name; } | 
+    ORANGE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_ORANGE )->name; } | 
+    PEACH { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PEACH )->name; } |
+    PINK { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PINK )->name; } | 
+    PURPLE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PURPLE )->name; } | 
+    RED { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_RED )->name; } | 
+    TAN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TAN )->name; } | 
+    TURQUOISE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TURQUOISE )->name; } | 
+    VIOLET { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_VIOLET )->name; } | 
+    WHITE { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_WHITE )->name; } | 
+    YELLOW { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW )->name; } | 
+    YELLOW GREEN { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW_GREEN )->name; };
+
+key_scancode_alphadigit:
+    Integer {
+        switch( $1 ) {
+            case 0:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_0 ) )->name;
+                break;
+            case 1:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_1 ) )->name;
+                break;
+            case 2:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_2 ) )->name;
+                break;
+            case 3:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_3 ) )->name;
+                break;
+            case 4:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_4 ) )->name;
+                break;
+            case 5:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_5 ) )->name;
+                break;
+            case 6:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_6 ) )->name;
+                break;
+            case 7:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_7 ) )->name;
+                break;
+            case 8:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_8 ) )->name;
+                break;
+            case 9:
+                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_9 ) )->name;
+                break;
+        }
+    } | 
+    A { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_A ) )->name; } | 
+    B { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_B ) )->name; } | 
+    C { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_C ) )->name; } | 
+    D { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_D ) )->name; } | 
+    E { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_E ) )->name; } | 
+    F { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F ) )->name; } | 
+    G { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_G ) )->name; } | 
+    H { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_H ) )->name; } |
+    I { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_I ) )->name; } | 
+    J { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_J ) )->name; } | 
+    K { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_K ) )->name; } | 
+    L { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_L ) )->name; } | 
+    M { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_M ) )->name; } | 
+    N { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_N ) )->name; } |
+    O { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_O ) )->name; } | 
+    P { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_P ) )->name; } | 
+    Q { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Q ) )->name; } | 
+    R { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_R ) )->name; } | 
+    S { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_S ) )->name; } | 
+    T { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_T ) )->name; } | 
+    U { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_U ) )->name; } | 
+    V { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_V ) )->name; } | 
+    W { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_W ) )->name; } | 
+    X { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_X ) )->name; } | 
+    Y { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Y ) )->name; } | 
+    Z { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Z ) )->name; };
+
+key_scancode_function_digit:
+    F1 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F1 ) )->name; } | 
+    F2 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F2 ) )->name; } | 
+    F3 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F3 ) )->name; } | 
+    F4 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F4 ) )->name; } | 
+    F5 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F5 ) )->name; } | 
+    F6 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F6 ) )->name; } |
+    F7 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F7 ) )->name; } | 
+    F8 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F8 ) )->name; };
+
+key_scancode_definition: 
+      NONE {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_NONE ) )->name;
+    }
+    | key_scancode_alphadigit {
+        $$ = $1;
+    }
+    | ASTERISK {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_ASTERISK ) )->name;
+    }
+    | AT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_AT ) )->name;
+    }
+    | CLEAR {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CLEAR ) )->name;
+    }
+    | COLON {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COLON ) )->name;
+    }
+    | COMMA {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMA ) )->name;
+    }
+    | COMMODORE {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMODORE ) )->name;
+    }
+    | CONTROL {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CONTROL ) )->name;
+    }
+    | CRSR LEFT RIGHT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_LEFT_RIGHT ) )->name;
+    }
+    | CRSR UP DOWN {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_UP_DOWN ) )->name;
+    }
+    | DELETE {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DELETE ) )->name;
+    }
+    | EQUAL {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_EQUAL ) )->name;
+    }
+    | key_scancode_function_digit {
+        $$ = $1;
+    }
+    | HOME {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_HOME ) )->name;
+    }
+    | TAB {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_TAB ) )->name;
+    }
+    | INSERT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_INSERT ) )->name;
+    }
+    | ARROW LEFT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
+    }
+    | LEFT ARROW {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
+    }
+    | LEFT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT ) )->name;
+    }
+    | RIGHT {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RIGHT ) )->name;
+    }
+    | UP {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP ) )->name;
+    }
+    | DOWN {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DOWN ) )->name;
+    }
+    | ARROW UP {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
+    }
+    | UP ARROW {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
+    }
+    | MINUS {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_MINUS ) )->name;
+    }
+    | PERIOD {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PERIOD ) )->name;
+    }
+    | PLUS {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PLUS ) )->name;
+    }
+    | POUND {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_POUND ) )->name;
+    }
+    | RETURN {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RETURN ) )->name;
+    }
+    | RUNSTOP {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
+    }
+    | RUN STOP {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
+    }
+    | SEMICOLON {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SEMICOLON ) )->name;
+    }
+    | SLASH {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SLASH ) )->name;
+    }
+    | SPACE {
+        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SPACE ) )->name;
+    };
+
+/*============================================================================
  ============ EXTENDED SYNTAXES
  ============================================================================*/
 
@@ -1728,631 +2036,34 @@ expr:
     expr_math XOR expr { $$ = variable_xor( _environment, $1, $3 )->name; }  | 
     NOT expr { $$ = variable_not( _environment, $2 )->name; };
 
+/*============================================================================
+ ============ INSTRUCTIONS DEFINITIONS
+ ============================================================================*/
 
+/*-----------------------------------------------------------------------------
+ ------------ RANDOM
+ ----------------------------------------------------------------------------*/
 
-
-
-
-
-
-
-on_bank_explicit:
-    {
-        $$ = 0;
-    }
-    | BANKED {
-        $$ = 1;
-    }
-    | UNBANKED {
-        $$ = 0;
-    }
-    | BANKED OP const_expr CP {
-        $$ = $3;
-    }
-    | FOR BANK READ {
-        $$ = -1;
-    }
-    | FOR BANK WRITE {
-        $$ = -1;
-    }
-    | FOR READ BANK {
-        $$ = -1;
-    }
-    | FOR WRITE BANK {
-        $$ = -1;
-    };
-
-on_bank_implicit:
-    {
-        $$ = ((struct _Environment *)_environment)->bankedLoadDefault;
-    }
-    | UNBANKED {
-        $$ = 0;
-    }
-    | BANKED {
-        $$ = 1;
-    }
-    | BANKED OP const_expr CP {
-        $$ = $3;
-    };
-
-sprite_flag:
-    MULTICOLOR {
-        $$ = SPRITE_FLAG_MULTICOLOR;
-    }
-    | MONOCOLOR {
-        $$ = SPRITE_FLAG_MONOCOLOR;
-    }
-    | EXPAND VERTICAL {
-        $$ = SPRITE_FLAG_EXPAND_VERTICAL;
-    }
-    | COMPRESS VERTICAL {
-        $$ = SPRITE_FLAG_COMPRESS_VERTICAL;
-    }
-    | EXPAND HORIZONTAL {
-        $$ = SPRITE_FLAG_EXPAND_HORIZONTAL;
-    }
-    | COMPRESS HORIZONTAL {
-        $$ = SPRITE_FLAG_COMPRESS_HORIZONTAL;
-    }
-    | IGNORE COLOR const_expr {
-        $$ = SPRITE_FLAG_TRANSPARENCY_COLOR | ( $3 & 0x000f );
-    };
-
-sprite_flags1:
-    sprite_flag {
-        $$ = $1;
-    }
-    | sprite_flag sprite_flags1 {
-        $$ = $1 | $2;
-    }
-    ;
-
-sprite_flags:
-    {
-        $$ = 0;    
-    } 
-    | sprite_flags1 {
-        $$ = $1;
-    };
-
+/* RANDOM */
 random_definition_simple:
-      BIT {
-        $$ = random_value( _environment, VT_BIT )->name;
-    }
-    | BYTE {
-        $$ = random_value( _environment, VT_BYTE )->name;
-    }
-    | WORD {
-        $$ = random_value( _environment, VT_WORD )->name;
-    }
-    | INT {
-        $$ = random_value( _environment, VT_SWORD )->name;
-    }
-    | INTEGER {
-        $$ = random_value( _environment, VT_SWORD )->name;
-    }
-    | float_or_single {
-        $$ = random_value( _environment, VT_FLOAT )->name;
-    }
-    | NUMBER {
-        $$ = random_value( _environment, VT_NUMBER )->name;
-    }
-    | DWORD {
-        $$ = random_value( _environment, VT_DWORD )->name;
-    }
-    | LONG {
-        $$ = random_value( _environment, VT_SDWORD )->name;
-    }
-    | POSITION {
-        $$ = random_value( _environment, VT_POSITION )->name;
-    }
-    | COLOR {
-        $$ = random_value( _environment, VT_COLOR )->name;
-    }
-    | COLOUR {
-        $$ = random_value( _environment, VT_COLOR )->name;
-    }
-    | WIDTH {
-        $$ = rnd( _environment, screen_get_width( _environment )->name )->name;
-    }
-    | HEIGHT {
-        $$ = rnd( _environment, screen_get_height( _environment )->name )->name;
-    };
+    BIT { $$ = random_value( _environment, VT_BIT )->name; } | 
+    BYTE { $$ = random_value( _environment, VT_BYTE )->name; } | 
+    COLOR { $$ = random_value( _environment, VT_COLOR )->name; } | 
+    COLOUR { $$ = random_value( _environment, VT_COLOR )->name; } | 
+    DWORD { $$ = random_value( _environment, VT_DWORD )->name; } | 
+    float_or_single { $$ = random_value( _environment, VT_FLOAT )->name; } | 
+    HEIGHT { $$ = rnd( _environment, screen_get_height( _environment )->name )->name; } |
+    INT { $$ = random_value( _environment, VT_SWORD )->name; } | 
+    INTEGER { $$ = random_value( _environment, VT_SWORD )->name; } | 
+    LONG { $$ = random_value( _environment, VT_SDWORD )->name; } | 
+    NUMBER { $$ = random_value( _environment, VT_NUMBER )->name; } | 
+    POSITION { $$ = random_value( _environment, VT_POSITION )->name; } | 
+    WIDTH { $$ = rnd( _environment, screen_get_width( _environment )->name )->name; } | 
+    WORD { $$ = random_value( _environment, VT_WORD )->name; };
 
 random_definition:
-      random_definition_simple {
-          $$ = $1;
-      };
+    random_definition_simple { $$ = $1; };
 
-color_enumeration:
-      BLACK {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLACK)->name;
-      }
-      | WHITE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_WHITE )->name;
-      }
-      | DARK WHITE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_WHITE )->name;
-      }
-      | LIGHT WHITE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_WHITE )->name;
-      }
-      | RED {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_RED )->name;
-      }
-      | CYAN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_CYAN )->name;
-      }
-      | VIOLET {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_VIOLET )->name;
-      }
-      | GREEN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREEN )->name;
-      }
-      | BLUE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BLUE )->name;
-      }
-      | YELLOW {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW )->name;
-      }
-      | ORANGE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_ORANGE )->name;
-      }
-      | BROWN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_BROWN )->name;
-      }
-      | DARK RED {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_RED )->name;
-      }
-      | LIGHT RED {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_RED )->name;
-      }
-      | DARK GREY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name;
-      }
-      | GREY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name;
-      }
-      | DARK GRAY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREY )->name;
-      }
-      | GRAY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GREY )->name;
-      }
-      | DARK GREEN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_GREEN )->name;
-      }
-      | LIGHT GREEN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREEN )->name;
-      }
-      | LIGHT BLUE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_BLUE )->name;
-      }
-      | LIGHT GREY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name;
-      }
-      | LIGHT GRAY {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LIGHT_GREY )->name;
-      }
-      | DARK BLUE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_DARK_BLUE )->name;
-      }
-      | MAGENTA {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_MAGENTA )->name;
-      }
-      | PURPLE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PURPLE )->name;
-      }
-      | LAVENDER {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_LAVENDER )->name;
-      }
-      | GOLD {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_GOLD )->name;
-      }
-      | TURQUOISE {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TURQUOISE )->name;
-      }
-      | TAN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_TAN )->name;
-      }
-      | YELLOW GREEN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_YELLOW_GREEN )->name;
-      }
-      | OLIVE GREEN {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_OLIVE_GREEN )->name;
-      }
-      | PINK {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PINK )->name;
-      }
-      | PEACH {
-        $$ = variable_by_constant( _environment, VT_COLOR, COLOR_PEACH )->name;
-      };
-
-key_scancode_alphadigit:
-    Integer {
-        switch( $1 ) {
-            case 0:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_0 ) )->name;
-                break;
-            case 1:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_1 ) )->name;
-                break;
-            case 2:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_2 ) )->name;
-                break;
-            case 3:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_3 ) )->name;
-                break;
-            case 4:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_4 ) )->name;
-                break;
-            case 5:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_5 ) )->name;
-                break;
-            case 6:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_6 ) )->name;
-                break;
-            case 7:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_7 ) )->name;
-                break;
-            case 8:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_8 ) )->name;
-                break;
-            case 9:
-                $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_9 ) )->name;
-                break;
-        }
-    }
-    | A {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_A ) )->name;
-    }
-    | B {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_B ) )->name;
-    }
-    | C {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_C ) )->name;
-    }
-    | D {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_D ) )->name;
-    }
-    | E {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_E ) )->name;
-    }
-    | F {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F ) )->name;
-    }
-    | G {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_G ) )->name;
-    }
-    | H {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_H ) )->name;
-    }
-    | I {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_I ) )->name;
-    }
-    | J {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_J ) )->name;
-    }
-    | K {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_K ) )->name;
-    }
-    | L {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_L ) )->name;
-    }
-    | M {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_M ) )->name;
-    }
-    | N {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_N ) )->name;
-    }
-    | O {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_O ) )->name;
-    }
-    | P {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_P ) )->name;
-    }
-    | Q {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Q ) )->name;
-    }
-    | R {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_R ) )->name;
-    }
-    | S {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_S ) )->name;
-    }
-    | T {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_T ) )->name;
-    }
-    | U {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_U ) )->name;
-    }
-    | V {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_V ) )->name;
-    }
-    | X {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_X ) )->name;
-    }
-    | Y {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Y ) )->name;
-    }
-    | W {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_W ) )->name;
-    }
-    | Z {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_Z ) )->name;
-    }
-    ;
-
-const_key_scancode_alphadigit:
-      "0" {
-        $$ = key_constant( _environment, KEY_0 );
-    }
-    | "1" {
-        $$ = key_constant( _environment, KEY_1 );
-    }
-    | "2" {
-        $$ = key_constant( _environment, KEY_2 );
-    }
-    | "3" {
-        $$ = key_constant( _environment, KEY_3 );
-    }
-    | "4" {
-        $$ = key_constant( _environment, KEY_4 );
-    }
-    | "5" {
-        $$ = key_constant( _environment, KEY_5 );
-    }
-    | "6" {
-        $$ = key_constant( _environment, KEY_6 );
-    }
-    | "7" {
-        $$ = key_constant( _environment, KEY_7 );
-    }
-    | "8" {
-        $$ = key_constant( _environment, KEY_8 );
-    }
-    | "9" {
-        $$ = key_constant( _environment, KEY_9 );
-    }
-    | A {
-        $$ = key_constant( _environment, KEY_A );
-    }
-    | B {
-        $$ = key_constant( _environment, KEY_B );
-    }
-    | C {
-        $$ = key_constant( _environment, KEY_C );
-    }
-    | D {
-        $$ = key_constant( _environment, KEY_D );
-    }
-    | E {
-        $$ = key_constant( _environment, KEY_E );
-    }
-    | F {
-        $$ = key_constant( _environment, KEY_F );
-    }
-    | G {
-        $$ = key_constant( _environment, KEY_G );
-    }
-    | H {
-        $$ = key_constant( _environment, KEY_H );
-    }
-    | I {
-        $$ = key_constant( _environment, KEY_I );
-    }
-    | J {
-        $$ = key_constant( _environment, KEY_J );
-    }
-    | K {
-        $$ = key_constant( _environment, KEY_K );
-    }
-    | L {
-        $$ = key_constant( _environment, KEY_L );
-    }
-    | M {
-        $$ = key_constant( _environment, KEY_M );
-    }
-    | N {
-        $$ = key_constant( _environment, KEY_N );
-    }
-    | O {
-        $$ = key_constant( _environment, KEY_O );
-    }
-    | P {
-        $$ = key_constant( _environment, KEY_P );
-    }
-    | Q {
-        $$ = key_constant( _environment, KEY_Q );
-    }
-    | R {
-        $$ = key_constant( _environment, KEY_R );
-    }
-    | S {
-        $$ = key_constant( _environment, KEY_S );
-    }
-    | T {
-        $$ = key_constant( _environment, KEY_T );
-    }
-    | U {
-        $$ = key_constant( _environment, KEY_U );
-    }
-    | V {
-        $$ = key_constant( _environment, KEY_V );
-    }
-    | X {
-        $$ = key_constant( _environment, KEY_X );
-    }
-    | Y {
-        $$ = key_constant( _environment, KEY_Y );
-    }
-    | W {
-        $$ = key_constant( _environment, KEY_W );
-    }
-    | Z {
-        $$ = key_constant( _environment, KEY_Z );
-    }
-    ;
-
-key_scancode_function_digit:
-      F1 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F1 ) )->name;
-    }
-    | F2 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F2 ) )->name;
-    }
-    | F3 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F3 ) )->name;
-    }
-    | F4 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F4 ) )->name;
-    }
-    | F5 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F5 ) )->name;
-    }
-    | F6 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F6 ) )->name;
-    }
-    | F7 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F7 ) )->name;
-    }
-    | F8 {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F8 ) )->name;
-    };
-
-const_key_scancode_function_digit:
-      F1 {
-        $$ = key_constant( _environment, KEY_F1 );
-    }
-    | F2 {
-        $$ = key_constant( _environment, KEY_F2 );
-    }
-    | F3 {
-        $$ = key_constant( _environment, KEY_F3 );
-    }
-    | F4 {
-        $$ = key_constant( _environment, KEY_F4 );
-    }
-    | F5 {
-        $$ = key_constant( _environment, KEY_F5 );
-    }
-    | F6 {
-        $$ = key_constant( _environment, KEY_F6 );
-    }
-    | F7 {
-        $$ = key_constant( _environment, KEY_F7 );
-    }
-    | F8 {
-        $$ = key_constant( _environment, KEY_F8 );
-    };
-
-key_scancode_definition: 
-      NONE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_NONE ) )->name;
-    }
-    | key_scancode_alphadigit {
-        $$ = $1;
-    }
-    | ASTERISK {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_ASTERISK ) )->name;
-    }
-    | AT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_AT ) )->name;
-    }
-    | CLEAR {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CLEAR ) )->name;
-    }
-    | COLON {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COLON ) )->name;
-    }
-    | COMMA {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMA ) )->name;
-    }
-    | COMMODORE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMODORE ) )->name;
-    }
-    | CONTROL {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CONTROL ) )->name;
-    }
-    | CRSR LEFT RIGHT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_LEFT_RIGHT ) )->name;
-    }
-    | CRSR UP DOWN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_UP_DOWN ) )->name;
-    }
-    | DELETE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DELETE ) )->name;
-    }
-    | EQUAL {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_EQUAL ) )->name;
-    }
-    | key_scancode_function_digit {
-        $$ = $1;
-    }
-    | HOME {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_HOME ) )->name;
-    }
-    | TAB {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_TAB ) )->name;
-    }
-    | INSERT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_INSERT ) )->name;
-    }
-    | ARROW LEFT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
-    }
-    | LEFT ARROW {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
-    }
-    | LEFT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT ) )->name;
-    }
-    | RIGHT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RIGHT ) )->name;
-    }
-    | UP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP ) )->name;
-    }
-    | DOWN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DOWN ) )->name;
-    }
-    | ARROW UP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
-    }
-    | UP ARROW {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
-    }
-    | MINUS {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_MINUS ) )->name;
-    }
-    | PERIOD {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PERIOD ) )->name;
-    }
-    | PLUS {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PLUS ) )->name;
-    }
-    | POUND {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_POUND ) )->name;
-    }
-    | RETURN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RETURN ) )->name;
-    }
-    | RUNSTOP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
-    }
-    | RUN STOP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
-    }
-    | SEMICOLON {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SEMICOLON ) )->name;
-    }
-    | SLASH {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SLASH ) )->name;
-    }
-    | SPACE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SPACE ) )->name;
-    };
 
 const_key_scancode_definition: 
       NONE {
