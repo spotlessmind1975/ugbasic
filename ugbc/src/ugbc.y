@@ -867,9 +867,9 @@ const_color_enumeration:
 const_modula: 
     const_factor | 
     const_modula OP_DIVISION const_factor { CHECK_NOTZERO_DIVISION_BY_ZERO($3); $$ = $1 / $3; } |
-    const_modula OP_DIVISION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLICATOR2( $3 ); $$ = $1 >> ((int)log2($3)); } |
+    const_modula OP_DIVISION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLACTOR2( $3 ); $$ = $1 >> ((int)log2($3)); } |
     const_modula OP_MULTIPLICATION const_factor { $$ = $1 * $3; }  | 
-    const_modula OP_MULTIPLICATION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLICATOR2( $3 ); $$ = $1 << ((int)log2($3)); };
+    const_modula OP_MULTIPLICATION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLACTOR2( $3 ); $$ = $1 << ((int)log2($3)); };
 
 const_term:
     const_modula | 
@@ -898,422 +898,7 @@ const_expr :
     NOT const_expr { $$ = ( ! $2 ); } ;
 
 /*============================================================================
- ============ CONSTANT FACTOR
- ============================================================================*/
-
-const_factor: 
-    Integer { $$ = $1; } | 
-    IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP { $$ = ($3) ? $5 : $7; } | 
-    OP_MINUS Integer { $$ = -$2; } | 
-    OP const_expr CP { $$ = $2; } | 
-    FALSE { $$ = 0x00; } | 
-    TRUE { $$ = 0xff; } |
-    RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP { $$ = RGBCONVERT( $3, $5, $7 ); }  | 
-    COLORS { $$ = SCREENCOLORS(); } | 
-    COLOURS { $$ = SCREENCOLORS(); } | 
-    MIN OP const_expr OP_COMMA const_expr CP { $$ = ( $3 < $5 ) ? $3 : $5; } | 
-    MAX OP const_expr OP_COMMA const_expr CP { $$ = ( $3 > $5 ) ? $3 : $5; } | 
-    SCREEN COLORS { $$ = SCREENCOLORS(); } | 
-    SCREEN COLOURS { $$ = SCREENCOLORS(); } | 
-    SHADES { $$ = SCREENSHADES(); } | 
-    SCREEN SHADES { $$ = SCREENSHADES(); } | 
-    XTEXT OP const_expr CP { $$ = XTEXT( $3 ); } | 
-    X TEXT OP const_expr CP { $$ = XTEXT( $4 ); } | 
-    YTEXT OP const_expr CP { $$ = YTEXT( $3 ); } | 
-    Y TEXT OP const_expr CP { $$ = YTEXT( $4 ); } | 
-    XGRAPHIC OP const_expr CP { $$ = XGRAPHIC( $3 ); } | 
-    X GRAPHIC OP const_expr CP { $$ = XGRAPHIC( $4 ); } | 
-    YGRAPHIC OP const_expr CP { $$ = YGRAPHIC( $3 ); } | 
-    Y GRAPHIC OP const_expr CP { $$ = YGRAPHIC( $4 ); } | 
-    WIDTH { $$ = SCREENWIDTH(); } |
-    TILES { $$ = SCREENTILES(); } |
-    FIND WIDTH OP const_expr CP {
-        int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $4;
-        int width = ( widthModulus / 8 ) * 8;
-        $$ = width;
-    }
-    | FIND WIDTH OP const_expr OP_COMMA const_expr CP {
-        int widthModulus = ( ((Environment *)_environment)->screenWidth - $6 ) / $4;
-        int width = ( widthModulus / 8 ) * 8;
-        $$ = width;
-    }
-    | FWIDTH OP const_expr CP {
-        int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $3;
-        int width = ( widthModulus / 8 ) * 8;
-        $$ = width;
-    }
-    | FWIDTH OP const_expr OP_COMMA const_expr CP {
-        int widthModulus = ( ((Environment *)_environment)->screenWidth - $5 ) / $3;
-        int width = ( widthModulus / 8 ) * 8;
-        $$ = width;
-    }
-    | SCREEN WIDTH {
-        $$ = ((Environment *)_environment)->screenWidth;
-    }
-    | PAGE Integer {
-        if ( ($2 != 0) && ($2 != 1) ) {
-        CRITICAL_PAGE01();
-        }
-        $$ = $2;
-    }
-    | PAGE "A" {
-        $$ = DOUBLE_BUFFER_PAGE_0;
-    }
-    | PAGE "B" {
-        $$ = DOUBLE_BUFFER_PAGE_1;
-    }
-    | SCREEN TILES WIDTH {
-        $$ = ((Environment *)_environment)->screenTilesWidth;
-    }
-    | TILES WIDTH {
-        $$ = ((Environment *)_environment)->consoleTilesWidth;
-    }
-    | TILEMAP WIDTH OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_TILEMAP ) {
-            $$ = v->mapWidth;
-        } else {
-            CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( $4 );
-        }
-    }
-    | TILE WIDTH OP expr CP {
-        if ( ! ((Environment *)_environment)->emptyProcedure ) {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-            $$ = v->frameWidth;
-        } else {
-            CRITICAL_TILE_WIDTH_NO_TILESET( $4 );
-        }
-        } else {
-        $$ = 0;
-        }
-    }
-    | SCREEN COLUMNS {
-        $$ = ((Environment *)_environment)->screenTilesWidth;
-    }
-    | COLUMNS {
-        $$ = ((Environment *)_environment)->consoleTilesWidth;
-    }
-    | FONT WIDTH {
-        $$ = ((Environment *)_environment)->fontWidth;
-
-    }
-    | BETA {
-    #ifdef __BETA__
-        $$ = 1;
-    #else
-        $$ = 0;
-    #endif
-    }
-    | IMAGE WIDTH OP expr CP {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-            CRITICAL_NOT_IMAGE( v->name );
-        }
-        int overallOffset = 0;
-        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
-            overallOffset = 3;
-        }
-        if ( !v->valueBuffer ) {
-            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-        }
-        switch( v->type ) {
-            case VT_IMAGE:
-                $$ = v->originalWidth;
-                break;
-            case VT_IMAGES:
-            case VT_SEQUENCE:
-                $$ = v->frameWidth;
-                break;
-        }
-        } else {
-        $$ = 0;
-        }
-    }
-    | FRAMES OP expr CP {
-        $$ = frames( _environment, $3 );
-    }
-    | IMAGES COUNT OP expr CP {
-        $$ = frames( _environment, $4 );
-    }
-    | FRAMES COUNT OP expr CP {
-        $$ = frames( _environment, $4 );
-    }
-    | SPRITE COUNT {
-        $$ = SPRITE_COUNT;
-    }
-    | VOLUME MIN {
-        $$ = 0;
-    }
-    | VOLUME MAX {
-        $$ = 255;
-    }
-    | SCREEN SPRITE RATIO X {
-        $$ = SCREEN_SPRITE_RATIO_X;
-    }
-    | SCREEN SPRITE RATIO Y {
-        $$ = SCREEN_SPRITE_RATIO_Y;
-    }
-    | SPRITE HEIGHT {
-        if ( SPRITE_HEIGHT < 0 ) {
-            CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( );
-        }
-        $$ = SPRITE_HEIGHT;
-    }
-    | SCREEN BORDER X {
-        $$ = SCREEN_BORDER_X;
-    }
-    | SCREEN BORDER Y {
-        $$ = SCREEN_BORDER_Y;
-    }
-    | SPRITE WIDTH {
-        if ( SPRITE_WIDTH < 0 ) {
-            CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( );
-        }
-        $$ = SPRITE_WIDTH;
-    }
-    | SPRITE X MIN {
-        $$ = SPRITE_X_MIN;
-    }
-    | SPRITE MIN X {
-        $$ = SPRITE_X_MIN;
-    }
-    | SPRITE MIN Y {
-        $$ = SPRITE_Y_MIN;
-    }
-    | SPRITE Y MIN {
-        $$ = SPRITE_Y_MIN;
-    }
-    | SPRITE X MAX {
-        $$ = SPRITE_X_MAX;
-    }
-    | SPRITE MAX X {
-        $$ = SPRITE_X_MAX;
-    }
-    | SPRITE MAX Y {
-        $$ = SPRITE_Y_MAX;
-    }
-    | SPRITE Y MAX {
-        $$ = SPRITE_Y_MAX;
-    }
-    | LITTLE ENDIAN {
-    #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
-        defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-        defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
-        defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
-        defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__) || \
-        defined(__pccga__) || defined( __vz200__) 
-        $$ = 1;
-    #else
-        $$ = 0;
-    #endif
-    }
-    | BIG ENDIAN {
-    #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-        defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-        defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
-        $$ = 1;
-    #else
-        $$ = 0;
-    #endif
-    }
-    | filesize OP const_expr_string CP {
-        $$ = file_size( _environment, $3 );
-    }
-    | HEIGHT {
-        $$ = ((Environment *)_environment)->screenHeight;
-    }
-    | FIND HEIGHT OP const_expr CP {
-        int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $4;
-        int height = ( heightModulus / 8 ) * 8;
-        $$ = height;
-    }
-    | FIND HEIGHT OP const_expr OP_COMMA const_expr CP {
-        int heightModulus = ( ((Environment *)_environment)->screenHeight - $6 ) / $4;
-        int height = ( heightModulus / 8 ) * 8;
-        $$ = height;
-    }
-    | FHEIGHT OP const_expr CP {
-        int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $3;
-        int height = ( heightModulus / 8 ) * 8;
-        $$ = height;
-    }
-    | FHEIGHT OP const_expr OP_COMMA const_expr CP {
-        int heightModulus = ( ((Environment *)_environment)->screenHeight - $5 ) / $3;
-        int height = ( heightModulus / 8 ) * 8;
-        $$ = height;
-    }
-    | SCREEN HEIGHT {
-        $$ = ((Environment *)_environment)->screenHeight;
-    }
-    | SCREEN TILES HEIGHT {
-        $$ = ((Environment *)_environment)->screenTilesHeight;
-    }
-    | TILES HEIGHT {
-        $$ = ((Environment *)_environment)->consoleTilesHeight;
-    }
-    | TILEMAP HEIGHT OP expr CP {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_TILEMAP ) {
-            $$ = v->mapHeight;
-        } else {
-            CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( $4 );
-        }
-    }
-    | TILE HEIGHT OP expr CP {
-        if ( ! ((Environment *)_environment)->emptyProcedure ) {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
-            $$ = v->frameHeight;
-        } else {
-            CRITICAL_TILE_HEIGHT_NO_TILESET( $4 );
-        }
-        } else {
-        $$ = 0;
-        }
-    }
-    | SCREEN ROWS {
-        $$ = ((Environment *)_environment)->screenTilesHeight;
-    }
-    | ROWS {
-        $$ = ((Environment *)_environment)->consoleTilesHeight;
-    }
-    | FONT HEIGHT {
-        $$ = ((Environment *)_environment)->fontHeight;
-    }
-    | IMAGE HEIGHT OP expr CP {
-        if ( ! ((Environment *)_environment)->emptyProcedure ) {
-        Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
-            CRITICAL_NOT_IMAGE( v->name );
-        }
-        int overallOffset = 0;
-        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
-            overallOffset = 3;
-        }
-        if ( !v->valueBuffer ) {
-            CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
-        }        
-        switch( v->type ) {
-            case VT_IMAGE:
-                $$ = v->originalHeight;
-                break;
-            case VT_IMAGES:
-            case VT_SEQUENCE:
-                $$ = v->frameHeight;
-                break;
-        }
-        } else {
-        $$ = 0;
-        }
-    }
-    | UBOUND OP Identifier CP {
-        Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
-        }
-        $$ = array->arrayDimensionsEach[array->arrayDimensions-1]-1;
-    }
-    | UBOUND OP Identifier OP_COMMA const_expr CP {
-    Variable * array = variable_retrieve( _environment, $3 );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
-    }
-    if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
-        CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
-    }
-    if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
-        CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
-    }
-    $$ = array->arrayDimensionsEach[array->arrayDimensions-$5-1]-1;
-    }
-    | LBOUND OP Identifier CP {
-        Variable * array = variable_retrieve( _environment, $3 );
-        if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
-        }
-        $$ = 0;
-    }
-    | LBOUND OP Identifier OP_COMMA const_expr CP {
-    Variable * array = variable_retrieve( _environment, $3 );
-    if ( array->type != VT_TARRAY ) {
-        CRITICAL_NOT_ARRAY( $3 );
-    }
-    if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
-        CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
-    }
-    if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
-        CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
-    }
-    $$ = 0;
-    }
-    | JOY COUNT {
-        $$ = JOY_COUNT;
-    }
-    | JOYCOUNT {
-        $$ = JOY_COUNT;
-    }
-    | LEN OP Identifier CP {
-        Constant * c = constant_find( _environment, $3 );
-        if ( c == NULL ) {
-            CRITICAL_UNDEFINED_CONSTANT( $3 );
-        }
-        if ( c->type != CT_STRING ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $3 );
-        }
-        $$ = strlen( c->valueString->value );
-    }
-    | LEN OP String CP {
-        $$ = strlen( $3 );
-    }
-    | LEN OP IF OP const_expr_string CP {
-        $$ = strlen( $5 );
-    }      
-    | Identifier {
-        Constant * c = constant_find( _environment, $1 );
-        if ( c == NULL ) {
-            CRITICAL_UNDEFINED_CONSTANT( $1 );
-        }
-        if ( c->type == CT_STRING ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
-        }
-        if ( c->type == CT_FLOAT ) {
-            $$ = (int)(c->valueFloating);
-        } else {
-            $$ = c->value;
-        }
-    }
-    | OP_HASH Identifier {
-        Constant * c = constant_find( _environment, $2 );
-        if ( c == NULL ) {
-            CRITICAL_UNDEFINED_CONSTANT( $2 );
-        }
-        if ( c->type == CT_STRING ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
-        }
-        if ( c->type == CT_FLOAT ) {
-            $$ = (int)(c->valueFloating);
-        } else {
-            $$ = c->value;
-        }
-    }
-    | TILE ID OP expr OP_COMMA Identifier CP {
-    $$ = tile_id( _environment, $4, $6 );
-    }
-    | const_color_enumeration
-    | KEY const_key_scancode_definition {
-    $$ = $2;
-    }
-    | const_key_scancode_definition {
-    $$ = $1;
-    }
-    ;
-
-
-/*============================================================================
- ============ AUXILIARY SYNTAXES
+ ============ EXTENDED SYNTAXES
  ============================================================================*/
 
 /* Buffer definition syntax, with suffixes and prefixes. Note that prefix can
@@ -1323,6 +908,482 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
+
+const_factor: 
+        Integer {
+            $$ = $1;
+        }
+      | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+          if ( $3 ) {
+              $$ = $5;
+          } else {
+              $$ = $7;
+          }
+      }
+      | OP_MINUS Integer {
+          $$ = -$2;
+      }
+      | OP const_expr CP {
+          $$ = $2;
+      }
+      | FALSE {
+          $$ = 0x0;
+      }
+      | TRUE {
+          $$ = 0xff;
+      }
+      | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+          if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
+            $$ = ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 );
+          } else {
+            $$ = 0;
+          }
+      }
+      | COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | COLOURS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | MIN OP const_expr OP_COMMA const_expr CP {
+          if ( $3 < $5 ) {
+            $$ = $3;
+          } else {
+            $$ = $5;
+          }
+      }
+      | MAX OP const_expr OP_COMMA const_expr CP {
+          if ( $3 > $5 ) {
+            $$ = $3;
+          } else {
+            $$ = $5;
+          }
+      }
+      | SCREEN COLORS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SCREEN COLOURS {
+          $$ = ((Environment *)_environment)->screenColors;
+      }
+      | SHADES {
+          $$ = ((Environment *)_environment)->screenShades;
+      }
+      | SCREEN SHADES {
+          $$ = ((Environment *)_environment)->screenShades;
+      }
+      | XTEXT OP const_expr CP {
+          $$ = $3 / ((Environment *)_environment)->fontWidth;
+      }
+      | X TEXT OP const_expr CP {
+          $$ = $4 / ((Environment *)_environment)->fontWidth;
+      }
+      | YTEXT OP const_expr CP {
+          $$ = $3 / ((Environment *)_environment)->fontHeight;
+      }
+      | Y TEXT OP const_expr CP {
+          $$ = $4 / ((Environment *)_environment)->fontHeight;
+      }
+      | XGRAPHIC OP const_expr CP {
+          $$ = $3 * ((Environment *)_environment)->fontWidth;
+      }
+      | X GRAPHIC OP const_expr CP {
+          $$ = $4 * ((Environment *)_environment)->fontWidth;
+      }
+      | YGRAPHIC OP const_expr CP {
+          $$ = $3 * ((Environment *)_environment)->fontHeight;
+      }
+      | Y GRAPHIC OP const_expr CP {
+          $$ = $4 * ((Environment *)_environment)->fontHeight;
+      }
+      | WIDTH {
+          $$ = ((Environment *)_environment)->screenWidth;
+      }
+      | TILES {
+          $$ = ((Environment *)_environment)->screenTiles;
+      }
+      | FIND WIDTH OP const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $4;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
+      | FIND WIDTH OP const_expr OP_COMMA const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth - $6 ) / $4;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
+      | FWIDTH OP const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth ) / $3;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
+      | FWIDTH OP const_expr OP_COMMA const_expr CP {
+        	int widthModulus = ( ((Environment *)_environment)->screenWidth - $5 ) / $3;
+        	int width = ( widthModulus / 8 ) * 8;
+            $$ = width;
+      }
+      | SCREEN WIDTH {
+          $$ = ((Environment *)_environment)->screenWidth;
+      }
+      | PAGE Integer {
+          if ( ($2 != 0) && ($2 != 1) ) {
+            CRITICAL_PAGE01();
+          }
+          $$ = $2;
+      }
+      | PAGE "A" {
+          $$ = DOUBLE_BUFFER_PAGE_0;
+      }
+      | PAGE "B" {
+          $$ = DOUBLE_BUFFER_PAGE_1;
+      }
+      | SCREEN TILES WIDTH {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | TILES WIDTH {
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
+      }
+      | TILEMAP WIDTH OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_TILEMAP ) {
+              $$ = v->mapWidth;
+          } else {
+             CRITICAL_TILEMAP_WIDTH_NO_TILEMAP( $4 );
+          }
+      }
+      | TILE WIDTH OP expr CP {
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = v->frameWidth;
+            } else {
+                CRITICAL_TILE_WIDTH_NO_TILESET( $4 );
+            }
+          } else {
+            $$ = 0;
+          }
+      }
+      | SCREEN COLUMNS {
+          $$ = ((Environment *)_environment)->screenTilesWidth;
+      }
+      | COLUMNS {
+          $$ = ((Environment *)_environment)->consoleTilesWidth;
+      }
+      | FONT WIDTH {
+          $$ = ((Environment *)_environment)->fontWidth;
+      
+      }
+      | BETA {
+#ifdef __BETA__
+         $$ = 1;
+#else
+         $$ = 0;
+#endif
+      }
+      | IMAGE WIDTH OP expr CP {
+          if ( !((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
+            }
+            int overallOffset = 0;
+            if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
+                overallOffset = 3;
+            }
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+            }
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalWidth;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameWidth;
+                    break;
+            }
+          } else {
+            $$ = 0;
+          }
+      }
+      | FRAMES OP expr CP {
+          $$ = frames( _environment, $3 );
+      }
+      | IMAGES COUNT OP expr CP {
+          $$ = frames( _environment, $4 );
+      }
+      | FRAMES COUNT OP expr CP {
+          $$ = frames( _environment, $4 );
+      }
+      | SPRITE COUNT {
+          $$ = SPRITE_COUNT;
+      }
+      | VOLUME MIN {
+          $$ = 0;
+      }
+      | VOLUME MAX {
+          $$ = 255;
+      }
+      | SCREEN SPRITE RATIO X {
+          $$ = SCREEN_SPRITE_RATIO_X;
+      }
+      | SCREEN SPRITE RATIO Y {
+          $$ = SCREEN_SPRITE_RATIO_Y;
+      }
+      | SPRITE HEIGHT {
+          if ( SPRITE_HEIGHT < 0 ) {
+              CRITICAL_CANNOT_CALCULATE_SPRITE_HEIGHT( );
+          }
+          $$ = SPRITE_HEIGHT;
+      }
+      | SCREEN BORDER X {
+          $$ = SCREEN_BORDER_X;
+      }
+      | SCREEN BORDER Y {
+          $$ = SCREEN_BORDER_Y;
+      }
+      | SPRITE WIDTH {
+          if ( SPRITE_WIDTH < 0 ) {
+              CRITICAL_CANNOT_CALCULATE_SPRITE_WIDTH( );
+          }
+          $$ = SPRITE_WIDTH;
+      }
+      | SPRITE X MIN {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN X {
+          $$ = SPRITE_X_MIN;
+      }
+      | SPRITE MIN Y {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE Y MIN {
+          $$ = SPRITE_Y_MIN;
+      }
+      | SPRITE X MAX {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX X {
+          $$ = SPRITE_X_MAX;
+      }
+      | SPRITE MAX Y {
+          $$ = SPRITE_Y_MAX;
+      }
+      | SPRITE Y MAX {
+          $$ = SPRITE_Y_MAX;
+      }
+      | LITTLE ENDIAN {
+        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+            defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
+            defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
+            defined( __c64reu__) || defined(__pc1403__) ||  defined(__gb__) || \
+            defined(__pccga__) || defined( __vz200__) 
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+      }
+      | BIG ENDIAN {
+        #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+            defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
+            $$ = 1;
+        #else
+            $$ = 0;
+        #endif
+      }
+      | filesize OP const_expr_string CP {
+          $$ = file_size( _environment, $3 );
+      }
+      | HEIGHT {
+          $$ = ((Environment *)_environment)->screenHeight;
+      }
+      | FIND HEIGHT OP const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $4;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | FIND HEIGHT OP const_expr OP_COMMA const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight - $6 ) / $4;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | FHEIGHT OP const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight ) / $3;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | FHEIGHT OP const_expr OP_COMMA const_expr CP {
+        	int heightModulus = ( ((Environment *)_environment)->screenHeight - $5 ) / $3;
+        	int height = ( heightModulus / 8 ) * 8;
+            $$ = height;
+      }
+      | SCREEN HEIGHT {
+          $$ = ((Environment *)_environment)->screenHeight;
+      }
+      | SCREEN TILES HEIGHT {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | TILES HEIGHT {
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
+      }
+      | TILEMAP HEIGHT OP expr CP {
+          Variable * v = variable_retrieve( _environment, $4 );
+          if ( v->type == VT_TILEMAP ) {
+              $$ = v->mapHeight;
+          } else {
+             CRITICAL_TILEMAP_HEIGHT_NO_TILEMAP( $4 );
+          }
+      }
+      | TILE HEIGHT OP expr CP {
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
+                $$ = v->frameHeight;
+            } else {
+                CRITICAL_TILE_HEIGHT_NO_TILESET( $4 );
+            }
+          } else {
+            $$ = 0;
+          }
+      }
+      | SCREEN ROWS {
+          $$ = ((Environment *)_environment)->screenTilesHeight;
+      }
+      | ROWS {
+          $$ = ((Environment *)_environment)->consoleTilesHeight;
+      }
+      | FONT HEIGHT {
+          $$ = ((Environment *)_environment)->fontHeight;
+      }
+      | IMAGE HEIGHT OP expr CP {
+          if ( ! ((Environment *)_environment)->emptyProcedure ) {
+            Variable * v = variable_retrieve( _environment, $4 );
+            if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+                CRITICAL_NOT_IMAGE( v->name );
+            }
+            int overallOffset = 0;
+            if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
+                overallOffset = 3;
+            }
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_IMAGE( v->name );
+            }        
+            switch( v->type ) {
+                case VT_IMAGE:
+                    $$ = v->originalHeight;
+                    break;
+                case VT_IMAGES:
+                case VT_SEQUENCE:
+                    $$ = v->frameHeight;
+                    break;
+            }
+          } else {
+            $$ = 0;
+          }
+      }
+      | UBOUND OP Identifier CP {
+          Variable * array = variable_retrieve( _environment, $3 );
+          if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+          }
+          $$ = array->arrayDimensionsEach[array->arrayDimensions-1]-1;
+      }
+      | UBOUND OP Identifier OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+            CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+            CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
+        }
+        $$ = array->arrayDimensionsEach[array->arrayDimensions-$5-1]-1;
+      }
+      | LBOUND OP Identifier CP {
+          Variable * array = variable_retrieve( _environment, $3 );
+          if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+          }
+          $$ = 0;
+      }
+      | LBOUND OP Identifier OP_COMMA const_expr CP {
+        Variable * array = variable_retrieve( _environment, $3 );
+        if ( array->type != VT_TARRAY ) {
+            CRITICAL_NOT_ARRAY( $3 );
+        }
+        if ( ( array->arrayDimensions == 1 ) && ( $5 > 1 ) ) {
+            CRITICAL_ARRAY_MONODIMENSIONAL( $3 );
+        }
+        if ( ( array->arrayDimensions > 1 ) && ( $5 > array->arrayDimensions ) ) {
+            CRITICAL_ARRAY_INVALID_DIMENSION( $3 );
+        }
+        $$ = 0;
+      }
+      | JOY COUNT {
+            $$ = JOY_COUNT;
+        }
+      | JOYCOUNT {
+            $$ = JOY_COUNT;
+        }
+      | LEN OP Identifier CP {
+          Constant * c = constant_find( _environment, $3 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $3 );
+          }
+          if ( c->type != CT_STRING ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $3 );
+          }
+          $$ = strlen( c->valueString->value );
+      }
+      | LEN OP String CP {
+          $$ = strlen( $3 );
+      }
+      | LEN OP IF OP const_expr_string CP {
+          $$ = strlen( $5 );
+      }      
+      | Identifier {
+          Constant * c = constant_find( _environment, $1 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $1 );
+          }
+          if ( c->type == CT_STRING ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
+          }
+          if ( c->type == CT_FLOAT ) {
+              $$ = (int)(c->valueFloating);
+          } else {
+              $$ = c->value;
+          }
+      }
+      | OP_HASH Identifier {
+          Constant * c = constant_find( _environment, $2 );
+          if ( c == NULL ) {
+              CRITICAL_UNDEFINED_CONSTANT( $2 );
+          }
+          if ( c->type == CT_STRING ) {
+              CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $2 );
+          }
+          if ( c->type == CT_FLOAT ) {
+              $$ = (int)(c->valueFloating);
+          } else {
+              $$ = c->value;
+          }
+      }
+      | TILE ID OP expr OP_COMMA Identifier CP {
+        $$ = tile_id( _environment, $4, $6 );
+      }
+      | const_color_enumeration
+      | KEY const_key_scancode_definition {
+        $$ = $2;
+      }
+      | const_key_scancode_definition {
+        $$ = $1;
+      }
+      ;
 
 float_or_single :
     FLOAT | SINGLE
