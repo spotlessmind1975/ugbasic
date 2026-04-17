@@ -17234,6 +17234,18 @@ char * import_file_name( char * _import_path ) {
 
 }
 
+StaticString * static_string_find_by_value( Environment * _environment, char * _value, int _size ) {
+
+    StaticString * actual = ((Environment *)_environment)->strings;
+    while( actual ) {
+        if ( memcmp( actual->value, _value, _size ) == 0 ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
 StaticString * static_string_create( Environment * _environment, int _size, char _value ) {
     StaticString * result = malloc( sizeof( StaticString ) );
     memset( result, 0, sizeof( StaticString ) );
@@ -17241,6 +17253,12 @@ StaticString * static_string_create( Environment * _environment, int _size, char
     result->value = malloc( _size );
     memset( result->value, _value, _size );
     result->size = _size;
+
+    StaticString * storedStaticString = static_string_find_by_value( _environment, result->value, result->size );
+    if ( !storedStaticString ) {
+        return storedStaticString;
+    }
+
     result->next = _environment->strings;
     _environment->strings = result;
     return result;

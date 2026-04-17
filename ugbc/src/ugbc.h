@@ -5956,6 +5956,7 @@ void                    sprite_at( Environment * _environment, int _sprite, int 
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
 StaticString *          static_string_create( Environment * _environment, int _size, char _value );
+StaticString *          static_string_find_by_value( Environment * _environment, char * _value, int _Size );
 void                    stop_animation( Environment * _environment, char * _prefix );
 void                    stop_movement( Environment * _environment, char * _prefix );
 Variable *              strig( Environment * _environment, int _port );
