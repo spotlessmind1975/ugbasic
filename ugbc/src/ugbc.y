@@ -539,8 +539,44 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  *****************************************************************************/
 
 /*============================================================================
- ============ SYMBOLS
+ ============ SYNONYMS ON KEYWORDS
  ============================================================================*/
+
+frame: 
+    FRAME | TILE;
+
+ticks:
+    TICK | TICKS;
+
+/*============================================================================
+ ============ CONSTANT VALUES / SYMBOLS
+ ============================================================================*/
+
+note : 
+    A { $$ = 9; } |
+    B { $$ = 11; } |
+    C { $$ = 0; } |
+    D { $$ = 2; } |
+    E { $$ = 4; } |
+    F { $$ = 5; } |
+    G { $$ = 7; };
+
+octave :
+    Integer { $$ = $1; };
+
+const_note :
+    note { $$ = $1 + ( 4 * 12 ); } |
+    note octave { $$ = $1 + ( $2 * 12 ); } |
+    F1 { $$ = 5 + ( 1 * 12 ); } |
+    F2 { $$ = 5 + ( 2 * 12 ); } |
+    F3 { $$ = 5 + ( 3 * 12 ); } |
+    F4 { $$ = 5 + ( 4 * 12 ); } |
+    F5 { $$ = 5 + ( 5 * 12 ); } |
+    F6 { $$ = 5 + ( 6 * 12 ); } |
+    F7 { $$ = 5 + ( 7 * 12 ); } |
+    F8 { $$ = 5 + ( 8 * 12 ); } |
+    note OP_HASH octave { $$ = ( $1 + 1 ) + ( $3 * 12 ); } |
+    CONST octave { $$ = ( 0 + 1 ) + ( $2 * 12 ); };
 
 /* 
     This is the list of instruments supported by IMF. This list is the same
@@ -682,107 +718,17 @@ const_instrument :
     WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
     XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; };
 
-/* Prefix and suffix for buffer definitions: "[" or "#[". */
+/*============================================================================
+ ============ EXTENDED SYNTAXES
+ ============================================================================*/
 
-buffer_definition_prefix :
-    | OSP
-    | OP_HASH OSP;
+/* Buffer definition syntax, with suffixes and prefixes. Note that prefix can
+   be omitted, while the suffix could not. */
 
-buffer_definition_suffix:
-    CSP;
+buffer_definition_prefix: | OSP | OP_HASH OSP;
+buffer_definition_suffix: CSP;
+buffer_definition_suffix_optional: | buffer_definition_suffix;
 
-buffer_definition_suffix_optional :
-    | buffer_definition_suffix;
-
-frame : FRAME | TILE;
-
-ticks :
-    TICK | TICKS;
-
-note :
-    C {
-        $$ = 0;
-    }
-    |
-    D {
-        $$ = 2;
-    }
-    |
-    E {
-        $$ = 4;
-    }
-    |
-    F {
-        $$ = 5;
-    }
-    |
-    G {
-        $$ = 7;
-    }
-    |
-    A {
-        $$ = 9;
-    }
-    |
-    B {
-        $$ = 11;
-    }
-    ;
-
-octave :
-    Integer {
-        $$ = $1;
-    };
-
-const_note :
-    note {
-        $$ = $1 + ( 4 * 12 );
-    }
-    |
-    note octave {
-        $$ = $1 + ( $2 * 12 );
-    }
-    |
-    F1 {
-        $$ = 5 + ( 1 * 12 );
-    }
-    |
-    F2 {
-        $$ = 5 + ( 2 * 12 );
-    }
-    |
-    F3 {
-        $$ = 5 + ( 3 * 12 );
-    }
-    |
-    F4 {
-        $$ = 5 + ( 4 * 12 );
-    }
-    |
-    F5 {
-        $$ = 5 + ( 5 * 12 );
-    }
-    |
-    F6 {
-        $$ = 5 + ( 6 * 12 );
-    }
-    |
-    F7 {
-        $$ = 5 + ( 7 * 12 );
-    }
-    |
-    F8 {
-        $$ = 5 + ( 8 * 12 );
-    }
-    |
-    note OP_HASH octave {
-        $$ = ( $1 + 1 ) + ( $3 * 12 );
-    }
-    |
-    CONST octave {
-        $$ = ( 0 + 1 ) + ( $2 * 12 );
-    }
-    ;
 
 const_expr_floating :
     Float {
