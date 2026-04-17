@@ -822,6 +822,46 @@ const_instrument:
     WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
     XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; };
 
+/* 
+    This is the list of colors supported.
+*/
+
+const_color_enumeration:
+      BLACK { $$ = COLOR_BLACK; } | 
+      BLUE { $$ = COLOR_BLUE; } | 
+      BROWN { $$ = COLOR_BROWN; } | 
+      CYAN { $$ = COLOR_CYAN; } | 
+      DARK BLUE { $$ = COLOR_DARK_BLUE; } | 
+      DARK GRAY { $$ = COLOR_DARK_GREY; } | 
+      DARK GREEN { $$ = COLOR_DARK_GREEN; } | 
+      DARK GREY { $$ = COLOR_DARK_GREY; } | 
+      DARK RED { $$ = COLOR_DARK_RED; } | 
+      DARK WHITE { $$ = COLOR_DARK_WHITE; } | 
+      GOLD { $$ = COLOR_GOLD; } | 
+      GRAY { $$ = COLOR_GREY; } | 
+      GREEN { $$ = COLOR_GREEN; } | 
+      GREY { $$ = COLOR_GREY; } | 
+      LAVENDER { $$ = COLOR_LAVENDER; } | 
+      LIGHT BLUE { $$ = COLOR_LIGHT_BLUE; } | 
+      LIGHT GRAY { $$ = COLOR_LIGHT_GREY; } | 
+      LIGHT GREEN { $$ = COLOR_LIGHT_GREEN; } | 
+      LIGHT GREY { $$ = COLOR_LIGHT_GREY; } | 
+      LIGHT RED { $$ = COLOR_LIGHT_RED; } | 
+      LIGHT WHITE { $$ = COLOR_LIGHT_WHITE; } | 
+      MAGENTA { $$ = COLOR_MAGENTA; } | 
+      OLIVE GREEN { $$ = COLOR_OLIVE_GREEN; } | 
+      ORANGE { $$ = COLOR_ORANGE; } | 
+      PEACH { $$ = COLOR_PEACH; } |
+      PINK { $$ = COLOR_PINK; } | 
+      PURPLE { $$ = COLOR_PURPLE; } | 
+      RED { $$ = COLOR_RED; } | 
+      TAN { $$ = COLOR_TAN; } | 
+      TURQUOISE { $$ = COLOR_TURQUOISE; } | 
+      VIOLET { $$ = COLOR_VIOLET; } | 
+      WHITE { $$ = COLOR_WHITE; } |
+      YELLOW { $$ = COLOR_YELLOW; } | 
+      YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
+
 /*============================================================================
  ============ EXTENDED SYNTAXES
  ============================================================================*/
@@ -832,7 +872,6 @@ const_instrument:
 buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
-
 
 const_expr : 
       const_expr_math
@@ -914,109 +953,6 @@ const_modula:
     } 
     ;
 
-const_color_enumeration:
-      BLACK {
-          $$ = COLOR_BLACK;
-      }
-      | WHITE {
-          $$ = COLOR_WHITE;
-      }
-      | RED {
-          $$ = COLOR_RED;
-      }
-      | CYAN {
-          $$ = COLOR_CYAN;
-      }
-      | VIOLET {
-          $$ = COLOR_VIOLET;
-      }
-      | GREEN {
-          $$ = COLOR_GREEN;
-      }
-      | BLUE {
-          $$ = COLOR_BLUE;
-      }
-      | YELLOW {
-          $$ = COLOR_YELLOW;
-      }
-      | ORANGE {
-          $$ = COLOR_ORANGE;
-      }
-      | BROWN {
-          $$ = COLOR_BROWN;
-      }
-      | DARK RED {
-          $$ = COLOR_DARK_RED;
-      }
-      | LIGHT RED {
-          $$ = COLOR_LIGHT_RED;
-      }
-      | DARK WHITE {
-          $$ = COLOR_DARK_WHITE;
-      }
-      | LIGHT WHITE {
-          $$ = COLOR_LIGHT_WHITE;
-      }
-      | DARK GREY {
-          $$ = COLOR_DARK_GREY;
-      }
-      | GREY {
-          $$ = COLOR_GREY;
-      }
-      | DARK GRAY {
-          $$ = COLOR_DARK_GREY;
-      }
-      | GRAY {
-          $$ = COLOR_GREY;
-      }
-      | DARK GREEN {
-          $$ = COLOR_DARK_GREEN;
-      }
-      | LIGHT GREEN {
-          $$ = COLOR_LIGHT_GREEN;
-      }
-      | LIGHT BLUE {
-          $$ = COLOR_LIGHT_BLUE;
-      }
-      | LIGHT GREY {
-          $$ = COLOR_LIGHT_GREY;
-      }
-      | LIGHT GRAY {
-          $$ = COLOR_LIGHT_GREY;
-      }
-      | DARK BLUE {
-          $$ = COLOR_DARK_BLUE;
-      }
-      | MAGENTA {
-          $$ = COLOR_MAGENTA;
-      }
-      | PURPLE {
-          $$ = COLOR_PURPLE;
-      }
-      | LAVENDER {
-          $$ = COLOR_LAVENDER;
-      }
-      | GOLD {
-          $$ = COLOR_GOLD;
-      }
-      | TURQUOISE {
-          $$ = COLOR_TURQUOISE;
-      }
-      | TAN {
-          $$ = COLOR_TAN;
-      }
-      | YELLOW GREEN {
-          $$ = COLOR_YELLOW_GREEN;
-      }
-      | OLIVE GREEN {
-          $$ = COLOR_OLIVE_GREEN;
-      }
-      | PINK {
-          $$ = COLOR_PINK;
-      }
-      | PEACH {
-          $$ = COLOR_PEACH;
-      };
 
 filesize :
     FILEX SIZE
