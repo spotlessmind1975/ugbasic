@@ -861,6 +861,36 @@ const_color_enumeration:
       YELLOW { $$ = COLOR_YELLOW; } | 
       YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
 
+image_load_flag :
+    COMPRESSED { $$ = FLAG_COMPRESSED; } | 
+    EXACT { $$ = FLAG_EXACT; } |
+    FLIP X { $$ = FLAG_FLIP_X; } | 
+    FLIP XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    FLIP Y { $$ = FLAG_FLIP_Y; } | 
+    FLIP YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    OVERLAYED { $$ = FLAG_OVERLAYED; };
+
+tile_load_flag :
+    FLIP X { $$ = FLAG_FLIP_X; } | 
+    FLIP XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    FLIP Y { $$ = FLAG_FLIP_Y; } | 
+    FLIP YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    ROLL X { $$ = FLAG_ROLL_X; } | 
+    ROLL XY { $$ = FLAG_ROLL_Y | FLAG_ROLL_X; } | 
+    ROLL Y { $$ = FLAG_ROLL_Y; } | 
+    ROLL YX { $$ = FLAG_ROLL_Y | FLAG_ROLL_X; } | 
+    TRANSPARENT { $$ = FLAG_TRANSPARENCY; };
+
+put_image_flag :
+    DOUBLE Y { $$ = FLAG_DOUBLE_Y; } |
+    WITH TRANSPARENCY { $$ = FLAG_TRANSPARENCY; };
+
+blit_image_flag :
+    DOUBLE Y { $$ = FLAG_DOUBLE_Y; };
+
+load_flag :
+    COMPRESSED { $$ = FLAG_COMPRESSED; };
+
 /*============================================================================
  ============ CONSTANT FACTORS
  ============================================================================*/
@@ -1361,7 +1391,7 @@ const_expr_math2:
     const_expr_math2 OP_MINUS const_term { $$ = $1 - $3; } |
     const_expr_math2 OP_PLUS const_term { $$ = $1 + $3; };
 
-const_expr_math : 
+const_expr_math: 
     const_expr_math2 | 
     const_expr_math2 OP_ASSIGN const_expr_math2 { $$ = ( $1 == $3 ); } | 
     const_expr_math2 OP_DISEQUAL const_expr_math2 { $$ = ( $1 != $3 ); } | 
@@ -1371,7 +1401,7 @@ const_expr_math :
     const_expr_math2 OP_LT const_expr_math2 { $$ = ( $1 < $3 ); } | 
     const_expr_math2 OP_LTE const_expr_math2 { $$ = ( $1 <= $3 ); };
 
-const_expr : 
+const_expr: 
     const_expr_math | 
     const_expr_math AND const_expr_math { $$ = ( $1 && $3 ); } | 
     const_expr_math OR const_expr_math { $$ = ( $1 || $3 ); } | 
@@ -1389,11 +1419,31 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
+/* Explicit integer constants. */
+
+direct_integer:
+    OP_HASH Integer { $$ = $2; } |
+    OP_HASH OP_MINUS Integer { $$ = -$3; } | 
+    OP_HASH Identifier {
+        Constant * c = constant_find( _environment, $2 );
+        if ( !c ) {
+            CRITICAL_UNDEFINED_CONSTANT($2);
+        }
+        if ( c->type == CT_STRING ) {
+            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC($2);
+        }
+        if ( c->type == CT_FLOAT ) {
+            $$ = (int)(c->valueFloating);
+        } else {
+            $$ = c->value;
+        }
+    };
+
 /*============================================================================
  ============ CASTING
  ============================================================================*/
 
-casting :
+casting:
     OP BIT CP exponential_less { $$ = variable_cast( _environment, $4, VT_BIT )->name; } |
     OP BYTE CP exponential_less { $$ = variable_cast( _environment, $4, VT_BYTE )->name; } |
     OP COLOR CP exponential_less { $$ = variable_cast( _environment, $4, VT_COLOR )->name; } | 
@@ -1408,203 +1458,20 @@ casting :
     OP SIGNED WORD CP exponential_less { $$ = variable_cast( _environment, $5, VT_SWORD )->name; } | 
     OP WORD CP exponential_less { $$ = variable_cast( _environment, $4, VT_WORD )->name; };
 
-expr : 
-    expr_math
-    | expr_math AND expr {        
-        $$ = variable_and( _environment, $1, $3 )->name;
-    } 
-    | expr_math OR expr {
-        $$ = variable_or( _environment, $1, $3 )->name;
-    } 
-    | expr_math XOR expr {        
-        $$ = variable_xor( _environment, $1, $3 )->name;
-    } 
-    | NOT expr {
-        $$ = variable_not( _environment, $2 )->name;
-    }
-    ;
-
-expr_math : 
-      expr_math2
-    | expr_math2 OP_EQUAL OP_HASH const_expr_math2 {
-        $$ = variable_compare_const( _environment, $1, $4 )->name;
-    }
-    | expr_math2 OP_EQUAL expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_compare_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_compare( _environment, $1, $3 )->name;
-        }
-    }
-    | expr_math2 OP_ASSIGN OP_HASH const_expr_math2 {
-        $$ = variable_compare_const( _environment, $1, $4 )->name;
-    }
-    | expr_math2 OP_ASSIGN expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_compare_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_compare( _environment, $1, $3 )->name;
-        }
-    }
-    | expr_math2 OP_DISEQUAL direct_integer {
-        $$ = variable_compare_not_const( _environment, $1, $3 )->name;
-    }
-    | expr_math2 OP_DISEQUAL expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_compare_not_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_compare_not( _environment, $1, $3 )->name;
-        }
-    }
-    | expr_math2 OP_LT expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
-        } else {
-            $$ = variable_less_than( _environment, $1, $3, 0 )->name;
-        }
-    }
-    | expr_math2 OP_LTE expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_less_than_const( _environment, $1, expr->value, 1 )->name;
-        } else {
-            $$ = variable_less_than( _environment, $1, $3, 1 )->name;
-        }
-    }
-    | expr_math2 OP_LT OP_HASH const_expr_math2 {
-        $$ = variable_less_than_const( _environment, $1, $4, 0 )->name;
-    }
-    | expr_math2 OP_LTE OP_HASH const_expr_math2 {
-        $$ = variable_less_than_const( _environment, $1, $4, 1 )->name;
-    }
-    | expr_math2 OP_GT expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_greater_than_const( _environment, $1, expr->value, 0 )->name;
-        } else {
-            $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
-        }
-    }
-    | expr_math2 OP_GTE expr_math {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant ) {
-            $$ = variable_greater_than_const( _environment, $1, expr->value, 1 )->name;
-        } else {
-            $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
-        }
-    }
-    | expr_math2 OP_GT OP_HASH const_expr_math2 {
-        $$ = variable_greater_than_const( _environment, $1, $4, 0 )->name;
-    }
-    | expr_math2 OP_GTE OP_HASH const_expr_math2 {
-        $$ = variable_greater_than_const( _environment, $1, $4, 1 )->name;
-    }
-    ;
-
-expr_math2: 
-      term
-    | expr_math2 OP_PLUS term {
-        Variable * v = variable_retrieve( _environment, $1 );
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
-            $$ = variable_add_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_add( _environment, $1, $3 )->name;
-        }
-    }
-    | expr_math2 OP_MINUS term {
-        Variable * v = variable_retrieve( _environment, $1 );
-        Variable * expr = variable_retrieve( _environment, $3 );
-        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
-            $$ = variable_sub_const( _environment, $1, expr->value )->name;
-        } else {
-            $$ = variable_sub( _environment, $1, $3 )->name;
-        }
-    }
-    ;
-
-term:
-      modula
-    | term MOD modula {
-        $$ = variable_mod( _environment, $1, $3 )->name;
-    }
-    ;
-
-modula: 
-      factor
-    | modula OP_MULTIPLICATION factor {
-        Variable * modula = variable_retrieve( _environment, $1 );
-        Variable * factor = variable_retrieve( _environment, $3 );
-        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT && modula->type != VT_NUMBER && factor->type != VT_NUMBER ) && factor->initializedByConstant ) {
-            if ( modula->initializedByConstant ) {
-                Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
-                $$ = number->name;
-                variable_store( _environment, $$, factor->value * modula->value );
-                number->initializedByConstant = 1;
-            } else {
-                $$ = variable_mul( _environment, $1, $3 )->name;
-            }
-        } else {
-            $$ = variable_mul( _environment, $1, $3 )->name;
-        }
-    } 
-    | modula OP_MULTIPLICATION2 direct_integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
-        }
-        $$ = variable_mul2_const( _environment, $1, $3 )->name;
-    } 
-    | modula OP_MULTIPLICATION2 Integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
-        }
-        $$ = variable_mul2_const( _environment, $1, $3 )->name;
-    } 
-    | modula OP_DIVISION factor {
-        $$ = variable_div( _environment, $1, $3, NULL )->name;
-    } 
-    | modula OP_DIVISION2 direct_integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_DIVISOR2( $3 );
-        }
-        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
-    } 
-    | modula OP_DIVISION2 Integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_DIVISOR2( $3 );
-        }
-        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
-    } 
-    ;
+/*============================================================================
+ ============ EXPRESSIONS
+ ============================================================================*/
 
 factor: 
-        exponential
-      | factor OP_POW exponential {
-        $$ = powering( _environment, $1, $3 )->name;
-      }
-      | POWERING OP factor OP_COMMA exponential CP {
-        $$ = powering( _environment, $3, $5 )->name;
-      }
-      | factor HAS BIT exponential {
-        $$ = variable_bit( _environment, $1, $4 )->name;
-      }
-      | factor HAS NOT BIT exponential {
-        $$ = variable_not( _environment, variable_bit( _environment, $1, $5 )->name )->name;
-      }
-      | factor IS exponential {
-        $$ = variable_bit( _environment, $1, $3 )->name;
-      }
-      | factor IS NOT exponential {
-        $$ = variable_not( _environment, variable_bit( _environment, $1, $4 )->name )->name;
-      }
-      | BIT exponential OF factor {
-        $$ = variable_bit( _environment, $4, $2 )->name;
-      }
-      | OP_MINUS factor {
+    exponential | 
+    factor OP_POW exponential { $$ = powering( _environment, $1, $3 )->name; } | 
+    POWERING OP factor OP_COMMA exponential CP { $$ = powering( _environment, $3, $5 )->name; } | 
+    factor HAS BIT exponential { $$ = variable_bit( _environment, $1, $4 )->name; } | 
+    factor HAS NOT BIT exponential { $$ = variable_not( _environment, variable_bit( _environment, $1, $5 )->name )->name; } |
+    factor IS exponential { $$ = variable_bit( _environment, $1, $3 )->name; } | 
+    factor IS NOT exponential { $$ = variable_not( _environment, variable_bit( _environment, $1, $4 )->name )->name; } |
+    BIT exponential OF factor { $$ = variable_bit( _environment, $4, $2 )->name; } | 
+    OP_MINUS factor {
         Variable * expr = variable_retrieve( _environment, $2 );
         if ( expr->type == VT_FLOAT ) {
             Variable * zero = variable_temporary( _environment, VT_FLOAT, "(zero)" );
@@ -1622,102 +1489,157 @@ factor:
                 $$ = variable_sub( _environment, zero->name, expr->name )->name;
             }
         }
-      }
-      ;
+      };
 
-direct_integer:
-    OP_HASH Integer {
-        $$ = $2;
-    }
-    |
-    OP_HASH OP_MINUS Integer {
-        $$ = -$3;
-    }
-    | OP_HASH Identifier {
-        Constant * c = constant_find( _environment, $2 );
-        if ( !c ) {
-            CRITICAL_UNDEFINED_CONSTANT($2);
-        }
-        if ( c->type == CT_STRING ) {
-            CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC($2);
-        }
-        if ( c->type == CT_FLOAT ) {
-            $$ = (int)(c->valueFloating);
+modula: 
+    factor | 
+    modula OP_MULTIPLICATION factor {
+        Variable * modula = variable_retrieve( _environment, $1 );
+        Variable * factor = variable_retrieve( _environment, $3 );
+        if ( ( modula->type != VT_FLOAT && factor->type != VT_FLOAT && modula->type != VT_NUMBER && factor->type != VT_NUMBER ) && factor->initializedByConstant ) {
+            if ( modula->initializedByConstant ) {
+                Variable * number = variable_temporary( _environment, VT_MAX_BITWIDTH_TYPE( factor->type, modula->type ), "(constant)" );
+                $$ = number->name;
+                variable_store( _environment, $$, factor->value * modula->value );
+                number->initializedByConstant = 1;
+            } else {
+                $$ = variable_mul( _environment, $1, $3 )->name;
+            }
         } else {
-            $$ = c->value;
+            $$ = variable_mul( _environment, $1, $3 )->name;
+        }
+    } | 
+    modula OP_MULTIPLICATION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = variable_mul2_const( _environment, $1, $3 )->name;
+    } | 
+    modula OP_MULTIPLICATION2 Integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
+        }
+        $$ = variable_mul2_const( _environment, $1, $3 )->name;
+    } | 
+    modula OP_DIVISION factor {
+        $$ = variable_div( _environment, $1, $3, NULL )->name;
+    } | 
+    modula OP_DIVISION2 direct_integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
+    } | 
+    modula OP_DIVISION2 Integer {
+        if ( log2($3) != (int)log2($3) ) {
+            CRITICAL_INVALID_DIVISOR2( $3 );
+        }
+        $$ = variable_div2_const( _environment, $1, $3, NULL )->name;
+    };
+
+term:
+    modula | 
+    term MOD modula { $$ = variable_mod( _environment, $1, $3 )->name; };
+
+expr_math2: 
+    term | 
+    expr_math2 OP_PLUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
+            $$ = variable_add_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_add( _environment, $1, $3 )->name;
+        }
+    } | 
+    expr_math2 OP_MINUS term {
+        Variable * v = variable_retrieve( _environment, $1 );
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant && VT_BITWIDTH(v->type)>1 ) {
+            $$ = variable_sub_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_sub( _environment, $1, $3 )->name;
         }
     };
 
-image_load_flag :
-    FLIP X {
-        $$ = FLAG_FLIP_X;
-    }
-    | FLIP Y {
-        $$ = FLAG_FLIP_Y;
-    }
-    | FLIP XY {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | FLIP YX {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | COMPRESSED {
-        $$ = FLAG_COMPRESSED;
-    }
-    | OVERLAYED {
-        $$ = FLAG_OVERLAYED;
-    }
-    | EXACT {
-        $$ = FLAG_EXACT;
-    };
+expr_math: 
+      expr_math2 | 
+      expr_math2 OP_EQUAL OP_HASH const_expr_math2 { $$ = variable_compare_const( _environment, $1, $4 )->name; } | 
+      expr_math2 OP_EQUAL expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
+    } | 
+    expr_math2 OP_ASSIGN OP_HASH const_expr_math2 { $$ = variable_compare_const( _environment, $1, $4 )->name; } | 
+    expr_math2 OP_ASSIGN expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare( _environment, $1, $3 )->name;
+        }
+    } | 
+    expr_math2 OP_DISEQUAL direct_integer { $$ = variable_compare_not_const( _environment, $1, $3 )->name; } | 
+    expr_math2 OP_DISEQUAL expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_compare_not_const( _environment, $1, expr->value )->name;
+        } else {
+            $$ = variable_compare_not( _environment, $1, $3 )->name;
+        }
+    } | 
+    expr_math2 OP_LT expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 0 )->name;
+        }
+    } | 
+    expr_math2 OP_LTE expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_less_than_const( _environment, $1, expr->value, 1 )->name;
+        } else {
+            $$ = variable_less_than( _environment, $1, $3, 1 )->name;
+        }
+    } | 
+    expr_math2 OP_LT OP_HASH const_expr_math2 { $$ = variable_less_than_const( _environment, $1, $4, 0 )->name; } | 
+    expr_math2 OP_LTE OP_HASH const_expr_math2 { $$ = variable_less_than_const( _environment, $1, $4, 1 )->name; } | 
+    expr_math2 OP_GT expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 0 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 0 )->name;
+        }
+    } | 
+    expr_math2 OP_GTE expr_math {
+        Variable * expr = variable_retrieve( _environment, $3 );
+        if ( expr->initializedByConstant ) {
+            $$ = variable_greater_than_const( _environment, $1, expr->value, 1 )->name;
+        } else {
+            $$ = variable_greater_than( _environment, $1, $3, 1 )->name;
+        }
+    } | 
+    expr_math2 OP_GT OP_HASH const_expr_math2 { $$ = variable_greater_than_const( _environment, $1, $4, 0 )->name; } | 
+    expr_math2 OP_GTE OP_HASH const_expr_math2 { $$ = variable_greater_than_const( _environment, $1, $4, 1 )->name; };
 
-tile_load_flag :
-    FLIP X {
-        $$ = FLAG_FLIP_X;
-    }
-    | FLIP Y {
-        $$ = FLAG_FLIP_Y;
-    }
-    | FLIP XY {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | FLIP YX {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | ROLL X {
-        $$ = FLAG_ROLL_X;
-    }
-    | ROLL Y {
-        $$ = FLAG_ROLL_Y;
-    }
-    | ROLL XY {
-        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
-    }
-    | ROLL YX {
-        $$ = FLAG_ROLL_Y | FLAG_ROLL_X;
-    }
-    | TRANSPARENT {
-        $$ = FLAG_TRANSPARENCY;
-    }
-    ;
+expr: 
+    expr_math | 
+    expr_math AND expr { $$ = variable_and( _environment, $1, $3 )->name; } | 
+    expr_math OR expr { $$ = variable_or( _environment, $1, $3 )->name; } | 
+    expr_math XOR expr { $$ = variable_xor( _environment, $1, $3 )->name; }  | 
+    NOT expr { $$ = variable_not( _environment, $2 )->name; };
 
-put_image_flag :
-    WITH TRANSPARENCY {
-        $$ = FLAG_TRANSPARENCY;
-    }
-    | DOUBLE Y {
-        $$ = FLAG_DOUBLE_Y;
-    };
 
-blit_image_flag :
-    DOUBLE Y {
-        $$ = FLAG_DOUBLE_Y;
-    };
 
-load_flag :
-    COMPRESSED {
-        $$ = FLAG_COMPRESSED;
-    };
+
+
+
 
 images_or_atlas :
     IMAGES | ATLAS;
