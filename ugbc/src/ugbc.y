@@ -319,11 +319,11 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token WOODBLOCK WORD WRITE WRITING X XCURS XGR XGRAPHIC XOR XPEN XTEXT XY
 %token XYLOPHONE Y YCURS YELLOW YGR YGRAPHIC YIELD YPEN YTEXT YX Z ZX 
 
-/* Literal identifier (without spaces). */
-%token <string> Identifier
+/* Integer numbers (8, 16, 32 bit). */
+%token <integer> Integer
 
-/* Literal identifier (with spaces). */
-%token <string> IdentifierSpaced
+/* Floating point numbers. */
+%token <floating> Float
 
 /* Strings between double quotes. */
 %token <string> String
@@ -331,14 +331,14 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 /* Strings between double quotes, prefixed by "#". */
 %token <string> RawString
 
-/* Integer numbers (8, 16, 32 bit). */
-%token <integer> Integer
-
 /* Explicit buffer definition using #[ operator. */
 %token <string> BufferDefinitionHex
 
-/* Floating point numbers. */
-%token <floating> Float
+/* Literal identifier (without spaces). */
+%token <string> Identifier
+
+/* Literal identifier (with spaces). */
+%token <string> IdentifierSpaced
 
 /* CPU registers (CPU dependent). */
 %token <string> Register
@@ -346,82 +346,178 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 /* ASM code snippet. */
 %token <string> AsmSnippet
 
-%type <string> expr term modula factor exponential exponential_less expr_math expr_math2
-%type <integer> const_expr const_term const_modula const_factor const_expr_math const_expr_math2
-%type <string> const_expr_string const_expr_string_const
-%type <floating> const_expr_floating
-%type <integer> direct_integer
-%type <string> random_definition_simple random_definition
-%type <string> color_enumeration
-%type <string> casting
-%type <string> writing_mode_definition writing_part_definition
-%type <string> key_scancode_definition key_scancode_alphadigit key_scancode_function_digit
-%type <integer> const_key_scancode_definition const_key_scancode_alphadigit const_key_scancode_function_digit
-%type <integer> datatype as_datatype as_datatype_mandatory as_datatype_suffix as_datatype_suffix_optional
-%type <integer> optional_integer
-%type <string> optional_expr optional_x optional_y optional_x_or_string
-%type <string> mandatory_x mandatory_y
-%type <integer> target targets
-%type <integer> parallel_optional
-%type <integer> on_targets
-%type <integer> scroll_definition_hdirection scroll_definition_vdirection
-%type <integer> load_flags load_flags1 load_flag
-%type <integer> tile_load_flags tile_load_flags1 tile_load_flag
-%type <integer> image_load_flags image_load_flags1 image_load_flag
-%type <integer> images_load_flags images_load_flags1 images_load_flag
-%type <integer> sequence_load_flags sequence_load_flags1 sequence_load_flag
-%type <integer> put_image_flags put_image_flags1 put_image_flag
-%type <integer> blit_image_flags blit_image_flags1 blit_image_flag
-%type <integer> flip_image_flags
-%type <integer> const_color_enumeration
-%type <integer> using_transparency
-%type <integer> using_opacity
-%type <integer> using_background
-%type <integer> memory_video
-%type <integer> raw_optional
-%type <integer> sprite_flag sprite_flags sprite_flags1
-%type <integer> on_bank_implicit on_bank_explicit
-%type <integer> note octave const_note
-%type <integer> const_instrument
-%type <integer> release
-%type <integer> readonly_optional
-%type <integer> option_explicit origin_direction relative_option option_clip option_read
-%type <integer> font_schema
-%type <integer> blit_unary_op blit_binary_op blit_operand
-%type <integer> blit_expression blit_compounded
-%type <integer> precision 
+/*============================================================================
+ ============ TERMS
+ ============================================================================*/
+
+/* Integer terms (numeric/flags). */
+%type <integer> as_datatype 
+%type <integer> as_datatype_mandatory 
+%type <integer> as_datatype_suffix 
+%type <integer> as_datatype_suffix_optional
 %type <integer> asmio
-%type <integer> system
-%type <string> padding_tile
-%type <integer> op_comma_or_semicolon
-%type <integer> read_safeness
-%type <integer> line_mode box_mode put_action
-%type <string> timer_number timer_number_comma
-%type <string> dload_from_offset dload_to_address dload_size_size dload_to_bank
-%type <string> dsave_to_offset dsave_from_address dsave_size_size
-%type <string> to_variable
-%type <string> optional_step
-%type <integer> music_type
-%type <integer> optional_loop
-%type <integer> configure_name
-%type <integer> option_name
 %type <integer> audio_source
-%type <integer> PALETTE1
-%type <string> dojo_functions
-%type <string> fujinet_functions
+%type <integer> blit_binary_op 
+%type <integer> blit_compounded
+%type <integer> blit_expression 
+%type <integer> blit_image_flag
+%type <integer> blit_image_flags 
+%type <integer> blit_image_flags1 
+%type <integer> blit_operand
+%type <integer> blit_unary_op 
+%type <integer> box_mode 
 %type <integer> clamp_optional
-%type <string> optional_next_animation
-%type <integer> fill_definition_optional_base fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count
-%type <integer> shuffle_definition_optional_rounds
-%type <string> serial_function
+%type <integer> configure_name
+%type <integer> const_color_enumeration
+%type <integer> const_expr 
+%type <integer> const_expr_math 
+%type <integer> const_expr_math2
+%type <integer> const_factor 
+%type <integer> const_instrument
+%type <integer> const_key_scancode_alphadigit 
+%type <integer> const_key_scancode_definition 
+%type <integer> const_key_scancode_function_digit
+%type <integer> const_modula 
+%type <integer> const_note
+%type <integer> const_term 
+%type <integer> datatype 
+%type <integer> direct_integer
+%type <integer> fill_definition_optional_base 
+%type <integer> fill_definition_optional_count
+%type <integer> fill_definition_optional_max 
+%type <integer> fill_definition_optional_min 
+%type <integer> flip_image_flags
+%type <integer> font_schema
+%type <integer> image_load_flag
+%type <integer> image_load_flags 
+%type <integer> image_load_flags1 
+%type <integer> images_load_flag
+%type <integer> images_load_flags 
+%type <integer> images_load_flags1 
+%type <integer> line_mode 
+%type <integer> load_flag
+%type <integer> load_flags 
+%type <integer> load_flags1 
+%type <integer> memory_video
+%type <integer> music_type
+%type <integer> note 
+%type <integer> octave 
+%type <integer> on_bank_explicit
+%type <integer> on_bank_implicit 
+%type <integer> on_targets
+%type <integer> op_comma_or_semicolon
+%type <integer> option_clip 
+%type <integer> option_explicit 
+%type <integer> option_name
+%type <integer> option_read
 %type <integer> optional_endianess
+%type <integer> optional_integer
+%type <integer> optional_loop
+%type <integer> origin_direction 
+%type <integer> PALETTE1
+%type <integer> parallel_optional
+%type <integer> precision 
+%type <integer> put_action
+%type <integer> put_image_flag
+%type <integer> put_image_flags 
+%type <integer> put_image_flags1 
+%type <integer> raw_optional
+%type <integer> read_safeness
+%type <integer> readonly_optional
+%type <integer> relative_option 
+%type <integer> release
+%type <integer> scroll_definition_hdirection 
+%type <integer> scroll_definition_vdirection
+%type <integer> sequence_load_flag
+%type <integer> sequence_load_flags 
+%type <integer> sequence_load_flags1 
+%type <integer> shuffle_definition_optional_rounds
+%type <integer> sprite_flag 
+%type <integer> sprite_flags 
+%type <integer> sprite_flags1
+%type <integer> strip_definition_id_optional
+%type <integer> system
+%type <integer> target targets
+%type <integer> tile_load_flag
+%type <integer> tile_load_flags 
+%type <integer> tile_load_flags1 
+%type <integer> using_background
+%type <integer> using_opacity
+%type <integer> using_transparency
+
+/* String terms. */
+%type <string> casting
+%type <string> color_enumeration
+%type <string> const_expr_string 
+%type <string> const_expr_string_const
+%type <string> dload_from_offset 
+%type <string> dload_size_size 
+%type <string> dload_to_address 
+%type <string> dload_to_bank
+%type <string> dojo_functions
+%type <string> dsave_from_address 
+%type <string> dsave_size_size
+%type <string> dsave_to_offset 
+%type <string> exponential 
+%type <string> exponential_less 
+%type <string> expr 
+%type <string> expr_math expr_math2
+%type <string> factor 
+%type <string> fujinet_functions
+%type <string> key_scancode_alphadigit 
+%type <string> key_scancode_definition 
+%type <string> key_scancode_function_digit
+%type <string> mandatory_x 
+%type <string> mandatory_y
+%type <string> modula 
+%type <string> on_flash_address
 %type <string> optional_by
 %type <string> optional_clamp
-%type <string> travel_function
-%type <string> optional_period
+%type <string> optional_expr 
 %type <string> optional_field
-%type <string> on_flash_address
-%type <integer> strip_definition_id_optional
+%type <string> optional_next_animation
+%type <string> optional_period
+%type <string> optional_step
+%type <string> optional_x 
+%type <string> optional_x_or_string
+%type <string> optional_y 
+%type <string> padding_tile
+%type <string> random_definition
+%type <string> random_definition_simple 
+%type <string> serial_function
+%type <string> term 
+%type <string> timer_number 
+%type <string> timer_number_comma
+%type <string> to_variable
+%type <string> travel_function
+%type <string> writing_mode_definition 
+%type <string> writing_part_definition
+
+/* Floating point terms. */
+%type <floating> const_expr_floating
+
+/*============================================================================
+ ============ PRECEDENCE MANAGEMENT
+ ============================================================================*/
+
+/* In Bison, priority increases as you move down the file. Directives written 
+   on lower lines have a higher priority than those written above. In addition 
+   to "vertical" priority, %left, %right and %nonassoc define associativity
+   (i.e., what happens between operators with the same priority).
+   When the parser encounters a conflict (comparison between an operator 
+   already on the stack and an incoming one), it follows these steps.
+
+   If the two operators have different priorities, it chooses the one with 
+   the higher priority (the one defined lower in the `.y` file). If the two 
+   operators have the same priority (they are on the same line), it looks 
+   for associativity: if `%left`, it reduces (performs the operation on the 
+   left); if `%right`, shift (waits for the operation to the right).
+
+   Sometimes an operator has a different priority depending on the context. 
+   The classic example is the unary minus (e.g., $-5 * 3$). In this case, 
+   the `-` must have a higher priority than multiplication, even though 
+   addition/subtraction is usually lower. It is solved using `%prec`.
+*/
 
 %right Integer String CP
 %left OP_DOLLAR
@@ -438,6 +534,156 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 %%
 
+/*****************************************************************************
+ ************ LANGUAGE RULES
+ *****************************************************************************/
+
+/*============================================================================
+ ============ SYMBOLS
+ ============================================================================*/
+
+/* 
+    This is the list of instruments supported by IMF. This list is the same
+    as MIDI (Musical Instrument Digital Interface) protocol. Those symbols
+    are associated with instruments, and they are essential for telling
+    ugBASIC which "timbre" to use to play the notes. These constants are 
+    defined by the General MIDI (GM) standard, which assigns a unique number 
+    to 128 different instruments, grouped into 16 families.
+*/
+
+const_instrument :
+    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
+    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
+    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
+    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
+    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
+    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
+    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
+    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
+    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
+    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
+    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
+    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
+    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
+    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
+    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
+    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
+    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
+    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
+    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
+    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
+    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
+    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
+    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
+    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
+    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
+    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
+    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
+    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
+    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
+    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
+    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
+    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
+    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
+    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
+    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
+    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
+    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
+    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
+    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
+    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
+    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
+    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
+    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
+    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
+    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
+    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
+    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
+    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
+    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
+    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
+    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
+    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
+    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; } |
+    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
+    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
+    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
+    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
+    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
+    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
+    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
+    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
+    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
+    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
+    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
+    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
+    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
+    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
+    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
+    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
+    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
+    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
+    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
+    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
+    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
+    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
+    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
+    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
+    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
+    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
+    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
+    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
+    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
+    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
+    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
+    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
+    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
+    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
+    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
+    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
+    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
+    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
+    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
+    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
+    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
+    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
+    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
+    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
+    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
+    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
+    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
+    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
+    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
+    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
+    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
+    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
+    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
+    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
+    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
+    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
+    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
+    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
+    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
+    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
+    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
+    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
+    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
+    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
+    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
+    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
+    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
+    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
+    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
+    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
+    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
+    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
+    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
+    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
+    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
+    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; };
+
+/* Prefix and suffix for buffer definitions: "[" or "#[". */
+
 buffer_definition_prefix :
     | OSP
     | OP_HASH OSP;
@@ -447,137 +693,6 @@ buffer_definition_suffix:
 
 buffer_definition_suffix_optional :
     | buffer_definition_suffix;
-
-const_instrument :
-    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
-    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
-    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
-    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
-    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
-    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
-    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
-    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
-    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
-    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
-    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
-    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
-    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
-    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
-    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; } |
-    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
-    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
-    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
-    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
-    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
-    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
-    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
-    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
-    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
-    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
-    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
-    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
-    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
-    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
-    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
-    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
-    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
-    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
-    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
-    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
-    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
-    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
-    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
-    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
-    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
-    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
-    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
-    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
-    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
-    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
-    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
-    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
-    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
-    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
-    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
-    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
-    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
-    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
-    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
-    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
-    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
-    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
-    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
-    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
-    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
-    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
-    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
-    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
-    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
-    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
-    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
-    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
-    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
-    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
-    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
-    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
-    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
-    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
-    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
-    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
-    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
-    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
-    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
-    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
-    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
-    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
-    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
-    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
-    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
-    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
-    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
-    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
-    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
-    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
-    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
-    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
-    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
-    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
-    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
-    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
-    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
-    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
-    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
-    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
-    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
-    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
-    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
-    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
-    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
-    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
-    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
-    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
-    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
-    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
-    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
-    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
-    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
-    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
-    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
-    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
-    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
-    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
-    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
-    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
-    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
-    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
-    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
-    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
-    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
-    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
-    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
-    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
-    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
-    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; };
 
 frame : FRAME | TILE;
 
