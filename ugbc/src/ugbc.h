@@ -3862,6 +3862,7 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( ) CRITICAL("E405 - cannot enable DOUBLE BUFFER after loading resources" );
 #define CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( s ) CRITICAL2("E406 - cannot DECRYPT on this kind of variable", s );
 #define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E407 - data type not supported for HEX2BIN", v, s );
+#define CRITICAL_DIVISION_BY_ZERO( ) CRITICAL("E408 - division by zero" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3888,6 +3889,15 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define WARNING_DLOAD_IGNORED_OFFSET( f ) WARNING2("W008 - offset for DLOAD is ignored", f );
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 #define WARNING_DLOAD_IGNORED_FILENAME( f ) WARNING2("W010 - filename for DLOAD is ignored", f );
+
+#define CHECK_POWEROF2_INVALID_MULTIPLACTOR2( value ) \
+    if ( log2(value) != (int)log2(value) ) { \
+        CRITICAL_INVALID_MULTIPLICATOR2(value); \
+    }
+#define CHECK_NOTZERO_DIVISION_BY_ZERO( value ) \
+    if ( value == 0 ) { \
+        CRITICAL_DIVISION_BY_ZERO(); \
+    }
 
 int assemblyLineIsAComment( char * _buffer );
 const char* strstrcase( const char* _x, const char* _y );

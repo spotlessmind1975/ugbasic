@@ -863,6 +863,43 @@ const_color_enumeration:
       YELLOW GREEN { $$ = COLOR_YELLOW_GREEN; };
 
 /*============================================================================
+ ============ CONSTANT EXPRESSIONS
+ ============================================================================*/
+
+const_modula: 
+    const_factor | 
+    const_modula OP_DIVISION const_factor { CHECK_NOTZERO_DIVISION_BY_ZERO($3); $$ = $1 / $3; } |
+    const_modula OP_DIVISION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLACTOR2( $3 ); $$ = $1 >> ((int)log2($3)); } |
+    const_modula OP_MULTIPLICATION const_factor { $$ = $1 * $3; }  | 
+    const_modula OP_MULTIPLICATION2 direct_integer { CHECK_POWEROF2_INVALID_MULTIPLACTOR2( $3 ); $$ = $1 << ((int)log2($3)); };
+
+const_term:
+    const_modula | 
+    const_term MOD const_modula { $$ = ( $1 % $3 ); };
+
+const_expr_math2: 
+    const_term | 
+    const_expr_math2 OP_MINUS const_term { $$ = $1 - $3; } |
+    const_expr_math2 OP_PLUS const_term { $$ = $1 + $3; };
+
+const_expr_math : 
+    const_expr_math2 | 
+    const_expr_math2 OP_ASSIGN const_expr_math2 { $$ = ( $1 == $3 ); } | 
+    const_expr_math2 OP_DISEQUAL const_expr_math2 { $$ = ( $1 != $3 ); } | 
+    const_expr_math2 OP_EQUAL const_expr_math2 { $$ = ( $1 == $3 ); } | 
+    const_expr_math2 OP_GT const_expr_math2 { $$ = ( $1 > $3 ); } | 
+    const_expr_math2 OP_GTE const_expr_math2 { $$ = ( $1 >= $3 ); } |
+    const_expr_math2 OP_LT const_expr_math2 { $$ = ( $1 < $3 ); } | 
+    const_expr_math2 OP_LTE const_expr_math2 { $$ = ( $1 <= $3 ); };
+
+const_expr : 
+    const_expr_math | 
+    const_expr_math AND const_expr_math { $$ = ( $1 && $3 ); } | 
+    const_expr_math OR const_expr_math { $$ = ( $1 || $3 ); } | 
+    const_expr_math XOR const_expr_math { $$ = $1 ? !$3 : $3; } | 
+    NOT const_expr { $$ = ( ! $2 ); } ;
+
+/*============================================================================
  ============ EXTENDED SYNTAXES
  ============================================================================*/
 
@@ -872,87 +909,6 @@ const_color_enumeration:
 buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
-
-const_expr : 
-      const_expr_math
-    | const_expr_math AND const_expr_math {        
-        $$ = ( $1 && $3 );
-    } 
-    | const_expr_math OR const_expr_math {
-        $$ = ( $1 || $3 );
-    } 
-    | const_expr_math XOR const_expr_math {
-        $$ = $1 ? !$3 : $3;
-    } 
-    | NOT const_expr {
-        $$ = ( ! $2 );
-    }
-    ;
-
-const_expr_math : 
-      const_expr_math2
-    | const_expr_math2 OP_EQUAL const_expr_math2 {
-        $$ = ( $1 == $3 );
-    }
-    | const_expr_math2 OP_ASSIGN const_expr_math2 {
-        $$ = ( $1 == $3 );
-    }
-    | const_expr_math2 OP_DISEQUAL const_expr_math2 {
-        $$ = ( $1 != $3 );
-    }
-    | const_expr_math2 OP_LT const_expr_math2 {
-        $$ = ( $1 < $3 );
-    }
-    | const_expr_math2 OP_LTE const_expr_math2 {
-        $$ = ( $1 <= $3 );
-    }
-    | const_expr_math2 OP_GT const_expr_math2 {
-        $$ = ( $1 > $3 );
-    }
-    | const_expr_math2 OP_GTE const_expr_math2 {
-        $$ = ( $1 >= $3 );
-    }
-    ;
-
-const_expr_math2: 
-      const_term
-    | const_expr_math2 OP_PLUS const_term {
-        $$ = $1 + $3;
-    }
-    | const_expr_math2 OP_MINUS const_term {
-        $$ = $1 - $3;
-    }
-    ;
-
-const_term:
-      const_modula
-    | const_term MOD const_modula {
-        $$ = ( $1 % $3 );
-    }
-    ;
-
-const_modula: 
-      const_factor
-    | const_modula OP_MULTIPLICATION const_factor {
-        $$ = $1 * $3;
-    } 
-    | const_modula OP_MULTIPLICATION2 direct_integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_MULTIPLICATOR2( $3 );
-        }
-        $$ = $1 << ((int)log2($3));
-    } 
-    | const_modula OP_DIVISION const_factor {
-        $$ = $1 / $3;
-    } 
-    | const_modula OP_DIVISION2 direct_integer {
-        if ( log2($3) != (int)log2($3) ) {
-            CRITICAL_INVALID_DIVISOR2( $3 );
-        }
-        $$ = $1 >> ((int)log2($3));
-    } 
-    ;
-
 
 filesize :
     FILEX SIZE
