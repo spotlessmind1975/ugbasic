@@ -564,6 +564,11 @@ const_expr_floating:
     Constant string value.
  */
 
+const_expr_string:
+    String { $$ = $1; } | 
+    RawString { $$ = $1; } | 
+    IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP { $$ = ( $3 ) ? $5 : $7; };
+
 const_expr_string_const:
     Z OP const_expr CP {
         Constant * c = constant_create( _environment, NULL );
@@ -828,21 +833,6 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
-
-const_expr_string :
-    String {
-        $$ = $1;
-    }
-    | RawString {
-        $$ = $1;
-    }
-    | IF OP const_expr OP_COMMA const_expr_string OP_COMMA const_expr_string CP {
-        if ( $3 ) {
-            $$ = $5;
-        } else {
-            $$ = $7;
-        }
-      };
 
 const_expr : 
       const_expr_math
