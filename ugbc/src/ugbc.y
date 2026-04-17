@@ -953,68 +953,36 @@ using_opacity:
     OPACITY const_color_enumeration { $$ = 0xf00000 | ( $2 << 8 ); };
 
 using_background:
-    {
-        $$ = -1;    
-    } 
-    | BACKGROUND const_color_enumeration {
-        $$ = $2;
-    };
+    { $$ = -1; } | 
+    BACKGROUND const_color_enumeration { $$ = $2; };
 
 tile_load_flags:
-    {
-        $$ = 0;    
-    } 
-    | tile_load_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    tile_load_flags1 { $$ = $1; };
 
 image_load_flags:
-    {
-        $$ = 0;    
-    } 
-    | image_load_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    image_load_flags1 { $$ = $1; };
 
 put_image_flags:
-    {
-        $$ = 0;    
-    } 
-    | put_image_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    put_image_flags1 { $$ = $1; };
 
 blit_image_flags:
-    {
-        $$ = 0;    
-    } 
-    | blit_image_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    blit_image_flags1 { $$ = $1; };
 
 load_flags:
-    {
-        $$ = 0;    
-    } 
-    | load_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    load_flags1 { $$ = $1; };
 
 images_load_flags:
-    {
-        $$ = 0;    
-    } 
-    | images_load_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    images_load_flags1 { $$ = $1; };
 
 sequence_load_flags:
-    {
-        $$ = 0;    
-    } 
-    | sequence_load_flags1 {
-        $$ = $1;
-    };
+    { $$ = 0; } | 
+    sequence_load_flags1 { $$ = $1; };
 
 /*============================================================================
  ============ CONSTANT FACTORS
