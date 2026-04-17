@@ -607,7 +607,7 @@ const_expr_string_const:
     } 
     | Identifier {
 
-        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
+        Constant * c1 = constant_find( _environment, $1 );
         if ( c1 == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $1 );
         }
@@ -648,8 +648,8 @@ const_expr_string_const:
     }
     | Identifier OP_PLUS const_expr_string_const {
 
-        Constant * c1 = constant_find( ((Environment *)_environment)->constants, $1 );
-        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+        Constant * c1 = constant_find( _environment, $1 );
+        Constant * c2 = constant_find( _environment, $3 );
 
         if ( c1 == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $1 );
@@ -722,7 +722,7 @@ const_expr_string_const:
             ((Environment *)_environment)->constants = c1;
         }
 
-        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $3 );
+        Constant * c2 = constant_find( _environment, $3 );
 
         Constant * c3 = malloc( sizeof( Constant ) );
         memset( c3, 0, sizeof( Constant ) );
@@ -786,7 +786,7 @@ const_expr_string_const:
             ((Environment *)_environment)->constants = c1;
         }
 
-        Constant * c2 = constant_find( ((Environment *)_environment)->constants, $6 );
+        Constant * c2 = constant_find( _environment, $6 );
 
         Constant * c3 = malloc( sizeof( Constant ) );
         memset( c3, 0, sizeof( Constant ) );
@@ -1636,7 +1636,7 @@ const_factor:
             $$ = JOY_COUNT;
         }
       | LEN OP Identifier CP {
-          Constant * c = constant_find( ((Environment *)_environment)->constants, $3 );
+          Constant * c = constant_find( _environment, $3 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $3 );
           }
@@ -1652,7 +1652,7 @@ const_factor:
           $$ = strlen( $5 );
       }      
       | Identifier {
-          Constant * c = constant_find( ((Environment *)_environment)->constants, $1 );
+          Constant * c = constant_find( _environment, $1 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $1 );
           }
@@ -1666,7 +1666,7 @@ const_factor:
           }
       }
       | OP_HASH Identifier {
-          Constant * c = constant_find( ((Environment *)_environment)->constants, $2 );
+          Constant * c = constant_find( _environment, $2 );
           if ( c == NULL ) {
               CRITICAL_UNDEFINED_CONSTANT( $2 );
           }
@@ -1963,7 +1963,7 @@ direct_integer:
         $$ = -$3;
     }
     | OP_HASH Identifier {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $2 );
+        Constant * c = constant_find( _environment, $2 );
         if ( !c ) {
             CRITICAL_UNDEFINED_CONSTANT($2);
         }
@@ -3238,7 +3238,7 @@ exponential_less:
         parser_array_cleanup( _environment );
     }
     | Identifier {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        Constant * c = constant_find( _environment, $1 );
         if ( c ) {
             if ( c->type == CT_STRING ) {
                 $$ = variable_temporary( _environment,  VT_STRING, "(constant)" )->name;
@@ -3276,7 +3276,7 @@ exponential_less:
         }
     }
     | Identifier as_datatype_suffix {
-        Constant * c = constant_find( ((struct _Environment *)_environment)->constants, $1 );
+        Constant * c = constant_find( _environment, $1 );
         if ( c ) {
             if ( c->type == CT_STRING ) {
                 CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( $1 );
@@ -3402,7 +3402,7 @@ exponential_less:
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
       }      
     | OP IMAGE CP Identifier { 
-        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        Constant * c = constant_find( _environment, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
         }
@@ -3422,7 +3422,7 @@ exponential_less:
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
       }   
     | OP images_or_atlas CP Identifier { 
-        Constant * c = constant_find( ((Environment *)_environment)->constants, $4 );
+        Constant * c = constant_find( _environment, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
         }
@@ -12215,7 +12215,7 @@ offset_definitions :
 const_definition :
   STRING Identifier OP_ASSIGN const_expr_string_const {
         if ( !((Environment *)_environment)->emptyProcedure ) {
-            Constant * c1 = constant_find( ((Environment *)_environment)->constants, $4 );
+            Constant * c1 = constant_find( _environment, $4 );
 
             Constant * c3 = malloc( sizeof( Constant ) );
             memset( c3, 0, sizeof( Constant ) );

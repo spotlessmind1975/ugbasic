@@ -5374,7 +5374,7 @@ void                    const_define_string( Environment * _environment, char * 
 void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
 Constant *              constant_create( Environment * _environment, char * _name );
-Constant *              constant_find( Constant * _constant, char * _name );
+Constant *              constant_find( Environment * _environment, char * _name );
 void                    copper_color( Environment * _environment, int _index, int _color );
 void                    copper_color_background( Environment * _environment, int _color );
 void                    copper_color_border( Environment * _environment, int _color );

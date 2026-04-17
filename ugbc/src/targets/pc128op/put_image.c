@@ -548,7 +548,7 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
         sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
         
-        Constant * flagsConstant = constant_find( _environment->constants, flagsConstantName );
+        Constant * flagsConstant = constant_find( _environment, flagsConstantName );
         
         if ( !flagsConstant ) {
             flagsConstant = malloc( sizeof( Constant ) );
