@@ -542,11 +542,9 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  ============ SYNONYMS ON KEYWORDS
  ============================================================================*/
 
-frame: 
-    FRAME | TILE;
-
-ticks:
-    TICK | TICKS;
+frame: FRAME | TILE;
+ticks: TICK | TICKS;
+filesize:  FILEX SIZE | FILESIZE | FSIZE;
 
 /*============================================================================
  ============ CONSTANT VALUES / SYMBOLS
@@ -910,11 +908,6 @@ buffer_definition_prefix: | OSP | OP_HASH OSP;
 buffer_definition_suffix: CSP;
 buffer_definition_suffix_optional: | buffer_definition_suffix;
 
-filesize :
-    FILEX SIZE
-    | FILESIZE
-    | FSIZE
-    ;
 
 const_factor: 
         Integer {
