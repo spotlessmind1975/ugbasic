@@ -956,7 +956,7 @@ void variable_cleanup( Environment * _environment ) {
     
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
-        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines_full( staticStrings->value, staticStrings->size ) );
         staticStrings = staticStrings->next;
     }
 

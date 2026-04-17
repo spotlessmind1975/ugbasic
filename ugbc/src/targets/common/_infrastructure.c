@@ -344,6 +344,31 @@ static Constant * constant_find_by_realname( Constant * _first, char * _name ) {
     return actual;
 }
 
+Constant * constant_create( Environment * _environment, char * _name ) {
+    Constant * c3 = malloc( sizeof( Constant ) );
+    memset( c3, 0, sizeof( Constant ) );
+    c3->name = malloc( MAX_TEMPORARY_STORAGE );
+    memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+    if ( _name ) {
+        c3->name = strdup( _name );        
+    } else {
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+    }
+    c3->realName = strdup( c3->name );
+
+    Constant * constLast = ((Environment *)_environment)->constants;
+    if ( constLast ) {
+        while( constLast->next ) {
+            constLast = constLast->next;
+        }
+        constLast->next = c3;
+    } else {
+        ((Environment *)_environment)->constants = c3;
+    }
+
+    return c3;
+}
+
 Constant * constant_find( Constant * _first, char * _name ) {
 
     Constant * actual = _first;
@@ -13781,15 +13806,15 @@ int system_remove_safe( Environment * _environment, char * _filename ) {
 
 }
 
-char * escape_newlines( char * _string ) {
+char * escape_newlines_full( char * _string, int _size ) {
 
-    char * result = malloc( 6 * strlen( _string ) + 2 + MAX_TEMPORARY_STORAGE );
+    char * result = malloc( 6 * _size + 2 + MAX_TEMPORARY_STORAGE );
 
-    memset( result, 0, 6 * strlen( _string ) + 2 );
+    memset( result, 0, 6 * _size + 2 );
 
     char * p = _string, * q = result;
 
-    while( *p ) {
+    while( _size ) {
         if ( *p == '\n' || *p == '\r' ) {
             if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
                 --q;
@@ -13867,6 +13892,7 @@ char * escape_newlines( char * _string ) {
         } else {
             *q++ = *p++;
         }
+        --_size;
     }
 
     *q = 0;
@@ -13915,6 +13941,12 @@ char * escape_newlines( char * _string ) {
     free( result2 );
     
     return result;
+
+}
+
+char * escape_newlines( char * _string ) {
+
+    return escape_newlines_full( _string, strlen( _string ) );
 
 }
 
@@ -17200,4 +17232,16 @@ char * import_file_name( char * _import_path ) {
 
     return importDeclaresFilename;
 
+}
+
+StaticString * static_string_create( Environment * _environment, int _size, char _value ) {
+    StaticString * result = malloc( sizeof( StaticString ) );
+    memset( result, 0, sizeof( StaticString ) );
+    result->id = UNIQUE_ID;
+    result->value = malloc( _size );
+    memset( result->value, _value, _size );
+    result->size = _size;
+    result->next = _environment->strings;
+    _environment->strings = result;
+    return result;
 }

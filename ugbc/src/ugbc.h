@@ -5373,6 +5373,7 @@ void                    const_define_numeric( Environment * _environment, char *
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
+Constant *              constant_create( Environment * _environment, char * _name );
 Constant *              constant_find( Constant * _constant, char * _name );
 void                    copper_color( Environment * _environment, int _index, int _color );
 void                    copper_color_background( Environment * _environment, int _color );
@@ -5503,6 +5504,7 @@ void                    end_while( Environment * _environment );
 void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 void                    error( Environment * _environment, char * _message );
 char *                  escape_newlines( char * _string );
+char *                  escape_newlines_full( char * _string, int _size );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment, char * _timer );
 void                    every_on( Environment * _environment, char * _timer );
@@ -5953,6 +5955,7 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+StaticString *          static_string_create( Environment * _environment, int _size, char _value );
 void                    stop_animation( Environment * _environment, char * _prefix );
 void                    stop_movement( Environment * _environment, char * _prefix );
 Variable *              strig( Environment * _environment, int _port );

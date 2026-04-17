@@ -561,226 +561,15 @@ const_expr_floating:
     IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP { $$ = ( $3 ) ? $5 : $7; }
 
 /*
-    Musical notation in international standard, used in modern music, jazz, 
-    and computer music (such as the MIDI protocol). This system uses the first 
-    seven letters of the alphabet. To distinguish, for example, a very low "C" 
-    from a very high one, a number is added immediately after the letter. This 
-    system is called "Scientific Notation". The number indicates the octave it 
-    belongs to. In the IMF/MIDI protocol each "Letter + Number" combination 
-    corresponds to a fixed numeric value (the MIDI Note Number).
-*/
-
-const_note_single: 
-    A { $$ = 9; } |
-    B { $$ = 11; } |
-    C { $$ = 0; } |
-    D { $$ = 2; } |
-    E { $$ = 4; } |
-    F { $$ = 5; } |
-    G { $$ = 7; };
-
-const_octave:
-    Integer { $$ = $1; };
-
-const_note:
-    const_note_single { $$ = $1 + ( 4 * 12 ); } |
-    const_note_single const_octave { $$ = $1 + ( $2 * 12 ); } |
-    F1 { $$ = 5 + ( 1 * 12 ); } |
-    F2 { $$ = 5 + ( 2 * 12 ); } |
-    F3 { $$ = 5 + ( 3 * 12 ); } |
-    F4 { $$ = 5 + ( 4 * 12 ); } |
-    F5 { $$ = 5 + ( 5 * 12 ); } |
-    F6 { $$ = 5 + ( 6 * 12 ); } |
-    F7 { $$ = 5 + ( 7 * 12 ); } |
-    F8 { $$ = 5 + ( 8 * 12 ); } |
-    const_note_single OP_HASH const_octave { $$ = ( $1 + 1 ) + ( $3 * 12 ); } |
-    CONST const_octave { $$ = ( 0 + 1 ) + ( $2 * 12 ); };
-
-/* 
-    This is the list of instruments supported by IMF. This list is the same
-    as MIDI (Musical Instrument Digital Interface) protocol. Those symbols
-    are associated with instruments, and they are essential for telling
-    ugBASIC which "timbre" to use to play the notes. These constants are 
-    defined by the General MIDI (GM) standard, which assigns a unique number 
-    to 128 different instruments, grouped into 16 families.
-*/
-
-const_instrument:
-    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
-    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
-    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
-    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
-    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
-    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
-    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
-    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
-    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
-    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
-    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
-    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
-    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
-    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
-    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
-    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
-    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
-    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
-    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
-    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
-    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
-    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
-    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
-    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
-    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
-    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
-    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
-    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
-    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
-    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
-    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
-    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
-    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
-    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
-    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
-    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
-    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
-    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
-    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
-    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
-    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
-    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
-    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
-    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
-    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
-    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
-    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
-    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
-    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
-    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
-    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
-    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
-    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; } |
-    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
-    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
-    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
-    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
-    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
-    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
-    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
-    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
-    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
-    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
-    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
-    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
-    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
-    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
-    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
-    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
-    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
-    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
-    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
-    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
-    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
-    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
-    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
-    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
-    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
-    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
-    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
-    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
-    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
-    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
-    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
-    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
-    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
-    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
-    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
-    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
-    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
-    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
-    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
-    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
-    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
-    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
-    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
-    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
-    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
-    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
-    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
-    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
-    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
-    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
-    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
-    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
-    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
-    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
-    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
-    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
-    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
-    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
-    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
-    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
-    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
-    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
-    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
-    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
-    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
-    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
-    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
-    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
-    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
-    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
-    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
-    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
-    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
-    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
-    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
-    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; };
-
-/*============================================================================
- ============ EXTENDED SYNTAXES
- ============================================================================*/
-
-/* Buffer definition syntax, with suffixes and prefixes. Note that prefix can
-   be omitted, while the suffix could not. */
-
-buffer_definition_prefix: | OSP | OP_HASH OSP;
-buffer_definition_suffix: CSP;
-buffer_definition_suffix_optional: | buffer_definition_suffix;
-
+    Constant string value.
+ */
 
 const_expr_string_const:
     Z OP const_expr CP {
-
-        Constant * c3 = malloc( sizeof( Constant ) );
-        memset( c3, 0, sizeof( Constant ) );
-        c3->name = malloc( MAX_TEMPORARY_STORAGE );
-        memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
-        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
-        c3->realName = strdup( c3->name );
-
-        c3->valueString = malloc( sizeof( StaticString ) );
-        memset( c3->valueString, 0, sizeof( StaticString ) );
-
-        c3->valueString->id = UNIQUE_ID;
-        c3->valueString->value = malloc( $3 );
-        memset( c3->valueString->value, 0, $3 );
-        c3->valueString->size = $3;
-        c3->valueString->next = ((Environment *)_environment)->strings;
-        ((Environment *)_environment)->strings = c3->valueString;
-
-        c3->type = CT_STRING;
-        Constant * constLast = ((Environment *)_environment)->constants;
-        if ( constLast ) {
-            while( constLast->next ) {
-                constLast = constLast->next;
-            }
-            constLast->next = c3;
-        } else {
-            ((Environment *)_environment)->constants = c3;
-        }
-
-        $$ = c3->name;
-
+        Constant * c = constant_create( _environment, NULL );
+        c->valueString = static_string_create( _environment, $3, 0 );
+        c->type = CT_STRING;
+        $$ = c->name;
     }
     | String {
         int size;
@@ -1032,6 +821,194 @@ const_expr_string_const:
 
     }    
     ;
+
+/*
+    Musical notation in international standard, used in modern music, jazz, 
+    and computer music (such as the MIDI protocol). This system uses the first 
+    seven letters of the alphabet. To distinguish, for example, a very low "C" 
+    from a very high one, a number is added immediately after the letter. This 
+    system is called "Scientific Notation". The number indicates the octave it 
+    belongs to. In the IMF/MIDI protocol each "Letter + Number" combination 
+    corresponds to a fixed numeric value (the MIDI Note Number).
+*/
+
+const_note_single: 
+    A { $$ = 9; } |
+    B { $$ = 11; } |
+    C { $$ = 0; } |
+    D { $$ = 2; } |
+    E { $$ = 4; } |
+    F { $$ = 5; } |
+    G { $$ = 7; };
+
+const_octave:
+    Integer { $$ = $1; };
+
+const_note:
+    const_note_single { $$ = $1 + ( 4 * 12 ); } |
+    const_note_single const_octave { $$ = $1 + ( $2 * 12 ); } |
+    F1 { $$ = 5 + ( 1 * 12 ); } |
+    F2 { $$ = 5 + ( 2 * 12 ); } |
+    F3 { $$ = 5 + ( 3 * 12 ); } |
+    F4 { $$ = 5 + ( 4 * 12 ); } |
+    F5 { $$ = 5 + ( 5 * 12 ); } |
+    F6 { $$ = 5 + ( 6 * 12 ); } |
+    F7 { $$ = 5 + ( 7 * 12 ); } |
+    F8 { $$ = 5 + ( 8 * 12 ); } |
+    const_note_single OP_HASH const_octave { $$ = ( $1 + 1 ) + ( $3 * 12 ); } |
+    CONST const_octave { $$ = ( 0 + 1 ) + ( $2 * 12 ); };
+
+/* 
+    This is the list of instruments supported by IMF. This list is the same
+    as MIDI (Musical Instrument Digital Interface) protocol. Those symbols
+    are associated with instruments, and they are essential for telling
+    ugBASIC which "timbre" to use to play the notes. These constants are 
+    defined by the General MIDI (GM) standard, which assigns a unique number 
+    to 128 different instruments, grouped into 16 families.
+*/
+
+const_instrument:
+    ACCORDION { $$ = IMF_INSTRUMENT_ACCORDION; } |
+    ACOUSTIC BASS { $$ = IMF_INSTRUMENT_ACOUSTIC_BASS; } |
+    ACOUSTIC GRAND PIANO { $$ = IMF_INSTRUMENT_ACOUSTIC_GRAND_PIANO; } |
+    ACOUSTIC GUITAR NYLON { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_NYLON; } |
+    ACOUSTIC GUITAR STEEL { $$ = IMF_INSTRUMENT_ACOUSTIC_GUITAR_STEEL; } |
+    AGOGO { $$ = IMF_INSTRUMENT_AGOGO; } |
+    ALTO SAX { $$ = IMF_INSTRUMENT_ALTO_SAX; } |
+    APPLAUSE { $$ = IMF_INSTRUMENT_APPLAUSE; } |
+    BAG PIPE { $$ = IMF_INSTRUMENT_BAG_PIPE; } |
+    BANJO { $$ = IMF_INSTRUMENT_BANJO; } |
+    BARITONE SAX { $$ = IMF_INSTRUMENT_BARITONE_SAX; } |
+    BASSOON { $$ = IMF_INSTRUMENT_BASSOON; } |
+    BIRD TWEET { $$ = IMF_INSTRUMENT_BIRD_TWEET; } |
+    BLOWN BOTTLE { $$ = IMF_INSTRUMENT_BLOWN_BOTTLE; } |
+    BRASS SECTION { $$ = IMF_INSTRUMENT_BRASS_SECTION; } |
+    BREATH NOISE { $$ = IMF_INSTRUMENT_BREATH_NOISE; } |
+    BRIGHT ACOUSTIC PIANO { $$ = IMF_INSTRUMENT_BRIGHT_ACOUSTIC_PIANO; } |
+    CELESTA { $$ = IMF_INSTRUMENT_CELESTA; } |
+    CELLO { $$ = IMF_INSTRUMENT_CELLO; } |
+    CHOIR AAHS { $$ = IMF_INSTRUMENT_CHOIR_AAHS; } |
+    CHURCH ORGAN { $$ = IMF_INSTRUMENT_CHURCH_ORGAN; } |
+    CLARINET { $$ = IMF_INSTRUMENT_CLARINET; } |
+    CLAVI { $$ = IMF_INSTRUMENT_CLAVI; } |
+    CONTRABASS { $$ = IMF_INSTRUMENT_CONTRABASS; } |
+    DISTORTION GUITAR { $$ = IMF_INSTRUMENT_DISTORTION_GUITAR; } |
+    DRAWBAR ORGAN { $$ = IMF_INSTRUMENT_DRAWBAR_ORGAN; } |
+    DULCIMER { $$ = IMF_INSTRUMENT_DULCIMER; } |
+    ELECTRIC BASS FINGER { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_FINGER; } |
+    ELECTRIC BASS PICK { $$ = IMF_INSTRUMENT_ELECTRIC_BASS_PICK; } |
+    ELECTRIC GRAND PIANO { $$ = IMF_INSTRUMENT_ELECTRIC_GRAND_PIANO; } |
+    ELECTRIC GUITAR CLEAN { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_CLEAN; } |
+    ELECTRIC GUITAR JAZZ { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_JAZZ; } |
+    ELECTRIC GUITAR MUTED { $$ = IMF_INSTRUMENT_ELECTRIC_GUITAR_MUTED; } |
+    ELECTRIC PIANO "1" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO1; } |
+    ELECTRIC PIANO "2" { $$ = IMF_INSTRUMENT_ELECTRIC_PIANO2; } |
+    ENGLISH HORN { $$ = IMF_INSTRUMENT_ENGLISH_HORN; } |
+    EXPLOSION { $$ = IMF_INSTRUMENT_EXPLOSION; } |
+    FIDDLE { $$ = IMF_INSTRUMENT_FIDDLE; } |
+    FLUTE { $$ = IMF_INSTRUMENT_FLUTE; } |
+    FRENCH HORN { $$ = IMF_INSTRUMENT_FRENCH_HORN; } |
+    FRETLESS BASS { $$ = IMF_INSTRUMENT_FRETLESS_BASS; } |
+    FX "1" RAIN { $$ = IMF_INSTRUMENT_FX_1_RAIN; } |
+    FX "2" SOUNDTRACK { $$ = IMF_INSTRUMENT_FX_2_SOUNDTRACK; } |
+    FX "3" CRYSTAL { $$ = IMF_INSTRUMENT_FX_3_CRYSTAL; } |
+    FX "4" ATMOSPHERE { $$ = IMF_INSTRUMENT_FX_4_ATMOSPHERE; } |
+    FX "5" BRIGHTNESS { $$ = IMF_INSTRUMENT_FX_5_BRIGHTNESS; } |
+    FX "6" GOBLINS { $$ = IMF_INSTRUMENT_FX_6_GOBLINS; } |
+    FX "7" ECHOES { $$ = IMF_INSTRUMENT_FX_7_ECHOES; } |
+    FX "8" SCI FI { $$ = IMF_INSTRUMENT_FX_8_SCI_FI; } |
+    GLOCKENSPIEL { $$ = IMF_INSTRUMENT_GLOCKENSPIEL; } |
+    GUITAR FRET NOISE { $$ = IMF_INSTRUMENT_GUITAR_FRET_NOISE; } |
+    GUITAR HARMONICS { $$ = IMF_INSTRUMENT_GUITAR_HARMONICS; } |
+    GUNSHOT { $$ = IMF_INSTRUMENT_GUNSHOT; } |
+    HARMONICA { $$ = IMF_INSTRUMENT_HARMONICA; } |
+    HARPSICHORD { $$ = IMF_INSTRUMENT_HARPSICHORD; } |
+    HELICOPTER { $$ = IMF_INSTRUMENT_HELICOPTER; } |
+    HONKY TONK PIANO { $$ = IMF_INSTRUMENT_HONKY_TONK_PIANO; } |
+    KALIMBA { $$ = IMF_INSTRUMENT_KALIMBA; } |
+    KOTO { $$ = IMF_INSTRUMENT_KOTO; } |
+    LEAD "1" SQUARE { $$ = IMF_INSTRUMENT_LEAD_1_SQUARE; } |
+    LEAD "2" SAWTOOTH { $$ = IMF_INSTRUMENT_LEAD_2_SAWTOOTH; } |
+    LEAD "3" CALLIOPE { $$ = IMF_INSTRUMENT_LEAD_3_CALLIOPE; } |
+    LEAD "4" CHIFF { $$ = IMF_INSTRUMENT_LEAD_4_CHIFF; } |
+    LEAD "5" CHARANG { $$ = IMF_INSTRUMENT_LEAD_5_CHARANG; } |
+    LEAD "6" VOICE { $$ = IMF_INSTRUMENT_LEAD_6_VOICE; } |
+    LEAD "7" FIFTHS { $$ = IMF_INSTRUMENT_LEAD_7_FIFTHS; } |
+    LEAD "8" BASS LEAD { $$ = IMF_INSTRUMENT_LEAD_8_BASS_LEAD; } |
+    MARIMBA { $$ = IMF_INSTRUMENT_MARIMBA; } |
+    MELODIC TOM { $$ = IMF_INSTRUMENT_MELODIC_TOM; } |
+    MUSIC BOX { $$ = IMF_INSTRUMENT_MUSIC_BOX; } |
+    MUTED TRUMPET { $$ = IMF_INSTRUMENT_MUTED_TRUMPET; } |
+    OBOE { $$ = IMF_INSTRUMENT_OBOE; } |
+    OCARINA { $$ = IMF_INSTRUMENT_OCARINA; } |
+    ORCHESTRA HIT { $$ = IMF_INSTRUMENT_ORCHESTRA_HIT; } |
+    ORCHESTRAL HARP { $$ = IMF_INSTRUMENT_ORCHESTRAL_HARP; } |
+    OVERDRIVEN GUITAR { $$ = IMF_INSTRUMENT_OVERDRIVEN_GUITAR; } |
+    PAD "1" NEW AGE { $$ = IMF_INSTRUMENT_PAD_1_NEW_AGE; } |
+    PAD "2" WARM { $$ = IMF_INSTRUMENT_PAD_2_WARM; } |
+    PAD "3" POLYSYNTH { $$ = IMF_INSTRUMENT_PAD_3_POLYSYNTH; } |
+    PAD "4" CHOIR { $$ = IMF_INSTRUMENT_PAD_4_CHOIR; } |
+    PAD "5" BOWED { $$ = IMF_INSTRUMENT_PAD_5_BOWED; } |
+    PAD "6" METALLIC { $$ = IMF_INSTRUMENT_PAD_6_METALLIC; } |
+    PAD "7" HALO { $$ = IMF_INSTRUMENT_PAD_7_HALO; } |
+    PAD "8" SWEEP { $$ = IMF_INSTRUMENT_PAD_8_SWEEP; } |
+    PAN FLUTE { $$ = IMF_INSTRUMENT_PAN_FLUTE; } |
+    PERCUSSIVE ORGAN { $$ = IMF_INSTRUMENT_PERCUSSIVE_ORGAN; } |
+    PICCOLO { $$ = IMF_INSTRUMENT_PICCOLO; } |
+    PIZZICATO STRINGS { $$ = IMF_INSTRUMENT_PIZZICATO_STRINGS; } |
+    RECORDER { $$ = IMF_INSTRUMENT_RECORDER; } |
+    REED ORGAN { $$ = IMF_INSTRUMENT_REED_ORGAN; } |
+    REVERSE CYMBAL { $$ = IMF_INSTRUMENT_REVERSE_CYMBAL; } |
+    ROCK ORGAN { $$ = IMF_INSTRUMENT_ROCK_ORGAN; } |
+    SEASHORE { $$ = IMF_INSTRUMENT_SEASHORE; } |
+    SHAKUHACHI { $$ = IMF_INSTRUMENT_SHAKUHACHI; } |
+    SHAMISEN { $$ = IMF_INSTRUMENT_SHAMISEN; } |
+    SHANAI { $$ = IMF_INSTRUMENT_SHANAI; } |
+    SITAR { $$ = IMF_INSTRUMENT_SITAR; } |
+    SLAP BASS "1" { $$ = IMF_INSTRUMENT_SLAP_BASS_1; } |
+    SLAP BASS "2" { $$ = IMF_INSTRUMENT_SLAP_BASS_2; } |
+    SOPRANO SAX { $$ = IMF_INSTRUMENT_SOPRANO_SAX; } |
+    STEEL DRUMS { $$ = IMF_INSTRUMENT_STEEL_DRUMS; } |
+    STRING ENSEMBLE "1" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_1; } |
+    STRING ENSEMBLE "2" { $$ = IMF_INSTRUMENT_STRING_ENSEMBLE_2; } |
+    SYNTH BASS "1" { $$ = IMF_INSTRUMENT_SYNTH_BASS_1; } |
+    SYNTH BASS "2" { $$ = IMF_INSTRUMENT_SYNTH_BASS_2; } |
+    SYNTH DRUM { $$ = IMF_INSTRUMENT_SYNTH_DRUM; } |
+    SYNTH VOICE { $$ = IMF_INSTRUMENT_SYNTH_VOICE; } |
+    SYNTHBRASS "1" { $$ = IMF_INSTRUMENT_SYNTHBRASS_1; } |
+    SYNTHBRASS "2" { $$ = IMF_INSTRUMENT_SYNTHBRASS_2; } |
+    SYNTHSTRINGS "1" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_1; } |
+    SYNTHSTRINGS "2" { $$ = IMF_INSTRUMENT_SYNTHSTRINGS_2; } |
+    TAIKO DRUM { $$ = IMF_INSTRUMENT_TAIKO_DRUM; } |
+    TANGO ACCORDION { $$ = IMF_INSTRUMENT_TANGO_ACCORDION; } |
+    TELEPHONE RING { $$ = IMF_INSTRUMENT_TELEPHONE_RING; } |
+    TENOR SAX { $$ = IMF_INSTRUMENT_TENOR_SAX; } |
+    TIMPANI { $$ = IMF_INSTRUMENT_TIMPANI; } |
+    TINKLE BELL { $$ = IMF_INSTRUMENT_TINKLE_BELL; } |
+    TREMOLO STRINGS { $$ = IMF_INSTRUMENT_TREMOLO_STRINGS; } |
+    TROMBONE { $$ = IMF_INSTRUMENT_TROMBONE; } |
+    TRUMPET { $$ = IMF_INSTRUMENT_TRUMPET; } |
+    TUBA { $$ = IMF_INSTRUMENT_TUBA; } |
+    TUBULAR BELLS { $$ = IMF_INSTRUMENT_TUBULAR_BELLS; } |
+    VIBRAPHONE { $$ = IMF_INSTRUMENT_VIBRAPHONE; } |
+    VIOLA { $$ = IMF_INSTRUMENT_VIOLA; } |
+    VIOLIN { $$ = IMF_INSTRUMENT_VIOLIN; } |
+    VOICE OOHS { $$ = IMF_INSTRUMENT_VOICE_OOHS; } |
+    WHISTLE { $$ = IMF_INSTRUMENT_WHISTLE; } |
+    WOODBLOCK { $$ = IMF_INSTRUMENT_WOODBLOCK; } |
+    XYLOPHONE { $$ = IMF_INSTRUMENT_XYLOPHONE; };
+
+/*============================================================================
+ ============ EXTENDED SYNTAXES
+ ============================================================================*/
+
+/* Buffer definition syntax, with suffixes and prefixes. Note that prefix can
+   be omitted, while the suffix could not. */
+
+buffer_definition_prefix: | OSP | OP_HASH OSP;
+buffer_definition_suffix: CSP;
+buffer_definition_suffix_optional: | buffer_definition_suffix;
+
 
 const_expr_string :
     String {
