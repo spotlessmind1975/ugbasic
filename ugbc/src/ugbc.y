@@ -1834,6 +1834,13 @@ casting:
  ============ EXPRESSIONS
  ============================================================================*/
 
+exponential:
+    exponential_less
+    | OP expr CP {
+        $$ = $2;
+    }
+    ;
+
 factor: 
     exponential | 
     factor OP_POW exponential { $$ = powering( _environment, $1, $3 )->name; } | 
@@ -3063,291 +3070,101 @@ exponential_less:
     YCURS { $$ = text_get_ycurs( _environment )->name; } | 
     Y CURS { $$ = text_get_ycurs( _environment )->name; } | 
     TEXTADDRESS { $$ = strdup( "TEXTADDRESS" ); } | 
-    BITMAPADDRESS {
-        $$ = strdup( "BITMAPADDRESS" );
-    }
-    | JOY OP OP_HASH const_expr CP {
-        $$ = joy( _environment, $4 )->name;
-    }
-    | JOY OP expr CP {
-        $$ = joy_vars( _environment, $3 )->name;
-    }
-    | JOYX {
-        $$ = joyx( _environment, 0 )->name;
-    }
-    | JOYX OP OP_HASH const_expr CP {
-        $$ = joyx( _environment, $4 )->name;
-    }
-    | JOYX OP expr CP {
-        $$ = joyx_vars( _environment, $3 )->name;
-    }
-    | JOY X  {
-        $$ = joyx( _environment, 0 )->name;
-    }
-    | JOY X OP OP_HASH const_expr CP {
-        $$ = joyx( _environment, $5 )->name;
-    }
-    | JOY X OP expr CP {
-        $$ = joyx_vars( _environment, $4 )->name;
-    }
-    | JOYY {
-        $$ = joyy( _environment, 0 )->name;
-    }
-    | JOYY OP OP_HASH const_expr CP {
-        $$ = joyy( _environment, $4 )->name;
-    }
-    | JOYY OP expr CP {
-        $$ = joyy_vars( _environment, $3 )->name;
-    }
-    | JOY Y {
-        $$ = joyy( _environment, 0 )->name;
-    }
-    | JOY Y OP OP_HASH const_expr CP {
-        $$ = joyy( _environment, $5 )->name;
-    }
-    | JOY Y OP expr CP {
-        $$ = joyy_vars( _environment, $4 )->name;
-    }
-    | JOYDIR {
-        $$ = joydir( _environment, 0 )->name;
-    }
-    | JOYDIR OP expr CP {
-        $$ = joydir_semivars( _environment, $3 )->name;
-    }
-    | JOYDIR OP OP_HASH const_expr CP {
-        $$ = joydir( _environment, $4 )->name;
-    }
-    | JUP OP expr CP {
-        $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name;
-    }
-    | JUP {
-        $$ = joy_direction( _environment, 0, JOY_UP )->name;
-    }
-    | JUP OP OP_HASH const_expr CP {
-        $$ = joy_direction( _environment, $4, JOY_UP )->name;
-    }
-    | JDOWN OP expr CP {
-        $$ = joy_direction_semivars( _environment, $3, JOY_DOWN )->name;
-    }
-    | JDOWN {
-        $$ = joy_direction( _environment, 0, JOY_DOWN )->name;
-    }
-    | JDOWN OP OP_HASH const_expr CP {
-        $$ = joy_direction( _environment, $4, JOY_DOWN )->name;
-    }
-    | JLEFT OP expr CP {
-        $$ = joy_direction_semivars( _environment, $3, JOY_LEFT )->name;
-    }
-    | JLEFT {
-        $$ = joy_direction( _environment, 0, JOY_LEFT )->name;
-    }
-    | JLEFT OP OP_HASH const_expr CP {
-        $$ = joy_direction( _environment, $4, JOY_LEFT )->name;
-    }
-    | JRIGHT {
-        $$ = joy_direction( _environment, 0, JOY_RIGHT )->name;
-    }
-    | JRIGHT OP expr CP {
-        $$ = joy_direction_semivars( _environment, $3, JOY_RIGHT )->name;
-    }
-    | JRIGHT OP OP_HASH const_expr CP {
-        $$ = joy_direction( _environment, $4, JOY_RIGHT )->name;
-    }    
-    | JFIRE {
-        $$ = jfire( _environment, 0 )->name;
-    }
-    | JFIRE OP expr CP {
-        $$ = jfire_vars( _environment, $3 )->name;
-    }
-    | JFIRE OP OP_HASH const_expr CP {
-        $$ = jfire( _environment, $4 )->name;
-    }
-    | FIRE OP expr CP {
-        $$ = jfire_vars( _environment, $3 )->name;
-    }
-    | FIRE OP OP_HASH const_expr CP {
-        $$ = jfire( _environment, $4 )->name;
-    }
-    | STRIG {
-        $$ = strig( _environment, 0 )->name;
-    }
-    | STRIG OP expr CP {
-        $$ = strig_vars( _environment, $3 )->name;
-    }
-    | STRIG OP OP_HASH const_expr CP {
-        $$ = strig( _environment, $4 )->name;
-    }
-    | JOY COUNT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
-        variable_store( _environment, $$, JOY_COUNT );
-    }
-    | JOYCOUNT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(JOYCOUNT)" )->name;
-        variable_store( _environment, $$, JOY_COUNT );
-    }
-    | BIT OP expr OP_COMMA expr CP {
-        $$ = variable_bit( _environment, $3, $5 )->name;
-    }
-    | UP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(UP)" )->name;
-        variable_store( _environment, $$, JOY_UP );
-    }
-    | DOWN {
-        $$ = variable_temporary( _environment, VT_BYTE, "(DOWN)" )->name;
-        variable_store( _environment, $$, JOY_DOWN );
-    }
-    | LEFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(LEFT)" )->name;
-        variable_store( _environment, $$, JOY_LEFT );
-    }
-    | RIGHT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(RIGHT)" )->name;
-        variable_store( _environment, $$, JOY_RIGHT );
-    }
-    | FIRE {
-        $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
-        variable_store( _environment, $$, JOY_FIRE );
-    }
-    | JOY UP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(UP)" )->name;
-        variable_store( _environment, $$, 1 << JOY_UP );
-    }
-    | JOY DOWN {
-        $$ = variable_temporary( _environment, VT_BYTE, "(DOWN)" )->name;
-        variable_store( _environment, $$, 1 << JOY_DOWN );
-    }
-    | JOY LEFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(LEFT)" )->name;
-        variable_store( _environment, $$, 1 << JOY_LEFT );
-    }
-    | JOY RIGHT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(RIGHT)" )->name;
-        variable_store( _environment, $$, 1 << JOY_RIGHT );
-    }
-    | JOY FIRE {
-        $$ = variable_temporary( _environment, VT_BYTE, "(FIRE)" )->name;
-        variable_store( _environment, $$, 1 << JOY_FIRE );
-    }
-    | INPUT OP expr CP {
-        $$ = input_string( _environment, $3 )->name;
-    }
-    | INPUT OP_DOLLAR OP expr CP {
-        $$ = input_string( _environment, $4 )->name;
-    }
-    | INKEY {
-        $$ = inkey( _environment )->name;
-    }
-    | SCANCODE {
-        $$ = scancode( _environment )->name;
-    }
-    | SCAN CODE {
-        $$ = scancode( _environment )->name;
-    }
-    | ASCIICODE {
-        $$ = asciicode( _environment )->name;
-    }
-    | ASCII CODE {
-        $$ = asciicode( _environment )->name;
-    }
-    | KEY PRESSED OP OP_HASH const_expr CP {
+    BITMAPADDRESS { $$ = strdup( "BITMAPADDRESS" ); } | 
+    JOY OP OP_HASH const_expr CP { $$ = joy( _environment, $4 )->name; } | 
+    JOY OP expr CP { $$ = joy_vars( _environment, $3 )->name; } | 
+    JOYX { $$ = joyx( _environment, 0 )->name; } | 
+    JOYX OP OP_HASH const_expr CP { $$ = joyx( _environment, $4 )->name; } | 
+    JOYX OP expr CP { $$ = joyx_vars( _environment, $3 )->name; } | 
+    JOY X  { $$ = joyx( _environment, 0 )->name; } | 
+    JOY X OP OP_HASH const_expr CP { $$ = joyx( _environment, $5 )->name; } | 
+    JOY X OP expr CP { $$ = joyx_vars( _environment, $4 )->name; } | 
+    JOYY { $$ = joyy( _environment, 0 )->name; } | 
+    JOYY OP OP_HASH const_expr CP { $$ = joyy( _environment, $4 )->name; } | 
+    JOYY OP expr CP { $$ = joyy_vars( _environment, $3 )->name; } | 
+    JOY Y { $$ = joyy( _environment, 0 )->name; } | 
+    JOY Y OP OP_HASH const_expr CP { $$ = joyy( _environment, $5 )->name; } | 
+    JOY Y OP expr CP { $$ = joyy_vars( _environment, $4 )->name; } | 
+    JOYDIR { $$ = joydir( _environment, 0 )->name; } | 
+    JOYDIR OP expr CP { $$ = joydir_semivars( _environment, $3 )->name; } | 
+    JOYDIR OP OP_HASH const_expr CP { $$ = joydir( _environment, $4 )->name; } | 
+    JUP OP expr CP { $$ = joy_direction_semivars( _environment, $3, JOY_UP )->name; } | 
+    JUP { $$ = joy_direction( _environment, 0, JOY_UP )->name; } | 
+    JUP OP OP_HASH const_expr CP { $$ = joy_direction( _environment, $4, JOY_UP )->name; } | 
+    JDOWN OP expr CP { $$ = joy_direction_semivars( _environment, $3, JOY_DOWN )->name; } | 
+    JDOWN { $$ = joy_direction( _environment, 0, JOY_DOWN )->name; } | 
+    JDOWN OP OP_HASH const_expr CP { $$ = joy_direction( _environment, $4, JOY_DOWN )->name; } | 
+    JLEFT OP expr CP { $$ = joy_direction_semivars( _environment, $3, JOY_LEFT )->name; } | 
+    JLEFT { $$ = joy_direction( _environment, 0, JOY_LEFT )->name; } | 
+    JLEFT OP OP_HASH const_expr CP { $$ = joy_direction( _environment, $4, JOY_LEFT )->name; } | 
+    JRIGHT { $$ = joy_direction( _environment, 0, JOY_RIGHT )->name; } | 
+    JRIGHT OP expr CP { $$ = joy_direction_semivars( _environment, $3, JOY_RIGHT )->name; } | 
+    JRIGHT OP OP_HASH const_expr CP { $$ = joy_direction( _environment, $4, JOY_RIGHT )->name; } | 
+    JFIRE { $$ = jfire( _environment, 0 )->name; } | 
+    JFIRE OP expr CP { $$ = jfire_vars( _environment, $3 )->name; } | 
+    JFIRE OP OP_HASH const_expr CP { $$ = jfire( _environment, $4 )->name; } | 
+    FIRE OP expr CP { $$ = jfire_vars( _environment, $3 )->name; } | 
+    FIRE OP OP_HASH const_expr CP { $$ = jfire( _environment, $4 )->name; } | 
+    STRIG { $$ = strig( _environment, 0 )->name; } | 
+    STRIG OP expr CP { $$ = strig_vars( _environment, $3 )->name; } | 
+    STRIG OP OP_HASH const_expr CP { $$ = strig( _environment, $4 )->name; } | 
+    JOY COUNT { $$ = variable_by_constant( _environment, VT_BYTE, JOY_COUNT )->name; } | 
+    JOYCOUNT { $$ = variable_by_constant( _environment, VT_BYTE, JOY_COUNT )->name; } | 
+    BIT OP expr OP_COMMA expr CP { $$ = variable_bit( _environment, $3, $5 )->name; } | 
+    UP { $$ = variable_by_constant( _environment, VT_BYTE, JOY_UP )->name; } | 
+    DOWN { $$ = variable_by_constant( _environment, VT_BYTE, JOY_DOWN )->name; } | 
+    LEFT { $$ = variable_by_constant( _environment, VT_BYTE, JOY_LEFT )->name; } | 
+    RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, JOY_RIGHT )->name; } | 
+    FIRE { $$ = variable_by_constant( _environment, VT_BYTE, JOY_FIRE )->name; } | 
+    JOY UP { $$ = variable_by_constant( _environment, VT_BYTE, 1 << JOY_UP )->name; } | 
+    JOY DOWN { $$ = variable_by_constant( _environment, VT_BYTE, 1 << JOY_DOWN )->name; } | 
+    JOY LEFT { $$ = variable_by_constant( _environment, VT_BYTE, 1 << JOY_LEFT )->name; }  | 
+    JOY RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, 1 << JOY_RIGHT )->name; } | 
+    JOY FIRE { $$ = variable_by_constant( _environment, VT_BYTE, 1 << JOY_FIRE )->name; } | 
+    INPUT OP expr CP { $$ = input_string( _environment, $3 )->name; } | 
+    INPUT OP_DOLLAR OP expr CP { $$ = input_string( _environment, $4 )->name; } |
+    INKEY { $$ = inkey( _environment )->name; } | 
+    SCANCODE { $$ = scancode( _environment )->name; } | 
+    SCAN CODE { $$ = scancode( _environment )->name; } |
+    ASCIICODE { $$ = asciicode( _environment )->name; } |
+    ASCII CODE { $$ = asciicode( _environment )->name; } |
+    KEY PRESSED OP OP_HASH const_expr CP {
         if ( ((Environment *)_environment)->keyPressDutyCycle ) {
             $$ = key_pressed( _environment, $5 )->name;
         } else {
             $$ = key_state( _environment, $5 )->name;
         }
-    }
-    | KEY PRESSED OP expr CP {
+    } | 
+    KEY PRESSED OP expr CP {
         if ( ((Environment *)_environment)->keyPressDutyCycle ) {
             $$ = key_pressed_var( _environment, $4 )->name;
         } else {
             $$ = key_state_var( _environment, $4 )->name;
         }
-    }
-    | KEY STATE OP OP_HASH const_expr CP {
-        $$ = key_state( _environment, $5 )->name;
-    }
-    | KEY STATE OP expr CP {
-        $$ = key_state_var( _environment, $4 )->name;
-    }
-    | KEYSTATE OP expr CP {
-        $$ = key_state_var( _environment, $3 )->name;
-    }
-    | SCANSHIFT {
-        $$ = scanshift( _environment )->name;
-    }
-    | SCAN SHIFT {
-        $$ = scanshift( _environment )->name;
-    }
-    | KEYSHIFT {
-        $$ = keyshift( _environment )->name;
-    }
-    | KEY SHIFT {
-        $$ = keyshift( _environment )->name;
-    }
-    | LEFT SHIFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT)" )->name;
-        variable_store( _environment, $$, SHIFT_LEFT );
-    }
-    | SHIFT LEFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT)" )->name;
-        variable_store( _environment, $$, SHIFT_LEFT );
-    }
-    | RIGHT SHIFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
-        variable_store( _environment, $$, SHIFT_RIGHT );
-    }
-    | SHIFT RIGHT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT)" )->name;
-        variable_store( _environment, $$, SHIFT_RIGHT );
-    }
-    | CAPSLOCK {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CAPSLOCK)" )->name;
-        variable_store( _environment, $$, SHIFT_CAPSLOCK );
-    }
-    | CAPS LOCK {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CAPSLOCK)" )->name;
-        variable_store( _environment, $$, SHIFT_CAPSLOCK );
-    }
-    | CONTROL {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT CONTROL)" )->name;
-        variable_store( _environment, $$, SHIFT_CONTROL );
-    }
-    | LEFT ALT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT ALT)" )->name;
-        variable_store( _environment, $$, SHIFT_LEFT_ALT );
-    }
-    | ALT LEFT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT LEFT ALT)" )->name;
-        variable_store( _environment, $$, SHIFT_LEFT_ALT );
-    }
-    | RIGHT ALT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT ALT)" )->name;
-        variable_store( _environment, $$, SHIFT_RIGHT_ALT );
-    }
-    | ALT RIGHT {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SHIFT RIGHT ALT)" )->name;
-        variable_store( _environment, $$, SHIFT_RIGHT_ALT );
-    }
-    | KEY key_scancode_definition {
-        $$ = $2;
-    }
-    | NOTE const_note {
-        $$ = variable_temporary( _environment, VT_BYTE, "(note)" )->name;
-        variable_store( _environment, $$, $2 );
-    }
-    | filesize OP const_expr_string CP {
-        $$ = variable_temporary( _environment, VT_WORD, "(size)" )->name;
-        variable_store( _environment, $$, file_size( _environment, $3 ) );
-    }
-    | IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
-        $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(if)" )->name;
-        if ( $3 ) {
-          variable_store( _environment, $$, $5 );
-        } else {
-          variable_store( _environment, $$, $7 );
-        }
-    }
-    | IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP {
+    } | 
+    KEY STATE OP OP_HASH const_expr CP { $$ = key_state( _environment, $5 )->name; } | 
+    KEY STATE OP expr CP { $$ = key_state_var( _environment, $4 )->name; } | 
+    KEYSTATE OP expr CP { $$ = key_state_var( _environment, $3 )->name; } | 
+    SCANSHIFT { $$ = scanshift( _environment )->name; } | 
+    SCAN SHIFT { $$ = scanshift( _environment )->name; } | 
+    KEYSHIFT { $$ = keyshift( _environment )->name; } | 
+    KEY SHIFT { $$ = keyshift( _environment )->name; } | 
+    LEFT SHIFT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_LEFT )->name; } | 
+    SHIFT LEFT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_LEFT )->name; } | 
+    RIGHT SHIFT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_RIGHT )->name; } | 
+    SHIFT RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_RIGHT )->name; } | 
+    CAPSLOCK { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_CAPSLOCK )->name; } | 
+    CAPS LOCK { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_CAPSLOCK )->name; } | 
+    CONTROL { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_CONTROL )->name; } | 
+    LEFT ALT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_LEFT_ALT )->name; } | 
+    ALT LEFT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_LEFT_ALT )->name; } | 
+    RIGHT ALT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_RIGHT_ALT )->name; } | 
+    ALT RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, SHIFT_RIGHT_ALT )->name; } | 
+    KEY key_scancode_definition { $$ = $2; } | 
+    NOTE const_note { $$ = variable_by_constant( _environment, VT_BYTE, $2 )->name; } | 
+    filesize OP const_expr_string CP { $$ = variable_by_constant( _environment, VT_BYTE, file_size( _environment, $3 ) )->name; } | 
+    IF OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP { $$ = variable_by_constant( _environment, ((struct _Environment *)_environment)->defaultVariableType, ($3) ? $5 : $7 )->name; } | 
+    IF OP const_expr OP_COMMA const_expr_floating OP_COMMA const_expr_floating CP {
         $$ = variable_temporary( _environment, VT_FLOAT, "(iff)" )->name;
         if ( $3 ) {
           variable_store_float( _environment, $$, $5 );
@@ -3363,9 +3180,7 @@ exponential_less:
           variable_store_string( _environment, $$, $7 );
         }
     }
-    | Identifier OP_PERIOD Identifier {
-        $$ = variable_move_from_type( _environment, $1, $3 )->name;
-    }
+    | Identifier OP_PERIOD Identifier { $$ = variable_move_from_type( _environment, $1, $3 )->name; }
     | OSP Identifier as_datatype_suffix_optional CSP optional_field {
         if ( !((struct _Environment *)_environment)->procedureName ) {
             CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
@@ -3403,13 +3218,6 @@ exponential_less:
             $$ = variable_move_from_array( _environment, $2 )->name;
         }
         parser_array_cleanup( _environment );
-    }
-    ;
-
-exponential:
-    exponential_less
-    | OP expr CP {
-        $$ = $2;
     }
     ;
 
