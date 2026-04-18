@@ -480,7 +480,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_x 
 %type <string> optional_x_or_string
 %type <string> optional_y 
-%type <string> padding_tile
+%type <string> pad_optional
 %type <string> random_definition
 %type <string> random_definition_simple 
 %type <string> serial_function
@@ -1111,6 +1111,10 @@ sprite_flags1:
 sprite_flags:
     { $$ = 0; }  | 
     sprite_flags1 { $$ = $1; };
+
+pad_optional:
+    { $$ = NULL; } | 
+    PAD expr { $$ = $2;};
 
 on_bank_explicit:
     { $$ = 0; } | 
@@ -1821,6 +1825,37 @@ key_scancode_definition:
 /*============================================================================
  ============ EXTENDED SYNTAXES
  ============================================================================*/
+
+// Fix
+optional_x_or_string:
+    RELATIVE expr { $$ = origin_resolution_relative_transform_x( _environment, $2, 1 )->name; } |
+    expr {
+        Variable * t = variable_retrieve( _environment, $1 );
+        if ( ( t->type == VT_STRING ) || ( t->type == VT_DSTRING ) ) {
+            $$ = $1;
+        } else {
+            $$ = origin_resolution_relative_transform_x( _environment, $1, 0 )->name;
+        }
+    } |
+    { $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name; };
+
+mandatory_x:
+    relative_optional expr { $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name; };
+
+mandatory_y:
+    relative_optional expr { $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name; };
+
+optional_x:
+    { $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name; } |
+    relative_optional expr { $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name; };
+
+optional_y:
+    { $$ = origin_resolution_relative_transform_y( _environment, NULL, 0 )->name; } |
+    relative_optional expr { $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name; };
+
+optional_expr:
+    { $$ = NULL; } |
+    expr { $$ = $1; };
 
 /* Buffer definition syntax, with suffixes and prefixes. Note that prefix can
    be omitted, while the suffix could not. */
@@ -3935,70 +3970,16 @@ point_definition:
     point_definition_expression |
     point_definition_simple;
 
-
-
-optional_x_or_string:
-    RELATIVE expr {
-        $$ = origin_resolution_relative_transform_x( _environment, $2, 1 )->name;
-    }
-    |
-    expr {
-        Variable * t = variable_retrieve( _environment, $1 );
-        if ( ( t->type == VT_STRING ) || ( t->type == VT_DSTRING ) ) {
-            $$ = $1;
-        } else {
-            $$ = origin_resolution_relative_transform_x( _environment, $1, 0 )->name;
-        }
-    }
-    |
-    {
-        $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name;
-    }
-    ;
-
-mandatory_x:
-    relative_optional expr {
-        $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
-    };
-
-mandatory_y:
-    relative_optional expr {
-        $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
-    };
-
-optional_x:
-    relative_optional expr {
-        $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
-    }
-    | {
-        $$ = origin_resolution_relative_transform_x( _environment, NULL, 0 )->name;
-    }
-    ;
-
-optional_y:
-    relative_optional expr {
-        $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
-    }
-    | {
-        $$ = origin_resolution_relative_transform_y( _environment, NULL, 0 )->name;
-    }
-    ;
-
-optional_expr:
-    expr {
-        $$ = $1;
-    }
-    | {
-        $$ = NULL;
-    }
-    ;
+/*-----------------------------------------------------------------------------
+ ------------ PLOT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 plot_definition_expression:
-      optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         plot( _environment, $1, $3, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y {
+    } | 
+    optional_x OP_COMMA optional_y {
         plot( _environment, $1, $3, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
@@ -4012,8 +3993,8 @@ plotr_definition_expression:
         Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
         plot( _environment, x->name, y->name, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x->name, y->name );
-    }
-    | expr OP_COMMA expr {
+    } | 
+    expr OP_COMMA expr {
         Variable * x = origin_resolution_relative_transform_x( _environment, $1, 1 );
         Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
         plot( _environment, x->name, y->name, NULL, 0 );
@@ -4023,17 +4004,20 @@ plotr_definition_expression:
 plotr_definition:
     plotr_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ FCIRCLE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 fcircle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | 
+    } | 
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
         fcircle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y OP_COMMA expr {
+    } | 
+    optional_x OP_COMMA optional_y OP_COMMA expr {
         fcircle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
@@ -4041,44 +4025,52 @@ fcircle_definition_expression:
 fcircle_definition:
     fcircle_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ CIRCLE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 circle_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
+    } | 
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA optional_expr {
         circle( _environment, $1, $3, $5, resolve_color( _environment, $7 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y OP_COMMA expr {
+    } | 
+    optional_x OP_COMMA optional_y OP_COMMA expr {
         circle( _environment, $1, $3, $5, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    }
-    | FILL fcircle_definition_expression;
+    } | 
+    FILL fcircle_definition_expression;
 
 circle_definition:
     circle_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ ELLIPSE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 ellipse_definition_expression:
-      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         ellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
+    } | 
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
         ellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    }
-    | FILL fellipse_definition_expression;
+    } | 
+    FILL fellipse_definition_expression;
 
 ellipse_definition:
     ellipse_definition_expression;
 
 fellipse_definition_expression:
-      optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr OP_COMMA optional_expr {
         fellipse( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
+    } | 
+    optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr {
         fellipse( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $1, $3 );
     };
@@ -4086,21 +4078,26 @@ fellipse_definition_expression:
 fellipse_definition:
     fellipse_definition_expression;
 
-get_message_definition_params: {
+/*-----------------------------------------------------------------------------
+ ------------ GET DEFINITION
+ ----------------------------------------------------------------------------*/
+
+get_message_definition_params: 
+    {
         ((struct _Environment *)_environment)->dojoChannelName = NULL;
         ((struct _Environment *)_environment)->dojoObjectName = NULL;
-    } | OP_COMMA expr  {
+    } | 
+    OP_COMMA expr  {
         ((struct _Environment *)_environment)->dojoChannelName = NULL;
         ((struct _Environment *)_environment)->dojoObjectName = strdup( $2 );
-    }
-    | OP_COMMA expr OP_COMMA expr {
+    } | 
+    OP_COMMA expr OP_COMMA expr {
         ((struct _Environment *)_environment)->dojoChannelName = strdup( $2 );
         ((struct _Environment *)_environment)->dojoObjectName = strdup( $4 );
     };
 
 get_definition_expression:
     Identifier as_datatype_suffix_optional get_message_definition_params {
-
         if ( $2 != 0 ) {
             if ( $2 != VT_STRING && $2 != VT_DSTRING ) {
                 CRITICAL_GET_NEED_STRING( $2 );
@@ -4125,113 +4122,95 @@ get_definition_expression:
             Variable * k = inkey( _environment );
             variable_move( _environment, k->name, p->name );
         }
-    } 
-    | OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
+    } | 
+    OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
         get_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
-    }
-    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+    } | 
+    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 0 );
         gr_locate( _environment, $2, $4 );
-    }
-    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA G {
+    } | 
+    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA G {
         get_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, 1 );
         gr_locate( _environment, $2, $4 );
-    }
-    | IMAGE expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    IMAGE expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, 1 );
         gr_locate( _environment, $4, $6 );
-    }
-    | IMAGE expr frame expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    IMAGE expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 1 );
         gr_locate( _environment, $6, $8 );
-    }
-    | IMAGE expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    IMAGE expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
         gr_locate( _environment, $8, $10 );
-    }
-    | BITMAP expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    BITMAP expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, 0 );
         gr_locate( _environment, $4, $6 );
-    }
-    | BITMAP expr frame expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    BITMAP expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, 0 );
         gr_locate( _environment, $6, $8 );
-    }
-    | BITMAP expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
+    } | 
+    BITMAP expr sequence_or_strip expr frame expr FROM optional_x OP_COMMA optional_y  {
         get_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, 1 );
         gr_locate( _environment, $8, $10 );
-    }    
-    ;
+    };
 
 get_definition:
     get_definition_expression;
 
-slice_source_options: {
+/*-----------------------------------------------------------------------------
+ ------------ SLICE DEFINITION
+ ----------------------------------------------------------------------------*/
+
+slice_source_optional: 
+    {
         ((struct _Environment *)_environment)->sliceImageX = NULL;
         ((struct _Environment *)_environment)->sliceImageY = NULL;
-    }
-    |
+    } |
     FROM expr OP_COMMA expr {
         ((struct _Environment *)_environment)->sliceImageX = $2;
         ((struct _Environment *)_environment)->sliceImageY = $4;
     };
 
 slice_definition_expression:
-      IMAGE expr slice_source_options TO Identifier {
-        slice_image( _environment, $2, NULL, NULL, $5 );
-    }
-    | IMAGE expr frame expr slice_source_options TO Identifier {
-        slice_image( _environment, $2, $4, NULL, $7 );
-    }
-    | IMAGE expr frame OP_HASH Identifier slice_source_options TO Identifier {
+    IMAGE expr frame expr slice_source_optional TO Identifier { slice_image( _environment, $2, $4, NULL, $7 ); } |
+    IMAGE expr frame OP_HASH Identifier slice_source_optional TO Identifier {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         slice_image( _environment, $2, calculatedFrame->name, NULL, $8 );
-    }
-    | IMAGE expr sequence_or_strip expr frame expr slice_source_options TO Identifier {
-        slice_image( _environment, $2, $6, $6, $9 );
-    }
-    ;
+    } | 
+    IMAGE expr sequence_or_strip expr frame expr slice_source_optional TO Identifier { slice_image( _environment, $2, $6, $6, $9 ); } |
+    IMAGE expr slice_source_optional TO Identifier { slice_image( _environment, $2, NULL, NULL, $5 ); };
 
 slice_definition:
     slice_definition_expression;
 
-padding_tile:
-    {
-        $$ = NULL;
-    }
-    | PAD expr {
-        $$ = $2;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ PUT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 put_action: 
-    PSET {
-        $$ = 0;   
-    }
-    | PRESET {
-        $$ = 1;
-    }
-    | AND {
-        $$ = 2;   
-    }
-    | OR {
-        $$ = 3;
-    }
-    | NOT {
-        $$ = 4;
-    };
+    PSET { $$ = 0;} |
+    PRESET { $$ = 1; } | 
+    AND { $$ = 2; } | 
+    OR { $$ = 3; } | 
+    NOT { $$ = 4; };
 
 put_definition_expression:
     OP optional_x OP_COMMA optional_y CP OP_COMMA expr {
         put_image( _environment, $7, $2, $4, NULL, NULL, NULL, NULL, FLAG_WITH_PALETTE );
         gr_locate( _environment, $2, $4 );
-    }
-    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+    } | 
+    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         put_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, FLAG_WITH_PALETTE );
         gr_locate( _environment, $2, $4 );
-    }
-    | OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA put_action {
+    } | 
+    OP optional_x OP_COMMA optional_y CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA put_action {
         switch ( $15 )  {
             case 0: // PSET
                 put_image( _environment, $13, $2, $4, $8, $10, NULL, NULL, FLAG_WITH_PALETTE );
@@ -4280,116 +4259,100 @@ put_definition_expression:
                 break;
         }
         gr_locate( _environment, $2, $4 );
-    }
-    | IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    IMAGE expr AT optional_x OP_COMMA optional_y put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         put_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, $7 );
         gr_locate( _environment, $4, $6 );
-    }
-    |  IMAGE expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    IMAGE expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         $9 = $9 | FLAG_WITH_PALETTE;
         put_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
-    }
-    |  IMAGE expr frame OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    IMAGE expr frame OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
         $10 = $10 | FLAG_WITH_PALETTE;
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, $7, $9, NULL, NULL, calculatedFrame->name, NULL, $10 );
         gr_locate( _environment, $7, $9 );
-    }
-    |  IMAGE expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } |
+    IMAGE expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         $11 = $11 | FLAG_WITH_PALETTE;
         put_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, $11 );
         gr_locate( _environment, $8, $10 );
-    }
-    | IMAGE expr put_image_flags {
+    } | 
+    IMAGE expr put_image_flags {
         $3 = $3 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, NULL, NULL, $3 );
-    }
-    | IMAGE expr frame expr put_image_flags {
+    } | 
+    IMAGE expr frame expr put_image_flags {
         $5 = $5 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $4, NULL, $5 );
-    }
-    | IMAGE expr frame OP_HASH Identifier put_image_flags {
+    } | 
+    IMAGE expr frame OP_HASH Identifier put_image_flags {
         $6 = $6 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, calculatedFrame->name, NULL, $6 );
-    }
-    | IMAGE expr sequence_or_strip expr frame expr put_image_flags {
+    } | 
+    IMAGE expr sequence_or_strip expr frame expr put_image_flags {
         $7 = $7 | FLAG_WITH_PALETTE;
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $6, $4, $7 );
-    }
-    |
-      BITMAP expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } |
+    BITMAP expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $4, $6, NULL, NULL, NULL, NULL, $7 );
         gr_locate( _environment, $4, $6 );
-    }
-    | BITMAP expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    BITMAP expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $6, $8, NULL, NULL, $4, NULL, $9 );
         gr_locate( _environment, $6, $8 );
-    }
-    | BITMAP expr frame OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    BITMAP expr frame OP_HASH Identifier AT optional_x OP_COMMA optional_y put_image_flags {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, $7, $9, NULL, NULL, calculatedFrame->name, NULL, $10 );
         gr_locate( _environment, $7, $9 );
-    }
-    | BITMAP expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
+    } | 
+    BITMAP expr sequence_or_strip expr frame expr AT optional_x OP_COMMA optional_y put_image_flags {
         put_image( _environment, $2, $8, $10, NULL, NULL, $6, $4, $11 );
         gr_locate( _environment, $8, $10 );
-    }
-    | BITMAP expr put_image_flags {
+    } | 
+    BITMAP expr put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, NULL, NULL, $3 );
-    }
-    | BITMAP expr frame expr put_image_flags {
+    } | 
+    BITMAP expr frame expr put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $4, NULL, $5 );
-    }
-    | BITMAP expr frame OP_HASH Identifier put_image_flags {
+    } | 
+    BITMAP expr frame OP_HASH Identifier put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, calculatedFrame->name, NULL, $6 );
-    }
-    | BITMAP expr sequence_or_strip expr frame expr put_image_flags {
+    } | 
+    BITMAP expr sequence_or_strip expr frame expr put_image_flags {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $6, $4, $7 );
-    }
-    | TILE expr AT optional_x OP_COMMA optional_y {
-        put_tile( _environment, $2, $4, $6, NULL, NULL );
-    }
-    | TILEMAP Identifier padding_tile put_image_flags {
-        $4 = $4 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $4, NULL, NULL, NULL, $3 );
-    }
-    | TILEMAP Identifier padding_tile LAYER expr put_image_flags {
-        $6 = $6 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $6, NULL, NULL, $5, $3 );
-    }
-    | TILEMAP Identifier padding_tile FROM expr OP_COMMA expr put_image_flags {
-        $8 = $8 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $8, $5, $7, NULL, $3 );
-    }
-    | TILEMAP Identifier padding_tile LAYER expr FROM expr OP_COMMA expr put_image_flags {
-        $10 = $10 | FLAG_WITH_PALETTE;
-        put_tilemap_vars( _environment, $2, $10, $7, $9, $5, $3 );
-    }
-    ;
+    } | 
+    TILE expr AT optional_x OP_COMMA optional_y { put_tile( _environment, $2, $4, $6, NULL, NULL ); } |
+    TILEMAP Identifier pad_optional put_image_flags { put_tilemap_vars( _environment, $2, $4 | FLAG_WITH_PALETTE, NULL, NULL, NULL, $3 ); } | 
+    TILEMAP Identifier pad_optional LAYER expr put_image_flags { put_tilemap_vars( _environment, $2, $6 | FLAG_WITH_PALETTE, NULL, NULL, $5, $3 ); } | 
+    TILEMAP Identifier pad_optional FROM expr OP_COMMA expr put_image_flags { put_tilemap_vars( _environment, $2, $8 | FLAG_WITH_PALETTE, $5, $7, NULL, $3 ); } | 
+    TILEMAP Identifier pad_optional LAYER expr FROM expr OP_COMMA expr put_image_flags { put_tilemap_vars( _environment, $2, $10 | FLAG_WITH_PALETTE, $7, $9, $5, $3 ); };
 
 put_definition:
     put_definition_expression;
