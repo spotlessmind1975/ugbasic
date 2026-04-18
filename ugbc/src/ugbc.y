@@ -424,7 +424,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> raw_optional
 %type <integer> read_safeness
 %type <integer> readonly_optional
-%type <integer> relative_option 
+%type <integer> relative_optional 
 %type <integer> release_optional
 %type <integer> scroll_definition_hdirection 
 %type <integer> scroll_definition_vdirection
@@ -1127,6 +1127,31 @@ on_bank_implicit:
     BANKED { $$ = 1; } | 
     BANKED OP const_expr CP { $$ = $3; } |
     UNBANKED { $$ = 0; };
+
+as_datatype_mandatory: 
+    AS datatype { $$ = $2; };
+
+as_datatype: 
+    { $$ = ((struct _Environment *)_environment)->defaultVariableType; } | 
+    as_datatype_mandatory;
+
+as_datatype_suffix:
+    OP_AMPERSAND { $$ = VT_SDWORD; } | 
+    OP_AMPERSAND OP_AMPERSAND { $$ = VT_NUMBER; } | 
+    OP_AT { $$ = VT_SBYTE; } | 
+    OP_DOLLAR { $$ = VT_DSTRING; } | 
+    OP_DOLLAR2 { $$ = VT_DOJOKA; } |
+    OP_EXCLAMATION { $$ = VT_FLOAT; } | 
+    OP_HASH { $$ = VT_BYTE; } | 
+    OP_PERC { $$ = VT_SWORD; };
+
+as_datatype_suffix_optional: 
+    { $$ = 0; } | 
+    as_datatype_suffix { $$ = $1; };
+
+relative_optional:
+    { $$ = 0; } | 
+    RELATIVE { $$ = 1; };
 
 /*============================================================================
  ============ CONSTANT FACTORS
@@ -3808,62 +3833,20 @@ screen_definition:
     screen_definition_expression |
     screen_definition_simple;
 
+/*-----------------------------------------------------------------------------
+ ------------ GRAPHICS DEFINITION
+ ----------------------------------------------------------------------------*/
+
 graphics_definition_simple:
-    const_expr {   
-      screen_mode( _environment, $1 );
-   } 
-   | OP_HASH Integer {   
-      screen_mode( _environment, $2 );
-  };
+    const_expr { screen_mode( _environment, $1 ); }  | 
+    OP_HASH Integer { screen_mode( _environment, $2 ); };
 
 graphics_definition:
     graphics_definition_simple;
 
-as_datatype_mandatory: 
-    AS datatype {
-        $$ = $2;
-    };
-
-as_datatype: 
-    {
-        $$ = ((struct _Environment *)_environment)->defaultVariableType;
-    }
-    | as_datatype_mandatory;
-
-as_datatype_suffix:
-      OP_AT {
-        $$ = VT_SBYTE;
-    }
-    | OP_HASH {
-        $$ = VT_BYTE;
-    }
-    | OP_PERC {
-        $$ = VT_SWORD;
-    }
-    | OP_AMPERSAND {
-        $$ = VT_SDWORD;
-    }
-    | OP_AMPERSAND OP_AMPERSAND {
-        $$ = VT_NUMBER;
-    }
-    | OP_EXCLAMATION {
-        $$ = VT_FLOAT;
-    }
-    | OP_DOLLAR {
-        $$ = VT_DSTRING;
-    }
-    | OP_DOLLAR2 {
-        $$ = VT_DOJOKA;
-    }
-    ;
-
-as_datatype_suffix_optional: 
-    {
-        $$ = 0;
-    }
-    | as_datatype_suffix {
-        $$ = $1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ VARIABLE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 var_definition_simple:
   Identifier as_datatype {
@@ -3871,35 +3854,30 @@ var_definition_simple:
       if ( $2 == VT_TYPE ) {
         variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
       }
-  }
-  |
-  Identifier as_datatype_suffix {
-      variable_define( _environment, $1, $2, 0 );
-  }
-  | Identifier as_datatype OP_ASSIGN const_expr {
+  } |
+  Identifier as_datatype_suffix { variable_define( _environment, $1, $2, 0 ); } | 
+  Identifier as_datatype OP_ASSIGN const_expr {
       variable_define( _environment, $1, $2, $4 );
       variable_store( _environment, $1, $4 );
-  }
-  | Identifier ON Identifier {
-      variable_define( _environment, $1, VT_BYTE, 0 );
-  }
-  | Identifier as_datatype_suffix ON Identifier {
+  } | 
+  Identifier ON Identifier { variable_define( _environment, $1, VT_BYTE, 0 ); } | 
+  Identifier as_datatype_suffix ON Identifier {
       if ( $2 != 0 ) {
           variable_define( _environment, $1, $2, 0 );        
       } else {
           variable_define( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType, 0 );
       }
-  }
-  | Identifier ON Identifier OP_ASSIGN direct_integer {
+  } | 
+  Identifier ON Identifier OP_ASSIGN direct_integer {
       variable_define( _environment, $1, VT_BYTE, $5 );
       variable_store( _environment, $1, $5 );
-  }
-  | Identifier ON Identifier OP_ASSIGN expr {
+  } | 
+  Identifier ON Identifier OP_ASSIGN expr {
       Variable * v = variable_retrieve( _environment, $5 );
       Variable * d = variable_define( _environment, $1, v->type, v->value );
       variable_move_naked( _environment, v->name, d->name );
-  }
-  | Identifier as_datatype_suffix ON Identifier OP_ASSIGN expr {
+  } | 
+  Identifier as_datatype_suffix ON Identifier OP_ASSIGN expr {
       VariableType vt = $2;
       if ( vt == 0 ) {
         vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -3907,72 +3885,57 @@ var_definition_simple:
       Variable * v = variable_retrieve( _environment, $6 );
       Variable * d = variable_define( _environment, $1, vt, 0 );
       variable_move( _environment, v->name, d->name );
-  }
-  ;
+  };
 
 var_definition_complex:
-    var_definition_simple
-    | var_definition_simple OP_COMMA var_definition_complex;
-
-restore_definition:
-    {
-      restore_label( _environment, NULL );
-    }
-    |
-    expr {
-        restore_label( _environment, $1 );  
-    }
-  ;
-
-cgoto_definition:
-    expr {
-      cgoto( _environment, $1 );
-    }
-  ;
-
-goto_definition:
-    Identifier {
-      goto_label( _environment, $1 );
-  }
-  | Integer {
-      goto_number( _environment, $1 );
-  }
-  ;
-
-gosub_definition:
-    Identifier {
-      gosub_label( _environment, $1 );
-  }
-  | Integer {
-      gosub_number( _environment, $1 );
-  }
-  ;
+    var_definition_simple | 
+    var_definition_simple OP_COMMA var_definition_complex;
 
 var_definition:
     var_definition_complex;
 
+/*-----------------------------------------------------------------------------
+ ------------ RESTORE DEFINITION
+ ----------------------------------------------------------------------------*/
+
+restore_definition:
+    { restore_label( _environment, NULL ); } |
+    expr { restore_label( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ (C)GOTO DEFINITION
+ ----------------------------------------------------------------------------*/
+
+cgoto_definition:
+    expr { cgoto( _environment, $1 ); };
+
+goto_definition:
+    Identifier { goto_label( _environment, $1 ); } | 
+    Integer { goto_number( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ GOSUB DEFINITION
+ ----------------------------------------------------------------------------*/
+
+gosub_definition:
+    Identifier { gosub_label( _environment, $1 ); } | 
+    Integer { gosub_number( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ POINT DEFINITION
+ ----------------------------------------------------------------------------*/
+
 point_definition_simple:
-      AT OP direct_integer OP_COMMA direct_integer CP {
-        point_at( _environment, $3, $5 );
-    }
-    ;
+    AT OP direct_integer OP_COMMA direct_integer CP { point_at( _environment, $3, $5 ); };
 
 point_definition_expression:
-      AT OP optional_x OP_COMMA optional_y CP {
-        point_at_vars( _environment, $3, $5 );
-    };
+    AT OP optional_x OP_COMMA optional_y CP { point_at_vars( _environment, $3, $5 ); };
 
 point_definition:
-    point_definition_simple
-  | point_definition_expression;
+    point_definition_expression |
+    point_definition_simple;
 
-relative_option:
-    {
-        $$ = 0;
-    }
-    | RELATIVE {
-        $$ = 1;
-    };
+
 
 optional_x_or_string:
     RELATIVE expr {
@@ -3994,17 +3957,17 @@ optional_x_or_string:
     ;
 
 mandatory_x:
-    relative_option expr {
+    relative_optional expr {
         $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
     };
 
 mandatory_y:
-    relative_option expr {
+    relative_optional expr {
         $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
     };
 
 optional_x:
-    relative_option expr {
+    relative_optional expr {
         $$ = origin_resolution_relative_transform_x( _environment, $2, $1 )->name;
     }
     | {
@@ -4013,7 +3976,7 @@ optional_x:
     ;
 
 optional_y:
-    relative_option expr {
+    relative_optional expr {
         $$ = origin_resolution_relative_transform_y( _environment, $2, $1 )->name;
     }
     | {
