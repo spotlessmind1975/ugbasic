@@ -2423,27 +2423,13 @@ exponential_less:
 #endif
         $$ = pi->name;
       } | 
-    SQR OP expr CP {
-        $$ = sqroot( _environment, $3 )->name;
-      } | 
-    LOG OP expr CP {
-        $$ = fp_log( _environment, $3 )->name;
-      } | 
-    EXP OP expr CP {
-        $$ = fp_exp( _environment, $3 )->name;
-      } | 
-    SIN OP expr CP {
-        $$ = fp_sin( _environment, $3 )->name;
-      } | 
-    COS OP expr CP {
-        $$ = fp_cos( _environment, $3 )->name;
-      } | 
-    TAN OP expr CP {
-        $$ = fp_tan( _environment, $3 )->name;
-      } | 
-    COMBINE NIBBLE OP expr OP_COMMA expr CP {
-        $$ = combine_nibble_vars( _environment, $4, $6 )->name;
-      } | 
+    SQR OP expr CP { $$ = sqroot( _environment, $3 )->name; } | 
+    LOG OP expr CP { $$ = fp_log( _environment, $3 )->name; } | 
+    EXP OP expr CP { $$ = fp_exp( _environment, $3 )->name; } | 
+    SIN OP expr CP { $$ = fp_sin( _environment, $3 )->name; } | 
+    COS OP expr CP { $$ = fp_cos( _environment, $3 )->name; } | 
+    TAN OP expr CP { $$ = fp_tan( _environment, $3 )->name; } | 
+    COMBINE NIBBLE OP expr OP_COMMA expr CP { $$ = combine_nibble_vars( _environment, $4, $6 )->name; } | 
     NEW TILESET {
         Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
         cpu_store_8bit( _environment, index->realName, ((struct _Environment *)_environment )->tilesetCount );
@@ -2457,39 +2443,17 @@ exponential_less:
         index->value = ++((struct _Environment *)_environment )->tilesetCount;
         $$ = index->name;
       } | 
-    NEW OP const_expr OP_COMMA const_expr CP {        
-        $$ = new_image( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode )->name;
-      } | 
-    NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
-        $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
-      } | 
-    NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
-        $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
-      } | 
-    NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
-        $$ = new_sequence( _environment, $4, $6, $8, $10, ((struct _Environment *)_environment)->currentMode )->name;
-      } | 
-    NEW MUSIC OP const_expr CP {        
-        $$ = new_music( _environment, $4 )->name;
-    } | 
-    LOAD OP String CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, NULL, 0, abs($5), $6 )->name;
-      } | 
-    LOAD OP String AS String CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, $5, 0, abs($7), $8 )->name;
-      } | 
-    LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, NULL, $5, abs($7), $8 )->name;
-      } | 
-    LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags {
-        $$ = load( _environment, $3, $5, $7, abs($9), $10 )->name;
-      } | 
-    LOAD MUSIC OP String CP on_bank_explicit {
-        $$ = music_load( _environment, $4, NULL, abs($6) )->name;
-      } | 
-    LOAD MUSIC OP String AS String CP on_bank_explicit {
-        $$ = music_load( _environment, $4, $6, abs($8) )->name;
-      } | 
+    NEW OP const_expr OP_COMMA const_expr CP { $$ = new_image( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode )->name; } | 
+    NEW IMAGE OP const_expr OP_COMMA const_expr CP { $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name; } | 
+    NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP { $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;} | 
+    NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP { $$ = new_sequence( _environment, $4, $6, $8, $10, ((struct _Environment *)_environment)->currentMode )->name; } | 
+    NEW MUSIC OP const_expr CP { $$ = new_music( _environment, $4 )->name; } | 
+    LOAD OP String CP on_bank_explicit load_flags { $$ = load( _environment, $3, NULL, 0, abs($5), $6 )->name; } | 
+    LOAD OP String AS String CP on_bank_explicit load_flags { $$ = load( _environment, $3, $5, 0, abs($7), $8 )->name; } | 
+    LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags { $$ = load( _environment, $3, NULL, $5, abs($7), $8 )->name; } | 
+    LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags { $$ = load( _environment, $3, $5, $7, abs($9), $10 )->name; } | 
+    LOAD MUSIC OP String CP on_bank_explicit { $$ = music_load( _environment, $4, NULL, abs($6) )->name; } | 
+    LOAD MUSIC OP String AS String CP on_bank_explicit { $$ = music_load( _environment, $4, $6, abs($8) )->name; } | 
     load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * sequence = sequence_load( 
             _environment, 
@@ -2504,8 +2468,8 @@ exponential_less:
             sequence->readonly = $19;
         }
         $$ = sequence->name;
-      }
-    | load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {        
+      } | 
+    load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {        
         Variable * sequence = sequence_load( 
             _environment, 
             $3, NULL, 
@@ -2519,8 +2483,8 @@ exponential_less:
             sequence->readonly = $17;
         }
         $$ = sequence->name;
-      }
-    | load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional strips_definition_optional {
+      } | 
+    load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional strips_definition_optional {
         Variable * images = images_load( _environment, 
             $3, NULL, 
             ((struct _Environment *)_environment)->currentMode, 
@@ -2534,8 +2498,8 @@ exponential_less:
         }
         images->strips = ((struct _Environment *)_environment)->currentStrip;
         $$ = images->name;
-      }
-    | load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * images = images_load( _environment, 
             $3, $5, 
             ((struct _Environment *)_environment)->currentMode, 
@@ -2548,57 +2512,57 @@ exponential_less:
             images->readonly = $11;
         }
         $$ = images->name;
-      }
-    | load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
+      } | 
+    load_tileset OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
         $$ = tileset_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
-      }
-    | load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank_implicit {
+      } | 
+    load_tileset OP String AS String CP images_load_flags  using_transparency using_opacity using_background on_bank_implicit {
         $$ = tileset_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 )->name;
-      }
-    | load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
+      } | 
+    load_tilemap OP String CP images_load_flags using_transparency using_opacity using_background on_bank_implicit {
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
-      }
-    | load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             image->readonly = $10;
         }
         $$ = image->name;
-      }
-    | load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
         if ( $12 ) {
             image->readonly = $12;
         }
         $$ = image->name;
-      }
-    | load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
         if ( $12 ) {
             image->readonly = $12;
         }
         $$ = image->name;
-      }
-    | load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
         if ( $14 ) {
             image->readonly = $14;
         }
         $$ = image->name;
-      }
-    | LOAD TILE OP String CP tile_load_flags {
+      } | 
+    LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
-      }
-    | LOAD TILE OP String OP_COMMA expr CP tile_load_flags {
+      } | 
+    LOAD TILE OP String OP_COMMA expr CP tile_load_flags {
         $$ = tile_load( _environment, $4, $8, $6, -1 )->name;
-      }
-    | LOAD TILES OP String CP tile_load_flags {
+      } | 
+    LOAD TILES OP String CP tile_load_flags {
         $$ = tiles_load( _environment, $4, $6, NULL, -1 )->name;
-      }
-    | LOAD TILES OP String OP_COMMA expr CP tile_load_flags {
+      } | 
+    LOAD TILES OP String OP_COMMA expr CP tile_load_flags {
         $$ = tiles_load( _environment, $4, $8, $6, -1 )->name;
-      }
-    | SIZE OP expr CP {
+      } | 
+    SIZE OP expr CP {
         Variable * v = variable_retrieve( _environment, $3 );
         switch( v->type ) {
             case VT_IMAGE:
@@ -2614,11 +2578,9 @@ exponential_less:
         }
         $$ = variable_temporary( _environment, ((struct _Environment *)_environment)->defaultVariableType, "(size)" )->name;
         variable_store( _environment, $$, v->size );
-      }
-    | color_enumeration { 
-        $$ = $1;
-      }
-    | RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
+      } | 
+    color_enumeration {  $$ = $1; } | 
+    RGB OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {
         Variable * rgb = variable_temporary( _environment, VT_COLOR, "(color)" );
         if ( ((Environment *)_environment)->currentRgbConverterFunction ) {
             variable_store( _environment, rgb->name, ((Environment *)_environment)->currentRgbConverterFunction( $3, $5, $7 ) );
@@ -2627,247 +2589,101 @@ exponential_less:
         }
         rgb->initializedByConstant = 1;
         $$ = rgb->name;
-    }
-    | DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP {
-        $$ = distance( _environment, $3, $5, $7, $9 )->name;
-    }
-    | READ END {
-        $$ = read_end( _environment )->name;
-      }
-    | TRAVEL travel_function {
-        $$ = $2;
-    }
-    | DOJO dojo_functions {
-        $$ = $2;
-    }
-    | dojo_functions {
-        $$ = $1;
-    }
-    | FUJINET fujinet_functions {
-        $$ = $2;
-    }
-    | MEMPEEK OP expr CP {
-        $$ = peek_var( _environment, $3 )->name;
-      }
-    | PEEK OP expr CP {
+    } | 
+    DISTANCE OP optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y CP { $$ = distance( _environment, $3, $5, $7, $9 )->name; } | 
+    READ END { $$ = read_end( _environment )->name; } | 
+    TRAVEL travel_function { $$ = $2; } | 
+    DOJO dojo_functions { $$ = $2; } | 
+    dojo_functions { $$ = $1; } | 
+    FUJINET fujinet_functions { $$ = $2; } | 
+    MEMPEEK OP expr CP { $$ = peek_var( _environment, $3 )->name; } | 
+    PEEK OP expr CP {
         Variable * id = variable_retrieve( _environment, $3 );
         if ( id->type == VT_DOJOKA ) {
             $$ = dojo_peek_message( _environment, $3, NULL )->name;
         } else {
             $$ = peek_var( _environment, $3 )->name;
         }
-      }
-    | PEEKW OP expr CP {
-        $$ = peekw_var( _environment, $3 )->name;
-      }
-    | PEEKD OP expr CP {
-        $$ = peekd_var( _environment, $3 )->name;
-      }
-    | SCREEN OP expr OP_COMMA expr CP {
-        $$ = screen_var( _environment, $3, $5, 0 )->name;
-      }
-    | SCREEN OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = screen_var( _environment, $4, $6, 1 )->name;
-      }
-    | XPEN {
-        $$ = xpen( _environment )->name;
-      }
-    | YPEN {
-        $$ = ypen( _environment )->name;
-      }
-    | SPEN {
-        $$ = spen( _environment )->name;
-      }
-    | XGR {
-        $$ = "XGR";
-      }
-    | YGR {
-        $$ = "YGR";
-      }
-    | INT OP expr CP {
-        $$ = variable_int( _environment, $3 )->name;
-    }
-    | IN OP expr CP {
-        $$ = in_var( _environment, $3 )->name;
-    }
-    | COLLISION OP direct_integer CP {
-        $$ = collision_to( _environment, $3 )->name;
-      }      
-    | COLLISION OP expr CP {
-        $$ = collision_to_vars( _environment, $3 )->name;
-      }      
-    | HIT OP direct_integer CP {
-        $$ = collision_to( _environment, $3 )->name;
-      }      
-    | HIT OP expr CP {
-        $$ = collision_to_vars( _environment, $3 )->name;
-      }      
-    | TILESET OP expr CP {
-        $$ = tileset_of_vars( _environment, $3 )->name;
-    }
-    | TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = tilemap_index_vars( _environment, $4, $6, $8, NULL )->name;
-    }
-    | TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = tilemap_index_vars( _environment, $4, $6, $8, $10 )->name;
-    }
-    | HEX2BIN OP expr TO expr CP {
-        $$ = variable_hex2bin( _environment, $3, $5 )->name;
-    }
-    | ENCRYPT OP expr OP_COMMA expr CP {
-        $$ = encrypt( _environment, $3, $5 )->name;
-    }
-    | DECRYPT OP expr OP_COMMA expr TO Identifier CP {
-        $$ = decrypt( _environment, $3, $5, $7 )->name;
-    }
-    | LEFT OP expr OP_COMMA expr CP {
-        $$ = variable_string_left( _environment, $3, $5 )->name;
-    }
-    | RIGHT OP expr OP_COMMA expr CP {
-        $$ = variable_string_right( _environment, $3, $5 )->name;
-    }
-    | BANK COUNT {
-        $$ = bank_get_count( _environment )->name;
-    }
-    | STRPTR OP expr CP {
-        $$ = strptr( _environment, $3 )->name;
-    }
-    | VARPTR OP Identifier CP {
-        $$ = varptr( _environment, $3 )->name;
-    }
-    | IMAGEREF OP Identifier CP {
-        $$ = image_ref( _environment, $3 )->name;
-    }
-    | CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP {
-        $$ = create_path( _environment, $4, $6, $8, $10  )->name;
-    }
-    | CREATE PATH OP optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr CP {
-        $$ = create_path( _environment, $4, $6, $8, $10  )->name;
-    }
-    | CREATE VECTOR OP expr OP_COMMA expr CP {
-        $$ = create_vector( _environment, $4, $6 )->name;
-    }
-    | VARBANK OP Identifier CP {
+      } | 
+    PEEKW OP expr CP { $$ = peekw_var( _environment, $3 )->name; } | 
+    PEEKD OP expr CP { $$ = peekd_var( _environment, $3 )->name; } | 
+    SCREEN OP expr OP_COMMA expr CP { $$ = screen_var( _environment, $3, $5, 0 )->name; } |
+    SCREEN OP_DOLLAR OP expr OP_COMMA expr CP { $$ = screen_var( _environment, $4, $6, 1 )->name; } |
+    XPEN { $$ = xpen( _environment )->name; } | 
+    YPEN { $$ = ypen( _environment )->name; } | 
+    SPEN { $$ = spen( _environment )->name; } | 
+    XGR { $$ = "XGR"; } | 
+    YGR { $$ = "YGR"; } | 
+    INT OP expr CP { $$ = variable_int( _environment, $3 )->name; } | 
+    IN OP expr CP { $$ = in_var( _environment, $3 )->name; } | 
+    COLLISION OP direct_integer CP { $$ = collision_to( _environment, $3 )->name; } | 
+    COLLISION OP expr CP { $$ = collision_to_vars( _environment, $3 )->name; } | 
+    HIT OP direct_integer CP { $$ = collision_to( _environment, $3 )->name; } | 
+    HIT OP expr CP { $$ = collision_to_vars( _environment, $3 )->name; } | 
+    TILESET OP expr CP { $$ = tileset_of_vars( _environment, $3 )->name; } | 
+    TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr CP { $$ = tilemap_index_vars( _environment, $4, $6, $8, NULL )->name; } |
+    TILEMAP INDEX OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP { $$ = tilemap_index_vars( _environment, $4, $6, $8, $10 )->name; } |
+    HEX2BIN OP expr TO expr CP { $$ = variable_hex2bin( _environment, $3, $5 )->name; } |
+    ENCRYPT OP expr OP_COMMA expr CP { $$ = encrypt( _environment, $3, $5 )->name; } |
+    DECRYPT OP expr OP_COMMA expr TO Identifier CP { $$ = decrypt( _environment, $3, $5, $7 )->name; } |
+    LEFT OP expr OP_COMMA expr CP { $$ = variable_string_left( _environment, $3, $5 )->name; } | 
+    RIGHT OP expr OP_COMMA expr CP { $$ = variable_string_right( _environment, $3, $5 )->name; } |
+    BANK COUNT { $$ = bank_get_count( _environment )->name; } | 
+    STRPTR OP expr CP { $$ = strptr( _environment, $3 )->name; } | 
+    VARPTR OP Identifier CP { $$ = varptr( _environment, $3 )->name; } | 
+    IMAGEREF OP Identifier CP { $$ = image_ref( _environment, $3 )->name; } | 
+    CREATE PATH OP optional_x OP_COMMA optional_y TO expr OP_COMMA expr CP { $$ = create_path( _environment, $4, $6, $8, $10  )->name; } | 
+    CREATE PATH OP optional_x OP_COMMA optional_y OP_COMMA expr OP_COMMA expr CP { $$ = create_path( _environment, $4, $6, $8, $10  )->name; } |
+    CREATE VECTOR OP expr OP_COMMA expr CP { $$ = create_vector( _environment, $4, $6 )->name; } | 
+    VARBANK OP Identifier CP {
         Variable * variable = variable_retrieve( _environment, $3 );
         Variable * bank = variable_temporary( _environment, VT_BYTE, "(bank)");
         variable_store( _environment, bank->name, variable->bankAssigned );
         $$ = bank->name;
-    }
-    | VARBANKPTR OP Identifier CP {
+    } | 
+    VARBANKPTR OP Identifier CP {
         Variable * variable = variable_retrieve( _environment, $3 );
         Variable * ptr = variable_temporary( _environment, VT_ADDRESS, "(ptr)");
         variable_store( _environment, ptr->name, variable->absoluteAddress );
         $$ = ptr->name;
-    }
-    | BANK OP CP {
-        $$ = bank_get( _environment )->name;
-    }
-    | BANK ADDRESS OP OP_HASH const_expr CP {
-        $$ = bank_get_address( _environment, $5 )->name;
-    }
-    | BANK ADDRESS OP expr CP {
-        $$ = bank_get_address_var( _environment, $4 )->name;
-    }
-    | BANK SIZE OP OP_HASH const_expr CP {
-        $$ = bank_get_size( _environment, $5 )->name;
-    }
-    | BANK SIZE OP expr CP {
-        $$ = bank_get_size_var( _environment, $4 )->name;
-    }
-    | INST OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_inst( _environment, $3, $5, $7 )->name;
-    }
-    | INSERT OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_insert( _environment, $3, $5, $7 )->name;
-    }
-    | MID OP expr OP_COMMA expr CP {
-        $$ = variable_string_mid( _environment, $3, $5, NULL )->name;
-    }
-    | MID OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_mid( _environment, $3, $5, $7 )->name;
-    }
-    | SUBSTRING OP expr OP_COMMA expr CP {
-        $$ = variable_string_substring( _environment, $3, $5, NULL )->name;
-    }
-    | SUBSTRING OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_substring( _environment, $3, $5, $7 )->name;
-    }
-    | PLACE OP expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
-    }
-    | PLACE OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
-    }
-    | INSTR OP expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $3, $5, NULL )->name;
-    }
-    | INSTR OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_string_instr( _environment, $3, $5, $7 )->name;
-    }
-    | UCASE OP expr CP {
-        $$ = variable_string_upper( _environment, $3 )->name;
-    }
-    | UPPER OP expr CP {
-        $$ = variable_string_upper( _environment, $3 )->name;
-    }
-    | LCASE OP expr CP {
-        $$ = variable_string_lower( _environment, $3 )->name;
-    }
-    | LOWER OP expr CP {
-        $$ = variable_string_lower( _environment, $3 )->name;
-    }
-    | HEX OP expr CP {
-        $$ = variable_hex( _environment, $3, 0 )->name;
-    }
-    | SERIALIZE OP expr CP {
-        $$ = serialize( _environment, $3, NULL )->name;
-    }
-    | SERIALIZE OP expr OP_COMMA expr CP {
-        $$ = serialize( _environment, $3, $5 )->name;
-    }
-    | DESERIALIZE OP expr TO Identifier CP {
-        $$ = deserialize( _environment, $3, NULL, $5 )->name;
-    }
-    | DESERIALIZE OP expr OP_COMMA expr TO Identifier CP {
-        $$ = deserialize( _environment, $3, $5, $7 )->name;
-    }
-    | OP_DOLLAR2 OP expr CP {
-        $$ = variable_hex( _environment, $3, 0 )->name;
-    }
-    | STR OP expr CP {
-        $$ = variable_string_str( _environment, $3 )->name;
-    }
-    | OP_PERC2 OP expr CP {
-        $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name;
-    }
-    | BIN OP expr CP {
-        $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name;
-    }
-    | BIN OP expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, NULL, NULL )->name;
-    }
-    | BIN OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, NULL, $5, $7 )->name;
-    }
-    | BIN OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = variable_bin( _environment, $3, $5, $7, $9 )->name;
-    }
-    | SPACE OP expr CP {
-        $$ = variable_string_space( _environment, $3 )->name;
-    }
-    | FLIP OP expr CP {
-        $$ = variable_flip( _environment, $3 )->name;
-    }
-    | CHR OP expr CP {
-        $$ = variable_string_chr( _environment, $3 )->name;
-    }
-    | PICK OP expr OP_COMMA const_expr CP {
-        $$ = variable_string_pick( _environment, $3, $5 )->name;
-    }    
-    | ASC OP expr CP {
-        $$ = variable_string_asc( _environment, $3 )->name;
-    }
-    | UBOUND OP expr CP {
+    } | 
+    BANK OP CP { $$ = bank_get( _environment )->name; } | 
+    BANK ADDRESS OP OP_HASH const_expr CP { $$ = bank_get_address( _environment, $5 )->name; } | 
+    BANK ADDRESS OP expr CP { $$ = bank_get_address_var( _environment, $4 )->name; } |
+    BANK SIZE OP OP_HASH const_expr CP { $$ = bank_get_size( _environment, $5 )->name; } |
+    BANK SIZE OP expr CP { $$ = bank_get_size_var( _environment, $4 )->name; } |
+    INST OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_inst( _environment, $3, $5, $7 )->name; } |
+    INSERT OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_insert( _environment, $3, $5, $7 )->name; } |
+    MID OP expr OP_COMMA expr CP { $$ = variable_string_mid( _environment, $3, $5, NULL )->name; } |
+    MID OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_mid( _environment, $3, $5, $7 )->name; } |
+    SUBSTRING OP expr OP_COMMA expr CP { $$ = variable_string_substring( _environment, $3, $5, NULL )->name; } |
+    SUBSTRING OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_substring( _environment, $3, $5, $7 )->name; } |
+    PLACE OP expr OP_COMMA expr CP { $$ = variable_string_instr( _environment, $3, $5, NULL )->name; } |
+    PLACE OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_instr( _environment, $3, $5, $7 )->name; } | 
+    INSTR OP expr OP_COMMA expr CP { $$ = variable_string_instr( _environment, $3, $5, NULL )->name; } |
+    INSTR OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_string_instr( _environment, $3, $5, $7 )->name; } |
+    UCASE OP expr CP { $$ = variable_string_upper( _environment, $3 )->name; } | 
+    UPPER OP expr CP { $$ = variable_string_upper( _environment, $3 )->name; } | 
+    LCASE OP expr CP { $$ = variable_string_lower( _environment, $3 )->name; } |
+    LOWER OP expr CP { $$ = variable_string_lower( _environment, $3 )->name; } | 
+    HEX OP expr CP { $$ = variable_hex( _environment, $3, 0 )->name; } | 
+    SERIALIZE OP expr CP { $$ = serialize( _environment, $3, NULL )->name; } | 
+    SERIALIZE OP expr OP_COMMA expr CP { $$ = serialize( _environment, $3, $5 )->name; } |
+    DESERIALIZE OP expr TO Identifier CP { $$ = deserialize( _environment, $3, NULL, $5 )->name; } |
+    DESERIALIZE OP expr OP_COMMA expr TO Identifier CP { $$ = deserialize( _environment, $3, $5, $7 )->name; } |
+    OP_DOLLAR2 OP expr CP { $$ = variable_hex( _environment, $3, 0 )->name; } |
+    STR OP expr CP { $$ = variable_string_str( _environment, $3 )->name; } |
+    OP_PERC2 OP expr CP { $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name; } |
+    BIN OP expr CP { $$ = variable_bin( _environment, $3, NULL, NULL, NULL )->name; } |
+    BIN OP expr OP_COMMA expr CP { $$ = variable_bin( _environment, $3, $5, NULL, NULL )->name; } |
+    BIN OP expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_bin( _environment, $3, NULL, $5, $7 )->name; } |
+    BIN OP expr OP_COMMA expr OP_COMMA expr OP_COMMA expr CP { $$ = variable_bin( _environment, $3, $5, $7, $9 )->name; } |
+    SPACE OP expr CP { $$ = variable_string_space( _environment, $3 )->name; } |
+    FLIP OP expr CP { $$ = variable_flip( _environment, $3 )->name; } |
+    CHR OP expr CP { $$ = variable_string_chr( _environment, $3 )->name; } |
+    PICK OP expr OP_COMMA const_expr CP { $$ = variable_string_pick( _environment, $3, $5 )->name; } |
+    ASC OP expr CP { $$ = variable_string_asc( _environment, $3 )->name; } |
+    UBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
@@ -2875,8 +2691,8 @@ exponential_less:
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
         variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-1]-1 );
         $$ = value->name;
-    }
-    | UBOUND OP expr OP_COMMA const_expr CP {
+    } | 
+    UBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
@@ -2890,8 +2706,8 @@ exponential_less:
         Variable * value = variable_temporary( _environment, VT_WORD, "(ubound)" );
         variable_store( _environment, value->name, array->arrayDimensionsEach[array->arrayDimensions-$5-1]-1 );
         $$ = value->name;
-    }
-    | LBOUND OP expr CP {
+    } | 
+    LBOUND OP expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
@@ -2899,8 +2715,8 @@ exponential_less:
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
         variable_store( _environment, value->name, 0 );
         $$ = value->name;
-    }
-    | LBOUND OP expr OP_COMMA const_expr CP {
+    } | 
+    LBOUND OP expr OP_COMMA const_expr CP {
         Variable * array = variable_retrieve( _environment, $3 );
         if ( array->type != VT_TARRAY ) {
             CRITICAL_NOT_ARRAY( $3 );
@@ -2914,47 +2730,21 @@ exponential_less:
         Variable * value = variable_temporary( _environment, VT_WORD, "(lbound)" );
         variable_store( _environment, value->name, 0 );
         $$ = value->name;
-    }
-    | ARRAY COUNT OP expr OP_COMMA expr CP {
-        $$ = variable_array_count_vars( _environment, $4, $6 )->name;
-    }
-    | COUNT OP expr OP_COMMA expr CP {
-        $$ = variable_array_count_vars( _environment, $3, $5 )->name;
-    }
-    | ARRAY SUM OP expr CP {
-        $$ = variable_array_sum_vars( _environment, $4 )->name;
-    }
-    | SUM OP expr CP {
-        $$ = variable_array_sum_vars( _environment, $3 )->name;
-    }
-    | ARRAY MAX OP expr CP {
-        $$ = variable_array_max_vars( _environment, $4 )->name;
-    }
-    | MAX OP expr CP {
-        $$ = variable_array_max_vars( _environment, $3 )->name;
-    }
-    | ARRAY MIN OP expr CP {
-        $$ = variable_array_min_vars( _environment, $4 )->name;
-    }
-    | MIN OP expr CP {
-        $$ = variable_array_min_vars( _environment, $3 )->name;
-    }
-    | LEN OP expr CP {
-        $$ = variable_string_len( _environment, $3 )->name;
-    }
-    | DUP OP expr OP_COMMA expr CP {
-        $$ = variable_string_dup( _environment, $3, $5 )->name;
-    }
-    | STRING OP expr OP_COMMA expr CP {
-        $$ = variable_string_string( _environment, $3, $5 )->name;
-    }
-    | VAL OP expr CP {
-        $$ = variable_string_val( _environment, $3 )->name;
-    }
-    | RANDOM random_definition {
-        $$ = $2;
-    }
-    | RND OP expr CP {
+    } | 
+    ARRAY COUNT OP expr OP_COMMA expr CP { $$ = variable_array_count_vars( _environment, $4, $6 )->name; } | 
+    COUNT OP expr OP_COMMA expr CP { $$ = variable_array_count_vars( _environment, $3, $5 )->name; } | 
+    ARRAY SUM OP expr CP { $$ = variable_array_sum_vars( _environment, $4 )->name; } | 
+    SUM OP expr CP { $$ = variable_array_sum_vars( _environment, $3 )->name; } | 
+    ARRAY MAX OP expr CP { $$ = variable_array_max_vars( _environment, $4 )->name; } | 
+    MAX OP expr CP { $$ = variable_array_max_vars( _environment, $3 )->name; } | 
+    ARRAY MIN OP expr CP { $$ = variable_array_min_vars( _environment, $4 )->name; } |
+    MIN OP expr CP { $$ = variable_array_min_vars( _environment, $3 )->name; } |
+    LEN OP expr CP { $$ = variable_string_len( _environment, $3 )->name; } |
+    DUP OP expr OP_COMMA expr CP { $$ = variable_string_dup( _environment, $3, $5 )->name; } |
+    STRING OP expr OP_COMMA expr CP { $$ = variable_string_string( _environment, $3, $5 )->name; } |
+    VAL OP expr CP { $$ = variable_string_val( _environment, $3 )->name; } |
+    RANDOM random_definition { $$ = $2; } | 
+    RND OP expr CP {
         Variable * expr = variable_retrieve( _environment, $3 );
         if ( expr->initializedByConstant ) {
             switch( expr->value ) {
@@ -2971,161 +2761,130 @@ exponential_less:
         } else {
             $$ = rnd( _environment, $3 )->name;
         }
-    }
-    | RANGE OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = range( _environment, $3, $5, $7 )->name;
-    }
-    |
-    casting {
-        $$ = $1;
-    }
-    | FREE {
+    } | 
+    RANGE OP expr OP_COMMA expr OP_COMMA expr CP { $$ = range( _environment, $3, $5, $7 )->name; } |
+    casting { $$ = $1; } | 
+    FREE {
         cpu_dsgc( _environment );
         Variable * var = variable_temporary( _environment, VT_WORD, "(free)" );
         cpu_move_16bit( _environment, "FREE_STRING", var->realName );
         $$ = var->name;
-    }
-    | SCREEN {
+    } | 
+    SCREEN {
         $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
         variable_store( _environment, $$, SCREEN_CAPABILITIES );
-    }
-    | CAN SCREEN direct_integer {
-        $$ = screen_can( _environment, $3 )->name;
-    }
-    | TILEMAP {
+    } | 
+    CAN SCREEN direct_integer { $$ = screen_can( _environment, $3 )->name; } | 
+    TILEMAP {
         $$ = variable_temporary( _environment, VT_BYTE, "(TILEMAP)" )->name;
         variable_store( _environment, $$, TILEMAP_NATIVE );
-    }
-    | BITMAP {
+    } | 
+    BITMAP {
         $$ = variable_temporary( _environment, VT_BYTE, "(BITMAP)" )->name;
         variable_store( _environment, $$, BITMAP_NATIVE );
-    }
-    | POINT OP optional_x OP_COMMA optional_y CP {
-        $$ = point( _environment, $3, $5 )->name;
-    }
-    | MAX OP expr OP_COMMA expr CP {
-        $$ = maximum( _environment, $3, $5 )->name;
-    }
-    | MIN OP expr OP_COMMA expr CP {
-        $$ = minimum( _environment, $3, $5 )->name;
-    }
-    | PARAM OP Identifier on_targets CP  {
+    } | 
+    POINT OP optional_x OP_COMMA optional_y CP { $$ = point( _environment, $3, $5 )->name; } |
+    MAX OP expr OP_COMMA expr CP { $$ = maximum( _environment, $3, $5 )->name; } |
+    MIN OP expr OP_COMMA expr CP { $$ = minimum( _environment, $3, $5 )->name; } |
+    PARAM OP Identifier on_targets CP  {
         if ( $4 ) {
             $$ = param_procedure( _environment, $3 )->name;
         } else {
             Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
             $$ = var->name;
         }
-    }
-    | PARAM OP_DOLLAR OP Identifier on_targets CP  {
+    } | 
+    PARAM OP_DOLLAR OP Identifier on_targets CP  {
         if ( $5 ) {
             $$ = param_procedure( _environment, $4 )->name;
         } else {
             Variable * var = variable_temporary( _environment, VT_WORD, "(temp)" );
             $$ = var->name;
         }
-    }
-    | Identifier OSP {
+    } | 
+    Identifier OSP {
       ((struct _Environment *)_environment)->parameters = 0;
     } values CSP {
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
-    }
-    | Identifier OSP CSP {
+    } | 
+    Identifier OSP CSP {
       ((struct _Environment *)_environment)->parameters = 0;
       call_procedure( _environment, $1 );
       $$ = param_procedure( _environment, $1 )->name;
-    }
-    | RUNNING OP Identifier CP {
-      $$ = running( _environment, $3, NULL )->name;
-    }
-    | RUNNING OP Identifier OP_COMMA Identifier CP {
-      $$ = running( _environment, $3, $5 )->name;
-    }
-    | ANIMATING OP Identifier CP {
-      $$ = animating( _environment, $3, NULL )->name;
-    }
-    | ANIMATING OP Identifier OP_COMMA Identifier CP {
-      $$ = animating( _environment, $3, $5 )->name;
-    }
-    | MOVING OP Identifier CP {
-      $$ = moving( _environment, $3, NULL )->name;
-    }
-    | MOVING OP Identifier OP_COMMA Identifier CP {
-      $$ = moving( _environment, $3, $5 )->name;
-    }
-    | SPAWN Identifier {
+    } | 
+    RUNNING OP Identifier CP { $$ = running( _environment, $3, NULL )->name; } | 
+    RUNNING OP Identifier OP_COMMA Identifier CP { $$ = running( _environment, $3, $5 )->name; } | 
+    ANIMATING OP Identifier CP { $$ = animating( _environment, $3, NULL )->name; } |
+    ANIMATING OP Identifier OP_COMMA Identifier CP { $$ = animating( _environment, $3, $5 )->name; } |
+    MOVING OP Identifier CP { $$ = moving( _environment, $3, NULL )->name; } |
+    MOVING OP Identifier OP_COMMA Identifier CP { $$ = moving( _environment, $3, $5 )->name; } |
+    SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $2, 0 )->name;
-    }
-    | SPAWN Identifier OSP {
+    } | 
+    SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
       $$ = spawn_procedure( _environment, $2, 0 )->name;
-    }
-    | SPAWN Identifier OSP CSP {
+    } | 
+    SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $2, 0 )->name;
-    }
-    | HALTED SPAWN Identifier {
+    } | 
+    HALTED SPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, 1 )->name;
-    }
-    | HALTED SPAWN Identifier OSP {
+    } | 
+    HALTED SPAWN Identifier OSP {
         ((struct _Environment *)_environment)->parameters = 0;
         } values CSP {
       $$ = spawn_procedure( _environment, $3, 1 )->name;
-    }
-    | HALTED SPAWN Identifier OSP CSP {
+    } | 
+    HALTED SPAWN Identifier OSP CSP {
         ((struct _Environment *)_environment)->parameters = 0;
       $$ = spawn_procedure( _environment, $3, 1 )->name;
-    }
-    | RESPAWN Identifier {
+    } | 
+    RESPAWN Identifier {
       ((struct _Environment *)_environment)->parameters = 0;
       $$ = respawn_procedure( _environment, $2 )->name;
-    }
-    | SGN OP expr CP {
-        $$ = sign( _environment, $3 )->name;
-    }
-    | ABS OP expr CP {
-        $$ = absolute( _environment, $3 )->name;
-    }
-    | SERIAL serial_function {
-        $$ = $2;
-    }
-    | TRUE {
+    } | 
+    SGN OP expr CP { $$ = sign( _environment, $3 )->name; } | 
+    ABS OP expr CP { $$ = absolute( _environment, $3 )->name; } | 
+    SERIAL serial_function { $$ = $2; } | 
+    TRUE {
         $$ = variable_temporary( _environment, VT_SBYTE, "(true)" )->name;
         variable_store( _environment, $$, 255 );
-    }
-    | FALSE {
+    } | 
+    FALSE {
         $$ = variable_temporary( _environment, VT_SBYTE, "(false)" )->name;
         variable_store( _environment, $$, 0 );
-    }
-    | COLORS {
+    } | 
+    COLORS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | COLORS COUNT {
+    } | 
+    COLORS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | COLOR COUNT {
+    } | 
+    COLOR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | COLOURS {
+    } | 
+    COLOURS {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | COLOURS COUNT {
+    } | 
+    COLOURS COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | COLOUR COUNT {
+    } | 
+    COLOUR COUNT {
         $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
         variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | THREAD {
+    } | 
+    THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
         cpu_protothread_current( _environment, var->realName );
         $$ = var->name;
