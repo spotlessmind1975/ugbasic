@@ -3760,86 +3760,53 @@ tiles_definition:
  ----------------------------------------------------------------------------*/
 
 font_definition_simple:
-    LOAD String tile_load_flags {
-        tiles_load( _environment, $2, $3 | FLAG_EXACT, NULL, -1 );
-    };
-  | LOAD String TO Integer tile_load_flags {
-        tiles_load( _environment, $2, $5 | FLAG_EXACT, NULL, $4 );
-    };
+    LOAD String tile_load_flags { tiles_load( _environment, $2, $3 | FLAG_EXACT, NULL, -1 ); }; | 
+    LOAD String TO Integer tile_load_flags { tiles_load( _environment, $2, $5 | FLAG_EXACT, NULL, $4 ); };
 
 font_definition:
     font_definition_simple;
 
+/*-----------------------------------------------------------------------------
+ ------------ COLORMAP DEFINITION
+ ----------------------------------------------------------------------------*/
+
 colormap_definition_simple:
-    AT direct_integer {
-      colormap_at( _environment, $2 );
-  }
-  | CLEAR {
-      colormap_clear( _environment );
-  }
-  | CLEAR WITH direct_integer ON direct_integer {
-      colormap_clear_with( _environment, $3, $5 );
-  };
+    AT direct_integer { colormap_at( _environment, $2 ); } | 
+    CLEAR { colormap_clear( _environment ); } | 
+    CLEAR WITH direct_integer ON direct_integer { colormap_clear_with( _environment, $3, $5 ); };
 
 colormap_definition_expression:
-    AT expr {
-      colormap_at_var( _environment, $2 );
-  }
-  | CLEAR WITH expr ON expr {
-      colormap_clear_with_vars( _environment, $3, $5 );
-  };
-  ;
+    AT expr { colormap_at_var( _environment, $2 ); } | 
+    CLEAR WITH expr ON expr { colormap_clear_with_vars( _environment, $3, $5 ); };
 
 colormap_definition:
-    colormap_definition_simple
-  | colormap_definition_expression;
+    colormap_definition_expression |
+    colormap_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ SCREEN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 screen_definition_simple:
-    OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-      screen_type_color_set( _environment, $2, $5 );
-  } 
-  | Integer {   
-      screen_mode( _environment, $1 );
-  }
-  |  direct_integer {   
-      screen_mode( _environment, $1 );
-  }
-  | ON {   
-      screen_on( _environment );
-  }
-  | OFF {
-      screen_off( _environment );
-  }
-  | ROWS direct_integer {
-      screen_rows( _environment, $2 );
-  }
-  | COLUMNS direct_integer {
-      screen_columns( _environment, $2 );
-  }
-  | VERTICAL SCROLL direct_integer {
-      screen_vertical_scroll( _environment, $3 );
-  }
-  | HORIZONTAL SCROLL direct_integer {
-      screen_horizontal_scroll( _environment, $3 );
-  };
+    COLUMNS direct_integer { screen_columns( _environment, $2 ); } |
+    direct_integer { screen_mode( _environment, $1 ); } | 
+    HORIZONTAL SCROLL direct_integer { screen_horizontal_scroll( _environment, $3 ); } |
+    Integer { screen_mode( _environment, $1 ); } |  
+    OFF { screen_off( _environment ); } | 
+    ON { screen_on( _environment ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr { screen_type_color_set( _environment, $2, $5 ); } | 
+    ROWS direct_integer { screen_rows( _environment, $2 ); } | 
+    VERTICAL SCROLL direct_integer { screen_vertical_scroll( _environment, $3 ); };
 
 screen_definition_expression:
-    ROWS expr {
-      screen_rows_var( _environment, $2 );
-  }
-  | COLUMNS expr {
-      screen_columns_var( _environment, $2 );
-  }
-  | VERTICAL SCROLL expr {
-      screen_vertical_scroll_var( _environment, $3 );
-  }
-  | HORIZONTAL SCROLL expr {
-      screen_horizontal_scroll_var( _environment, $3 );
-  };
+    COLUMNS expr { screen_columns_var( _environment, $2 ); } | 
+    HORIZONTAL SCROLL expr { screen_horizontal_scroll_var( _environment, $3 ); } |
+    ROWS expr { screen_rows_var( _environment, $2 ); } | 
+    VERTICAL SCROLL expr { screen_vertical_scroll_var( _environment, $3 ); };
 
 screen_definition:
-    screen_definition_simple
-  | screen_definition_expression;
+    screen_definition_expression |
+    screen_definition_simple;
 
 graphics_definition_simple:
     const_expr {   
