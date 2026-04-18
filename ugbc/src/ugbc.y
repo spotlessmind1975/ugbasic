@@ -1703,111 +1703,40 @@ key_scancode_function_digit:
     F8 { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_F8 ) )->name; };
 
 key_scancode_definition: 
-      NONE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_NONE ) )->name;
-    }
-    | key_scancode_alphadigit {
-        $$ = $1;
-    }
-    | ASTERISK {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_ASTERISK ) )->name;
-    }
-    | AT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_AT ) )->name;
-    }
-    | CLEAR {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CLEAR ) )->name;
-    }
-    | COLON {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COLON ) )->name;
-    }
-    | COMMA {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMA ) )->name;
-    }
-    | COMMODORE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMODORE ) )->name;
-    }
-    | CONTROL {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CONTROL ) )->name;
-    }
-    | CRSR LEFT RIGHT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_LEFT_RIGHT ) )->name;
-    }
-    | CRSR UP DOWN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_UP_DOWN ) )->name;
-    }
-    | DELETE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DELETE ) )->name;
-    }
-    | EQUAL {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_EQUAL ) )->name;
-    }
-    | key_scancode_function_digit {
-        $$ = $1;
-    }
-    | HOME {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_HOME ) )->name;
-    }
-    | TAB {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_TAB ) )->name;
-    }
-    | INSERT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_INSERT ) )->name;
-    }
-    | ARROW LEFT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
-    }
-    | LEFT ARROW {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name;
-    }
-    | LEFT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT ) )->name;
-    }
-    | RIGHT {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RIGHT ) )->name;
-    }
-    | UP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP ) )->name;
-    }
-    | DOWN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DOWN ) )->name;
-    }
-    | ARROW UP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
-    }
-    | UP ARROW {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name;
-    }
-    | MINUS {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_MINUS ) )->name;
-    }
-    | PERIOD {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PERIOD ) )->name;
-    }
-    | PLUS {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PLUS ) )->name;
-    }
-    | POUND {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_POUND ) )->name;
-    }
-    | RETURN {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RETURN ) )->name;
-    }
-    | RUNSTOP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
-    }
-    | RUN STOP {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name;
-    }
-    | SEMICOLON {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SEMICOLON ) )->name;
-    }
-    | SLASH {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SLASH ) )->name;
-    }
-    | SPACE {
-        $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SPACE ) )->name;
-    };
+    ARROW LEFT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name; } |
+    ARROW UP { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name; } |
+    ASTERISK { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_ASTERISK ) )->name; } | 
+    AT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_AT ) )->name; } | 
+    CLEAR { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CLEAR ) )->name; } |
+    COLON { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COLON ) )->name; } |
+    COMMA { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMA ) )->name; } | 
+    COMMODORE { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_COMMODORE ) )->name; } |
+    CONTROL { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CONTROL ) )->name; } | 
+    CRSR LEFT RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_LEFT_RIGHT ) )->name; } |
+    CRSR UP DOWN { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_CRSR_UP_DOWN ) )->name; } |
+    DELETE { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DELETE ) )->name; } | 
+    DOWN { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_DOWN ) )->name; } |
+    EQUAL { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_EQUAL ) )->name; } | 
+    INSERT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_INSERT ) )->name; } |
+    key_scancode_alphadigit { $$ = $1; } | 
+    key_scancode_function_digit { $$ = $1; } | HOME { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_HOME ) )->name; } |
+    LEFT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT ) )->name; } |
+    LEFT ARROW { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_LEFT_ARROW ) )->name; } |
+    MINUS { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_MINUS ) )->name; } |
+    NONE { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_NONE ) )->name; } |
+    PERIOD { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PERIOD ) )->name; } |
+    PLUS { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_PLUS ) )->name; } |
+    POUND { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_POUND ) )->name; } |
+    RETURN { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RETURN ) )->name; } |
+    RIGHT { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RIGHT ) )->name; } |
+    RUN STOP { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name; } |
+    RUNSTOP { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_RUNSTOP ) )->name; } |
+    SEMICOLON { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SEMICOLON ) )->name; } |
+    SLASH { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SLASH ) )->name; } |
+    SPACE { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_SPACE ) )->name; } |
+    TAB { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_TAB ) )->name; } | 
+    UP { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP ) )->name; } | 
+    UP ARROW { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name; };
 
 /*============================================================================
  ============ EXTENDED SYNTAXES
