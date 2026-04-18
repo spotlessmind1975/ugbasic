@@ -541,6 +541,15 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  ============ KEYWORDS ALIAS
  ============================================================================*/
 
+
+image_or_images: 
+    IMAGE | IMAGES | ATLAS
+    ;
+
+bitmap_or_bitmaps: 
+    BITMAP | BITMAPS
+    ;
+
 filesize: FILEX SIZE | FILESIZE | FSIZE;
 float_or_single: FLOAT | SINGLE;
 frame: FRAME | TILE;
@@ -551,7 +560,9 @@ load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
 load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
 load_tileset : LOAD TILESET | TILESET LOAD;
 milliseconds: MS | MILLISECOND | MILLISECONDS;
+op_assign:  OP_ASSIGN  | OP_ASSIGN_DIRECT;
 position: POSITION | AT;
+sequence_or_strip:  SEQUENCE | STRIP;
 ticks: TICK | TICKS;
 
 /*============================================================================
@@ -4357,71 +4368,35 @@ put_definition_expression:
 put_definition:
     put_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ BLIT
+ ----------------------------------------------------------------------------*/
+
 blit_unary_op:
-    COPY {
-        $$ = 1 << ((struct _Environment *)_environment)->currentModeBW;
-    }
-    | INVERSE {
-        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 1;
-    }
-    | VALUE const_expr {
-        $$ = $2 & ( ( 1 << ((struct _Environment *)_environment)->currentModeBW ) - 1 );
-    }
-    | IGNORE {
-        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 2;
-    }
-    | THRESHOLD {
-        $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 3;
-    }
-    ;
+    COPY { $$ = 1 << ((struct _Environment *)_environment)->currentModeBW; } | 
+    IGNORE { $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 2; } | 
+    INVERSE { $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 1; } | 
+    THRESHOLD { $$ = ( 1 << ((struct _Environment *)_environment)->currentModeBW ) + 3; } |
+    VALUE const_expr { $$ = $2 & ( ( 1 << ((struct _Environment *)_environment)->currentModeBW ) - 1 ); };
 
 blit_binary_op:
-    AND {
-        $$ = 0;
-    }
-    | OR {
-        $$ = 1;
-    }
-    | XOR {
-        $$ = 2;
-    }
-    | A {
-        $$ = 3;
-    }
-    | B {
-        $$ = 4;
-    }
-    | COPY A {
-        $$ = 3;
-    }
-    | COPY B {
-        $$ = 4;
-    }
-    | MASKED {
-        $$ = 5;
-    }
-    ;
+    A { $$ = 3; } | 
+    AND { $$ = 0; } | 
+    B { $$ = 4; } | 
+    COPY A { $$ = 3; } | 
+    COPY B { $$ = 4; } | 
+    MASKED { $$ = 5; } |
+    OR { $$ = 1; } | 
+    XOR { $$ = 2; };
 
 blit_operand:
-    SOURCE {
-        $$ = 1;
-    }
-    | SOURCE Integer {
-        $$ = $2;
-    }
-    | DESTINATION {
-        $$ = 0 ;
-    }
-    ;
+    DESTINATION { $$ = 0 ; } |
+    SOURCE { $$ = 1; } | 
+    SOURCE Integer { $$ = $2; };
 
 blit_sources:
-    Identifier {
-        ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
-    }
-    | Identifier {
-        ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 );
-    } OP_COMMA blit_sources
-    ;
+    Identifier { ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 ); } | 
+    Identifier { ((struct _Environment *)_environment)->blit.sources[((struct _Environment *)_environment)->blit.sourceCount++] = strdup( $1 ); } OP_COMMA blit_sources;
 
 blit_expression:
     OP blit_operand CP {
@@ -4437,8 +4412,8 @@ blit_expression:
         // outline3( "; ( O%2.2x (R%2.2X) ) -> R%2.2x", $2, operand, result );
         $$ = result;
 
-    }
-    | OP blit_unary_op blit_operand CP {
+    } | 
+    OP blit_unary_op blit_operand CP {
         // Take a free register for operand
         int operand = cpu_blit_alloc_register( _environment );
         blit_define_compound_operand_to_register( _environment, operand, $3 );
@@ -4450,8 +4425,8 @@ blit_expression:
         cpu_blit_free_register( _environment, operand );
         // outline4( "; ( [%2.2x] O%2.2x (R%2.2x) ) -> R%2.2x", $2, $3, operand, result );
         $$ = result;
-    }
-    | OP blit_operand blit_binary_op blit_operand CP {
+    } | 
+    OP blit_operand blit_binary_op blit_operand CP {
         // Take a free register for operand1
         int operand1 = cpu_blit_alloc_register( _environment );
         blit_define_compound_operand_to_register( _environment, operand1, $2 );
@@ -4468,21 +4443,20 @@ blit_expression:
         cpu_blit_free_register( _environment, operand2 );
         // outline6( "; ( O%2.2x R%2.2x [%2.2x] O%2.2x R%2.2x ) -> R%2.2x", $2, operand1, $3, $4, operand2, result );
         $$ = result;
-    }
-    ;
+    };
 
 blit_compounded:
     blit_expression {
         // outline2( "; R%2.2x -> R%2.2x", $1, $1 );
         // Pass result register
         $$ = $1;
-    }
-    | OP blit_compounded CP {
+    } | 
+    OP blit_compounded CP {
         // outline2( "; (R%2.2x) -> R%2.2x", $2, $2 );
         // Pass result register
         $$ = $2;
-    }
-    | OP blit_unary_op blit_compounded CP {
+    } | 
+    OP blit_unary_op blit_compounded CP {
         // Take a free register for result
         int result = cpu_blit_alloc_register( _environment );
         // B ( result1, result2 ) -> result
@@ -4492,8 +4466,8 @@ blit_compounded:
         // Free operand
         cpu_blit_free_register( _environment, $3 );
         $$ = result;
-    }
-    | OP blit_compounded blit_binary_op blit_compounded CP {
+    } | 
+    OP blit_compounded blit_binary_op blit_compounded CP {
         // Take a free register for result
         int result = cpu_blit_alloc_register( _environment );
         // B ( result1, result2 ) -> result
@@ -4505,13 +4479,7 @@ blit_compounded:
         // Free operands
         cpu_blit_free_register( _environment, $4 );
         $$ = result;
-    }
-    ;
-
-op_assign: 
-    OP_ASSIGN 
-    | OP_ASSIGN_DIRECT
-    ;
+    };
 
 blit_definition_define_expression: 
     Identifier AS {
@@ -4520,23 +4488,10 @@ blit_definition_define_expression:
     } blit_compounded {
         //printf( "R%2.2x -> final\n\n", $4 );
         blit_define_end_compound( _environment, $4 );
-      }
-    | Identifier op_assign blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op {
+      } | 
+    Identifier op_assign blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op OP_COMMA blit_unary_op OP_COMMA blit_binary_op OP_COMMA blit_unary_op {
         blit_define( _environment, $1, $3, $5, $7, $9, $11, $13, $15 );
-      }
-    ;
-
-sequence_or_strip: 
-    SEQUENCE | STRIP
-    ;
-
-image_or_images: 
-    IMAGE | IMAGES | ATLAS
-    ;
-
-bitmap_or_bitmaps: 
-    BITMAP | BITMAPS
-    ;
+      };
 
 blit_definition_expression:
     blit_definition_define_expression
@@ -4606,54 +4561,39 @@ blit_definition_expression:
 blit_definition:
     blit_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ MOVE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 move_definition_expression:
-      TILE expr AT optional_x OP_COMMA optional_y {
-        move_tile( _environment, $2, $4, $6 );
-    }
-    | Identifier WITH Identifier {
-        move( _environment, $1, $3, NULL, NULL, NULL );
-    }
-    | Identifier WITH Identifier SYNC Identifier {
-        move( _environment, $1, $3, NULL, NULL, $5 );
-    }
-    | Identifier TO expr OP_COMMA expr WITH Identifier {
-        move( _environment, $1, $7, $3, $5, NULL );
-    }
-    | Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier {
-        move( _environment, $1, $7, $3, $5, $9 );
-    }    
-    | const_expr OP_COMMA const_expr as_datatype {
+    TILE expr AT optional_x OP_COMMA optional_y { move_tile( _environment, $2, $4, $6 ); } | 
+    Identifier WITH Identifier { move( _environment, $1, $3, NULL, NULL, NULL ); } | 
+    Identifier WITH Identifier SYNC Identifier { move( _environment, $1, $3, NULL, NULL, $5 ); } | 
+    Identifier TO expr OP_COMMA expr WITH Identifier { move( _environment, $1, $7, $3, $5, NULL ); } | 
+    Identifier TO expr OP_COMMA expr WITH Identifier SYNC Identifier { move( _environment, $1, $7, $3, $5, $9 ); } | 
+    const_expr OP_COMMA const_expr as_datatype {
         if ( !((struct _Environment *)_environment)->insideCopperList ) {
             CRITICAL_COPPER_LIST_NOT_OPENED( );
         }
         copper_move( _environment, $1, $3, $4 );
-    }    
-    ;
+    };
 
 move_definition:
     move_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ LINE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 line_mode: 
-    {
-        $$ = 0;
-    }
-    | PSET {
-        $$ = 0;
-    }
-    | PRESET {
-        $$ = 1;
-    };
+    { $$ = 0; } | 
+    PSET { $$ = 0; } | 
+    PRESET {$$ = 1; };
 
 box_mode: 
-    {
-        $$ = 0;
-    }
-    | B {
-        $$ = 1;
-    }
-    | BF {
-        $$ = 2;
-    };
+    { $$ = 0; } | 
+    B { $$ = 1; } | 
+    BF { $$ = 2; };
 
 line_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
