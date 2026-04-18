@@ -3656,61 +3656,41 @@ sprite_definition:
     expr { ((Environment *)_environment)->currentSprite = strdup($1); } sprite_definition_expression | 
     sprite_definition_all_simple;
 
+/*-----------------------------------------------------------------------------
+ ------------ BITMAP DEFINITION
+ ----------------------------------------------------------------------------*/
+
 bitmap_enable_resolution: 
-    {
-        bitmap_enable( _environment, 0, 0, 0 );
-    }
-    | WIDTH const_expr {
-        bitmap_enable( _environment, -$2, 0, $2 );
-    }
-    | HEIGHT const_expr {
-        bitmap_enable( _environment, 0, -$2, $2 );
-    }
-    | OP integer_optional  CP {
-        bitmap_enable( _environment, 0, 0, $2 );
-    }
-    | OP integer_optional OP_COMMA integer_optional CP {
-        bitmap_enable( _environment, $2, $4, 0 );
-    }
-    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
-        bitmap_enable( _environment, $2, $4, $6 );
-    }
+    { bitmap_enable( _environment, 0, 0, 0 ); } | 
+    HEIGHT const_expr { bitmap_enable( _environment, 0, -$2, $2 ); } | 
+    OP integer_optional CP { bitmap_enable( _environment, 0, 0, $2 ); } | 
+    OP integer_optional OP_COMMA integer_optional CP { bitmap_enable( _environment, $2, $4, 0 ); } | 
+    OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP { bitmap_enable( _environment, $2, $4, $6 ); } |
+    WIDTH const_expr { bitmap_enable( _environment, -$2, 0, $2 ); } ;
 
 bitmap_definition_simple:
-    AT direct_integer {
-      bitmap_at( _environment, $2 );
-  } 
-  | bitmap_enable_resolution {
-
-  }
-  | ENABLE bitmap_enable_resolution {
-
-  }
-  | DISABLE {
-      bitmap_disable( _environment );
-  }
-  | CLEAR {
-      cls( _environment, NULL );
-  }
-  | CLEAR WITH direct_integer {
-      Variable * parameter = variable_temporary( _environment, VT_COLOR, "()" );
-      variable_store( _environment, parameter->name, $3 );
-      cls( _environment, parameter->name );
-  }
-  ;
+    AT direct_integer { bitmap_at( _environment, $2 ); }  | 
+    bitmap_enable_resolution { } | 
+    ENABLE bitmap_enable_resolution { } | 
+    DISABLE { bitmap_disable( _environment ); } | 
+    CLEAR { cls( _environment, NULL ); } | 
+    CLEAR WITH direct_integer {
+        Variable * parameter = variable_temporary( _environment, VT_COLOR, "()" );
+        variable_store( _environment, parameter->name, $3 );
+        cls( _environment, parameter->name );
+    };
 
 bitmap_definition_expression:
-    AT expr {
-      bitmap_at_var( _environment, $2 );
-  }
-  | CLEAR WITH expr {
-      cls( _environment, $3 );
-  }
-  ;
+    AT expr { bitmap_at_var( _environment, $2 ); } | 
+    CLEAR WITH expr { cls( _environment, $3 ); };
 
 bitmap_definition:
-    bitmap_definition_simple
-  | bitmap_definition_expression;
+    bitmap_definition_expression |
+    bitmap_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ TEXTNAP ENABLE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 textmap_definition_simple:
     AT direct_integer {
@@ -3720,76 +3700,64 @@ textmap_definition_simple:
         if ( $2 > 0xffff ) {
             CRITICAL_TEXTMAP_ADDRESS_NOT_VALID( $2 );
         }
-      textmap_at( _environment, $2 );
-  };
+        textmap_at( _environment, $2 );
+    };
 
 textmap_definition_expression:
-    AT expr {
-      textmap_at_var( _environment, $2 );
-  };
+    AT expr { textmap_at_var( _environment, $2 ); };
 
 textmap_definition:
     textmap_definition_simple
   | textmap_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ TEXT DEFINITION
+ ----------------------------------------------------------------------------*/
+
 text_definition_expression:
-     AT expr OP_COMMA expr OP_COMMA expr {
-       text_at( _environment, $2, $4, $6 );
-   }
-   | expr OP_COMMA expr OP_COMMA expr {
-       text_at( _environment, $1, $3, $5 );
-   };
+    AT expr OP_COMMA expr OP_COMMA expr { text_at( _environment, $2, $4, $6 ); } | 
+    expr OP_COMMA expr OP_COMMA expr { text_at( _environment, $1, $3, $5 ); };
 
 text_definition:
     text_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ TILEMAP ENABLE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 tilemap_enable_resolution: 
-      {
-        tilemap_enable( _environment, 0, 0, 0, 0, 0 );
-    }
-    | OP integer_optional CP {
-        tilemap_enable( _environment, 0, 0, $2, 0, 0 );
-    }
-    | OP integer_optional OP_COMMA integer_optional CP {
-        tilemap_enable( _environment, $2, $4, 0, 0, 0 );
-    }
-    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
-        tilemap_enable( _environment, $2, $4, $6, 0, 0 );
-    }
-    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
-        tilemap_enable( _environment, $2, $4, $6, $8, $10 );
-    };
+    { tilemap_enable( _environment, 0, 0, 0, 0, 0 ); } | 
+    OP integer_optional CP { tilemap_enable( _environment, 0, 0, $2, 0, 0 ); } | 
+    OP integer_optional OP_COMMA integer_optional CP { tilemap_enable( _environment, $2, $4, 0, 0, 0 ); } |
+    OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP { tilemap_enable( _environment, $2, $4, $6, 0, 0 ); } |
+    OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP { tilemap_enable( _environment, $2, $4, $6, $8, $10 ); };
 
 tilemap_definition_simple:
-    ENABLE tilemap_enable_resolution {
-
-  }
-  | DISABLE {
-      tilemap_disable( _environment );
-  };
+    DISABLE { tilemap_disable( _environment ); } |
+    ENABLE tilemap_enable_resolution { };
 
 tilemap_definition:
     tilemap_definition_simple;
 
+/*-----------------------------------------------------------------------------
+ ------------ TILES DEFINITION
+ ----------------------------------------------------------------------------*/
+
 tiles_definition_simple:
-    AT direct_integer {
-      tiles_at( _environment, $2 );
-  }
-  | LOAD String tile_load_flags {
-        tiles_load( _environment, $2, $3, NULL, -1 );
-    };
-  | LOAD String TO Integer tile_load_flags {
-        tiles_load( _environment, $2, $5, NULL, $4 );
-    };
+    AT direct_integer { tiles_at( _environment, $2 ); } | 
+    LOAD String tile_load_flags { tiles_load( _environment, $2, $3, NULL, -1 ); }; | 
+    LOAD String TO Integer tile_load_flags { tiles_load( _environment, $2, $5, NULL, $4 ); };
 
 tiles_definition_expression:
-    AT expr {
-      tiles_at_var( _environment, $2 );
-  };
+    AT expr { tiles_at_var( _environment, $2 ); };
 
 tiles_definition:
-    tiles_definition_simple
-  | tiles_definition_expression;
+    tiles_definition_expression |
+    tiles_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ FONT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 font_definition_simple:
     LOAD String tile_load_flags {
