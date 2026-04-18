@@ -411,7 +411,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> option_name
 %type <integer> option_read
 %type <integer> optional_endianess
-%type <integer> optional_integer
+%type <integer> integer_optional
 %type <integer> optional_loop
 %type <integer> origin_direction 
 %type <integer> PALETTE1
@@ -438,8 +438,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> strip_definition_id_optional
 %type <integer> system
 %type <integer> target targets
-%type <integer> tile_load_flag
-%type <integer> tile_load_flags 
+%type <integer> tile_load_flag%type <integer> tile_load_flags 
 %type <integer> tile_load_flags1 
 %type <integer> using_background
 %type <integer> using_opacity
@@ -476,7 +475,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_expr 
 %type <string> optional_field
 %type <string> optional_next_animation
-%type <string> optional_period
+%type <string> period_optional
 %type <string> optional_step
 %type <string> optional_x 
 %type <string> optional_x_or_string
@@ -1083,6 +1082,14 @@ images_load_flags:
 release_optional:
     { $$ = 0; } | 
     RELEASE { $$ = 1; };
+
+integer_optional: 
+    { $$ = 0; } |
+    Integer { $$ = $1; };
+
+period_optional: 
+    { $$ = NULL; } | 
+    PERIOD Identifier { $$ = $2; };
 
 sequence_load_flags:
     { $$ = 0; } | 
@@ -3377,17 +3384,14 @@ color_definition:
     color_definition_simple
   | color_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ WAIT DEFINITION
+ ----------------------------------------------------------------------------*/
+
 wait_definition_simple:
-    direct_integer CYCLES parallel_optional {
-      wait_cycles( _environment, $1, $3 );
-    }
-    | LINE const_expr {
-      copper_wait( _environment, $2 );
-    }
-    | direct_integer ticks {
-      wait_ticks( _environment, $1 );
-    }
-    | direct_integer parallel_optional {
+    direct_integer CYCLES parallel_optional { wait_cycles( _environment, $1, $3 ); } | 
+    direct_integer milliseconds { wait_milliseconds( _environment, $1 ); } | 
+    direct_integer parallel_optional {
       if ( !((struct _Environment *)_environment)->insideCopperList ) {
         wait_cycles( _environment, $1, $2 );
       } else if ( $2 ) {
@@ -3395,32 +3399,16 @@ wait_definition_simple:
       } else {
         copper_wait( _environment, $1 );
       }
-    }
-    | direct_integer milliseconds {
-      wait_milliseconds( _environment, $1 );
-    }
-    | FIRE release_optional {
-        wait_fire( _environment, -1, $2 );
-    }
-    | FIRE OP OP_HASH const_expr CP release_optional {
-        wait_fire( _environment, $4, $6 );
-    }
-    | KEY OR FIRE release_optional {
-        wait_key_or_fire( _environment, -1, $4 );
-    }
-    | KEY OR FIRE OP OP_HASH const_expr CP release_optional {
-        wait_key_or_fire( _environment, $6, $8 );
-    }
-    | KEY release_optional {
-        wait_key( _environment, $2 );
-    }
-    | VBL {
-      wait_vbl( _environment, NULL );
-    }
-    | VBL expr {
-      wait_vbl( _environment, $2 );
-    }    
-    ;
+    } | 
+    direct_integer ticks { wait_ticks( _environment, $1 ); } | 
+    FIRE OP OP_HASH const_expr CP release_optional { wait_fire( _environment, $4, $6 ); } | 
+    FIRE release_optional { wait_fire( _environment, -1, $2 ); } | 
+    KEY OR FIRE OP OP_HASH const_expr CP release_optional { wait_key_or_fire( _environment, $6, $8 ); } |
+    KEY OR FIRE release_optional { wait_key_or_fire( _environment, -1, $4 ); } | 
+    KEY release_optional { wait_key( _environment, $2 ); } | 
+    LINE const_expr { copper_wait( _environment, $2 ); } | 
+    VBL { wait_vbl( _environment, NULL ); } | 
+    VBL expr { wait_vbl( _environment, $2 ); };
 
 wait_definition_expression:
     expr CYCLES parallel_optional {
@@ -3430,50 +3418,49 @@ wait_definition_expression:
         } else {
             wait_cycles_var( _environment, $1, $3 );
         }
-    }
-    | expr ticks {
+    } | 
+    expr ticks {
         Variable * expr = variable_retrieve( _environment, $1 );
         if ( expr->initializedByConstant ) {
             wait_ticks( _environment, expr->value );
         } else {
             wait_ticks_var( _environment, $1 );
         }
-    }
-    | expr milliseconds {
+    } | 
+    expr milliseconds {
         Variable * expr = variable_retrieve( _environment, $1 );
         if ( expr->initializedByConstant ) {
             wait_milliseconds( _environment, expr->value );
         } else {
             wait_milliseconds_var( _environment, $1 );
         }
-    }
-    | FIRE OP expr CP release_optional {
-        wait_fire_semivar( _environment, $3, $5 );
-    }
-    | KEY OR FIRE OP expr CP release_optional {
-        wait_key_or_fire_semivar( _environment, $5, $7 );
-    }
-    | UNTIL { 
+    } | 
+    FIRE OP expr CP release_optional { wait_fire_semivar( _environment, $3, $5 ); } | 
+    KEY OR FIRE OP expr CP release_optional { wait_key_or_fire_semivar( _environment, $5, $7 ); } | 
+    UNTIL { 
         wait_until( _environment );  
     } expr {
         wait_until_condition( _environment, $3 );  
-    }
-    | WHILE { 
+    } | 
+    WHILE { 
         wait_while( _environment );  
     } expr {
         wait_while_condition( _environment, $3 );  
-    }
-    | PARALLEL expr { 
+    } | 
+    PARALLEL expr { 
         wait_parallel( _environment, $2 );  
-    }
-    ;
+    };
 
 wait_definition:
-    wait_definition_simple
-  | wait_definition_expression;
+    wait_definition_simple | 
+    wait_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ SLEEP DEFINITION
+ ----------------------------------------------------------------------------*/
 
 sleep_definition_simple:
-      OP_HASH const_expr {
+    OP_HASH const_expr {
       wait_milliseconds( _environment, $2 * 1000 );
     };
 
@@ -3481,303 +3468,193 @@ sleep_definition_expression:
     expr {
         Variable * seconds = variable_retrieve_or_define( _environment, $1, VT_WORD, 0 );
         wait_milliseconds_var( _environment, variable_mul2_const( _environment, seconds->name, 1024 )->name );
-    }
-    ;
-
-sleep_definition:
-    sleep_definition_simple
-  | sleep_definition_expression;
-
-fade_in_palette:
-    OP_HASH const_expr {
-        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
-    }
-    | expr {
-        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-    }
-    | OP_HASH const_expr {
-        fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
-    } OP_COMMA fade_in_palette
-    | expr {
-        fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-    } OP_COMMA fade_in_palette;
-
-optional_period: {
-    $$ = NULL;
-    }
-    | PERIOD Identifier {
-        $$ = $2;
     };
 
+sleep_definition:
+    sleep_definition_expression |
+    sleep_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ FADE DEFINITION
+ ----------------------------------------------------------------------------*/
+
+fade_in_palette:
+    expr { fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } | 
+    OP_HASH const_expr { fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 ); } | 
+    expr { fade_in_color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } OP_COMMA fade_in_palette |
+    OP_HASH const_expr { fade_in_color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 ); } OP_COMMA fade_in_palette;
+
 fade_definition:
-    OUT {
-      fade_out( _environment, NULL );
-    }
-    | OUT PERIOD expr {
-      fade_out( _environment, $3 );
-    }
-    | IN {
-      fade_in( _environment, NULL );
-    }
-    | IN {
+    IN { fade_in( _environment, NULL ); } | 
+    IN {
       ((struct _Environment *)_environment)->paletteIndex = 0;
-    } fade_in_palette optional_period {
+    } fade_in_palette period_optional {
       fade_in( _environment, $4 );
-    }
-    | IN PERIOD expr {
-      fade_in( _environment, $3 );
-    }
-    ;
+    } | 
+    IN PERIOD expr { fade_in( _environment, $3 ); } |
+    OUT { fade_out( _environment, NULL ); } | 
+    OUT PERIOD expr { fade_out( _environment, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SPRITE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 sprite_definition_action_simple:
-    MULTICOLOR {
-      sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | MULTICOLOUR {
-      sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | MONOCOLOR {
-      sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | MONOCOLOUR {
-      sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | COLOR direct_integer {
-      sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 );
-  }
-  | COLOUR direct_integer {
-      sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 );
-  }
-  | position direct_integer OP_COMMA direct_integer {
-      sprite_at( _environment, ((Environment *)_environment)->currentSpriteNumber, $2, $4 );
-  }
-  | ENABLE {
-      sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | ON {
-      sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | DISABLE {
-      sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | OFF {
-      sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | EXPAND VERTICAL {
-      sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | COMPRESS VERTICAL {
-      sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | VERTICAL EXPAND {
-      sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | VERTICAL COMPRESS {
-      sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | EXPAND HORIZONTAL {
-      sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | COMPRESS HORIZONTAL {
-      sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | HORIZONTAL EXPAND {
-      sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  | HORIZONTAL COMPRESS {
-      sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber );
-  }
-  ;
+    COLOR direct_integer { sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 ); } | 
+    COLOUR direct_integer { sprite_color( _environment, ((Environment *)_environment)->currentSpriteNumber, $2 ); } |
+    COMPRESS HORIZONTAL { sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    COMPRESS VERTICAL { sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    DISABLE { sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    ENABLE { sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    EXPAND HORIZONTAL { sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    EXPAND VERTICAL { sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    HORIZONTAL COMPRESS { sprite_compress_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    HORIZONTAL EXPAND { sprite_expand_horizontal( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    MONOCOLOR { sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    MONOCOLOUR { sprite_monocolor( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    MULTICOLOR { sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    MULTICOLOUR { sprite_multicolor( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    OFF { sprite_disable( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    ON { sprite_enable( _environment, ((Environment *)_environment)->currentSpriteNumber ); } | 
+    position direct_integer OP_COMMA direct_integer { sprite_at( _environment, ((Environment *)_environment)->currentSpriteNumber, $2, $4 ); } |
+    VERTICAL COMPRESS { sprite_compress_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber ); } |
+    VERTICAL EXPAND { sprite_expand_vertical( _environment, ((Environment *)_environment)->currentSpriteNumber ); };
 
 sprite_definition_simple:
-    sprite_definition_action_simple
-    | sprite_definition_action_simple sprite_definition_simple;
+    sprite_definition_action_simple | 
+    sprite_definition_action_simple sprite_definition_simple;
 
 sprite_definition_all_action_simple:
-  | ENABLE {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_enable( _environment, i );
-    }
-  }
-  | ON {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_enable( _environment, i );
-    }
-  }
-  | DISABLE {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_disable( _environment, i );
-    }
-  }
-  | OFF {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_disable( _environment, i );
-    }
-  }
-  | MULTICOLOR {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_multicolor( _environment, i );
-    }
-  }
-  | MULTICOLOUR {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_multicolor( _environment, i );
-    }
-  }
-  | MONOCOLOR {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_monocolor( _environment, i );
-    }
-  }
-  | MONOCOLOUR {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_monocolor( _environment, i );
-    }
-  }
-  | COLOR direct_integer {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_color( _environment, i, $2 );
-    }
-  }
-  | COLOUR direct_integer {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_color( _environment, i, $2 );
-    }
-  }
-  | position direct_integer OP_COMMA direct_integer {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_at( _environment, i, $2, $4 );
-    }
-  }
-  | EXPAND VERTICAL {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_expand_vertical( _environment, i );
-    }
-  }
-  | COMPRESS VERTICAL {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_compress_vertical( _environment, i );
-    }
-  }
-  | VERTICAL EXPAND {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_expand_vertical( _environment, i );
-    }
-  }
-  | VERTICAL COMPRESS {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_compress_vertical( _environment, i );
-    }
-  }
-  | EXPAND HORIZONTAL {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_expand_horizontal( _environment, i );
-    }
-  }
-  | COMPRESS HORIZONTAL {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_compress_horizontal( _environment, i );
-    }
-  }
-  | HORIZONTAL EXPAND {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_expand_horizontal( _environment, i );
-    }
-  }
-  | HORIZONTAL COMPRESS {
-    for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
-        sprite_compress_horizontal( _environment, i );
-    }
-  }
-  ;
+    | 
+    ENABLE {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_enable( _environment, i );
+        }
+    } | 
+    ON {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_enable( _environment, i );
+        }
+    } | 
+    DISABLE {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_disable( _environment, i );
+        }
+    } | 
+    OFF {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_disable( _environment, i );
+        }
+    } | 
+    MULTICOLOR {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_multicolor( _environment, i );
+        }
+    } | 
+    MULTICOLOUR {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_multicolor( _environment, i );
+        }
+    } | 
+    MONOCOLOR {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_monocolor( _environment, i );
+        }
+    } | 
+    MONOCOLOUR {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_monocolor( _environment, i );
+        }
+    } | 
+    COLOR direct_integer {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_color( _environment, i, $2 );
+        }
+    } | 
+    COLOUR direct_integer {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_color( _environment, i, $2 );
+        }
+    } | 
+    position direct_integer OP_COMMA direct_integer {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_at( _environment, i, $2, $4 );
+        }
+    } | 
+    EXPAND VERTICAL {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_expand_vertical( _environment, i );
+        }
+    } | 
+    COMPRESS VERTICAL {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_compress_vertical( _environment, i );
+        }
+    } | 
+    VERTICAL EXPAND {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_expand_vertical( _environment, i );
+        }
+    } | 
+    VERTICAL COMPRESS {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_compress_vertical( _environment, i );
+        }
+    } | 
+    EXPAND HORIZONTAL {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_expand_horizontal( _environment, i );
+        }
+    } | 
+    COMPRESS HORIZONTAL {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_compress_horizontal( _environment, i );
+        }
+    } | 
+    HORIZONTAL EXPAND {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_expand_horizontal( _environment, i );
+        }
+    } | HORIZONTAL COMPRESS {
+        for( int i=0; i<(SPRITE_COUNT-1); ++i ) {
+            sprite_compress_horizontal( _environment, i );
+        }
+    };
 
 sprite_definition_all_simple:
     sprite_definition_all_action_simple;
 
 sprite_definition_action_expression:
-    MULTICOLOR {
-      sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | MULTICOLOUR {
-      sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | MONOCOLOR {
-      sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | MONOCOLOUR {
-      sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | COLOR expr {
-      sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 );
-  }
-  | COLOUR expr {
-      sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 );
-  }
-  | position expr OP_COMMA expr {
-      sprite_at_vars( _environment, ((Environment *)_environment)->currentSprite, $2, $4 );
-  }
-  | ENABLE {
-      sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | ON {
-      sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | DISABLE {
-      sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | OFF {
-      sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | EXPAND VERTICAL {
-      sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | COMPRESS VERTICAL {
-      sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | VERTICAL EXPAND {
-      sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | VERTICAL COMPRESS {
-      sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | EXPAND HORIZONTAL {
-      sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | COMPRESS HORIZONTAL {
-      sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | HORIZONTAL EXPAND {
-      sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | HORIZONTAL COMPRESS {
-      sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite );
-  }
-  | REPLACE Identifier {
-      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, 0 )->name;
-  }
-  | REPLACE Identifier OP sprite_flags CP {
-      sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, $4 )->name;
-  };
+    COLOR expr { sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 ); } |
+    COLOUR expr { sprite_color_vars( _environment, ((Environment *)_environment)->currentSprite, $2 ); } | 
+    COMPRESS HORIZONTAL { sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    COMPRESS VERTICAL { sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    DISABLE { sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    ENABLE { sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    EXPAND HORIZONTAL { sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    EXPAND VERTICAL { sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    HORIZONTAL COMPRESS { sprite_compress_horizontal_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    HORIZONTAL EXPAND { sprite_expand_horizontal_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    MONOCOLOR { sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    MONOCOLOUR { sprite_monocolor_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    MULTICOLOR { sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    MULTICOLOUR { sprite_multicolor_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    OFF { sprite_disable_var( _environment, ((Environment *)_environment)->currentSprite ); } | 
+    ON { sprite_enable_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    position expr OP_COMMA expr { sprite_at_vars( _environment, ((Environment *)_environment)->currentSprite, $2, $4 ); } |
+    REPLACE Identifier { sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, 0 )->name; } | 
+    REPLACE Identifier OP sprite_flags CP { sprite_init( _environment, $2, ((Environment *)_environment)->currentSprite, $4 )->name;} |
+    VERTICAL COMPRESS { sprite_compress_vertical_var( _environment, ((Environment *)_environment)->currentSprite ); } |
+    VERTICAL EXPAND { sprite_expand_vertical_var( _environment, ((Environment *)_environment)->currentSprite ); };
 
 sprite_definition_expression:
-    sprite_definition_action_expression
-    | sprite_definition_action_expression sprite_definition_expression;
+    sprite_definition_action_expression | 
+    sprite_definition_action_expression sprite_definition_expression;
 
 sprite_definition:
-    direct_integer {
-        ((Environment *)_environment)->currentSpriteNumber = $1;
-    } sprite_definition_simple
-  | expr {
-        ((Environment *)_environment)->currentSprite = strdup($1);
-    } sprite_definition_expression
-  | sprite_definition_all_simple;
-
-optional_integer: 
-    Integer {
-        $$ = $1;
-    } | {
-        $$ = 0;
-    };
+    direct_integer { ((Environment *)_environment)->currentSpriteNumber = $1; } sprite_definition_simple |
+    expr { ((Environment *)_environment)->currentSprite = strdup($1); } sprite_definition_expression | 
+    sprite_definition_all_simple;
 
 bitmap_enable_resolution: 
     {
@@ -3789,13 +3666,13 @@ bitmap_enable_resolution:
     | HEIGHT const_expr {
         bitmap_enable( _environment, 0, -$2, $2 );
     }
-    | OP optional_integer  CP {
+    | OP integer_optional  CP {
         bitmap_enable( _environment, 0, 0, $2 );
     }
-    | OP optional_integer OP_COMMA optional_integer CP {
+    | OP integer_optional OP_COMMA integer_optional CP {
         bitmap_enable( _environment, $2, $4, 0 );
     }
-    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
+    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
         bitmap_enable( _environment, $2, $4, $6 );
     }
 
@@ -3870,16 +3747,16 @@ tilemap_enable_resolution:
       {
         tilemap_enable( _environment, 0, 0, 0, 0, 0 );
     }
-    | OP optional_integer CP {
+    | OP integer_optional CP {
         tilemap_enable( _environment, 0, 0, $2, 0, 0 );
     }
-    | OP optional_integer OP_COMMA optional_integer CP {
+    | OP integer_optional OP_COMMA integer_optional CP {
         tilemap_enable( _environment, $2, $4, 0, 0, 0 );
     }
-    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
+    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
         tilemap_enable( _environment, $2, $4, $6, 0, 0 );
     }
-    | OP optional_integer OP_COMMA optional_integer OP_COMMA optional_integer OP_COMMA optional_integer OP_COMMA optional_integer CP {
+    | OP integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional OP_COMMA integer_optional CP {
         tilemap_enable( _environment, $2, $4, $6, $8, $10 );
     };
 
