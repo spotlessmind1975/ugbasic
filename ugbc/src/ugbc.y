@@ -1236,7 +1236,7 @@ const_factor:
     }
     | PAGE Integer {
         if ( ($2 != 0) && ($2 != 1) ) {
-        CRITICAL_PAGE01();
+            CRITICAL_PAGE01();
         }
         $$ = $2;
     }
@@ -2401,26 +2401,26 @@ exponential_less:
     } | 
     PI {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
-#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
-    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
-    defined(__vz200__)
-        variable_store_float( _environment, pi->name, M_PI );
-#else
-        cpu_move_32bit( _environment, "PI", pi->realName );
-#endif
+        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
+            defined(__vz200__)
+                variable_store_float( _environment, pi->name, M_PI );
+        #else
+                cpu_move_32bit( _environment, "PI", pi->realName );
+        #endif
         $$ = pi->name;
       } | 
     PI OP CP {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
-#if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
-    defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-    defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
-    defined(__vz200__)
-        variable_store_float( _environment, pi->name, M_PI );
-#else
-        cpu_move_32bit( _environment, "PI", pi->realName );
-#endif
+        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) ||  defined(__gb__) || \
+            defined(__vz200__)
+                variable_store_float( _environment, pi->name, M_PI );
+        #else
+                cpu_move_32bit( _environment, "PI", pi->realName );
+        #endif
         $$ = pi->name;
       } | 
     SQR OP expr CP { $$ = sqroot( _environment, $3 )->name; } | 
@@ -2770,19 +2770,10 @@ exponential_less:
         cpu_move_16bit( _environment, "FREE_STRING", var->realName );
         $$ = var->name;
     } | 
-    SCREEN {
-        $$ = variable_temporary( _environment, VT_BYTE, "(SCREEN)" )->name;
-        variable_store( _environment, $$, SCREEN_CAPABILITIES );
-    } | 
+    SCREEN { $$ = variable_by_constant( _environment, VT_BYTE, SCREEN_CAPABILITIES)->name; } | 
     CAN SCREEN direct_integer { $$ = screen_can( _environment, $3 )->name; } | 
-    TILEMAP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(TILEMAP)" )->name;
-        variable_store( _environment, $$, TILEMAP_NATIVE );
-    } | 
-    BITMAP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(BITMAP)" )->name;
-        variable_store( _environment, $$, BITMAP_NATIVE );
-    } | 
+    TILEMAP { $$ = variable_by_constant( _environment, VT_BYTE, TILEMAP_NATIVE)->name; } | 
+    BITMAP { $$ = variable_by_constant( _environment, VT_BYTE, BITMAP_NATIVE)->name; } | 
     POINT OP optional_x OP_COMMA optional_y CP { $$ = point( _environment, $3, $5 )->name; } |
     MAX OP expr OP_COMMA expr CP { $$ = maximum( _environment, $3, $5 )->name; } |
     MIN OP expr OP_COMMA expr CP { $$ = minimum( _environment, $3, $5 )->name; } |
@@ -2852,192 +2843,67 @@ exponential_less:
     SGN OP expr CP { $$ = sign( _environment, $3 )->name; } | 
     ABS OP expr CP { $$ = absolute( _environment, $3 )->name; } | 
     SERIAL serial_function { $$ = $2; } | 
-    TRUE {
-        $$ = variable_temporary( _environment, VT_SBYTE, "(true)" )->name;
-        variable_store( _environment, $$, 255 );
-    } | 
-    FALSE {
-        $$ = variable_temporary( _environment, VT_SBYTE, "(false)" )->name;
-        variable_store( _environment, $$, 0 );
-    } | 
-    COLORS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
-    COLORS COUNT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
-    COLOR COUNT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
-    COLOURS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
-    COLOURS COUNT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
-    COLOUR COUNT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS COUNT)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    } | 
+    TRUE { $$ = variable_by_constant( _environment, VT_SBYTE, 255)->name; } | 
+    FALSE { $$ = variable_by_constant( _environment, VT_SBYTE, 0)->name; } | 
+    COLORS { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    COLORS COUNT { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    COLOR COUNT { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    COLOURS { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    COLOURS COUNT { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    COLOUR COUNT { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
     THREAD {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(THREAD)" );
         cpu_protothread_current( _environment, var->realName );
         $$ = var->name;
-    }
-    | TASK {
+    } | 
+    TASK {
         Variable * var = variable_temporary( _environment, VT_THREAD, "(TASK)" );
         cpu_protothread_current( _environment, var->realName );
         $$ = var->name;
-    }
-    | SCREEN SHADES {
-        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
-    }
-    | SHADES {
-        $$ = variable_temporary( _environment, VT_WORD, "(SCREEN SHADES)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenShades );
-    }
-    | SCREEN COLORS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | PEN COLORS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
-    }
-    | SCREEN COLOURS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(SCREEN COLORS)" )->name;
-        variable_store( _environment, $$, ((Environment *)_environment)->screenColors );
-    }
-    | PEN COLOURS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
-    }
-    | PEN DEFAULT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_WHITE );
-    }
-    | DEFAULT PEN {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_WHITE );
-    }
-    | PAPER COLORS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
-    }
-    | PAPER COLOURS {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_COUNT );
-    }
-    | PAPER DEFAULT {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_BLACK );
-    }
-    | DEFAULT PAPER {
-        $$ = variable_temporary( _environment, VT_COLOR, "(COLORS)" )->name;
-        variable_store( _environment, $$, COLOR_BLACK );
-    }
-    | XTEXT OP expr CP {
-        $$ = x_text_get( _environment, $3 )->name;
-    }
-    | X TEXT OP expr CP {
-        $$ = x_text_get( _environment, $4 )->name;
-    }
-    | YTEXT OP expr CP {
-        $$ = y_text_get( _environment, $3 )->name;
-    }
-    | Y TEXT OP expr CP {
-        $$ = y_text_get( _environment, $4 )->name;
-    }
-    | XGRAPHIC OP expr CP {
-        $$ = x_graphic_get( _environment, $3 )->name;
-    }
-    | X GRAPHIC OP expr CP {
-        $$ = x_graphic_get( _environment, $4 )->name;
-    }
-    | YGRAPHIC OP expr CP {
-        $$ = y_graphic_get( _environment, $3 )->name;
-    }
-    | Y GRAPHIC OP expr CP {
-        $$ = y_graphic_get( _environment, $4 )->name;
-    }
-    | ROTATE VECTOR OP expr OP_COMMA expr CP {
-        $$ = rotate_vector( _environment, $4, $6 )->name;
-    }
-    | X OP expr CP {
-        $$ = vector_get_x( _environment, $3 )->name;
-    }
-    | Y OP expr CP {
-        $$ = vector_get_y( _environment, $3 )->name;
-    }
-    | WIDTH {
-        $$ = screen_get_width( _environment )->name;
-    }
-    | COLOR OP expr CP {
-        $$ = color_get_vars( _environment, $3 )->name;
-    }
-    | SCREEN WIDTH {
-        $$ = screen_get_width( _environment )->name;
-    }
-    | SCREEN TILES WIDTH {
-        $$ = screen_tiles_get_width( _environment )->name;
-    }
-    | TILES WIDTH {
-        $$ = console_tiles_get_width( _environment )->name;
-    }
-    | TILES COUNT {
-        $$ = screen_tiles_get( _environment )->name;
-    }
-    | SCREEN COLUMNS {
-        $$ = screen_tiles_get_width( _environment )->name;
-    }
-    | COLUMNS {
-        $$ = console_tiles_get_width( _environment )->name;
-    }
-    | FONT WIDTH {
-        $$ = variable_temporary( _environment, VT_POSITION, "(FONT WIDTH)" )->name;
-        variable_store( _environment, $$, ((struct _Environment *)_environment)->fontWidth );
-    }
-    | IMAGES COUNT OP expr CP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, frames( _environment, $4 ) );
-    }
-    | FRAME COUNT OP expr CP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, frames( _environment, $4 ) );
-    }
-    | TILE COUNT OP expr CP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, frames( _environment, $4 ) );
-    }
-    | FRAMES OP expr CP {
-        $$ = variable_temporary( _environment, VT_BYTE, "(frame count)" )->name;
-        variable_store( _environment, $$, frames( _environment, $3 ) );
-    }
-    | TILE CLASS OP expr OP_COMMA const_expr CP {
-        $$ = tile_class( _environment, $4, $6 )->name;
-    }
-    | TILE PROBABILITY OP expr OP_COMMA const_expr CP {
-        $$ = tile_probability( _environment, $4, $6 )->name;
-    }
-    | TILE BELONG OP expr OP_COMMA expr CP {
-        $$ = tile_belong( _environment, $4, $6 )->name;
-    }
-    | TILE AT OP expr OP_COMMA expr CP {
-        $$ = tile_at( _environment, $4, $6 )->name;
-    }
-    | TILES FIRST OP expr CP {
-        $$ = tile_get_first( _environment, $4 )->name;
-    }
-    | TILEMAP WIDTH OP expr CP {
-        $$ = tilemap_get_width( _environment, $4 )->name;
-    }
-    | TILE WIDTH OP expr CP {
+    } | 
+    SCREEN SHADES { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenShades)->name; } | 
+    SHADES { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenShades)->name; } | 
+    SCREEN COLORS { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    PEN COLORS { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_COUNT)->name; } | 
+    SCREEN COLOURS { $$ = variable_by_constant( _environment, VT_COLOR, ((Environment *)_environment)->screenColors)->name; } | 
+    PEN COLOURS { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_COUNT)->name; } | 
+    PEN DEFAULT { $$ = variable_by_constant( _environment, VT_COLOR, DEFAULT_PEN_COLOR)->name; } | 
+    DEFAULT PEN { $$ = variable_by_constant( _environment, VT_COLOR, DEFAULT_PEN_COLOR)->name; } | 
+    PAPER COLORS { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_COUNT)->name; } | 
+    PAPER COLOURS { $$ = variable_by_constant( _environment, VT_COLOR, COLOR_COUNT)->name; } | 
+    PAPER DEFAULT { $$ = variable_by_constant( _environment, VT_COLOR, DEFAULT_PAPER_COLOR)->name; } | 
+    DEFAULT PAPER { $$ = variable_by_constant( _environment, VT_COLOR, DEFAULT_PAPER_COLOR)->name; } | 
+    XTEXT OP expr CP { $$ = x_text_get( _environment, $3 )->name; } | 
+    X TEXT OP expr CP { $$ = x_text_get( _environment, $4 )->name; } | 
+    YTEXT OP expr CP { $$ = y_text_get( _environment, $3 )->name; } | 
+    Y TEXT OP expr CP { $$ = y_text_get( _environment, $4 )->name; } | 
+    XGRAPHIC OP expr CP { $$ = x_graphic_get( _environment, $3 )->name; } | 
+    X GRAPHIC OP expr CP { $$ = x_graphic_get( _environment, $4 )->name; } | 
+    YGRAPHIC OP expr CP { $$ = y_graphic_get( _environment, $3 )->name; } | 
+    Y GRAPHIC OP expr CP { $$ = y_graphic_get( _environment, $4 )->name; } | 
+    ROTATE VECTOR OP expr OP_COMMA expr CP { $$ = rotate_vector( _environment, $4, $6 )->name; } | 
+    X OP expr CP { $$ = vector_get_x( _environment, $3 )->name; } | 
+    Y OP expr CP { $$ = vector_get_y( _environment, $3 )->name; } | 
+    WIDTH { $$ = screen_get_width( _environment )->name; } | 
+    COLOR OP expr CP { $$ = color_get_vars( _environment, $3 )->name; } | 
+    SCREEN WIDTH { $$ = screen_get_width( _environment )->name; } | 
+    SCREEN TILES WIDTH { $$ = screen_tiles_get_width( _environment )->name; } | 
+    TILES WIDTH { $$ = console_tiles_get_width( _environment )->name; } | 
+    TILES COUNT { $$ = screen_tiles_get( _environment )->name; } | 
+    SCREEN COLUMNS { $$ = screen_tiles_get_width( _environment )->name; } | 
+    COLUMNS { $$ = console_tiles_get_width( _environment )->name; } | 
+    FONT WIDTH { $$ = variable_by_constant( _environment, VT_BYTE, ((struct _Environment *)_environment)->fontWidth )->name; } | 
+    IMAGES COUNT OP expr CP { $$ = variable_by_constant( _environment, VT_BYTE, frames( _environment, $4 ) )->name; } |
+    FRAME COUNT OP expr CP { $$ = variable_by_constant( _environment, VT_BYTE, frames( _environment, $4 ) )->name; } |
+    TILE COUNT OP expr CP { $$ = variable_by_constant( _environment, VT_BYTE, frames( _environment, $4 ) )->name; } |
+    FRAMES OP expr CP { $$ = variable_by_constant( _environment, VT_BYTE, frames( _environment, $3 ) )->name; } |
+    TILE CLASS OP expr OP_COMMA const_expr CP { $$ = tile_class( _environment, $4, $6 )->name; } | 
+    TILE PROBABILITY OP expr OP_COMMA const_expr CP { $$ = tile_probability( _environment, $4, $6 )->name; } | 
+    TILE BELONG OP expr OP_COMMA expr CP { $$ = tile_belong( _environment, $4, $6 )->name; } |
+    TILE AT OP expr OP_COMMA expr CP { $$ = tile_at( _environment, $4, $6 )->name; } |
+    TILES FIRST OP expr CP { $$ = tile_get_first( _environment, $4 )->name; } |
+    TILEMAP WIDTH OP expr CP { $$ = tilemap_get_width( _environment, $4 )->name; } |
+    TILE WIDTH OP expr CP {
           if ( ! ((Environment *)_environment)->emptyProcedure ) {
             Variable * v = variable_retrieve( _environment, $4 );
             if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
@@ -3049,79 +2915,37 @@ exponential_less:
             $$ = variable_temporary( _environment, VT_BYTE, "(zero)" )->name;
             variable_store( _environment, $$, 0 );
           }
-    }
-    | DLOAD ERROR {
+    } | 
+    DLOAD ERROR {
         $$ = variable_temporary( _environment, VT_BYTE, "(DLOAD ERROR)" )->name;
         variable_move( _environment, "DLOADERROR", $$ );
-    }
-    | DSAVE ERROR {
+    } | 
+    DSAVE ERROR {
         $$ = variable_temporary( _environment, VT_BYTE, "(DSAVE ERROR)" )->name;
         variable_move( _environment, "DSAVEERROR", $$ );
-    }
-    | PAL {
+    } | 
+    PAL {
         Variable * pal = variable_temporary( _environment, VT_SBYTE, "PAL" );
         cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 50, pal->realName, 1 );
         $$ = pal->name;
-    }
-    | NTSC {
+    } | 
+    NTSC {
         Variable * ntsc = variable_temporary( _environment, VT_SBYTE, "NTSC" );
         cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
         $$ = ntsc->name;
-    }
-    | LITTLE ENDIAN {
-        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
-    #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
-        defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-        defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
-        defined(__atari__) || defined(__atarixl__) || defined(__c64__) || \
-        defined(__c128__) || defined(__plus4__) || defined(__vic20__) || \
-        defined( __c64reu__) || defined(__gb__) || defined(__vz200__) || defined(__c16__)
-        variable_store( _environment, endianess->name, 1 );
-    #else
-        variable_store( _environment, endianess->name, 0 );
-    #endif
-        $$ = endianess->name;
-    }
-    | BIG ENDIAN {
-        Variable * endianess = variable_temporary( _environment, VT_BYTE, "endianess" );
-    #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-        defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-        defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
-        variable_store( _environment, endianess->name, 1 );
-    #else
-        variable_store( _environment, endianess->name, 0 );
-    #endif
-        $$ = endianess->name;
-    }
-    | IMAGE WIDTH OP expr CP {
-        $$ = image_get_width( _environment, $4 )->name;
-    }
-    | HEIGHT {
-        $$ = screen_get_height( _environment )->name;
-    }
-    | SCREEN HEIGHT {
-        $$ = screen_get_height( _environment )->name;
-    }
-    | SCREEN TILES HEIGHT {
-        $$ = screen_tiles_get_height( _environment )->name;
-    }
-    | TILES HEIGHT {
-        $$ = screen_tiles_get_height( _environment )->name;
-    }
-    | SCREEN ROWS {
-        $$ = screen_tiles_get_height( _environment )->name;
-    }
-    | ROWS {
-        $$ = console_tiles_get_height( _environment )->name;
-    }
-    | FONT HEIGHT {
-        $$ = variable_temporary( _environment, VT_POSITION, "(FONT HEIGHT)" )->name;
-        variable_store( _environment, $$, ((struct _Environment *)_environment)->fontHeight );
-    }
-    | TILEMAP HEIGHT OP expr CP {
-        $$ = tilemap_get_height( _environment, $4 )->name;
-    }
-    | TILE HEIGHT OP expr CP {
+    } | 
+    LITTLE ENDIAN { $$ = variable_by_constant( _environment, VT_SBYTE, (ENDIANESSVALUE == 1) ? 255 : 0)->name; } |
+    BIG ENDIAN { $$ = variable_by_constant( _environment, VT_SBYTE, (ENDIANESSVALUE == 0) ? 255 : 0)->name; } |
+    IMAGE WIDTH OP expr CP { $$ = image_get_width( _environment, $4 )->name; } |
+    HEIGHT { $$ = screen_get_height( _environment )->name; } |
+    SCREEN HEIGHT { $$ = screen_get_height( _environment )->name; } |
+    SCREEN TILES HEIGHT { $$ = screen_tiles_get_height( _environment )->name; } |
+    TILES HEIGHT { $$ = screen_tiles_get_height( _environment )->name; } |
+    SCREEN ROWS { $$ = screen_tiles_get_height( _environment )->name; } |
+    ROWS { $$ = console_tiles_get_height( _environment )->name; } |
+    FONT HEIGHT { $$ = variable_by_constant( _environment, VT_BYTE, ((struct _Environment *)_environment)->fontHeight )->name; } |
+    TILEMAP HEIGHT OP expr CP { $$ = tilemap_get_height( _environment, $4 )->name; } |
+    TILE HEIGHT OP expr CP {
         if ( ! ((Environment *)_environment)->emptyProcedure ) {
             Variable * v = variable_retrieve( _environment, $4 );
             if ( v->type == VT_IMAGES && v->originalTileset != NULL ) {
@@ -3133,250 +2957,113 @@ exponential_less:
             $$ = variable_temporary( _environment, VT_BYTE, "(zero)" )->name;
             variable_store( _environment, $$, 0 );
         }
-    }
-    | IMAGE HEIGHT OP expr CP {
-        $$ = image_get_height( _environment, $4 )->name;
-    }
-    | TILEMAP Identifier AT OP expr OP_COMMA expr CP {
-        $$ = tilemap_at( _environment, $2, $5, $7, NULL )->name;
-    }
-    | TILEMAP Identifier LAYER expr AT OP expr OP_COMMA expr CP {
-        $$ = tilemap_at( _environment, $2, $7, $9, $4 )->name;
-    }
-    | SCREEN PAGE {
-        $$ = screen_page( _environment )->name;
-    }
-    | VOLUME MIN {
-        $$ = variable_temporary( _environment, VT_WORD, "(volume min)" )->name;
-        variable_store( _environment, $$, 0 );
-    }
-    | VOLUME MAX {
-        $$ = variable_temporary( _environment, VT_WORD, "(volume max)" )->name;
-        variable_store( _environment, $$, 255 );
-    }
-    | SPRITE COUNT {
-        $$ = variable_temporary( _environment, VT_WORD, "(SPRITE COUNT)" )->name;
-        variable_store( _environment, $$, SPRITE_COUNT );
-    }
-    | SPRITE HEIGHT {
+    } |
+    IMAGE HEIGHT OP expr CP { $$ = image_get_height( _environment, $4 )->name; } |
+    TILEMAP Identifier AT OP expr OP_COMMA expr CP { $$ = tilemap_at( _environment, $2, $5, $7, NULL )->name; } |
+    TILEMAP Identifier LAYER expr AT OP expr OP_COMMA expr CP { $$ = tilemap_at( _environment, $2, $7, $9, $4 )->name; } |
+    SCREEN PAGE { $$ = screen_page( _environment )->name; } | 
+    VOLUME MIN { $$ = variable_by_constant( _environment, VT_BYTE, 0 )->name; } | 
+    VOLUME MAX { $$ = variable_by_constant( _environment, VT_BYTE, 255 )->name; } | 
+    SPRITE COUNT { $$ = variable_by_constant( _environment, VT_BYTE, SPRITE_COUNT )->name; } | 
+    SPRITE HEIGHT {
         if ( SPRITE_HEIGHT < 0 ) {
             $$ = screen_get_height( _environment )->name;
         } else {
             $$ = variable_temporary( _environment, VT_WORD, "(SPRITE HEIGHT)" )->name;
             variable_store( _environment, $$, SPRITE_HEIGHT );
         }
-    }
-    | SPRITE WIDTH {
+    } | 
+    SPRITE WIDTH {
         if ( SPRITE_HEIGHT < 0 ) {
             $$ = screen_get_width( _environment )->name;
         } else {
             $$ = variable_temporary( _environment, VT_WORD, "(SPRITE WIDTH)" )->name;
             variable_store( _environment, $$, SPRITE_WIDTH );
         }
-    }
-    | SCREEN SPRITE RATIO X {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN SPRITE RATIO X)" )->name;
-        variable_store( _environment, $$, SCREEN_SPRITE_RATIO_X );
-    }
-    | SCREEN SPRITE RATIO Y {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN SPRITE RATIO y)" )->name;
-        variable_store( _environment, $$, SCREEN_SPRITE_RATIO_Y );
-    }
-    | SCREEN BORDER X {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER X)" )->name;
-        variable_store( _environment, $$, SCREEN_BORDER_X );
-    }
-    | SCREEN BORDER Y {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SCREEN BORDER Y)" )->name;
-        variable_store( _environment, $$, SCREEN_BORDER_Y );
-    }
-    | TICK PER SECOND {
-        $$ = get_ticks_per_second( _environment )->name;
-    }
-    | TICKS PER SECOND {
-        $$ = get_ticks_per_second( _environment )->name;
-    }
-    | TPS {
-        $$ = get_ticks_per_second( _environment )->name;
-    }
-    | SPRITE X MIN {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
-        variable_store( _environment, $$, SPRITE_X_MIN );
-    }
-    | SPRITE MIN X {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MIN)" )->name;
-        variable_store( _environment, $$, SPRITE_X_MIN );
-    }
-    | SPRITE MIN Y {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
-        variable_store( _environment, $$, SPRITE_Y_MIN );
-    }
-    | SPRITE Y MIN {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MIN)" )->name;
-        variable_store( _environment, $$, SPRITE_Y_MIN );
-    }
-    | SPRITE X MAX {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
-        variable_store( _environment, $$, SPRITE_X_MAX );
-    }
-    | SPRITE MAX X {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE X MAX)" )->name;
-        variable_store( _environment, $$, SPRITE_X_MAX );
-    }
-    | SPRITE MAX Y {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
-        variable_store( _environment, $$, SPRITE_Y_MAX );
-    }
-    | SPRITE Y MAX {
-        $$ = variable_temporary( _environment, VT_POSITION, "(SPRITE Y MAX)" )->name;
-        variable_store( _environment, $$, SPRITE_Y_MAX );
-    }
-    | SPRITE OP expr sprite_flags CP {
-        $$ = sprite_init( _environment, $3, NULL, $4 )->name;
-    }
-    | SPRITE OP expr OP_COMMA expr sprite_flags CP  {
-        $$ = sprite_init( _environment, $3, $5, $6 )->name;
-    }
-    | CSPRITE OP expr sprite_flags CP {
-        $$ = csprite_init( _environment, $3, NULL, $4 )->name;
-    }
-    | CSPRITE OP expr OP_COMMA expr sprite_flags CP {
-        $$ = csprite_init( _environment, $3, $5, $6 )->name;
-    }
-    | MSPRITE OP expr sprite_flags CP {
+    } | 
+    SCREEN SPRITE RATIO X { $$ = variable_by_constant( _environment, VT_POSITION, SCREEN_SPRITE_RATIO_X )->name; } |
+    SCREEN SPRITE RATIO Y { $$ = variable_by_constant( _environment, VT_POSITION, SCREEN_SPRITE_RATIO_Y )->name; } |
+    SCREEN BORDER X { $$ = variable_by_constant( _environment, VT_POSITION, SCREEN_BORDER_X )->name; } | 
+    SCREEN BORDER Y { $$ = variable_by_constant( _environment, VT_POSITION, SCREEN_BORDER_Y )->name; } |
+    TICK PER SECOND { $$ = get_ticks_per_second( _environment )->name; } | 
+    TICKS PER SECOND { $$ = get_ticks_per_second( _environment )->name; } | 
+    TPS { $$ = get_ticks_per_second( _environment )->name; } | 
+    SPRITE X MIN { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_X_MIN )->name; } | 
+    SPRITE MIN X { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_X_MIN )->name; } | 
+    SPRITE MIN Y { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_Y_MIN )->name; } | 
+    SPRITE Y MIN { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_Y_MIN )->name; } | 
+    SPRITE X MAX { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_X_MAX )->name; } | 
+    SPRITE MAX X { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_X_MAX )->name; } | 
+    SPRITE MAX Y { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_Y_MAX )->name; } | 
+    SPRITE Y MAX { $$ = variable_by_constant( _environment, VT_POSITION, SPRITE_Y_MAX )->name; } | 
+    SPRITE OP expr sprite_flags CP { $$ = sprite_init( _environment, $3, NULL, $4 )->name; } | 
+    SPRITE OP expr OP_COMMA expr sprite_flags CP  { $$ = sprite_init( _environment, $3, $5, $6 )->name; } | 
+    CSPRITE OP expr sprite_flags CP { $$ = csprite_init( _environment, $3, NULL, $4 )->name; } | 
+    CSPRITE OP expr OP_COMMA expr sprite_flags CP { $$ = csprite_init( _environment, $3, $5, $6 )->name; } | 
+    MSPRITE OP expr sprite_flags CP {
         Variable * original = variable_retrieve( _environment, $3 );
         if ( original->type == VT_MSPRITE ) {
             $$ = msprite_duplicate( _environment, $3 )->name;
         } else {
             $$ = msprite_init( _environment, $3, NULL, $4 )->name;
         }
-    }
-    | MSPRITE OP expr OP_COMMA expr sprite_flags CP {
-        $$ = msprite_init( _environment, $3, $5, $6 )->name;
-    }
-    | PAGE Integer {
+    } | 
+    MSPRITE OP expr OP_COMMA expr sprite_flags CP { $$ = msprite_init( _environment, $3, $5, $6 )->name; } | 
+    PAGE Integer {
         if ( ( $2 != 0 ) && ( $2 != 1 ) ) {
             CRITICAL_PAGE01();
         }
         $$ = variable_temporary( _environment, VT_BYTE, "(PAGE)" )->name;
         variable_store( _environment, $$, $2 );
-    }
-    | PAGE A {
-        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 0)" )->name;
-        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_0 );
-    }
-    | PAGE B {
-        $$ = variable_temporary( _environment, VT_BYTE, "(PAGE 1)" )->name;
-        variable_store( _environment, $$, DOUBLE_BUFFER_PAGE_1 );
-    }
-    | IMAGE OP expr frame const_expr CP {
-        $$ = image_extract( _environment, $3, $5, NULL )->name;
-    }
-    | IMAGE OP expr sequence_or_strip const_expr frame const_expr CP {
+    } | 
+    PAGE A { $$ = variable_by_constant( _environment, VT_BYTE, DOUBLE_BUFFER_PAGE_0 )->name; } | 
+    PAGE B { $$ = variable_by_constant( _environment, VT_BYTE, DOUBLE_BUFFER_PAGE_1 )->name;  } | 
+    IMAGE OP expr frame const_expr CP { $$ = image_extract( _environment, $3, $5, NULL )->name; } | 
+    IMAGE OP expr sequence_or_strip const_expr frame const_expr CP {
         int sequence = $5;
         $$ = image_extract( _environment, $3, $7, &sequence )->name;
-    }
-    | IMAGE OP expr frame NAMED Identifier CP {
+    } | 
+    IMAGE OP expr frame NAMED Identifier CP {
         Variable * images = variable_retrieve( _environment, $3 );
         int calculatedFrame = find_frame_by_type( _environment, images->originalTileset, $3, $6 );
         $$ = image_extract( _environment, $3, calculatedFrame, NULL )->name;
-    }
-    | RASTER LINE {
-        $$ = get_raster_line( _environment )->name;
-    }
-    | TI {
-        $$ = get_timer( _environment )->name;
-    }
-    | EMPTYTILE {
-        $$ = "EMPTYTILE";
-    }
-    | EMPTY TILE {
-        $$ = "EMPTYTILE";
-    }
-    | TIMER {
-        $$ = get_timer( _environment )->name;
-    }
-    | PEN {
+    } | 
+    RASTER LINE { $$ = get_raster_line( _environment )->name; } | 
+    TI { $$ = get_timer( _environment )->name; } | 
+    EMPTYTILE { $$ = "EMPTYTILE"; } | 
+    EMPTY TILE { $$ = "EMPTYTILE"; } | 
+    TIMER { $$ = get_timer( _environment )->name; } | 
+    PEN {
         Variable * pen = variable_temporary( _environment, VT_COLOR, "(pen)" );
         cpu_move_8bit( _environment, "_PEN", pen->realName );
         $$ = pen->name;
-    }
-    | PEN OP expr CP {
-        $$ = get_pen( _environment, $3 )->name;
-    }
-    | PEN OP_DOLLAR OP expr CP {
-        $$ = get_pen( _environment, $4 )->name;
-    }
-    | PAPER OP expr CP {
-        $$ = get_paper( _environment, $3 )->name;
-    }
-    | PAPER OP_DOLLAR OP expr CP {
-        $$ = get_paper( _environment, $4 )->name;
-    }
-    | CMOVE OP expr OP_COMMA expr CP {
-        $$ = get_cmove( _environment, $3, $5 )->name;
-    }
-    | CMOVE OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = get_cmove( _environment, $4, $6 )->name;
-    }
-    | CUP {
-        $$ = get_cmove_direct( _environment, 0, -1 )->name;
-    }
-    | CUP OP_DOLLAR {
-        $$ = get_cmove_direct( _environment, 0, -1 )->name;
-    }
-    | CDOWN {
-        $$ = get_cmove_direct( _environment, 0, 1 )->name;
-    }
-    | CDOWN OP_DOLLAR {
-        $$ = get_cmove_direct( _environment, 0, 1 )->name;
-    }
-    | CLEFT {
-        $$ = get_cmove_direct( _environment, -1, 0 )->name;
-    }
-    | CLEFT OP_DOLLAR {
-        $$ = get_cmove_direct( _environment, -1, 0 )->name;
-    }
-    | CRIGHT {
-        $$ = get_cmove_direct( _environment, 1, 0 )->name;
-    }
-    | CRIGHT OP_DOLLAR {
-        $$ = get_cmove_direct( _environment, 1, 0 )->name;
-    }
-    | AT OP expr OP_COMMA expr CP {
-        $$ = get_at( _environment, $3, $5 )->name;
-    }
-    | AT OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = get_at( _environment, $4, $6 )->name;
-    }
-    | LOCATE OP expr OP_COMMA expr CP {
-        $$ = get_at( _environment, $3, $5 )->name;
-    }
-    | LOCATE OP_DOLLAR OP expr OP_COMMA expr CP {
-        $$ = get_at( _environment, $4, $6 )->name;
-    }
-    | TAB {
-        $$ = get_tab( _environment )->name;
-    }
-    | TAB OP_DOLLAR {
-        $$ = get_tab( _environment )->name;
-    }
-    | XCURS {
-        $$ = text_get_xcurs( _environment )->name;
-    }
-    | X CURS {
-        $$ = text_get_xcurs( _environment )->name;
-    }
-    | YCURS {
-        $$ = text_get_ycurs( _environment )->name;
-    }
-    | Y CURS {
-        $$ = text_get_ycurs( _environment )->name;
-    }
-    | TEXTADDRESS {
-        $$ = strdup( "TEXTADDRESS" );
-    }
-    | BITMAPADDRESS {
+    } | 
+    PEN OP expr CP { $$ = get_pen( _environment, $3 )->name; } | 
+    PEN OP_DOLLAR OP expr CP { $$ = get_pen( _environment, $4 )->name; } | 
+    PAPER OP expr CP { $$ = get_paper( _environment, $3 )->name; } | 
+    PAPER OP_DOLLAR OP expr CP { $$ = get_paper( _environment, $4 )->name; } | 
+    CMOVE OP expr OP_COMMA expr CP { $$ = get_cmove( _environment, $3, $5 )->name; } | 
+    CMOVE OP_DOLLAR OP expr OP_COMMA expr CP { $$ = get_cmove( _environment, $4, $6 )->name; } | 
+    CUP { $$ = get_cmove_direct( _environment, 0, -1 )->name; } | 
+    CUP OP_DOLLAR { $$ = get_cmove_direct( _environment, 0, -1 )->name; } | 
+    CDOWN { $$ = get_cmove_direct( _environment, 0, 1 )->name; } | 
+    CDOWN OP_DOLLAR { $$ = get_cmove_direct( _environment, 0, 1 )->name; } | 
+    CLEFT { $$ = get_cmove_direct( _environment, -1, 0 )->name; } | 
+    CLEFT OP_DOLLAR { $$ = get_cmove_direct( _environment, -1, 0 )->name; } | 
+    CRIGHT { $$ = get_cmove_direct( _environment, 1, 0 )->name; } | 
+    CRIGHT OP_DOLLAR { $$ = get_cmove_direct( _environment, 1, 0 )->name; } | 
+    AT OP expr OP_COMMA expr CP { $$ = get_at( _environment, $3, $5 )->name; } | 
+    AT OP_DOLLAR OP expr OP_COMMA expr CP { $$ = get_at( _environment, $4, $6 )->name; } | 
+    LOCATE OP expr OP_COMMA expr CP { $$ = get_at( _environment, $3, $5 )->name; } | 
+    LOCATE OP_DOLLAR OP expr OP_COMMA expr CP { $$ = get_at( _environment, $4, $6 )->name; } | 
+    TAB { $$ = get_tab( _environment )->name; } | 
+    TAB OP_DOLLAR { $$ = get_tab( _environment )->name; } | 
+    XCURS { $$ = text_get_xcurs( _environment )->name; } | 
+    X CURS { $$ = text_get_xcurs( _environment )->name; } | 
+    YCURS { $$ = text_get_ycurs( _environment )->name; } | 
+    Y CURS { $$ = text_get_ycurs( _environment )->name; } | 
+    TEXTADDRESS { $$ = strdup( "TEXTADDRESS" ); } | 
+    BITMAPADDRESS {
         $$ = strdup( "BITMAPADDRESS" );
     }
     | JOY OP OP_HASH const_expr CP {
