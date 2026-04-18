@@ -2356,7 +2356,7 @@ exponential_less:
     OP COLOUR CP OP expr CP { $$ = variable_cast( _environment, $5, VT_COLOR )->name; } |
     OP STRING CP Identifier { $$ = variable_cast( _environment, $4, VT_DSTRING )->name; } |
     OSP BufferDefinitionHex {  $$ = parse_buffer_definition( _environment, $2, VT_BUFFER, 1 )->name; } |
-    OP IMAGE CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
+    OP IMAGE CP buffer_definition_prefix BufferDefinitionHex { 
         int size;
         char * buffer = parse_buffer( _environment, $5, &size, 1 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
