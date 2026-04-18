@@ -425,7 +425,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> read_safeness
 %type <integer> readonly_optional
 %type <integer> relative_option 
-%type <integer> release
+%type <integer> release_optional
 %type <integer> scroll_definition_hdirection 
 %type <integer> scroll_definition_vdirection
 %type <integer> sequence_load_flag
@@ -551,6 +551,8 @@ load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
 load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
 load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
 load_tileset : LOAD TILESET | TILESET LOAD;
+milliseconds: MS | MILLISECOND | MILLISECONDS;
+position: POSITION | AT;
 ticks: TICK | TICKS;
 
 /*============================================================================
@@ -1077,6 +1079,10 @@ load_flags:
 images_load_flags:
     { $$ = 0; } | 
     images_load_flags1 { $$ = $1; };
+
+release_optional:
+    { $$ = 0; } | 
+    RELEASE { $$ = 1; };
 
 sequence_load_flags:
     { $$ = 0; } | 
@@ -3221,176 +3227,100 @@ exponential_less:
     }
     ;
 
-position:   POSITION | AT;
+/*-----------------------------------------------------------------------------
+ ------------ BANK DEFINITION
+ ----------------------------------------------------------------------------*/
 
 bank_definition_simple:
-  AT direct_integer {
-      bank_define( _environment, NULL, BT_DATA, $2, NULL );
-  }
-  | Identifier AT direct_integer {
-      bank_define( _environment, $1, BT_DATA, $3, NULL );
-  }
-  | AT direct_integer AS DATA {
-      bank_define( _environment, NULL, BT_DATA, $2, NULL );
-  }
-  | Identifier AT direct_integer AS DATA {
-      bank_define( _environment, $1, BT_DATA, $3, NULL );
-  }
-  | DATA Identifier AT direct_integer {
-      bank_define( _environment, $2, BT_DATA, $4, NULL );
-  }
-  | DATA AT direct_integer {
-      bank_define( _environment, NULL, BT_DATA, $3, NULL );
-  }
-
-  | Identifier AT direct_integer AS CODE {
-      bank_define( _environment, $1, BT_CODE, $3, NULL );
-  }
-  | AT direct_integer AS CODE {
-      bank_define( _environment, NULL, BT_CODE, $2, NULL );
-  }
-  | CODE Identifier AT direct_integer {
-      bank_define( _environment, $2, BT_CODE, $4, NULL );
-  }
-  | CODE AT direct_integer {
-      bank_define( _environment, NULL, BT_CODE, $3, NULL );
-  }
-
-  | AT direct_integer AS VARIABLES {
-      bank_define( _environment, NULL, BT_VARIABLES, $2, NULL );
-  }
-  | Identifier AT direct_integer AS VARIABLES {
-      bank_define( _environment, $1, BT_VARIABLES, $3, NULL );
-  }
-  | VARIABLES Identifier AT direct_integer {
-      bank_define( _environment, $2, BT_VARIABLES, $4, NULL );
-  }
-  | VARIABLES AT direct_integer {
-      bank_define( _environment, NULL, BT_VARIABLES, $3, NULL );
-  }
-
-  | Identifier AT direct_integer AS TEMPORARY {
-      bank_define( _environment, $1, BT_TEMPORARY, $3, NULL );
-  }
-  | AT direct_integer AS TEMPORARY {
-      bank_define( _environment, NULL, BT_TEMPORARY, $2, NULL );
-  }
-  | TEMPORARY Identifier AT direct_integer {
-      bank_define( _environment, $2, BT_TEMPORARY, $4, NULL );
-  }
-  | TEMPORARY AT direct_integer {
-      bank_define( _environment, NULL, BT_TEMPORARY, $3, NULL );
-  }  
-  ;
+  AT direct_integer { bank_define( _environment, NULL, BT_DATA, $2, NULL ); } | 
+  AT direct_integer AS CODE { bank_define( _environment, NULL, BT_CODE, $2, NULL ); } | 
+  AT direct_integer AS DATA { bank_define( _environment, NULL, BT_DATA, $2, NULL ); } | 
+  AT direct_integer AS TEMPORARY { bank_define( _environment, NULL, BT_TEMPORARY, $2, NULL ); } | 
+  AT direct_integer AS VARIABLES { bank_define( _environment, NULL, BT_VARIABLES, $2, NULL ); } | 
+  CODE AT direct_integer { bank_define( _environment, NULL, BT_CODE, $3, NULL ); } | 
+  CODE Identifier AT direct_integer { bank_define( _environment, $2, BT_CODE, $4, NULL ); } | 
+  DATA AT direct_integer { bank_define( _environment, NULL, BT_DATA, $3, NULL ); } | 
+  DATA Identifier AT direct_integer { bank_define( _environment, $2, BT_DATA, $4, NULL ); } | 
+  Identifier AT direct_integer { bank_define( _environment, $1, BT_DATA, $3, NULL ); } | 
+  Identifier AT direct_integer AS CODE { bank_define( _environment, $1, BT_CODE, $3, NULL ); } | 
+  Identifier AT direct_integer AS DATA { bank_define( _environment, $1, BT_DATA, $3, NULL ); } | 
+  Identifier AT direct_integer AS TEMPORARY { bank_define( _environment, $1, BT_TEMPORARY, $3, NULL ); } |
+  Identifier AT direct_integer AS VARIABLES { bank_define( _environment, $1, BT_VARIABLES, $3, NULL ); } | 
+  TEMPORARY AT direct_integer { bank_define( _environment, NULL, BT_TEMPORARY, $3, NULL ); } |
+  TEMPORARY Identifier AT direct_integer { bank_define( _environment, $2, BT_TEMPORARY, $4, NULL ); } |
+  VARIABLES AT direct_integer { bank_define( _environment, NULL, BT_VARIABLES, $3, NULL ); } | 
+  VARIABLES Identifier AT direct_integer { bank_define( _environment, $2, BT_VARIABLES, $4, NULL ); };
 
 bank_definition_with_payload:
-  Identifier AT direct_integer WITH String {
-      bank_define( _environment, $1, BT_DATA, $3, $5 );
-  }
-  | Identifier AT direct_integer AS DATA WITH String {
-      bank_define( _environment, $1, BT_DATA, $3, $7 );
-  }
-  | DATA Identifier AT direct_integer WITH String {
-      bank_define( _environment, $2, BT_DATA, $4, $6 );
-  }
-  | Identifier AT direct_integer AS CODE WITH String {
-      bank_define( _environment, $1, BT_CODE, $3, $7 );
-  }
-  | CODE Identifier AT direct_integer WITH String {
-      bank_define( _environment, $2, BT_CODE, $4, $6 );
-  };
+  CODE Identifier AT direct_integer WITH String { bank_define( _environment, $2, BT_CODE, $4, $6 ); } |
+  DATA Identifier AT direct_integer WITH String { bank_define( _environment, $2, BT_DATA, $4, $6 ); } |
+  Identifier AT direct_integer AS CODE WITH String { bank_define( _environment, $1, BT_CODE, $3, $7 ); } |
+  Identifier AT direct_integer AS DATA WITH String { bank_define( _environment, $1, BT_DATA, $3, $7 ); } | 
+  Identifier AT direct_integer WITH String { bank_define( _environment, $1, BT_DATA, $3, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ EXPANSION BANK DEFINITION
+ ----------------------------------------------------------------------------*/
 
 bank_expansion_definition_simple:
-    OP_HASH const_expr {
-        bank_set( _environment, $2 );
-    }
-    ;
+    OP_HASH const_expr { bank_set( _environment, $2 ); };
 
 bank_expansion_definition_expression:
-    expr {
-        bank_set_var( _environment, $1 );
-    }
-    | READ expr FROM expr TO expr SIZE expr {
-        bank_read_vars( _environment, $2, $4, $6, $8 );
-    }
-    | WRITE expr FROM expr TO expr SIZE expr {
-        bank_write_vars( _environment, $4, $2, $6, $8 );
-    }
-    ;
+    expr { bank_set_var( _environment, $1 ); } | 
+    READ expr FROM expr TO expr SIZE expr { bank_read_vars( _environment, $2, $4, $6, $8 ); } | 
+    WRITE expr FROM expr TO expr SIZE expr { bank_write_vars( _environment, $4, $2, $6, $8 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ (EXPANSION) BANK DEFINITION
+ ----------------------------------------------------------------------------*/
 
 bank_definition: 
-    bank_definition_simple
-  | bank_definition_with_payload
-  | bank_expansion_definition_simple
-  | bank_expansion_definition_expression;
+    bank_definition_simple | 
+    bank_definition_with_payload | 
+    bank_expansion_definition_expression |
+    bank_expansion_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ RASTER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 raster_definition_simple:
-    Identifier AT direct_integer {
-      raster_at( _environment, $1, $3 );
-    }
-  | AT direct_integer WITH Identifier {
-      raster_at( _environment, $4, $2 );
-    };
+    AT direct_integer WITH Identifier { raster_at( _environment, $4, $2 ); } |
+    Identifier AT direct_integer { raster_at( _environment, $1, $3 ); }; 
 
 raster_definition_expression:
-    Identifier AT expr {
-      raster_at_var( _environment, $1, $3 );
-    }
-  | AT expr WITH Identifier {
-      raster_at_var( _environment, $2, $4 );
-    };
-
-raster_definition:
-    raster_definition_simple
-  | raster_definition_expression;
+    AT expr WITH Identifier { raster_at_var( _environment, $2, $4 ); } |
+    Identifier AT expr { raster_at_var( _environment, $1, $3 ); };
 
 next_raster_definition_simple:
-    Identifier AT direct_integer {
-      next_raster_at_with( _environment, $3, $1 );
-    }
-  | AT direct_integer WITH Identifier {
-      next_raster_at_with( _environment, $2, $4 );
-    };
+    AT direct_integer WITH Identifier { next_raster_at_with( _environment, $2, $4 ); } |
+    Identifier AT direct_integer { next_raster_at_with( _environment, $3, $1 ); };
 
 next_raster_definition_expression:
-    Identifier AT expr {
-      next_raster_at_with_var( _environment, $3, $1 );
-    }
-  | AT expr WITH Identifier {
-      next_raster_at_with_var( _environment, $2, $4 );
-    };
+    AT expr WITH Identifier { next_raster_at_with_var( _environment, $2, $4 ); } |
+    Identifier AT expr { next_raster_at_with_var( _environment, $3, $1 ); }; 
+
+raster_definition:
+    raster_definition_expression |
+    raster_definition_simple;
 
 next_raster_definition:
-    next_raster_definition_simple
-  | next_raster_definition_expression;
+    next_raster_definition_expression |
+    next_raster_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ COLOR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 color_definition_simple:
-  OP_HASH const_expr OP_COMMA expr {
-      color_semivars( _environment, $2, $4 );
-  }
-  | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-      color( _environment, $2, $5 );
-  }
-  | BORDER direct_integer {
-      color_border( _environment, $2 );
-  }
-  | BACKGROUND direct_integer TO direct_integer {
-      color_background( _environment, $2, $4 );
-  }
-  | SPRITE direct_integer TO direct_integer {
-      color_sprite( _environment, $2, $4 );
-  };
+    BACKGROUND direct_integer TO direct_integer { color_background( _environment, $2, $4 ); } | 
+    BORDER direct_integer { color_border( _environment, $2 ); } | 
+    OP_HASH const_expr OP_COMMA expr { color_semivars( _environment, $2, $4 ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr { color( _environment, $2, $5 ); } | 
+    SPRITE direct_integer TO direct_integer { color_sprite( _environment, $2, $4 ); };
 
-next_animation_definition: 
-    Identifier {
-        next_animation( _environment, $1 );
-    };
-    
 color_definition_expression:
-  expr OP_COMMA expr OP_COMMA expr {
-      color_tsb( _environment, $1, $3, $5 );
-  }
-  | 
+  expr OP_COMMA expr OP_COMMA expr { color_tsb( _environment, $1, $3, $5 ); } | 
   expr OP_COMMA expr {
       if ( !((struct _Environment *)_environment)->insideCopperList ) {
         if ( ((Environment *)_environment)->dialect == DI_TSB ) {
@@ -3415,16 +3345,10 @@ color_definition_expression:
         }
         copper_color( _environment, index->value, color->value );
       }
-  }
-  |
-  OP_COMMA expr {
-      color_tsb( _environment, NULL, NULL, $2 );
-  }
-  |
-  expr {
-      color_tsb( _environment, $1, NULL, NULL );
-  }
-  | BORDER expr {
+  } |
+  OP_COMMA expr { color_tsb( _environment, NULL, NULL, $2 ); } |
+  expr { color_tsb( _environment, $1, NULL, NULL ); } | 
+  BORDER expr {
       if ( !((struct _Environment *)_environment)->insideCopperList ) {
           color_border_var( _environment, $2 );
       } else {
@@ -3434,11 +3358,9 @@ color_definition_expression:
         }
         copper_color_border( _environment, color->value );
       }
-  }
-  | BACK expr {
-      back( _environment, $2 );
-  }
-  | BACKGROUND expr {
+  } | 
+  BACK expr { back( _environment, $2 ); } | 
+  BACKGROUND expr {
       if ( !((struct _Environment *)_environment)->insideCopperList ) {
           back( _environment, $2 );
       } else {
@@ -3448,28 +3370,12 @@ color_definition_expression:
         }
         copper_color_background( _environment, color->value );
       }
-  }
-  | BACKGROUND expr TO expr {
-      color_background_vars( _environment, $2, $4 );
-  };
+  } | 
+  BACKGROUND expr TO expr { color_background_vars( _environment, $2, $4 ); };
 
 color_definition:
     color_definition_simple
   | color_definition_expression;
-
-milliseconds:
-    MS
-    | MILLISECOND
-    | MILLISECONDS;
-
-release:
-    {
-        $$ = 0;
-    }
-    | RELEASE {
-        $$ = 1;
-    }
-    ;
 
 wait_definition_simple:
     direct_integer CYCLES parallel_optional {
@@ -3493,19 +3399,19 @@ wait_definition_simple:
     | direct_integer milliseconds {
       wait_milliseconds( _environment, $1 );
     }
-    | FIRE release {
+    | FIRE release_optional {
         wait_fire( _environment, -1, $2 );
     }
-    | FIRE OP OP_HASH const_expr CP release {
+    | FIRE OP OP_HASH const_expr CP release_optional {
         wait_fire( _environment, $4, $6 );
     }
-    | KEY OR FIRE release {
+    | KEY OR FIRE release_optional {
         wait_key_or_fire( _environment, -1, $4 );
     }
-    | KEY OR FIRE OP OP_HASH const_expr CP release {
+    | KEY OR FIRE OP OP_HASH const_expr CP release_optional {
         wait_key_or_fire( _environment, $6, $8 );
     }
-    | KEY release {
+    | KEY release_optional {
         wait_key( _environment, $2 );
     }
     | VBL {
@@ -3541,10 +3447,10 @@ wait_definition_expression:
             wait_milliseconds_var( _environment, $1 );
         }
     }
-    | FIRE OP expr CP release {
+    | FIRE OP expr CP release_optional {
         wait_fire_semivar( _environment, $3, $5 );
     }
-    | KEY OR FIRE OP expr CP release {
+    | KEY OR FIRE OP expr CP release_optional {
         wait_key_or_fire_semivar( _environment, $5, $7 );
     }
     | UNTIL { 
@@ -10228,6 +10134,13 @@ optional_reverse:
     REVERSE {
         ((struct _Environment *)_environment)->animationReverse = 1;
     };
+
+/*-----------------------------------------------------------------------------
+ ------------ ANIMATION DEFINITION
+ ----------------------------------------------------------------------------*/
+
+next_animation_definition: 
+    Identifier { next_animation( _environment, $1 ); };
 
 animation_definition:
     optional_reverse animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
