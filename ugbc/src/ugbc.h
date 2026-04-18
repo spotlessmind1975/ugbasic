@@ -6443,4 +6443,10 @@ Variable *              y_text_get( Environment * _environment, char * _y );
         }
 #endif
 
+#ifdef __BETA__
+    #define BETAVALUE 1
+#else
+    #define BETAVALUE 0
+#endif
+
 #endif

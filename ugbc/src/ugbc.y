@@ -546,6 +546,11 @@ filesize: FILEX SIZE | FILESIZE | FSIZE;
 float_or_single: FLOAT | SINGLE;
 frame: FRAME | TILE;
 images_or_atlas: IMAGES | ATLAS;
+load_image : LOAD IMAGE | IMAGE LOAD;
+load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
+load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
+load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
+load_tileset : LOAD TILESET | TILESET LOAD;
 ticks: TICK | TICKS;
 
 /*============================================================================
@@ -2030,35 +2035,28 @@ random_definition_simple:
 random_definition:
     random_definition_simple { $$ = $1; };
 
-
-
-load_image : LOAD IMAGE | IMAGE LOAD;
-load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
-load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
-load_tileset : LOAD TILESET | TILESET LOAD;
-load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
+/*-----------------------------------------------------------------------------
+ ------------ FRAMING
+ ----------------------------------------------------------------------------*/
 
 frame_offset: 
-    OFFSET OP const_expr OP_COMMA const_expr CP {
-        ((struct _Environment *)_environment)->frameOffsetX = $3;
-        ((struct _Environment *)_environment)->frameOffsetY = $5;
-    }
-    |
     {
         ((struct _Environment *)_environment)->frameOffsetX = 0;
         ((struct _Environment *)_environment)->frameOffsetY = 0;
-    }
-    ;
+    } |
+    OFFSET OP const_expr OP_COMMA const_expr CP {
+        ((struct _Environment *)_environment)->frameOffsetX = $3;
+        ((struct _Environment *)_environment)->frameOffsetY = $5;
+    };
 
 frame_origin: 
-    ORIGIN OP const_expr OP_COMMA const_expr CP {
-        ((struct _Environment *)_environment)->frameOriginX = $3;
-        ((struct _Environment *)_environment)->frameOriginY = $5;
-    }
-    |
     {
         ((struct _Environment *)_environment)->frameOriginX = 0;
         ((struct _Environment *)_environment)->frameOriginY = 0;
+    } |
+    ORIGIN OP const_expr OP_COMMA const_expr CP {
+        ((struct _Environment *)_environment)->frameOriginX = $3;
+        ((struct _Environment *)_environment)->frameOriginY = $5;
     }
     ;
 
@@ -2075,10 +2073,11 @@ frame_size_auto:
     };
 
 frame_size_definition:
-      frame_size_auto 
-    | frame_size_explicit;
+    frame_size_auto | 
+    frame_size_explicit;
 
-frame_size: {
+frame_size: 
+    {
         ((struct _Environment *)_environment)->frameOffsetX = 0;
         ((struct _Environment *)_environment)->frameOffsetY = 0;
         ((struct _Environment *)_environment)->frameOriginX = 0;
@@ -2088,17 +2087,21 @@ frame_size: {
 frame_definition:
     const_expr {
         ((struct _Environment *)_environment)->currentStrip->frames[((struct _Environment *)_environment)->currentStrip->count++] = $1;
-    }
-    | const_expr {
+    } | 
+    const_expr {
         ((struct _Environment *)_environment)->currentStrip->frames[((struct _Environment *)_environment)->currentStrip->count++] = $1;
     } OP_COMMA frame_definition
     ;
 
+/*-----------------------------------------------------------------------------
+ ------------ STRIPS
+ ----------------------------------------------------------------------------*/
+
 strip_definition_id_optional: 
     {
         $$ = -1;
-    }
-    | ID const_expr {
+    } | 
+    ID const_expr {
         $$ = $2;
     };
 
@@ -2119,11 +2122,12 @@ strip_definition:
     } OP frame_definition CP;
 
 strips_definition:
-    strip_definition
-    | strip_definition OP_COMMA strips_definition;
+    strip_definition | 
+    strip_definition OP_COMMA strips_definition;
 
 strips_definition_optional:
-    | OSP strips_definition CSP {
+    | 
+    OSP strips_definition CSP {
 
         Strip * final = NULL;
         
@@ -2141,80 +2145,45 @@ strips_definition_optional:
 
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ DOJO SUPPORT
+ ----------------------------------------------------------------------------*/
+
 dojo_functions: 
-    ERROR {
-        $$ = dojo_error( _environment )->name;
-    }
-    | CREATE PORT OP CP {
-        $$ = dojo_create_port( _environment )->name;
-    }
-    | OPEN PORT OP expr CP {
-        $$ = dojo_open_port( _environment, $4 )->name;
-    }
-    | PORT OP expr CP {
-        $$ = dojo_open_port( _environment, $3 )->name;
-    }
-    | PUT OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = dojo_put_message( _environment, $3, $5, $7 )->name;
-    }
-    | PUT MESSAGE OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = dojo_put_message( _environment, $4, $6, $8 )->name;
-    }
-    | PUT OP expr OP_COMMA expr CP {
-        $$ = dojo_put_message( _environment, $3, NULL, $5 )->name;
-    }
-    | PUT MESSAGE OP expr OP_COMMA expr CP {
-        $$ = dojo_put_message( _environment, $4, NULL, $6 )->name;
-    }
-    | PEEK MESSAGE OP expr OP_COMMA expr CP {
-        $$ = dojo_peek_message( _environment, $4, $6 )->name;
-    }
-    | PEEK OP expr OP_COMMA expr CP {
-        $$ = dojo_peek_message( _environment, $3, $5 )->name;
-    }
-    | PEEK MESSAGE OP expr CP {
-        $$ = dojo_peek_message( _environment, $4, NULL )->name;
-    }
-    | GET OP expr OP_COMMA expr CP {
-        $$ = dojo_get_message( _environment, $3, $5 )->name;
-    }
-    | GET MESSAGE OP expr OP_COMMA expr CP {
-        $$ = dojo_get_message( _environment, $4, $6 )->name;
-    }
-    | GET OP expr CP {
-        $$ = dojo_get_message( _environment, $3, NULL )->name;
-    }
-    | GET MESSAGE OP expr CP {
-        $$ = dojo_get_message( _environment, $4, NULL )->name;
-    }
-    | PING {
-        $$ = dojo_ping( _environment, NULL, NULL )->name;
-    }
-    | PING OP expr CP {
-        $$ = dojo_ping( _environment, $3, NULL )->name;
-    }
-    | PING OP expr OP_COMMA expr CP {
-        $$ = dojo_ping( _environment, $3, $5 )->name;
-    }
-    ;
+    CREATE PORT OP CP { $$ = dojo_create_port( _environment )->name; } | 
+    ERROR { $$ = dojo_error( _environment )->name; } | 
+    GET MESSAGE OP expr CP { $$ = dojo_get_message( _environment, $4, NULL )->name; } | 
+    GET MESSAGE OP expr OP_COMMA expr CP { $$ = dojo_get_message( _environment, $4, $6 )->name; } |
+    GET OP expr CP { $$ = dojo_get_message( _environment, $3, NULL )->name; } |
+    GET OP expr OP_COMMA expr CP { $$ = dojo_get_message( _environment, $3, $5 )->name; } |
+    OPEN PORT OP expr CP { $$ = dojo_open_port( _environment, $4 )->name; } | 
+    PEEK MESSAGE OP expr CP { $$ = dojo_peek_message( _environment, $4, NULL )->name; } |
+    PEEK MESSAGE OP expr OP_COMMA expr CP { $$ = dojo_peek_message( _environment, $4, $6 )->name; } |
+    PEEK OP expr OP_COMMA expr CP { $$ = dojo_peek_message( _environment, $3, $5 )->name; } |
+    PING { $$ = dojo_ping( _environment, NULL, NULL )->name; } | 
+    PING OP expr CP { $$ = dojo_ping( _environment, $3, NULL )->name; } | 
+    PING OP expr OP_COMMA expr CP { $$ = dojo_ping( _environment, $3, $5 )->name; } |
+    PORT OP expr CP { $$ = dojo_open_port( _environment, $3 )->name; } | 
+    PUT MESSAGE OP expr OP_COMMA expr CP { $$ = dojo_put_message( _environment, $4, NULL, $6 )->name; } |
+    PUT MESSAGE OP expr OP_COMMA expr OP_COMMA expr CP { $$ = dojo_put_message( _environment, $4, $6, $8 )->name; } | 
+    PUT OP expr OP_COMMA expr CP { $$ = dojo_put_message( _environment, $3, NULL, $5 )->name; } | 
+    PUT OP expr OP_COMMA expr OP_COMMA expr CP { $$ = dojo_put_message( _environment, $3, $5, $7 )->name; };
+
+/*-----------------------------------------------------------------------------
+ ------------ FUJINET SUPPORT
+ ----------------------------------------------------------------------------*/
 
 fujinet_functions: 
-    BYTES {
-        $$ = fujinet_get_bytes_waiting( _environment )->name;
-    }
-    | ERROR {
-        $$ = fujinet_get_error( _environment )->name;
-    }
-    | CONNECTED {
-        $$ = fujinet_is_connected( _environment )->name;
-    }
-    | READY {
-        $$ = fujinet_is_ready( _environment )->name;
-    }
-    | READ OP expr CP {
-        $$ = fujinet_read( _environment, $3 )->name;
-    }
-    | READ OP expr as_datatype_mandatory CP  {
+    BYTES { $$ = fujinet_get_bytes_waiting( _environment )->name; } | 
+    CONNECTED { $$ = fujinet_is_connected( _environment )->name; } | 
+    ERROR { $$ = fujinet_get_error( _environment )->name; } | 
+    HTTP POST BIN OP expr as_datatype_mandatory CP  { $$ = fujinet_http_post_bin_type( _environment, $5, $6 )->name; } | 
+    HTTP POST BIN OP expr CP { $$ = fujinet_http_post_bin( _environment, $5 )->name; } | 
+    OPEN OP expr OP_COMMA expr OP_COMMA expr CP { $$ = fujinet_open( _environment, $3, $5, $7 )->name; } | 
+    PARSE JSON { $$ = fujinet_parse_json( _environment )->name; } | 
+    READ OP CP as_datatype_mandatory { $$ = fujinet_read_type( _environment, $4 )->name; } | 
+    READ OP expr CP { $$ = fujinet_read( _environment, $3 )->name; } | 
+    READ OP expr as_datatype_mandatory CP  {
         Variable * value = fujinet_read( _environment, $3 );
         if ( $4 == VT_DSTRING || $4 == VT_STRING ) {
             Variable * s = variable_temporary( _environment, VT_BYTE, "(size)" );
@@ -2227,36 +2196,20 @@ fujinet_functions:
             variable_string_val( _environment, revalue->name );
             $$ = revalue->name;
         }
-    }
-    | READ OP CP as_datatype_mandatory {
-        $$ = fujinet_read_type( _environment, $4 )->name;
-    }
-    | OPEN OP expr OP_COMMA expr OP_COMMA expr CP {
-        $$ = fujinet_open( _environment, $3, $5, $7 )->name;
-    }
-    | PARSE JSON {
-        $$ = fujinet_parse_json( _environment )->name;
-    }
-    | HTTP POST BIN OP expr CP {
-        $$ = fujinet_http_post_bin( _environment, $5 )->name;
-    }
-    | HTTP POST BIN OP expr as_datatype_mandatory CP  {
-        $$ = fujinet_http_post_bin_type( _environment, $5, $6 )->name;
-    }
-    | SET CHANNEL MODE OP expr CP {
-        $$ = fujinet_set_channel_mode_var( _environment, $5 )->name;
-    }
-    | WRITE OP expr CP {
-        $$ = fujinet_write( _environment, $3 )->name;
-    }
-    | WRITE OP expr as_datatype_mandatory CP {
-        $$ = fujinet_write_type( _environment, $3, $4 )->name;
-    };
+    } | 
+    READY { $$ = fujinet_is_ready( _environment )->name; } | 
+    SET CHANNEL MODE OP expr CP { $$ = fujinet_set_channel_mode_var( _environment, $5 )->name; } | 
+    WRITE OP expr as_datatype_mandatory CP { $$ = fujinet_write_type( _environment, $3, $4 )->name; } |
+    WRITE OP expr CP { $$ = fujinet_write( _environment, $3 )->name; };
+
+/*-----------------------------------------------------------------------------
+ ------------ OVERALL FUNCTIONS
+ ----------------------------------------------------------------------------*/
 
 exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
-    }
+      }
       OP indexes CP optional_field {
         if ( $7 ) {
             Variable * array;
@@ -2292,8 +2245,8 @@ exponential_less:
             $$ = variable_move_from_array( _environment, $1 )->name;
         }
         parser_array_cleanup( _environment );
-    }
-    | Identifier {
+    } | 
+    Identifier {
         Constant * c = constant_find( _environment, $1 );
         if ( c ) {
             if ( c->type == CT_STRING ) {
@@ -2330,8 +2283,8 @@ exponential_less:
                 $$ = variable_retrieve( _environment, $1 )->name;
             }
         }
-    }
-    | Identifier as_datatype_suffix {
+    } | 
+    Identifier as_datatype_suffix {
         Constant * c = constant_find( _environment, $1 );
         if ( c ) {
             if ( c->type == CT_STRING ) {
@@ -2363,101 +2316,57 @@ exponential_less:
                 $$ = variable_retrieve( _environment, $1 )->name;
             }
         }
-    }
-    | Integer { 
+    } | 
+    Integer { 
         $$ = parser_adapted_numeric( _environment, $1 )->name;
-      }
-    | Float { 
+      } | 
+    Float { 
         $$ = variable_temporary( _environment, VT_FLOAT, "(float))" )->name;
         variable_store_float( _environment, $$, $1 );
-    }
-    | String { 
+    } | 
+    String { 
         $$ = variable_temporary( _environment, VT_STRING, "(string value)" )->name;
         variable_store_string( _environment, $$, $1 );
-      }
-    | RawString { 
+      } | 
+    RawString { 
         Variable * variable = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, variable->name, $1 );
         variable->printable = 1;
         $$ = variable->name;
-      }
-    | OP BYTE CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name;
-      }
-    | OP BYTE CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_BYTE )->name;
-      }
-    | OP SIGNED BYTE CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name;
-      }
-    | OP SBYTE CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_SBYTE, $4 )->name;
-      }
-    | OP SIGNED BYTE CP OP expr CP {
-        $$ = variable_cast( _environment, $6, VT_SBYTE )->name;
-      }
-    | OP SBYTE CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_SBYTE )->name;
-      }
-    | OP WORD CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name;
-      }
-    | OP WORD CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_WORD )->name;
-      }
-    | OP SIGNED WORD CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name;
-      }
-    | OP SIGNED WORD CP OP expr CP {
-        $$ = variable_cast( _environment, $6, VT_SWORD )->name;
-      }
-    | OP float_or_single CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_FLOAT )->name;
-      }
-    | OP NUMBER CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_NUMBER, $4 )->name;
-      }
-    | OP DWORD CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name;
-      }
-    | OP DWORD CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_DWORD )->name;
-      }
-    | OP SIGNED DWORD CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name;
-      }
-    | OP SIGNED DWORD CP OP expr CP {
-        $$ = variable_cast( _environment, $6, VT_SDWORD )->name;
-      }
-    | OP COLOR CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
-      }
-    | OP COLOR CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_COLOR )->name;
-      }
-    | OP COLOUR CP direct_integer {
-        $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name;
-      }
-    | OP COLOUR CP OP expr CP {
-        $$ = variable_cast( _environment, $5, VT_COLOR )->name;
-      }
-    | OP STRING CP Identifier {
-        $$ = variable_cast( _environment, $4, VT_DSTRING )->name;
-      }
-    | OSP BufferDefinitionHex { 
-        $$ = parse_buffer_definition( _environment, $2, VT_BUFFER, 1 )->name;
-      }
-    | OP IMAGE CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
+      } | 
+    OP BYTE CP direct_integer { $$ = parser_casted_numeric( _environment, VT_BYTE, $4 )->name; } | 
+    OP BYTE CP OP expr CP { $$ = variable_cast( _environment, $5, VT_BYTE )->name; } |
+    OP SIGNED BYTE CP direct_integer { $$ = parser_casted_numeric( _environment, VT_SBYTE, $5 )->name; } |
+    OP SBYTE CP direct_integer { $$ = parser_casted_numeric( _environment, VT_SBYTE, $4 )->name; } | 
+    OP SIGNED BYTE CP OP expr CP { $$ = variable_cast( _environment, $6, VT_SBYTE )->name; } |
+    OP SBYTE CP OP expr CP { $$ = variable_cast( _environment, $5, VT_SBYTE )->name; } |
+    OP WORD CP direct_integer { $$ = parser_casted_numeric( _environment, VT_WORD, $4 )->name; } |
+    OP WORD CP OP expr CP { $$ = variable_cast( _environment, $5, VT_WORD )->name; } |
+    OP SIGNED WORD CP direct_integer { $$ = parser_casted_numeric( _environment, VT_SWORD, $5 )->name; } |
+    OP SIGNED WORD CP OP expr CP { $$ = variable_cast( _environment, $6, VT_SWORD )->name; } |
+    OP float_or_single CP OP expr CP { $$ = variable_cast( _environment, $5, VT_FLOAT )->name; } |
+    OP NUMBER CP direct_integer { $$ = parser_casted_numeric( _environment, VT_NUMBER, $4 )->name; } |
+    OP DWORD CP direct_integer { $$ = parser_casted_numeric( _environment, VT_DWORD, $4 )->name; } |
+    OP DWORD CP OP expr CP { $$ = variable_cast( _environment, $5, VT_DWORD )->name; } | 
+    OP SIGNED DWORD CP direct_integer { $$ = parser_casted_numeric( _environment, VT_SDWORD, $5 )->name; } |
+    OP SIGNED DWORD CP OP expr CP { $$ = variable_cast( _environment, $6, VT_SDWORD )->name; } |
+    OP COLOR CP direct_integer { $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name; } |
+    OP COLOR CP OP expr CP { $$ = variable_cast( _environment, $5, VT_COLOR )->name; } |
+    OP COLOUR CP direct_integer { $$ = parser_casted_numeric( _environment, VT_COLOR, $4 )->name; } |
+    OP COLOUR CP OP expr CP { $$ = variable_cast( _environment, $5, VT_COLOR )->name; } |
+    OP STRING CP Identifier { $$ = variable_cast( _environment, $4, VT_DSTRING )->name; } |
+    OSP BufferDefinitionHex {  $$ = parse_buffer_definition( _environment, $2, VT_BUFFER, 1 )->name; } |
+    OP IMAGE CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
         int size;
         char * buffer = parse_buffer( _environment, $5, &size, 1 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
-      }      
-    | OP IMAGE CP RawString { 
+      }  |
+    OP IMAGE CP RawString { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = image_load_from_buffer( _environment, buffer, size )->name;
-      }      
-    | OP IMAGE CP Identifier { 
+      } | 
+    OP IMAGE CP Identifier { 
         Constant * c = constant_find( _environment, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
@@ -2466,18 +2375,18 @@ exponential_less:
             CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
         }
         $$ = image_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
-      }      
-    | OP images_or_atlas CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
+      } | 
+    OP images_or_atlas CP buffer_definition_prefix BufferDefinitionHex buffer_definition_suffix { 
         int size;
         char * buffer = parse_buffer( _environment, $5, &size, 1 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
-      }   
-    | OP images_or_atlas CP RawString { 
+      } | 
+    OP images_or_atlas CP RawString { 
         int size;
         char * buffer = parse_buffer( _environment, $4, &size, 0 );
         $$ = images_load_from_buffer( _environment, buffer, size )->name;
-      }   
-    | OP images_or_atlas CP Identifier { 
+      } | 
+    OP images_or_atlas CP Identifier { 
         Constant * c = constant_find( _environment, $4 );
         if ( c == NULL ) {
             CRITICAL_UNDEFINED_CONSTANT( $4 );
@@ -2486,17 +2395,11 @@ exponential_less:
             CRITICAL_TYPE_MISMATCH_CONSTANT_STRING( $4 );
         }
         $$ = images_load_from_buffer( _environment, c->valueString->value, c->valueString->size )->name;
-      }      
-    | BETA {
-#ifdef __BETA__
-         int beta = 1;
-#else
-         int beta = 0;
-#endif
-        $$ = variable_temporary( _environment, VT_BYTE, "(BETA value)" )->name;
-        variable_store( _environment, $$, beta );
-    }
-    | PI {
+      } | 
+    BETA {
+        $$ = variable_by_constant( _environment, VT_BYTE, BETAVALUE )->name;
+    } | 
+    PI {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
@@ -2507,8 +2410,8 @@ exponential_less:
         cpu_move_32bit( _environment, "PI", pi->realName );
 #endif
         $$ = pi->name;
-      }
-    | PI OP CP {
+      } | 
+    PI OP CP {
         Variable * pi = variable_temporary( _environment, VT_FLOAT, "(float)" );
 #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
     defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
@@ -2519,29 +2422,29 @@ exponential_less:
         cpu_move_32bit( _environment, "PI", pi->realName );
 #endif
         $$ = pi->name;
-      }
-    | SQR OP expr CP {
+      } | 
+    SQR OP expr CP {
         $$ = sqroot( _environment, $3 )->name;
-      }
-    | LOG OP expr CP {
+      } | 
+    LOG OP expr CP {
         $$ = fp_log( _environment, $3 )->name;
-      }
-    | EXP OP expr CP {
+      } | 
+    EXP OP expr CP {
         $$ = fp_exp( _environment, $3 )->name;
-      }
-    | SIN OP expr CP {
+      } | 
+    SIN OP expr CP {
         $$ = fp_sin( _environment, $3 )->name;
-      }
-    | COS OP expr CP {
+      } | 
+    COS OP expr CP {
         $$ = fp_cos( _environment, $3 )->name;
-      }
-    | TAN OP expr CP {
+      } | 
+    TAN OP expr CP {
         $$ = fp_tan( _environment, $3 )->name;
-      }
-    | COMBINE NIBBLE OP expr OP_COMMA expr CP {
+      } | 
+    COMBINE NIBBLE OP expr OP_COMMA expr CP {
         $$ = combine_nibble_vars( _environment, $4, $6 )->name;
-      }
-    | NEW TILESET {
+      } | 
+    NEW TILESET {
         Variable * index = variable_temporary( _environment, VT_TILESET, "(tileset)");
         cpu_store_8bit( _environment, index->realName, ((struct _Environment *)_environment )->tilesetCount );
         ((struct _Environment *)_environment )->tilesets[((struct _Environment *)_environment )->tilesetCount] = malloc( sizeof( TileDescriptors ) );
@@ -2553,41 +2456,41 @@ exponential_less:
         descriptors->lastFree = 128;
         index->value = ++((struct _Environment *)_environment )->tilesetCount;
         $$ = index->name;
-      }
-    | NEW OP const_expr OP_COMMA const_expr CP {        
+      } | 
+    NEW OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode )->name;
-      }
-    | NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
+      } | 
+    NEW IMAGE OP const_expr OP_COMMA const_expr CP {        
         $$ = new_image( _environment, $4, $6, ((struct _Environment *)_environment)->currentMode )->name;
-      }
-    | NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
+      } | 
+    NEW images_or_atlas OP const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_images( _environment, $4, $6, $8, ((struct _Environment *)_environment)->currentMode )->name;
-      }
-    | NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
+      } | 
+    NEW SEQUENCE OP const_expr OP_COMMA const_expr OP_COMMA const_expr OP_COMMA const_expr CP {        
         $$ = new_sequence( _environment, $4, $6, $8, $10, ((struct _Environment *)_environment)->currentMode )->name;
-      }
-    | NEW MUSIC OP const_expr CP {        
+      } | 
+    NEW MUSIC OP const_expr CP {        
         $$ = new_music( _environment, $4 )->name;
-    }
-    | LOAD OP String CP on_bank_explicit load_flags {
+    } | 
+    LOAD OP String CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, NULL, 0, abs($5), $6 )->name;
-      }
-    | LOAD OP String AS String CP on_bank_explicit load_flags {
+      } | 
+    LOAD OP String AS String CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, $5, 0, abs($7), $8 )->name;
-      }
-    | LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags {
+      } | 
+    LOAD OP String OP_COMMA Integer CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, NULL, $5, abs($7), $8 )->name;
-      }
-    | LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags {
+      } | 
+    LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags {
         $$ = load( _environment, $3, $5, $7, abs($9), $10 )->name;
-      }
-    | LOAD MUSIC OP String CP on_bank_explicit {
+      } | 
+    LOAD MUSIC OP String CP on_bank_explicit {
         $$ = music_load( _environment, $4, NULL, abs($6) )->name;
-      }
-    | LOAD MUSIC OP String AS String CP on_bank_explicit {
+      } | 
+    LOAD MUSIC OP String AS String CP on_bank_explicit {
         $$ = music_load( _environment, $4, $6, abs($8) )->name;
-      }
-    | load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
+      } | 
+    load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * sequence = sequence_load( 
             _environment, 
             $3, $5, 
