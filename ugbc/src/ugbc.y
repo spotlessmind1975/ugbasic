@@ -914,6 +914,43 @@ const_key_scancode_function_digit:
     F7 { $$ = key_constant( _environment, KEY_F7 ); } | 
     F8 { $$ = key_constant( _environment, KEY_F8 ); };
 
+const_key_scancode_definition: 
+    ARROW LEFT { $$ = key_constant( _environment, KEY_LEFT_ARROW ); } | 
+    ARROW UP { $$ = key_constant( _environment, KEY_UP_ARROW ); } | 
+    ASTERISK { $$ = key_constant( _environment, KEY_ASTERISK ); } | 
+    AT { $$ = key_constant( _environment, KEY_AT ); } | 
+    CLEAR { $$ = key_constant( _environment, KEY_CLEAR ); } | 
+    COLON { $$ = key_constant( _environment, KEY_COLON ); } | 
+    COMMA { $$ = key_constant( _environment, KEY_COMMA ); } | 
+    COMMODORE { $$ = key_constant( _environment, KEY_COMMODORE ); } | 
+    const_key_scancode_alphadigit { $$ = $1; } | 
+    const_key_scancode_function_digit { $$ = $1; } | 
+    CONTROL { $$ = key_constant( _environment, KEY_CONTROL ); } | 
+    CRSR LEFT RIGHT { $$ = key_constant( _environment, KEY_CRSR_LEFT_RIGHT ); } | 
+    CRSR UP DOWN { $$ = key_constant( _environment, KEY_CRSR_UP_DOWN ); } | 
+    DELETE { $$ = key_constant( _environment, KEY_DELETE ); } | 
+    DOWN { $$ = key_constant( _environment, KEY_DOWN ); } | 
+    EQUAL { $$ = key_constant( _environment, KEY_EQUAL ); } | 
+    HOME { $$ = key_constant( _environment, KEY_HOME ); } | 
+    INSERT { $$ = key_constant( _environment, KEY_INSERT ); } |
+    LEFT { $$ = key_constant( _environment, KEY_LEFT ); } | 
+    LEFT ARROW { $$ = key_constant( _environment, KEY_LEFT_ARROW ); } | 
+    MINUS { $$ = key_constant( _environment, KEY_MINUS ); } | 
+    NONE { $$ = key_constant( _environment, KEY_NONE ); } | 
+    PERIOD { $$ = key_constant( _environment, KEY_PERIOD ); } | 
+    PLUS { $$ = key_constant( _environment, KEY_PLUS ); } | 
+    POUND { $$ = key_constant( _environment, KEY_POUND ); } | 
+    RETURN { $$ = key_constant( _environment, KEY_RETURN ); } | 
+    RIGHT { $$ = key_constant( _environment, KEY_RIGHT ); } | 
+    RUN STOP { $$ = key_constant( _environment, KEY_RUNSTOP ); } | 
+    RUNSTOP { $$ = key_constant( _environment, KEY_RUNSTOP ); } | 
+    SEMICOLON { $$ = key_constant( _environment, KEY_SEMICOLON ); } | 
+    SLASH { $$ = key_constant( _environment, KEY_SLASH ); } | 
+    SPACE { $$ = key_constant( _environment, KEY_SPACE ); } |
+    TAB { $$ = key_constant( _environment, KEY_TAB ); } | 
+    UP { $$ = key_constant( _environment, KEY_UP ); } | 
+    UP ARROW { $$ = key_constant( _environment, KEY_UP_ARROW ); };
+
 /* 
     Various flags.
 */
@@ -1994,112 +2031,6 @@ random_definition:
     random_definition_simple { $$ = $1; };
 
 
-const_key_scancode_definition: 
-      NONE {
-        $$ = key_constant( _environment, KEY_NONE );
-    }
-    | const_key_scancode_alphadigit {
-        $$ = $1;
-    }
-    | ASTERISK {
-        $$ = key_constant( _environment, KEY_ASTERISK );
-    }
-    | AT {
-        $$ = key_constant( _environment, KEY_AT );
-    }
-    | CLEAR {
-        $$ = key_constant( _environment, KEY_CLEAR );
-    }
-    | COLON {
-        $$ = key_constant( _environment, KEY_COLON );
-    }
-    | COMMA {
-        $$ = key_constant( _environment, KEY_COMMA );
-    }
-    | COMMODORE {
-        $$ = key_constant( _environment, KEY_COMMODORE );
-    }
-    | CONTROL {
-        $$ = key_constant( _environment, KEY_CONTROL );
-    }
-    | CRSR LEFT RIGHT {
-        $$ = key_constant( _environment, KEY_CRSR_LEFT_RIGHT );
-    }
-    | CRSR UP DOWN {
-        $$ = key_constant( _environment, KEY_CRSR_UP_DOWN );
-    }
-    | DELETE {
-        $$ = key_constant( _environment, KEY_DELETE );
-    }
-    | EQUAL {
-        $$ = key_constant( _environment, KEY_EQUAL );
-    }
-    | TAB {
-        $$ = key_constant( _environment, KEY_TAB );
-    }
-    | const_key_scancode_function_digit {
-        $$ = $1;
-    }
-    | HOME {
-        $$ = key_constant( _environment, KEY_HOME );
-    }
-    | INSERT {
-        $$ = key_constant( _environment, KEY_INSERT );
-    }
-    | ARROW LEFT {
-        $$ = key_constant( _environment, KEY_LEFT_ARROW );
-    }
-    | LEFT ARROW {
-        $$ = key_constant( _environment, KEY_LEFT_ARROW );
-    }
-    | LEFT {
-        $$ = key_constant( _environment, KEY_LEFT );
-    }
-    | RIGHT {
-        $$ = key_constant( _environment, KEY_RIGHT );
-    }
-    | UP {
-        $$ = key_constant( _environment, KEY_UP );
-    }
-    | DOWN {
-        $$ = key_constant( _environment, KEY_DOWN );
-    }
-    | ARROW UP {
-        $$ = key_constant( _environment, KEY_UP_ARROW );
-    }
-    | UP ARROW {
-        $$ = key_constant( _environment, KEY_UP_ARROW );
-    }
-    | MINUS {
-        $$ = key_constant( _environment, KEY_MINUS );
-    }
-    | PERIOD {
-        $$ = key_constant( _environment, KEY_PERIOD );
-    }
-    | PLUS {
-        $$ = key_constant( _environment, KEY_PLUS );
-    }
-    | POUND {
-        $$ = key_constant( _environment, KEY_POUND );
-    }
-    | RETURN {
-        $$ = key_constant( _environment, KEY_RETURN );
-    }
-    | RUNSTOP {
-        $$ = key_constant( _environment, KEY_RUNSTOP );        
-    }
-    | RUN STOP {
-        $$ = key_constant( _environment, KEY_RUNSTOP );        
-    }
-    | SEMICOLON {
-        $$ = key_constant( _environment, KEY_SEMICOLON );
-    }
-    | SLASH {
-        $$ = key_constant( _environment, KEY_SLASH );        
-    }
-    | SPACE {
-        $$ = key_constant( _environment, KEY_SPACE );        
-    };
 
 load_image : LOAD IMAGE | IMAGE LOAD;
 load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
