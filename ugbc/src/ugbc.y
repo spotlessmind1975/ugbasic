@@ -10633,239 +10633,134 @@ char version[MAX_TEMPORARY_STORAGE] = UGBASIC_VERSION;
  */
 char revision[MAX_TEMPORARY_STORAGE] = UGBASIC_REVISION;
 
+/*!
+ @brief Show usage and exit
+ 
+ When using a CLI (Command Line Interface), you must pass a series of parameters (the 
+ source file, the target, any optimization options). If the user makes a syntax error 
+ or explicitly requests help, this function intervenes. This function lists all available 
+ flags (e.g., `-t` for the target, `-o` for output, `-i` for includes, and so on). It 
+ displays a list of all retrocomputers for which  ugBASIC can compile. Finally, 
+ terminates the program, returning a status code to the operating system.
+
+ @param _argc The number of parameters given on the command line.
+ @param _argv The array of parameters given on the command line.
+ */
 void show_usage_and_exit( int _argc, char *_argv[] ) {
 
-#if defined(__atari__) 
-    char target[MAX_TEMPORARY_STORAGE] = "ATARI 400/800";
-#elif defined(__atarixl__) 
-    char target[MAX_TEMPORARY_STORAGE] = "ATARI XL";
-#elif __c128__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (MOS 8510 native)";
-#elif __c128z__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 128 (ZILOG Z80 native)";
-#elif __c64__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 64";
-#elif __gb__
-    char target[MAX_TEMPORARY_STORAGE] = "Gameboy";
-#elif __plus4__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore PLUS/4";
-#elif __c16__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 16";
-#elif __zx__
-    char target[MAX_TEMPORARY_STORAGE] = "ZX Spectrum 48K";
-#elif __d32__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32 (Motorola 6809)";
-#elif __d32b__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 32 (Hitachi 6309)";
-#elif __d64__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 64 (Motorola 6809)";
-#elif __d64b__
-    char target[MAX_TEMPORARY_STORAGE] = "Dragon 64 (Hitachi 6309)";
-#elif __pc128op__
-    char target[MAX_TEMPORARY_STORAGE] = "PC128 Olivetti Prodest / Thomson MO6";
-#elif __to8__
-    char target[MAX_TEMPORARY_STORAGE] = "Thomson TO8";
-#elif __mo5__
-    char target[MAX_TEMPORARY_STORAGE] = "Thomson MO5";
-#elif __vic20__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore VIC-20";
-#elif __msx1__
-    char target[MAX_TEMPORARY_STORAGE] = "MSX 1";
-#elif __coleco__
-    char target[MAX_TEMPORARY_STORAGE] = "ColecoVision";
-#elif __pccga__
-    char target[MAX_TEMPORARY_STORAGE] = "PC IBM (CGA)";
-#elif __sc3000__
-    char target[MAX_TEMPORARY_STORAGE] = "SEGA SC-3000";
-#elif __sg1000__
-    char target[MAX_TEMPORARY_STORAGE] = "SEGA SG-1000";
-#elif __cpc__
-    char target[MAX_TEMPORARY_STORAGE] = "Amstrad CPC664";
-#elif __vg5000__
-    char target[MAX_TEMPORARY_STORAGE] = "Philips VG5000";
-#elif __coco__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer (Motorola 6809)";
-#elif __cocob__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer (Hitachi 6309)";
-#elif __coco3b__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3 (Motorola 6809)";
-#elif __coco3__
-    char target[MAX_TEMPORARY_STORAGE] = "TRS-80 Color Computer 3 (Hitachi 6309)";
-#elif __c64reu__
-    char target[MAX_TEMPORARY_STORAGE] = "Commodore 64 + REU";
-#elif __pc1403__
-    char target[MAX_TEMPORARY_STORAGE] = "Sharp PC-1403";
-#elif __vz200__
-    char target[MAX_TEMPORARY_STORAGE] = "VTech Laser200/210/305/310";
-#endif
-
     printf("--------------------------------------------------\n");
-    printf("ugBASIC Compiler v%s [target: %s]\n", version, target);
+    printf("ugBASIC Compiler v%s [target: %s]\n", version, targetDescription);
     printf("--------------------------------------------------\n");
     printf("Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)\n\n");
     printf("Licensed under the Apache License, Version 2.0 (the \"License\");\n");
     printf("you may not use this program except in compliance with the License.\n\n");
 
-    printf("usage: %s [options] <source>\n\n", _argv[0] );
+    printf("usage: %s [options] <source> [<asm>]\n\n", _argv[0] );
 
-    printf("Options and parameters:\n" );
+    printf("Options and parameters:\n\n" );
+
     printf("\t<source>     Input filename with ugBASIC source code\n" );
-    printf("\t<asm>        Output filename with ASM source code (optional if '-o' given)\n" );
+    printf("\t<asm>        Output filename with ASM source code (optional, if '-o' given)\n" );
+    printf("\n" );
+
+    printf("\t-1           Enable 10-liners mode\n" );
+    printf("\t               It includes an execution shell and it enforces other.\n" );
+    printf("\t               10-liners rules.\n" );
     printf("\t-a           Show statistics on assembly listing generated\n" );
-    printf("\t-d           Enable debugging of LOAD IMAGE\n" );
-    printf("\t-F           Enable DOJO over FujiNet\n" );
-    printf("\t-f           Enable DOJO over virtualized FujiNet\n" );
-    printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
-    printf("\t-C <file>    Path to compiler\n" );
     printf("\t-A <file>    Path to app maker\n" );
-    printf("\t-T <path>    Path to temporary path\n" );
-    printf("\t-X <file>    Path to executer\n" );
-    printf("\t-P <file>    Path to profile (-L needed)\n" );
-    printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
-#if defined(__c64reu__) || defined(__to8__)
-    printf("\t-R <size>    Size of expansion memory (in KB)\n" );
-#endif
-    printf("\t-c <file>    Output filename with linker configuration\n" );
 #if defined(__coco__) || defined(__coco3__) || defined(__cocob__) || defined(__coco3b__)
     printf("\t-b <file>    Path to DECB image tool\n" );
 #endif
-#if defined(__atari__) || defined(__atarixl__)
-    printf("\t-t <file>    Path to DIR2ATR tool\n" );
-#endif
-#if defined(__msx1__)
-    printf("\t-t <file>    Path to DSKTOOLS tool\n" );
-#endif
-#if defined(__pc1403__)
-    printf("\t-t <file>    Path to ASLINK tool\n" );
-#endif
+    printf("\t-c <file>    Output filename with linker configuration\n" );
+    printf("\t-C <file>    Path to compiler\n" );
+    printf("\t-d           Enable debugging of LOAD IMAGE\n" );
+
+    printf("\t-e <modules> Embed specified modules instead of inline code\n" );
+    printf("\t-E           Show stats of embedded modules\n" );
+    printf("\t-f           Enable DOJO over virtualized FujiNet\n" );
+    printf("\t-F           Enable DOJO over FujiNet\n" );
+
 #if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
     printf("\t               type1 (1): algorithmic\n" );
     printf("\t               type2 (2): by threshold\n" );
 #endif
-    printf("\t-1           Include source code into the executable\n" );
-    printf("\t             and an execution shell. It enforces other.\n" );
-    printf("\t             10-liners rules.\n" );
-    printf("\t-s           Enforces sandbox running rules.\n" );
-    printf("\t-o <exe>     Output filename with final executable file for target\n" );
-    printf("\t-O <type>    Output file format for target:\n" );
-#if __atari__ 
-    printf("\t                xex - executable binary file\n" );
-    printf("\t                atr - ATR disk image\n" );
-    #define defaultExtension "xex"
-#elif __atarixl__ 
-    printf("\t                xex - executable binary file\n" );
-    printf("\t                atr - ATR disk image\n" );
-    #define defaultExtension "xex"
-#elif __c64__
-    printf("\t                prg - program binary file\n" );
-    printf("\t                d64 - D64 disk image\n" );
-    #define defaultExtension "prg"
-#elif __c128__
-    printf("\t                prg - program binary file\n" );
-    printf("\t                d64 - D64 disk image\n" );
-    #define defaultExtension "prg"
-#elif __c128z__
-    printf("\t                prg - program binary file\n" );
-    #define defaultExtension "prg"
-#elif __plus4__
-    printf("\t                prg - program binary file\n" );
-    #define defaultExtension "prg"
-#elif __c16__
-    printf("\t                prg - program binary file\n" );
-    #define defaultExtension "prg"
-#elif __zx__
-    printf("\t                tap - tape file\n" );
-    #define defaultExtension "tap"
-#elif __coco__
-    printf("\t                bin - COCO binary file\n" );
-    printf("\t                dsk - COCO disk basic\n" );
-    #define defaultExtension "bin"
-#elif __cocob__
-    printf("\t                bin - COCO binary file\n" );
-    printf("\t                dsk - COCO disk basic\n" );
-    #define defaultExtension "bin"
-#elif __coco3__
-    printf("\t                bin - COCO binary file\n" );
-    printf("\t                dsk - COCO disk basic\n" );
-    #define defaultExtension "bin"
-#elif __coco3b__
-    printf("\t                bin - COCO binary file\n" );
-    printf("\t                dsk - COCO disk basic\n" );
-    #define defaultExtension "bin"
-#elif __d32__
-    printf("\t                bin - dragon dos binary file\n" );
-    #define defaultExtension "bin"
-#elif __d32b__
-    printf("\t                bin - dragon dos binary file\n" );
-    #define defaultExtension "bin"
-#elif __d64__
-    printf("\t                bin - dragon dos binary file\n" );
-    #define defaultExtension "bin"
-#elif __d64b__
-    printf("\t                bin - dragon dos binary file\n" );
-    #define defaultExtension "bin"
-#elif __pc128op__
-    printf("\t                k7o - K7 format (original algorithm)\n" );
-    printf("\t                k7 - K7 format\n" );
-    #define defaultExtension "k7"
-#elif __to8__
-    printf("\t                k7 - K7 format\n" );
-    #define defaultExtension "k7"
-#elif __mo5__
-    printf("\t                k7o - K7 format (original algorithm)\n" );
-    printf("\t                k7 - K7 format\n" );
-    #define defaultExtension "k7"
-#elif __vic20__
-    printf("\t                prg - program binary file\n" );
-    printf("\t                d64 - D64 disk image\n" );
-    #define defaultExtension "prg"
-#elif __msx1__
-    printf("\t                rom - cartridge ROM\n" );
-    printf("\t                dsk - DSK image\n" );
-    #define defaultExtension "rom"
-#elif __gb__
-    printf("\t                gb - cartridge ROM\n" );
-    #define defaultExtension "gb"
-#elif __coleco__
-    printf("\t                rom - cartridge ROM\n" );
-    #define defaultExtension "rom"
-#elif __pccga__
-    printf("\t                com - binary executable\n" );
-    #define defaultExtension "com"
-#elif __sc3000__
-    printf("\t                rom - cartridge ROM\n" );
-    #define defaultExtension "rom"
-#elif __sg1000__
-    printf("\t                rom - cartridge ROM\n" );
-    #define defaultExtension "rom"
-#elif __cpc__
-    printf("\t                bin - binary image\n" );
-    printf("\t                dsk - disk image\n" );
-    #define defaultExtension "dsk"
-#elif __vg5000__
-    printf("\t                k7 - K7 format\n" );
-    #define defaultExtension "k7"
-#elif __c64reu__
-    printf("\t                d64 - D64 disk image\n" );
-    printf("\t                reu - REU RAM espansion image\n" );
-    #define defaultExtension "d64"
-#elif __pc1403__
-    printf("\t                ram - RAM loadable by debugger\n" );
-    #define defaultExtension "ram"
-#elif __vz200__
-    printf("\t                vz - file snapshot\n" );
-    #define defaultExtension "vz"
-#endif
+
     printf("\t-l <name>    Output filename with list of variables defined\n" );
-    printf("\t-e <modules> Embed specified modules instead of inline code\n" );
 #if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__) || defined(__vz200__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
 #else
     printf("\t-L <listing> Output filename with assembly listing file\n" );
 #endif
-    printf("\t-E           Show stats of embedded modules\n" );
+    printf("\t-o <exe>     Output filename with final executable file for target\n" );
+    printf("\t-O <type>    Output file format for target:\n" );
+#if defined(__atari__) || defined(__atarixl__)
+    printf("\t                xex - executable binary file\n" );
+    printf("\t                atr - ATR disk image\n" );
+#elif defined(__c64__) || defined(__vic20__)
+    printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
+#elif defined(__c64reu__)
+    printf("\t                d64 - D64 disk image\n" );
+    printf("\t                reu - REU RAM espansion image\n" );
+#elif defined(__c128__)
+    printf("\t                prg - program binary file\n" );
+    printf("\t                d64 - D64 disk image\n" );
+#elif defined(__c128z__) || defined(__plus4__) || defined(__c16__)
+    printf("\t                prg - program binary file\n" );
+#elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
+    printf("\t                bin - COCO binary file\n" );
+    printf("\t                dsk - COCO disk basic\n" );
+#elif defined(__coleco__)
+    printf("\t                rom - cartridge ROM\n" );
+#elif defined(__cpc__)
+    printf("\t                bin - binary image\n" );
+    printf("\t                dsk - disk image\n" );
+#elif defined(__d32__) || defined(__d32b__) || defined(__d64__) || defined(__d64b__) 
+    printf("\t                bin - dragon dos binary file\n" );
+#elif defined(__gb__)
+    printf("\t                gb - cartridge ROM\n" );
+#elif defined(__mo5__)
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif defined(__msx1__)
+    printf("\t                rom - cartridge ROM\n" );
+    printf("\t                dsk - DSK image\n" );
+#elif defined(__pc128op__)
+    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                k7 - K7 format\n" );
+#elif defined(__pc1403__)
+    printf("\t                ram - RAM loadable by debugger\n" );
+#elif defined(__pccga__)
+    printf("\t                com - binary executable\n" );
+#elif defined(__sc3000__) || defined(__sg1000__)
+    printf("\t                rom - cartridge ROM\n" );
+#elif defined(__to8__)
+    printf("\t                k7 - K7 format\n" );
+#elif defined(__vg5000__)
+    printf("\t                k7 - K7 format\n" );
+#elif defined(__vz200__)
+    printf("\t                vz - file snapshot\n" );
+#elif defined(__zx__)
+    printf("\t                tap - tape file\n" );
+#endif
+    printf("\t-p <num>     Maximum number of peep hole optimizations passes (default: 16, 0 = disable)\n" );
+    printf("\t-P <file>    Path to profile (-L needed)\n" );
+    printf("\t-q <cycles>  Cycles for profiling (default: 1000000)\n" );
+#if defined(__c64reu__) || defined(__to8__)
+    printf("\t-R <size>    Size of expansion memory (in KB)\n" );
+#endif
+    printf("\t-s           Enforces sandbox running rules.\n" );
+#if defined(__atari__) || defined(__atarixl__)
+    printf("\t-t <file>    Path to DIR2ATR tool\n" );
+#elif defined(__msx1__)
+    printf("\t-t <file>    Path to DSKTOOLS tool\n" );
+#elif defined(__pc1403__)
+    printf("\t-t <file>    Path to ASLINK tool\n" );
+#endif
+    printf("\t-T <path>    Path to temporary path\n" );
+    printf("\t-X <file>    Path to executer\n" );
     printf("\t-W           Enable warnings during compilation\n" );
     printf("\t-V           Output version (example: '%s')\n", version );
     printf("\t-v           Output generated files\n" );
