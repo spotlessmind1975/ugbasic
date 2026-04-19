@@ -9506,189 +9506,122 @@ cpuspeed_definition:
     expr { cpuspeed( _environment, $1 ); };
 
 /*-----------------------------------------------------------------------------
- ------------ OVERALL INSTRUCTIONS
+ ------------ OVERALL INSTRUCTIONS (SINGLE STATEMENTS, NO COLONS)
  ----------------------------------------------------------------------------*/
 
 statement2nc:
-    BANK bank_definition | 
-    RASTER raster_definition | 
-    NEXT RASTER next_raster_definition | 
-    NEXT ANIMATION next_animation_definition |
-    COLOR color_definition | 
-    COLOUR color_definition | 
-    PALETTE { ((struct _Environment *)_environment)->paletteIndex = 0; } palette_definition | 
-    PALETTE1 { ((struct _Environment *)_environment)->paletteIndex = 0; color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } palette_definition | 
-    MOVEMENT movement_definition | 
-    ANIMATION animation_definition | 
-    ANIMATE animate_definition | 
-    PAUSE pause_definition | 
-    SUSPEND suspend_definition | 
-    FREEZE freeze_definition | 
-    RESUME resume_definition | 
-    UNFREEZE unfreeze_definition | 
-    WAIT wait_definition | 
-    SLEEP sleep_definition | 
-    CMOB cmob_definition | 
-    MOB mob_definition | 
-    SPRITE sprite_definition | 
-    CSET cset_definition | 
-    CSPRITE sprite_definition | 
-    MSPRITE sprite_definition | 
-    MSPRITE UPDATE { msprite_update( _environment ); } | 
-    NRM nrm_definition | 
-    MOD mod_definition | 
-    HIRES hires_definition | 
-    MULTI multi_definition | 
-    KEYGET keyget_definition | 
-    BITMAP bitmap_definition | 
-    TEXTMAP textmap_definition | 
-    TILEMAP tilemap_definition | 
-    TEXT text_definition | 
-    TILE tile_definition | 
-    TILES tiles_definition | 
-    FONT font_definition | 
-    COLORMAP colormap_definition | 
-    COLOURMAP colormap_definition | 
-    SCREEN screen_definition | 
-    GRAPHICS graphics_definition | 
-    POINT point_definition | 
-    PLOT plot_definition | 
-    PLOTR plotr_definition | 
-    CIRCLE circle_definition | 
-    FCIRCLE fcircle_definition | 
-    ELLIPSE ellipse_definition | 
-    FELLIPSE fellipse_definition | 
-    DRAW draw_definition | 
-    ROT rot_definition | 
-    DTILE draw_tile_definition | 
-    DTILES draw_tile_definition | 
-    LINE line_definition | 
-    PUT put_definition | 
-    DEFDGR defdgr_definition | 
-    BLIT blit_definition | 
-    FLIP flip_definition | 
-    MOVE move_definition | 
-    GET get_definition | 
-    SLICE slice_definition | 
-    BOX box_definition | 
-    REC rec_definition | 
-    RECT rec_definition | 
-    CONSOLE console_definition | 
-    BAR bar_definition | 
-    BLOCK block_definition | 
-    POLYLINE polyline_definition | 
-    TRIANGLE triangle_definition | 
-    CLIP clip_definition | 
-    USE use_definition | 
-    SET LINE expr {
-            ((Environment *)_environment)->lineNeeded = 1;
-            variable_move( _environment, $3, "LINE" );
-        } | 
-    INK ink_definition | 
-    INKB inkb_definition | 
-    VAR var_definition | 
-    TEXTADDRESS OP_ASSIGN expr { variable_move( _environment, $3, "TEXTADDRESS" ); } | 
-    EMPTY TILE OP_ASSIGN expr { variable_move( _environment, $4, "EMPTYTILE" ); } | 
-    EMPTYTILE OP_ASSIGN expr { variable_move( _environment, $3, "EMPTYTILE" ); } | 
     ADD add_definition | 
     ADDC addc_definition | 
-    MUL mul_definition | 
-    DIV div_definition | 
-    XOR xor_definition | 
-    POKE poke_definition | 
-    POKEW pokew_definition | 
-    POKED poked_definition | 
-    NOP { cpu_nop(_environment); } | 
-    RUN { run( _environment ); } | 
-    KEY key_definition | 
-    DLOAD dload_definition | 
-    DSAVE dsave_definition | 
-    CHAIN chain_definition | 
-    SWAP swap_definition | 
-    OUT out_definition | 
-    DATA data_definition | 
-    READ read_definition | 
-    RESTORE restore_definition | 
-    CLR clear_definition | 
-    CLEAR clear_definition | 
-    PMODE pmode_definition | 
-    PAINT paint_definition | 
+    AFTER after_definition | 
+    ALLOW { allow( _environment ); } | 
+    ANIMATE animate_definition | 
+    ANIMATION animation_definition | 
+    ARRAY Identifier {
+            } OP_ASSIGN {
+            Variable * var = variable_retrieve( _environment, $2 );
+            if ( var->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $2 );
+            }
+            ((struct _Environment *)_environment)->currentArray = var;
+
+                Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+                currentArray->arrayInitialization = NULL;
+
+        } array_reassign  | 
+    ARRAY Identifier {
+            
+            } OP_ASSIGN_DIRECT {
+            Variable * var = variable_retrieve( _environment, $2 );
+            if ( var->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $2 );
+            }
+            ((struct _Environment *)_environment)->currentArray = var;
+                Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
+                currentArray->arrayInitialization = NULL;
+
+        } array_reassign | 
     AT at_definition | 
-    CHAR char_definition | 
-    ENVELOPE envelope_definition | 
-    INSERT insert_definition | 
-    CHECK check_definition | 
-    DOJO dojo_definition | 
-    dojo_definition | 
-    FUJINET fujinet_definition | 
-    SERIAL serial_definition | 
-    PRINT print_definition | 
-    FAST fast_definition | 
-    SLOW slow_definition | 
-    CPUSPEED cpuspeed_definition | 
-    GR PRINT gprint_definition | 
-    GPRINT gprint_definition | 
-    FLASH flash_definition | 
-    TRAVEL {
-        ((struct _Environment *)_environment)->travelX = NULL; 
-        ((struct _Environment *)_environment)->travelXAR = NULL; 
-        ((struct _Environment *)_environment)->travelY = NULL; 
-        ((struct _Environment *)_environment)->travelYAR = NULL; 
-        } travel_definition | 
+    BANK bank_definition | 
+    BAR bar_definition | 
+    BEG COPPER { begin_copper( _environment, NULL ); } | 
+    BEG COPPER const_expr_string { begin_copper( _environment, $3 ); } | 
+    BEG GAMELOOP { begin_gameloop( _environment ); } | 
+    BEG STORAGE const_expr_string { begin_storage( _environment, $3, NULL ); } | 
+    BEG STORAGE const_expr_string AS const_expr_string { begin_storage( _environment, $3, $5 ); } | 
+    BEG TYPE Identifier { begin_type( _environment, $3 ); } |
+    BELL bell_definition | 
+    BITMAP bitmap_definition | 
+    BLIT blit_definition | 
+    BLOCK block_definition | 
+    BOOM boom_definition | 
     BORDER border_definition | 
-    PRINT BUFFER print_buffer_definition | 
-    PRINT BUFFER RAW print_buffer_raw_definition |
-    PRINT { print_newline( _environment ); } | 
-    INPUT { ((Environment *)_environment)->lineInput = 0; } input_definition | 
-    QM print_definition | 
-    QM { print_newline( _environment ); } | 
-    LOCATE locate_definition | 
-    GR LOCATE gr_locate_definition | 
-    MEMORIZE { memorize( _environment ); } | 
-    REMEMBER { remember( _environment ); } | 
-    HSCROLL hscroll_definition | 
-    VSCROLL vscroll_definition | 
-    UPB upb_definition | 
-    UPW upw_definition | 
-    DOWNB downb_definition | 
-    DOWNW downw_definition | 
-    LEFTB leftb_definition | 
-    LEFTW leftw_definition | 
-    RIGHTB rightb_definition | 
-    RIGHTW rightw_definition | 
-    SCROLL scroll_definition | 
-    CMOVE cmove_definition | 
-    CUP { cmove_direct( _environment, 0, -1 ); } | 
+    BOTTOM { bottom( _environment ); } | 
+    BOX box_definition | 
+    CALL Identifier on_targets {
+            if ( $3 ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $2 );
+            }
+        } | 
+    CALL Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+                if ( $7 ) {
+                call_procedure( _environment, $2 );
+                }
+        } | 
+    CALL Identifier OSP CSP on_targets {
+            if ( $5 ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $2 );
+            }
+        } | 
+    CASE { case_equals_label( _environment );   } OP_HASH const_expr { case_equals( _environment, $4 ); } |
+    CASE {
+            case_equals_label( _environment );  
+        } expr {
+            Variable * expr = variable_retrieve( _environment, $3 );
+            if ( expr->initializedByConstant ) {
+                case_equals( _environment, expr->value );  
+            } else {
+                case_equals_var( _environment, $3 );  
+            }
+        } | 
+    CASE ELSE { case_equals_label( _environment );   case_else( _environment ); } | 
     CDOWN { cmove_direct( _environment, 0, 1 ); } | 
+    CENTER center_definition | 
+    CENTRE center_definition | 
+    CGOTO cgoto_definition | 
+    CHAIN chain_definition | 
+    CHAR char_definition | 
+    CHECK check_definition | 
+    CIRCLE circle_definition | 
+    CLEAR clear_definition | 
+    CLEAR KEY { clear_key( _environment ); } | 
     CLEFT { cmove_direct( _environment, -1, 0 ); } | 
-    CRIGHT { cmove_direct( _environment, 1, 0 ); } | 
     CLINE { cline( _environment, NULL ); } | 
     CLINE expr { cline( _environment, $2 ); } | 
-    SET TAB expr { text_set_tab( _environment, $3 ); } | 
-    CENTRE center_definition | 
-    CENTER center_definition | 
-    VCENTER vcenter_definition | 
-    VCENTRE vcenter_definition | 
-    VHCENTER vhcenter_definition | 
-    VHCENTRE vhcenter_definition | 
-    JMOVE jmove_definition | 
-    CLS expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { cls_box( _environment, $2, $4, $6, $8 ); } |
+    CLIP clip_definition | 
+    CLR clear_definition | 
     CLS { cls( _environment, NULL ); home( _environment ); } | 
     CLS expr { cls( _environment, $2 ); home( _environment ); } | 
-    PCLS { cls( _environment, NULL ); home( _environment ); } | 
-    PCLS expr { cls( _environment, $2 ); home( _environment ); } | 
-    HOME { home( _environment ); } | 
-    BOTTOM { bottom( _environment ); } | 
-    LBOTTOM { lbottom( _environment ); } | 
-    CLEAR KEY { clear_key( _environment ); } | 
-    PUT KEY expr { put_key( _environment, $3 ); } | 
-    INC Identifier field_optional {
-                if ( $3 ) {
-                    variable_increment_type( _environment, $2, $3 );
-                } else {
-                    variable_increment( _environment, $2 );
-                }      
-        } | 
+    CLS expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { cls_box( _environment, $2, $4, $6, $8 ); } |
+    CMOB cmob_definition | 
+    CMOVE cmove_definition | 
+    COLOR color_definition | 
+    COLORMAP colormap_definition | 
+    COLOUR color_definition | 
+    COLOURMAP colormap_definition | 
+    CONFIGURE configure_definitions | 
+    CONSOLE console_definition | 
+    const_instruction const_definition | 
+    COPPER copper_definition | 
+    CPUSPEED cpuspeed_definition | 
+    CRIGHT { cmove_direct( _environment, 1, 0 ); } | 
+    CSET cset_definition | 
+    CSPRITE sprite_definition | 
+    CUP { cmove_direct( _environment, 0, -1 ); } | 
+    DATA data_definition | 
     DEC Identifier field_optional {
                 if ( $3 ) {
                     variable_decrement_type( _environment, $2, $3 );
@@ -9696,27 +9629,12 @@ statement2nc:
                     variable_decrement( _environment, $2 );
                 }
         } | 
-    INC TI {
-            Variable * ti = get_timer( _environment );
-            variable_increment( _environment, ti->name );
-            set_timer( _environment, ti->name );
-        } | 
     DEC TI {
             Variable * ti = get_timer( _environment );
             variable_decrement( _environment, ti->name );
             set_timer( _environment, ti->name );
         } | 
-    INC Identifier OP {
-            parser_array_init( _environment );
-        } indexes CP field_optional {
-            if ( $7 ) {
-                variable_increment_array_type( _environment, $2, $7 );
-            } else {
-                define_implicit_array_if_needed( _environment, $2 );
-                variable_increment_array( _environment, $2 );
-            }
-            parser_array_cleanup( _environment );
-        } | 
+
     DEC Identifier OP {
             parser_array_init( _environment );
         } indexes CP field_optional {
@@ -9728,30 +9646,6 @@ statement2nc:
             }
             parser_array_cleanup( _environment );
     } | 
-    INC OSP Identifier CSP field_optional {
-            if ( $5 ) {
-                Variable * array;
-                if ( ! variable_exists( _environment, $3 ) ) {
-                    CRITICAL_NOT_ARRAY( $3 );
-                }        
-                array = variable_retrieve( _environment, $3 );        
-                if ( array->type != VT_TARRAY ) {
-                    CRITICAL_NOT_ARRAY( $3 );
-                }
-                parser_array_init( _environment );
-                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-                Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
-                variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
-                parser_array_cleanup( _environment );
-                variable_increment( _environment, temporary->name );
-                parser_array_init( _environment );
-                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-                variable_move_array_type( _environment, $3, $5, temporary->name );
-                parser_array_cleanup( _environment );
-            } else {
-                variable_increment_mt( _environment, $3 );
-            }
-        } | 
     DEC OSP Identifier CSP field_optional {
             if ( $5 ) {
                 Variable * array;
@@ -9776,67 +9670,83 @@ statement2nc:
                 variable_decrement_mt( _environment, $3 );
             }
       } | 
-    RANDOMIZE { randomize( _environment, NULL ); } | 
-    RANDOMIZE expr { randomize( _environment, $2 ); } | 
-    IF expr THEN { if_then( _environment, $2 ); } | 
-    IF expr GOTO Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
-    IF expr GOTO Identifier { if_then( _environment, $2 ); goto_label( _environment, $4 ); end_if_then( _environment ); } | 
-    IF expr THEN Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
-    IF expr THEN Integer ELSE Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); else_if_then_label( _environment ); else_if_then( _environment, NULL ); goto_number( _environment, $6 ); end_if_then( _environment ); } | 
-    IF expr THEN { if_then( _environment, $2 ); } statement2nc { end_if_then( _environment ); } | 
+    DECLARE declare_definition | 
+    DEFDGR defdgr_definition | 
+    DEFINE define_definitions | 
+    DEGREE { ((struct _Environment *)_environment)->floatType.angle = FT_DEGREE; } | 
+    DIM dim_definitions | 
+    DISABLE INTERRUPT { cpu_di( _environment ); } | 
+    DIV div_definition | 
+    DLOAD dload_definition | 
+    DO { begin_loop( _environment, 1 ); } | 
+    DO NULLkw { wait_key( _environment, 1 ); } | 
+    DOJO dojo_definition | 
+    dojo_definition | 
+    DOUBLE BUFFER OFF { double_buffer( _environment, 0 ); } | 
+    DOUBLE BUFFER ON { double_buffer( _environment, 1 ); } | 
+    DOWNB downb_definition | 
+    DOWNW downw_definition | 
+    DRAW draw_definition | 
+    DSAVE dsave_definition | 
+    DTILE draw_tile_definition | 
+    DTILES draw_tile_definition | 
+    ELLIPSE ellipse_definition | 
     ELSE { else_if_then_label( _environment );   else_if_then( _environment, NULL ); } | 
     ELSE IF { else_if_then_label( _environment ); }  expr THEN { else_if_then( _environment, $4 ); } | 
     ELSEIF { else_if_then_label( _environment ); } expr THEN { else_if_then( _environment, $3 ); } |
-    ENDIF { end_if_then( _environment ); } | 
-    SELECT CASE expr { select_case( _environment, $3 ); } | 
-    CASE { case_equals_label( _environment );   } OP_HASH const_expr { case_equals( _environment, $4 ); } |
-    CASE {
-            case_equals_label( _environment );  
-        } expr {
-            Variable * expr = variable_retrieve( _environment, $3 );
-            if ( expr->initializedByConstant ) {
-                case_equals( _environment, expr->value );  
-            } else {
-                case_equals_var( _environment, $3 );  
-            }
-        } | 
-    CASE ELSE { case_equals_label( _environment );   case_else( _environment ); } | 
-    ENDSELECT { end_select_case( _environment ); } | 
-    DO NULLkw { wait_key( _environment, 1 ); } | 
-    DO { begin_loop( _environment, 1 ); } | 
-    LOOP {
-        if ( is_do_loop( _environment ) ) {
-            end_loop( _environment, 1 );  
-        } else {
-            begin_loop( _environment, 0 );  
-        }
-    } | 
-    LOOP WHILE expr { end_loop_while( _environment, $3 ); } | 
-    LOOP UNTIL expr { end_loop_until( _environment, $3 ); } | 
+    EMPTY TILE OP_ASSIGN expr { variable_move( _environment, $4, "EMPTYTILE" ); } | 
+    EMPTYTILE OP_ASSIGN expr { variable_move( _environment, $3, "EMPTYTILE" ); } | 
+    ENABLE INTERRUPT { cpu_ei( _environment ); } | 
+    END { end( _environment ); } | 
+    END COPPER { end_copper( _environment ); } | 
+    END GAMELOOP { end_gameloop( _environment ); } | 
     END LOOP { end_loop( _environment, 0 ); } | 
-    WHILE {  begin_while( _environment ); } expr { begin_while_condition( _environment, $3 ); } | 
-    WEND { end_while( _environment ); } | 
-    REPEAT { begin_repeat( _environment ); } | 
-    UNTIL { end_repeat( _environment ); } expr { end_repeat_condition( _environment, $3 ); } | 
+    END PROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROC OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROCEDURE { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROCEDURE OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END STORAGE { end_storage( _environment ); } | 
+    END TYPE { end_type( _environment ); } | 
+    ENDCOPPER { end_copper( _environment ); } | 
+    ENDIF { end_if_then( _environment ); } | 
+    ENDPROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    ENDSELECT { end_select_case( _environment ); } | 
+    ENDSTORAGE { end_storage( _environment ); } | 
+    ENDTYPE { end_type( _environment ); } | 
+    ENVELOPE envelope_definition | 
+    ERROR expr { error( _environment, $2 ); } | 
+    EVERY every_definition | 
+    EXEC exec_definition | 
     EXIT { exit_loop( _environment, 0 );   } | 
-    EXIT PROC { exit_procedure( _environment ); } | 
-    EXIT PROCEDURE { exit_procedure( _environment ); } | 
-    POP PROC { exit_procedure( _environment ); } | 
-    POP PROCEDURE { exit_procedure( _environment ); } | 
-    EXIT PROC IF expr { exit_proc_if( _environment, $4, NULL ); } | 
-    EXIT PROCEDURE IF expr { exit_proc_if( _environment, $4, NULL ); } | 
-    EXIT PROC WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
-    EXIT PROCEDURE WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
-    EXIT IF expr { exit_loop_if( _environment, $3, 0 ); } | 
-    EXITIF expr { exit_loop_if( _environment, $2, 0 ); } | 
-    EXIT Integer { exit_loop( _environment, $2 ); } | 
     EXIT direct_integer { exit_loop( _environment, $2 ); } | 
-    EXIT IF expr OP_COMMA Integer { exit_loop_if( _environment, $3, $5 ); } | 
-    EXITIF expr OP_COMMA Integer { exit_loop_if( _environment, $2, $4 ); } | 
-    EXIT IF expr OP_COMMA direct_integer { exit_loop_if( _environment, $3, $5 ); } | 
-    EXITIF expr OP_COMMA direct_integer { exit_loop_if( _environment, $2, $4 ); } | 
-    EXIT Integer IF expr { exit_loop_if( _environment, $4, $2 ); } | 
     EXIT direct_integer IF expr { exit_loop_if( _environment, $4, $2 ); } | 
+    EXIT IF expr { exit_loop_if( _environment, $3, 0 ); } | 
+    EXIT IF expr OP_COMMA direct_integer { exit_loop_if( _environment, $3, $5 ); } | 
+    EXIT IF expr OP_COMMA Integer { exit_loop_if( _environment, $3, $5 ); } | 
+    EXIT Integer { exit_loop( _environment, $2 ); } | 
+    EXIT Integer IF expr { exit_loop_if( _environment, $4, $2 ); } | 
+    EXIT PROC { exit_procedure( _environment ); } | 
+    EXIT PROC IF expr { exit_proc_if( _environment, $4, NULL ); } | 
+    EXIT PROC WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
+    EXIT PROCEDURE { exit_procedure( _environment ); } | 
+    EXIT PROCEDURE IF expr { exit_proc_if( _environment, $4, NULL ); } | 
+    EXIT PROCEDURE WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
+    EXITIF expr { exit_loop_if( _environment, $2, 0 ); } | 
+    EXITIF expr OP_COMMA direct_integer { exit_loop_if( _environment, $2, $4 ); } | 
+    EXITIF expr OP_COMMA Integer { exit_loop_if( _environment, $2, $4 ); } | 
+    FADE fade_definition | 
+    FAST fast_definition | 
+    FCIRCLE fcircle_definition | 
+    FELLIPSE fellipse_definition | 
+    FILEX const_expr_string { file_storage( _environment, $2, NULL, FSF_BINARY, 0 ); } | 
+    FILEX const_expr_string AS const_expr_string { file_storage( _environment, $2, $4, FSF_BINARY, 0 ); } | 
+    FILEX const_expr_string AS const_expr_string CSV OF datatype { file_storage( _environment, $2, $4, FSF_CSV, $7 ); } | 
+    FILEX const_expr_string CSV OF datatype { file_storage( _environment, $2, NULL, FSF_CSV, $5 ); } | 
+    FILL fill_definitions | 
+    FILL SCREEN fill_screen_definition | 
+    FLASH flash_definition | 
+    FLIP flip_definition | 
+    FONT font_definition | 
     FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
             VariableType vt = $3;
             if ( vt == 0 ) {
@@ -9901,8 +9811,419 @@ statement2nc:
         }   step_optional {
             begin_for_step_assign_mt( _environment, $14 );
             begin_for_identifier_mt( _environment, $3 );
+        } |    
+    FORBID { forbid( _environment ); } | 
+    FREEZE freeze_definition | 
+    FUJINET fujinet_definition | 
+    FUNCTION Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = 0;
+            } OSP parameters CSP {
+                ((struct _Environment *)_environment)->emptyProcedure = 0;
+                begin_procedure( _environment, $2 );
+            } OP_ASSIGN expr {
+                end_procedure( _environment, $9 );
         } | 
+    FUNCTION Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = 0;
+            ((struct _Environment *)_environment)->emptyProcedure = 0;
+            begin_procedure( _environment, $2 );
+            } OP_ASSIGN expr {
+                end_procedure( _environment, $5 );
+        } | 
+    GET get_definition | 
+    GLOBAL parameters_expr { global( _environment ); } | 
+    GOSUB gosub_definition | 
+    GOTO goto_definition | 
+    GPRINT gprint_definition | 
+    GR LOCATE gr_locate_definition | 
+    GR PRINT gprint_definition | 
+    GRAPHIC { graphic( _environment ); } | 
+    GRAPHICS graphics_definition | 
+    HALT { halt( _environment ); } | 
+    HIRES hires_definition | 
+    HOME { home( _environment ); } | 
+    HSCROLL hscroll_definition | 
+    Identifier AS datatype { field_type( _environment, $1, $3 ); } | 
+    Identifier OP_ASSIGN OP_HASH OSP BufferDefinitionHex CSP {
+            Variable * variable = NULL;
+                if ( variable_exists( _environment, $1 ) ) {
+                    variable = variable_retrieve( _environment, $1 );
+                } else {
+                    variable = variable_define( _environment, $1, VT_BUFFER, 0 );
+                }
+                Variable * buffer = parse_buffer_definition( _environment, $5, VT_BUFFER, 1 );
+                variable_move( _environment, buffer->name, variable->name );
+        } | 
+    Identifier OP_ASSIGN BufferDefinitionHex {
+            Variable * variable = NULL;
+                if ( variable_exists( _environment, $1 ) ) {
+                    variable = variable_retrieve( _environment, $1 );
+                } else {
+                    variable = variable_define( _environment, $1, VT_BUFFER, 0 );
+                }
+                Variable * buffer = parse_buffer_definition( _environment, $3, VT_BUFFER, 1 );
+                variable_move( _environment, buffer->name, variable->name );
+        } | 
+    Identifier OP_ASSIGN expr {
+                Variable * expr = variable_retrieve( _environment, $3 );
+                Variable * variable;
+                if ( variable_exists( _environment, $1 ) ) {
+                    variable = variable_retrieve( _environment, $1 );
+                } else {
+                    if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                        variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
+                        variable->typeType = expr->typeType;
+                        if (variable->typeType) {
+                            variable->size = expr->size;
+                        }
+                    } else {
+                        CRITICAL_VARIABLE_UNDEFINED( $1 );
+                    }
+                }
+
+                if ( expr->type == VT_IMAGE || expr->type == VT_IMAGES || expr->type == VT_SEQUENCE ) {
+                    expr->usedImage = 1;
+                    variable->usedImage = 1;
+                }
+
+                if ( expr->initializedByConstant ) {
+                    if ( variable->type == VT_FLOAT ) {
+                        if ( expr->type != VT_FLOAT ) {
+                            variable_store_float( _environment, variable->name, expr->value );
+                        } else {
+                            variable_store_float( _environment, variable->name, expr->valueFloating );
+                        }
+                    } else {
+                        if ( expr->type != VT_FLOAT ) {
+                            variable_store( _environment, variable->name, expr->value );
+                        } else {
+                            variable_store( _environment, variable->name, expr->valueFloating );
+                        }
+                    }
+                } else {
+                    if ( variable->type == VT_TARRAY ) {
+                        if ( expr->type != VT_BUFFER && expr->type != VT_TARRAY ) {
+                            CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
+                        }
+                        if ( expr->size != variable->size ) {
+                            CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
+                        }
+                    }
+
+                    outline2("; move( %d, %d )", variable->size, expr->size );
+
+                    if ( variable->type != expr->type ) {
+                        Variable * casted = variable_cast( _environment, expr->name, variable->type );
+                        variable_move( _environment, casted->name, variable->name );
+                    } else {
+                        variable_move( _environment, expr->name, variable->name );
+                    }
+
+                }
+
+                variable->frameSize = expr->frameSize;
+                variable->frameCount = expr->frameCount;
+                variable->offsettingFrames = expr->offsettingFrames;
+                if ( variable->offsettingFrames ) {
+                    offsetting_add_variable_reference( _environment, variable->offsettingFrames, variable, 0 );
+                }
+                variable->offsettingSequences = expr->offsettingSequences;
+                if ( variable->offsettingSequences ) {
+                    offsetting_add_variable_reference( _environment, variable->offsettingSequences, variable, 1 );
+                }
+        } | 
+    Identifier OP_PERIOD Identifier OP_ASSIGN expr { variable_move_type( _environment, $1, $3, $5 ); } | 
+    Identifier as_datatype_suffix OP_ASSIGN expr {
+                VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
+                if ( $2 != 0 ) {
+                    vt = $2;
+                }
+                Variable * expr = variable_retrieve( _environment, $4 );
+                Variable * variable;
+                if ( variable_exists( _environment, $1 ) ) {
+                    variable = variable_retrieve( _environment, $1 );
+                } else {
+                    if ( !((struct _Environment *)_environment)->optionExplicit ) {
+                        variable = variable_define( _environment, $1, vt, 0 );
+                    } else {
+                        CRITICAL_VARIABLE_UNDEFINED( $1 );
+                    }
+                }
+
+                if ( VT_UNSIGN( variable->type ) != VT_UNSIGN( vt ) ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[vt] );
+                }
+
+                if ( variable->type != expr->type ) {
+                    Variable * casted = variable_cast( _environment, expr->name, variable->type );
+                    variable_move( _environment, casted->name, variable->name );
+                } else {
+                    variable_move( _environment, expr->name, variable->name );
+                }
+        } | 
+    Identifier {
+                parser_array_init( _environment );
+                define_implicit_array_if_needed( _environment, $1 );
+            } datatype OP indexes CP OP_ASSIGN expr {
+                Variable * x = variable_retrieve( _environment, $8 );
+                Variable * a = variable_retrieve( _environment, $1 );
+                if ( x->type != $3 ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$3] );
+                }
+                if ( a->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $1 );
+                }
+                if ( a->arrayType != $3 ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$3] );
+                }
+                variable_move_array( _environment, $1, x->name );
+                parser_array_cleanup( _environment );
+        } | 
+    Identifier {
+                parser_array_init( _environment );
+            }    
+            OP indexes CP array_assignment {
+                if ( ((struct _Environment *)_environment)->currentFieldName ) {
+                    Variable * array = variable_retrieve( _environment, $1 );
+                    if ( array->type != VT_TARRAY ) {
+                        CRITICAL_NOT_ARRAY( $1 );
+                    }
+                    variable_move_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName, ((struct _Environment *)_environment)->currentExpression );
+                    parser_array_cleanup( _environment );
+                } else {
+                    define_implicit_array_if_needed( _environment, $1 );
+                    Variable * array = variable_retrieve( _environment, $1 );
+                    if ( array->type != VT_TARRAY ) {
+                        CRITICAL_NOT_ARRAY( $1 );
+                    }
+                    variable_move_array( _environment, $1, ((struct _Environment *)_environment)->currentExpression );
+                    parser_array_cleanup( _environment );
+                }
+        } | 
+    Identifier OP_DOLLAR {
+                parser_array_init( _environment );
+            } OP indexes CP OP_ASSIGN expr {
+                define_implicit_array_if_needed( _environment, $1 );
+                Variable * x = variable_retrieve( _environment, $8 );
+                Variable * a = variable_retrieve( _environment, $1 );
+                if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
+                }
+                if ( a->type != VT_TARRAY ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
+                }
+                if ( a->arrayType != VT_DSTRING ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
+                }
+                variable_move_array_string( _environment, $1, x->name );
+                parser_array_cleanup( _environment );
+        } | 
+    Identifier OP_ASSIGN OP_HASH const_expr as_datatype {
+                if ( !variable_exists( _environment, $1 ) ) {
+                    variable_retrieve_or_define( _environment, $1, $5, $4 );
+                }
+                variable_store( _environment, $1, $4 );
+        } | 
+    Identifier OP_ASSIGN_DIRECT expr  { variable_direct_assign( _environment, $1, $3 )->name; } | 
+    Identifier OP_COLON {
+            char realLabel[MAX_TEMPORARY_STORAGE];
+            if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+                sprintf( realLabel, "lbl%s", $1 );
+            } else {
+                strcpy( realLabel, $1 );
+            }
+            label_define_named( _environment, realLabel );
+            cpu_label( _environment, realLabel );
+            ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
+            ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
+        } | 
+    Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+            if ( $6 ) {
+                call_procedure( _environment, $1 );
+            }
+        } | 
+    Identifier OSP CSP on_targets {
+            if ( $4) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $1 );
+            }
+        } | 
+    IF expr GOTO Identifier { if_then( _environment, $2 ); goto_label( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr GOTO Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr THEN { if_then( _environment, $2 ); } | 
+    IF expr THEN { if_then( _environment, $2 ); } statement2nc { end_if_then( _environment ); } | 
+    IF expr THEN Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr THEN Integer ELSE Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); else_if_then_label( _environment ); else_if_then( _environment, NULL ); goto_number( _environment, $6 ); end_if_then( _environment ); } | 
+    IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+            Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
+            if ( $8 ) {
+                prepare_variable_storage( _environment, $8, v );
+            } 
+            variable_temporary_remove( _environment, v->name );
+        } | 
+    IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+                if ( $10 ) {
+                    prepare_variable_storage( _environment, $10, v );
+                }
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+            Variable * v = images_storage( 
+                _environment, 
+                $2, NULL, 
+                ((struct _Environment *)_environment)->currentMode, 
+                ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
+                $6, $5+$6, 
+                $7, $8, 
+                ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+                ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+            if ( $9 ) {
+                prepare_variable_storage( _environment, $9, v );
+            }
+            variable_temporary_remove( _environment, v->name );
+        } | 
+    images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = images_storage( 
+                    _environment, 
+                    $2, $4, 
+                    ((struct _Environment *)_environment)->currentMode, 
+                    ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
+                    $6, $7+$8, 
+                    $9, $10, 
+                    ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+                    ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+                if ( $11 ) {
+                    prepare_variable_storage( _environment, $11, v );
+                }
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    INC Identifier field_optional {
+                if ( $3 ) {
+                    variable_increment_type( _environment, $2, $3 );
+                } else {
+                    variable_increment( _environment, $2 );
+                }      
+        } | 
+    INC Identifier OP {
+            parser_array_init( _environment );
+        } indexes CP field_optional {
+            if ( $7 ) {
+                variable_increment_array_type( _environment, $2, $7 );
+            } else {
+                define_implicit_array_if_needed( _environment, $2 );
+                variable_increment_array( _environment, $2 );
+            }
+            parser_array_cleanup( _environment );
+        } | 
+    INC OSP Identifier CSP field_optional {
+            if ( $5 ) {
+                Variable * array;
+                if ( ! variable_exists( _environment, $3 ) ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }        
+                array = variable_retrieve( _environment, $3 );        
+                if ( array->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
+                parser_array_cleanup( _environment );
+                variable_increment( _environment, temporary->name );
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                variable_move_array_type( _environment, $3, $5, temporary->name );
+                parser_array_cleanup( _environment );
+            } else {
+                variable_increment_mt( _environment, $3 );
+            }
+        } | 
+    INC TI {
+            Variable * ti = get_timer( _environment );
+            variable_increment( _environment, ti->name );
+            set_timer( _environment, ti->name );
+        } |
+    INK ink_definition | 
+    INKB inkb_definition | 
+    INPUT { ((Environment *)_environment)->lineInput = 0; } input_definition | 
+    INSERT insert_definition | 
+    INSTRUMENT instrument_definition | 
+    INVERSE OFF { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
+    INVERSE ON { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
+    JMOVE jmove_definition | 
+    KEY key_definition | 
+    KEYGET keyget_definition | 
+    KILL kill_definition | 
+    LBOTTOM { lbottom( _environment ); } | 
+    LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_left_assign( _environment, $3, $5, $8 ); } | 
+    LEFTB leftb_definition | 
+    LEFTW leftw_definition | 
+    LET let_definition | 
+    LINE line_definition | 
+    LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, $4, $6, abs($7), $8 ); } | 
+    LOAD String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, NULL, $4, abs($5), $6 ); } | 
+    LOCATE locate_definition | 
+    LOOP {
+        if ( is_do_loop( _environment ) ) {
+            end_loop( _environment, 1 );  
+        } else {
+            begin_loop( _environment, 0 );  
+        }
+    } | 
+    LOOP UNTIL expr { end_loop_until( _environment, $3 ); } | 
+    LOOP WHILE expr { end_loop_while( _environment, $3 ); } | 
+    MEMCLR memclr_definition | 
+    MEMCONT memcont_definition | 
+    MEMDEF memdef_definition | 
+    MEMLEN memlen_definition | 
+    MEMLOAD memload_definition | 
+    MEMOR memor_definition | 
+    MEMORIZE { memorize( _environment ); } | 
+    MEMPOS mempos_definition | 
+    MEMRESTORE memrestore_definition | 
+    MEMSAVE memsave_definition | 
+    MID OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, NULL, $8 ); } | 
+    MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, $7, $10 ); } |
+    MMOB mmob_definition | 
+    MMOVE memory_video_optional expr TO memory_video_optional expr SIZE expr {
+            if ( $2 == 0 ) {
+                if ( $5 == 0 ) {
+                    mmove_memory_memory( _environment, $3, $6, $8 );
+                } else {
+                    mmove_memory_video_optional( _environment, $3, $6, $8 );
+                }
+            } else {
+                if ( $5 == 0 ) {
+                    mmove_video_memory( _environment, $3, $6, $8 );
+                } else {
+                    CRITICAL_CANNOT_MMOVE_UNSUPPORTED( )
+                }
+            }
+        } | 
+    MOB mob_definition | 
+    MOD mod_definition | 
+    MOVE move_definition | 
+    MOVEMENT movement_definition | 
+    MSPRITE sprite_definition | 
+    MSPRITE UPDATE { msprite_update( _environment ); } | 
+    MUL mul_definition | 
+    MULTI multi_definition | 
+    MUSIC const_expr_string AS const_expr_string on_bank_explicit to_identifier_optional {
+                Variable * v = music_storage( _environment, $2, $4, abs($5) );
+                if ( $6 ) {
+                    prepare_variable_storage( _environment, $6, v );
+                }
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    MUSIC music_definition | 
     NEXT { end_for( _environment ); } | 
+    NEXT ANIMATION next_animation_definition |
     NEXT Identifier as_datatype_suffix_optional {
             if ( $3 > 0 ) {
                 Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
@@ -9924,53 +10245,11 @@ statement2nc:
             }
             end_for_identifier( _environment, $3 );
         } | 
-    parallel_optional PROCEDURE Identifier on_targets {
-            ((struct _Environment *)_environment)->parameters = 0;
-            ((struct _Environment *)_environment)->protothread = $1;
-            ((struct _Environment *)_environment)->emptyProcedure = !$4;
-            begin_procedure( _environment, $3 );
-        } | 
-    parallel_optional PROCEDURE Identifier {
-            ((struct _Environment *)_environment)->parameters = 0;
-            ((struct _Environment *)_environment)->protothread = $1;
-        } OSP parameters CSP on_targets {
-            ((struct _Environment *)_environment)->emptyProcedure = !$8;
-            begin_procedure( _environment, $3 );
-        } | 
-    SHARED parameters_expr { shared( _environment ); } | 
-    GLOBAL parameters_expr { global( _environment ); } | 
-    ENDPROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
-    END PROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
-    END PROCEDURE { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
-    END PROC OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
-    END PROCEDURE OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
-    FUNCTION Identifier {
-            ((struct _Environment *)_environment)->parameters = 0;
-            ((struct _Environment *)_environment)->protothread = 0;
-            } OSP parameters CSP {
-                ((struct _Environment *)_environment)->emptyProcedure = 0;
-                begin_procedure( _environment, $2 );
-            } OP_ASSIGN expr {
-                end_procedure( _environment, $9 );
-        } | 
-    FUNCTION Identifier {
-            ((struct _Environment *)_environment)->parameters = 0;
-            ((struct _Environment *)_environment)->protothread = 0;
-            ((struct _Environment *)_environment)->emptyProcedure = 0;
-            begin_procedure( _environment, $2 );
-            } OP_ASSIGN expr {
-                end_procedure( _environment, $5 );
-        } | 
-    PROC Identifier {
-            ((struct _Environment *)_environment)->parameters = 0;
-            proc( _environment, $2 );
-        } | 
-    PROC IdentifierSpaced {
-            ((struct _Environment *)_environment)->parameters = 0;
-            proc( _environment, $2 );
-        } | 
-    EXEC exec_definition | 
-    SYS sys_definition | 
+    NEXT RASTER next_raster_definition | 
+    NOP { cpu_nop(_environment); } | 
+    NRM nrm_definition | 
+    OFFSET offset_definition | 
+    ON on_definition | 
     on_targets AsmSnippet on_targets {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
         #if defined(__to8__)
@@ -9987,62 +10266,53 @@ statement2nc:
         #endif
             }
         } | 
-    CALL Identifier on_targets {
-            if ( $3 ) {
-                ((struct _Environment *)_environment)->parameters = 0;
-                call_procedure( _environment, $2 );
-            }
-        } | 
-    Identifier OSP {
-            ((struct _Environment *)_environment)->parameters = 0;
-            } values CSP on_targets {
-            if ( $6 ) {
-                call_procedure( _environment, $1 );
-            }
-        } | 
-    Identifier OSP CSP on_targets {
-            if ( $4) {
-                ((struct _Environment *)_environment)->parameters = 0;
-                call_procedure( _environment, $1 );
-            }
-        } | 
-    PROC Identifier OSP {
-            ((struct _Environment *)_environment)->parameters = 0;
-            } values CSP on_targets {
-                if ( $7 ) {
-                call_procedure( _environment, $2 );
+    OPTION option_definitions | 
+    ORIGIN origin_definitions | 
+    OSP Identifier CSP {
+                if ( ! ((struct _Environment *)_environment)->procedureName ) {
+                    CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
                 }
-        } | 
-    CALL Identifier OSP {
-            ((struct _Environment *)_environment)->parameters = 0;
-            } values CSP on_targets {
-                if ( $7 ) {
-                call_procedure( _environment, $2 );
+                if ( ! ((struct _Environment *)_environment)->protothread ) {
+                    CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
                 }
+
+                parser_array_init( _environment );
+                define_implicit_array_if_needed( _environment, $2 );
+            } field_optional
+            OP_ASSIGN expr {
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                Variable * array = variable_retrieve( _environment, $2 );
+                if ( array->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $2 );
+                }
+                if ( $5 ) {
+                    Variable * expr = variable_retrieve( _environment, $7 );
+                    variable_move_array_type( _environment, $2, $5, expr->name );
+                } else {
+                    Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
+                    variable_move_array( _environment, $2, expr->name );
+                }
+                parser_array_cleanup( _environment );
         } | 
-    CALL Identifier OSP CSP on_targets {
-            if ( $5 ) {
-                ((struct _Environment *)_environment)->parameters = 0;
-                call_procedure( _environment, $2 );
-            }
+    OSP Identifier OP_DOLLAR CSP {
+                parser_array_init( _environment );
+                define_implicit_array_if_needed( _environment, $2 );
+            } OP_ASSIGN expr {
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                Variable * x = variable_retrieve( _environment, $7 );
+                Variable * a = variable_retrieve( _environment, $2 );
+                if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
+                }
+                if ( a->type != VT_TARRAY ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
+                }
+                if ( a->arrayType != VT_DSTRING ) {
+                    CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
+                }
+                variable_move_array_string( _environment, $2, x->name );
+                parser_array_cleanup( _environment );
         } | 
-    SPAWN spawn_definition | 
-    RESPAWN expr on_targets {
-            ((struct _Environment *)_environment)->parameters = 0;
-            if ( $3 ) {
-                respawn_procedure( _environment, $2 );
-            }
-        } | 
-    KILL kill_definition | 
-    STOP stop_definition | 
-    YIELD { yield( _environment ); } | 
-    FORBID { forbid( _environment ); } | 
-    ALLOW { allow( _environment ); } | 
-    PEN expr { pen( _environment, $2 ); } | 
-    PAPER expr { paper( _environment, $2 ); } | 
-    INVERSE ON { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
-    INVERSE OFF { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
-    WRITING writing_definition | 
     OSP Identifier OP_COLON CSP {
             char realLabel[MAX_TEMPORARY_STORAGE];
             if (strcmp($2, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
@@ -10055,509 +10325,204 @@ statement2nc:
             ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
             ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
         } | 
-    Identifier OP_COLON {
-            char realLabel[MAX_TEMPORARY_STORAGE];
-            if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
-                sprintf( realLabel, "lbl%s", $1 );
-            } else {
-                strcpy( realLabel, $1 );
-            }
-            label_define_named( _environment, realLabel );
-            cpu_label( _environment, realLabel );
-            ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
-            ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
+    OUT out_definition | 
+    PAINT paint_definition | 
+    PALETTE { ((struct _Environment *)_environment)->paletteIndex = 0; } palette_definition | 
+    PALETTE1 { ((struct _Environment *)_environment)->paletteIndex = 0; color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } palette_definition | 
+    PAPER expr { paper( _environment, $2 ); } | 
+    parallel_optional PROCEDURE Identifier on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = $1;
+            ((struct _Environment *)_environment)->emptyProcedure = !$4;
+            begin_procedure( _environment, $3 );
         } | 
-    LOAD String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, NULL, $4, abs($5), $6 ); } | 
-    LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, $4, $6, abs($7), $8 ); } | 
-    RUN PARALLEL { run_parallel( _environment ); } | 
-    BEG GAMELOOP { begin_gameloop( _environment ); } | 
-    END GAMELOOP { end_gameloop( _environment ); } | 
-    GRAPHIC { graphic( _environment ); } | 
-    DEGREE { ((struct _Environment *)_environment)->floatType.angle = FT_DEGREE; } | 
-    RADIAN { ((struct _Environment *)_environment)->floatType.angle = FT_RADIAN; } | 
-    BELL bell_definition | 
-    BOOM boom_definition | 
-    SHOOT shoot_definition | 
-    SOUND sound_definition | 
+    parallel_optional PROCEDURE Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = $1;
+        } OSP parameters CSP on_targets {
+            ((struct _Environment *)_environment)->emptyProcedure = !$8;
+            begin_procedure( _environment, $3 );
+        } | 
+    PAUSE pause_definition | 
+    PCLS { cls( _environment, NULL ); home( _environment ); } | 
+    PCLS expr { cls( _environment, $2 ); home( _environment ); } | 
+    PEN expr { pen( _environment, $2 ); } | 
     PLAY play_definition | 
-    MUSIC music_definition | 
-    MEMLOAD memload_definition | 
-    MEMSAVE memsave_definition | 
-    MEMPOS mempos_definition | 
-    MEMOR memor_definition | 
-    MEMDEF memdef_definition | 
-    MEMLEN memlen_definition | 
-    MEMRESTORE memrestore_definition | 
-    MEMCONT memcont_definition | 
-    MEMCLR memclr_definition | 
-    INSTRUMENT instrument_definition | 
-    VOLUME volume_definition | 
-    HALT { halt( _environment ); } | 
+    PLOT plot_definition | 
+    PLOTR plotr_definition | 
+    PMODE pmode_definition | 
+    POINT point_definition | 
+    POKE poke_definition | 
+    POKED poked_definition | 
+    POKEW pokew_definition | 
+    POLYLINE polyline_definition | 
+    POP { pop( _environment ); } | 
+    POP PROC { exit_procedure( _environment ); } | 
+    POP PROCEDURE { exit_procedure( _environment ); } | 
+    POSITIVE const_instruction positive_const_definition | 
+    PRINT { print_newline( _environment ); } | 
+    PRINT BUFFER print_buffer_definition | 
+    PRINT BUFFER RAW print_buffer_raw_definition |
+    PRINT print_definition | 
+    PROC Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            proc( _environment, $2 );
+        } | 
+    PROC Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+                if ( $7 ) {
+                call_procedure( _environment, $2 );
+                }
+        } | 
+    PROC IdentifierSpaced {
+            ((struct _Environment *)_environment)->parameters = 0;
+            proc( _environment, $2 );
+        } | 
+    PUT KEY expr { put_key( _environment, $3 ); } | 
+    PUT put_definition | 
+    QM { print_newline( _environment ); } | 
+    QM print_definition | 
+    RADIAN { ((struct _Environment *)_environment)->floatType.angle = FT_RADIAN; } | 
+    RANDOMIZE { randomize( _environment, NULL ); } | 
+    RANDOMIZE expr { randomize( _environment, $2 ); } | 
+    RASTER raster_definition | 
+    READ read_definition | 
+    REC rec_definition | 
+    RECT rec_definition | 
+    Remark |
+    REMEMBER { remember( _environment ); } | 
+    REPEAT { begin_repeat( _environment ); } | 
     RESET { reset( _environment ); } | 
-    ERROR expr { error( _environment, $2 ); } | 
-    END { end( _environment ); } | 
-    ON on_definition | 
-    WAVE wave_definition | 
-    GOTO goto_definition | 
-    CGOTO cgoto_definition | 
-    GOSUB gosub_definition | 
-    EVERY every_definition | 
-    AFTER after_definition | 
+    RESOLUTION resolution_definitions | 
+    RESPAWN expr on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            if ( $3 ) {
+                respawn_procedure( _environment, $2 );
+            }
+        } | 
+    RESTORE restore_definition | 
+    RESUME resume_definition | 
     RETURN { return_label( _environment ); } | 
     RETURN expr { return_procedure( _environment, $2 ); } | 
-    POP { pop( _environment ); } | 
-    LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_left_assign( _environment, $3, $5, $8 ); } | 
     RIGHT OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_right_assign( _environment, $3, $5, $8 ); } | 
-    MID OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, NULL, $8 ); } | 
-    MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, $7, $10 ); } |
-    BEG COPPER { begin_copper( _environment, NULL ); } | 
-    BEG COPPER const_expr_string { begin_copper( _environment, $3 ); } | 
-    COPPER copper_definition | 
-    STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype { copper_store( _environment, $3, $6, $7 ); } | 
-    ENDCOPPER { end_copper( _environment ); } | 
-    END COPPER { end_copper( _environment ); } | 
-    BEG TYPE Identifier { begin_type( _environment, $3 ); } |
-    TYPE Identifier { begin_type( _environment, $2 ); } | 
-    Identifier AS datatype { field_type( _environment, $1, $3 ); } | 
-    END TYPE { end_type( _environment ); } | 
-    ENDTYPE { end_type( _environment ); } | 
-    BEG STORAGE const_expr_string { begin_storage( _environment, $3, NULL ); } | 
+    RIGHTB rightb_definition | 
+    RIGHTW rightw_definition | 
+    ROT rot_definition | 
+    RUN { run( _environment ); } | 
+    RUN PARALLEL { run_parallel( _environment ); } | 
+    SCALE scale_definition | 
+    SCREEN screen_definition | 
+    SCREEN SWAP { screen_swap( _environment ); } | 
+    SCROLL scroll_definition | 
+    SELECT CASE expr { select_case( _environment, $3 ); } | 
+    sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional{
+                Variable * v = sequence_storage( 
+                    _environment, 
+                    $2, $4, 
+                    ((struct _Environment *)_environment)->currentMode, 
+                    $8, $10, 
+                    $12, $13+$14, 
+                    $15, $16, 
+                    ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+                    ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+                if ( $17 ) {
+                    prepare_variable_storage( _environment, $17, v );
+                }
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = sequence_storage( 
+                    _environment, 
+                    $2, NULL, 
+                    ((struct _Environment *)_environment)->currentMode, 
+                    $6, $8, 
+                    $10, $11+$12, 
+                    $13, $14, 
+                    ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
+                    ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+                if ( $15 ) {
+                    prepare_variable_storage( _environment, $15, v );
+                }
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    SERIAL serial_definition | 
+    SET LINE expr { ((Environment *)_environment)->lineNeeded = 1; variable_move( _environment, $3, "LINE" ); } | 
+    SET TAB expr { text_set_tab( _environment, $3 ); } | 
+    SHARED parameters_expr { shared( _environment ); } | 
+    SHOOT shoot_definition | 
+    SHUFFLE shuffle_definition | 
+    SLEEP sleep_definition | 
+    SLICE slice_definition | 
+    SLOW slow_definition | 
+    SOUND sound_definition | 
+    SPAWN spawn_definition | 
+    SPRITE sprite_definition | 
+    STOP stop_definition | 
     STORAGE const_expr_string { begin_storage( _environment, $2, NULL ); } | 
-    BEG STORAGE const_expr_string AS const_expr_string { begin_storage( _environment, $3, $5 ); } | 
     STORAGE const_expr_string AS const_expr_string { begin_storage( _environment, $2, $4 ); } | 
-    FILEX const_expr_string { file_storage( _environment, $2, NULL, FSF_BINARY, 0 ); } | 
-    FILEX const_expr_string CSV OF datatype { file_storage( _environment, $2, NULL, FSF_CSV, $5 ); } | 
-    FILEX const_expr_string AS const_expr_string {
-        file_storage( _environment, $2, $4, FSF_BINARY, 0 );
-  }
-  | FILEX const_expr_string AS const_expr_string CSV OF datatype {
-        file_storage( _environment, $2, $4, FSF_CSV, $7 );
-  }
-  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
-        if ( $8 ) {
-            prepare_variable_storage( _environment, $8, v );
-        } 
-        variable_temporary_remove( _environment, v->name );
-  }
-  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
-        if ( $10 ) {
-            prepare_variable_storage( _environment, $10, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = images_storage( 
-            _environment, 
-            $2, NULL, 
-            ((struct _Environment *)_environment)->currentMode, 
-            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
-            $6, $5+$6, 
-            $7, $8, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $9 ) {
-            prepare_variable_storage( _environment, $9, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = images_storage( 
-            _environment, 
-            $2, $4, 
-            ((struct _Environment *)_environment)->currentMode, 
-            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
-            $6, $7+$8, 
-            $9, $10, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $11 ) {
-            prepare_variable_storage( _environment, $11, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional{
-        Variable * v = sequence_storage( 
-            _environment, 
-            $2, $4, 
-            ((struct _Environment *)_environment)->currentMode, 
-            $8, $10, 
-            $12, $13+$14, 
-            $15, $16, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $17 ) {
-            prepare_variable_storage( _environment, $17, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = sequence_storage( 
-            _environment, 
-            $2, NULL, 
-            ((struct _Environment *)_environment)->currentMode, 
-            $6, $8, 
-            $10, $11+$12, 
-            $13, $14, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $15 ) {
-            prepare_variable_storage( _environment, $15, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | MUSIC const_expr_string AS const_expr_string on_bank_explicit to_identifier_optional {
-        Variable * v = music_storage( _environment, $2, $4, abs($5) );
-        if ( $6 ) {
-            prepare_variable_storage( _environment, $6, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = tileset_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
-        if ( $8 ) {
-            prepare_variable_storage( _environment, $8, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = tileset_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
-        if ( $10 ) {
-            prepare_variable_storage( _environment, $10, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = tilemap_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
-        if ( $8 ) {
-            prepare_variable_storage( _environment, $8, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
-        Variable * v = tilemap_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
-        if ( $10 ) {
-            prepare_variable_storage( _environment, $10, v );
-        }
-        variable_temporary_remove( _environment, v->name );
-  }
-  | END STORAGE {
-        end_storage( _environment );
-  }
-  | ENDSTORAGE {
-        end_storage( _environment );
-  }
-  | DECLARE declare_definition
-  | DEFINE define_definitions
-  | OPTION option_definitions
-  | CONFIGURE configure_definitions
-  | ORIGIN origin_definitions
-  | RESOLUTION resolution_definitions
-  | SCALE scale_definition
-  | OFFSET offset_definition
-  | DIM dim_definitions
-  | FILL fill_definitions
-  | FILL SCREEN fill_screen_definition
-  | SHUFFLE shuffle_definition
-  | const_instruction const_definition
-  | POSITIVE const_instruction positive_const_definition
-  | TI OP_ASSIGN expr {
-        set_timer( _environment, $3 );
-  }
-  | TIMER OP_ASSIGN expr {
-        set_timer( _environment, $3 );
-  }
-  | ENABLE INTERRUPT {
-      cpu_ei( _environment );
-  }
-  | DISABLE INTERRUPT {
-      cpu_di( _environment );
-  }
-  | DOUBLE BUFFER ON {
-      double_buffer( _environment, 1 );
-  }
-  | DOUBLE BUFFER OFF {
-      double_buffer( _environment, 0 );
-  }
-  | SCREEN SWAP {
-      screen_swap( _environment );
-  }
-  | MMOB mmob_definition
-  | MMOVE memory_video_optional expr TO memory_video_optional expr SIZE expr {
-      if ( $2 == 0 ) {
-        if ( $5 == 0 ) {
-            mmove_memory_memory( _environment, $3, $6, $8 );
-        } else {
-            mmove_memory_video_optional( _environment, $3, $6, $8 );
-        }
-      } else {
-        if ( $5 == 0 ) {
-            mmove_video_memory( _environment, $3, $6, $8 );
-        } else {
-            CRITICAL_CANNOT_MMOVE_UNSUPPORTED( )
-        }
-      }
-  }
-  | LET let_definition
-  | Identifier OP_ASSIGN OP_HASH OSP BufferDefinitionHex CSP {
-    Variable * variable = NULL;
-        if ( variable_exists( _environment, $1 ) ) {
-            variable = variable_retrieve( _environment, $1 );
-        } else {
-            variable = variable_define( _environment, $1, VT_BUFFER, 0 );
-        }
-        Variable * buffer = parse_buffer_definition( _environment, $5, VT_BUFFER, 1 );
-        variable_move( _environment, buffer->name, variable->name );
-  }
-  | Identifier OP_ASSIGN BufferDefinitionHex {
-    Variable * variable = NULL;
-        if ( variable_exists( _environment, $1 ) ) {
-            variable = variable_retrieve( _environment, $1 );
-        } else {
-            variable = variable_define( _environment, $1, VT_BUFFER, 0 );
-        }
-        Variable * buffer = parse_buffer_definition( _environment, $3, VT_BUFFER, 1 );
-        variable_move( _environment, buffer->name, variable->name );
-  }
-  | Identifier OP_ASSIGN expr {
-        Variable * expr = variable_retrieve( _environment, $3 );
-        Variable * variable;
-        if ( variable_exists( _environment, $1 ) ) {
-            variable = variable_retrieve( _environment, $1 );
-        } else {
-            if ( !((struct _Environment *)_environment)->optionExplicit ) {
-                variable = variable_define( _environment, $1, expr->type == VT_STRING ? VT_DSTRING : expr->type, 0 );
-                variable->typeType = expr->typeType;
-                if (variable->typeType) {
-                    variable->size = expr->size;
+    STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype { copper_store( _environment, $3, $6, $7 ); } | 
+    SUSPEND suspend_definition | 
+    SWAP swap_definition | 
+    SYS sys_definition | 
+    TEXT text_definition | 
+    TEXTADDRESS OP_ASSIGN expr { variable_move( _environment, $3, "TEXTADDRESS" ); } | 
+    TEXTMAP textmap_definition | 
+    TI OP_ASSIGN expr { set_timer( _environment, $3 ); } | 
+    TILE tile_definition | 
+    TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = tilemap_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
+                if ( $8 ) {
+                    prepare_variable_storage( _environment, $8, v );
                 }
-            } else {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            }
-        }
-
-        if ( expr->type == VT_IMAGE || expr->type == VT_IMAGES || expr->type == VT_SEQUENCE ) {
-            expr->usedImage = 1;
-            variable->usedImage = 1;
-        }
-
-        if ( expr->initializedByConstant ) {
-            if ( variable->type == VT_FLOAT ) {
-                if ( expr->type != VT_FLOAT ) {
-                    variable_store_float( _environment, variable->name, expr->value );
-                } else {
-                    variable_store_float( _environment, variable->name, expr->valueFloating );
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = tilemap_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+                if ( $10 ) {
+                    prepare_variable_storage( _environment, $10, v );
                 }
-            } else {
-                if ( expr->type != VT_FLOAT ) {
-                    variable_store( _environment, variable->name, expr->value );
-                } else {
-                    variable_store( _environment, variable->name, expr->valueFloating );
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    TILEMAP tilemap_definition | 
+    TILES tiles_definition | 
+    TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = tileset_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
+                if ( $8 ) {
+                    prepare_variable_storage( _environment, $8, v );
                 }
-            }
-        } else {
-            if ( variable->type == VT_TARRAY ) {
-                if ( expr->type != VT_BUFFER && expr->type != VT_TARRAY ) {
-                    CRITICAL_CANNOT_ASSIGN_TO_ARRAY( $1, DATATYPE_AS_STRING[expr->type] );
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
+                Variable * v = tileset_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+                if ( $10 ) {
+                    prepare_variable_storage( _environment, $10, v );
                 }
-                if ( expr->size != variable->size ) {
-                    CRITICAL_BUFFER_SIZE_MISMATCH_ARRAY_SIZE( $1, expr->size, variable->size );
-                }
-            }
-
-            outline2("; move( %d, %d )", variable->size, expr->size );
-
-            if ( variable->type != expr->type ) {
-                Variable * casted = variable_cast( _environment, expr->name, variable->type );
-                variable_move( _environment, casted->name, variable->name );
-            } else {
-                variable_move( _environment, expr->name, variable->name );
-            }
-
-        }
-
-        variable->frameSize = expr->frameSize;
-        variable->frameCount = expr->frameCount;
-        variable->offsettingFrames = expr->offsettingFrames;
-        if ( variable->offsettingFrames ) {
-            offsetting_add_variable_reference( _environment, variable->offsettingFrames, variable, 0 );
-        }
-        variable->offsettingSequences = expr->offsettingSequences;
-        if ( variable->offsettingSequences ) {
-            offsetting_add_variable_reference( _environment, variable->offsettingSequences, variable, 1 );
-        }
-  }
-  | Identifier as_datatype_suffix OP_ASSIGN expr {
-        VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
-        if ( $2 != 0 ) {
-            vt = $2;
-        }
-        Variable * expr = variable_retrieve( _environment, $4 );
-        Variable * variable;
-        if ( variable_exists( _environment, $1 ) ) {
-            variable = variable_retrieve( _environment, $1 );
-        } else {
-            if ( !((struct _Environment *)_environment)->optionExplicit ) {
-                variable = variable_define( _environment, $1, vt, 0 );
-            } else {
-                CRITICAL_VARIABLE_UNDEFINED( $1 );
-            }
-        }
-
-        if ( VT_UNSIGN( variable->type ) != VT_UNSIGN( vt ) ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[variable->type], DATATYPE_AS_STRING[vt] );
-        }
-
-        if ( variable->type != expr->type ) {
-            Variable * casted = variable_cast( _environment, expr->name, variable->type );
-            variable_move( _environment, casted->name, variable->name );
-        } else {
-            variable_move( _environment, expr->name, variable->name );
-        }
-  }
-  | Identifier OP_ASSIGN OP_HASH const_expr as_datatype {
-        if ( !variable_exists( _environment, $1 ) ) {
-            variable_retrieve_or_define( _environment, $1, $5, $4 );
-        }
-        variable_store( _environment, $1, $4 );
-  }
-  | Identifier OP_ASSIGN_DIRECT expr  {
-        variable_direct_assign( _environment, $1, $3 )->name;
-  }
-  | ARRAY Identifier {
-      
-    } OP_ASSIGN {
-      Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_TARRAY ) {
-          CRITICAL_NOT_ARRAY( $2 );
-      }
-      ((struct _Environment *)_environment)->currentArray = var;
-
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        currentArray->arrayInitialization = NULL;
-
-  } array_reassign 
-  | ARRAY Identifier {
-      
-    } OP_ASSIGN_DIRECT {
-      Variable * var = variable_retrieve( _environment, $2 );
-      if ( var->type != VT_TARRAY ) {
-          CRITICAL_NOT_ARRAY( $2 );
-      }
-      ((struct _Environment *)_environment)->currentArray = var;
-        Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
-        currentArray->arrayInitialization = NULL;
-
-  } array_reassign
-  | Identifier OP_PERIOD Identifier OP_ASSIGN expr {
-        variable_move_type( _environment, $1, $3, $5 );
-  }
-  | Identifier {
-        parser_array_init( _environment );
-    }    
-      OP indexes CP array_assignment {
-        if ( ((struct _Environment *)_environment)->currentFieldName ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            if ( array->type != VT_TARRAY ) {
-                CRITICAL_NOT_ARRAY( $1 );
-            }
-            variable_move_array_type( _environment, $1, ((struct _Environment *)_environment)->currentFieldName, ((struct _Environment *)_environment)->currentExpression );
-            parser_array_cleanup( _environment );
-        } else {
-            define_implicit_array_if_needed( _environment, $1 );
-            Variable * array = variable_retrieve( _environment, $1 );
-            if ( array->type != VT_TARRAY ) {
-                CRITICAL_NOT_ARRAY( $1 );
-            }
-            variable_move_array( _environment, $1, ((struct _Environment *)_environment)->currentExpression );
-            parser_array_cleanup( _environment );
-        }
-  }
-  | Identifier OP_DOLLAR {
-        parser_array_init( _environment );
-    } OP indexes CP OP_ASSIGN expr {
-        define_implicit_array_if_needed( _environment, $1 );
-        Variable * x = variable_retrieve( _environment, $8 );
-        Variable * a = variable_retrieve( _environment, $1 );
-        if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
-        }
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
-        }
-        if ( a->arrayType != VT_DSTRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
-        }
-        variable_move_array_string( _environment, $1, x->name );
-        parser_array_cleanup( _environment );
-  }
-  | Identifier {
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $1 );
-    } datatype OP indexes CP OP_ASSIGN expr {
-        Variable * x = variable_retrieve( _environment, $8 );
-        Variable * a = variable_retrieve( _environment, $1 );
-        if ( x->type != $3 ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[$3] );
-        }
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
-        }
-        if ( a->arrayType != $3 ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[$3] );
-        }
-        variable_move_array( _environment, $1, x->name );
-        parser_array_cleanup( _environment );
-  }
-  | OSP Identifier CSP {
-        if ( ! ((struct _Environment *)_environment)->procedureName ) {
-            CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
-        }
-        if ( ! ((struct _Environment *)_environment)->protothread ) {
-            CRITICAL_CANNOT_ACCESS_MULTITHREAD_ARRAY_OUTSIDE_PROCEDURE($2);
-        }
-
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $2 );
-    } field_optional
-      OP_ASSIGN expr {
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * array = variable_retrieve( _environment, $2 );
-        if ( array->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        if ( $5 ) {
-            Variable * expr = variable_retrieve( _environment, $7 );
-            variable_move_array_type( _environment, $2, $5, expr->name );
-        } else {
-            Variable * expr = variable_retrieve_or_define( _environment, $7, array->arrayType, 0 );
-            variable_move_array( _environment, $2, expr->name );
-        }
-        parser_array_cleanup( _environment );
-  }
-  | OSP Identifier OP_DOLLAR CSP {
-        parser_array_init( _environment );
-        define_implicit_array_if_needed( _environment, $2 );
-    } OP_ASSIGN expr {
-        parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-        Variable * x = variable_retrieve( _environment, $7 );
-        Variable * a = variable_retrieve( _environment, $2 );
-        if ( x->type != VT_STRING && x->type != VT_DSTRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[x->type], DATATYPE_AS_STRING[VT_DSTRING] );
-        }
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->type], DATATYPE_AS_STRING[VT_TARRAY] );
-        }
-        if ( a->arrayType != VT_DSTRING ) {
-            CRITICAL_DATATYPE_MISMATCH(DATATYPE_AS_STRING[a->arrayType], DATATYPE_AS_STRING[VT_DSTRING] );
-        }
-        variable_move_array_string( _environment, $2, x->name );
-        parser_array_cleanup( _environment );
-  }
-  | FADE fade_definition
-  | Remark
-  ;
+                variable_temporary_remove( _environment, v->name );
+        } | 
+    TIMER OP_ASSIGN expr { set_timer( _environment, $3 ); } | 
+    TRAVEL { ((struct _Environment *)_environment)->travelX = NULL;  ((struct _Environment *)_environment)->travelXAR = NULL;  ((struct _Environment *)_environment)->travelY = NULL;  ((struct _Environment *)_environment)->travelYAR = NULL;  } travel_definition | 
+    TRIANGLE triangle_definition | 
+    TYPE Identifier { begin_type( _environment, $2 ); } | 
+    UNFREEZE unfreeze_definition | 
+    UNTIL { end_repeat( _environment ); } expr { end_repeat_condition( _environment, $3 ); } | 
+    UPB upb_definition | 
+    UPW upw_definition | 
+    USE use_definition | 
+    VAR var_definition | 
+    VCENTER vcenter_definition | 
+    VCENTRE vcenter_definition | 
+    VHCENTER vhcenter_definition | 
+    VHCENTRE vhcenter_definition | 
+    VOLUME volume_definition | 
+    VSCROLL vscroll_definition | 
+    WAIT wait_definition | 
+    WAVE wave_definition | 
+    WEND { end_while( _environment ); } | 
+    WHILE {  begin_while( _environment ); } expr { begin_while_condition( _environment, $3 ); } | 
+    WRITING writing_definition | 
+    XOR xor_definition | 
+    YIELD { yield( _environment ); };
 
 statement2:
     statement2nc
