@@ -10674,19 +10674,16 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-c <file>    Output filename with linker configuration\n" );
     printf("\t-C <file>    Path to compiler\n" );
     printf("\t-d           Enable debugging of LOAD IMAGE\n" );
-
     printf("\t-e <modules> Embed specified modules instead of inline code\n" );
     printf("\t-E           Show stats of embedded modules\n" );
     printf("\t-f           Enable DOJO over virtualized FujiNet\n" );
     printf("\t-F           Enable DOJO over FujiNet\n" );
-
 #if defined(__pc128op__) || defined(__mo5__) || defined(__to8__)
     printf("\t-G <type>    Type of gamma correction on PALETTE generation:\n" );
     printf("\t               none (0): no gamma correction\n" );
     printf("\t               type1 (1): algorithmic\n" );
     printf("\t               type2 (2): by threshold\n" );
 #endif
-
     printf("\t-l <name>    Output filename with list of variables defined\n" );
 #if defined(__zx__) || defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__) || defined(__cpc__) || defined(__c128z__) || defined(__gb__) || defined(__vz200__)
     printf("\t-L <ignored> Output filename with assembly listing file\n" );
@@ -10760,10 +10757,11 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t-t <file>    Path to ASLINK tool\n" );
 #endif
     printf("\t-T <path>    Path to temporary path\n" );
-    printf("\t-X <file>    Path to executer\n" );
-    printf("\t-W           Enable warnings during compilation\n" );
     printf("\t-V           Output version (example: '%s')\n", version );
     printf("\t-v           Output generated files\n" );
+    printf("\t-X <file>    Path to executer\n" );
+    printf("\t-W           Enable warnings during compilation\n" );
+    printf("\t-y           Enable BISON debugging\n" );
     printf("\n\n" );
     printf("Examples:\n" );
     printf("\tTo generate an assembly starting from basic source:\n" );
@@ -10886,10 +10884,10 @@ int main( int _argc, char *_argv[] ) {
     _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
 #endif
 
-    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y:")) != -1) {
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y")) != -1) {
         switch (opt) {
                 case 'y':
-                    yydebug = atoi( optarg );
+                    yydebug = 1;
                     break;
                 case '@':
                     show_troubleshooting_and_exit( _environment, _argc, _argv );
