@@ -472,7 +472,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_clamp
 %type <string> optional_expr 
 %type <string> field_optional
-%type <string> optional_next_animation
+%type <string> next_animation_optional
 %type <string> period_optional
 %type <string> step_optional
 %type <string> optional_x 
@@ -1960,6 +1960,11 @@ key_scancode_definition:
     TAB { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_TAB ) )->name; } | 
     UP { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP ) )->name; } | 
     UP ARROW { $$ = variable_by_constant( _environment, VT_BYTE, key_constant( _environment, KEY_UP_ARROW ) )->name; };
+
+animation_type:
+      SIMPLE { ((struct _Environment *)_environment)->animationType = AT_SIMPLE; } | 
+      BOUNCE { ((struct _Environment *)_environment)->animationType = AT_BOUNCE; } | 
+      LOOP { ((struct _Environment *)_environment)->animationType = AT_LOOP; };
 
 /*============================================================================
  ============ EXTENDED SYNTAXES
@@ -8970,400 +8975,339 @@ travel_function:
             parser_array_cleanup( _environment );
         };
 
-animation_type:
-      SIMPLE {
-      ((struct _Environment *)_environment)->animationType = AT_SIMPLE;
-    }
-    | BOUNCE {
-      ((struct _Environment *)_environment)->animationType = AT_BOUNCE;
-    }
-    | LOOP {
-      ((struct _Environment *)_environment)->animationType = AT_LOOP;
-    };
-
-optional_delay: 
-    {
-        ((struct _Environment *)_environment)->animationDelay = 20;
-    }
-    |
-    DELAY const_expr {
-        ((struct _Environment *)_environment)->animationDelay = $2;
-    };
-
-
-optional_ease_in_delay: 
-    {
-        ((struct _Environment *)_environment)->animationEaseInDelay = 20;
-    }
-    |
-    DELAY const_expr {
-        ((struct _Environment *)_environment)->animationEaseInDelay = $2;
-    };
-
-optional_ease_in: 
-    {
-        ((struct _Environment *)_environment)->animationEaseInFrames = 0;
-        ((struct _Environment *)_environment)->animationEaseInDelay = 0;
-    }
-    |
-    EASEIN const_expr optional_ease_in_delay {
-        ((struct _Environment *)_environment)->animationEaseInFrames = $2;
-    };
-
-optional_ease_out_delay: 
-    {
-        ((struct _Environment *)_environment)->animationEaseOutDelay = 20;
-    }
-    |
-    DELAY const_expr {
-        ((struct _Environment *)_environment)->animationEaseOutDelay = $2;
-    };
-
-optional_ease_out: 
-    {
-        ((struct _Environment *)_environment)->animationEaseOutFrames = 0;
-        ((struct _Environment *)_environment)->animationEaseOutDelay = 0;
-    }
-    |
-    EASEOUT const_expr optional_ease_out_delay {
-        ((struct _Environment *)_environment)->animationEaseOutFrames = $2;
-    };
-
-optional_next_animation:
-    {
-        $$ = NULL;
-        ((struct _Environment *)_environment)->animationNextWithEaseIn = 0;
-    }
-    |
-    NEXT Identifier {
-        $$ = $2;
-        ((struct _Environment *)_environment)->animationNextWithEaseIn = 0;
-    }
-    |
-    NEXT WITH EASEIN Identifier {
-        $$ = $4;
-        ((struct _Environment *)_environment)->animationNextWithEaseIn = 1;
-    };
-
-optional_wait_vbl:
-    {
-        ((struct _Environment *)_environment)->animationWaitVbl = 0;
-    }
-    |
-    WAIT VBL {
-        ((struct _Environment *)_environment)->animationWaitVbl = 1;
-    };
-
-optional_preserve_background:
-    {
-        ((struct _Environment *)_environment)->animationPreserveBackground = 0;
-    }
-    |
-    PRESERVE BACKGROUND {
-        ((struct _Environment *)_environment)->animationPreserveBackground = 1;
-    };
-
-optional_reverse: 
-    {
-        ((struct _Environment *)_environment)->animationReverse = 0;
-    }
-    |
-    REVERSE {
-        ((struct _Environment *)_environment)->animationReverse = 1;
-    };
-
 /*-----------------------------------------------------------------------------
  ------------ ANIMATION DEFINITION
  ----------------------------------------------------------------------------*/
+
+delay_optional: 
+    { ((struct _Environment *)_environment)->animationDelay = 20; } | 
+    DELAY const_expr { ((struct _Environment *)_environment)->animationDelay = $2; };
+
+ease_in_delay_optional: 
+    { ((struct _Environment *)_environment)->animationEaseInDelay = 20; } |
+    DELAY const_expr { ((struct _Environment *)_environment)->animationEaseInDelay = $2; };
+
+ease_in_optional: 
+    {
+            ((struct _Environment *)_environment)->animationEaseInFrames = 0;
+            ((struct _Environment *)_environment)->animationEaseInDelay = 0;
+        } |
+    EASEIN const_expr ease_in_delay_optional {
+        ((struct _Environment *)_environment)->animationEaseInFrames = $2;
+    };
+
+ease_out_delay_optional: 
+    { ((struct _Environment *)_environment)->animationEaseOutDelay = 20; } |
+    DELAY const_expr { ((struct _Environment *)_environment)->animationEaseOutDelay = $2; };
+
+ease_out_optional: 
+    {
+            ((struct _Environment *)_environment)->animationEaseOutFrames = 0;
+            ((struct _Environment *)_environment)->animationEaseOutDelay = 0;
+        } |
+    EASEOUT const_expr ease_out_delay_optional { ((struct _Environment *)_environment)->animationEaseOutFrames = $2; };
+
+next_animation_optional:
+    { $$ = NULL; ((struct _Environment *)_environment)->animationNextWithEaseIn = 0; } |
+    NEXT Identifier { $$ = $2; ((struct _Environment *)_environment)->animationNextWithEaseIn = 0; } |
+    NEXT WITH EASEIN Identifier { $$ = $4; ((struct _Environment *)_environment)->animationNextWithEaseIn = 1; };
+
+wait_vbl_optional:
+    { ((struct _Environment *)_environment)->animationWaitVbl = 0; } |
+    WAIT VBL { ((struct _Environment *)_environment)->animationWaitVbl = 1; };
+
+preserve_background_optional:
+    { ((struct _Environment *)_environment)->animationPreserveBackground = 0; } |
+    PRESERVE BACKGROUND { ((struct _Environment *)_environment)->animationPreserveBackground = 1; };
+
+reverse_optional: 
+    { ((struct _Environment *)_environment)->animationReverse = 0; } |
+    REVERSE { ((struct _Environment *)_environment)->animationReverse = 1; };
 
 next_animation_definition: 
     Identifier { next_animation( _environment, $1 ); };
 
 animation_definition:
-    optional_reverse animation_type Identifier WITH expr optional_delay optional_ease_in optional_ease_out USING Identifier optional_next_animation optional_wait_vbl optional_preserve_background {
-        animation( _environment, $3, $5, $10, $11 );
-    };
+    reverse_optional animation_type Identifier WITH expr delay_optional ease_in_optional ease_out_optional USING Identifier next_animation_optional wait_vbl_optional preserve_background_optional { animation( _environment, $3, $5, $10, $11 ); };
 
 animate_definition:
-    Identifier WITH Identifier {
-        animate_semivars( _environment, $1, $3, NULL, NULL );
-    }
-    |
-    Identifier WITH Identifier AT optional_x OP_COMMA optional_y {
-        animate_semivars( _environment, $1, $3, $5, $7 );
-    }    
-    ;
+    Identifier WITH Identifier { animate_semivars( _environment, $1, $3, NULL, NULL ); } |
+    Identifier WITH Identifier AT optional_x OP_COMMA optional_y { animate_semivars( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MOVEMENT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 movement_direction:
     LEFT {
-        ((struct _Environment *)_environment)->movementDeltaX = -1;
-        ((struct _Environment *)_environment)->movementDeltaY = 0;
-    }
-    | RIGHT {
-        ((struct _Environment *)_environment)->movementDeltaX = 1;
-        ((struct _Environment *)_environment)->movementDeltaY = 0;
-    }
-    | UP {
-        ((struct _Environment *)_environment)->movementDeltaX = 0;
-        ((struct _Environment *)_environment)->movementDeltaY = -1;
-    }
-    | DOWN {
-        ((struct _Environment *)_environment)->movementDeltaX = 0;
-        ((struct _Environment *)_environment)->movementDeltaY = 1;
-    }
-    | TO POSITION {
-        ((struct _Environment *)_environment)->movementDeltaX = 0;
-        ((struct _Environment *)_environment)->movementDeltaY = 0;
-    }
-    | STEADY {
-        ((struct _Environment *)_environment)->movementDeltaX = 2;
-        ((struct _Environment *)_environment)->movementDeltaY = 2;
+            ((struct _Environment *)_environment)->movementDeltaX = -1;
+            ((struct _Environment *)_environment)->movementDeltaY = 0;
+        } | 
+    RIGHT {
+            ((struct _Environment *)_environment)->movementDeltaX = 1;
+            ((struct _Environment *)_environment)->movementDeltaY = 0;
+        } | 
+    UP {
+            ((struct _Environment *)_environment)->movementDeltaX = 0;
+            ((struct _Environment *)_environment)->movementDeltaY = -1;
+        } | 
+    DOWN {
+            ((struct _Environment *)_environment)->movementDeltaX = 0;
+            ((struct _Environment *)_environment)->movementDeltaY = 1;
+        } | 
+    TO POSITION {
+            ((struct _Environment *)_environment)->movementDeltaX = 0;
+            ((struct _Environment *)_environment)->movementDeltaY = 0;
+        } | 
+    STEADY {
+            ((struct _Environment *)_environment)->movementDeltaX = 2;
+            ((struct _Environment *)_environment)->movementDeltaY = 2;
     };
 
-optional_movement_delay:
-    {
-        ((struct _Environment *)_environment)->movementDelay = 20;
-    }
-    |
-    DELAY const_expr {
-        ((struct _Environment *)_environment)->movementDelay = $2;
-    };
+movement_delay_optional:
+    { ((struct _Environment *)_environment)->movementDelay = 20; } |
+    DELAY const_expr { ((struct _Environment *)_environment)->movementDelay = $2; };
 
 movement_definition:
-    Identifier movement_direction WITH expr optional_movement_delay USING Identifier {
-        movement( _environment, $1, $4, $7 );
-    }
-    | Identifier movement_direction optional_movement_delay USING Identifier {
-        movement( _environment, $1, NULL, $5 );
-    }
-;
+    Identifier movement_direction WITH expr movement_delay_optional USING Identifier { movement( _environment, $1, $4, $7 ); } | 
+    Identifier movement_direction movement_delay_optional USING Identifier { movement( _environment, $1, NULL, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MMOB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 mmob_definition: 
-    expr OP_COMMA expr OP_COMMA expr {
+    expr OP_COMMA expr OP_COMMA expr { mmob( _environment, $1, $3, $5, NULL, NULL, NULL, NULL ); } | 
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { mmob( _environment, $1, $3, $5, $7, $9, NULL, NULL ); } |
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { mmob( _environment, $1, $3, $5, $7, $9, $11, NULL ); } |
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { mmob( _environment, $1, $3, $5, $7, $9, $11, $13 ); };
 
-        mmob( _environment, $1, $3, $5, NULL, NULL, NULL, NULL );
-
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-
-        mmob( _environment, $1, $3, $5, $7, $9, NULL, NULL );
-
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-
-        mmob( _environment, $1, $3, $5, $7, $9, $11, NULL );
-
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-
-        mmob( _environment, $1, $3, $5, $7, $9, $11, $13 );
-
-    };
+/*-----------------------------------------------------------------------------
+ ------------ UPW/UPB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 upw_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        upw( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { upw( _environment, $1, $3, $5, $7 ); };
 
 upb_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        upb( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { upb( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ DOWNW/DOWNB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 downw_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        downw( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { downw( _environment, $1, $3, $5, $7 ); };
 
 downb_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        downb( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { downb( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ LEFTW/LEFTB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 leftw_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        leftw( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { leftw( _environment, $1, $3, $5, $7 ); };
 
 leftb_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        leftb( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { leftb( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ RIGHTW/RIGHTB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 rightw_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        rightw( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { rightw( _environment, $1, $3, $5, $7 ); };
 
 rightb_definition:
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        rightb( _environment, $1, $3, $5, $7 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { rightb( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMLOAD DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memload_definition:
-    {
-        memload( _environment );
-    };
+    { memload( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMSAVE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memsave_definition:
-    {
-        memsave( _environment );
-    };
+    { memsave( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMPOS DEFINITION
+ ----------------------------------------------------------------------------*/
 
 mempos_definition:
-    expr OP_COMMA expr {
-        mempos( _environment, $1, $3 );
-    };
+    expr OP_COMMA expr { mempos( _environment, $1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMOR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memor_definition:
-    expr  {
-        memor( _environment, $1, NULL, NULL );
-    }
-    | expr OP_COMMA expr OP_COMMA expr {
-        memor( _environment, $1, $3, $5 );
-    };
+    expr { memor( _environment, $1, NULL, NULL ); } | 
+    expr OP_COMMA expr OP_COMMA expr { memor( _environment, $1, $3, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMDEF DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memdef_definition:
-    expr  {
-        memdef( _environment, $1, NULL, NULL, NULL );
-    }
-    | expr OP_COMMA expr {
-        memdef( _environment, $1, $3, NULL, NULL );
-    } 
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        memdef( _environment, $1, $3, $5, $7 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        memdef( _environment, $1, $3, $5, $7 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        memdef( _environment, $1, $3, $5, $7 );
-    };
+    expr  { memdef( _environment, $1, NULL, NULL, NULL ); } | 
+    expr OP_COMMA expr { memdef( _environment, $1, $3, NULL, NULL ); }  | 
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { memdef( _environment, $1, $3, $5, $7 ); } |
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { memdef( _environment, $1, $3, $5, $7 ); } |
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { memdef( _environment, $1, $3, $5, $7 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMLEN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memlen_definition:
-    expr {
-        memlen( _environment, $1 );
-    };
+    expr { memlen( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMRESTORE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memrestore_definition:
-    expr {
-        memrestore( _environment, $1 );
-    };
+    expr { memrestore( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMCONT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memcont_definition:
-    expr {
-        memcont( _environment, $1 );
-    };
+    expr { memcont( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ MEMCLR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 memclr_definition:
-    expr OP_COMMA expr {
-        memclr( _environment, $1, $3, NULL );
-    }
-    | expr OP_COMMA expr OP_COMMA expr {
-        memclr( _environment, $1, $3, $5 );
-    };
+    expr OP_COMMA expr { memclr( _environment, $1, $3, NULL ); } | 
+    expr OP_COMMA expr OP_COMMA expr { memclr( _environment, $1, $3, $5 ); };
 
-scale_definitions:
+/*-----------------------------------------------------------------------------
+ ------------ SCALE DEFINITION
+ ----------------------------------------------------------------------------*/
+
+scale_definition:
     const_expr OP_COMMA const_expr {
         ((struct _Environment *)_environment)->scaleX = $1;
         ((struct _Environment *)_environment)->scaleY = $3;
     };
 
-offset_definitions:
+/*-----------------------------------------------------------------------------
+ ------------ OFFSET DEFINITION
+ ----------------------------------------------------------------------------*/
+
+offset_definition:
     const_expr OP_COMMA const_expr {
         ((struct _Environment *)_environment)->offsetX = $1;
         ((struct _Environment *)_environment)->offsetY = $3;
     };
 
-const_definition:
-  STRING Identifier OP_ASSIGN const_expr_string_const {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            Constant * c1 = constant_find( _environment, $4 );
-            Constant * c = constant_create( _environment, $2 );
-            c->valueString = static_string_create( _environment, c1->valueString->value, c1->valueString->size );
-            c->type = CT_STRING;
-        }
-  }
-  | Identifier OP_ASSIGN const_expr_string {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_string( _environment, $1, $3 );
-        }
-  }
-  | Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            const_define_numeric( _environment, $1, $3 );
-        }
-  }
-  | POSITIVE Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $4 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $2, $4 );
-            }
-            const_define_numeric( _environment, $2, $4 );
-        }
-  }
-  | Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $9 < $4 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
-            }
-            if ( $9 > $6 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $1 );
-            }
-            const_define_numeric( _environment, $1, $9 );
-        }
-  }
-  | Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $9 <= $4 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
-            }
-            if ( $9 > $6 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $1 );
-            }
-            const_define_numeric( _environment, $1, $9 );
-        }
-  }
-  | Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $9 < $4 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
-            }
-            if ( $9 >= $6 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $1 );
-            }
-            const_define_numeric( _environment, $1, $9 );
-        }
-  }
-  | Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $9 <= $4 ) {
-                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
-            }
-            if ( $9 >= $6 ) {
-                CRITICAL_TOO_BIG_CONSTANT( $1 );
-            }
-            const_define_numeric( _environment, $1, $9 );
-        }
-  };
+/*-----------------------------------------------------------------------------
+ ------------ CONST DEFINITION
+ ----------------------------------------------------------------------------*/
 
-const_definitions:
-    const_definition
-    | const_definition OP_COMMA const_definitions;
+const_definition_single:
+    STRING Identifier OP_ASSIGN const_expr_string_const {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                Constant * c1 = constant_find( _environment, $4 );
+                Constant * c = constant_create( _environment, $2 );
+                c->valueString = static_string_create( _environment, c1->valueString->value, c1->valueString->size );
+                c->type = CT_STRING;
+            }
+        } | 
+    Identifier OP_ASSIGN const_expr_string {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                const_define_string( _environment, $1, $3 );
+            }
+        } | 
+    Identifier OP_ASSIGN const_expr {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                const_define_numeric( _environment, $1, $3 );
+            }
+        } | 
+    POSITIVE Identifier OP_ASSIGN const_expr {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                if ( $4 < 0 ) {
+                    CRITICAL_NEGATIVE_CONSTANT( $2, $4 );
+                }
+                const_define_numeric( _environment, $2, $4 );
+            }
+        } | 
+    Identifier IN OP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                if ( $9 < $4 ) {
+                    CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+                }
+                if ( $9 > $6 ) {
+                    CRITICAL_TOO_BIG_CONSTANT( $1 );
+                }
+                const_define_numeric( _environment, $1, $9 );
+            }
+        } | 
+    Identifier IN OSP const_expr OP_COMMA const_expr CP OP_ASSIGN const_expr  {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                if ( $9 <= $4 ) {
+                    CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+                }
+                if ( $9 > $6 ) {
+                    CRITICAL_TOO_BIG_CONSTANT( $1 );
+                }
+                const_define_numeric( _environment, $1, $9 );
+            }
+        } | 
+  Identifier IN OP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr  {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                if ( $9 < $4 ) {
+                    CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+                }
+                if ( $9 >= $6 ) {
+                    CRITICAL_TOO_BIG_CONSTANT( $1 );
+                }
+                const_define_numeric( _environment, $1, $9 );
+            }
+        } | 
+    Identifier IN OSP const_expr OP_COMMA const_expr CSP OP_ASSIGN const_expr {
+        if ( !((Environment *)_environment)->emptyProcedure ) {
+            if ( $9 <= $4 ) {
+                CRITICAL_TOO_LITTLE_CONSTANT( $1 );
+            }
+            if ( $9 >= $6 ) {
+                CRITICAL_TOO_BIG_CONSTANT( $1 );
+            }
+            const_define_numeric( _environment, $1, $9 );
+        }
+    };
+
+const_definition:
+    const_definition_single
+    | const_definition_single OP_COMMA const_definition;
+
+positive_const_definition_single:
+    Identifier OP_ASSIGN const_expr {
+            if ( !((Environment *)_environment)->emptyProcedure ) {
+                if ( $3 < 0 ) {
+                    CRITICAL_NEGATIVE_CONSTANT( $1, $3 );
+                }
+                const_define_numeric( _environment, $1, $3 );
+            }
+    };
 
 positive_const_definition:
-  Identifier OP_ASSIGN const_expr {
-        if ( !((Environment *)_environment)->emptyProcedure ) {
-            if ( $3 < 0 ) {
-                CRITICAL_NEGATIVE_CONSTANT( $1, $3 );
-            }
-            const_define_numeric( _environment, $1, $3 );
-        }
-  };
+    positive_const_definition_single
+    | positive_const_definition_single OP_COMMA positive_const_definition;
 
-positive_const_definitions:
-    positive_const_definition
-    | positive_const_definition OP_COMMA positive_const_definitions;
+/*-----------------------------------------------------------------------------
+ ------------ SERIAL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 serial_function:
     READ OP expr CP {
@@ -10627,14 +10571,14 @@ statement2nc:
   | CONFIGURE configure_definitions
   | ORIGIN origin_definitions
   | RESOLUTION resolution_definitions
-  | SCALE scale_definitions
-  | OFFSET offset_definitions
+  | SCALE scale_definition
+  | OFFSET offset_definition
   | DIM dim_definitions
   | FILL fill_definitions
   | FILL SCREEN fill_screen_definition
   | SHUFFLE shuffle_definition
-  | const_instruction const_definitions
-  | POSITIVE const_instruction positive_const_definitions
+  | const_instruction const_definition
+  | POSITIVE const_instruction positive_const_definition
   | TI OP_ASSIGN expr {
         set_timer( _environment, $3 );
   }
