@@ -2423,6 +2423,16 @@ to_identifier_optional:
     { $$ = NULL; } | 
     TO Identifier { $$ = $2; };
 
+array_assignment:
+    OP_ASSIGN expr {
+            ((struct _Environment *)_environment)->currentFieldName = NULL;
+            ((struct _Environment *)_environment)->currentExpression = $2;
+        } | 
+    OP_PERIOD Identifier OP_ASSIGN expr {
+            ((struct _Environment *)_environment)->currentFieldName = $2;
+            ((struct _Environment *)_environment)->currentExpression = $4;
+        };
+
 thread_identifiers:
     expr {
             Variable * array = variable_retrieve( _environment, $1 );
@@ -9321,167 +9331,136 @@ serial_function:
     WRITE OP expr as_datatype_mandatory CP endianess_optional  { $$ = serial_write_type( _environment, $3, $4, $6 )->name; } |
     WRITE OP expr CP { $$ = serial_write( _environment, $3 )->name; };
 
-
 serial_definition:
-    WRITE expr {
-        serial_write( _environment, $2 );
-    }
-    |
-    WRITE OP expr as_datatype_mandatory CP endianess_optional {
-        serial_write_type( _environment, $3, $4, $6 );
-    };
+    WRITE expr { serial_write( _environment, $2 ); } |
+    WRITE OP expr as_datatype_mandatory CP endianess_optional { serial_write_type( _environment, $3, $4, $6 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ JMOVE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 jmove_definition:
-    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr   {
-        jmove( _environment, $1, $3, $5, $7, $9, $7, $9, NULL, NULL );
-    }
-    | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
-        jmove( _environment, $1, $3, $5, $7, $9, $11, $13, NULL, NULL );
-    }
-    | expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        jmove( _environment, $1, $3, $5, $7, $9, $11, $13, $15, $17 );
-    }
-    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr { jmove( _environment, $1, $3, $5, $7, $9, $7, $9, NULL, NULL ); } |
+    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr  { jmove( _environment, $1, $3, $5, $7, $9, $11, $13, NULL, NULL ); } |
+    expr OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { jmove( _environment, $1, $3, $5, $7, $9, $11, $13, $15, $17 ); } |
+    OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
         variable_store( _environment, zero->name, 0 );
         jmove( _environment, zero->name, $2, $4, $6, $8, $10, $12, $14, $16 );
-    }
-    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
+    } | 
+    OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
         variable_store( _environment, zero->name, 0 );
         jmove( _environment, zero->name, $2, $4, $6, $8, $10, $12, NULL, NULL );
-    }
-    | OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr {
+    } | 
+    OP_COMMA Identifier OP_COMMA Identifier OP_COMMA expr OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)");
         variable_store( _environment, zero->name, 0 );
         jmove( _environment, zero->name, $2, $4, $6, $8, $6, $8, NULL, NULL );
-    }
-    ;
-
-array_assignment:
-    OP_ASSIGN expr {
-        ((struct _Environment *)_environment)->currentFieldName = NULL;
-        ((struct _Environment *)_environment)->currentExpression = $2;
-  }
-  | OP_PERIOD Identifier OP_ASSIGN expr {
-        ((struct _Environment *)_environment)->currentFieldName = $2;
-        ((struct _Environment *)_environment)->currentExpression = $4;
     };
+
+/*-----------------------------------------------------------------------------
+ ------------ LET DEFINITION
+ ----------------------------------------------------------------------------*/
 
 let_definition:
     Identifier OP_ASSIGN Identifier {
-        parser_array_init( _environment );
-    }
-      OP indexes CP field_optional {
-        if ( $8 ) {
-            variable_move_from_array_type_inplace( _environment, $3, $8, $1 );
-        } else {
-            variable_move_from_array_inplace( _environment, $3, $1 );
+            parser_array_init( _environment );
         }
-        parser_array_cleanup( _environment );
-    }
-    | Identifier OP_ASSIGN Identifier OP_PERIOD Identifier {
-        variable_move_from_type_inplace( _environment, $3, $5, $1 );
-    }
-    | Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Identifier OP Identifier CP OP_PERIOD Identifier {
-        Variable * variable = variable_retrieve( _environment, $1 );
-        if ( variable->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
-        }
-        if ( variable->arrayType != VT_TYPE ) {
-            CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
-        }
-        Variable * variableIndex = variable_retrieve( _environment, $3 );
-        if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
-            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
-        }
-        Field * variableField = field_find( variable->typeType, $6 );
-        if ( ! variableField ) {
-            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
-        }
-
-        Variable * expr = variable_retrieve( _environment, $8 );
-        if ( expr->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $8 );
-        }
-        if ( expr->arrayType != VT_TYPE ) {
-            CRITICAL_VARIABLE_TYPE_NEEDED( $8 );
-        }
-        Variable * exprIndex = variable_retrieve( _environment, $10 );
-        if ( VT_BITWIDTH( exprIndex->type ) == 0 ) {
-            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $10 );
-        }
-        Field * exprField = field_find( expr->typeType, $13 );
-        if ( ! exprField ) {
-            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $13 );
-        }
-
-        if ( strcmp( variable->name, expr->name ) == 0 ) {
-            if ( strcmp( variableField->name, exprField->name ) == 0 ) {
-                //
+        OP indexes CP field_optional {
+            if ( $8 ) {
+                variable_move_from_array_type_inplace( _environment, $3, $8, $1 );
             } else {
-                variable_move_array1_type_fields( _environment, variable->name, variableIndex->name, exprField->name, variableField->name );
+                variable_move_from_array_inplace( _environment, $3, $1 );
             }
-        } else {
-            variable_move_array1_type( _environment, variable->name, variableIndex->name, variableField->name, variable_move_from_array1_type( _environment, expr->name, exprIndex->name, exprField->name )->name  );
-        }
+            parser_array_cleanup( _environment );
+        } | 
+    Identifier OP_ASSIGN Identifier OP_PERIOD Identifier { variable_move_from_type_inplace( _environment, $3, $5, $1 ); } |
+    Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Identifier OP Identifier CP OP_PERIOD Identifier {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            if ( variable->arrayType != VT_TYPE ) {
+                CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
+            }
+            Variable * variableIndex = variable_retrieve( _environment, $3 );
+            if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
+                CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
+            }
+            Field * variableField = field_find( variable->typeType, $6 );
+            if ( ! variableField ) {
+                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
+            }
 
-    }
-    | Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Integer {
-        Variable * variable = variable_retrieve( _environment, $1 );
-        if ( variable->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $1 );
-        }
-        if ( variable->arrayType != VT_TYPE ) {
-            CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
-        }
-        Variable * variableIndex = variable_retrieve( _environment, $3 );
-        if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
-            CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
-        }
-        Field * variableField = field_find( variable->typeType, $6 );
-        if ( ! variableField ) {
-            CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
-        }
+            Variable * expr = variable_retrieve( _environment, $8 );
+            if ( expr->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $8 );
+            }
+            if ( expr->arrayType != VT_TYPE ) {
+                CRITICAL_VARIABLE_TYPE_NEEDED( $8 );
+            }
+            Variable * exprIndex = variable_retrieve( _environment, $10 );
+            if ( VT_BITWIDTH( exprIndex->type ) == 0 ) {
+                CRITICAL_DATATYPE_UNSUPPORTED( "LET", $10 );
+            }
+            Field * exprField = field_find( expr->typeType, $13 );
+            if ( ! exprField ) {
+                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $13 );
+            }
 
-        variable_move_array1_type_const( _environment, variable->name, variableIndex->name, variableField->name, $8 );
+            if ( strcmp( variable->name, expr->name ) == 0 ) {
+                if ( strcmp( variableField->name, exprField->name ) == 0 ) {
+                    //
+                } else {
+                    variable_move_array1_type_fields( _environment, variable->name, variableIndex->name, exprField->name, variableField->name );
+                }
+            } else {
+                variable_move_array1_type( _environment, variable->name, variableIndex->name, variableField->name, variable_move_from_array1_type( _environment, expr->name, exprIndex->name, exprField->name )->name  );
+            }
 
-    };
+        } | 
+    Identifier OP Identifier CP OP_PERIOD Identifier OP_ASSIGN Integer {
+            Variable * variable = variable_retrieve( _environment, $1 );
+            if ( variable->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $1 );
+            }
+            if ( variable->arrayType != VT_TYPE ) {
+                CRITICAL_VARIABLE_TYPE_NEEDED( $1 );
+            }
+            Variable * variableIndex = variable_retrieve( _environment, $3 );
+            if ( VT_BITWIDTH( variableIndex->type ) == 0 ) {
+                CRITICAL_DATATYPE_UNSUPPORTED( "LET", $3 );
+            }
+            Field * variableField = field_find( variable->typeType, $6 );
+            if ( ! variableField ) {
+                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $6 );
+            }
+
+            variable_move_array1_type_const( _environment, variable->name, variableIndex->name, variableField->name, $8 );
+
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ COPPER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 copper_definition:
-  NOP {
-        copper_nop( _environment );
-  }
-  | WAIT LINE const_expr {
-        copper_wait( _environment, $3 );
-  }
-  | MOVE const_expr OP_COMMA const_expr as_datatype {
-        copper_move( _environment, $2, $4, $5 );
-  }
-  | STORE const_expr OP_COMMA const_expr as_datatype {
-        copper_store( _environment, $2, $4, $5 );
-  }
-  | POKE const_expr OP_COMMA const_expr {
-        copper_store( _environment, $2, $4, VT_BYTE );
-  }
-  | POKEW const_expr OP_COMMA const_expr {
-        copper_store( _environment, $2, $4, VT_WORD );
-  }
-  | POKED const_expr OP_COMMA const_expr {
-        copper_store( _environment, $2, $4, VT_DWORD );
-  }
-  | COLOR BORDER const_expr {
-        copper_color_border( _environment, $3 );
-  }
-  | COLOR BACKGROUND const_expr {
-        copper_color_background( _environment, $3 );
-  }
-  | COLOR const_expr OP_COMMA const_expr {
-        copper_color( _environment, $2, $4 );
-  }
-  | USE const_expr_string {
-        copper_use( _environment, $2 );
-  };
+  COLOR BACKGROUND const_expr { copper_color_background( _environment, $3 ); } | 
+  COLOR BORDER const_expr { copper_color_border( _environment, $3 ); } | 
+  COLOR const_expr OP_COMMA const_expr { copper_color( _environment, $2, $4 ); } | 
+  MOVE const_expr OP_COMMA const_expr as_datatype { copper_move( _environment, $2, $4, $5 ); } | 
+  NOP { copper_nop( _environment ); } | 
+  POKE const_expr OP_COMMA const_expr { copper_store( _environment, $2, $4, VT_BYTE ); } | 
+  POKED const_expr OP_COMMA const_expr { copper_store( _environment, $2, $4, VT_DWORD ); } | 
+  POKEW const_expr OP_COMMA const_expr { copper_store( _environment, $2, $4, VT_WORD ); } | 
+  STORE const_expr OP_COMMA const_expr as_datatype { copper_store( _environment, $2, $4, $5 ); } | 
+  USE const_expr_string { copper_use( _environment, $2 ); } |
+  WAIT LINE const_expr { copper_wait( _environment, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ FLASH DEFINITION
+ ----------------------------------------------------------------------------*/
 
 flash_definition_couple:
     expr OP_COMMA expr {
@@ -9490,500 +9469,358 @@ flash_definition_couple:
     };
 
 on_flash_address:
-    {
-        $$ = NULL;
-    }
-    | ON expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } | 
+    ON expr { $$ = $2; };
 
 flash_definition_couples:
-    flash_definition_couple
-    | flash_definition_couple OP_COMMA flash_definition_couples;
+    flash_definition_couple | 
+    flash_definition_couple OP_COMMA flash_definition_couples;
 
 flash_definition:
     expr OP_COMMA {
-        ((Environment *)_environment)->flashVarsIndex = 0;
-    } flash_definition_couples on_flash_address {
-        flash( _environment, $1, $5 );
-    }
-    | expr OFF {
-        flash_off( _environment, $1 );
-    };
+            ((Environment *)_environment)->flashVarsIndex = 0;
+        } flash_definition_couples on_flash_address {
+            flash( _environment, $1, $5 );
+        } | 
+    expr OFF { flash_off( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ FAST DEFINITION
+ ----------------------------------------------------------------------------*/
 
 fast_definition:
-    {
-        fast( _environment );
-    };
+    { fast( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SLOW DEFINITION
+ ----------------------------------------------------------------------------*/
 
 slow_definition:
-    {
-        slow( _environment );
-    };
+    { slow( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ CPUSPEED DEFINITION
+ ----------------------------------------------------------------------------*/
 
 cpuspeed_definition:
-    expr {
-        cpuspeed( _environment, $1 );
-    };
+    expr { cpuspeed( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ OVERALL INSTRUCTIONS
+ ----------------------------------------------------------------------------*/
 
 statement2nc:
-    BANK bank_definition
-  | RASTER raster_definition
-  | NEXT RASTER next_raster_definition
-  | NEXT ANIMATION next_animation_definition
-  | COLOR color_definition
-  | COLOUR color_definition
-  | PALETTE {
-      ((struct _Environment *)_environment)->paletteIndex = 0;
-  } palette_definition
-  | PALETTE1 {
-      ((struct _Environment *)_environment)->paletteIndex = 0;
-      color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-  } palette_definition
-  | MOVEMENT movement_definition
-  | ANIMATION animation_definition
-  | ANIMATE animate_definition
-  | PAUSE pause_definition
-  | SUSPEND suspend_definition
-  | FREEZE freeze_definition
-  | RESUME resume_definition
-  | UNFREEZE unfreeze_definition
-  | WAIT wait_definition
-  | SLEEP sleep_definition
-  | CMOB cmob_definition
-  | MOB mob_definition
-  | SPRITE sprite_definition
-  | CSET cset_definition
-  | CSPRITE sprite_definition
-  | MSPRITE sprite_definition
-  | MSPRITE UPDATE {
-      msprite_update( _environment );
-  }
-  | NRM nrm_definition
-  | MOD mod_definition
-  | HIRES hires_definition
-  | MULTI multi_definition
-  | KEYGET keyget_definition
-  | BITMAP bitmap_definition
-  | TEXTMAP textmap_definition
-  | TILEMAP tilemap_definition
-  | TEXT text_definition
-  | TILE tile_definition
-  | TILES tiles_definition
-  | FONT font_definition
-  | COLORMAP colormap_definition
-  | COLOURMAP colormap_definition
-  | SCREEN screen_definition
-  | GRAPHICS graphics_definition
-  | POINT point_definition
-  | PLOT plot_definition
-  | PLOTR plotr_definition
-  | CIRCLE circle_definition
-  | FCIRCLE fcircle_definition
-  | ELLIPSE ellipse_definition
-  | FELLIPSE fellipse_definition
-  | DRAW draw_definition
-  | ROT rot_definition
-  | DTILE draw_tile_definition
-  | DTILES draw_tile_definition
-  | LINE line_definition
-  | PUT put_definition
-  | DEFDGR defdgr_definition
-  | BLIT blit_definition
-  | FLIP flip_definition
-  | MOVE move_definition
-  | GET get_definition
-  | SLICE slice_definition
-  | BOX box_definition
-  | REC rec_definition
-  | RECT rec_definition
-  | CONSOLE console_definition
-  | BAR bar_definition
-  | BLOCK block_definition
-  | POLYLINE polyline_definition
-  | TRIANGLE triangle_definition
-  | CLIP clip_definition
-  | USE use_definition
-  | SET LINE expr {
-      ((Environment *)_environment)->lineNeeded = 1;
-      variable_move( _environment, $3, "LINE" );
-  }
-  | INK ink_definition
-  | INKB inkb_definition
-  | VAR var_definition
-  | TEXTADDRESS OP_ASSIGN expr {
-      variable_move( _environment, $3, "TEXTADDRESS" );
-  }
-  | EMPTY TILE OP_ASSIGN expr {
-      variable_move( _environment, $4, "EMPTYTILE" );
-  }
-  | EMPTYTILE OP_ASSIGN expr {
-      variable_move( _environment, $3, "EMPTYTILE" );
-  }
-  | ADD add_definition
-  | ADDC addc_definition
-  | MUL mul_definition
-  | DIV div_definition
-  | XOR xor_definition
-  | POKE poke_definition
-  | POKEW pokew_definition
-  | POKED poked_definition
-  | NOP {
-      cpu_nop(_environment);
-  }
-  | RUN {
-    run( _environment );
-  }
-  | KEY key_definition
-  | DLOAD dload_definition
-  | DSAVE dsave_definition
-  | CHAIN chain_definition
-  | SWAP swap_definition
-  | OUT out_definition
-  | DATA data_definition
-  | READ read_definition
-  | RESTORE restore_definition
-  | CLR clear_definition
-  | CLEAR clear_definition
-  | PMODE pmode_definition
-  | PAINT paint_definition
-  | AT at_definition
-  | CHAR char_definition
-  | ENVELOPE envelope_definition
-  | INSERT insert_definition
-  | CHECK check_definition
-  | DOJO dojo_definition
-  | dojo_definition
-  | FUJINET fujinet_definition
-  | SERIAL serial_definition
-  | PRINT print_definition
-  | FAST fast_definition
-  | SLOW slow_definition
-  | CPUSPEED cpuspeed_definition
-  | GR PRINT gprint_definition
-  | GPRINT gprint_definition
-  | FLASH flash_definition
-  | TRAVEL {
-   ((struct _Environment *)_environment)->travelX = NULL; 
-   ((struct _Environment *)_environment)->travelXAR = NULL; 
-   ((struct _Environment *)_environment)->travelY = NULL; 
-   ((struct _Environment *)_environment)->travelYAR = NULL; 
-  }travel_definition
-  | BORDER border_definition
-  | PRINT BUFFER print_buffer_definition
-  | PRINT BUFFER RAW print_buffer_raw_definition
-  | PRINT {
-      print_newline( _environment );
-  }
-  | INPUT {
-        ((Environment *)_environment)->lineInput = 0;
-  } input_definition
-  | QM print_definition
-  | QM {
-      print_newline( _environment );
-  }
-  | LOCATE locate_definition
-  | GR LOCATE gr_locate_definition
-  | MEMORIZE {
-      memorize( _environment );
-  }
-  | REMEMBER {
-      remember( _environment );
-  }
-  | HSCROLL hscroll_definition
-  | VSCROLL vscroll_definition
-  | UPB upb_definition
-  | UPW upw_definition
-  | DOWNB downb_definition
-  | DOWNW downw_definition
-  | LEFTB leftb_definition
-  | LEFTW leftw_definition
-  | RIGHTB rightb_definition
-  | RIGHTW rightw_definition
-  | SCROLL scroll_definition
-  | CMOVE cmove_definition
-  | CUP {
-      cmove_direct( _environment, 0, -1 );
-  }
-  | CDOWN {
-      cmove_direct( _environment, 0, 1 );
-  }
-  | CLEFT {
-      cmove_direct( _environment, -1, 0 );
-  }
-  | CRIGHT {
-      cmove_direct( _environment, 1, 0 );
-  }
-  | CLINE {
-      cline( _environment, NULL );
-  }
-  | CLINE expr {
-      cline( _environment, $2 );
-  }
-  | SET TAB expr {
-      text_set_tab( _environment, $3 );
-  }
-  | CENTRE center_definition
-  | CENTER center_definition
-  | VCENTER vcenter_definition
-  | VCENTRE vcenter_definition
-  | VHCENTER vhcenter_definition
-  | VHCENTRE vhcenter_definition
-  | JMOVE jmove_definition
-  | CLS expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-      cls_box( _environment, $2, $4, $6, $8 );
-  }
-  | CLS {
-      cls( _environment, NULL );
-      home( _environment );
-  }
-  | CLS expr {
-      cls( _environment, $2 );
-      home( _environment );
-  }
-  | PCLS {
-      cls( _environment, NULL );
-      home( _environment );
-  }
-  | PCLS expr {
-      cls( _environment, $2 );
-      home( _environment );
-  }
-  | HOME {
-      home( _environment );
-  }
-  | BOTTOM {
-      bottom( _environment );
-  }
-  | LBOTTOM {
-      lbottom( _environment );
-  }
-  | CLEAR KEY {
-      clear_key( _environment );
-  }
-  | PUT KEY expr {
-      put_key( _environment, $3 );
-  }
-  | INC Identifier field_optional {
-        if ( $3 ) {
-            variable_increment_type( _environment, $2, $3 );
-        } else {
-            variable_increment( _environment, $2 );
-        }      
-  }
-  | DEC Identifier field_optional {
-        if ( $3 ) {
-            variable_decrement_type( _environment, $2, $3 );
-        } else {
-            variable_decrement( _environment, $2 );
-        }
-  }
-  | INC TI {
-      Variable * ti = get_timer( _environment );
-      variable_increment( _environment, ti->name );
-      set_timer( _environment, ti->name );
-  }
-  | DEC TI {
-      Variable * ti = get_timer( _environment );
-      variable_decrement( _environment, ti->name );
-      set_timer( _environment, ti->name );
-  }
-  | INC Identifier OP {
-        parser_array_init( _environment );
-    } indexes CP field_optional {
-        if ( $7 ) {
-            variable_increment_array_type( _environment, $2, $7 );
-        } else {
-            define_implicit_array_if_needed( _environment, $2 );
-            variable_increment_array( _environment, $2 );
-        }
-        parser_array_cleanup( _environment );
-  }
-  | DEC Identifier OP {
-        parser_array_init( _environment );
-    } indexes CP field_optional {
-        if ( $7 ) {
-            variable_decrement_array_type( _environment, $2, $7 );
-        } else {
-            define_implicit_array_if_needed( _environment, $2 );
-            variable_decrement_array( _environment, $2 );
-        }
-        parser_array_cleanup( _environment );
-  }
-  | INC OSP Identifier CSP field_optional {
-        if ( $5 ) {
-            Variable * array;
-            if ( ! variable_exists( _environment, $3 ) ) {
-                CRITICAL_NOT_ARRAY( $3 );
-            }        
-            array = variable_retrieve( _environment, $3 );        
-            if ( array->type != VT_TARRAY ) {
-                CRITICAL_NOT_ARRAY( $3 );
+    BANK bank_definition | 
+    RASTER raster_definition | 
+    NEXT RASTER next_raster_definition | 
+    NEXT ANIMATION next_animation_definition |
+    COLOR color_definition | 
+    COLOUR color_definition | 
+    PALETTE { ((struct _Environment *)_environment)->paletteIndex = 0; } palette_definition | 
+    PALETTE1 { ((struct _Environment *)_environment)->paletteIndex = 0; color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } palette_definition | 
+    MOVEMENT movement_definition | 
+    ANIMATION animation_definition | 
+    ANIMATE animate_definition | 
+    PAUSE pause_definition | 
+    SUSPEND suspend_definition | 
+    FREEZE freeze_definition | 
+    RESUME resume_definition | 
+    UNFREEZE unfreeze_definition | 
+    WAIT wait_definition | 
+    SLEEP sleep_definition | 
+    CMOB cmob_definition | 
+    MOB mob_definition | 
+    SPRITE sprite_definition | 
+    CSET cset_definition | 
+    CSPRITE sprite_definition | 
+    MSPRITE sprite_definition | 
+    MSPRITE UPDATE { msprite_update( _environment ); } | 
+    NRM nrm_definition | 
+    MOD mod_definition | 
+    HIRES hires_definition | 
+    MULTI multi_definition | 
+    KEYGET keyget_definition | 
+    BITMAP bitmap_definition | 
+    TEXTMAP textmap_definition | 
+    TILEMAP tilemap_definition | 
+    TEXT text_definition | 
+    TILE tile_definition | 
+    TILES tiles_definition | 
+    FONT font_definition | 
+    COLORMAP colormap_definition | 
+    COLOURMAP colormap_definition | 
+    SCREEN screen_definition | 
+    GRAPHICS graphics_definition | 
+    POINT point_definition | 
+    PLOT plot_definition | 
+    PLOTR plotr_definition | 
+    CIRCLE circle_definition | 
+    FCIRCLE fcircle_definition | 
+    ELLIPSE ellipse_definition | 
+    FELLIPSE fellipse_definition | 
+    DRAW draw_definition | 
+    ROT rot_definition | 
+    DTILE draw_tile_definition | 
+    DTILES draw_tile_definition | 
+    LINE line_definition | 
+    PUT put_definition | 
+    DEFDGR defdgr_definition | 
+    BLIT blit_definition | 
+    FLIP flip_definition | 
+    MOVE move_definition | 
+    GET get_definition | 
+    SLICE slice_definition | 
+    BOX box_definition | 
+    REC rec_definition | 
+    RECT rec_definition | 
+    CONSOLE console_definition | 
+    BAR bar_definition | 
+    BLOCK block_definition | 
+    POLYLINE polyline_definition | 
+    TRIANGLE triangle_definition | 
+    CLIP clip_definition | 
+    USE use_definition | 
+    SET LINE expr {
+            ((Environment *)_environment)->lineNeeded = 1;
+            variable_move( _environment, $3, "LINE" );
+        } | 
+    INK ink_definition | 
+    INKB inkb_definition | 
+    VAR var_definition | 
+    TEXTADDRESS OP_ASSIGN expr { variable_move( _environment, $3, "TEXTADDRESS" ); } | 
+    EMPTY TILE OP_ASSIGN expr { variable_move( _environment, $4, "EMPTYTILE" ); } | 
+    EMPTYTILE OP_ASSIGN expr { variable_move( _environment, $3, "EMPTYTILE" ); } | 
+    ADD add_definition | 
+    ADDC addc_definition | 
+    MUL mul_definition | 
+    DIV div_definition | 
+    XOR xor_definition | 
+    POKE poke_definition | 
+    POKEW pokew_definition | 
+    POKED poked_definition | 
+    NOP { cpu_nop(_environment); } | 
+    RUN { run( _environment ); } | 
+    KEY key_definition | 
+    DLOAD dload_definition | 
+    DSAVE dsave_definition | 
+    CHAIN chain_definition | 
+    SWAP swap_definition | 
+    OUT out_definition | 
+    DATA data_definition | 
+    READ read_definition | 
+    RESTORE restore_definition | 
+    CLR clear_definition | 
+    CLEAR clear_definition | 
+    PMODE pmode_definition | 
+    PAINT paint_definition | 
+    AT at_definition | 
+    CHAR char_definition | 
+    ENVELOPE envelope_definition | 
+    INSERT insert_definition | 
+    CHECK check_definition | 
+    DOJO dojo_definition | 
+    dojo_definition | 
+    FUJINET fujinet_definition | 
+    SERIAL serial_definition | 
+    PRINT print_definition | 
+    FAST fast_definition | 
+    SLOW slow_definition | 
+    CPUSPEED cpuspeed_definition | 
+    GR PRINT gprint_definition | 
+    GPRINT gprint_definition | 
+    FLASH flash_definition | 
+    TRAVEL {
+        ((struct _Environment *)_environment)->travelX = NULL; 
+        ((struct _Environment *)_environment)->travelXAR = NULL; 
+        ((struct _Environment *)_environment)->travelY = NULL; 
+        ((struct _Environment *)_environment)->travelYAR = NULL; 
+        } travel_definition | 
+    BORDER border_definition | 
+    PRINT BUFFER print_buffer_definition | 
+    PRINT BUFFER RAW print_buffer_raw_definition |
+    PRINT { print_newline( _environment ); } | 
+    INPUT { ((Environment *)_environment)->lineInput = 0; } input_definition | 
+    QM print_definition | 
+    QM { print_newline( _environment ); } | 
+    LOCATE locate_definition | 
+    GR LOCATE gr_locate_definition | 
+    MEMORIZE { memorize( _environment ); } | 
+    REMEMBER { remember( _environment ); } | 
+    HSCROLL hscroll_definition | 
+    VSCROLL vscroll_definition | 
+    UPB upb_definition | 
+    UPW upw_definition | 
+    DOWNB downb_definition | 
+    DOWNW downw_definition | 
+    LEFTB leftb_definition | 
+    LEFTW leftw_definition | 
+    RIGHTB rightb_definition | 
+    RIGHTW rightw_definition | 
+    SCROLL scroll_definition | 
+    CMOVE cmove_definition | 
+    CUP { cmove_direct( _environment, 0, -1 ); } | 
+    CDOWN { cmove_direct( _environment, 0, 1 ); } | 
+    CLEFT { cmove_direct( _environment, -1, 0 ); } | 
+    CRIGHT { cmove_direct( _environment, 1, 0 ); } | 
+    CLINE { cline( _environment, NULL ); } | 
+    CLINE expr { cline( _environment, $2 ); } | 
+    SET TAB expr { text_set_tab( _environment, $3 ); } | 
+    CENTRE center_definition | 
+    CENTER center_definition | 
+    VCENTER vcenter_definition | 
+    VCENTRE vcenter_definition | 
+    VHCENTER vhcenter_definition | 
+    VHCENTRE vhcenter_definition | 
+    JMOVE jmove_definition | 
+    CLS expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { cls_box( _environment, $2, $4, $6, $8 ); } |
+    CLS { cls( _environment, NULL ); home( _environment ); } | 
+    CLS expr { cls( _environment, $2 ); home( _environment ); } | 
+    PCLS { cls( _environment, NULL ); home( _environment ); } | 
+    PCLS expr { cls( _environment, $2 ); home( _environment ); } | 
+    HOME { home( _environment ); } | 
+    BOTTOM { bottom( _environment ); } | 
+    LBOTTOM { lbottom( _environment ); } | 
+    CLEAR KEY { clear_key( _environment ); } | 
+    PUT KEY expr { put_key( _environment, $3 ); } | 
+    INC Identifier field_optional {
+                if ( $3 ) {
+                    variable_increment_type( _environment, $2, $3 );
+                } else {
+                    variable_increment( _environment, $2 );
+                }      
+        } | 
+    DEC Identifier field_optional {
+                if ( $3 ) {
+                    variable_decrement_type( _environment, $2, $3 );
+                } else {
+                    variable_decrement( _environment, $2 );
+                }
+        } | 
+    INC TI {
+            Variable * ti = get_timer( _environment );
+            variable_increment( _environment, ti->name );
+            set_timer( _environment, ti->name );
+        } | 
+    DEC TI {
+            Variable * ti = get_timer( _environment );
+            variable_decrement( _environment, ti->name );
+            set_timer( _environment, ti->name );
+        } | 
+    INC Identifier OP {
+            parser_array_init( _environment );
+        } indexes CP field_optional {
+            if ( $7 ) {
+                variable_increment_array_type( _environment, $2, $7 );
+            } else {
+                define_implicit_array_if_needed( _environment, $2 );
+                variable_increment_array( _environment, $2 );
             }
-            parser_array_init( _environment );
-            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-            Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
-            variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
             parser_array_cleanup( _environment );
-            variable_increment( _environment, temporary->name );
+        } | 
+    DEC Identifier OP {
             parser_array_init( _environment );
-            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-            variable_move_array_type( _environment, $3, $5, temporary->name );
-            parser_array_cleanup( _environment );
-        } else {
-            variable_increment_mt( _environment, $3 );
-        }
-  }
-  | DEC OSP Identifier CSP field_optional {
-        if ( $5 ) {
-            Variable * array;
-            if ( ! variable_exists( _environment, $3 ) ) {
-                CRITICAL_NOT_ARRAY( $3 );
-            }        
-            array = variable_retrieve( _environment, $3 );        
-            if ( array->type != VT_TARRAY ) {
-                CRITICAL_NOT_ARRAY( $3 );
+        } indexes CP field_optional {
+            if ( $7 ) {
+                variable_decrement_array_type( _environment, $2, $7 );
+            } else {
+                define_implicit_array_if_needed( _environment, $2 );
+                variable_decrement_array( _environment, $2 );
             }
-            parser_array_init( _environment );
-            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-            Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
-            variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
             parser_array_cleanup( _environment );
-            variable_decrement( _environment, temporary->name );
-            parser_array_init( _environment );
-            parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
-            variable_move_array_type( _environment, $3, $5, temporary->name );
-            parser_array_cleanup( _environment );
+    } | 
+    INC OSP Identifier CSP field_optional {
+            if ( $5 ) {
+                Variable * array;
+                if ( ! variable_exists( _environment, $3 ) ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }        
+                array = variable_retrieve( _environment, $3 );        
+                if ( array->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
+                parser_array_cleanup( _environment );
+                variable_increment( _environment, temporary->name );
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                variable_move_array_type( _environment, $3, $5, temporary->name );
+                parser_array_cleanup( _environment );
+            } else {
+                variable_increment_mt( _environment, $3 );
+            }
+        } | 
+    DEC OSP Identifier CSP field_optional {
+            if ( $5 ) {
+                Variable * array;
+                if ( ! variable_exists( _environment, $3 ) ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }        
+                array = variable_retrieve( _environment, $3 );        
+                if ( array->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                Variable * temporary = variable_temporary( _environment, VT_WORD, "(tmp)");
+                variable_move( _environment, variable_move_from_array_type( _environment, $3, $5 )->name, temporary->name );
+                parser_array_cleanup( _environment );
+                variable_decrement( _environment, temporary->name );
+                parser_array_init( _environment );
+                parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
+                variable_move_array_type( _environment, $3, $5, temporary->name );
+                parser_array_cleanup( _environment );
+            } else {
+                variable_decrement_mt( _environment, $3 );
+            }
+      } | 
+    RANDOMIZE { randomize( _environment, NULL ); } | 
+    RANDOMIZE expr { randomize( _environment, $2 ); } | 
+    IF expr THEN { if_then( _environment, $2 ); } | 
+    IF expr GOTO Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr GOTO Identifier { if_then( _environment, $2 ); goto_label( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr THEN Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); end_if_then( _environment ); } | 
+    IF expr THEN Integer ELSE Integer { if_then( _environment, $2 ); goto_number( _environment, $4 ); else_if_then_label( _environment ); else_if_then( _environment, NULL ); goto_number( _environment, $6 ); end_if_then( _environment ); } | 
+    IF expr THEN { if_then( _environment, $2 ); } statement2nc { end_if_then( _environment ); } | 
+    ELSE { else_if_then_label( _environment );   else_if_then( _environment, NULL ); } | 
+    ELSE IF { else_if_then_label( _environment ); }  expr THEN { else_if_then( _environment, $4 ); } | 
+    ELSEIF { else_if_then_label( _environment ); } expr THEN { else_if_then( _environment, $3 ); } |
+    ENDIF { end_if_then( _environment ); } | 
+    SELECT CASE expr { select_case( _environment, $3 ); } | 
+    CASE { case_equals_label( _environment );   } OP_HASH const_expr { case_equals( _environment, $4 ); } |
+    CASE {
+            case_equals_label( _environment );  
+        } expr {
+            Variable * expr = variable_retrieve( _environment, $3 );
+            if ( expr->initializedByConstant ) {
+                case_equals( _environment, expr->value );  
+            } else {
+                case_equals_var( _environment, $3 );  
+            }
+        } | 
+    CASE ELSE { case_equals_label( _environment );   case_else( _environment ); } | 
+    ENDSELECT { end_select_case( _environment ); } | 
+    DO NULLkw { wait_key( _environment, 1 ); } | 
+    DO { begin_loop( _environment, 1 ); } | 
+    LOOP {
+        if ( is_do_loop( _environment ) ) {
+            end_loop( _environment, 1 );  
         } else {
-            variable_decrement_mt( _environment, $3 );
+            begin_loop( _environment, 0 );  
         }
-  }
-  | RANDOMIZE {
-      randomize( _environment, NULL );
-  }
-  | RANDOMIZE expr {
-      randomize( _environment, $2 );
-  }
-  | IF expr THEN {
-      if_then( _environment, $2 );  
-  }
-  | IF expr GOTO Integer {
-      if_then( _environment, $2 );
-      goto_number( _environment, $4 );
-      end_if_then( _environment );  
-  }
-  | IF expr GOTO Identifier {
-      if_then( _environment, $2 );
-      goto_label( _environment, $4 );
-      end_if_then( _environment );  
-  }
-  | IF expr THEN Integer {
-      if_then( _environment, $2 );
-      goto_number( _environment, $4 );
-      end_if_then( _environment );  
-  }
-  | IF expr THEN Integer ELSE Integer {
-      if_then( _environment, $2 );
-      goto_number( _environment, $4 );
-      else_if_then_label( _environment );  
-      else_if_then( _environment, NULL );  
-      goto_number( _environment, $6 );
-      end_if_then( _environment );  
-  }
-  | IF expr THEN  {
-      if_then( _environment, $2 );
-  } statement2nc {
-      end_if_then( _environment );  
-  }
-  | ELSE {
-      else_if_then_label( _environment );  
-      else_if_then( _environment, NULL );  
-  }
-  | ELSE IF {
-      else_if_then_label( _environment );  
-   }  expr THEN {
-      else_if_then( _environment, $4 );  
-  }
-  | ELSEIF {
-      else_if_then_label( _environment );  
-   } expr THEN {
-      else_if_then( _environment, $3 );  
-  }
-  | ENDIF {
-      end_if_then( _environment );  
-  }
-  | SELECT CASE expr {
-      select_case( _environment, $3 );  
-  }
-  | CASE {
-      case_equals_label( _environment );  
-  } OP_HASH const_expr {
-      case_equals( _environment, $4 );  
-  }
-  | CASE {
-      case_equals_label( _environment );  
-  } expr {
-      Variable * expr = variable_retrieve( _environment, $3 );
-      if ( expr->initializedByConstant ) {
-          case_equals( _environment, expr->value );  
-      } else {
-          case_equals_var( _environment, $3 );  
-      }
-  }
-  | CASE ELSE {
-      case_equals_label( _environment );  
-      case_else( _environment );  
-  }
-  | ENDSELECT {
-      end_select_case( _environment );  
-  }
-  | DO NULLkw {
-      wait_key( _environment, 1 );
-  }
-  | DO {
-      begin_loop( _environment, 1 );  
-  }
-  | LOOP {
-      if ( is_do_loop( _environment ) ) {
-          end_loop( _environment, 1 );  
-      } else {
-          begin_loop( _environment, 0 );  
-      }
-  }
-  | LOOP WHILE expr {
-    end_loop_while( _environment, $3 );
-  }
-  | LOOP UNTIL expr {
-    end_loop_until( _environment, $3 );
-  }
-  | END LOOP {
-      end_loop( _environment, 0 );  
-  }
-  | WHILE { 
-      begin_while( _environment );  
-  } expr {
-      begin_while_condition( _environment, $3 );  
-  }
-  | WEND {
-      end_while( _environment );  
-  }
-  | REPEAT {
-      begin_repeat( _environment );  
-  }
-  | UNTIL {
-      end_repeat( _environment );  
-  } expr {
-      end_repeat_condition( _environment, $3 );  
-  }
-  | EXIT {
-      exit_loop( _environment, 0 );  
-  }
-  | EXIT PROC {
-      exit_procedure( _environment );
-  }
-  | EXIT PROCEDURE {
-      exit_procedure( _environment );
-  }
+    } | 
+    LOOP WHILE expr { end_loop_while( _environment, $3 ); } | 
+    LOOP UNTIL expr { end_loop_until( _environment, $3 ); } | 
+    END LOOP { end_loop( _environment, 0 ); } | 
+    WHILE {  begin_while( _environment ); } expr { begin_while_condition( _environment, $3 ); } | 
+    WEND { end_while( _environment ); } | 
+    REPEAT { begin_repeat( _environment ); } | 
+    UNTIL { end_repeat( _environment ); } expr { end_repeat_condition( _environment, $3 ); } | 
+    EXIT { exit_loop( _environment, 0 );   } | 
+    EXIT PROC { exit_procedure( _environment ); } | 
+    EXIT PROCEDURE { exit_procedure( _environment ); }
   | POP PROC {
       exit_procedure( _environment );
   }
