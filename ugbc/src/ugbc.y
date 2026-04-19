@@ -10196,7 +10196,7 @@ statement2nc:
                 if ( $5 == 0 ) {
                     mmove_memory_memory( _environment, $3, $6, $8 );
                 } else {
-                    mmove_memory_video_optional( _environment, $3, $6, $8 );
+                    mmove_memory_video( _environment, $3, $6, $8 );
                 }
             } else {
                 if ( $5 == 0 ) {
@@ -10599,7 +10599,38 @@ program :
 
 %%
 
+/*****************************************************************************
+ ************ COMPILER MAIN MODULE
+ *****************************************************************************/
+
+/*!
+    This variable holds the current version of ugBASIC (format: x.y.z).
+    Versioning for ugBASIC follows a very precise logic, dictated by the 
+    very nature of the project: a constantly evolving software that must 
+    support dozens of different platforms. The format used is a variant of 
+    Semantic Versioning, generally structured with three digits: `MAJOR.MINOR.BUILD`.
+
+    The MAJOR indicates a radical change in the compiler architecture or in the 
+    language itself. The MINOR represents the release of new hardware. The BUILD
+    Indicates bug fixes, refinements and/or new functionalities.
+
+    The versioning is important, since ugBASIC works with extremely different 
+    target hardware. A version change can affect memory footprint, since it may
+    optimize the generated assembly code, allowing the program to use less RAM.
+    Since each video chip is managed by the compiler, a new MINOR version may 
+    unlock graphics capabilities previously unavailable for a specific machine.
+    Although if the author strive to maintain backward compatibility, a MAJOR 
+    version jump may require minor modifications to the old ".bas" source code 
+    to accommodate new language conventions.
+
+    You can check the version of the compiler you are using directly from 
+    the command line by run the compiler without parameters-
+ */
 char version[MAX_TEMPORARY_STORAGE] = UGBASIC_VERSION;
+
+/*!
+    This variable holds the current commit of ugBASIC (format: hexadecimal string).
+ */
 char revision[MAX_TEMPORARY_STORAGE] = UGBASIC_REVISION;
 
 void show_usage_and_exit( int _argc, char *_argv[] ) {
