@@ -409,7 +409,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> on_off_optional 
 %type <integer> option_name
 %type <integer> safe_fast_optional
-%type <integer> optional_endianess
+%type <integer> endianess_optional
 %type <integer> integer_optional
 %type <integer> loop_optional
 %type <integer> origin_direction_optional 
@@ -1965,6 +1965,11 @@ animation_type:
       SIMPLE { ((struct _Environment *)_environment)->animationType = AT_SIMPLE; } | 
       BOUNCE { ((struct _Environment *)_environment)->animationType = AT_BOUNCE; } | 
       LOOP { ((struct _Environment *)_environment)->animationType = AT_LOOP; };
+
+endianess_optional:
+    { $$ = 0; } | 
+    LITTLE ENDIAN { $$ = 0; } | 
+    BIG ENDIAN { $$ = 1; };
 
 /*============================================================================
  ============ EXTENDED SYNTAXES
@@ -9310,41 +9315,19 @@ positive_const_definition:
  ----------------------------------------------------------------------------*/
 
 serial_function:
-    READ OP expr CP {
-        $$ = serial_read( _environment, $3 )->name;
-    }
-    |
-    READ as_datatype_mandatory optional_endianess {
-        $$ = serial_read_type( _environment, $2, $3 )->name;
-    }
-    |
-    READ OP CP as_datatype_mandatory optional_endianess {
-        $$ = serial_read_type( _environment, $4, $5 )->name;
-    }
-    |
-    WRITE OP expr CP {
-        $$ = serial_write( _environment, $3 )->name;
-    }
-    |
-    WRITE OP expr as_datatype_mandatory CP optional_endianess  {
-        $$ = serial_write_type( _environment, $3, $4, $6 )->name;
-    };
+    READ as_datatype_mandatory endianess_optional { $$ = serial_read_type( _environment, $2, $3 )->name; } |
+    READ OP CP as_datatype_mandatory endianess_optional { $$ = serial_read_type( _environment, $4, $5 )->name; } |
+    READ OP expr CP { $$ = serial_read( _environment, $3 )->name; } |
+    WRITE OP expr as_datatype_mandatory CP endianess_optional  { $$ = serial_write_type( _environment, $3, $4, $6 )->name; } |
+    WRITE OP expr CP { $$ = serial_write( _environment, $3 )->name; };
 
-optional_endianess:
-    {
-        $$ = 0;
-    } | LITTLE ENDIAN {
-        $$ = 0;
-    } | BIG ENDIAN {
-        $$ = 1;
-    };
 
 serial_definition:
     WRITE expr {
         serial_write( _environment, $2 );
     }
     |
-    WRITE OP expr as_datatype_mandatory CP optional_endianess {
+    WRITE OP expr as_datatype_mandatory CP endianess_optional {
         serial_write_type( _environment, $3, $4, $6 );
     };
 

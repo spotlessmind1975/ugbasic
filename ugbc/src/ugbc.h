@@ -6416,7 +6416,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
 #endif
 
 #ifdef CPU_BIG_ENDIAN
-    #define ENDIANESSVALUE 0    /* big endian */
+    #define ENDIANESSVALUE 1    /* big endian */
     #define IMAGE_GET_WIDTH( buffer, offset, width ) \
         if ( IMAGE_WIDTH_SIZE == 1 ) { \
             width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
@@ -6430,7 +6430,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
             height = 256*buffer[offset+IMAGE_HEIGHT_OFFSET] + buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
         }
 #else
-    #define ENDIANESSVALUE 1    /* little endian */
+    #define ENDIANESSVALUE 0    /* little endian */
     #define IMAGE_GET_WIDTH( buffer, offset, width ) \
         if ( IMAGE_WIDTH_SIZE == 1 ) { \
             width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
