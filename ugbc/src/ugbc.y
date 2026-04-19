@@ -9820,451 +9820,314 @@ statement2nc:
     UNTIL { end_repeat( _environment ); } expr { end_repeat_condition( _environment, $3 ); } | 
     EXIT { exit_loop( _environment, 0 );   } | 
     EXIT PROC { exit_procedure( _environment ); } | 
-    EXIT PROCEDURE { exit_procedure( _environment ); }
-  | POP PROC {
-      exit_procedure( _environment );
-  }
-  | POP PROCEDURE {
-      exit_procedure( _environment );
-  }
-  | EXIT PROC IF expr {
-      exit_proc_if( _environment, $4, NULL );  
-  }
-  | EXIT PROCEDURE IF expr {
-      exit_proc_if( _environment, $4, NULL );  
-  }
-  | EXIT PROC WITH expr IF expr {
-      exit_proc_if( _environment, $6, $4 );  
-  }
-  | EXIT PROCEDURE WITH expr IF expr {
-      exit_proc_if( _environment, $6, $4 );  
-  }
-  | EXIT IF expr {
-      exit_loop_if( _environment, $3, 0 );  
-  }
-  | EXITIF expr {
-      exit_loop_if( _environment, $2, 0 );  
-  }
-  | EXIT Integer {
-      exit_loop( _environment, $2 );  
-  }
-  | EXIT direct_integer {
-      exit_loop( _environment, $2 );  
-  }
-  | EXIT IF expr OP_COMMA Integer {
-      exit_loop_if( _environment, $3, $5 );  
-  }
-  | EXITIF expr OP_COMMA Integer {
-      exit_loop_if( _environment, $2, $4 );  
-  }
-  | EXIT IF expr OP_COMMA direct_integer {
-      exit_loop_if( _environment, $3, $5 );  
-  }
-  | EXITIF expr OP_COMMA direct_integer {
-      exit_loop_if( _environment, $2, $4 );  
-  }
-  | EXIT Integer IF expr {
-      exit_loop_if( _environment, $4, $2 );  
-  }
-  | EXIT direct_integer IF expr  {
-      exit_loop_if( _environment, $4, $2 );  
-  }
-  | FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
-    VariableType vt = $3;
-    if ( vt == 0 ) {
-        vt = ((struct _Environment *)_environment)->defaultVariableType;
-    }
-    Variable * index;
-    if ( variable_exists( _environment, $2 ) ) {
-        index = variable_retrieve( _environment, $2 );
-    } else {
-        if ( ((struct _Environment *)_environment)->optionExplicit ) {
-            CRITICAL_VARIABLE_UNDEFINED( $2 );
-        }        
-        index = variable_define( _environment, $2, vt, 0 );
-    }
-    begin_for_prepare( _environment, $2 );
-    begin_for_from_prepare( _environment );
-  } expr { 
-      begin_for_from_assign( _environment, $6 );
-  } TO {
-      begin_for_to_prepare( _environment );
-  } expr {
-      begin_for_to_assign( _environment, $10 );
-      begin_for_step_prepare( _environment );
-  }   step_optional {
-      begin_for_step_assign( _environment, $12 );
-      begin_for_identifier( _environment, $2 );
-  }
-  | FOR OSP Identifier as_datatype_suffix_optional CSP OP_ASSIGN {
-     Variable * index;
-     if ( variable_exists( _environment, $3 ) ) {
-        index = variable_retrieve( _environment, $3 );
-        if ( index->type != VT_TARRAY ) {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
-        }
-        VariableType vt = $4;
-        if ( vt != 0 ) {
-            if ( index->arrayType != vt ) {
-                CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+    EXIT PROCEDURE { exit_procedure( _environment ); } | 
+    POP PROC { exit_procedure( _environment ); } | 
+    POP PROCEDURE { exit_procedure( _environment ); } | 
+    EXIT PROC IF expr { exit_proc_if( _environment, $4, NULL ); } | 
+    EXIT PROCEDURE IF expr { exit_proc_if( _environment, $4, NULL ); } | 
+    EXIT PROC WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
+    EXIT PROCEDURE WITH expr IF expr { exit_proc_if( _environment, $6, $4 ); } | 
+    EXIT IF expr { exit_loop_if( _environment, $3, 0 ); } | 
+    EXITIF expr { exit_loop_if( _environment, $2, 0 ); } | 
+    EXIT Integer { exit_loop( _environment, $2 ); } | 
+    EXIT direct_integer { exit_loop( _environment, $2 ); } | 
+    EXIT IF expr OP_COMMA Integer { exit_loop_if( _environment, $3, $5 ); } | 
+    EXITIF expr OP_COMMA Integer { exit_loop_if( _environment, $2, $4 ); } | 
+    EXIT IF expr OP_COMMA direct_integer { exit_loop_if( _environment, $3, $5 ); } | 
+    EXITIF expr OP_COMMA direct_integer { exit_loop_if( _environment, $2, $4 ); } | 
+    EXIT Integer IF expr { exit_loop_if( _environment, $4, $2 ); } | 
+    EXIT direct_integer IF expr { exit_loop_if( _environment, $4, $2 ); } | 
+    FOR Identifier as_datatype_suffix_optional OP_ASSIGN {
+            VariableType vt = $3;
+            if ( vt == 0 ) {
+                vt = ((struct _Environment *)_environment)->defaultVariableType;
             }
-        }
-     } else {
-        if ( ((struct _Environment *)_environment)->optionExplicit ) {
-            CRITICAL_VARIABLE_UNDEFINED( $3 );
-        }        
-        VariableType vt = $4;
-        if ( vt == 0 ) {
-            vt = ((struct _Environment *)_environment)->defaultVariableType;
-        }
-        index = variable_define( _environment, $3, VT_TARRAY, 0 );
-        variable_array_type( _environment, $3, vt );
-     }
-     begin_for_prepare_mt( _environment, $3 );
-     begin_for_from_prepare_mt( _environment );
-  } expr { 
-      begin_for_from_assign_mt( _environment, $8 );
-  } TO {
-      begin_for_to_prepare_mt( _environment );
-  } expr {
-      outline1("; to assign = %s", $12 );
-      begin_for_to_assign_mt( _environment, $12 );
-      begin_for_step_prepare_mt( _environment );
-  }   step_optional {
-      begin_for_step_assign_mt( _environment, $14 );
-      begin_for_identifier_mt( _environment, $3 );
-  }
-  | NEXT {
-      end_for( _environment );
-  }
-  | NEXT Identifier as_datatype_suffix_optional {
-    if ( $3 > 0 ) {
-        Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
-        if ( index->type != $3 ) {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
-        }
-      }
-      end_for_identifier( _environment, $2 );
-  }
-  | NEXT OSP Identifier as_datatype_suffix_optional CSP {
-    if ( $4 > 0 ) {
-        Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
-        if ( index->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $3 );
-        }
-        if ( index->arrayType != $4 ) {
-            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
-        }
-      }
-      end_for_identifier( _environment, $3 );
-  }
-  | parallel_optional PROCEDURE Identifier on_targets {
-        ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->protothread = $1;
-        ((struct _Environment *)_environment)->emptyProcedure = !$4;
-        begin_procedure( _environment, $3 );
-  }
-  | parallel_optional PROCEDURE Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->protothread = $1;
-    } OSP parameters CSP on_targets {
-      ((struct _Environment *)_environment)->emptyProcedure = !$8;
-      begin_procedure( _environment, $3 );
-  }
-  | SHARED parameters_expr {
-      shared( _environment );
-  }
-  | GLOBAL parameters_expr {
-      global( _environment );
-  }
-  | ENDPROC {
-      end_procedure( _environment, NULL );
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | END PROC {
-      end_procedure( _environment, NULL );
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | END PROCEDURE {
-      end_procedure( _environment, NULL );
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | END PROC OSP expr CSP {
-      end_procedure( _environment, $4 );
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | END PROCEDURE OSP expr CSP {
-      end_procedure( _environment, $4 );
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-  }
-  | FUNCTION Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->protothread = 0;
-    } OSP parameters CSP {
-        ((struct _Environment *)_environment)->emptyProcedure = 0;
-        begin_procedure( _environment, $2 );
-    } OP_ASSIGN expr {
-        end_procedure( _environment, $9 );
-  }
-  | FUNCTION Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->protothread = 0;
-      ((struct _Environment *)_environment)->emptyProcedure = 0;
-      begin_procedure( _environment, $2 );
-    } OP_ASSIGN expr {
-        end_procedure( _environment, $5 );
-  }
-  | PROC Identifier {
-      ((struct _Environment *)_environment)->parameters = 0;
-      proc( _environment, $2 );
-  }
-  | PROC IdentifierSpaced {
-      ((struct _Environment *)_environment)->parameters = 0;
-      proc( _environment, $2 );
-  }  
-  | EXEC exec_definition
-  | SYS sys_definition
-  | on_targets AsmSnippet on_targets {
-    if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-#if defined(__to8__)
-    if ( !((struct _Environment *)_environment)->vestigialConfig.rchack_ccarrots_1163 ) {
-#endif
-    if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
-        CRITICAL_10_LINE_RULES_ENFORCED("ASM");
-    }
-    if ( $1 && $3 ) {
-        outline1("%s", $2 );
-    }
-#if defined(__to8__)
-    }
-#endif
-    }
-  }
-  | CALL Identifier on_targets {
-      if ( $3 ) {
-        ((struct _Environment *)_environment)->parameters = 0;
-        call_procedure( _environment, $2 );
-      }
-  }
-  | Identifier OSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP on_targets {
-      if ( $6 ) {
-          call_procedure( _environment, $1 );
-      }
-  }
-  | Identifier OSP CSP on_targets {
-      if ( $4) {
-         ((struct _Environment *)_environment)->parameters = 0;
-         call_procedure( _environment, $1 );
-      }
-  }
-  | PROC Identifier OSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP on_targets {
-        if ( $7 ) {
-          call_procedure( _environment, $2 );
-        }
-  }
-  | CALL Identifier OSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP on_targets {
-        if ( $7 ) {
-          call_procedure( _environment, $2 );
-        }
-  }
-  | CALL Identifier OSP CSP on_targets {
-      if ( $5 ) {
-          ((struct _Environment *)_environment)->parameters = 0;
-          call_procedure( _environment, $2 );
-      }
-  }
-  | SPAWN spawn_definition
-  | RESPAWN expr on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      if ( $3 ) {
-          respawn_procedure( _environment, $2 );
-      }
-  }
-  | KILL kill_definition
-  | STOP stop_definition
-  | YIELD {
-      yield( _environment );
-  }
-  | FORBID {
-      forbid( _environment );
-  }
-  | ALLOW {
-      allow( _environment );
-  }
-  | PEN expr {
-      pen( _environment, $2 );
-  }
-  | PAPER expr {
-      paper( _environment, $2 );
-  }
-  | INVERSE ON {
-      CRITICAL_NOT_SUPPORTED("INVERSE");
-  }
-  | INVERSE OFF {
-      CRITICAL_NOT_SUPPORTED("INVERSE");
-  }
-  | WRITING writing_definition
-  | OSP Identifier OP_COLON CSP {
-    char realLabel[MAX_TEMPORARY_STORAGE];
-    if (strcmp($2, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
-        sprintf( realLabel, "lbl%s", $2 );
-    } else {
-        strcpy( realLabel, $2 );
-    }
-    label_define_named( _environment, realLabel );
-    cpu_label( _environment, realLabel );
-    ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
-    ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
-  } 
-  | Identifier OP_COLON {
-    char realLabel[MAX_TEMPORARY_STORAGE];
-    if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
-        sprintf( realLabel, "lbl%s", $1 );
-    } else {
-        strcpy( realLabel, $1 );
-    }
-    label_define_named( _environment, realLabel );
-    cpu_label( _environment, realLabel );
-    ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
-    ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
-  } 
-  | LOAD String OP_COMMA Integer on_bank_explicit load_flags {
-    load( _environment, $2, NULL, $4, abs($5), $6 );
-  }
-  | LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags {
-    load( _environment, $2, $4, $6, abs($7), $8 );
-  }
-  | RUN PARALLEL {
-      run_parallel( _environment );
-  }
-  | BEG GAMELOOP {
-      begin_gameloop( _environment );
-  }
-  | END GAMELOOP {
-      end_gameloop( _environment );
-  }
-  | GRAPHIC {
-      graphic( _environment );
-  }
-  | DEGREE {
-     ((struct _Environment *)_environment)->floatType.angle = FT_DEGREE;
-  }
-  | RADIAN {
-     ((struct _Environment *)_environment)->floatType.angle = FT_RADIAN;
-  }
-  | BELL bell_definition
-  | BOOM boom_definition
-  | SHOOT shoot_definition
-  | SOUND sound_definition
-  | PLAY play_definition
-  | MUSIC music_definition
-  | MEMLOAD memload_definition
-  | MEMSAVE memsave_definition
-  | MEMPOS mempos_definition
-  | MEMOR memor_definition
-  | MEMDEF memdef_definition
-  | MEMLEN memlen_definition
-  | MEMRESTORE memrestore_definition
-  | MEMCONT memcont_definition
-  | MEMCLR memclr_definition
-  | INSTRUMENT instrument_definition
-  | VOLUME volume_definition
-  | HALT {
-      halt( _environment );
-  }
-  | RESET {
-      reset( _environment );
-  }
-  | ERROR expr {
-      error( _environment, $2 );
-  }
-  | END {
-      end( _environment );
-  }
-  | ON on_definition
-  | WAVE wave_definition
-  | GOTO goto_definition
-  | CGOTO cgoto_definition
-  | GOSUB gosub_definition
-  | EVERY every_definition
-  | AFTER after_definition
-  | RETURN {
-      return_label( _environment );
-  }
-  | RETURN expr {
-      return_procedure( _environment, $2 );
-  }
-  | POP {
-      pop( _environment );
-  }
-  | LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr {
-        variable_string_left_assign( _environment, $3, $5, $8 );
-  }
-  | RIGHT OP expr OP_COMMA expr CP OP_ASSIGN expr {
-        variable_string_right_assign( _environment, $3, $5, $8 );
-  }
-  | MID OP expr OP_COMMA expr CP OP_ASSIGN expr {
-        variable_string_mid_assign( _environment, $3, $5, NULL, $8 );
-  }
-  | MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr {
-        variable_string_mid_assign( _environment, $3, $5, $7, $10 );
-  }
-  | BEG COPPER {
-        begin_copper( _environment, NULL );
-  }
-  | BEG COPPER const_expr_string {
-        begin_copper( _environment, $3 );
-  }
-  | COPPER copper_definition
-  | STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype {
-        copper_store( _environment, $3, $6, $7 );
-  }
-  | ENDCOPPER {
-        end_copper( _environment );
-  }
-  | END COPPER {
-        end_copper( _environment );
-  }
-  | BEG TYPE Identifier {
-        begin_type( _environment, $3 );
-  }
-  | TYPE Identifier {
-        begin_type( _environment, $2 );
-  }
-  | Identifier AS datatype {
-        field_type( _environment, $1, $3 );
-  }
-  | END TYPE {
-        end_type( _environment );
-  }
-  | ENDTYPE {
-        end_type( _environment );
-  }
-  | BEG STORAGE const_expr_string {
-        begin_storage( _environment, $3, NULL );
-  }
-  | STORAGE const_expr_string {
-        begin_storage( _environment, $2, NULL );
-  }
-  | BEG STORAGE const_expr_string AS const_expr_string {
-        begin_storage( _environment, $3, $5 );
-  }
-  | STORAGE const_expr_string AS const_expr_string {
-        begin_storage( _environment, $2, $4 );
-  }
-  | FILEX const_expr_string {
-        file_storage( _environment, $2, NULL, FSF_BINARY, 0 );
-  }
-  | FILEX const_expr_string CSV OF datatype {
-        file_storage( _environment, $2, NULL, FSF_CSV, $5 );
-  }
-  | FILEX const_expr_string AS const_expr_string {
+            Variable * index;
+            if ( variable_exists( _environment, $2 ) ) {
+                index = variable_retrieve( _environment, $2 );
+            } else {
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $2 );
+                }        
+                index = variable_define( _environment, $2, vt, 0 );
+            }
+            begin_for_prepare( _environment, $2 );
+            begin_for_from_prepare( _environment );
+        } expr { 
+            begin_for_from_assign( _environment, $6 );
+        } TO {
+            begin_for_to_prepare( _environment );
+        } expr {
+            begin_for_to_assign( _environment, $10 );
+            begin_for_step_prepare( _environment );
+        }   step_optional {
+            begin_for_step_assign( _environment, $12 );
+            begin_for_identifier( _environment, $2 );
+        } | 
+    FOR OSP Identifier as_datatype_suffix_optional CSP OP_ASSIGN {
+            Variable * index;
+            if ( variable_exists( _environment, $3 ) ) {
+                index = variable_retrieve( _environment, $3 );
+                if ( index->type != VT_TARRAY ) {
+                    CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+                }
+                VariableType vt = $4;
+                if ( vt != 0 ) {
+                    if ( index->arrayType != vt ) {
+                        CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+                    }
+                }
+            } else {
+                if ( ((struct _Environment *)_environment)->optionExplicit ) {
+                    CRITICAL_VARIABLE_UNDEFINED( $3 );
+                }        
+                VariableType vt = $4;
+                if ( vt == 0 ) {
+                    vt = ((struct _Environment *)_environment)->defaultVariableType;
+                }
+                index = variable_define( _environment, $3, VT_TARRAY, 0 );
+                variable_array_type( _environment, $3, vt );
+            }
+            begin_for_prepare_mt( _environment, $3 );
+            begin_for_from_prepare_mt( _environment );
+        } expr { 
+            begin_for_from_assign_mt( _environment, $8 );
+        } TO {
+            begin_for_to_prepare_mt( _environment );
+        } expr {
+            outline1("; to assign = %s", $12 );
+            begin_for_to_assign_mt( _environment, $12 );
+            begin_for_step_prepare_mt( _environment );
+        }   step_optional {
+            begin_for_step_assign_mt( _environment, $14 );
+            begin_for_identifier_mt( _environment, $3 );
+        } | 
+    NEXT { end_for( _environment ); } | 
+    NEXT Identifier as_datatype_suffix_optional {
+            if ( $3 > 0 ) {
+                Variable * index = variable_retrieve_or_define( _environment, $2, $3, 0 );
+                if ( index->type != $3 ) {
+                    CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $3 ] );
+                }
+            }
+            end_for_identifier( _environment, $2 );
+        } | 
+    NEXT OSP Identifier as_datatype_suffix_optional CSP {
+            if ( $4 > 0 ) {
+                Variable * index = variable_retrieve_or_define( _environment, $3, $4, 0 );
+                if ( index->type != VT_TARRAY ) {
+                    CRITICAL_NOT_ARRAY( $3 );
+                }
+                if ( index->arrayType != $4 ) {
+                    CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[ index->type ], DATATYPE_AS_STRING[ $4 ] );
+                }
+            }
+            end_for_identifier( _environment, $3 );
+        } | 
+    parallel_optional PROCEDURE Identifier on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = $1;
+            ((struct _Environment *)_environment)->emptyProcedure = !$4;
+            begin_procedure( _environment, $3 );
+        } | 
+    parallel_optional PROCEDURE Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = $1;
+        } OSP parameters CSP on_targets {
+            ((struct _Environment *)_environment)->emptyProcedure = !$8;
+            begin_procedure( _environment, $3 );
+        } | 
+    SHARED parameters_expr { shared( _environment ); } | 
+    GLOBAL parameters_expr { global( _environment ); } | 
+    ENDPROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROC { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROCEDURE { end_procedure( _environment, NULL ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROC OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    END PROCEDURE OSP expr CSP { end_procedure( _environment, $4 ); ((struct _Environment *)_environment)->emptyProcedure = 0; } | 
+    FUNCTION Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = 0;
+            } OSP parameters CSP {
+                ((struct _Environment *)_environment)->emptyProcedure = 0;
+                begin_procedure( _environment, $2 );
+            } OP_ASSIGN expr {
+                end_procedure( _environment, $9 );
+        } | 
+    FUNCTION Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->protothread = 0;
+            ((struct _Environment *)_environment)->emptyProcedure = 0;
+            begin_procedure( _environment, $2 );
+            } OP_ASSIGN expr {
+                end_procedure( _environment, $5 );
+        } | 
+    PROC Identifier {
+            ((struct _Environment *)_environment)->parameters = 0;
+            proc( _environment, $2 );
+        } | 
+    PROC IdentifierSpaced {
+            ((struct _Environment *)_environment)->parameters = 0;
+            proc( _environment, $2 );
+        } | 
+    EXEC exec_definition | 
+    SYS sys_definition | 
+    on_targets AsmSnippet on_targets {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+        #if defined(__to8__)
+            if ( !((struct _Environment *)_environment)->vestigialConfig.rchack_ccarrots_1163 ) {
+        #endif
+            if ( ((struct _Environment *)_environment)->tenLinerRulesEnforced ) {
+                CRITICAL_10_LINE_RULES_ENFORCED("ASM");
+            }
+            if ( $1 && $3 ) {
+                outline1("%s", $2 );
+            }
+        #if defined(__to8__)
+            }
+        #endif
+            }
+        } | 
+    CALL Identifier on_targets {
+            if ( $3 ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $2 );
+            }
+        } | 
+    Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+            if ( $6 ) {
+                call_procedure( _environment, $1 );
+            }
+        } | 
+    Identifier OSP CSP on_targets {
+            if ( $4) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $1 );
+            }
+        } | 
+    PROC Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+                if ( $7 ) {
+                call_procedure( _environment, $2 );
+                }
+        } | 
+    CALL Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+                if ( $7 ) {
+                call_procedure( _environment, $2 );
+                }
+        } | 
+    CALL Identifier OSP CSP on_targets {
+            if ( $5 ) {
+                ((struct _Environment *)_environment)->parameters = 0;
+                call_procedure( _environment, $2 );
+            }
+        } | 
+    SPAWN spawn_definition | 
+    RESPAWN expr on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            if ( $3 ) {
+                respawn_procedure( _environment, $2 );
+            }
+        } | 
+    KILL kill_definition | 
+    STOP stop_definition | 
+    YIELD { yield( _environment ); } | 
+    FORBID { forbid( _environment ); } | 
+    ALLOW { allow( _environment ); } | 
+    PEN expr { pen( _environment, $2 ); } | 
+    PAPER expr { paper( _environment, $2 ); } | 
+    INVERSE ON { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
+    INVERSE OFF { CRITICAL_NOT_SUPPORTED("INVERSE"); } | 
+    WRITING writing_definition | 
+    OSP Identifier OP_COLON CSP {
+            char realLabel[MAX_TEMPORARY_STORAGE];
+            if (strcmp($2, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+                sprintf( realLabel, "lbl%s", $2 );
+            } else {
+                strcpy( realLabel, $2 );
+            }
+            label_define_named( _environment, realLabel );
+            cpu_label( _environment, realLabel );
+            ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
+            ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
+        } | 
+    Identifier OP_COLON {
+            char realLabel[MAX_TEMPORARY_STORAGE];
+            if (strcmp($1, "q" ) == 0 && ((Environment *)_environment)->vestigialConfig.rchack_ostra_1172) {
+                sprintf( realLabel, "lbl%s", $1 );
+            } else {
+                strcpy( realLabel, $1 );
+            }
+            label_define_named( _environment, realLabel );
+            cpu_label( _environment, realLabel );
+            ((Environment *)_environment)->lastDefinedLabel = strdup( realLabel );
+            ((Environment *)_environment)->lastDefinedLabelIsNumeric = 0;
+        } | 
+    LOAD String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, NULL, $4, abs($5), $6 ); } | 
+    LOAD String AS String OP_COMMA Integer on_bank_explicit load_flags { load( _environment, $2, $4, $6, abs($7), $8 ); } | 
+    RUN PARALLEL { run_parallel( _environment ); } | 
+    BEG GAMELOOP { begin_gameloop( _environment ); } | 
+    END GAMELOOP { end_gameloop( _environment ); } | 
+    GRAPHIC { graphic( _environment ); } | 
+    DEGREE { ((struct _Environment *)_environment)->floatType.angle = FT_DEGREE; } | 
+    RADIAN { ((struct _Environment *)_environment)->floatType.angle = FT_RADIAN; } | 
+    BELL bell_definition | 
+    BOOM boom_definition | 
+    SHOOT shoot_definition | 
+    SOUND sound_definition | 
+    PLAY play_definition | 
+    MUSIC music_definition | 
+    MEMLOAD memload_definition | 
+    MEMSAVE memsave_definition | 
+    MEMPOS mempos_definition | 
+    MEMOR memor_definition | 
+    MEMDEF memdef_definition | 
+    MEMLEN memlen_definition | 
+    MEMRESTORE memrestore_definition | 
+    MEMCONT memcont_definition | 
+    MEMCLR memclr_definition | 
+    INSTRUMENT instrument_definition | 
+    VOLUME volume_definition | 
+    HALT { halt( _environment ); } | 
+    RESET { reset( _environment ); } | 
+    ERROR expr { error( _environment, $2 ); } | 
+    END { end( _environment ); } | 
+    ON on_definition | 
+    WAVE wave_definition | 
+    GOTO goto_definition | 
+    CGOTO cgoto_definition | 
+    GOSUB gosub_definition | 
+    EVERY every_definition | 
+    AFTER after_definition | 
+    RETURN { return_label( _environment ); } | 
+    RETURN expr { return_procedure( _environment, $2 ); } | 
+    POP { pop( _environment ); } | 
+    LEFT OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_left_assign( _environment, $3, $5, $8 ); } | 
+    RIGHT OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_right_assign( _environment, $3, $5, $8 ); } | 
+    MID OP expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, NULL, $8 ); } | 
+    MID OP expr OP_COMMA expr OP_COMMA expr CP OP_ASSIGN expr { variable_string_mid_assign( _environment, $3, $5, $7, $10 ); } |
+    BEG COPPER { begin_copper( _environment, NULL ); } | 
+    BEG COPPER const_expr_string { begin_copper( _environment, $3 ); } | 
+    COPPER copper_definition | 
+    STORE OP_HASH const_expr OP_COMMA OP_HASH const_expr as_datatype { copper_store( _environment, $3, $6, $7 ); } | 
+    ENDCOPPER { end_copper( _environment ); } | 
+    END COPPER { end_copper( _environment ); } | 
+    BEG TYPE Identifier { begin_type( _environment, $3 ); } |
+    TYPE Identifier { begin_type( _environment, $2 ); } | 
+    Identifier AS datatype { field_type( _environment, $1, $3 ); } | 
+    END TYPE { end_type( _environment ); } | 
+    ENDTYPE { end_type( _environment ); } | 
+    BEG STORAGE const_expr_string { begin_storage( _environment, $3, NULL ); } | 
+    STORAGE const_expr_string { begin_storage( _environment, $2, NULL ); } | 
+    BEG STORAGE const_expr_string AS const_expr_string { begin_storage( _environment, $3, $5 ); } | 
+    STORAGE const_expr_string AS const_expr_string { begin_storage( _environment, $2, $4 ); } | 
+    FILEX const_expr_string { file_storage( _environment, $2, NULL, FSF_BINARY, 0 ); } | 
+    FILEX const_expr_string CSV OF datatype { file_storage( _environment, $2, NULL, FSF_CSV, $5 ); } | 
+    FILEX const_expr_string AS const_expr_string {
         file_storage( _environment, $2, $4, FSF_BINARY, 0 );
   }
   | FILEX const_expr_string AS const_expr_string CSV OF datatype {
