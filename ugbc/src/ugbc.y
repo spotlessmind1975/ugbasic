@@ -473,7 +473,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> optional_by
 %type <string> optional_clamp
 %type <string> optional_expr 
-%type <string> optional_field
+%type <string> field_optional
 %type <string> optional_next_animation
 %type <string> period_optional
 %type <string> optional_step
@@ -1098,6 +1098,10 @@ integer_optional:
     { $$ = 0; } |
     Integer { $$ = $1; };
 
+clamp_optional: 
+    { $$ = 0; } | 
+    CLAMP { $$ = 1; };
+
 period_optional: 
     { $$ = NULL; } | 
     PERIOD Identifier { $$ = $2; };
@@ -1105,6 +1109,10 @@ period_optional:
 sequence_load_flags:
     { $$ = 0; } | 
     sequence_load_flags1 { $$ = $1; };
+
+field_optional:  
+    { $$ = NULL; } | 
+    OP_PERIOD Identifier { $$ = $2; };
 
 sprite_flag:
     COMPRESS HORIZONTAL { $$ = SPRITE_FLAG_COMPRESS_HORIZONTAL; } | 
@@ -2301,7 +2309,7 @@ exponential_less:
     Identifier as_datatype_suffix_optional {
         parser_array_init( _environment );
       }
-      OP indexes CP optional_field {
+      OP indexes CP field_optional {
         if ( $7 ) {
             Variable * array;
             array = variable_retrieve( _environment, $1 );
@@ -3265,7 +3273,7 @@ exponential_less:
         }
     }
     | Identifier OP_PERIOD Identifier { $$ = variable_move_from_type( _environment, $1, $3 )->name; }
-    | OSP Identifier as_datatype_suffix_optional CSP optional_field {
+    | OSP Identifier as_datatype_suffix_optional CSP field_optional {
         if ( !((struct _Environment *)_environment)->procedureName ) {
             CRITICAL_CANNOT_USE_MULTITASKED_ARRAY($2);
         }
@@ -4684,15 +4692,17 @@ line_definition_expression:
 line_definition:
     line_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ DRAW DEFINITION
+ ----------------------------------------------------------------------------*/
+
 draw_optional_string2:
-    OP_COMMA expr OP_COMMA expr {
-        draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, resolve_color( _environment, $4 ), ((Environment *)_environment)->colorImplicit );
-    }
-    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    OP_COMMA expr OP_COMMA expr { draw_tsb_string( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, resolve_color( _environment, $4 ), ((Environment *)_environment)->colorImplicit ); } | 
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         draw( _environment, ((Environment *)_environment)->optionalX, ((Environment *)_environment)->optionalY, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
     };
@@ -4700,30 +4710,29 @@ draw_optional_string2:
 draw_optional_string:
     {
         draw_string( _environment, ((Environment *)_environment)->optionalX );
-    }
-    | OP_COMMA optional_y {
+    } | 
+    OP_COMMA optional_y {
          ((Environment *)_environment)->optionalY = $2;
     } draw_optional_string2;
-
 
 draw_definition_expression:
     OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP {
         draw( _environment, $2, $4, $8, $10, NULL, 0 );
         gr_locate( _environment, $8, $10 );
-    }
-    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode {
+    } | 
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
         draw( _environment, $2, $4, $8, $10, $13 == 0 ? NULL : color_get_vars( _environment, zero->name )->name, 0 );
         gr_locate( _environment, $8, $10 );
-    }
-    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
+    } | 
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA expr {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
         draw( _environment, $2, $4, $8, $10, resolve_color( _environment, $13 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $8, $10 );
-    }
-    | OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
+    } | 
+    OP expr OP_COMMA expr CP OP_MINUS OP expr OP_COMMA expr CP OP_COMMA line_mode OP_COMMA box_mode {
         Variable * zero = variable_temporary( _environment, VT_BYTE, "(zero)" );
         variable_store( _environment, zero->name, 0 );
         switch( $15 ) {
@@ -4738,17 +4747,17 @@ draw_definition_expression:
                 break;
         }
         gr_locate( _environment, $8, $10 );
-    }
-    | optional_x_or_string {
+    } | 
+    optional_x_or_string {
         ((Environment *)_environment)->optionalX = $1;
-    } draw_optional_string
-    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    } draw_optional_string | 
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
@@ -4756,18 +4765,10 @@ draw_definition_expression:
     };
 
 draw_tile_definition_expression:
-      expr ROW expr OP_COMMA expr TO expr OP_COMMA optional_expr {
-        draw_tile_row( _environment, $1, $3, $5, $7, $9 );
-    }
-    | expr ROW expr OP_COMMA expr TO expr  {
-        draw_tile_row( _environment, $1, $3, $5, $7, NULL );
-    }
-    | expr COLUMN expr OP_COMMA expr TO expr OP_COMMA optional_expr {
-        draw_tile_column( _environment, $1, $3, $5, $7, $9 );
-    }
-    | expr COLUMN expr OP_COMMA expr TO expr  {
-        draw_tile_column( _environment, $1, $3, $5, $7, NULL );
-    };
+    expr COLUMN expr OP_COMMA expr TO expr  { draw_tile_column( _environment, $1, $3, $5, $7, NULL ); } |
+    expr COLUMN expr OP_COMMA expr TO expr OP_COMMA optional_expr { draw_tile_column( _environment, $1, $3, $5, $7, $9 ); } |
+    expr ROW expr OP_COMMA expr TO expr  { draw_tile_row( _environment, $1, $3, $5, $7, NULL ); } | 
+    expr ROW expr OP_COMMA expr TO expr OP_COMMA optional_expr { draw_tile_row( _environment, $1, $3, $5, $7, $9 ); };
 
 draw_definition:
     draw_definition_expression;
@@ -4775,45 +4776,41 @@ draw_definition:
 draw_tile_definition: 
     draw_tile_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ BOX DEFINITION
+ ----------------------------------------------------------------------------*/
+
 box_definition_expression:
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+        box( _environment, $1, $3, $5, $7, NULL, 0 );
+        gr_locate( _environment, $5, $7 );
+    } | 
     optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         box( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
-    }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
-        box( _environment, $1, $3, $5, $7, NULL, 0 );
-        gr_locate( _environment, $5, $7 );
-    }
-    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
-        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
-        box( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
-        gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         box( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
+        gr_locate( _environment, $2, $4 );
+    } |
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        box( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
     };
 
 box_definition:
     box_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ REC DEFINITION
+ ----------------------------------------------------------------------------*/
+
 rec_definition_expression:
-    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
-        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
-        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
-        variable_move( _environment, x2->name, x2p->name );
-        variable_decrement( _environment, x2p->name );        
-        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
-        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
-        variable_move( _environment, y2->name, y2p->name );
-        variable_decrement( _environment, y2p->name );
-        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
-        gr_locate( _environment, x2->name, y2p->name );
-    }
-    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr  {
+    mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr  {
         Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
         Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
         variable_move( _environment, x2->name, x2p->name );
@@ -4824,8 +4821,20 @@ rec_definition_expression:
         variable_decrement( _environment, y2p->name );
         box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, NULL ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x2->name, y2p->name );
-    }
-    | mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr OP_COMMA expr  {
+    } | 
+    mandatory_x OP_COMMA mandatory_y TO expr OP_COMMA expr OP_COMMA expr  {
+        Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
+        Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
+        variable_move( _environment, x2->name, x2p->name );
+        variable_decrement( _environment, x2p->name );        
+        Variable * y2 = variable_add( _environment, $3, variable_retrieve_or_define( _environment, $7, VT_POSITION, 0 )->name );
+        Variable * y2p = variable_temporary( _environment, VT_POSITION, "(y)" );
+        variable_move( _environment, y2->name, y2p->name );
+        variable_decrement( _environment, y2p->name );
+        box( _environment, $1, $3, x2->name, y2p->name, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
+        gr_locate( _environment, x2->name, y2p->name );
+    } |
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
         Variable * x2 = variable_add( _environment, $1, variable_retrieve_or_define( _environment, $5, VT_POSITION, 0 )->name );
         Variable * x2p = variable_temporary( _environment, VT_POSITION, "(x)" );
         variable_move( _environment, x2->name, x2p->name );
@@ -4841,69 +4850,53 @@ rec_definition_expression:
 rec_definition:
     rec_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ CONSOLE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 console_definition_simple:
-    OFF {
-        console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth-1, ((struct _Environment *)_environment)->screenTilesHeight-1 );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        console( _environment, $2, $5, $8, $11 );        
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        console( _environment, $2, $5, $8, $11 );        
-    }
-    | SAVE OP_HASH const_expr {
-        console_save( _environment, $3 );
-    }
-    | RESTORE OP_HASH const_expr {
-        console_restore( _environment, $3 );
-    }
-    | USE OP_HASH const_expr {
-        console_restore( _environment, $3 );
-    }
-    ;
+    OFF { console( _environment, 0, 0, ((struct _Environment *)_environment)->screenTilesWidth-1, ((struct _Environment *)_environment)->screenTilesHeight-1 ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr { console( _environment, $2, $5, $8, $11 ); } |
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr OP_COMMA OP_HASH const_expr { console( _environment, $2, $5, $8, $11 ); } |
+    RESTORE OP_HASH const_expr { console_restore( _environment, $3 ); } |
+    SAVE OP_HASH const_expr { console_save( _environment, $3 ); } |
+    USE OP_HASH const_expr { console_restore( _environment, $3 ); };
 
 console_definition_expression:
-    expr OP_COMMA expr TO expr OP_COMMA expr {
-        console_vars( _environment, $1, $3, $5, $7 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        console_vars( _environment, $1, $3, $5, $7 );
-    }
-    | SAVE expr {
-        console_save_vars( _environment, $2 );
-    }
-    | RESTORE expr {
-        console_restore_vars( _environment, $2 );
-    }
-    | USE expr {
-        console_restore_vars( _environment, $2 );
-    }
-    ;
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { console_vars( _environment, $1, $3, $5, $7 ); } |
+    expr OP_COMMA expr TO expr OP_COMMA expr { console_vars( _environment, $1, $3, $5, $7 ); } | 
+    RESTORE expr { console_restore_vars( _environment, $2 ); } |
+    SAVE expr { console_save_vars( _environment, $2 ); } |
+    USE expr { console_restore_vars( _environment, $2 ); };
 
 console_definition:
-    console_definition_simple
-    | console_definition_expression;
+    console_definition_expression |
+    console_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ BAR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 bar_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
-    }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    } | 
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         bar( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
-    }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+    } | 
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         bar( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
-    }
-    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    } | 
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         bar( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         bar( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
@@ -4912,6 +4905,10 @@ bar_definition_expression:
 
 bar_definition:
     bar_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ BLOCK DEFINITION
+ ----------------------------------------------------------------------------*/
 
 block_definition_expression:
     mandatory_x OP_COMMA mandatory_y OP_COMMA mandatory_x OP_COMMA mandatory_y OP_COMMA expr  {
@@ -4922,31 +4919,35 @@ block_definition_expression:
 block_definition:
     block_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ CLIP DEFINITION
+ ----------------------------------------------------------------------------*/
+
 clip_definition_expression:
-      expr OP_COMMA expr TO expr OP_COMMA expr {
-        clip( _environment, $1, $3, $5, $7 );
-    }
-    | {
-        clip( _environment, NULL, NULL, NULL, NULL );
-    };
+    { clip( _environment, NULL, NULL, NULL, NULL ); } |
+    expr OP_COMMA expr TO expr OP_COMMA expr { clip( _environment, $1, $3, $5, $7 ); };
 
 clip_definition:
     clip_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ POLYLINE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 polyline_definition_expression_continue:
-      TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
-    } polyline_definition_expression_continue
-    | TO optional_x OP_COMMA optional_y  {
+    } polyline_definition_expression_continue | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
@@ -4954,31 +4955,31 @@ polyline_definition_expression_continue:
     };
 
 polyline_definition_expression:
-      optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $9 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $5, $7 );
-    }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+    } | 
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         draw( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
-    }
-    | optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
+    } | 
+    optional_x OP_COMMA optional_y TO optional_x OP_COMMA optional_y  {
         draw( _environment, $1, $3, $5, $7, NULL, 0 );
         gr_locate( _environment, $5, $7 );
-    } polyline_definition_expression_continue
-    | TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
+    } polyline_definition_expression_continue | 
+    TO optional_x OP_COMMA optional_y OP_COMMA optional_expr {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, resolve_color( _environment, $6 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
         gr_locate( _environment, $2, $4 );
-    }
-    | TO optional_x OP_COMMA optional_y  {
+    } | 
+    TO optional_x OP_COMMA optional_y  {
         Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         draw( _environment, implicitX->name, implicitY->name, $2, $4, NULL, 0 );
@@ -4988,197 +4989,148 @@ polyline_definition_expression:
 polyline_definition:
     polyline_definition_expression;
 
+/*-----------------------------------------------------------------------------
+ ------------ TRIANGLE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 triangle_definition:
     optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y {
         draw( _environment, $1, $3, $5, $7, NULL, 0 );
         draw( _environment, $5, $7, $9, $11, NULL, 0 );
         draw( _environment, $9, $11, $1, $3, NULL, 0 );
         gr_locate( _environment, $1, $3 );
-    }
-    | optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y OP_COMMA expr {
+    } | 
+    optional_x OP_COMMA optional_y TO mandatory_x OP_COMMA mandatory_y TO mandatory_x OP_COMMA mandatory_y OP_COMMA expr {
         draw( _environment, $1, $3, $5, $7, resolve_color( _environment, $13), 0 );
         draw( _environment, $5, $7, $9, $11, resolve_color( _environment, $13), 0 );
         draw( _environment, $9, $11, $1, $3, resolve_color( _environment, $13), 0 );
         gr_locate( _environment, $1, $3 );
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ INK DEFINITION
+ ----------------------------------------------------------------------------*/
+
 ink_definition:
-    expr {
-        ink( _environment, $1 );
-    };
+    expr { ink( _environment, $1 ); };
 
 inkb_definition:
-    expr OP_COMMA expr OP_COMMA expr {
-        inkb( _environment, $1, $3, $5 );
-    }
-    | expr OP_COMMA OP_COMMA expr {
-        inkb( _environment, $1, NULL, $4 );
-    }
-    | expr OP_COMMA expr OP_COMMA {
-        inkb( _environment, $1, $3, NULL );
-    }
-    | expr OP_COMMA OP_COMMA {
-        inkb( _environment, $1, NULL, NULL );
-    };
+    expr OP_COMMA expr OP_COMMA { inkb( _environment, $1, $3, NULL ); } | 
+    expr OP_COMMA expr OP_COMMA expr { inkb( _environment, $1, $3, $5 ); } | 
+    expr OP_COMMA OP_COMMA { inkb( _environment, $1, NULL, NULL ); } |
+    expr OP_COMMA OP_COMMA expr { inkb( _environment, $1, NULL, $4 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ ON GOTO DEFINITION
+ ----------------------------------------------------------------------------*/
 
 on_goto_definition:
-      Identifier {
-          on_goto_index( _environment, $1 );
-          on_goto_end( _environment );
-      }
-    |
-      Integer {
-          on_goto_number( _environment, $1 );
-          on_goto_end( _environment );
-      }
-    | Identifier {
-        on_goto_index( _environment, $1 );
-    } OP_COMMA on_goto_definition
-    | Integer {
-        on_goto_number( _environment, $1 );
-    } OP_COMMA on_goto_definition;
+    Identifier { on_goto_index( _environment, $1 ); } OP_COMMA on_goto_definition | 
+    Identifier { on_goto_index( _environment, $1 ); on_goto_end( _environment ); } |
+    Integer { on_goto_number( _environment, $1 ); } OP_COMMA on_goto_definition |
+    Integer { on_goto_number( _environment, $1 ); on_goto_end( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ ON GOSUB DEFINITION
+ ----------------------------------------------------------------------------*/
 
 on_gosub_definition:
-      Identifier {
-          on_gosub_index( _environment, $1 );
-          on_gosub_end( _environment );
-      }
-    | Integer {
-          on_gosub_number( _environment, $1 );
-          on_gosub_end( _environment );
-      }
-    | Identifier {
-          on_gosub_index( _environment, $1 );
-    } OP_COMMA on_gosub_definition
-    | Integer {
-          on_gosub_number( _environment, $1 );
-    } OP_COMMA on_gosub_definition;
+    Identifier { on_gosub_index( _environment, $1 ); } OP_COMMA on_gosub_definition | 
+    Identifier { on_gosub_index( _environment, $1 ); on_gosub_end( _environment ); } | 
+    Integer { on_gosub_number( _environment, $1 ); } OP_COMMA on_gosub_definition |
+    Integer { on_gosub_number( _environment, $1 ); on_gosub_end( _environment ); };
 
 on_proc_definition:
-      Identifier {
-          on_proc_index( _environment, $1 );
-          on_proc_end( _environment );
-      }
-    | Identifier {
-          on_proc_index( _environment, $1 );
-    } OP_COMMA on_proc_definition;
+    Identifier { on_proc_index( _environment, $1 ); } OP_COMMA on_proc_definition |
+    Identifier { on_proc_index( _environment, $1 ); on_proc_end( _environment ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ ON DEFINITION
+ ----------------------------------------------------------------------------*/
 
 on_definition:
-      SCROLL LEFT COLUMN GOSUB Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_gosub( _environment, -1, 0, $5 );
-    }
-    | SCROLL RIGHT COLUMN GOSUB Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_gosub( _environment, 1, 0, $5 );
-    }
-    | SCROLL UP ROW GOSUB Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_gosub( _environment, 0, -1, $5 );
-    }
-    | SCROLL DOWN ROW GOSUB Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_gosub( _environment, 0, 1, $5 );
-    }
-    | SCROLL LEFT COLUMN CALL Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_call( _environment, -1, 0, $5 );
-    }
-    | SCROLL RIGHT COLUMN CALL Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_call( _environment, 1, 0, $5 );
-    }
-    | SCROLL UP ROW CALL Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_call( _environment, 0, -1, $5 );
-    }
-    | SCROLL DOWN ROW CALL Identifier {
-        scroll( _environment, 0, 0 );
-        on_scroll_call( _environment, 0, 1, $5 );
-    }
-    | expr GOTO {
-          on_goto( _environment, $1 );
-      } on_goto_definition
-    | expr PROC {
-          on_proc( _environment, $1 );
-      } on_proc_definition
-    | expr GOSUB {
-        on_gosub( _environment, $1 );  
-    } on_gosub_definition;
+    expr GOSUB { on_gosub( _environment, $1 );   } on_gosub_definition |
+    expr GOTO { on_goto( _environment, $1 ); } on_goto_definition | 
+    expr PROC { on_proc( _environment, $1 ); } on_proc_definition | 
+    SCROLL DOWN ROW CALL Identifier { scroll( _environment, 0, 0 ); on_scroll_call( _environment, 0, 1, $5 ); } |
+    SCROLL DOWN ROW GOSUB Identifier { scroll( _environment, 0, 0 ); on_scroll_gosub( _environment, 0, 1, $5 ); } | 
+    SCROLL LEFT COLUMN CALL Identifier { scroll( _environment, 0, 0 ); on_scroll_call( _environment, -1, 0, $5 ); } | 
+    SCROLL LEFT COLUMN GOSUB Identifier { scroll( _environment, 0, 0 ); on_scroll_gosub( _environment, -1, 0, $5 ); } | 
+    SCROLL RIGHT COLUMN CALL Identifier { scroll( _environment, 0, 0 ); on_scroll_call( _environment, 1, 0, $5 ); } | 
+    SCROLL RIGHT COLUMN GOSUB Identifier { scroll( _environment, 0, 0 ); on_scroll_gosub( _environment, 1, 0, $5 ); } | 
+    SCROLL UP ROW CALL Identifier { scroll( _environment, 0, 0 ); on_scroll_call( _environment, 0, -1, $5 ); } | 
+    SCROLL UP ROW GOSUB Identifier { scroll( _environment, 0, 0 ); on_scroll_gosub( _environment, 0, -1, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ EVERY DEFINITION
+ ----------------------------------------------------------------------------*/
 
 timer_number_comma:
-    {
-        $$ = NULL;
-    }
-    | OP_COMMA expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } | 
+    OP_COMMA expr { $$ = $2; };
 
 timer_number:
-    {
-        $$ = NULL;
-    }
-    | expr {
-        $$ = $1;
-    };
+    { $$ = NULL; } | 
+    expr { $$ = $1; };
 
 every_definition:
-      expr ticks timer_number_comma GOSUB Identifier on_targets {
+    expr ticks timer_number_comma GOSUB Identifier on_targets {
         if ( $6 ) {
           every_ticks_gosub( _environment, $1, $5, $3 );
         }
-    }
-    | expr ticks timer_number_comma CALL Identifier on_targets {
+    } | 
+    expr ticks timer_number_comma CALL Identifier on_targets {
         if ( $6 ) {
           every_ticks_call( _environment, $1, $5, $3 );
         }
-    }
-    | ON timer_number on_targets {
+    } | 
+    ON timer_number on_targets {
         if ( $3 ) {
           every_on( _environment, $2 );
         }
-    }
-    | OFF timer_number on_targets {
+    } | 
+    OFF timer_number on_targets {
         if ( $3 ) {
           every_off( _environment, $2 );
         }
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ AFTER DEFINITION
+ ----------------------------------------------------------------------------*/
+
 after_definition:
-      expr ticks timer_number_comma GOSUB Identifier on_targets {
+    expr ticks timer_number_comma GOSUB Identifier on_targets {
         if ( $6 ) {
           every_ticks_gosub( _environment, $1, $5, $3 );
           every_on( _environment, $3 );
         }
-    }
-    | expr ticks timer_number_comma CALL Identifier on_targets {
+    } | 
+    expr ticks timer_number_comma CALL Identifier on_targets {
         if ( $6 ) {
           every_ticks_call( _environment, $1, $5, $3 );
           every_on( _environment, $3 );
         }
     };
 
-clamp_optional: {
-        $$ = 0;
-    }
-    | CLAMP {
-        $$ = 1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ CLAMP DEFINITION
+ ----------------------------------------------------------------------------*/
 
-limits: 
+limits_optional: 
     {
         ((struct _Environment *)_environment)->upperLimit = NULL;
         ((struct _Environment *)_environment)->lowerLimit = NULL;
         ((struct _Environment *)_environment)->clamp = 0;
-    }
-    | OP_COMMA expr TO expr clamp_optional {
+    } | 
+    OP_COMMA expr TO expr clamp_optional {
         ((struct _Environment *)_environment)->lowerLimit = $2;
         ((struct _Environment *)_environment)->upperLimit = $4;
         ((struct _Environment *)_environment)->clamp = $5;
     };
 
 add_definition:
-    Identifier optional_field OP_COMMA expr {
+    Identifier field_optional OP_COMMA expr {
         Variable * expr = variable_retrieve( _environment, $4 );
         if ( expr->initializedByConstant ) {
             if ( $2 ) {
@@ -5194,28 +5146,28 @@ add_definition:
             }
         }
     }
-    | Identifier optional_field OP_COMMA OP_HASH const_expr {
+    | Identifier field_optional OP_COMMA OP_HASH const_expr {
         if ( $2 ) {
             variable_add_inplace_type( _environment, $1, $2, $5 );
         } else {
             variable_add_inplace( _environment, $1, $5 );
         }
     }
-    | Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+    | Identifier field_optional OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, $9 );
         }
     }
-    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
+    | Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, $9 );
         }
     }
-    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
+    | Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
         if ( $2 ) {
             add_complex_type( _environment, $1, $2, $5, $8, $11, $12 );
         } else {
@@ -5230,7 +5182,7 @@ add_definition:
     }
     | Identifier OP {
         parser_array_init( _environment );        
-    } indexes CP optional_field OP_COMMA expr limits {
+    } indexes CP field_optional OP_COMMA expr limits_optional {
         if ( $6 ) {
             add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
         } else {
@@ -5242,21 +5194,21 @@ add_definition:
     ;
 
 addc_definition:
-    Identifier optional_field OP_COMMA expr OP_COMMA expr TO expr  {
+    Identifier field_optional OP_COMMA expr OP_COMMA expr TO expr  {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, 1 );
         }
     }
-    | Identifier optional_field OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+    | Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, 1 );
         }
     }
-    | Identifier optional_field OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+    | Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
         if ( $2 ) {
             add_complex_type( _environment, $1, $2, $5, $8, $11, 1 );
         } else {
@@ -5268,7 +5220,7 @@ addc_definition:
     }
     | Identifier OP {
         parser_array_init( _environment );        
-    } indexes CP optional_field OP_COMMA expr limits {
+    } indexes CP field_optional OP_COMMA expr limits_optional {
         if ( $6 ) {
             add_complex_array_type( _environment, $1, $6, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
         } else {
@@ -7112,14 +7064,6 @@ read_safeness:
         $$ = ((struct _Environment *)_environment)->optionReadSafe;
     };
 
-optional_field: 
-    {
-        $$ = NULL;
-    }
-    | OP_PERIOD Identifier {
-        $$ = $2;
-    };
-
 read_definition_single:
      read_safeness Identifier as_datatype_suffix_optional {
         if ( $3 ) {
@@ -7139,7 +7083,7 @@ read_definition_single:
                 ((struct _Environment *)_environment)->currentType = NULL;
             }
         }
-    } OP indexes CP optional_field {
+    } OP indexes CP field_optional {
         if ( !((struct _Environment *)_environment)->currentType ) {
             define_implicit_array_if_needed( _environment, $2 );
         }
@@ -9427,7 +9371,7 @@ optional_clamp:
     };
 
 travel_definition_array_first:
-    Identifier optional_field {
+    Identifier field_optional {
         if ( $2 ) {
             ((struct _Environment *)_environment)->travelX = $1;
             ((struct _Environment *)_environment)->travelXF = $2;
@@ -9441,7 +9385,7 @@ travel_definition_array_first:
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );        
-    } indexes CP optional_field {
+    } indexes CP field_optional {
         ((struct _Environment *)_environment)->travelX = $1;
         ((struct _Environment *)_environment)->travelXF = $6;
         ((struct _Environment *)_environment)->travelXAR = parser_array_retrieve( _environment );
@@ -9449,7 +9393,7 @@ travel_definition_array_first:
     };
 
 travel_definition_array_second:
-    Identifier optional_field {
+    Identifier field_optional {
         ((struct _Environment *)_environment)->travelY = $1;
         ((struct _Environment *)_environment)->travelYF = $2;
         ((struct _Environment *)_environment)->travelYAR = NULL;
@@ -9457,7 +9401,7 @@ travel_definition_array_second:
     | Identifier OP {
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $1 );        
-    } indexes CP optional_field {
+    } indexes CP field_optional {
         ((struct _Environment *)_environment)->travelY = $1;
         ((struct _Environment *)_environment)->travelYF = $6;
         ((struct _Environment *)_environment)->travelYAR = parser_array_retrieve( _environment );
@@ -10186,7 +10130,7 @@ let_definition:
     Identifier OP_ASSIGN Identifier {
         parser_array_init( _environment );
     }
-      OP indexes CP optional_field {
+      OP indexes CP field_optional {
         if ( $8 ) {
             variable_move_from_array_type_inplace( _environment, $3, $8, $1 );
         } else {
@@ -10578,14 +10522,14 @@ statement2nc:
   | PUT KEY expr {
       put_key( _environment, $3 );
   }
-  | INC Identifier optional_field {
+  | INC Identifier field_optional {
         if ( $3 ) {
             variable_increment_type( _environment, $2, $3 );
         } else {
             variable_increment( _environment, $2 );
         }      
   }
-  | DEC Identifier optional_field {
+  | DEC Identifier field_optional {
         if ( $3 ) {
             variable_decrement_type( _environment, $2, $3 );
         } else {
@@ -10604,7 +10548,7 @@ statement2nc:
   }
   | INC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP optional_field {
+    } indexes CP field_optional {
         if ( $7 ) {
             variable_increment_array_type( _environment, $2, $7 );
         } else {
@@ -10615,7 +10559,7 @@ statement2nc:
   }
   | DEC Identifier OP {
         parser_array_init( _environment );
-    } indexes CP optional_field {
+    } indexes CP field_optional {
         if ( $7 ) {
             variable_decrement_array_type( _environment, $2, $7 );
         } else {
@@ -10624,7 +10568,7 @@ statement2nc:
         }
         parser_array_cleanup( _environment );
   }
-  | INC OSP Identifier CSP optional_field {
+  | INC OSP Identifier CSP field_optional {
         if ( $5 ) {
             Variable * array;
             if ( ! variable_exists( _environment, $3 ) ) {
@@ -10648,7 +10592,7 @@ statement2nc:
             variable_increment_mt( _environment, $3 );
         }
   }
-  | DEC OSP Identifier CSP optional_field {
+  | DEC OSP Identifier CSP field_optional {
         if ( $5 ) {
             Variable * array;
             if ( ! variable_exists( _environment, $3 ) ) {
@@ -11634,7 +11578,7 @@ statement2nc:
 
         parser_array_init( _environment );
         define_implicit_array_if_needed( _environment, $2 );
-    } optional_field
+    } field_optional
       OP_ASSIGN expr {
         parser_array_index_symbolic( _environment, "PROTOTHREADCT" );
         Variable * array = variable_retrieve( _environment, $2 );
