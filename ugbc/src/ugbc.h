@@ -5081,11 +5081,15 @@ char * strcopy( char * _dest, char * _source );
         BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }
 
+void show_usage_and_exit( int _argc, char *_argv[] );
+
 char * import_file_name( char * _import_path );
 
 Environment * environment_create( void );
 void environment_setup_embedded( Environment *_environment );
 void environment_setup_default( Environment * _environment );
+void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] );
+
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );

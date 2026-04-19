@@ -17327,38 +17327,429 @@ void environment_setup_default( Environment * _environment ) {
     _environment->defaultArraySize = 10;
     _environment->vestigialConfig.screenModeUnique = 1;
 
-#if defined(__pc128op__) || defined(__to8__)
-    _environment->bankedLoadDefault = 1;
-#endif
+    #if defined(__pc128op__) || defined(__to8__)
+        _environment->bankedLoadDefault = 1;
+    #endif
 
-#if defined(__atari__) || defined(__atarixl__) 
-    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
-#elif defined(__c64__) || defined(__plus4__) || defined(__c16__) || defined(__vic20__) || defined(__c128__) || defined(__c128z__) 
-    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
-#elif defined(__zx__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
-#elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
-#elif defined(__d32__) || defined(__d32b__) || defined(__d64__) || defined(__d64b__) 
-    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
-#elif defined(__pc128op__) || defined(__to8__) || defined(__mo5__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
-#elif defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
-#elif defined(__gb__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
-#elif defined(__pccga__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
-#elif defined(__cpc__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
-#elif defined(__vg5000__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
-#elif defined(__c64reu__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
-#elif defined(__pc1403__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
-#elif defined(__vz__)
-    _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
-#endif
+    #if defined(__atari__) || defined(__atarixl__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+    #elif defined(__c64__) || defined(__plus4__) || defined(__c16__) || defined(__vic20__) || defined(__c128__) || defined(__c128z__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+    #elif defined(__zx__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+    #elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+    #elif defined(__d32__) || defined(__d32b__) || defined(__d64__) || defined(__d64b__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+    #elif defined(__pc128op__) || defined(__to8__) || defined(__mo5__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+    #elif defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+    #elif defined(__gb__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
+    #elif defined(__pccga__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
+    #elif defined(__cpc__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+    #elif defined(__vg5000__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+    #elif defined(__c64reu__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+    #elif defined(__pc1403__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+    #elif defined(__vz__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+    #endif
+
+}
+
+extern int yydebug;
+extern char * importPath;
+
+/*!
+ @brief Parse command line parameters
+
+ @param _environment Environment to change
+ @param _argc The number of parameters given on the command line.
+ @param _argv The array of parameters given on the command line.
+*/
+void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] ) {
+
+    int opt;
+    
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y")) != -1) {
+        switch (opt) {
+                case 'y':
+                    yydebug = 1;
+                    break;
+                case '@':
+                    show_troubleshooting_and_exit( _environment, _argc, _argv );
+                case 'a':
+                    if ( ! _environment->listingFileName ) {
+                        char listingFileName[MAX_TEMPORARY_STORAGE];
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename( _environment ) );
+                        _environment->listingFileName = strdup(listingFileName);
+                    }
+                    _environment->analysis = 1;
+                    break;
+                case 'c':
+                    _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'B':
+                    if ( strcmp( optarg, "UGBASIC" ) ) {
+                        _environment->dialect = DI_UGBASIC;    
+                    } else if ( strcmp( optarg, "TSB" ) ) {
+                        _environment->dialect = DI_TSB;    
+                    } else {
+                        CRITICAL("Option '-B': unknown dialect.");
+                    }
+                    break;
+                case 'C':
+                    _environment->compilerFileName = strdup(optarg);
+                    if( access( _environment->compilerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-C': compiler not found.");
+                    }
+                    break;
+                case 'w':
+                    _environment->cmdFileName = strdup(optarg);
+                    if( access( _environment->cmdFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-w': replaced cmd.exe not found.");
+                    }
+                    break;
+                case 'b':
+                    _environment->decbFileName = strdup(optarg);
+                    if( access( _environment->decbFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-b': decb application not found.");
+                    }
+                    break;
+                case 'X':
+                    _environment->executerFileName = strdup(optarg);
+                    if( access( _environment->executerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-X': executer not found.");
+                    }
+                    break;
+                case 'F':
+                    _environment->dojoOnFujiNet = 1;
+                    break;
+                case 'f':
+                    _environment->dojoOnVirtualizedFujiNet = 1;
+                    break;
+                case 'P':
+                    _environment->profileFileName = strdup(optarg);
+                    break;
+                case 'A':
+                    _environment->appMakerFileName = strdup(optarg);
+                    if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-A': app maker no found.");
+                    }
+                    break;
+                case 'i':
+                    importPath = strdup(optarg);
+                    break;
+                case 't':
+                    #if defined(__atari__) || defined(__atarixl__)
+                        _environment->dir2atrFileName = strdup(optarg);
+                        if( access( _environment->dir2atrFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': dir2atr  not found.");
+                        }
+                    #endif
+                    #if defined(__msx1__)
+                        _environment->dsktoolsFileName = strdup(optarg);
+                        if( access( _environment->dsktoolsFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': dsktools tool not found.");
+                        }
+                    #endif
+                    #if defined(__pc1403__)
+                        _environment->asLinkerFileName = strdup(optarg);
+                        if( access( _environment->asLinkerFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': aslink tool not found.");
+                        }
+                    #endif
+                    break;
+                case 'T':
+                    _environment->temporaryPath = strdup(optarg);
+                    break;
+                case 'o':
+                    _environment->exeFileName = strdup(optarg);
+                    break;
+                case 'd':
+                    break;
+                case 'r':
+                    _environment->removeComments = 1;
+                    break;
+                case 'v':
+                    _environment->outputGeneratedFiles = 1;
+                    break;
+                case 'G':
+                    if ( strcmp( optarg, "none") == 0 || atoi( optarg ) == 0 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_NONE;
+                    } else if ( strcmp( optarg, "type1") == 0 || atoi( optarg ) == 1 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE1;
+                    } else if ( strcmp( optarg, "type2") == 0 || atoi( optarg ) == 2 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE2;
+                    }
+                    break;
+                case 'O':
+                    if ( strcmp( optarg, "bin") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+                    } else if ( strcmp( optarg, "prg") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+                    } else if ( strcmp( optarg, "xex") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+                    } else if ( strcmp( optarg, "k7o") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_ORIGINAL;
+                    } else if ( strcmp( optarg, "k7") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    } else if ( strcmp( optarg, "tap") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+                    } else if ( strcmp( optarg, "rom") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "com") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
+                    } else if ( strcmp( optarg, "d64") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+                    } else if ( strcmp( optarg, "gb") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; 
+                    } else if ( strcmp( optarg, "ram") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+                    } else if ( strcmp( optarg, "dsk") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+                    } else if ( strcmp( optarg, "atr") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
+                    } else if ( strcmp( optarg, "reu") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
+                    } else if ( strcmp( optarg, "vz") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+                    } else {
+                        CRITICAL2("Unknown output format", optarg);
+                    }
+                    break;
+                case 'D':
+                    _environment->additionalInfoFileName = strdup(optarg);
+                    if ( ! _environment->listingFileName ) {
+                        char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
+                        strcopy( p, _environment->additionalInfoFileName );
+                        char * q = strrchr( p, '.' );
+                        if ( q ) {
+                            strcopy( q, ".listing" );
+                        } 
+                        _environment->listingFileName = p;
+                    }
+                    break;
+                case 'W':
+                    _environment->warningsEnabled = 1;
+                    break;
+                case 'I':
+                    CRITICAL("Option '-I' has been removed, see bug#641" );
+                    break;
+                case 'l':
+                    _environment->debuggerLabelsFileName = strdup(optarg);
+                    break;
+                case 'L':
+                    _environment->listingFileName = strdup(optarg);
+                    break;
+                case 'E':
+                    _environment->embeddedStatsEnabled = 1;
+                    break;
+                case 'p':
+                    _environment->peepholeOptimizationLimit = atoi(optarg);
+                    break;
+                case 'R':
+                    _environment->ramSize = atoi(optarg);
+                    break;
+                case 'q':
+                    _environment->profileCycles = atoi(optarg);
+                    break;
+                case 'V':
+                    fprintf(stderr, "%s\n%s\n", UGBASIC_VERSION, UGBASIC_REVISION );
+                    exit(0);
+                    break;
+                case '1':
+                    _environment->tenLinerRulesEnforced = 1;
+                    break;
+                case 's':
+                    _environment->sandbox = 1;
+                    break;
+                case 'g': {
+                        char * p = strtok(optarg, ",");
+                        while(p) {
+                            if ( strcmp(p, "CLS_IMPLICIT" ) == 0 ) {
+                                ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
+                            }
+                            if ( strstr(p, "STRING_COUNT=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.count = atoi(p+13);
+                            }
+                            if ( strstr(p, "STRING_SPACE=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.space = atoi(p+13);
+                            }
+                            p = strtok(NULL, ",");
+                        }
+                    }
+                    break;
+                case 'e': {
+                    char * p = strtok(optarg, ",");
+                    while (p) {
+
+                        parse_embedded( p, cpu_beq );
+                        parse_embedded( p, cpu_bneq );
+                        parse_embedded( p, cpu_busy_wait );
+                        parse_embedded( p, cpu_bveq );
+                        parse_embedded( p, cpu_bvneq );
+                        parse_embedded( p, cpu_combine_nibbles );
+                        parse_embedded( p, cpu_compare_16bit );
+                        parse_embedded( p, cpu_compare_32bit );
+                        parse_embedded( p, cpu_compare_8bit );
+                        parse_embedded( p, cpu_compare_and_branch_16bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_32bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_8bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_char_const );
+                        parse_embedded( p, cpu_di );
+                        parse_embedded( p, cpu_ei );
+                        parse_embedded( p, cpu_inc );
+                        parse_embedded( p, cpu_inc_16bit );
+                        parse_embedded( p, cpu_inc_32bit );
+                        parse_embedded( p, cpu_dec );
+                        parse_embedded( p, cpu_dec_16bit );
+                        parse_embedded( p, cpu_less_than_16bit );
+                        parse_embedded( p, cpu_less_than_32bit );
+                        parse_embedded( p, cpu_less_than_8bit );
+                        parse_embedded( p, cpu_greater_than_16bit );
+                        parse_embedded( p, cpu_greater_than_32bit );
+                        parse_embedded( p, cpu_greater_than_8bit );
+                        parse_embedded( p, cpu_fill );
+                        parse_embedded( p, cpu_fill_blocks );
+                        parse_embedded( p, cpu_halt );
+                        parse_embedded( p, cpu_end );
+                        parse_embedded( p, cpu_jump );
+                        parse_embedded( p, cpu_call );
+                        parse_embedded( p, cpu_return );
+                        parse_embedded( p, cpu_pop );
+                        parse_embedded( p, cpu_label );
+                        parse_embedded( p, cpu_limit_16bit );
+                        parse_embedded( p, cpu_logical_not_8bit );
+                        parse_embedded( p, cpu_logical_and_8bit );
+                        parse_embedded( p, cpu_logical_or_8bit );
+                        parse_embedded( p, cpu_not_8bit );
+                        parse_embedded( p, cpu_and_8bit );
+                        parse_embedded( p, cpu_or_8bit );
+                        parse_embedded( p, cpu_swap_8bit );
+                        parse_embedded( p, cpu_not_16bit );
+                        parse_embedded( p, cpu_and_16bit );
+                        parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
+                        parse_embedded( p, cpu_not_16bit );
+                        parse_embedded( p, cpu_and_16bit );
+                        parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_swap_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
+                        parse_embedded( p, cpu_not_32bit );
+                        parse_embedded( p, cpu_and_32bit );
+                        parse_embedded( p, cpu_or_32bit );
+                        parse_embedded( p, cpu_xor_32bit );
+                        parse_embedded( p, cpu_swap_32bit );
+                        parse_embedded( p, cpu_math_add_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_8bit );
+                        parse_embedded( p, cpu_math_add_32bit );
+                        parse_embedded( p, cpu_math_add_8bit );
+                        parse_embedded( p, cpu_math_and_const_16bit );
+                        parse_embedded( p, cpu_math_and_const_32bit );
+                        parse_embedded( p, cpu_math_and_const_8bit );
+                        parse_embedded( p, cpu_math_complement_const_16bit );
+                        parse_embedded( p, cpu_math_complement_const_32bit );
+                        parse_embedded( p, cpu_math_complement_const_8bit );
+                        parse_embedded( p, cpu_math_div2_const_16bit );
+                        parse_embedded( p, cpu_math_div2_const_32bit );
+                        parse_embedded( p, cpu_math_div2_const_8bit );
+                        parse_embedded( p, cpu_math_double_16bit );
+                        parse_embedded( p, cpu_math_double_32bit );
+                        parse_embedded( p, cpu_math_double_8bit );
+                        parse_embedded( p, cpu_math_mul_16bit_to_32bit );
+                        parse_embedded( p, cpu_math_mul_8bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_32bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_16bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_8bit_to_8bit );
+                        parse_embedded( p, cpu_math_mul2_const_16bit );
+                        parse_embedded( p, cpu_math_mul2_const_32bit );
+                        parse_embedded( p, cpu_math_mul2_const_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit );
+                        parse_embedded( p, cpu_math_sub_32bit );
+                        parse_embedded( p, cpu_math_sub_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit_with_8bit );
+                        parse_embedded( p, cpu_move_16bit );
+                        parse_embedded( p, cpu_addressof_16bit );
+                        parse_embedded( p, cpu_move_32bit );
+                        parse_embedded( p, cpu_move_8bit );
+                        parse_embedded( p, cpu_peek );
+                        parse_embedded( p, cpu_poke );
+                        parse_embedded( p, cpu_random );
+                        parse_embedded( p, cpu_random_16bit );
+                        parse_embedded( p, cpu_random_32bit );
+                        parse_embedded( p, cpu_random_8bit );
+                        parse_embedded( p, cpu_store_16bit );
+                        parse_embedded( p, cpu_store_32bit );
+                        parse_embedded( p, cpu_store_8bit );
+                        parse_embedded( p, cpu_mem_move );
+                        parse_embedded( p, cpu_mem_move_direct );
+                        parse_embedded( p, cpu_mem_move_size );
+                        parse_embedded( p, cpu_mem_move_direct_size );
+                        parse_embedded( p, cpu_mem_move_direct_indirect_size );
+                        parse_embedded( p, cpu_compare_memory );
+                        parse_embedded( p, cpu_compare_memory_size );
+                        parse_embedded( p, cpu_less_than_memory );
+                        parse_embedded( p, cpu_less_than_memory_size );
+                        parse_embedded( p, cpu_greater_than_memory );
+                        parse_embedded( p, cpu_greater_than_memory_size );
+                        parse_embedded( p, cpu_uppercase );
+                        parse_embedded( p, cpu_lowercase );
+                        parse_embedded( p, cpu_convert_string_into_16bit );
+                        parse_embedded( p, cpu_fill_indirect );
+                        parse_embedded( p, cpu_flip );
+                        parse_embedded( p, cpu_move_8bit_indirect );
+                        parse_embedded( p, cpu_move_8bit_indirect2 );
+                        parse_embedded( p, cpu_move_16bit_indirect );
+                        parse_embedded( p, cpu_move_16bit_indirect2 );
+                        parse_embedded( p, cpu_move_32bit_indirect );
+                        parse_embedded( p, cpu_move_32bit_indirect2 );
+                        parse_embedded( p, cpu_number_to_string );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset );
+                        parse_embedded( p, cpu_bits_to_string );
+                        parse_embedded( p, cpu_hex_to_string );
+                        parse_embedded( p, cpu_bit_check_extended );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset2 );
+                        parse_embedded( p, cpu_dsdefine );
+                        parse_embedded( p, cpu_dsalloc );
+                        parse_embedded( p, cpu_dsfree );
+                        parse_embedded( p, cpu_dswrite );
+                        parse_embedded( p, cpu_dsresize );
+                        parse_embedded( p, cpu_dsresize_size );
+                        parse_embedded( p, cpu_dsgc );
+                        parse_embedded( p, cpu_dsdescriptor );
+                        parse_embedded( p, cpu_move_8bit_with_offset );
+                        parse_embedded( p, cpu_move_8bit_with_offset2 );
+                        parse_embedded( p, cpu_store_8bit_with_offset );
+                        parse_embedded( p, cpu_dsalloc_size );
+                        parse_embedded( p, cpu_complement2_8bit );
+                        parse_embedded( p, cpu_complement2_16bit );
+                        parse_embedded( p, cpu_complement2_32bit );
+                        parse_embedded( p, cpu_sqroot );
+
+                        p = strtok(NULL, ",");
+                    }
+
+                    }
+                    break;
+                default: /* '?' */
+                    show_usage_and_exit( _argc, _argv );
+                }
+    }
+
+    if ( ! _argv[optind] ) {
+        show_usage_and_exit( _argc, _argv );
+    }
+
+    if ( ! _argv[optind+1] && !_environment->exeFileName ) {
+        show_usage_and_exit( _argc, _argv );
+    }
 
 }
