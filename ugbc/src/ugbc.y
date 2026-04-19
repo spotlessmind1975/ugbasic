@@ -400,16 +400,15 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flag
 %type <integer> load_flags 
 %type <integer> load_flags1 
-%type <integer> memory_video
+%type <integer> memory_video_optional
 %type <integer> music_type
 %type <integer> on_bank_explicit
 %type <integer> on_bank_implicit 
 %type <integer> on_targets
 %type <integer> op_comma_or_semicolon
-%type <integer> option_clip 
-%type <integer> option_explicit 
+%type <integer> on_off_optional 
 %type <integer> option_name
-%type <integer> option_read
+%type <integer> safe_fast_optional
 %type <integer> optional_endianess
 %type <integer> integer_optional
 %type <integer> loop_optional
@@ -422,12 +421,11 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> put_image_flags 
 %type <integer> put_image_flags1 
 %type <integer> raw_optional
-%type <integer> safe_fast_optional
 %type <integer> readonly_optional
 %type <integer> relative_optional 
 %type <integer> release_optional
-%type <integer> scroll_definition_hdirection 
-%type <integer> scroll_definition_vdirection
+%type <integer> left_or_right 
+%type <integer> up_or_down
 %type <integer> sequence_load_flag
 %type <integer> sequence_load_flags 
 %type <integer> sequence_load_flags1 
@@ -542,6 +540,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  ============================================================================*/
 
 bitmap_or_bitmaps: BITMAP | BITMAPS;
+const_instruction: CONST | SHARED CONST | CONST SHARED | GLOBAL CONST | CONST GLOBAL;
 filesize: FILEX SIZE | FILESIZE | FSIZE;
 float_or_single: FLOAT | SINGLE;
 frame: FRAME | TILE;
@@ -1960,6 +1959,397 @@ key_scancode_definition:
  ============ EXTENDED SYNTAXES
  ============================================================================*/
 
+target: 
+    CPUZ80 {
+            #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
+                defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
+                defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
+                defined(__vz200__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPUSM83 {
+            #if defined(__gb__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU6809 {
+            #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
+                defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
+                defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU6309 {
+            #if defined(__d32b__) || defined(__d64b__) || defined(__cocob__) || defined(__coco3b__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPUSC61860 {
+            #if defined(__pc1403__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU6502 {
+            #if defined(__atari__) || defined(__atarixl__) || \
+                defined(__c128__) || defined(__vic20__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU6510 {
+            #if defined(__c64__) || defined( __c64reu__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU7501 {
+            #if defined(__c16__) || defined( __plus4__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU8501 {
+            #if defined(__c16__) || defined( __plus4__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU8502 {
+            #if defined(__c128__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    CPU8086 {
+            #if defined(__pccga__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    ATARI {
+            #ifdef __atari__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } | 
+    ATARIXL {
+            #ifdef __atarixl__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    C128 {
+            #ifdef __c128__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    C128Z {
+            #ifdef __c128z__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    C64 {
+            #ifdef __c64__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    C64REU {
+            #ifdef __c64reu__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    VIC20 {
+            #ifdef __vic20__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    VG5000 {
+            #ifdef __vg5000__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    ZX {
+            #ifdef __zx__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    COLECO {
+            #ifdef __coleco__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    PCCGA {
+            #ifdef __pccga__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    CPC {
+            #ifdef __cpc__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    VZ200 {
+            #ifdef __vz200__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    GB {
+            #ifdef __gb__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    PLUS4 {
+            #ifdef __plus4__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    C16 {
+            #ifdef __c16__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    SC3000 {
+            #ifdef __sc3000__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    SG1000 {
+            #ifdef __sg1000__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    PC1403 {
+            #ifdef __pc1403__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    MSX {
+            #ifdef __msx1__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    MSX1 {
+            #ifdef __msx1__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    COCO {
+            #if defined(__coco__) || defined(__cocob__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    COCO1 {
+            #if defined(__coco__) || defined(__cocob__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    COCO2 {
+            #if defined(__coco__) || defined(__cocob__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    COCO3 {
+            #if defined(__coco3__) || defined(__coco3b__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    DRAGON {
+            #if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    DRAGON32 {
+            #if defined(__d32__) || defined(__d32b__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    DRAGON64 {
+            #if defined(__d64__) || defined(__d64b__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    PC128OP {
+            #ifdef __pc128op__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    TO8 {
+            #ifdef __to8__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    MO5 {
+            #ifdef __mo5__
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    JOYSTICK AVAILABLE {
+            #if JOY_COUNT > 0
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    JOY AVAILABLE {
+            #if JOY_COUNT > 0
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    JOYSTICK NOT AVAILABLE {
+            #if JOY_COUNT > 0
+                $$ = 0;
+            #else
+                $$ = 1;
+            #endif
+        } |
+    JOY NOT AVAILABLE {
+            #if JOY_COUNT > 0
+                $$ = 0;
+            #else
+                $$ = 1;
+            #endif
+        } |
+    SPRITE AVAILABLE {
+            #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
+                || defined(__msx1__) || defined(__coleco__) \
+                || defined(__sc3000__) || defined(__sg1000__)
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    SPRITE NOT AVAILABLE {
+            #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
+                || defined(__msx1__) || defined(__coleco__) \
+                || defined(__sc3000__) || defined(__sg1000__) \
+                || defined(__gb__)
+                $$ = 0;
+            #else
+                $$ = 1;
+            #endif
+        } |
+    POKEY {
+            #if defined(__atari__) || defined(__atarixl__) 
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    TED {
+            #if defined(__c16__) || defined(__plus4__) 
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        } |
+    SID {
+            #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)  || defined(__c128z__) 
+                $$ = 1;
+            #else
+                $$ = 0;
+            #endif
+        };
+
+left_or_right:
+    LEFT { $$ = -1; } |
+    RIGHT { $$ = 1; };
+
+up_or_down:
+    UP { $$ = -1; } |
+    DOWN { $$ = 1; };
+
+targets:
+     target { $$ = $1; } | 
+     target OP_COMMA targets { $$ = $1 || $3; };
+
+on_targets: 
+    { $$ = 1; } | 
+    ON targets { $$ = $2; } | 
+    ON ALL BUT targets { $$ = ( $4 ) ? 0: 1; };
+
+parallel_optional: 
+    { $$ = 0; } |
+    PARALLEL { $$ = 1; };
+
 safe_fast_optional:
     { $$ = ((struct _Environment *)_environment)->optionReadSafe; } |
     SAFE { $$ = 1; } | 
@@ -1982,9 +2372,19 @@ static_optional:
     |
     STATIC;
 
+memory_video_optional:
+    { $$ = 0; } | 
+    MEMORY { $$ = 0; } | 
+    VIDEO { $$ = 1; };
+
 loop_optional:
     { $$ = 0; } | 
     LOOP { $$ = 1; };
+
+on_off_optional: 
+    { $$ = 1; } | 
+    ON { $$ = 1; } | 
+    OFF { $$ = 0; };
 
 dimensions:
     {
@@ -6874,7 +7274,7 @@ input_definition:
             print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
-    } input_definition2;\
+    } input_definition2;
 
 /*-----------------------------------------------------------------------------
  ------------ READ DEFINITION
@@ -7028,7 +7428,7 @@ define_definition:
     STACK START const_expr { ((struct _Environment *)_environment)->stackStartAddress = $3; } | 
     CHAIN { ((struct _Environment *)_environment)->chainUsed = 1; } | 
     SET LINE { ((struct _Environment *)_environment)->lineNeeded = 1; } | 
-    CLIP option_clip { ((struct _Environment *)_environment)->optionClip = $2; } | 
+    CLIP on_off_optional { ((struct _Environment *)_environment)->optionClip = $2; } | 
     PUT IMAGE FAST { ((struct _Environment *)_environment)->putImageSafe = 0; } | 
     PUT IMAGE SAFE { ((struct _Environment *)_environment)->putImageSafe = 1; } | 
     GET IMAGE FAST { ((struct _Environment *)_environment)->getImageSafe = 0; } | 
@@ -7281,6 +7681,10 @@ define_definition:
         ((struct _Environment *)_environment)->paintBucketSize = $3;
     };
 
+define_definitions:
+    define_definition |
+    define_definition OP_COMMA define_definitions;
+
 /*-----------------------------------------------------------------------------
  ------------ CONFIGURE DEFINITION
  ----------------------------------------------------------------------------*/
@@ -7352,659 +7756,96 @@ configure_definitions:
  ----------------------------------------------------------------------------*/
 
 declare_definition:
-  system_optional procedure Identifier AT const_expr on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-      if ( $6 ) {
-           declare_procedure( _environment, $3, $5, $1 );
-      }
-  }
-  | system_optional procedure Identifier AT const_expr {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-    } OP parameters_asmios CP on_targets {
-      if ( $10 ) {
-           declare_procedure( _environment, $3, $5, $1 );
-      }
-  }
-  | system_optional FUNCTION Identifier AT const_expr {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-  } return_parameter_asmios on_targets {
-      if ( $8 ) {
-           declare_procedure( _environment, $3, $5, $1 );
-      }
-  }
-  | system_optional FUNCTION Identifier AT const_expr {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-    } OP parameters_asmios CP return_parameter_asmios on_targets {
-      if ( $11 ) {
-           declare_procedure( _environment, $3, $5, $1 );
-      }
-  }
-  ;
+    system_optional procedure Identifier AT const_expr on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->returns = 0;
+            if ( $6 ) {
+                declare_procedure( _environment, $3, $5, $1 );
+            }
+        } | 
+    system_optional procedure Identifier AT const_expr {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->returns = 0;
+            } OP parameters_asmios CP on_targets {
+            if ( $10 ) {
+                declare_procedure( _environment, $3, $5, $1 );
+            }
+        } | 
+    system_optional FUNCTION Identifier AT const_expr {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->returns = 0;
+        } return_parameter_asmios on_targets {
+            if ( $8 ) {
+                declare_procedure( _environment, $3, $5, $1 );
+            }
+        } | 
+    system_optional FUNCTION Identifier AT const_expr {
+            ((struct _Environment *)_environment)->parameters = 0;
+            ((struct _Environment *)_environment)->returns = 0;
+        } OP parameters_asmios CP return_parameter_asmios on_targets {
+            if ( $11 ) {
+                declare_procedure( _environment, $3, $5, $1 );
+            }
+        };
 
-define_definitions:
-      define_definition
-    | define_definition OP_COMMA define_definitions;
-
-target: 
-    CPUZ80 {
-        #if defined(__c128z__) || defined(__vg5000__) || defined(__zx__) || \
-            defined(__coleco__) || defined(__cpc__) || defined(__sc3000__) || \
-            defined(__sc3000__) || defined(__sg1000__) ||  defined(__msx1__) || \
-            defined(__vz200__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPUSM83 {
-        #if defined(__gb__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU6809 {
-        #if defined(__coco__) || defined(__d32__) || defined(__d64__) || \
-            defined(__pc128op__) || defined(__mo5__) || defined(__coco3__) || \
-            defined(__to8__) || defined(__d32b__) || defined(__d64b__) || defined(__cocob__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU6309 {
-        #if defined(__d32b__) || defined(__d64b__) || defined(__cocob__) || defined(__coco3b__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPUSC61860 {
-        #if defined(__pc1403__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU6502 {
-        #if defined(__atari__) || defined(__atarixl__) || \
-            defined(__c128__) || defined(__vic20__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU6510 {
-        #if defined(__c64__) || defined( __c64reu__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU7501 {
-        #if defined(__c16__) || defined( __plus4__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU8501 {
-        #if defined(__c16__) || defined( __plus4__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU8502 {
-        #if defined(__c128__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | CPU8086 {
-        #if defined(__pccga__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    | ATARI {
-        #ifdef __atari__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    ATARIXL {
-        #ifdef __atarixl__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C128 {
-        #ifdef __c128__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C128Z {
-        #ifdef __c128z__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C64 {
-        #ifdef __c64__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C64REU {
-        #ifdef __c64reu__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    VIC20 {
-        #ifdef __vic20__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    VG5000 {
-        #ifdef __vg5000__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    ZX {
-        #ifdef __zx__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    COLECO {
-        #ifdef __coleco__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    PCCGA {
-        #ifdef __pccga__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    CPC {
-        #ifdef __cpc__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    VZ200 {
-        #ifdef __vz200__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    GB {
-        #ifdef __gb__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    PLUS4 {
-        #ifdef __plus4__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    C16 {
-        #ifdef __c16__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    SC3000 {
-        #ifdef __sc3000__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    SG1000 {
-        #ifdef __sg1000__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    PC1403 {
-        #ifdef __pc1403__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    MSX {
-        #ifdef __msx1__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    MSX1 {
-        #ifdef __msx1__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    COCO {
-        #if defined(__coco__) || defined(__cocob__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    COCO1 {
-        #if defined(__coco__) || defined(__cocob__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    COCO2 {
-        #if defined(__coco__) || defined(__cocob__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    COCO3 {
-        #if defined(__coco3__) || defined(__coco3b__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    DRAGON {
-        #if defined(__d32__) || defined(__d64__) || defined(__d32b__) || defined(__d64b__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    DRAGON32 {
-        #if defined(__d32__) || defined(__d32b__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    DRAGON64 {
-        #if defined(__d64__) || defined(__d64b__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    PC128OP {
-        #ifdef __pc128op__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    TO8 {
-        #ifdef __to8__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }
-    |
-    MO5 {
-        #ifdef __mo5__
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    JOYSTICK AVAILABLE {
-        #if JOY_COUNT > 0
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    JOY AVAILABLE {
-        #if JOY_COUNT > 0
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    JOYSTICK NOT AVAILABLE {
-        #if JOY_COUNT > 0
-            $$ = 0;
-        #else
-            $$ = 1;
-        #endif
-    }    
-    |
-    JOY NOT AVAILABLE {
-        #if JOY_COUNT > 0
-            $$ = 0;
-        #else
-            $$ = 1;
-        #endif
-    }
-    |
-    SPRITE AVAILABLE {
-        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
-            || defined(__msx1__) || defined(__coleco__) \
-            || defined(__sc3000__) || defined(__sg1000__)
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    SPRITE NOT AVAILABLE {
-        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__) \
-            || defined(__msx1__) || defined(__coleco__) \
-            || defined(__sc3000__) || defined(__sg1000__) \
-            || defined(__gb__)
-            $$ = 0;
-        #else
-            $$ = 1;
-        #endif
-    }    
-    |
-    POKEY {
-        #if defined(__atari__) || defined(__atarixl__) 
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    TED {
-        #if defined(__c16__) || defined(__plus4__) 
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    |
-    SID {
-        #if defined(__c64__) || defined(__c64reu__) || defined(__c128__)  || defined(__c128z__) 
-            $$ = 1;
-        #else
-            $$ = 0;
-        #endif
-    }    
-    ;
-
-targets:
-     target {
-         $$ = $1;
-     }
-     | target OP_COMMA targets {
-        $$ = $1 || $3;
-     };
-
-parallel_optional: 
-    PARALLEL {
-        $$ = 1;
-    }
-    | {
-        $$ = 0;
-    };
-
-on_targets: 
-      { $$ = 1; }
-    | ON targets {
-        $$ = $2;
-    }
-    | ON ALL BUT targets {
-        $$ = ( $4 ) ? 0: 1;
-    };
-
-scroll_definition_hdirection:
-    LEFT {
-        $$ = -1;
-    }
-    |
-    RIGHT {
-        $$ = 1;
-    };
-
-scroll_definition_vdirection:
-    UP {
-        $$ = -1;
-    }
-    |
-    DOWN {
-        $$ = 1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ SCROLL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 scroll_definition: 
-      scroll_definition_hdirection scroll_definition_vdirection {
-        scroll( _environment, $1, $2 );
-    }
-    | scroll_definition_hdirection {
-        scroll( _environment, $1, 0 );
-    }
-    | scroll_definition_vdirection {
-        scroll( _environment, 0, $1 );
-    }
-    ;
+    left_or_right { scroll( _environment, $1, 0 ); } |
+    left_or_right up_or_down { scroll( _environment, $1, $2 ); } |
+    up_or_down { scroll( _environment, 0, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ PALETTE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 palette_definition:
-    OP_HASH const_expr {
-        color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
-    }
-    | expr {
-        color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-    }
-    | OP_HASH const_expr {
-        color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 );
-    } OP_COMMA palette_definition
-    | expr {
-        color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 );
-    } OP_COMMA palette_definition;
+    expr { color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } | 
+    expr { color_semivars( _environment, ((struct _Environment *)_environment)->paletteIndex++, $1 ); } OP_COMMA palette_definition |
+    OP_HASH const_expr { color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 ); } | 
+    OP_HASH const_expr { color( _environment, ((struct _Environment *)_environment)->paletteIndex++, $2 ); } OP_COMMA palette_definition;
+
+/*-----------------------------------------------------------------------------
+ ------------ USE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 use_definition:
-    TILESET expr {
-        use_tileset( _environment, $2 );
-    };
-
-memory_video:
-    {
-        $$ = 0;
-    }
-    | MEMORY {
-        $$ = 0;
-    }
-    | VIDEO {
-        $$ = 1;
-    };
-
-const_instruction:
-    CONST
-    | SHARED CONST
-    | CONST SHARED
-    | GLOBAL CONST
-    | CONST GLOBAL
-    ;
-
-option_explicit: 
-    {
-        $$ = 1;
-    }
-    | ON {
-        $$ = 1;
-    }
-    | OFF {
-        $$ = 0;
-    };
-
-option_clip: 
-    {
-        $$ = 1;
-    }
-    | ON {
-        $$ = 1;
-    }
-    | OFF {
-        $$ = 0;
-    };
-
-option_read: 
-    SAFE {
-        $$ = 1;
-    }
-    | FAST {
-        $$ = 0;
-    }
-    | {
-        $$ = 1;
-    };
+    TILESET expr { use_tileset( _environment, $2 ); };
 
 option_definitions:
+    ARRAY CHECK { ((struct _Environment *)_environment)->checkBoundary = 1; } | 
+    ARRAY SIZE const_expr { ((struct _Environment *)_environment)->defaultArraySize = $3; } | 
+    CALL AS GOSUB { ((struct _Environment *)_environment)->optionCallAsGoto = 0; } | 
+    CALL AS GOTO { ((struct _Environment *)_environment)->optionCallAsGoto = 1; } | 
+    CLIP on_off_optional { ((struct _Environment *)_environment)->optionClip = $2; } |
     COMPILE on_targets {
         if ( ! $2 ) {
             printf("OPTION COMPILE does not allow to compile this source code on this target.\n");
             end_compilation( _environment );
             exit(EXIT_SUCCESS);
         }
-    }
-    | ARRAY CHECK {
-        ((struct _Environment *)_environment)->checkBoundary = 1;
-    }
-    | LEFT REPLACE {
-        ((struct _Environment *)_environment)->leftReplace = 1;
-    }
-    | LEFT INSERT {
-        ((struct _Environment *)_environment)->leftReplace = 0;
-    }
-    | MID REPLACE {
-        ((struct _Environment *)_environment)->midReplace = 1;
-    }
-    | MID INSERT {
-        ((struct _Environment *)_environment)->midReplace = 0;
-    }
-    | FINAL HALT {
-        ((struct _Environment *)_environment)->finalReturn = 0;
-    }
-    | FINAL RETURN {
-        ((struct _Environment *)_environment)->finalReturn = 1;
-    }
-    | DIALECT UGBASIC {
-        option_dialect( _environment, DI_UGBASIC );
-    }
-    | DIALECT TSB {
-        option_dialect( _environment, DI_TSB );
-    }
-    | DIALECT ATARI {
-        option_dialect( _environment, DI_ATARI_BASIC );
-    }
-    | DIALECT ATARI BASIC {
-        option_dialect( _environment, DI_ATARI_BASIC );
-    }
-    | EXEC AS GOSUB {
-        ((struct _Environment *)_environment)->optionExecAsGosub = 1;
-    }
-    | EXEC AS GOTO {
-        ((struct _Environment *)_environment)->optionExecAsGosub = 0;
-    }
-    | CALL AS GOSUB {
-        ((struct _Environment *)_environment)->optionCallAsGoto = 0;
-    }
-    | CALL AS GOTO {
-        ((struct _Environment *)_environment)->optionCallAsGoto = 1;
-    }
-    | TYPE WIDE {
-        ((struct _Environment *)_environment)->defaultNarrowType = 0;
-    }
-    | TYPE NARROW {
-        ((struct _Environment *)_environment)->defaultNarrowType = 1;
-    }
-    | TYPE SIGNED {
-        ((struct _Environment *)_environment)->defaultUnsignedType = 0;
-    }
-    | DEFAULT TYPE datatype {
-        ((struct _Environment *)_environment)->defaultVariableType = $3;
-    }
-    | ARRAY SIZE const_expr {
-        ((struct _Environment *)_environment)->defaultArraySize = $3;
-    }
-    | TYPE UNSIGNED {
-        ((struct _Environment *)_environment)->defaultUnsignedType = 1;
-    }
-    | EXPLICIT option_explicit {
-        ((struct _Environment *)_environment)->optionExplicit = $2;
-    }
-    | READ option_read {
-        ((struct _Environment *)_environment)->optionReadSafe = $2;
-    }
-    | CLIP option_clip {
-        ((struct _Environment *)_environment)->optionClip = $2;
-    };
+    } | 
+    DEFAULT TYPE datatype { ((struct _Environment *)_environment)->defaultVariableType = $3; } | 
+    DIALECT ATARI { option_dialect( _environment, DI_ATARI_BASIC ); } | 
+    DIALECT ATARI BASIC { option_dialect( _environment, DI_ATARI_BASIC ); } | 
+    DIALECT TSB { option_dialect( _environment, DI_TSB ); } | 
+    DIALECT UGBASIC { option_dialect( _environment, DI_UGBASIC ); } | 
+    EXEC AS GOSUB { ((struct _Environment *)_environment)->optionExecAsGosub = 1; } | 
+    EXEC AS GOTO { ((struct _Environment *)_environment)->optionExecAsGosub = 0; } | 
+    EXPLICIT on_off_optional { ((struct _Environment *)_environment)->optionExplicit = $2; } | 
+    FINAL HALT { ((struct _Environment *)_environment)->finalReturn = 0; } | 
+    FINAL RETURN { ((struct _Environment *)_environment)->finalReturn = 1; } | 
+    LEFT INSERT { ((struct _Environment *)_environment)->leftReplace = 0; } | 
+    LEFT REPLACE { ((struct _Environment *)_environment)->leftReplace = 1; } | 
+    MID INSERT { ((struct _Environment *)_environment)->midReplace = 0; } | 
+    MID REPLACE { ((struct _Environment *)_environment)->midReplace = 1; } | 
+    READ safe_fast_optional { ((struct _Environment *)_environment)->optionReadSafe = $2; } | 
+    TYPE NARROW { ((struct _Environment *)_environment)->defaultNarrowType = 1; } | 
+    TYPE SIGNED { ((struct _Environment *)_environment)->defaultUnsignedType = 0; } | 
+    TYPE UNSIGNED { ((struct _Environment *)_environment)->defaultUnsignedType = 1; } | 
+    TYPE WIDE { ((struct _Environment *)_environment)->defaultNarrowType = 0; };
 
 origin_direction:
     {
@@ -10877,12 +10718,12 @@ statement2nc:
       screen_swap( _environment );
   }
   | MMOB mmob_definition
-  | MMOVE memory_video expr TO memory_video expr SIZE expr {
+  | MMOVE memory_video_optional expr TO memory_video_optional expr SIZE expr {
       if ( $2 == 0 ) {
         if ( $5 == 0 ) {
             mmove_memory_memory( _environment, $3, $6, $8 );
         } else {
-            mmove_memory_video( _environment, $3, $6, $8 );
+            mmove_memory_video_optional( _environment, $3, $6, $8 );
         }
       } else {
         if ( $5 == 0 ) {
