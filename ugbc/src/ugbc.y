@@ -474,7 +474,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> field_optional
 %type <string> optional_next_animation
 %type <string> period_optional
-%type <string> optional_step
+%type <string> step_optional
 %type <string> optional_x 
 %type <string> optional_x_or_string
 %type <string> optional_y 
@@ -485,7 +485,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <string> term 
 %type <string> timer_number 
 %type <string> timer_number_comma
-%type <string> to_variable
+%type <string> to_identifier_optional
 %type <string> travel_function
 %type <string> writing_mode_definition 
 %type <string> writing_part_definition
@@ -1177,6 +1177,12 @@ sprite_flags:
 pad_optional:
     { $$ = NULL; } | 
     PAD expr { $$ = $2;};
+
+flip_image_flags:
+    X { $$ = FLAG_FLIP_X; } | 
+    Y { $$ = FLAG_FLIP_Y; } | 
+    XY { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; } | 
+    YX { $$ = FLAG_FLIP_X | FLAG_FLIP_Y; };
 
 on_bank_explicit:
     { $$ = 0; } | 
@@ -2364,6 +2370,10 @@ milliseconds_optional:
     milliseconds
     ;
 
+step_optional:
+    { $$ = NULL; } | 
+    STEP expr { $$ = $2; };
+
 system_optional: 
     { $$ = 0; } | 
     SYSTEM { $$ = 1; };
@@ -2390,6 +2400,40 @@ origin_direction_optional:
     { $$ = 1; } | 
     DOWN { $$ = 1; } | 
     UP { $$ = -1; };
+
+to_identifier_optional: 
+    { $$ = NULL; } | 
+    TO Identifier { $$ = $2; };
+
+thread_identifiers:
+    expr {
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            } else {
+                for( int i=0; i<array->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                    ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+                }
+            }
+        } | 
+    expr OP_COMMA thread_identifiers {
+            Variable * array = variable_retrieve( _environment, $1 );
+            if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
+                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
+                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+            } else {
+                for( int i=0; i<array->size; ++i ) {
+                    parser_array_init( _environment );
+                    parser_array_index_numeric( _environment, i );
+                    ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
+                    ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
+                }
+            }
+        };
 
 dimensions:
     {
@@ -8077,315 +8121,215 @@ paint_definition:
 border_definition:
     expr { color_border_var( _environment, $1 ); };
 
+/*-----------------------------------------------------------------------------
+ ------------ DSAVE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 dsave_to_offset:
-    {
-        $$ = NULL;
-    }
-    |
-    TO expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    TO expr { $$ = $2; };
 
 dsave_from_address:
-    {
-        $$ = NULL;
-    }
-    |
-    FROM expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    FROM expr { $$ = $2; };
 
 dsave_size_size:
-    {
-        $$ = NULL;
-    }
-    |
-    SIZE expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    SIZE expr { $$ = $2; };
 
 dsave_definition:
-    expr dsave_to_offset dsave_from_address dsave_size_size {
-        dsave( _environment, $1, $2, $3, $4 );
-    };
+    expr dsave_to_offset dsave_from_address dsave_size_size { dsave( _environment, $1, $2, $3, $4 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ DLOAD DEFINITION
+ ----------------------------------------------------------------------------*/
 
 dload_to_bank:
-    {
-        $$ = NULL;
-    }
-    |
-    BANK expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    BANK expr { $$ = $2; };
 
 dload_from_offset:
-    {
-        $$ = NULL;
-    }
-    |
-    FROM expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    FROM expr { $$ = $2; };
 
 dload_to_address:
-    {
-        $$ = NULL;
-    }
-    |
-    TO expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    TO expr { $$ = $2; };
 
 dload_size_size:
-    {
-        $$ = NULL;
-    }
-    |
-    SIZE expr {
-        $$ = $2;
-    };
+    { $$ = NULL; } |
+    SIZE expr { $$ = $2; };
 
 dload_definition:
-    expr dload_from_offset dload_to_address dload_to_bank dload_size_size {
-        dload( _environment, $1, $2, $3, $4, $5 );
-    };
+    expr dload_from_offset dload_to_address dload_to_bank dload_size_size { dload( _environment, $1, $2, $3, $4, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ CHAIN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 chain_definition:
-    expr {
-        chain( _environment, $1 );
-    };
+    expr { chain( _environment, $1 ); };
 
-to_variable: 
-    {
-        $$ = NULL;
-    }
-    | TO Identifier {
-        $$ = $2;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ DEFDGR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 defdgr_definition:
-    OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 );
-    }
-    | OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 );
-    };
+    OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 ); } | 
+    OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 ); };
 
-optional_step:
-    {
-        $$ = NULL;
-    }
-    | STEP expr {
-        $$ = $2;
-    };
-
-flip_image_flags:
-    X {
-        $$ = FLAG_FLIP_X;
-    }
-    | Y {
-        $$ = FLAG_FLIP_Y;
-    }
-    | XY {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    }
-    | YX {
-        $$ = FLAG_FLIP_X | FLAG_FLIP_Y;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ FLIP DEFINITION
+ ----------------------------------------------------------------------------*/
 
 flip_definition:
-    IMAGE expr flip_image_flags {
-        flip_image_vars_direction( _environment, $2, NULL, NULL, $3 );
-    }
-    | IMAGE expr frame OP_HASH Identifier flip_image_flags {
+    IMAGE expr flip_image_flags { flip_image_vars_direction( _environment, $2, NULL, NULL, $3 ); } | 
+    IMAGE expr frame OP_HASH Identifier flip_image_flags {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         flip_image_vars_direction( _environment, $2, calculatedFrame->name, NULL, $6 );
-    }
-    | IMAGE expr sequence_or_strip expr frame expr flip_image_flags {
-        flip_image_vars_direction( _environment, $2, $6, $4, $7 );
-    }
-    | IMAGE expr frame expr flip_image_flags {
-        flip_image_vars_direction( _environment, $2, $4, NULL, $5 );
-    }
-
-    | flip_image_flags IMAGE expr {
-        flip_image_vars_direction( _environment, $3, NULL, NULL, $1 );
-    }
-    | flip_image_flags IMAGE expr frame OP_HASH Identifier {
+    } | 
+    IMAGE expr sequence_or_strip expr frame expr flip_image_flags { flip_image_vars_direction( _environment, $2, $6, $4, $7 ); } | 
+    IMAGE expr frame expr flip_image_flags { flip_image_vars_direction( _environment, $2, $4, NULL, $5 ); } | 
+    flip_image_flags IMAGE expr { flip_image_vars_direction( _environment, $3, NULL, NULL, $1 ); } | 
+    flip_image_flags IMAGE expr frame OP_HASH Identifier {
         Variable * images = variable_retrieve( _environment, $3 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $3, $6 );
         flip_image_vars_direction( _environment, $3, calculatedFrame->name, NULL, $1 );
-    }
-    | flip_image_flags IMAGE expr sequence_or_strip expr frame expr {
-        flip_image_vars_direction( _environment, $3, $7, $5, $1 );
-    }
-    | flip_image_flags IMAGE expr frame expr {
-        flip_image_vars_direction( _environment, $3, $5, NULL, $1 );
-    }
-    
-    | IMAGE expr DIRECTION expr {
-        flip_image_vars_indirection( _environment, $2, NULL, NULL, $4 );
-    }
-    | IMAGE expr frame OP_HASH Identifier DIRECTION expr {
+    } | 
+    flip_image_flags IMAGE expr sequence_or_strip expr frame expr { flip_image_vars_direction( _environment, $3, $7, $5, $1 ); } | 
+    flip_image_flags IMAGE expr frame expr { flip_image_vars_direction( _environment, $3, $5, NULL, $1 ); } | 
+    IMAGE expr DIRECTION expr { flip_image_vars_indirection( _environment, $2, NULL, NULL, $4 ); } | 
+    IMAGE expr frame OP_HASH Identifier DIRECTION expr {
         Variable * images = variable_retrieve( _environment, $2 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $2, $5 );
         flip_image_vars_indirection( _environment, $2, calculatedFrame->name, NULL, $7 );
-    }
-    | IMAGE expr sequence_or_strip expr frame expr DIRECTION expr {
-        flip_image_vars_indirection( _environment, $2, $6, $4, $8 );
-    }
-    | IMAGE expr frame expr DIRECTION expr {
-        flip_image_vars_indirection( _environment, $2, $4, NULL, $6 );
-    }
-
-    | DIRECTION expr IMAGE expr {
-        flip_image_vars_indirection( _environment, $4, NULL, NULL, $2 );
-    }
-    | DIRECTION expr IMAGE expr frame OP_HASH Identifier {
+    } | 
+    IMAGE expr sequence_or_strip expr frame expr DIRECTION expr { flip_image_vars_indirection( _environment, $2, $6, $4, $8 ); } | 
+    IMAGE expr frame expr DIRECTION expr { flip_image_vars_indirection( _environment, $2, $4, NULL, $6 ); } |
+    DIRECTION expr IMAGE expr { flip_image_vars_indirection( _environment, $4, NULL, NULL, $2 ); } | 
+    DIRECTION expr IMAGE expr frame OP_HASH Identifier {
         Variable * images = variable_retrieve( _environment, $4 );
         Variable * calculatedFrame = calculate_frame_by_type( _environment, images->originalTileset, $4, $7 );
         flip_image_vars_indirection( _environment, $4, calculatedFrame->name, NULL, $2 );
-    }
-    | DIRECTION expr IMAGE expr sequence_or_strip expr frame expr {
-        flip_image_vars_indirection( _environment, $4, $8, $6, $2 );
-    }
-    | DIRECTION expr IMAGE expr frame expr {
-        flip_image_vars_indirection( _environment, $4, $6, NULL, $2 );
-    }
-    ;
+    } | 
+    DIRECTION expr IMAGE expr sequence_or_strip expr frame expr { flip_image_vars_indirection( _environment, $4, $8, $6, $2 ); } | 
+    DIRECTION expr IMAGE expr frame expr { flip_image_vars_indirection( _environment, $4, $6, NULL, $2 ); };
 
-thread_identifiers:
-    expr {
-        Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
-            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
-            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
-        } else {
-            for( int i=0; i<array->size; ++i ) {
-                parser_array_init( _environment );
-                parser_array_index_numeric( _environment, i );
-                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
-                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
-            }
-        }
-    }
-    | expr OP_COMMA thread_identifiers {
-        Variable * array = variable_retrieve( _environment, $1 );
-        if ( array->type != VT_TARRAY || array->arrayType != VT_THREAD ) {
-            ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( $1 );
-            ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
-        } else {
-            for( int i=0; i<array->size; ++i ) {
-                parser_array_init( _environment );
-                parser_array_index_numeric( _environment, i );
-                ((struct _Environment *)_environment)->threadIdentifier[((struct _Environment *)_environment)->lastThreadIdentifierUsed] = strdup( variable_move_from_array( _environment, array->name )->name );
-                ++((struct _Environment *)_environment)->lastThreadIdentifierUsed;
-            }
-        }
-    };
+/*-----------------------------------------------------------------------------
+ ------------ KILL DEFINITION
+ ----------------------------------------------------------------------------*/
 
-kill_definition: {
+kill_definition: 
+    {
         ((struct _Environment *)_environment)->lastThreadIdentifierUsed = 0;
         memset( ((struct _Environment *)_environment)->threadIdentifier, 0, MAX_TEMPORARY_STORAGE * sizeof( char * ) );
     } thread_identifiers on_targets {
-      if ( $3 ) {
-        for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
-          kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
+        if ( $3 ) {
+            for( int i=0; i<((struct _Environment *)_environment)->lastThreadIdentifierUsed; ++i ) {
+                kill_procedure( _environment, ((struct _Environment *)_environment)->threadIdentifier[i] );
+            }
         }
-      }
     };
+
+/*-----------------------------------------------------------------------------
+ ------------ STOP DEFINITION
+ ----------------------------------------------------------------------------*/
 
 stop_definition: 
-    Identifier {
-        stop_animation( _environment, $1 );
-    }
-    | ANIMATION Identifier {
-        stop_animation( _environment, $2 );
-    }
-    | MOVEMENT Identifier {
-        stop_movement( _environment, $2 );
-    };
+    Identifier { stop_animation( _environment, $1 ); } | 
+    ANIMATION Identifier { stop_animation( _environment, $2 ); } | 
+    MOVEMENT Identifier { stop_movement( _environment, $2 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SPAWN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 spawn_definition:
-  Identifier on_targets {
-      if ( $2 ) {
-        ((struct _Environment *)_environment)->parameters = 0;
-        spawn_procedure( _environment, $1, 0 );
-      }
-  }
-  | Identifier OSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP on_targets {
-      if ( $6 ) {
-          spawn_procedure( _environment, $1, 0 );
-      }
-  }
-  | Identifier OSP CSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      if ( $4 ) {
-          spawn_procedure( _environment, $1, 0 );
-      }
-  }
-  | Identifier OP_COMMA Identifier on_targets {
-        if ( $4 ) {
-            Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
+    Identifier on_targets {
+            if ( $2 ) {
                 ((struct _Environment *)_environment)->parameters = 0;
-                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
-            } else {
-                for( int i=0; i<variable->size; ++i ) {
-                    parser_array_init( _environment );
-                    parser_array_index_numeric( _environment, i );
+                spawn_procedure( _environment, $1, 0 );
+            }
+        } | 
+    Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+            if ( $6 ) {
+                spawn_procedure( _environment, $1, 0 );
+            }
+        } | 
+    Identifier OSP CSP on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            if ( $4 ) {
+                spawn_procedure( _environment, $1, 0 );
+            }
+        } | 
+    Identifier OP_COMMA Identifier on_targets {
+            if ( $4 ) {
+                Variable * variable = variable_retrieve( _environment, $1 );
+                if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
                     ((struct _Environment *)_environment)->parameters = 0;
-                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                    variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+                } else {
+                    for( int i=0; i<variable->size; ++i ) {
+                        parser_array_init( _environment );
+                        parser_array_index_numeric( _environment, i );
+                        ((struct _Environment *)_environment)->parameters = 0;
+                        variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                    }
                 }
             }
-        }
-  }
-  | Identifier OP_COMMA Identifier OSP {
-      ((struct _Environment *)_environment)->parameters = 0;
-    } values CSP on_targets {
-      if ( $8 ) {
-            Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
-                ((struct _Environment *)_environment)->parameters = 0;
-                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
-            } else {
-                for( int i=0; i<variable->size; ++i ) {
-                    parser_array_init( _environment );
-                    parser_array_index_numeric( _environment, i );
-                    ((struct _Environment *)_environment)->parameters = 0;
-                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
-                }
+        } | 
+    Identifier OP_COMMA Identifier OSP {
+            ((struct _Environment *)_environment)->parameters = 0;
+            } values CSP on_targets {
+            if ( $8 ) {
+                    Variable * variable = variable_retrieve( _environment, $1 );
+                    if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
+                        ((struct _Environment *)_environment)->parameters = 0;
+                        variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+                    } else {
+                        for( int i=0; i<variable->size; ++i ) {
+                            parser_array_init( _environment );
+                            parser_array_index_numeric( _environment, i );
+                            ((struct _Environment *)_environment)->parameters = 0;
+                            variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                        }
+                    }
             }
-      }
-  }
-  | Identifier OP_COMMA Identifier OSP CSP on_targets {
-      ((struct _Environment *)_environment)->parameters = 0;
-      if ( $6 ) {
-            Variable * variable = variable_retrieve( _environment, $1 );
-            if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
-                ((struct _Environment *)_environment)->parameters = 0;
-                variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
-            } else {
-                for( int i=0; i<variable->size; ++i ) {
-                    parser_array_init( _environment );
-                    parser_array_index_numeric( _environment, i );
-                    ((struct _Environment *)_environment)->parameters = 0;
-                    variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
-                }
+        } | 
+    Identifier OP_COMMA Identifier OSP CSP on_targets {
+            ((struct _Environment *)_environment)->parameters = 0;
+            if ( $6 ) {
+                    Variable * variable = variable_retrieve( _environment, $1 );
+                    if ( variable->type != VT_TARRAY || variable->arrayType != VT_THREAD ) {
+                        ((struct _Environment *)_environment)->parameters = 0;
+                        variable_move( _environment, spawn_procedure( _environment, $3, 0 )->name, variable->name );
+                    } else {
+                        for( int i=0; i<variable->size; ++i ) {
+                            parser_array_init( _environment );
+                            parser_array_index_numeric( _environment, i );
+                            ((struct _Environment *)_environment)->parameters = 0;
+                            variable_move_array( _environment, variable->name, spawn_procedure( _environment, $3, 0 )->name );
+                        }
+                    }
             }
-      }
-  };
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ HIRES DEFINITION
+ ----------------------------------------------------------------------------*/
 
 hires_definition_expression:
-    expr OP_COMMA expr {
-        hires( _environment, $1, $3 );
-    };
+    expr OP_COMMA expr { hires( _environment, $1, $3 ); };
 
 hires_definition: 
     hires_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ MULTI DEFINITION
+ ----------------------------------------------------------------------------*/
 
 multi_definition_expression:
     expr OP_COMMA expr OP_COMMA expr {
@@ -8393,13 +8337,15 @@ multi_definition_expression:
         sbpen_set( _environment, 1, $1 );
         sbpen_set( _environment, 2, $3 );
         sbpen_set( _environment, 3, $5 );
-    }
-    | ON {
-        bitmap_enable( _environment, 0, 0, 32 );
-    };
+    } |
+    ON { bitmap_enable( _environment, 0, 0, 32 ); };
 
 multi_definition: 
     multi_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ MOD DEFINITION
+ ----------------------------------------------------------------------------*/
 
 mod_definition_expression:
     expr OP_COMMA expr {
@@ -8410,6 +8356,10 @@ mod_definition_expression:
 
 mod_definition: 
     mod_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ KEY GET DEFINITION
+ ----------------------------------------------------------------------------*/
 
 keyget_definition:
     Identifier as_datatype_suffix_optional {
@@ -8424,43 +8374,51 @@ keyget_definition:
         variable_move( _environment, k->name, p->name );
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ AT DEFINITION
+ ----------------------------------------------------------------------------*/
+
 at_definition:
     OP Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional CP {
-        if ( ($3 != 0) && ($6 != 0) && ($3 != $6) ) {
-            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$3], DATATYPE_AS_STRING[$6] );
-        }
-        if ( $3 != VT_DSTRING ) {
-            Variable * v1 = variable_retrieve( _environment, $2 );
-            if ( v1->type != VT_DSTRING ) {
-                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            if ( ($3 != 0) && ($6 != 0) && ($3 != $6) ) {
+                CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$3], DATATYPE_AS_STRING[$6] );
             }
-        }
-        if ( $6 != VT_DSTRING ) {
-            Variable * v2 = variable_retrieve( _environment, $5 );
-            if ( v2->type != VT_DSTRING ) {
-                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            if ( $3 != VT_DSTRING ) {
+                Variable * v1 = variable_retrieve( _environment, $2 );
+                if ( v1->type != VT_DSTRING ) {
+                    CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+                }
             }
-        }
-        variable_swap( _environment, $2, $5 );
-    }
-    | Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
-        if ( ($2 != 0) && ($5 != 0) && ($2 != $5) ) {
-            CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$2], DATATYPE_AS_STRING[$5] );
-        }
-        if ( $2 != VT_DSTRING ) {
-            Variable * v1 = variable_retrieve( _environment, $1 );
-            if ( v1->type != VT_DSTRING ) {
-                CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+            if ( $6 != VT_DSTRING ) {
+                Variable * v2 = variable_retrieve( _environment, $5 );
+                if ( v2->type != VT_DSTRING ) {
+                    CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+                }
             }
-        }
-        if ( $5 != VT_DSTRING ) {
-            Variable * v2 = variable_retrieve( _environment, $4 );
-            if ( v2->type != VT_DSTRING ) {
-                CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+            variable_swap( _environment, $2, $5 );
+        } | 
+    Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
+            if ( ($2 != 0) && ($5 != 0) && ($2 != $5) ) {
+                CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( DATATYPE_AS_STRING[$2], DATATYPE_AS_STRING[$5] );
             }
-        }
-        variable_swap( _environment, $1, $4 );
-    };
+            if ( $2 != VT_DSTRING ) {
+                Variable * v1 = variable_retrieve( _environment, $1 );
+                if ( v1->type != VT_DSTRING ) {
+                    CRITICAL_AT_UNSUPPORTED( v1->name, DATATYPE_AS_STRING[v1->type]);
+                }
+            }
+            if ( $5 != VT_DSTRING ) {
+                Variable * v2 = variable_retrieve( _environment, $4 );
+                if ( v2->type != VT_DSTRING ) {
+                    CRITICAL_AT_UNSUPPORTED( v2->name, DATATYPE_AS_STRING[v2->type]);
+                }
+            }
+            variable_swap( _environment, $1, $4 );
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ NRM DEFINITION
+ ----------------------------------------------------------------------------*/
 
 nrm_definition:
     {
@@ -8468,53 +8426,51 @@ nrm_definition:
         cls( _environment, NULL );
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ CHAR DEFINITION
+ ----------------------------------------------------------------------------*/
+
 char_definition:
-    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        char_at( _environment, $1, $3, $5, $7, $9 );
-    };
+    mandatory_x OP_COMMA mandatory_y OP_COMMA expr OP_COMMA expr OP_COMMA expr { char_at( _environment, $1, $3, $5, $7, $9 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ CENTER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 center_definition: 
-  expr OP_SEMICOLON {
-      center( _environment, $1, 0, NULL);
-  }
-  | expr {
-      center( _environment, $1, 1, NULL );
-  }
-  | expr OP_COMMA expr {
-      center( _environment, $1, 1, $3 );
-  }
-  | AT OP expr OP_COMMA expr CP expr OP_COMMA expr {
+  expr OP_SEMICOLON { center( _environment, $1, 0, NULL); } | 
+  expr { center( _environment, $1, 1, NULL ); } | 
+  expr OP_COMMA expr { center( _environment, $1, 1, $3 ); } | 
+  AT OP expr OP_COMMA expr CP expr OP_COMMA expr {
       locate( _environment, $3, $5 );
       center( _environment, $7, 0, $9 );
   }
   ;
 
+/*-----------------------------------------------------------------------------
+ ------------ VCENTER DEFINITION
+ ----------------------------------------------------------------------------*/
+
 vcenter_definition: 
-  expr OP_SEMICOLON {
-      vcenter( _environment, $1, 0 );
-  }
-  | expr {
-      vcenter( _environment, $1, 1 );
-  }
-  | expr OP_COMMA expr {
-      vcenter( _environment, $1, 1 );
-  };
+  expr OP_SEMICOLON { vcenter( _environment, $1, 0 ); } | 
+  expr { vcenter( _environment, $1, 1 ); } | 
+  expr OP_COMMA expr { vcenter( _environment, $1, 1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ VHCENTER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 vhcenter_definition: 
-  expr OP_SEMICOLON {
-      vhcenter( _environment, $1, 0, NULL);
-  }
-  | expr {
-      vhcenter( _environment, $1, 1, NULL );
-  }
-  | expr OP_COMMA expr {
-      vhcenter( _environment, $1, 1, $3 );
-  };
+  expr OP_SEMICOLON { vhcenter( _environment, $1, 0, NULL); } | 
+  expr { vhcenter( _environment, $1, 1, NULL ); } | 
+  expr OP_COMMA expr { vhcenter( _environment, $1, 1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ INSERT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 insert_definition: 
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        insert( _environment, $1, $3, $5, $7, $9, $11 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { insert( _environment, $1, $3, $5, $7, $9, $11 ); };
 
 envelope_definition:
     expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
@@ -10187,7 +10143,7 @@ statement2nc:
   } expr {
       begin_for_to_assign( _environment, $10 );
       begin_for_step_prepare( _environment );
-  }   optional_step {
+  }   step_optional {
       begin_for_step_assign( _environment, $12 );
       begin_for_identifier( _environment, $2 );
   }
@@ -10225,7 +10181,7 @@ statement2nc:
       outline1("; to assign = %s", $12 );
       begin_for_to_assign_mt( _environment, $12 );
       begin_for_step_prepare_mt( _environment );
-  }   optional_step {
+  }   step_optional {
       begin_for_step_assign_mt( _environment, $14 );
       begin_for_identifier_mt( _environment, $3 );
   }
@@ -10565,21 +10521,21 @@ statement2nc:
   | FILEX const_expr_string AS const_expr_string CSV OF datatype {
         file_storage( _environment, $2, $4, FSF_CSV, $7 );
   }
-  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | IMAGE const_expr_string image_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = image_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $3+$4, $5, $6 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         } 
         variable_temporary_remove( _environment, v->name );
   }
-  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | IMAGE const_expr_string AS const_expr_string image_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = image_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | images_or_atlas const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = images_storage( 
             _environment, 
             $2, NULL, 
@@ -10594,7 +10550,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | images_or_atlas const_expr_string AS const_expr_string frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = images_storage( 
             _environment, 
             $2, $4, 
@@ -10609,7 +10565,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable{
+  | sequence_or_strip const_expr_string AS const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional{
         Variable * v = sequence_storage( 
             _environment, 
             $2, $4, 
@@ -10624,7 +10580,7 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | sequence_or_strip const_expr_string frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = sequence_storage( 
             _environment, 
             $2, NULL, 
@@ -10639,35 +10595,35 @@ statement2nc:
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | MUSIC const_expr_string AS const_expr_string on_bank_explicit to_variable {
+  | MUSIC const_expr_string AS const_expr_string on_bank_explicit to_identifier_optional {
         Variable * v = music_storage( _environment, $2, $4, abs($5) );
         if ( $6 ) {
             prepare_variable_storage( _environment, $6, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | TILESET const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = tileset_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | TILESET const_expr_string AS const_expr_string images_load_flags  using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = tileset_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | TILEMAP const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = tilemap_storage( _environment, $2, NULL, ((struct _Environment *)_environment)->currentMode, $3, $4+$5, $6, $7 );
         if ( $8 ) {
             prepare_variable_storage( _environment, $8, v );
         }
         variable_temporary_remove( _environment, v->name );
   }
-  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_variable {
+  | TILEMAP const_expr_string AS const_expr_string images_load_flags using_transparency using_opacity using_background on_bank_implicit to_identifier_optional {
         Variable * v = tilemap_storage( _environment, $2, $4, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
         if ( $10 ) {
             prepare_variable_storage( _environment, $10, v );
