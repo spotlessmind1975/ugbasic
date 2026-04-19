@@ -10793,70 +10793,10 @@ int main( int _argc, char *_argv[] ) {
     environment_parse_command_line( _environment, _argc, _argv );
 
     if ( _environment->tenLinerRulesEnforced ) {
-        _environment->dstring.space = 512;
-        _environment->dstring.count = 32;
-        _environment->defaultVariableType = VT_BYTE;
-        _environment->vestigialConfig.clsImplicit = 1;
+        environment_setup_10liner( _environment );
     }
 
     _environment->sourceFileName = strdup(_argv[optind] );
-
-    /* retrocompatible hacks */
-
-    // If we are compiling "Beyond The Door" game with a recent
-    // version of the compiler (>1.17), we must enable the hack.
-    if ( strstr( strtoupper( _environment->sourceFileName ), "ACME-INC") != NULL ) {
-        _environment->vestigialConfig.rchack_acme_1172 = 1;
-    }
-
-    // If we are compiling "Beyond The Door" game with a recent
-    // version of the compiler (>1.17), we must enable the hack.
-    if ( strstr( strtoupper( _environment->sourceFileName ), "OSTRA") != NULL ) {
-        _environment->vestigialConfig.rchack_ostra_1172 = 1;
-    }
-
-    // If we are compiling "Beyond The Door" game with a recent
-    // version of the compiler (>1.17), we must enable the hack.
-    if ( strstr( _environment->sourceFileName, "btd-10liner") != NULL ) {
-        _environment->vestigialConfig.rchack_btd_1171 = 1;
-    }
-
-    // If we are compiling "Cocon" game with a recent
-    // version of the compiler (>1.16.3), we must use the disruptive
-    // optimization rule to reduce executable size.
-    if ( strstr( _environment->sourceFileName, "cocon.bas") != NULL ) {
-        _environment->vestigialConfig.rchack_cocon_1163 = 1;
-    }
-
-    /* retrocompatible hacks */
-    // If we are compiling "Pick the star" game with a recent
-    // version of the compiler (>1.16.3), we must use a different
-    // convention on joystick related return values (signed vs unsigned).
-    if ( strstr( _environment->sourceFileName, "pick-the-star-10liner") != NULL ) {
-        _environment->vestigialConfig.rchack_pick_the_star_1163 = 1;
-    }
-
-    /* retrocompatible hacks */
-    // We are compiling "4gravity" game with a recent
-    // version of the compiler (>1.16.3).
-    if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
-        _environment->vestigialConfig.rchack_4gravity_1163 = 1;
-        _environment->vestigialConfig.rchack_4gravity_1164 = 1;
-    }
-
-    /* retrocompatible hacks */
-    // We are compiling "falling_balls" game with a recent
-    // version of the compiler (>1.16.3).
-    if ( strstr( _environment->sourceFileName, "falling-balls") != NULL ) {
-        _environment->vestigialConfig.rchack_falling_balls_1163 = 1;
-    }
-
-    /* retrocompatible hacks */
-    // We are compiling "Creepy carrots" game with a recent
-    // version of the compiler (>1.16.3).
-    if ( strstr( _environment->sourceFileName, "ccarrots") != NULL ) {
-        _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
-    }
     
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );

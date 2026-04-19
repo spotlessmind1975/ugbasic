@@ -5089,6 +5089,8 @@ Environment * environment_create( void );
 void environment_setup_embedded( Environment *_environment );
 void environment_setup_default( Environment * _environment );
 void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] );
+void environment_setup_10liner( Environment * _environment );
+void environment_setup_retrohack( Environment * _environment );
 
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );

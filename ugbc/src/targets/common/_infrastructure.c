@@ -17376,7 +17376,7 @@ extern char * importPath;
 void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] ) {
 
     int opt;
-    
+
     while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y")) != -1) {
         switch (opt) {
                 case 'y':
@@ -17750,6 +17750,74 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
 
     if ( ! _argv[optind+1] && !_environment->exeFileName ) {
         show_usage_and_exit( _argc, _argv );
+    }
+
+}
+
+void environment_setup_10liner( Environment * _environment ) {
+    _environment->dstring.space = 512;
+    _environment->dstring.count = 32;
+    _environment->defaultVariableType = VT_BYTE;
+    _environment->vestigialConfig.clsImplicit = 1;
+}
+
+void environment_setup_retrohack( Environment * _environment ) {
+
+    /* retrocompatible hacks */
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "ACME-INC") != NULL ) {
+        _environment->vestigialConfig.rchack_acme_1172 = 1;
+    }
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "OSTRA") != NULL ) {
+        _environment->vestigialConfig.rchack_ostra_1172 = 1;
+    }
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( _environment->sourceFileName, "btd-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_btd_1171 = 1;
+    }
+
+    // If we are compiling "Cocon" game with a recent
+    // version of the compiler (>1.16.3), we must use the disruptive
+    // optimization rule to reduce executable size.
+    if ( strstr( _environment->sourceFileName, "cocon.bas") != NULL ) {
+        _environment->vestigialConfig.rchack_cocon_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // If we are compiling "Pick the star" game with a recent
+    // version of the compiler (>1.16.3), we must use a different
+    // convention on joystick related return values (signed vs unsigned).
+    if ( strstr( _environment->sourceFileName, "pick-the-star-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_pick_the_star_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "4gravity" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
+        _environment->vestigialConfig.rchack_4gravity_1163 = 1;
+        _environment->vestigialConfig.rchack_4gravity_1164 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "falling_balls" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "falling-balls") != NULL ) {
+        _environment->vestigialConfig.rchack_falling_balls_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "Creepy carrots" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "ccarrots") != NULL ) {
+        _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
     }
 
 }
