@@ -412,7 +412,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> optional_endianess
 %type <integer> integer_optional
 %type <integer> loop_optional
-%type <integer> origin_direction 
+%type <integer> origin_direction_optional 
 %type <integer> PALETTE1
 %type <integer> parallel_optional
 %type <integer> precision 
@@ -2385,6 +2385,11 @@ on_off_optional:
     { $$ = 1; } | 
     ON { $$ = 1; } | 
     OFF { $$ = 0; };
+
+origin_direction_optional:
+    { $$ = 1; } | 
+    DOWN { $$ = 1; } | 
+    UP { $$ = -1; };
 
 dimensions:
     {
@@ -7814,6 +7819,10 @@ palette_definition:
 use_definition:
     TILESET expr { use_tileset( _environment, $2 ); };
 
+/*-----------------------------------------------------------------------------
+ ------------ OPTION DEFINITION
+ ----------------------------------------------------------------------------*/
+
 option_definitions:
     ARRAY CHECK { ((struct _Environment *)_environment)->checkBoundary = 1; } | 
     ARRAY SIZE const_expr { ((struct _Environment *)_environment)->defaultArraySize = $3; } | 
@@ -7847,83 +7856,88 @@ option_definitions:
     TYPE UNSIGNED { ((struct _Environment *)_environment)->defaultUnsignedType = 1; } | 
     TYPE WIDE { ((struct _Environment *)_environment)->defaultNarrowType = 0; };
 
-origin_direction:
-    {
-        $$ = 1;
-    }
-    | DOWN {
-        $$ = 1;
-    }
-    | UP {
-        $$ = -1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ ORIGIN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 origin_definitions:
-    expr OP_COMMA expr origin_direction {
-        ((struct _Environment *)_environment)->originUsed = 1;
-        variable_move( ((struct _Environment *)_environment), $1, "ORIGINX" );
-        variable_move( ((struct _Environment *)_environment), $3, "ORIGINY" );
-        ((struct _Environment *)_environment)->originYDirection = $4;
-    }
-    ;
+    expr OP_COMMA expr origin_direction_optional {
+            ((struct _Environment *)_environment)->originUsed = 1;
+            variable_move( ((struct _Environment *)_environment), $1, "ORIGINX" );
+            variable_move( ((struct _Environment *)_environment), $3, "ORIGINY" );
+            ((struct _Environment *)_environment)->originYDirection = $4;
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ RESOLUTION DEFINITION
+ ----------------------------------------------------------------------------*/
 
 resolution_definitions:
     expr OP_COMMA expr {
-        ((struct _Environment *)_environment)->resolutionUsed = 1;
-        variable_move( ((struct _Environment *)_environment), $1, "RESOLUTIONX" );
-        variable_move( ((struct _Environment *)_environment), $3, "RESOLUTIONY" );
-    }
-    ;
+            ((struct _Environment *)_environment)->resolutionUsed = 1;
+            variable_move( ((struct _Environment *)_environment), $1, "RESOLUTIONX" );
+            variable_move( ((struct _Environment *)_environment), $3, "RESOLUTIONY" );
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ OUT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 out_definition: 
-    expr OP_COMMA expr {
-        out_var( _environment, $1, $3 );
-    }
-    ;
+    expr OP_COMMA expr { out_var( _environment, $1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ LOAD TILE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 tile_definition: 
-    LOAD String TO Integer tile_load_flags {
-        tile_load( _environment, $2, $5, NULL, $4 );
-    };
+    LOAD String TO Integer tile_load_flags { tile_load( _environment, $2, $5, NULL, $4 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SYS/EXEC DEFINITION
+ ----------------------------------------------------------------------------*/
 
 sys_definition:
     expr on_targets {
-        if ( $2 ) {
-            sys_var( _environment, $1 );
-        }
-    }
-    | OP_HASH const_expr on_targets {
-        if ( $3 ) {
-            sys( _environment, $2 );
-        }
-    }
-    | expr WITH {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-    } values_asmios return_values_asmios on_targets {
-        if ( $6 ) {
-            sys_var( _environment, $1 );
-        }
-    }
-    | OP_HASH const_expr WITH {
-      ((struct _Environment *)_environment)->parameters = 0;
-      ((struct _Environment *)_environment)->returns = 0;
-    } values_asmios return_values_asmios on_targets {
-        if ( $7 ) {
-            sys( _environment, $2 );
-        }
-    }
-    ;
+            if ( $2 ) {
+                sys_var( _environment, $1 );
+            }
+        } | 
+    OP_HASH const_expr on_targets {
+            if ( $3 ) {
+                sys( _environment, $2 );
+            }
+        } | 
+    expr WITH {
+        ((struct _Environment *)_environment)->parameters = 0;
+        ((struct _Environment *)_environment)->returns = 0;
+        } values_asmios return_values_asmios on_targets {
+            if ( $6 ) {
+                sys_var( _environment, $1 );
+            }
+        } | 
+    OP_HASH const_expr WITH {
+        ((struct _Environment *)_environment)->parameters = 0;
+        ((struct _Environment *)_environment)->returns = 0;
+        } values_asmios return_values_asmios on_targets {
+            if ( $7 ) {
+                sys( _environment, $2 );
+            }
+        };
 
 exec_definition:
-    sys_definition
-    | IdentifierSpaced {
-        if (  ((struct _Environment *)_environment)->optionExecAsGosub ) {
-            call_procedure( _environment, $1 );
-        } else {
-            goto_label( _environment, $1 );
-        }
-    };
+    sys_definition | 
+    IdentifierSpaced {
+            if (  ((struct _Environment *)_environment)->optionExecAsGosub ) {
+                call_procedure( _environment, $1 );
+            } else {
+                goto_label( _environment, $1 );
+            }
+        };
+
+/*-----------------------------------------------------------------------------
+ ------------ DATA DEFINITION
+ ----------------------------------------------------------------------------*/
 
 data_definition_single:
     const_expr {
@@ -7952,79 +7966,67 @@ data_definition_single:
         } else {
             data_numeric( _environment, $1 );
         }
-    }
-    | const_expr_floating {
-        data_floating( _environment, $1 );
-    }
-    | const_expr_string {
-        data_string( _environment, $1 );
-    }
-    | OSP const_expr_string_const CSP {
-        data_string( _environment, $2 );
-    };
+    } | 
+    const_expr_floating { data_floating( _environment, $1 ); } | 
+    const_expr_string { data_string( _environment, $1 ); } | 
+    OSP const_expr_string_const CSP { data_string( _environment, $2 ); };
 
 data_definition_data:
     data_definition_single {
-        if ( ((struct _Environment *)_environment)->currentType ) {
-            if ( ((struct _Environment *)_environment)->currentField != ((struct _Environment *)_environment)->currentType->first ) {
-                CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( ((struct _Environment *)_environment)->currentType->name );
-            }
-        }
-    }
-    | data_definition_single OP_COMMA data_definition_data
-    | LOAD String AS TEXT {
-
-        FILE * handle = fopen( $2, "rt" );
-        if ( ! handle ) {
-            CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( $2 );
-        }
-
-        while( !feof( handle ) ) {
-
-            char valueString[MAX_TEMPORARY_STORAGE];
-            memset( valueString, 0, MAX_TEMPORARY_STORAGE );
-            int p=0, j=0;
-
-            while( !feof( handle ) ) {
-                char c = fgetc(handle);
-                if ( j == 0 ) {
-                    if ( (c < '0') || (c > '9') ) {
-                        continue;
-                    }
-                    j = 1;
-                } else {
-                    if ( (c < '0') || (c > '9') ) {
-                        break;
-                    }
+            if ( ((struct _Environment *)_environment)->currentType ) {
+                if ( ((struct _Environment *)_environment)->currentField != ((struct _Environment *)_environment)->currentType->first ) {
+                    CRITICAL_DATA_NOT_ENOUGH_FOR_TYPE( ((struct _Environment *)_environment)->currentType->name );
                 }
-                valueString[p] = c;
-                ++p;
             }
-
-            data_numeric( _environment, atoi( valueString ) );
-
-        }
-
-        fclose( handle );
-    }
-    ;
+        } | 
+    data_definition_single OP_COMMA data_definition_data | 
+    LOAD String AS TEXT {
+            FILE * handle = fopen( $2, "rt" );
+            if ( ! handle ) {
+                CRITICAL_DATA_LOAD_TEXT_NOT_FOUND( $2 );
+            }
+            while( !feof( handle ) ) {
+                char valueString[MAX_TEMPORARY_STORAGE];
+                memset( valueString, 0, MAX_TEMPORARY_STORAGE );
+                int p=0, j=0;
+                while( !feof( handle ) ) {
+                    char c = fgetc(handle);
+                    if ( j == 0 ) {
+                        if ( (c < '0') || (c > '9') ) {
+                            continue;
+                        }
+                        j = 1;
+                    } else {
+                        if ( (c < '0') || (c > '9') ) {
+                            break;
+                        }
+                    }
+                    valueString[p] = c;
+                    ++p;
+                }
+                data_numeric( _environment, atoi( valueString ) );
+            }
+            fclose( handle );
+        };
 
 data_definition:
     {
         ((struct _Environment *)_environment)->currentType = NULL;
         ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = 0;
-    } data_definition_data
-    | as_datatype_mandatory {
+    } data_definition_data | 
+    as_datatype_mandatory {
         ((struct _Environment *)_environment)->currentType = NULL;
         ((struct _Environment *)_environment)->currentField = NULL;
         ((struct _Environment *)_environment)->dataDataType = $1;
-
         if ( ((struct _Environment *)_environment)->dataDataType == VT_TYPE ) {
             ((struct _Environment *)_environment)->currentField = ((struct _Environment *)_environment)->currentType->first;
         }
-
     } data_definition_data;
+
+/*-----------------------------------------------------------------------------
+ ------------ CLEAR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 clear_definition: 
     const_expr {
@@ -8034,50 +8036,46 @@ clear_definition:
         ((struct _Environment *)_environment)->dstring.space = $1;
         clear( _environment );
         cpu_dsinit( _environment );
-    }
-    ;
+    };
+
+/*-----------------------------------------------------------------------------
+ ------------ PMODE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 pmode_definition:
     expr OP_COMMA expr {
-        Variable * expr1 = variable_retrieve( _environment, $1 );
-        if ( ! expr1->initializedByConstant ) {
-            CRITICAL_PMODE_NEEDS_CONSTANTS( );
-        }
-        Variable * expr2 = variable_retrieve( _environment, $3 );
-        if ( ! expr2->initializedByConstant ) {
-            CRITICAL_PMODE_NEEDS_CONSTANTS( );
-        }
-        pmode( _environment, expr1->value, expr2->value );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        pmode( _environment, $2, $5 );
-    }
+            Variable * expr1 = variable_retrieve( _environment, $1 );
+            if ( ! expr1->initializedByConstant ) {
+                CRITICAL_PMODE_NEEDS_CONSTANTS( );
+            }
+            Variable * expr2 = variable_retrieve( _environment, $3 );
+            if ( ! expr2->initializedByConstant ) {
+                CRITICAL_PMODE_NEEDS_CONSTANTS( );
+            }
+            pmode( _environment, expr1->value, expr2->value );
+        } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr { pmode( _environment, $2, $5 ); };
 
-    ;
+/*-----------------------------------------------------------------------------
+ ------------ PAINT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 paint_definition:
     expr OP_COMMA expr OP_COMMA expr  {
         Variable * color = sbpen_get( _environment, $5 );
         paint_vars( _environment, $1, $3, color->name, NULL );
-    } 
-    | OP expr OP_COMMA expr CP {
-        paint_vars( _environment, $2, $4, NULL, NULL );
-    }
-    | OP expr OP_COMMA expr CP OP_COMMA expr {
-        paint_vars( _environment, $2, $4, $7, NULL );
-    }
-    | OP expr OP_COMMA expr CP OP_COMMA OP_COMMA expr {
-        paint_vars( _environment, $2, $4, NULL, $8 );
-    }
-    | OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA expr {
-        paint_vars( _environment, $2, $4, $7, $9 );
-    }    
-    ;
+    } | 
+    OP expr OP_COMMA expr CP { paint_vars( _environment, $2, $4, NULL, NULL ); } | 
+    OP expr OP_COMMA expr CP OP_COMMA expr { paint_vars( _environment, $2, $4, $7, NULL ); } | 
+    OP expr OP_COMMA expr CP OP_COMMA OP_COMMA expr { paint_vars( _environment, $2, $4, NULL, $8 ); } |
+    OP expr OP_COMMA expr CP OP_COMMA expr OP_COMMA expr { paint_vars( _environment, $2, $4, $7, $9 ); }     ;
+
+/*-----------------------------------------------------------------------------
+ ------------ BORDER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 border_definition:
-    expr {
-        color_border_var( _environment, $1 );
-    };
+    expr { color_border_var( _environment, $1 ); };
 
 dsave_to_offset:
     {
