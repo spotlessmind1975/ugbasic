@@ -422,7 +422,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> put_image_flags 
 %type <integer> put_image_flags1 
 %type <integer> raw_optional
-%type <integer> read_safeness
+%type <integer> safe_fast_optional
 %type <integer> readonly_optional
 %type <integer> relative_optional 
 %type <integer> release_optional
@@ -436,7 +436,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> sprite_flags 
 %type <integer> sprite_flags1
 %type <integer> strip_definition_id_optional
-%type <integer> system
+%type <integer> system_optional
 %type <integer> target targets
 %type <integer> tile_load_flag%type <integer> tile_load_flags 
 %type <integer> tile_load_flags1 
@@ -555,6 +555,7 @@ load_tileset : LOAD TILESET | TILESET LOAD;
 milliseconds: MS | MILLISECOND | MILLISECONDS;
 op_assign:  OP_ASSIGN  | OP_ASSIGN_DIRECT;
 position: POSITION | AT;
+procedure: PROCEDURE | PROC;
 sequence_or_strip:  SEQUENCE | STRIP;
 text_or_csv: TEXT | CSV;
 ticks: TICK | TICKS;
@@ -1270,6 +1271,26 @@ perc:
     |
     OP_PERC;
 
+font_schema: 
+    ALPHA { $$ = FONT_SCHEMA_ALPHA; } | 
+    COMPLETE { $$ = FONT_SCHEMA_COMPLETE; } |
+    EMBEDDED { $$ = FONT_SCHEMA_EMBEDDED; } | 
+    SEMIGRAPHIC { $$ = FONT_SCHEMA_SEMIGRAPHIC; }  | 
+    STANDARD { $$ = FONT_SCHEMA_STANDARD; };
+
+precision: 
+    FAST { $$ = FT_FAST; } | 
+    SINGLE { $$ = FT_SINGLE; };
+
+audio_source:
+    SN76489 { $$ = ADN_SN76489; } | 
+    POKEY { $$ = ADN_POKEY; } | 
+    SID { $$ = ADN_SID; } | 
+    DAC1 { $$ = ADN_DAC1; } | 
+    AY8910 { $$ = ADN_AY8910; } | 
+    TED { $$ = ADN_TED; } | 
+    VIC { $$ = ADN_VIC1; };
+
 /*============================================================================
  ============ CONSTANT FACTORS
  ============================================================================*/
@@ -1939,10 +1960,27 @@ key_scancode_definition:
  ============ EXTENDED SYNTAXES
  ============================================================================*/
 
+safe_fast_optional:
+    { $$ = ((struct _Environment *)_environment)->optionReadSafe; } |
+    SAFE { $$ = 1; } | 
+    FAST { $$ = 0; };
+
+op_comma_or_semicolon: 
+    OP_COMMA { $$ = 0; } | 
+    OP_SEMICOLON { $$ = 1; };
+
 milliseconds_optional:
     |
     milliseconds
     ;
+
+system_optional: 
+    { $$ = 0; } | 
+    SYSTEM { $$ = 1; };
+
+static_optional:
+    |
+    STATIC;
 
 loop_optional:
     { $$ = 0; } | 
@@ -6554,53 +6592,28 @@ music_type:
     SJ2 { $$ = MUSIC_TYPE_SJ2; };
 
 music_definition_expression:
-    expr music_type loop_optional {
-        music_var( _environment, $1, $3, $2 );
-    }
-    | LOOP expr music_type {
-        music_var( _environment, $2, 1, $3 );
-    }
-    | PAUSE {
-        music_pause( _environment );
-    }
-    | RESUME {
-        music_resume( _environment );
-    }
-    | STOP {
-        music_stop( _environment );
-    }
-    | SEEK expr {
-        music_seek_var( _environment, $2 );
-    }
-    ;
+    expr music_type loop_optional { music_var( _environment, $1, $3, $2 ); } | 
+    LOOP expr music_type { music_var( _environment, $2, 1, $3 ); } | 
+    PAUSE { music_pause( _environment ); } | 
+    RESUME { music_resume( _environment ); } | 
+    SEEK expr { music_seek_var( _environment, $2 ); } |
+    STOP { music_stop( _environment ); };
 
 music_definition:
-    music_definition_expression
-    ;
+    music_definition_expression;
+
+/*-----------------------------------------------------------------------------
+ ------------ PLAY DEFINITION
+ ----------------------------------------------------------------------------*/
 
 play_definition_simple: 
-    OP_HASH const_expr {
-        play( _environment, $2, 0, 0xffff );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        play( _environment, $2, $5, 0xffff );
-    }
-    | OP_HASH const_expr ON OP_HASH const_expr {
-        play( _environment, $2, 0, $5 );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
-        play( _environment, $2, $5, $8 );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        play( _environment, $5, $8, $2 );
-    }
-    | OFF  {
-        play_off( _environment, 0xffff );
-    }
-    | OFF ON OP_HASH const_expr {
-        play_off( _environment, $4 );
-    }
-    ;
+    OFF { play_off( _environment, 0xffff ); } | 
+    OFF ON OP_HASH const_expr { play_off( _environment, $4 ); } |
+    OP_HASH const_expr { play( _environment, $2, 0, 0xffff ); } | 
+    OP_HASH const_expr ON OP_HASH const_expr { play( _environment, $2, 0, $5 ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr { play( _environment, $2, $5, 0xffff ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr { play( _environment, $2, $5, $8 ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr { play( _environment, $5, $8, $2 ); };
 
 play_definition_expression: 
     expr {
@@ -6610,327 +6623,162 @@ play_definition_expression:
         } else {
             play_vars( _environment, $1, NULL, NULL );
         }
-    }
-    | expr OP_COMMA expr {
-        play_vars( _environment, $1, $3, NULL );
-    }
-    | expr OP_COMMA expr ON expr {
-        play_vars( _environment, $1, $3, $5 );
-    }
-    | expr OP_COMMA expr OP_COMMA expr {
-        play_vars( _environment, $3, $5, $1 );
-    }
-    | expr ON expr {
-        play_vars( _environment, $1, NULL, $3 );
-    }
-    | OFF ON expr {
-        play_off_var( _environment, $3 );
-    }
-    ;
+    } | 
+    expr OP_COMMA expr { play_vars( _environment, $1, $3, NULL ); } | 
+    expr OP_COMMA expr ON expr { play_vars( _environment, $1, $3, $5 ); } | 
+    expr OP_COMMA expr OP_COMMA expr { play_vars( _environment, $3, $5, $1 ); } | 
+    expr ON expr { play_vars( _environment, $1, NULL, $3 ); } | 
+    OFF ON expr { play_off_var( _environment, $3 ); };
 
 play_definition: 
-    play_definition_simple
-    | play_definition_expression
-    ;
+    play_definition_expression |
+    play_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ VOLUME DEFINITION
+ ----------------------------------------------------------------------------*/
 
 volume_definition_simple: 
-    OP_HASH const_expr {
-        volume( _environment, $2, 0xffff );
-    }
-    | OP_HASH const_expr ON OP_HASH const_expr {
-        volume( _environment, $2, $5 );
-    }
-    | OFF  {
-        volume_off( _environment, 0xffff );
-    }
-    | OFF ON OP_HASH const_expr {
-        volume_off( _environment, $4 );
-    }
-    ;
+    OFF { volume_off( _environment, 0xffff ); } | 
+    OFF ON OP_HASH const_expr { volume_off( _environment, $4 ); } |
+    OP_HASH const_expr { volume( _environment, $2, 0xffff ); } | 
+    OP_HASH const_expr ON OP_HASH const_expr { volume( _environment, $2, $5 ); };
 
 volume_definition_expression: 
-    expr {
-        volume_vars( _environment, $1, NULL );
-    }
-    | expr ON expr {
-        volume_vars( _environment, $1, $3 );
-    }
-    | OFF ON expr {
-        volume_off_var( _environment, $3 );
-    }
-    ;
+    expr { volume_vars( _environment, $1, NULL ); } | 
+    expr ON expr { volume_vars( _environment, $1, $3 ); } | 
+    OFF ON expr { volume_off_var( _environment, $3 ); };
 
 volume_definition: 
-    volume_definition_simple
-    | volume_definition_expression
-    ;
+    volume_definition_expression |
+    volume_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ BELL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 bell_definition_simple: 
-    {
-        bell( _environment, 400, 1500, 0xffff );
-    } 
-    | OP_HASH const_expr {
-        bell( _environment, $2, 1500, 0xffff );
-    }
-    | OP_HASH const_expr ON OP_HASH const_expr {
-        bell( _environment, $2, 1500, $5 );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr {
-        bell( _environment, $2, $5, 0xffff );
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr {
-        bell( _environment, $2, $5, $8 );
-    }
-    ;
+    { bell( _environment, 400, 1500, 0xffff ); }  | 
+    OP_HASH const_expr { bell( _environment, $2, 1500, 0xffff ); } | 
+    OP_HASH const_expr ON OP_HASH const_expr { bell( _environment, $2, 1500, $5 ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr { bell( _environment, $2, $5, 0xffff ); } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr ON OP_HASH const_expr { bell( _environment, $2, $5, $8 ); };
 
 bell_definition_expression: 
-    expr {
-        bell_vars( _environment, $1, NULL, NULL, 0 );
-    }
-    | expr ON expr {
-        bell_vars( _environment, $1, NULL, $3, 0 );
-    }
-    | expr OP_COMMA expr {
-        bell_vars( _environment, $1, $3, NULL, 0 );
-    }
-    | expr OP_COMMA expr ON expr {
-        bell_vars( _environment, $1, $3, $5, 0 );
-    }
-    ;
+    expr { bell_vars( _environment, $1, NULL, NULL, 0 ); } | 
+    expr ON expr { bell_vars( _environment, $1, NULL, $3, 0 ); } | 
+    expr OP_COMMA expr { bell_vars( _environment, $1, $3, NULL, 0 ); } | 
+    expr OP_COMMA expr ON expr { bell_vars( _environment, $1, $3, $5, 0 ); };
 
 bell_definition: 
-    bell_definition_simple
-    | bell_definition_expression
-    ;
+    bell_definition_expression |
+    bell_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ BOOM DEFINITION
+ ----------------------------------------------------------------------------*/
 
 boom_definition_simple: 
-    {
-        boom( _environment, 1500, 0xffff );
-    }
-    | OP_HASH const_expr {
-        boom( _environment, $2, 0xffff );
-    }
-    | OP_HASH const_expr milliseconds {
-        boom( _environment, $2, 0xffff );
-    }
-    | ON OP_HASH const_expr {
-        boom( _environment, 1500, $3 );
-    }
-    | OP_HASH const_expr OP_COMMA ON OP_HASH const_expr {
-        boom( _environment, $2, $6 );
-    }
-    | OP_HASH milliseconds const_expr OP_COMMA ON OP_HASH const_expr {
-        boom( _environment, $3, $7 );
-    }
-    ;
+    { boom( _environment, 1500, 0xffff ); } | 
+    ON OP_HASH const_expr { boom( _environment, 1500, $3 ); } | 
+    OP_HASH const_expr { boom( _environment, $2, 0xffff ); } | 
+    OP_HASH const_expr milliseconds { boom( _environment, $2, 0xffff ); } | 
+    OP_HASH const_expr OP_COMMA ON OP_HASH const_expr { boom( _environment, $2, $6 ); } | 
+    OP_HASH milliseconds const_expr OP_COMMA ON OP_HASH const_expr { boom( _environment, $3, $7 ); };
 
 boom_definition_expression: 
-    expr {
-        boom_var( _environment, $1, NULL );
-    }
-    | expr milliseconds {
-        boom_var( _environment, $1, NULL );
-    }
-    | ON expr {
-        boom_var( _environment, NULL, $2 );
-    }
-    | expr ON expr {
-        boom_var( _environment, $1, $3 );
-    }
-    | expr milliseconds ON expr {
-        boom_var( _environment, $1, $4 );
-    }
-    ;
+    expr { boom_var( _environment, $1, NULL ); } | 
+    expr milliseconds { boom_var( _environment, $1, NULL ); } | 
+    expr milliseconds ON expr { boom_var( _environment, $1, $4 ); } |
+    expr ON expr { boom_var( _environment, $1, $3 ); } | 
+    ON expr { boom_var( _environment, NULL, $2 ); };
 
 boom_definition: 
-    boom_definition_simple
-    | boom_definition_expression
-    ;
+    boom_definition_expression |
+    boom_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ SHOOT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 shoot_definition_simple: 
-    {
-        shoot( _environment, 0xffff );
-    }
-    | OP_HASH const_expr {
-        shoot( _environment, $2 );
-    }
-    ;
+    { shoot( _environment, 0xffff ); } | 
+    OP_HASH const_expr { shoot( _environment, $2 ); };
 
 shoot_definition: 
     shoot_definition_simple
     ;
 
+/*-----------------------------------------------------------------------------
+ ------------ LOCATE DEFINITION
+ ----------------------------------------------------------------------------*/
+
 locate_definition: 
-     OP_COMMA expr {
-        locate( _environment, NULL, $2 );
-    }
-    | expr OP_COMMA {
-        locate( _environment, $1, NULL );
-    } 
-    | expr OP_COMMA expr {
-        locate( _environment, $1, $3 );
-    }
-    ;
+    OP_COMMA expr { locate( _environment, NULL, $2 ); } | 
+    expr OP_COMMA { locate( _environment, $1, NULL ); }  | 
+    expr OP_COMMA expr { locate( _environment, $1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ GR LOCATE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 gr_locate_definition: 
-    optional_x OP_COMMA optional_y {
-        gr_locate( _environment, $1, $3 );
-    }
-    ;
+    optional_x OP_COMMA optional_y { gr_locate( _environment, $1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ CMOVE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 cmove_definition: 
-     OP_COMMA expr {
-        cmove( _environment, NULL, $2 );
-    }
-    | expr OP_COMMA {
-        cmove( _environment, $1, NULL );
-    } 
-    | expr OP_COMMA expr {
-        cmove( _environment, $1, $3 );
-    }
-    ;
+    OP_COMMA expr { cmove( _environment, NULL, $2 ); } | 
+    expr OP_COMMA { cmove( _environment, $1, NULL ); }  | 
+    expr OP_COMMA expr { cmove( _environment, $1, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ HSCROLL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 hscroll_definition: 
-    LEFT {
-        text_hscroll_line( _environment, -1, 0 );
-    }
-    | SCREEN LEFT {
-        text_hscroll_screen( _environment, -1, 0 );
-    }
-    | RIGHT {
-        text_hscroll_line( _environment, 1, 0 );
-    }
-    | SCREEN RIGHT {
-        text_hscroll_screen( _environment, 1, 0 );
-    }
-    ;
+    LEFT { text_hscroll_line( _environment, -1, 0 ); } | 
+    SCREEN LEFT { text_hscroll_screen( _environment, -1, 0 ); } | 
+    RIGHT { text_hscroll_line( _environment, 1, 0 ); } | 
+    SCREEN RIGHT { text_hscroll_screen( _environment, 1, 0 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ VSCROLL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 vscroll_definition: 
-      SCREEN UP {
-        text_vscroll_screen( _environment, -1, 0 );
-    }
-    | SCREEN DOWN {
-        text_vscroll_screen( _environment, 1, 0 );
-    }
-    ;
+    SCREEN UP { text_vscroll_screen( _environment, -1, 0 ); } | 
+    SCREEN DOWN { text_vscroll_screen( _environment, 1, 0 ); };
     
+/*-----------------------------------------------------------------------------
+ ------------ INPUT DEFINITION
+ ----------------------------------------------------------------------------*/
+
 input_definition2:
-      Identifier as_datatype_suffix_optional {
+    Identifier as_datatype_suffix_optional {
         VariableType vt = $2;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
         }
         input( _environment, $1, vt );
         print_newline( _environment );
-      }
-    | Identifier as_datatype_suffix_optional OP_SEMICOLON {
+      } | 
+    Identifier as_datatype_suffix_optional OP_SEMICOLON {
         VariableType vt = $2;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
         }
         input( _environment, $1, vt );
-      }
-    | Identifier as_datatype_suffix_optional {
+      } | 
+    Identifier as_datatype_suffix_optional {
         VariableType vt = $2;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
         }
         input( _environment, $1, vt );
-      } OP_COMMA input_definition2
-    ;
-
-op_comma_or_semicolon: 
-    OP_COMMA {
-        $$ = 0;
-    }
-    | OP_SEMICOLON {
-        $$ = 1;
-    };
-
-read_safeness:
-    SAFE {
-        $$ = 1;
-    }
-    | FAST {
-        $$ = 0;
-    }
-    | {
-        $$ = ((struct _Environment *)_environment)->optionReadSafe;
-    };
-
-read_definition_single:
-     read_safeness Identifier as_datatype_suffix_optional {
-        if ( $3 ) {
-            if ( !variable_exists( _environment, $2 ) ) {
-                variable_define( _environment, $2, $3, 0 );
-            }
-        }
-        read_data( _environment, $2, $1 );
-    }
-    | read_safeness Identifier {
-        parser_array_init( _environment );
-        if ( variable_exists( _environment, $2 ) ) {
-            Variable * v = variable_retrieve( _environment, $2 );
-            if ( v->arrayType == VT_TYPE ) {
-                ((struct _Environment *)_environment)->currentType = v->typeType;
-            } else {
-                ((struct _Environment *)_environment)->currentType = NULL;
-            }
-        }
-    } OP indexes CP field_optional {
-        if ( !((struct _Environment *)_environment)->currentType ) {
-            define_implicit_array_if_needed( _environment, $2 );
-        }
-        Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        Variable * read;
-        if ( ! ((struct _Environment *)_environment)->currentType ) {
-            read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
-        } else {
-            if ( ! a->typeType ) {
-                CRITICAL_VARIABLE_TYPE_NEEDED( $2 );
-            }
-            ((struct _Environment *)_environment)->currentField = field_find( a->typeType, $7 );
-            if ( ! ((struct _Environment *)_environment)->currentField ) {
-                CRITICAL_UNKNOWN_FIELD_ON_TYPE( $7 );
-            }
-            read = variable_temporary( _environment, ((struct _Environment *)_environment)->currentField->type, "(temp for array)" );
-        }
-        read_data( _environment, read->name, $1 );
-        if ( ! ((struct _Environment *)_environment)->currentType ) {
-            if ( a->arrayType == VT_DSTRING ) {
-                variable_move_array_string( _environment, $2, read->name );
-            } else {
-                variable_move_array( _environment, $2, read->name );
-            }
-        } else {
-            variable_move_array_type( _environment, $2, ((struct _Environment *)_environment)->currentField->name, read->name );
-        }
-        parser_array_cleanup( _environment );
-    }
-    | read_safeness Identifier OP_DOLLAR {
-        parser_array_init( _environment );
-    } OP indexes CP {
-        define_implicit_array_if_needed( _environment, $2 );
-        Variable * a = variable_retrieve( _environment, $2 );
-        if ( a->type != VT_TARRAY ) {
-            CRITICAL_NOT_ARRAY( $2 );
-        }
-        if ( a->arrayType != VT_DSTRING ) {
-            CRITICAL_DATATYPE_MISMATCH( a->name, $2 );
-        }
-        Variable * read = variable_temporary( _environment, VT_DSTRING, "(temp for array)" );
-        read_data( _environment, read->name, $1 );
-        variable_move_array_string( _environment, $2, read->name );
-        parser_array_cleanup( _environment );
-    }
-    ;
-
-read_definition:
-    read_definition_single
-    | read_definition_single OP_COMMA read_definition;
+      } OP_COMMA input_definition2;
 
 input_definition:
     String op_comma_or_semicolon Identifier as_datatype_suffix_optional {
@@ -6949,8 +6797,8 @@ input_definition:
         Variable * var = variable_retrieve_or_define( _environment, $3, vt, 0 );
         input( _environment, var->name, VT_DSTRING );
         print_newline( _environment );
-    }
-    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+    } | 
+    String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -6964,8 +6812,8 @@ input_definition:
             print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
-    }
-    | String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
+    } | 
+    String op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -6979,9 +6827,9 @@ input_definition:
             print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
-    }  input_definition2
-    | input_definition2
-    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional {
+    }  input_definition2 | 
+    input_definition2 | 
+    RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional {
         VariableType vt = ((struct _Environment *)_environment)->defaultVariableType;
         Variable * string = variable_temporary( _environment, VT_STRING, "(string value)" );
         variable_store_string( _environment, string->name, $1 );
@@ -6994,8 +6842,8 @@ input_definition:
         }
         input( _environment, $3, vt );
         print_newline( _environment );
-    }
-    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
+    } | 
+    RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_SEMICOLON {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -7010,8 +6858,8 @@ input_definition:
             print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
-    }
-    | RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
+    } | 
+    RawString op_comma_or_semicolon Identifier as_datatype_suffix_optional OP_COMMA {
         VariableType vt = $4;
         if ( vt == 0 ) {
             vt = ((struct _Environment *)_environment)->defaultVariableType;
@@ -7026,24 +6874,109 @@ input_definition:
             print( _environment, qm->name, 0, ((struct _Environment *)_environment)->printRaw );
         }
         input( _environment, $3, vt );
-    }  input_definition2
-  ;
+    } input_definition2;\
+
+/*-----------------------------------------------------------------------------
+ ------------ READ DEFINITION
+ ----------------------------------------------------------------------------*/
+
+read_definition_single:
+     safe_fast_optional Identifier as_datatype_suffix_optional {
+        if ( $3 ) {
+            if ( !variable_exists( _environment, $2 ) ) {
+                variable_define( _environment, $2, $3, 0 );
+            }
+        }
+        read_data( _environment, $2, $1 );
+    } | 
+    safe_fast_optional Identifier {
+            parser_array_init( _environment );
+            if ( variable_exists( _environment, $2 ) ) {
+                Variable * v = variable_retrieve( _environment, $2 );
+                if ( v->arrayType == VT_TYPE ) {
+                    ((struct _Environment *)_environment)->currentType = v->typeType;
+                } else {
+                    ((struct _Environment *)_environment)->currentType = NULL;
+                }
+            }
+        } OP indexes CP field_optional {
+            if ( !((struct _Environment *)_environment)->currentType ) {
+                define_implicit_array_if_needed( _environment, $2 );
+            }
+            Variable * a = variable_retrieve( _environment, $2 );
+            if ( a->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $2 );
+            }
+            Variable * read;
+            if ( ! ((struct _Environment *)_environment)->currentType ) {
+                read = variable_temporary( _environment, a->arrayType, "(temp for array)" );
+            } else {
+                if ( ! a->typeType ) {
+                    CRITICAL_VARIABLE_TYPE_NEEDED( $2 );
+                }
+                ((struct _Environment *)_environment)->currentField = field_find( a->typeType, $7 );
+                if ( ! ((struct _Environment *)_environment)->currentField ) {
+                    CRITICAL_UNKNOWN_FIELD_ON_TYPE( $7 );
+                }
+                read = variable_temporary( _environment, ((struct _Environment *)_environment)->currentField->type, "(temp for array)" );
+            }
+            read_data( _environment, read->name, $1 );
+            if ( ! ((struct _Environment *)_environment)->currentType ) {
+                if ( a->arrayType == VT_DSTRING ) {
+                    variable_move_array_string( _environment, $2, read->name );
+                } else {
+                    variable_move_array( _environment, $2, read->name );
+                }
+            } else {
+                variable_move_array_type( _environment, $2, ((struct _Environment *)_environment)->currentField->name, read->name );
+            }
+            parser_array_cleanup( _environment );
+        } | 
+    safe_fast_optional Identifier OP_DOLLAR {
+            parser_array_init( _environment );
+        } OP indexes CP {
+            define_implicit_array_if_needed( _environment, $2 );
+            Variable * a = variable_retrieve( _environment, $2 );
+            if ( a->type != VT_TARRAY ) {
+                CRITICAL_NOT_ARRAY( $2 );
+            }
+            if ( a->arrayType != VT_DSTRING ) {
+                CRITICAL_DATATYPE_MISMATCH( a->name, $2 );
+            }
+            Variable * read = variable_temporary( _environment, VT_DSTRING, "(temp for array)" );
+            read_data( _environment, read->name, $1 );
+            variable_move_array_string( _environment, $2, read->name );
+            parser_array_cleanup( _environment );
+        };
+
+read_definition:
+    read_definition_single | 
+    read_definition_single OP_COMMA read_definition;
+
+/*-----------------------------------------------------------------------------
+ ------------ POKE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 poke_definition: 
     expr OP_COMMA expr {
-      if ( ((struct _Environment *)_environment)->insideCopperList ) {
-        Variable * address = variable_retrieve( _environment, $1 );
-        if ( !address->initializedByConstant ) {
-            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+        if ( ((struct _Environment *)_environment)->insideCopperList ) {
+            Variable * address = variable_retrieve( _environment, $1 );
+            if ( !address->initializedByConstant ) {
+                CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $1 );
+            }
+            Variable * value = variable_retrieve( _environment, $3 );
+            if ( !value->initializedByConstant ) {
+                CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
+            }
+            copper_store( _environment, address->value, value->value, VT_BYTE );
+        } else {
+            poke_var( _environment, $1, $3 );
         }
-        Variable * value = variable_retrieve( _environment, $3 );
-        if ( !value->initializedByConstant ) {
-            CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
-        }
-        copper_store( _environment, address->value, value->value, VT_BYTE );
-      }
-      poke_var( _environment, $1, $3 );
     };
+
+/*-----------------------------------------------------------------------------
+ ------------ POKEW DEFINITION
+ ----------------------------------------------------------------------------*/
 
 pokew_definition: 
     expr OP_COMMA expr {
@@ -7057,9 +6990,14 @@ pokew_definition:
             CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
         }
         copper_store( _environment, address->value, value->value, VT_WORD );
+      } else {
+        pokew_var( _environment, $1, $3 );
       }
-      pokew_var( _environment, $1, $3 );
     };
+
+/*-----------------------------------------------------------------------------
+ ------------ POKED DEFINITION
+ ----------------------------------------------------------------------------*/
 
 poked_definition: 
     expr OP_COMMA expr {
@@ -7073,287 +7011,104 @@ poked_definition:
             CRITICAL_STORE_WITH_NOT_CONST_NOT_ALLOWED( $3 );
         }
         copper_store( _environment, address->value, value->value, VT_DWORD );
+      } else {
+        poked_var( _environment, $1, $3 );
       }
-      poked_var( _environment, $1, $3 );
     };
 
-font_schema: 
-    ALPHA {
-        $$ = FONT_SCHEMA_ALPHA;
-    }
-    | EMBEDDED {
-        $$ = FONT_SCHEMA_EMBEDDED;
-    }
-    | STANDARD {
-        $$ = FONT_SCHEMA_STANDARD;
-    }
-    | SEMIGRAPHIC {
-        $$ = FONT_SCHEMA_SEMIGRAPHIC;
-    } 
-    | COMPLETE {
-        $$ = FONT_SCHEMA_COMPLETE;
-    } 
-    ;
-
-precision: 
-    FAST {
-        $$ = FT_FAST;
-    }
-    | SINGLE {
-        $$ = FT_SINGLE;
-    }
-    ;
-
-audio_source:
-    SN76489 {
-        $$ = ADN_SN76489;
-    }
-    | POKEY {
-        $$ = ADN_POKEY;
-    }
-    | SID {
-        $$ = ADN_SID;
-    }
-    | DAC1 {
-        $$ = ADN_DAC1;
-    }
-    | AY8910 {
-        $$ = ADN_AY8910;
-    }
-    | TED {
-        $$ = ADN_TED;
-    }
-    | VIC {
-        $$ = ADN_VIC1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ DEFINE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 define_definition:
-    HORIZONTAL SCROLL ON {
-        ((struct _Environment *)_environment)->horizontalScrollOff = 0;
-    }
-    | HORIZONTAL SCROLL OFF {
-        ((struct _Environment *)_environment)->horizontalScrollOff = 1;
-    }
-    | STACK const_expr {
-        ((struct _Environment *)_environment)->stackSize = $2;
-    }
-    | STACK SIZE const_expr {
-        ((struct _Environment *)_environment)->stackSize = $3;
-    }
-    | STACK START const_expr {
-        ((struct _Environment *)_environment)->stackStartAddress = $3;
-    }
-    | CHAIN {
-        ((struct _Environment *)_environment)->chainUsed = 1;
-    }
-    | SET LINE {
-        ((struct _Environment *)_environment)->lineNeeded = 1;
-    }
-    | CLIP option_clip {
-        ((struct _Environment *)_environment)->optionClip = $2;
-    }
-    | PUT IMAGE FAST {
-        ((struct _Environment *)_environment)->putImageSafe = 0;
-    }
-    | PUT IMAGE SAFE {
-        ((struct _Environment *)_environment)->putImageSafe = 1;
-    }
-    | GET IMAGE FAST {
-        ((struct _Environment *)_environment)->getImageSafe = 0;
-    }
-    | GET IMAGE SAFE {
-        ((struct _Environment *)_environment)->getImageSafe = 1;
-    }
-    | PRINT RAW {
-        ((struct _Environment *)_environment)->printRaw = 1;
-    }
-    | PRINT NORMAL {
-        ((struct _Environment *)_environment)->printRaw = 0;
-    }
-    | GPRINT INLINE {
-        ((struct _Environment *)_environment)->gprintInline = 1;
-    }
-    | GPRINT EMBEDDED {
-        ((struct _Environment *)_environment)->gprintInline = 0;
-    }
-    | PRINT FAST {
-        ((struct _Environment *)_environment)->printSafe = 0;
-    }
-    | PRINT SAFE {
-        ((struct _Environment *)_environment)->printSafe = 1;
-    }
-    | IMAGEREF FAST {
-        ((struct _Environment *)_environment)->putImageRefUnsafe = 1;
-    }
-    | IMAGEREF SAFE {
-        ((struct _Environment *)_environment)->putImageRefUnsafe = 0;
-    }
-    | TRANSPARENCY COARSE  {
+    HORIZONTAL SCROLL ON { ((struct _Environment *)_environment)->horizontalScrollOff = 0; } | 
+    HORIZONTAL SCROLL OFF { ((struct _Environment *)_environment)->horizontalScrollOff = 1; } | 
+    STACK const_expr { ((struct _Environment *)_environment)->stackSize = $2; } | 
+    STACK SIZE const_expr { ((struct _Environment *)_environment)->stackSize = $3; } | 
+    STACK START const_expr { ((struct _Environment *)_environment)->stackStartAddress = $3; } | 
+    CHAIN { ((struct _Environment *)_environment)->chainUsed = 1; } | 
+    SET LINE { ((struct _Environment *)_environment)->lineNeeded = 1; } | 
+    CLIP option_clip { ((struct _Environment *)_environment)->optionClip = $2; } | 
+    PUT IMAGE FAST { ((struct _Environment *)_environment)->putImageSafe = 0; } | 
+    PUT IMAGE SAFE { ((struct _Environment *)_environment)->putImageSafe = 1; } | 
+    GET IMAGE FAST { ((struct _Environment *)_environment)->getImageSafe = 0; } | 
+    GET IMAGE SAFE { ((struct _Environment *)_environment)->getImageSafe = 1; } | 
+    PRINT RAW { ((struct _Environment *)_environment)->printRaw = 1; } | 
+    PRINT NORMAL { ((struct _Environment *)_environment)->printRaw = 0; } | 
+    GPRINT INLINE { ((struct _Environment *)_environment)->gprintInline = 1; } | 
+    GPRINT EMBEDDED { ((struct _Environment *)_environment)->gprintInline = 0; } | 
+    PRINT FAST { ((struct _Environment *)_environment)->printSafe = 0; } | 
+    PRINT SAFE { ((struct _Environment *)_environment)->printSafe = 1; } | 
+    IMAGEREF FAST { ((struct _Environment *)_environment)->putImageRefUnsafe = 1; } | 
+    IMAGEREF SAFE { ((struct _Environment *)_environment)->putImageRefUnsafe = 0; } | 
+    TRANSPARENCY COARSE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 1;        
         ((struct _Environment *)_environment)->transparencyUsed = 1;
-    }
-    | TRANSPARENCY PRECISE  {
+    } | 
+    TRANSPARENCY PRECISE  {
         ((struct _Environment *)_environment)->transparencyCoarse = 0;        
         ((struct _Environment *)_environment)->transparencyUsed = 1;
-    }
-    | DOJO FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;        
-    }
-    | DOJO VIRTUALIZED FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnVirtualizedFujiNet = 1;        
-    }
-    | DOJO ON FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 1;
-    }
-    | DOJO ON VIRTUALIZED FUJINET  {
-        ((struct _Environment *)_environment)->dojoOnVirtualizedFujiNet = 1;
-    }
-    | DOJO SERIAL {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
-    }
-    | DOJO ON SERIAL {
-        ((struct _Environment *)_environment)->dojoOnFujiNet = 0;
-    }
-    | FUJINET HDBDOS  {
-        fujinet_define( _environment, FN_HDBDOS );
-    }
-    | FUJINET BECKER {
-        fujinet_define( _environment, FN_BECKER );
-    }
-    | FUJINET BECKER PORT {
-        fujinet_define( _environment, FN_BECKER );
-    }
-    | FUJINET SERIAL {
-        fujinet_define( _environment, FN_SERIAL );
-    }
-    | FUJINET SIO {
-        fujinet_define( _environment, FN_SIO );
-    }
-    | FUJINET ON SIO {
-        fujinet_define( _environment, FN_SIO );
-    }
-    | SERIAL HDBDOS  {
-        fujinet_define( _environment, FN_HDBDOS );
-    }
-    | SERIAL BECKER {
-        fujinet_define( _environment, FN_BECKER );
-    }
-    | SERIAL BECKER PORT {
-        fujinet_define( _environment, FN_BECKER );
-    }
-    | SID RELOC const_expr {
-        ((struct _Environment *)_environment)->sidRelocAddress = $3;
-    }
-    | IMAGE FREE HEIGHT {
-        ((struct _Environment *)_environment)->freeImageHeight = 1;
-    }
-    | IMAGE FREE WIDTH {
-        ((struct _Environment *)_environment)->freeImageWidth = 1;
-    }
-    | COLOR IMPLICIT {
-        ((struct _Environment *)_environment)->colorImplicit = 1;
-    }
-    | COLOR EXPLICIT {
-        ((struct _Environment *)_environment)->colorImplicit = 0;
-    }
-    | COMPRESSION RLE ON {
-        ((struct _Environment *)_environment)->enableRle = 1;
-    }
-    | COMPRESSION RLE OFF {
-        ((struct _Environment *)_environment)->enableRle = 0;
-    }
-    | RESIDENT DETECTION ON {
-        ((struct _Environment *)_environment)->residentDetectionEnabled = 1;
-    }
-    | RESIDENT DETECTION OFF {
-        ((struct _Environment *)_environment)->residentDetectionEnabled = 0;
-    }
-    | CENTER WITH NEWLINE {
-        ((struct _Environment *)_environment)->centerWithoutNewLine = 0;
-    }
-    | CENTER WITHOUT NEWLINE {
-        ((struct _Environment *)_environment)->centerWithoutNewLine = 1;
-    }
-    | CLS IMPLICIT {
-        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
-    }
-    | CLS EXPLICIT {
-        ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0;
-    }
-    | CLS FAST {
-        ((struct _Environment *)_environment)->clsSlow = 0;
-    }
-    | CLS SLOW {
-        ((struct _Environment *)_environment)->clsSlow = 1;
-    }
-    | JOYSTICK SYNC {
-        ((struct _Environment *)_environment)->joystickConfig.sync = 1;
-    }
-    | JOYSTICK ASYNC {
-        ((struct _Environment *)_environment)->joystickConfig.sync = 0;
-    }
-    | KEYBOARD SYNC {
-        ((struct _Environment *)_environment)->keyboardConfig.sync = 1;
-    }
-    | KEYBOARD ASYNC {
-        ((struct _Environment *)_environment)->keyboardConfig.sync = 0;
-    }
-    | AUDIO SYNC {
-        ((struct _Environment *)_environment)->audioConfig.async = 0;
-    }
-    | AUDIO ASYNC {
-        ((struct _Environment *)_environment)->audioConfig.async = 1;
-    }
-    | MSPRITE SYNC {
-        ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 0;
-    }
-    | MSPRITE ASYNC {
-        ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1;
-    }
-    | LOAD BANKED ON {
-        ((struct _Environment *)_environment)->bankedLoadDefault = 1;
-    }
-    | LOAD BANKED OFF {
-        ((struct _Environment *)_environment)->bankedLoadDefault = 0;
-    }
-    | KEY PRESSED SYNC {
-        ((Environment *)_environment)->keyPressDutyCycle = 1;
-    }
-    | KEY PRESSED ASYNC {
-        ((Environment *)_environment)->keyPressDutyCycle = 0;
-    }
-    | KEY PRESS SYNC {
-        ((Environment *)_environment)->keyPressDutyCycle = 1;
-    }
-    | KEY PRESS ASYNC {
-        ((Environment *)_environment)->keyPressDutyCycle = 0;
-    }
-    | AUDIO TARGET audio_source {
+    } | 
+    DOJO FUJINET  { ((struct _Environment *)_environment)->dojoOnFujiNet = 1; } | 
+    DOJO VIRTUALIZED FUJINET  { ((struct _Environment *)_environment)->dojoOnVirtualizedFujiNet = 1; } | 
+    DOJO ON FUJINET  { ((struct _Environment *)_environment)->dojoOnFujiNet = 1; } | 
+    DOJO ON VIRTUALIZED FUJINET  { ((struct _Environment *)_environment)->dojoOnVirtualizedFujiNet = 1; } |
+    DOJO SERIAL { ((struct _Environment *)_environment)->dojoOnFujiNet = 0; } | 
+    DOJO ON SERIAL { ((struct _Environment *)_environment)->dojoOnFujiNet = 0; } | 
+    FUJINET HDBDOS  { fujinet_define( _environment, FN_HDBDOS ); } | 
+    FUJINET BECKER { fujinet_define( _environment, FN_BECKER ); } | 
+    FUJINET BECKER PORT { fujinet_define( _environment, FN_BECKER ); } | 
+    FUJINET SERIAL { fujinet_define( _environment, FN_SERIAL ); } | 
+    FUJINET SIO { fujinet_define( _environment, FN_SIO ); } | 
+    FUJINET ON SIO { fujinet_define( _environment, FN_SIO ); } | 
+    SERIAL HDBDOS  { fujinet_define( _environment, FN_HDBDOS ); } | 
+    SERIAL BECKER { fujinet_define( _environment, FN_BECKER ); } | 
+    SERIAL BECKER PORT { fujinet_define( _environment, FN_BECKER ); } | 
+    SID RELOC const_expr { ((struct _Environment *)_environment)->sidRelocAddress = $3; } | 
+    IMAGE FREE HEIGHT { ((struct _Environment *)_environment)->freeImageHeight = 1; } | 
+    IMAGE FREE WIDTH { ((struct _Environment *)_environment)->freeImageWidth = 1; } | 
+    COLOR IMPLICIT { ((struct _Environment *)_environment)->colorImplicit = 1; } | 
+    COLOR EXPLICIT { ((struct _Environment *)_environment)->colorImplicit = 0; } | 
+    COMPRESSION RLE ON { ((struct _Environment *)_environment)->enableRle = 1; } | 
+    COMPRESSION RLE OFF { ((struct _Environment *)_environment)->enableRle = 0; } | 
+    RESIDENT DETECTION ON { ((struct _Environment *)_environment)->residentDetectionEnabled = 1; } | 
+    RESIDENT DETECTION OFF { ((struct _Environment *)_environment)->residentDetectionEnabled = 0; } | 
+    CENTER WITH NEWLINE { ((struct _Environment *)_environment)->centerWithoutNewLine = 0; } | 
+    CENTER WITHOUT NEWLINE { ((struct _Environment *)_environment)->centerWithoutNewLine = 1; } | 
+    CLS IMPLICIT { ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1; } |
+    CLS EXPLICIT { ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 0; } | 
+    CLS FAST { ((struct _Environment *)_environment)->clsSlow = 0; } | 
+    CLS SLOW { ((struct _Environment *)_environment)->clsSlow = 1; } | 
+    JOYSTICK SYNC { ((struct _Environment *)_environment)->joystickConfig.sync = 1; } | 
+    JOYSTICK ASYNC { ((struct _Environment *)_environment)->joystickConfig.sync = 0; } | 
+    KEYBOARD SYNC { ((struct _Environment *)_environment)->keyboardConfig.sync = 1; } | 
+    KEYBOARD ASYNC { ((struct _Environment *)_environment)->keyboardConfig.sync = 0; } | 
+    AUDIO SYNC { ((struct _Environment *)_environment)->audioConfig.async = 0; } | 
+    AUDIO ASYNC { ((struct _Environment *)_environment)->audioConfig.async = 1; } | 
+    MSPRITE SYNC { ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 0; } | 
+    MSPRITE ASYNC { ((struct _Environment *)_environment)->multiplexingSpriteConfig.async = 1; } | 
+    LOAD BANKED ON { ((struct _Environment *)_environment)->bankedLoadDefault = 1; } | 
+    LOAD BANKED OFF { ((struct _Environment *)_environment)->bankedLoadDefault = 0; } | 
+    KEY PRESSED SYNC { ((Environment *)_environment)->keyPressDutyCycle = 1; } | 
+    KEY PRESSED ASYNC { ((Environment *)_environment)->keyPressDutyCycle = 0; } | 
+    KEY PRESS SYNC { ((Environment *)_environment)->keyPressDutyCycle = 1; } | 
+    KEY PRESS ASYNC { ((Environment *)_environment)->keyPressDutyCycle = 0; } | 
+    AUDIO TARGET audio_source {
         if ( ! define_audio_target_check( _environment, $3 ) ) {
             CRITICAL_AUDIO_TARGET_UNAVAILABLE( );
         }
         ((struct _Environment *)_environment)->audioConfig.target = $3;
-    }
-    | FONT font_schema {
+    } | 
+    FONT font_schema {
         ((struct _Environment *)_environment)->fontConfig.schema = $2;
         font_descriptors_init( _environment, 0 );
-    }
-    | FONT OPTIMIZED {
-        ((struct _Environment *)_environment)->fontConfig.optimized = 1;
-    }
-    | JOYSTICK VALUES DEFAULT {
-        ((struct _Environment *)_environment)->joystickConfig.values = 0;
-    }
-    | JOYSTICK VALUES TSB {
-        ((struct _Environment *)_environment)->joystickConfig.values = 1;
-    }
-    | JOYSTICK EMULATION ON {
-        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 0;
-    }
-    | JOYSTICK EMULATION OFF {
-        ((struct _Environment *)_environment)->joystickConfig.notEmulated = 1;
-    }
-    | JOYSTICK RETRIES const_expr {
+    } | 
+    FONT OPTIMIZED { ((struct _Environment *)_environment)->fontConfig.optimized = 1; } | 
+    JOYSTICK VALUES DEFAULT { ((struct _Environment *)_environment)->joystickConfig.values = 0; } | 
+    JOYSTICK VALUES TSB { ((struct _Environment *)_environment)->joystickConfig.values = 1; } | 
+    JOYSTICK EMULATION ON { ((struct _Environment *)_environment)->joystickConfig.notEmulated = 0; } | 
+    JOYSTICK EMULATION OFF { ((struct _Environment *)_environment)->joystickConfig.notEmulated = 1; } | 
+    JOYSTICK RETRIES const_expr {
         if ( $3 < 0 ) {
             CRITICAL_INVALID_JOYSTICK_RETRIES( $3 );
         }
@@ -7361,8 +7116,8 @@ define_definition:
             CRITICAL_INVALID_JOYSTICK_RETRIES( $3 );
         }
         ((struct _Environment *)_environment)->joystickConfig.retries = $3;
-    }
-    | PROGRAM START const_expr {
+    } | 
+    PROGRAM START const_expr {
         if ( $3 < 0 ) {
             CRITICAL_INVALID_PROGRAM_START( $3 );
         }
@@ -7370,178 +7125,173 @@ define_definition:
             CRITICAL_INVALID_PROGRAM_START( $3 );
         }
         ((struct _Environment *)_environment)->program.startingAddress = $3;
-    }
-    | PROGRAM NAME const_expr_string {
+    } | 
+    PROGRAM NAME const_expr_string {
         ((struct _Environment *)_environment)->program.name = strdup( $3 );
-    }
-    | NUMBER BYTES const_expr {
+    } | 
+    NUMBER BYTES const_expr {
         if ( $3 <= 4 || ( $3 & 0x01 ) ) {
             CRITICAL_INVALID_NUMBER_BYTES( $3 );
         }
         ((struct _Environment *)_environment)->numberConfig.maxBytes = $3;
-    }
-    | NUMBER DIGITS const_expr {
+    } | 
+    NUMBER DIGITS const_expr {
         if ( $3 <= 10 || ( $3 & 0x01 ) ) {
             CRITICAL_INVALID_NUMBER_DIGITS( $3 );
         }
         ((struct _Environment *)_environment)->numberConfig.maxDigits = $3;
-    }
-    | STRING COUNT const_expr {
+    } | 
+    STRING COUNT const_expr {
         if ( $3 <= 0 || $3 > 255 ) {
             CRITICAL_INVALID_STRING_COUNT( $3 );
         }
         ((struct _Environment *)_environment)->dstring.count = $3;
-    }
-    | STRING SPACE const_expr {
+    } | 
+    STRING SPACE const_expr {
         if ( $3 <= 0 || $3 > 32767 ) {
             CRITICAL_INVALID_STRING_SPACE( $3 );
         }
         ((struct _Environment *)_environment)->dstring.space = $3;
-    }
-    | FLOAT PRECISION precision {
+    } | 
+    FLOAT PRECISION precision {
         ((struct _Environment *)_environment)->floatType.precision = $3;
-    }
-    | TASK COUNT const_expr {
+    } | 
+    TASK COUNT const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_TASK_COUNT( $3 );
         }
         ((struct _Environment *)_environment)->protothreadConfig.count = $3;
         variable_import( _environment, "PROTOTHREADCOUNT", VT_BYTE, $3 );
-    }
-    | DEFAULT TYPE datatype {
+    } | 
+    DEFAULT TYPE datatype {
         ((struct _Environment *)_environment)->defaultVariableType = $3;
-    }
-    | INPUT SIZE const_expr {
+    } | 
+    INPUT SIZE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_SIZE( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.size = $3;
-    }    
-    | INPUT SEPARATOR const_expr {
+    } | 
+    INPUT SEPARATOR const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_SEPARATOR( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.separator = $3;
-    }    
-    | INPUT CURSOR const_expr {
+    } | 
+    INPUT CURSOR const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_CURSOR( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.cursor = $3;
-    }    
-    | INPUT LATENCY const_expr  {
+    } | 
+    INPUT LATENCY const_expr  {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_LATENCY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.latency = $3;
-    }
-    | INPUT LATENCY const_expr milliseconds {
+    } | 
+    INPUT LATENCY const_expr milliseconds {
         int latency = $3 / 20;
         if ( latency <= 0 || latency >= 256 ) {
             CRITICAL_INVALID_INPUT_LATENCY_MS( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.latency = latency;
-    }
-    | INPUT RATE const_expr {
+    } | 
+    INPUT RATE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = 255 - $3;
-    }
-    | INPUT DELAY const_expr {
+    } | 
+    INPUT DELAY const_expr {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
-    }
-    | INPUT DELAY const_expr milliseconds {
+    } | 
+    INPUT DELAY const_expr milliseconds {
         int delay = $3 / 20;
         if ( delay <= 0 || delay >= 256 ) {
             CRITICAL_INVALID_INPUT_DELAY_MS( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
-    }
-    | INPUT RELEASE const_expr {
+    } | 
+    INPUT RELEASE const_expr {
         if ( $3 <= 0 || $3 >= 256 ) {
             CRITICAL_INVALID_INPUT_RELEASE( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.release = $3;
-    }
-    | INPUT RELEASE const_expr milliseconds {
+    } | 
+    INPUT RELEASE const_expr milliseconds {
         int release = $3 / 20;
         if ( release <= 0 || release >= 256 ) {
             CRITICAL_INVALID_INPUT_RELEASE_MS( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.release = release;
-    }
-    | SCREEN MODE UNIQUE OFF {
+    } | 
+    SCREEN MODE UNIQUE OFF {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 0;
-    }    
-    | SCREEN MODE UNIQUE {
+    } | 
+    SCREEN MODE UNIQUE {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
-    }    
-    | SCREEN MODE UNIQUE ON {
+    } | 
+    SCREEN MODE UNIQUE ON {
         ((struct _Environment *)_environment)->vestigialConfig.screenModeUnique = 1;
-    }    
-    | DOUBLE BUFFER ON {
+    } | 
+    DOUBLE BUFFER ON {
         ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
         ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 1;
-    }    
-    | DOUBLE BUFFER OFF {
+    } | 
+    DOUBLE BUFFER OFF {
         ((struct _Environment *)_environment)->vestigialConfig.doubleBufferSelected = 1;
         ((struct _Environment *)_environment)->vestigialConfig.doubleBuffer = 0;
-    }    
-    | PALETTE PRESERVE {
+    } | 
+    PALETTE PRESERVE {
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 1;
-    }    
-    | PALETTE NOT PRESERVE {
+    } | 
+    PALETTE NOT PRESERVE {
         ((struct _Environment *)_environment)->vestigialConfig.palettePreserve = 0;
-    }    
-    | ANIMATION animation_definition
-    | MOVEMENT movement_definition
-    | BLIT blit_definition_define_expression
-    | KEYBOARD RATE const_expr {
+    } | 
+    ANIMATION animation_definition | 
+    MOVEMENT movement_definition | 
+    BLIT blit_definition_define_expression | 
+    KEYBOARD RATE const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_RATE( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = 255 - $3;
-    }
-    | KEYBOARD DELAY const_expr {
+    } | 
+    KEYBOARD DELAY const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = $3;
-    }
-    | KEYBOARD DELAY const_expr milliseconds {
+    } | 
+    KEYBOARD DELAY const_expr milliseconds {
         int delay = $3 / 20;
         if ( delay <= 0 ) {
             CRITICAL_INVALID_INPUT_DELAY( $3 );
         }
         ((struct _Environment *)_environment)->keyboardConfig.delay = delay;
-    }
-    | PAINT BUFFER const_expr {
+    } | 
+    PAINT BUFFER const_expr {
         if ( $3 <= 0 ) {
             CRITICAL_INVALID_PAINT_BUFFER( $3 );
         }
         ((struct _Environment *)_environment)->paintBucketSize = $3;
-    }
-    ;
+    };
+
+/*-----------------------------------------------------------------------------
+ ------------ CONFIGURE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 configure_name:
-    GMC {
-        $$ = HN_GMC;
-    }
-    | SN76489 {
-        $$ = HN_SN76489;
-    };
+    GMC { $$ = HN_GMC; } | 
+    SN76489 { $$ = HN_SN76489; };
 
 option_name:
-    SLOT {
-        $$ = HPN_SLOT;
-    }
-    | ADDRESS {
-        $$ = HPN_ADDRESS;
-    };
+    ADDRESS { $$ = HPN_ADDRESS; } |
+    SLOT { $$ = HPN_SLOT; };
 
 configure_set_static_option:
     option_name OP_ASSIGN const_expr {
@@ -7554,22 +7304,19 @@ configure_set_static_option:
     };
 
 configure_set_static_options:
-    configure_set_static_option
-    | configure_set_static_option OP_COMMA configure_set_static_options;
-
-static_optional:
-    STATIC | ;
+    configure_set_static_option | 
+    configure_set_static_option OP_COMMA configure_set_static_options;
 
 configure_static_definitions:
     static_optional configure_name {
-        ((struct _Environment *)_environment)->optionParameters = NULL;
-    } SET configure_set_static_options {
-        OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
-        while( actual ) {
-            configure_set_value( _environment, $2, actual->parameter, actual->value );
-            actual = actual->next;
-        }
-    };
+            ((struct _Environment *)_environment)->optionParameters = NULL;
+        } SET configure_set_static_options {
+            OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+            while( actual ) {
+                configure_set_value( _environment, $2, actual->parameter, actual->value );
+                actual = actual->next;
+            }
+        };
 
 configure_set_dynamic_option:
     option_name OP_ASSIGN expr {
@@ -7597,28 +7344,22 @@ configure_dynamic_definitions:
     };
 
 configure_definitions:
-    configure_static_definitions
-    | configure_dynamic_definitions;
+    configure_dynamic_definitions |
+    configure_static_definitions;
 
-system: {
-        $$ = 0;
-    }
-    | SYSTEM {
-        $$ = 1;
-    };
-
-procedure: 
-    PROCEDURE | PROC;
+/*-----------------------------------------------------------------------------
+ ------------ DECLARE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 declare_definition:
-  system procedure Identifier AT const_expr on_targets {
+  system_optional procedure Identifier AT const_expr on_targets {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->returns = 0;
       if ( $6 ) {
            declare_procedure( _environment, $3, $5, $1 );
       }
   }
-  | system procedure Identifier AT const_expr {
+  | system_optional procedure Identifier AT const_expr {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->returns = 0;
     } OP parameters_asmios CP on_targets {
@@ -7626,7 +7367,7 @@ declare_definition:
            declare_procedure( _environment, $3, $5, $1 );
       }
   }
-  | system FUNCTION Identifier AT const_expr {
+  | system_optional FUNCTION Identifier AT const_expr {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->returns = 0;
   } return_parameter_asmios on_targets {
@@ -7634,7 +7375,7 @@ declare_definition:
            declare_procedure( _environment, $3, $5, $1 );
       }
   }
-  | system FUNCTION Identifier AT const_expr {
+  | system_optional FUNCTION Identifier AT const_expr {
       ((struct _Environment *)_environment)->parameters = 0;
       ((struct _Environment *)_environment)->returns = 0;
     } OP parameters_asmios CP return_parameter_asmios on_targets {
