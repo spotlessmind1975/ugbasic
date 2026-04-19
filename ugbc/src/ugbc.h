@@ -5085,6 +5085,7 @@ char * import_file_name( char * _import_path );
 
 Environment * environment_create( void );
 void environment_setup_embedded( Environment *_environment );
+void environment_setup_default( Environment * _environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
@@ -6295,7 +6296,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "outputs/d64.h"
 #elif defined(__coco__)
     #define targetDescription "TRS-80 Color Computer 1/2 (Motorola 6809)"
-    #define defaultExtension "bin"
+    #define defaultExtension "dsk"
     #include "../src-generated/modules_coco.h"
     #include "hw/6809.h"
     #include "hw/6847.h"
@@ -6304,7 +6305,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/sn76489m.h"
 #elif defined(__cocob__)
     #define targetDescription "TRS-80 Color Computer 1/2 (Motorola 6309)"
-    #define defaultExtension "bin"
+    #define defaultExtension "dsk"
     #include "../src-generated/modules_cocob.h"
     #include "hw/6309.h"
     #include "hw/6847b.h"
@@ -6313,7 +6314,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/sn76489m.h"
 #elif defined(__coco3__)
     #define targetDescription "TRS-80 Color Computer 3 (Motorola 6809)"
-    #define defaultExtension "bin"
+    #define defaultExtension "dsk"
     #include "../src-generated/modules_coco3.h"
     #include "hw/6809.h"
     #include "hw/gime.h"
@@ -6322,7 +6323,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/sn76489m.h"
 #elif defined(__coco3b__)
     #define targetDescription "TRS-80 Color Computer 3 (Motorola 6309)"
-    #define defaultExtension "bin"
+    #define defaultExtension "dsk"
     #include "../src-generated/modules_coco3b.h"
     #include "hw/6309.h"
     #include "hw/gime.h"

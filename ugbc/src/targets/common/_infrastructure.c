@@ -17283,9 +17283,82 @@ StaticString * static_string_create( Environment * _environment, char * _value, 
     }
 }
 
+/*!
+ @brief Create a new environment
+
+ Allocate space and reset (put to zero) the content of the
+ Environment structure.
+
+ @return Environment just created
+*/
 Environment * environment_create( void ) {
     Environment * environment = malloc( sizeof(Environment) );
     memset( environment, 0, sizeof(Environment));
     return environment;
 }
 
+/*!
+ @brief Setup default environment values
+
+ @param _environment Environment to change
+*/
+void environment_setup_default( Environment * _environment ) {
+
+    _environment->optionClip = 1;
+    _environment->optionReadSafe = 1;
+    _environment->warningsEnabled = 0;
+    _environment->defaultVariableType = VT_SWORD;
+    _environment->peepholeOptimizationLimit = 16;
+    _environment->floatType.precision = FT_FAST;
+    _environment->numberConfig.maxBytes = 4;
+    _environment->numberConfig.maxDigits = 10;
+    _environment->temporaryPath = get_default_temporary_path( );
+    _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
+    _environment->joystickConfig.sync = JOYSTICK_CONFIG_DEFAULT_SYNC;
+    _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
+    _environment->printSafe = 1;
+    _environment->putImageSafe = 1;
+    _environment->getImageSafe = 1;
+    _environment->keyboardConfig.latency = 700 / 20;
+    _environment->keyboardConfig.delay = 150 / 20;
+    _environment->keyboardConfig.release = 150 / 20;
+    _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+    _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+    _environment->defaultArraySize = 10;
+    _environment->vestigialConfig.screenModeUnique = 1;
+
+#if defined(__pc128op__) || defined(__to8__)
+    _environment->bankedLoadDefault = 1;
+#endif
+
+#if defined(__atari__) || defined(__atarixl__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+#elif defined(__c64__) || defined(__plus4__) || defined(__c16__) || defined(__vic20__) || defined(__c128__) || defined(__c128z__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+#elif defined(__zx__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+#elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif defined(__d32__) || defined(__d32b__) || defined(__d64__) || defined(__d64b__) 
+    _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+#elif defined(__pc128op__) || defined(__to8__) || defined(__mo5__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+#elif defined(__gb__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
+#elif defined(__pccga__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
+#elif defined(__cpc__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+#elif defined(__vg5000__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+#elif defined(__c64reu__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+#elif defined(__pc1403__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+#elif defined(__vz__)
+    _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+#endif
+
+}
