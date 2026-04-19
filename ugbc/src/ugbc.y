@@ -384,10 +384,10 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> const_term 
 %type <integer> datatype 
 %type <integer> direct_integer
-%type <integer> fill_definition_optional_base 
-%type <integer> fill_definition_optional_count
-%type <integer> fill_definition_optional_max 
-%type <integer> fill_definition_optional_min 
+%type <integer> fill_base_optional 
+%type <integer> fill_count_optional
+%type <integer> fill_max_optional 
+%type <integer> fill_min_optional 
 %type <integer> flip_image_flags
 %type <integer> font_schema
 %type <integer> image_load_flag
@@ -412,7 +412,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> option_read
 %type <integer> optional_endianess
 %type <integer> integer_optional
-%type <integer> optional_loop
+%type <integer> loop_optional
 %type <integer> origin_direction 
 %type <integer> PALETTE1
 %type <integer> parallel_optional
@@ -1135,6 +1135,11 @@ release_optional:
 integer_optional: 
     { $$ = 0; } |
     Integer { $$ = $1; };
+
+readonly_optional: 
+    { $$ = 0; } | 
+    READ ONLY { $$ = 1; } |
+    READONLY { $$ = 1; };
 
 clamp_optional: 
     { $$ = 0; } | 
@@ -1934,6 +1939,15 @@ key_scancode_definition:
  ============ EXTENDED SYNTAXES
  ============================================================================*/
 
+milliseconds_optional:
+    |
+    milliseconds
+    ;
+
+loop_optional:
+    { $$ = 0; } | 
+    LOOP { $$ = 1; };
+
 dimensions:
     {
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = -1;
@@ -1947,6 +1961,216 @@ dimensions:
           ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
           ++((struct _Environment *)_environment)->arrayDimensions;
     };
+
+indexes:
+    expr {
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            parser_array_index_numeric( _environment, expr->value );
+        } else {
+            parser_array_index_symbolic( _environment, $1 );
+        }
+    } | 
+    expr OP_COMMA indexes {
+        Variable * expr = variable_retrieve( _environment, $1 );
+        if ( expr->initializedByConstant ) {
+            parser_array_index_numeric( _environment, expr->value );
+        } else {
+            parser_array_index_symbolic( _environment, $1 );
+        }
+    } | 
+    OP_HASH const_expr { parser_array_index_numeric( _environment, $2 ); } | 
+    OP_HASH const_expr OP_COMMA indexes { parser_array_index_numeric( _environment, $2 ); };
+
+parameters: 
+    Identifier as_datatype_mandatory {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype_suffix_optional {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype_mandatory OP_COMMA parameters {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype_suffix_optional OP_COMMA parameters {
+        VariableType vt = $2;
+        if ( vt == 0 ) {
+            vt = ((struct _Environment *)_environment)->defaultVariableType;
+        }
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
+        ++((struct _Environment *)_environment)->parameters;
+    }
+    ;
+
+parameters_expr: 
+    |
+    Identifier OP_DOLLAR {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier OP_DOLLAR OP_COMMA parameters_expr {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype OP_COMMA parameters_expr {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    String {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    RawString {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    String OP_COMMA parameters_expr {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    RawString OP_COMMA parameters_expr {
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    };
+
+values: 
+    expr {
+        Variable * v = variable_retrieve( _environment, $1 );
+        if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+            ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+            ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+        } else {
+            ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        }
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    expr OP_COMMA values {
+        Variable * v = variable_retrieve( _environment, $1 );
+        if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
+            ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
+            ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+        } else {
+            ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        }
+        ++((struct _Environment *)_environment)->parameters;
+    };
+
+asmio: 
+    Register { $$ = cpu_register_decode( _environment, $1 ); } | 
+    STACK OP BYTE CP { $$ = (int)STACK_BYTE; } | 
+    STACK OP WORD CP { $$ = (int)STACK_WORD; } | 
+    STACK OP DWORD CP { $$ = (int)STACK_DWORD; };
+
+values_asmios:
+    asmio OP_ASSIGN expr {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    asmio OP_ASSIGN expr OP_COMMA values_asmios {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    asmio OP_ASSIGN OP_HASH const_expr {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+        ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    asmio OP_ASSIGN OP_HASH const_expr OP_COMMA values_asmios {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
+        ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+        ++((struct _Environment *)_environment)->parameters;
+    };
+
+parameters_asmios:
+    Identifier as_datatype ON asmio {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    Identifier as_datatype ON asmio {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
+        ++((struct _Environment *)_environment)->parameters;
+    } OP_COMMA parameters_asmios | 
+    OP_HASH const_expr ON asmio {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
+        ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+        ++((struct _Environment *)_environment)->parameters;
+    } | 
+    OP_HASH const_expr ON asmio  {
+        ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
+        ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
+        ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
+        ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
+        ++((struct _Environment *)_environment)->parameters;
+    } OP_COMMA parameters_asmios | 
+    OUT Identifier as_datatype ON asmio {
+        ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
+        ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
+        ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
+        ++((struct _Environment *)_environment)->returns;
+    } | 
+    OUT Identifier as_datatype ON asmio {
+        ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
+        ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
+        ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
+        ++((struct _Environment *)_environment)->returns;
+    } OP_COMMA parameters_asmios;
+
+return_parameter_asmios2: 
+    asmio as_datatype {
+        ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $1;
+        ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $2;
+        ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = NULL;
+        ++((struct _Environment *)_environment)->returns;
+    };
+
+return_parameter_asmios: 
+    | 
+    RETURN return_parameter_asmios2;
+    ;
+
+return_values_asmios2: 
+    Identifier OP_ASSIGN asmio {
+        ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
+        ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
+        ++((struct _Environment *)_environment)->returns;
+    } | 
+    Identifier OP_ASSIGN asmio OP_COMMA return_values_asmios2 {
+        ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
+        ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
+        ++((struct _Environment *)_environment)->returns;
+    };
+
+return_values_asmios: 
+    | 
+    RETURN return_values_asmios2;
 
 // Fix
 optional_x_or_string:
@@ -5375,8 +5599,12 @@ div_definition:
         variable_move( _environment, variable_div( _environment, $1, $4, $6 )->name, $1 );
     };
 
+/*-----------------------------------------------------------------------------
+ ------------ ASSIGNMENT OF ARRAY DEFINITION
+ ----------------------------------------------------------------------------*/
+
 array_assign_buffer:
- buffer_definition_prefix BufferDefinitionHex {
+    buffer_definition_prefix BufferDefinitionHex {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             int size = ( strlen( $2 ) ) / 2;
             if ( ((struct _Environment *)_environment)->currentArray->arrayDimensions > 1 ) {
@@ -5408,8 +5636,8 @@ array_assign_buffer:
             ((struct _Environment *)_environment)->currentArray->memoryArea = NULL;
             ((struct _Environment *)_environment)->currentArray = NULL;
         }
-    } buffer_definition_suffix_optional
-    | OP_HASH OGP const_array_definitions CGP {
+    } buffer_definition_suffix_optional | 
+    OP_HASH OGP const_array_definitions CGP {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
             if ( currentArray->size < 0 ) {
@@ -5504,8 +5732,8 @@ array_assign:
                 }
             }
         }
-    }
-    | WITH const_expr {
+    } | 
+    WITH const_expr {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             ((struct _Environment *)_environment)->currentArray->value = $2;
             if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
@@ -5515,8 +5743,8 @@ array_assign:
                 variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
             }
         }
-    }
-    | OP_ASSIGN {
+    } | 
+    OP_ASSIGN {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
             currentArray->arrayInitialization = NULL;
@@ -5524,8 +5752,8 @@ array_assign:
                 CRITICAL_ARRAY_ASSIGN_DATATYPE_NOT_SUPPORTED( currentArray->name );
             }
         }
-    } array_assign_buffer
-    | OP_ASSIGN LOAD String AS text_or_csv {
+    } array_assign_buffer | 
+    OP_ASSIGN LOAD String AS text_or_csv {
 
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
 
@@ -5555,8 +5783,8 @@ array_assign:
 
         }
 
-    }
-    | OP_ASSIGN LOAD String AS BINARY {
+    } | 
+    OP_ASSIGN LOAD String AS BINARY {
         if ( !((struct _Environment *)_environment)->emptyProcedure ) {
             Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
             
@@ -5692,8 +5920,8 @@ array_reassign:
         variable_store_buffer( _environment, var->name, buffer, size, 0 );
         cpu_mem_move_direct_size( _environment, var->realName, ((struct _Environment *)_environment)->currentArray->realName, size );
         ((struct _Environment *)_environment)->currentArray = NULL;
-    } buffer_definition_suffix_optional
-    | OP_HASH OGP const_array_definitions CGP {
+    } buffer_definition_suffix_optional | 
+    OP_HASH OGP const_array_definitions CGP {
         Variable *currentArray = ((struct _Environment *)_environment)->currentArray;
         int size = currentArray->size;
         char * buffer = malloc( currentArray->size ), * ptr = buffer;
@@ -5741,192 +5969,190 @@ array_reassign:
         ((struct _Environment *)_environment)->currentArray = NULL;
     };    
 
-readonly_optional: 
-    {
-        $$ = 0;
-    }
-    | READONLY {
-        $$ = 1;
-    }
-    | READ ONLY {
-        $$ = 1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ DIM/VAR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 dim_definition:
     Identifier datatype {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-            if ( $2 == VT_TYPE ) {
-                variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            ((struct _Environment *)_environment)->arrayDimensions = 0;
             }
-            variable_array_type( _environment, $1, $2 );
-        }
-    } array_assign readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $9;
-            if ( $10 > 0 ) {
-                if ( ! banks_store( _environment, array, $10 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $10 < 0 ) {
-                array->bankReadOrWrite = 1;
+        } OP dimensions CP {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+                if ( $2 == VT_TYPE ) {
+                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                }
+                variable_array_type( _environment, $1, $2 );
+            }
+        } array_assign readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $9;
+                if ( $10 > 0 ) {
+                    if ( ! banks_store( _environment, array, $10 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $10 < 0 ) {
+                    array->bankReadOrWrite = 1;
+                }
             }
         }
-    }
-    as_datatype_suffix
-    |
+        as_datatype_suffix |
     Identifier as_datatype_suffix_optional {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-        }
-    } as_datatype {
-
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            int followRchackCocon1163 = 0;
-
-            /* retrocompatible hacks */
-
-            // If we are compiling "Cocon" game with a recent
-            // version of the compiler, arrays "til", "sts", 
-            // "bkg", "win" and "ugb" will be defined as BYTE, 
-            // to reduce to half the memory occupation.        
-            if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
-                if ( 
-                    strcmp( $1, "til" ) == 0 || 
-                    strcmp( $1, "sts" ) == 0 || 
-                    strcmp( $1, "bkg" ) == 0 ||
-                    strcmp( $1, "win" ) == 0 ||
-                    strcmp( $1, "ugb" ) == 0
-                    ) {
-                    followRchackCocon1163 = 1;
-                }
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            ((struct _Environment *)_environment)->arrayDimensions = 0;
             }
+        } OP dimensions CP {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+            }
+        } as_datatype {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                int followRchackCocon1163 = 0;
 
-            if ( followRchackCocon1163 ) {
-                variable_array_type( _environment, $1, VT_BYTE );
-            } else {
-                if ( $2 ) {
-                    if ( $2 == VT_TYPE ) {
-                        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                /* retrocompatible hacks */
+
+                // If we are compiling "Cocon" game with a recent
+                // version of the compiler, arrays "til", "sts", 
+                // "bkg", "win" and "ugb" will be defined as BYTE, 
+                // to reduce to half the memory occupation.        
+                if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+                    if ( 
+                        strcmp( $1, "til" ) == 0 || 
+                        strcmp( $1, "sts" ) == 0 || 
+                        strcmp( $1, "bkg" ) == 0 ||
+                        strcmp( $1, "win" ) == 0 ||
+                        strcmp( $1, "ugb" ) == 0
+                        ) {
+                        followRchackCocon1163 = 1;
                     }
-                    variable_array_type( _environment, $1, $2 );
-                } else {
-                    if ( $8 == VT_TYPE ) {
-                        variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
-                    }
-                    variable_array_type( _environment, $1, $8 );
                 }
-            }
-        }
 
-    } array_assign readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $11;
-            if ( $12 > 0 ) {
-                if ( ! banks_store( _environment, array, $12 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $12 < 0 ) {
-                array->bankReadOrWrite = 1;
-            }
-        }
-    }
-    | Identifier WITH const_expr {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
-            ((struct _Environment *)_environment)->currentArray->value = $3;
-            variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
-            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-            }
-            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-            }
-        }
-      } readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $9;
-            if ( $10 > 0 ) {
-                if ( ! banks_store( _environment, array, $10 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $10 < 0 ) {
-                array->bankReadOrWrite = 1;
-            }
-        }
-    }
-    | Identifier datatype WITH const_expr {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-            ((struct _Environment *)_environment)->currentArray->value = $4;
-            variable_array_type( _environment, $1, $2 );
-            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
-            }
-            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
-            }
-        }
-      } readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $10;
-            if ( $11 > 0 ) {
-                if ( ! banks_store( _environment, array, $11 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $11 < 0 ) {
-                array->bankReadOrWrite = 1;
-            }
-        }
-    }
-    | Identifier as_datatype_mandatory {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP as_datatype {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-            
-            /* retrocompatible hacks */
-
-            // If we are compiling "Cocon" game with a recent
-            // version of the compiler, arrays "til", "sts", 
-            // "bkg", "win" and "ugb" will be defined as BYTE, 
-            // to reduce to half the memory occupation.        
-            if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
-                if ( 
-                    strcmp( $1, "til" ) == 0 || 
-                    strcmp( $1, "sts" ) == 0 || 
-                    strcmp( $1, "bkg" ) == 0 ||
-                    strcmp( $1, "win" ) == 0 ||
-                    strcmp( $1, "ugb" ) == 0
-                    ) {
+                if ( followRchackCocon1163 ) {
                     variable_array_type( _environment, $1, VT_BYTE );
+                } else {
+                    if ( $2 ) {
+                        if ( $2 == VT_TYPE ) {
+                            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                        }
+                        variable_array_type( _environment, $1, $2 );
+                    } else {
+                        if ( $8 == VT_TYPE ) {
+                            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                        }
+                        variable_array_type( _environment, $1, $8 );
+                    }
+                }
+            }
+
+        } array_assign readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $11;
+                if ( $12 > 0 ) {
+                    if ( ! banks_store( _environment, array, $12 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $12 < 0 ) {
+                    array->bankReadOrWrite = 1;
+                }
+            }
+        } | 
+    Identifier WITH const_expr {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+                ((struct _Environment *)_environment)->arrayDimensions = 0;
+            }
+        } OP dimensions CP {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment,  $1, VT_TARRAY, 0 );
+                ((struct _Environment *)_environment)->currentArray->value = $3;
+                variable_array_type( _environment, $1, ((struct _Environment *)_environment)->defaultVariableType );
+                if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+                }
+                if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+                }
+            }
+        } readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $9;
+                if ( $10 > 0 ) {
+                    if ( ! banks_store( _environment, array, $10 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $10 < 0 ) {
+                    array->bankReadOrWrite = 1;
+                }
+            }
+        } | 
+    Identifier datatype WITH const_expr {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            ((struct _Environment *)_environment)->arrayDimensions = 0;
+            }
+        } OP dimensions CP {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+                ((struct _Environment *)_environment)->currentArray->value = $4;
+                variable_array_type( _environment, $1, $2 );
+                if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+                }
+                if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+                }
+            }
+        } readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $10;
+                if ( $11 > 0 ) {
+                    if ( ! banks_store( _environment, array, $11 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $11 < 0 ) {
+                    array->bankReadOrWrite = 1;
+                }
+            }
+        } | 
+    Identifier as_datatype_mandatory {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+            memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+            ((struct _Environment *)_environment)->arrayDimensions = 0;
+            }
+        } OP dimensions CP as_datatype {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+                
+                /* retrocompatible hacks */
+
+                // If we are compiling "Cocon" game with a recent
+                // version of the compiler, arrays "til", "sts", 
+                // "bkg", "win" and "ugb" will be defined as BYTE, 
+                // to reduce to half the memory occupation.        
+                if ( ((struct _Environment *)_environment)->vestigialConfig.rchack_cocon_1163 ) {
+                    if ( 
+                        strcmp( $1, "til" ) == 0 || 
+                        strcmp( $1, "sts" ) == 0 || 
+                        strcmp( $1, "bkg" ) == 0 ||
+                        strcmp( $1, "win" ) == 0 ||
+                        strcmp( $1, "ugb" ) == 0
+                        ) {
+                        variable_array_type( _environment, $1, VT_BYTE );
+                    } else {
+                        int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
+                        if ( realType == VT_TYPE ) {
+                            variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+                        }
+                        variable_array_type( _environment, $1, realType );
+                    }
                 } else {
                     int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
                     if ( realType == VT_TYPE ) {
@@ -5934,96 +6160,75 @@ dim_definition:
                     }
                     variable_array_type( _environment, $1, realType );
                 }
-            } else {
-                int realType = ( $7 == ((struct _Environment *)_environment)->defaultVariableType ) ? $2 : $7;
-                if ( realType == VT_TYPE ) {
-                    variable_set_type( _environment, $1, ((struct _Environment *)_environment)->currentType->name );
+            }
+        } array_assign readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $10;
+                if ( $11 > 0 ) {
+                    if ( ! banks_store( _environment, array, $11 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $11 < 0 ) {
+                    array->bankReadOrWrite = 1;
                 }
-                variable_array_type( _environment, $1, realType );
             }
-        }
-    } array_assign readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $10;
-            if ( $11 > 0 ) {
-                if ( ! banks_store( _environment, array, $11 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $11 < 0 ) {
-                array->bankReadOrWrite = 1;
+        } | 
+    Identifier as_datatype_mandatory WITH const_expr {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
+                ((struct _Environment *)_environment)->arrayDimensions = 0;
             }
-        }
-    }
-    | Identifier as_datatype_mandatory WITH const_expr {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-          memset( ((struct _Environment *)_environment)->arrayDimensionsEach, 0, sizeof( int ) * MAX_ARRAY_DIMENSIONS );
-          ((struct _Environment *)_environment)->arrayDimensions = 0;
-        }
-      } OP dimensions CP {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
-            ((struct _Environment *)_environment)->currentArray->value = $4;
-            variable_array_type( _environment, $1, $2 );
-            if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+        } OP dimensions CP {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                ((struct _Environment *)_environment)->currentArray = variable_define( _environment, $1, VT_TARRAY, 0 );
+                ((struct _Environment *)_environment)->currentArray->value = $4;
+                variable_array_type( _environment, $1, $2 );
+                if ( ! ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    memory_area_assign( ((struct _Environment *)_environment)->memoryAreas, ((struct _Environment *)_environment)->currentArray );
+                }
+                if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
+                    variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+                }
             }
-            if ( ((struct _Environment *)_environment)->currentArray->memoryArea ) {
-                variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
+        } readonly_optional on_bank_explicit {
+            if ( !((struct _Environment *)_environment)->emptyProcedure ) {
+                Variable * array = variable_retrieve( _environment, $1 );
+                array->readonly = $10;
+                if ( $11 > 0 ) {
+                    if ( ! banks_store( _environment, array, $11 ) ) {
+                        CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
+                    };
+                } else if ( $11 < 0 ) {
+                    array->bankReadOrWrite = 1;
+                }
             }
-        }
-    } readonly_optional on_bank_explicit {
-        if ( !((struct _Environment *)_environment)->emptyProcedure ) {
-            Variable * array = variable_retrieve( _environment, $1 );
-            array->readonly = $10;
-            if ( $11 > 0 ) {
-                if ( ! banks_store( _environment, array, $11 ) ) {
-                    CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
-                };
-            } else if ( $11 < 0 ) {
-                array->bankReadOrWrite = 1;
-            }
-        }
-    }
-    ;
+        };
 
 dim_definitions:
-      var_definition
-    | dim_definition
-    | dim_definition OP_COMMA dim_definitions
-    ;
+    dim_definition |
+    dim_definition OP_COMMA dim_definitions |
+    var_definition;
 
-fill_definition_optional_base:
-    {
-        $$ = 0;
-    }
-    | const_expr {
-        $$ = $1;
-    };
+/*-----------------------------------------------------------------------------
+ ------------ FILL DEFINITION
+ ----------------------------------------------------------------------------*/
 
-fill_definition_optional_min:
-    {
-        $$ = 0;
-    }
-    | MIN const_expr {
-        $$ = $2;
-    };
+fill_base_optional:
+    { $$ = 0; } | 
+    const_expr { $$ = $1; };
 
-fill_definition_optional_max:
-    {
-        $$ = 0;
-    }
-    | MAX const_expr {
-        $$ = $2;
-    };
+fill_min_optional:
+    { $$ = 0; } | 
+    MIN const_expr { $$ = $2; };
 
-fill_definition_optional_count:
-    {
-        $$ = 0;
-    }
-    | COUNT const_expr {
-        $$ = $2;
-    };
+fill_max_optional:
+    { $$ = 0; } | 
+    MAX const_expr { $$ = $2; };
+
+fill_count_optional:
+    { $$ = 0; } | 
+    COUNT const_expr { $$ = $2; };
 
 fill_definition_array:
     Identifier {
@@ -6034,7 +6239,7 @@ fill_definition_array:
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill( _environment, $1, $3 );
     }
-    | Identifier RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+    | Identifier RANDOM fill_min_optional fill_max_optional fill_count_optional {
         if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
             randomize( _environment, get_timer( _environment )->name );
             ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
@@ -6042,7 +6247,7 @@ fill_definition_array:
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, 0, $3, $4, $5, 0 );
     }
-    | Identifier WITH fill_definition_optional_base RANDOM fill_definition_optional_min fill_definition_optional_max fill_definition_optional_count {
+    | Identifier WITH fill_base_optional RANDOM fill_min_optional fill_max_optional fill_count_optional {
         if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
             randomize( _environment, get_timer( _environment )->name );
             ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
@@ -6050,7 +6255,7 @@ fill_definition_array:
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, $5, $6, $7, 0 );
     }
-    | Identifier WITH fill_definition_optional_base RANDOM BOOLEAN fill_definition_optional_count {
+    | Identifier WITH fill_base_optional RANDOM BOOLEAN fill_count_optional {
         if ( !((struct _Environment *)_environment)->randomizeTimerCalled ) {
             randomize( _environment, get_timer( _environment )->name );
             ((struct _Environment *)_environment)->randomizeTimerCalled = 1;
@@ -6058,284 +6263,56 @@ fill_definition_array:
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_random( _environment, $1, $3, 0, 0, $6, 1 );
     }
-    | Identifier WITH INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+    | Identifier WITH INCREMENTAL fill_min_optional fill_count_optional {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
-    | Identifier INCREMENTAL fill_definition_optional_min fill_definition_optional_count {
+    | Identifier INCREMENTAL fill_min_optional fill_count_optional {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
-    | Identifier WITH INC fill_definition_optional_min fill_definition_optional_count {
+    | Identifier WITH INC fill_min_optional fill_count_optional {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $4, $5 );
     }
-    | Identifier INC fill_definition_optional_min fill_definition_optional_count {
+    | Identifier INC fill_min_optional fill_count_optional {
         define_implicit_array_if_needed( _environment, $1 );
         variable_array_fill_incremental( _environment, $1, $3, $4 );
     }
     ;
 
 fill_definitions_array:
-    fill_definition_array
-    | fill_definition_array OP_COMMA fill_definitions_array;
+    fill_definition_array | 
+    fill_definition_array OP_COMMA fill_definitions_array;
     
 fill_definitions:
-    fill_definitions_array
-    ;
+    fill_definitions_array;
+
+/*-----------------------------------------------------------------------------
+ ------------ FILL SCREEN DEFINITION
+ ----------------------------------------------------------------------------*/
 
 fill_screen_definition: 
-    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr {
-        fill( _environment, $1, $3, $5, $7, $9, $11 );
-    };
+    expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { fill( _environment, $1, $3, $5, $7, $9, $11 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SHUFFLE DEFINITION
+ ----------------------------------------------------------------------------*/
 
 shuffle_definition_optional_rounds: 
-    {
-        $$ = 128;
-    }
-    | ROUNDS const_expr {
-        $$ = $2;
-    };
+    { $$ = 128; } | 
+    ROUNDS const_expr { $$ = $2; };
 
 shuffle_definition_array:
-    Identifier shuffle_definition_optional_rounds {
-        variable_array_shuffle( _environment, $1, $2 );
-    };
-
+    Identifier shuffle_definition_optional_rounds { variable_array_shuffle( _environment, $1, $2 ); };
 
 shuffle_definition:
       shuffle_definition_array
     | shuffle_definition_array OP_COMMA shuffle_definition;
 
-indexes:
-      expr {
-        Variable * expr = variable_retrieve( _environment, $1 );
-        if ( expr->initializedByConstant ) {
-            parser_array_index_numeric( _environment, expr->value );
-        } else {
-            parser_array_index_symbolic( _environment, $1 );
-        }
-    }
-    | expr OP_COMMA indexes {
-        Variable * expr = variable_retrieve( _environment, $1 );
-        if ( expr->initializedByConstant ) {
-            parser_array_index_numeric( _environment, expr->value );
-        } else {
-            parser_array_index_symbolic( _environment, $1 );
-        }
-    }
-    | OP_HASH const_expr {
-        parser_array_index_numeric( _environment, $2 );
-    }
-    | OP_HASH const_expr OP_COMMA indexes {
-        parser_array_index_numeric( _environment, $2 );
-    }
-    ;
-
-parameters: 
-    Identifier as_datatype_mandatory {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype_suffix_optional {
-          VariableType vt = $2;
-          if ( vt == 0 ) {
-                vt = ((struct _Environment *)_environment)->defaultVariableType;
-          }
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype_mandatory OP_COMMA parameters {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype_suffix_optional OP_COMMA parameters {
-          VariableType vt = $2;
-          if ( vt == 0 ) {
-                vt = ((struct _Environment *)_environment)->defaultVariableType;
-          }
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = vt;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    ;
-
-parameters_expr: 
-    |
-    Identifier OP_DOLLAR {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier OP_DOLLAR OP_COMMA parameters_expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = VT_DSTRING;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype OP_COMMA parameters_expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | String {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | RawString {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | String OP_COMMA parameters_expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | RawString OP_COMMA parameters_expr {
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    ;
-
-values: 
-      expr {
-            Variable * v = variable_retrieve( _environment, $1 );
-            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
-              ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
-              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
-            } else {
-              ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-            }
-            ++((struct _Environment *)_environment)->parameters;
-    }
-    | expr OP_COMMA values {
-            Variable * v = variable_retrieve( _environment, $1 );
-            if ( v->initializedByConstant && VT_BITWIDTH( v->type ) > 0 ) {
-                ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = v->value;
-                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
-            } else {
-                ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-            }
-            ++((struct _Environment *)_environment)->parameters;
-    }
-    ;
-
-asmio: 
-    Register {
-        $$ = cpu_register_decode( _environment, $1 );
-    }
-    | STACK OP BYTE CP {
-        $$ = (int)STACK_BYTE;
-    }
-    | STACK OP WORD CP {
-        $$ = (int)STACK_WORD;
-    }
-    | STACK OP DWORD CP {
-        $$ = (int)STACK_DWORD;
-    }
-    ;
-
-values_asmios:
-      asmio OP_ASSIGN expr {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | asmio OP_ASSIGN expr OP_COMMA values_asmios {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $3 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | asmio OP_ASSIGN OP_HASH const_expr {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
-          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | asmio OP_ASSIGN OP_HASH const_expr OP_COMMA values_asmios {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $1;
-          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $4;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    ;
-
-parameters_asmios:
-      Identifier as_datatype ON asmio {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | Identifier as_datatype ON asmio {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = $2;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = strdup( $1 );
-          ++((struct _Environment *)_environment)->parameters;
-    } OP_COMMA parameters_asmios
-    | OP_HASH const_expr ON asmio {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
-          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
-          ++((struct _Environment *)_environment)->parameters;
-    }
-    | OP_HASH const_expr ON asmio  {
-          ((struct _Environment *)_environment)->parametersAsmioEach[((struct _Environment *)_environment)->parameters] = $4;
-          ((struct _Environment *)_environment)->parametersTypeEach[((struct _Environment *)_environment)->parameters] = -1;
-          ((struct _Environment *)_environment)->parametersValueEach[((struct _Environment *)_environment)->parameters] = $2;
-          ((struct _Environment *)_environment)->parametersEach[((struct _Environment *)_environment)->parameters] = NULL;
-          ++((struct _Environment *)_environment)->parameters;
-    } OP_COMMA parameters_asmios
-    | OUT Identifier as_datatype ON asmio {
-          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
-          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
-          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
-          ++((struct _Environment *)_environment)->returns;
-    }
-    | OUT Identifier as_datatype ON asmio {
-          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $5;
-          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $3;
-          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $2 );
-          ++((struct _Environment *)_environment)->returns;
-    } OP_COMMA parameters_asmios
-
-    ;
-
-return_parameter_asmios2: 
-    asmio as_datatype {
-          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $1;
-          ((struct _Environment *)_environment)->returnsTypeEach[((struct _Environment *)_environment)->returns] = $2;
-          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = NULL;
-          ++((struct _Environment *)_environment)->returns;
-    }
-    ;
-
-return_parameter_asmios: 
-    | RETURN return_parameter_asmios2;
-    ;
-
-return_values_asmios2: 
-    Identifier OP_ASSIGN asmio {
-          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
-          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
-          ++((struct _Environment *)_environment)->returns;
-    }
-    | Identifier OP_ASSIGN asmio OP_COMMA return_values_asmios2 {
-          ((struct _Environment *)_environment)->returnsAsmioEach[((struct _Environment *)_environment)->returns] = $3;
-          ((struct _Environment *)_environment)->returnsEach[((struct _Environment *)_environment)->returns] = strdup( $1 );
-          ++((struct _Environment *)_environment)->returns;
-    }
-    ;
-
-return_values_asmios: 
-    | RETURN return_values_asmios2;
-    ;
+/*-----------------------------------------------------------------------------
+ ------------ PRINT BUFFER DEFINITION
+ ----------------------------------------------------------------------------*/
 
 print_buffer_definition:
     OP_AT expr {
@@ -6343,31 +6320,24 @@ print_buffer_definition:
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    }
-  | OP_AT expr {
+    } | 
+    OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    } OP_COMMA print_buffer_raw_definition
-  | expr {
-        print_buffer( _environment, $1, 1, 1 );
-    }
-  | expr OP_COMMA {
+    } OP_COMMA print_buffer_raw_definition | 
+    expr { print_buffer( _environment, $1, 1, 1 ); } | 
+    expr OP_COMMA {
         print_buffer( _environment, $1, 0, 1 );
         print_tab( _environment, 0 );
-  }
-  | expr OP_SEMICOLON {
-        print_buffer( _environment, $1, 0, 1 );
-  }
-  | expr OP_COMMA {
+    } | 
+    expr OP_SEMICOLON { print_buffer( _environment, $1, 0, 1 ); } | 
+    expr OP_COMMA {
         print_buffer( _environment, $1, 0, 1 );
         print_tab( _environment, 0 );
-  }  print_buffer_definition
-  | expr OP_SEMICOLON  {
-        print_buffer( _environment, $1, 0, 0 );
-  } print_buffer_definition
-  ;
+    } print_buffer_definition | 
+    expr OP_SEMICOLON  { print_buffer( _environment, $1, 0, 0 ); } print_buffer_definition;
 
 print_buffer_raw_definition:
     OP_AT expr {
@@ -6375,165 +6345,114 @@ print_buffer_raw_definition:
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    }
-  | OP_AT expr {
+    } | 
+    OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    } OP_COMMA print_buffer_raw_definition
-  | expr {
-        print_buffer( _environment, $1, 1, 0 );
-    }
-  | expr OP_COMMA {
+    } OP_COMMA print_buffer_raw_definition | 
+    expr { print_buffer( _environment, $1, 1, 0 ); } | 
+    expr OP_COMMA {
         print_buffer( _environment, $1, 0, 0 );
         print_tab( _environment, 0 );
-  }
-  | expr OP_SEMICOLON {
-        print_buffer( _environment, $1, 0, 0 );
-  }
-  | expr OP_COMMA {
+    } | 
+    expr OP_SEMICOLON { print_buffer( _environment, $1, 0, 0 ); } | 
+    expr OP_COMMA {
         print_buffer( _environment, $1, 0, 0 );
         print_tab( _environment, 0 );
-  }  print_buffer_raw_definition
-  | expr OP_SEMICOLON  {
-        print_buffer( _environment, $1, 0, 0 );
-  } print_buffer_raw_definition
-  ;
+    } print_buffer_raw_definition | 
+    expr OP_SEMICOLON  { print_buffer( _environment, $1, 0, 0 ); } print_buffer_raw_definition;
+
+/*-----------------------------------------------------------------------------
+ ------------ PRINT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 print_definition:
-    SPC OP expr CP {
-        spc( _environment, $3 );
-    }
-  | SPC OP expr CP {
-        spc( _environment, $3 );
-    } print_definition
-  | SPC OP expr CP {
-        spc( _environment, $3 );
-    } OP_COMMA print_definition
-  | SPC OP expr CP {
-        spc( _environment, $3 );
-    } OP_SEMICOLON print_definition
-  | OP_AT expr {
+    SPC OP expr CP { spc( _environment, $3 ); } | 
+    SPC OP expr CP { spc( _environment, $3 ); } print_definition | 
+    SPC OP expr CP { spc( _environment, $3 ); } OP_COMMA print_definition | 
+    SPC OP expr CP { spc( _environment, $3 ); } OP_SEMICOLON print_definition | 
+    OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    }
-  | OP_AT expr {
+    } | 
+    OP_AT expr {
         Variable * p = variable_retrieve_or_define( _environment, $2, VT_WORD, 0 );
         Variable * x = variable_temporary( _environment, VT_BYTE, "(x)" );
         Variable * y = variable_div( _environment, p->name, screen_tiles_get_width( _environment )->name, x->name );
         locate( _environment, x->name, y->name );
-    } OP_COMMA print_definition
-  | raw_optional expr {
-        print( _environment, $2, 1, $1 );
-    }
-  | raw_optional expr OP_COMMA {
+    } OP_COMMA print_definition | 
+    raw_optional expr { print( _environment, $2, 1, $1 ); } | 
+    raw_optional expr OP_COMMA {
         print( _environment, $2, 0, $1 );
         print_tab( _environment, 0 );
-  }
-  | raw_optional expr OP_SEMICOLON {
-        print( _environment, $2, 0, $1 );
-  }
-  | raw_optional expr OP_COMMA {
+    } | 
+    raw_optional expr OP_SEMICOLON { print( _environment, $2, 0, $1 ); } | 
+    raw_optional expr OP_COMMA {
         print( _environment, $2, 0, $1 );
         print_tab( _environment, 0 );
-  }  print_definition
-  | raw_optional expr OP_SEMICOLON  {
-        print( _environment, $2, 0, $1 );
-  } print_definition
-  ;
+    }  print_definition | 
+    raw_optional expr OP_SEMICOLON  { print( _environment, $2, 0, $1 ); } print_definition;
+
+/*-----------------------------------------------------------------------------
+ ------------ GPRINT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 gprint_definition:
-    expr WITH expr {
-        gprint( _environment, $3, $1, "XGR", "YGR" );
-    }
-    | expr AT expr OP_COMMA expr WITH expr {
-        gprint( _environment, $7, $1, $3, $5 );
-    }
-  ;
+    expr WITH expr { gprint( _environment, $3, $1, "XGR", "YGR" ); } | 
+    expr AT expr OP_COMMA expr WITH expr { gprint( _environment, $7, $1, $3, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ WRITING DEFINITION
+ ----------------------------------------------------------------------------*/
 
 writing_mode_definition: 
-      REPLACE {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing REPLACE)" )->name;
-          variable_store( _environment, $$, WRITING_REPLACE );
-    }
-    | OR {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing OR)" )->name;
-          variable_store( _environment, $$, WRITING_OR );
-    }
-    | XOR {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing XOR)" )->name;
-          variable_store( _environment, $$, WRITING_XOR );
-    }
-    | AND {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing AND)" )->name;
-          variable_store( _environment, $$, WRITING_AND );
-    }
-    | IGNORE {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing IGNORE)" )->name;
-          variable_store( _environment, $$, WRITING_IGNORE );
-    }
-    ;
+    AND { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_AND )->name; } | 
+    IGNORE {$$ = variable_by_constant( _environment, VT_BYTE, WRITING_IGNORE )->name; } |
+    OR { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_OR )->name; } | 
+    XOR {$$ = variable_by_constant( _environment, VT_BYTE, WRITING_XOR )->name; } |
+    REPLACE { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_REPLACE )->name; };
 
 writing_part_definition:
-      NORMAL {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing NORMAL)" )->name;
-          variable_store( _environment, $$, WRITING_NORMAL );
-    }
-    | PAPER {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing PAPER)" )->name;
-          variable_store( _environment, $$, WRITING_PAPER );
-    }
-    | PAPER ONLY {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing PAPER)" )->name;
-          variable_store( _environment, $$, WRITING_PAPER );
-    }
-    | PEN {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing PEN)" )->name;
-          variable_store( _environment, $$, WRITING_PEN );
-    }
-    | PEN ONLY {
-          $$ = variable_temporary( _environment, VT_BYTE, "(writing PEN)" )->name;
-          variable_store( _environment, $$, WRITING_PEN );
-    }
-    ;
+    NORMAL { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_NORMAL )->name; } | 
+    PAPER { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_PAPER )->name; } | 
+    PAPER ONLY {$$ = variable_by_constant( _environment, VT_BYTE, WRITING_PAPER )->name; } | 
+    PEN { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_PEN )->name; } | 
+    PEN ONLY { $$ = variable_by_constant( _environment, VT_BYTE, WRITING_PEN )->name; };
 
 writing_definition: 
-    writing_mode_definition OP_COMMA writing_part_definition {
-        writing( _environment, $1, $3 );
-    }
-    ;
+    writing_mode_definition OP_COMMA writing_part_definition { writing( _environment, $1, $3 ); };
 
-milliseconds_optional:
-    |
-    milliseconds
-    ;
+/*-----------------------------------------------------------------------------
+ ------------ SOUND DEFINITION
+ ----------------------------------------------------------------------------*/
 
 sound_definition_argument:
     OP_HASH const_expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
-    }
-    | OP_HASH const_expr OP_COMMA OP_HASH const_expr milliseconds_optional {
+    } | 
+    OP_HASH const_expr OP_COMMA OP_HASH const_expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNoteValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $2;
         ((struct _Environment *)_environment)->soundDurationValue[((struct _Environment *)_environment)->lastSoundNoteDuration] = $5;
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
-    }
-    | expr milliseconds_optional {
+    } | 
+    expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
-    }
-    | expr OP_COMMA expr milliseconds_optional {
+    } | 
+    expr OP_COMMA expr milliseconds_optional {
         ((struct _Environment *)_environment)->soundNote[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $1 );
         ((struct _Environment *)_environment)->soundDuration[((struct _Environment *)_environment)->lastSoundNoteDuration] = strdup( $3 );
         ++((struct _Environment *)_environment)->lastSoundNoteDuration;
     };
 
 sound_definition_arguments:
-    sound_definition_argument
-    | sound_definition_argument OP_SEMICOLON sound_definition_arguments;
+    sound_definition_argument | 
+    sound_definition_argument OP_SEMICOLON sound_definition_arguments;
 
 sound_definition: 
     sound_definition_arguments ON OP_HASH const_expr {
@@ -6559,8 +6478,8 @@ sound_definition:
                 sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], $4 );
             }
         }
-    }
-    | sound_definition_arguments ON expr {
+    } | 
+    sound_definition_arguments ON expr {
         for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
             if ( ((struct _Environment *)_environment)->soundNote[i] ) {
                 if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
@@ -6583,8 +6502,8 @@ sound_definition:
                 sound_vars( _environment, note->name, duration->name, $3 );
             }
         }
-    }
-    | sound_definition_arguments {
+    } | 
+    sound_definition_arguments {
         for( int i=0; i<((struct _Environment *)_environment)->lastSoundNoteDuration; ++i ) {
             if ( ((struct _Environment *)_environment)->soundNote[i] ) {
                 if ( ((struct _Environment *)_environment)->soundDuration[i] ) {
@@ -6602,70 +6521,40 @@ sound_definition:
                 sound( _environment, ((struct _Environment *)_environment)->soundNoteValue[i], ((struct _Environment *)_environment)->soundDurationValue[i], 0xff );
             }
         }
-    }
-    | OFF  {
-        sound_off( _environment, 0xffff );
-    }
-    | OFF ON OP_HASH const_expr {
-        sound_off( _environment, $4 );
-    }
-    | OFF ON expr {
-        sound_off_var( _environment, $3 );
-    }
-    ;
+    } | 
+    OFF  { sound_off( _environment, 0xffff ); } | 
+    OFF ON OP_HASH const_expr { sound_off( _environment, $4 ); } | 
+    OFF ON expr { sound_off_var( _environment, $3 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ INSTRUMENT DEFINITION
+ ----------------------------------------------------------------------------*/
 
 instrument_definition_simple:
-    OP_HASH const_expr ON OP_HASH const_expr {
-        instrument( _environment, $2, $5 );
-    }
-    | const_instrument ON OP_HASH const_expr {
-        instrument( _environment, $1, $4 );
-    }
-    ;
+    const_instrument ON OP_HASH const_expr { instrument( _environment, $1, $4 ); } |
+    OP_HASH const_expr ON OP_HASH const_expr { instrument( _environment, $2, $5 ); };
 
 instrument_definition_expression:
-    OP_HASH const_expr ON expr {
-        instrument_semi_var( _environment, $2, $4 );
-    }
-    | const_instrument ON expr {
-        instrument_semi_var( _environment, $1, $3 );
-    }
-    ;
+    const_instrument ON expr { instrument_semi_var( _environment, $1, $3 ); } |
+    OP_HASH const_expr ON expr { instrument_semi_var( _environment, $2, $4 ); };
 
 instrument_definition: 
-    instrument_definition_simple
-    | instrument_definition_expression
-    ;
+    instrument_definition_expression |
+    instrument_definition_simple;
+
+/*-----------------------------------------------------------------------------
+ ------------ MUSIC DEFINITION
+ ----------------------------------------------------------------------------*/
 
 music_type:
-    {
-        $$ = MUSIC_TYPE_AUTO;
-    }
-    | IAF {
-        $$ = MUSIC_TYPE_IAF;
-    }
-    | MID {
-        $$ = MUSIC_TYPE_MID;
-    }
-    | PSG {
-        $$ = MUSIC_TYPE_PSG;
-    }
-    | SJ2 {
-        $$ = MUSIC_TYPE_SJ2;
-    }
-    ;
-
-optional_loop:
-    {
-        $$ = 0;
-    }
-    | LOOP {
-        $$ = 1;
-    }
-    ;
+    { $$ = MUSIC_TYPE_AUTO; } | 
+    IAF { $$ = MUSIC_TYPE_IAF; } | 
+    MID { $$ = MUSIC_TYPE_MID; } | 
+    PSG { $$ = MUSIC_TYPE_PSG; } | 
+    SJ2 { $$ = MUSIC_TYPE_SJ2; };
 
 music_definition_expression:
-    expr music_type optional_loop {
+    expr music_type loop_optional {
         music_var( _environment, $1, $3, $2 );
     }
     | LOOP expr music_type {
