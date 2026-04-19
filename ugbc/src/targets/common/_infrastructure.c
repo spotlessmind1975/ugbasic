@@ -17282,3 +17282,10 @@ StaticString * static_string_create( Environment * _environment, char * _value, 
         return result;
     }
 }
+
+Environment * environment_create( void ) {
+    Environment * environment = malloc( sizeof(Environment) );
+    memset( environment, 0, sizeof(Environment));
+    return environment;
+}
+

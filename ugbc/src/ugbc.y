@@ -10772,12 +10772,19 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     exit(EXIT_FAILURE);
 }
 
+/*!
+ @brief Main procedure
+ 
+ @param _argc The number of parameters given on the command line.
+ @param _argv The array of parameters given on the command line.
+ */
 int main( int _argc, char *_argv[] ) {
+
     extern FILE *yyin;
     int flags, opt;
     int nsecs, tfnd;
-    Environment * _environment = malloc(sizeof(Environment));
-    memset( _environment, 0, sizeof(Environment));
+
+    Environment * _environment = environment_create();
 
     setup_embedded( _environment );
 
