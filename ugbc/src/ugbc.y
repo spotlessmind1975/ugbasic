@@ -10786,7 +10786,7 @@ int main( int _argc, char *_argv[] ) {
 
     Environment * _environment = environment_create();
 
-    setup_embedded( _environment );
+    environment_setup_embedded( _environment );
 
     _environment->optionClip = 1;
     _environment->optionReadSafe = 1;

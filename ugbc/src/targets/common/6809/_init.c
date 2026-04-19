@@ -42,7 +42,7 @@
 
 extern char DATATYPE_AS_STRING[][16];
 
-void setup_embedded( Environment * _environment ) {
+void environment_setup_embedded( Environment * _environment ) {
 
     _environment->embedded.cpu_fill_blocks = 1;
     _environment->embedded.cpu_fill = 1;

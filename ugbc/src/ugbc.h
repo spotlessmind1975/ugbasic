@@ -5084,7 +5084,7 @@ char * strcopy( char * _dest, char * _source );
 char * import_file_name( char * _import_path );
 
 Environment * environment_create( void );
-void setup_embedded( Environment *_environment );
+void environment_setup_embedded( Environment *_environment );
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
