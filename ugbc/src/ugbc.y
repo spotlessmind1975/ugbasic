@@ -541,18 +541,11 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
  ============ KEYWORDS ALIAS
  ============================================================================*/
 
-
-image_or_images: 
-    IMAGE | IMAGES | ATLAS
-    ;
-
-bitmap_or_bitmaps: 
-    BITMAP | BITMAPS
-    ;
-
+bitmap_or_bitmaps: BITMAP | BITMAPS;
 filesize: FILEX SIZE | FILESIZE | FSIZE;
 float_or_single: FLOAT | SINGLE;
 frame: FRAME | TILE;
+image_or_images:  IMAGE | IMAGES | ATLAS;
 images_or_atlas: IMAGES | ATLAS;
 load_image : LOAD IMAGE | IMAGE LOAD;
 load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
@@ -563,6 +556,7 @@ milliseconds: MS | MILLISECOND | MILLISECONDS;
 op_assign:  OP_ASSIGN  | OP_ASSIGN_DIRECT;
 position: POSITION | AT;
 sequence_or_strip:  SEQUENCE | STRIP;
+text_or_csv: TEXT | CSV;
 ticks: TICK | TICKS;
 
 /*============================================================================
@@ -662,6 +656,50 @@ const_expr_string_const:
         c->type = CT_STRING;
         $$ = c->name;
     };
+
+/*
+    Array of constants.
+*/
+
+const_array_definition:
+    const_expr {
+        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
+        Constant * first = currentArray->arrayInitialization;
+        Constant * c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
+        c->value = $1;
+        if ( first ) {
+            while( first->next ) {
+                first = first->next;
+            }
+            first->next = c;
+        } else {
+            currentArray->arrayInitialization = c;
+        }        
+    } | 
+    const_expr_floating {
+        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
+        Constant * first = currentArray->arrayInitialization;
+        Constant * c = malloc( sizeof( Constant ) );
+        memset( c, 0, sizeof( Constant ) );
+        c->valueFloating = $1;
+        if ( first ) {
+            while( first->next ) {
+                first = first->next;
+            }
+            first->next = c;
+        } else {
+            currentArray->arrayInitialization = c;
+        }        
+    };
+
+const_array_definitions1:
+    const_array_definition | 
+    const_array_definition OP_COMMA const_array_definitions1;
+
+const_array_definitions: 
+    | 
+    const_array_definitions1;
 
 /*
     Musical notation in international standard, used in modern music, jazz, 
@@ -1172,9 +1210,60 @@ as_datatype_suffix_optional:
     { $$ = 0; } | 
     as_datatype_suffix { $$ = $1; };
 
+datatype: 
+    BIT { $$ = VT_BIT; } | 
+    BYTE { $$ = VT_BYTE; } | 
+    SIGNED BYTE { $$ = VT_SBYTE; } | 
+    SBYTE { $$ = VT_SBYTE; } | 
+    WORD { $$ = VT_WORD; } | 
+    INT { $$ = VT_SWORD; } | 
+    INTEGER { $$ = VT_SWORD; } | 
+    SIGNED WORD { $$ = VT_SWORD; } | 
+    DWORD { $$ = VT_DWORD; } | 
+    SIGNED DWORD { $$ = VT_SDWORD; } | 
+    LONG { $$ = VT_SDWORD; } | 
+    float_or_single { $$ = VT_FLOAT; } | 
+    NUMBER { $$ = VT_NUMBER; } | 
+    ADDRESS { $$ = VT_ADDRESS; } | 
+    POSITION { $$ = VT_POSITION; } | 
+    COLOR { $$ = VT_COLOR; } | 
+    VECTOR { $$ = VT_VECTOR2; } | 
+    COLOUR { $$ = VT_COLOR; } | 
+    STRING { $$ = VT_DSTRING; } | 
+    IMAGE { $$ = VT_IMAGE; } | 
+    IMAGES { $$ = VT_IMAGES; } | 
+    ATLAS { $$ = VT_IMAGES; } | 
+    SEQUENCE { $$ = VT_SEQUENCE; } | 
+    IMAGEREF { $$ = VT_IMAGEREF; } | 
+    PATH { $$ = VT_PATH; } | 
+    MUSIC { $$ = VT_MUSIC; } | 
+    BLIT { $$ = VT_BLIT; } | 
+    SPRITE { $$ = VT_SPRITE; } | 
+    MSPRITE { $$ = VT_MSPRITE; } | 
+    TILE { $$ = VT_TILE; } | 
+    TILES { $$ = VT_TILES; } | 
+    TILESET { $$ = VT_TILESET; } | 
+    TILEMAP { $$ = VT_TILEMAP; } | 
+    BUFFER { $$ = VT_BUFFER; } | 
+    DOJOKA { $$ = VT_DOJOKA; } | 
+    TASK { $$ = VT_THREAD; } | 
+    THREAD { $$ = VT_THREAD; } | 
+    Identifier {
+        $$ = VT_TYPE;
+        Type * type = type_find( ((struct _Environment *)_environment)->types, $1 );
+        if ( ! type ) {
+            CRITICAL_UNKNOWN_TYPE( $1 );
+        }
+        ((struct _Environment *)_environment)->currentType = type;
+    };
+
 relative_optional:
     { $$ = 0; } | 
     RELATIVE { $$ = 1; };
+
+perc:
+    |
+    OP_PERC;
 
 /*============================================================================
  ============ CONSTANT FACTORS
@@ -1844,6 +1933,20 @@ key_scancode_definition:
 /*============================================================================
  ============ EXTENDED SYNTAXES
  ============================================================================*/
+
+dimensions:
+    {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = -1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    } | 
+    const_expr {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    } | 
+    const_expr OP_COMMA dimensions {
+          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
+          ++((struct _Environment *)_environment)->arrayDimensions;
+    };
 
 // Fix
 optional_x_or_string:
@@ -5114,7 +5217,7 @@ after_definition:
     };
 
 /*-----------------------------------------------------------------------------
- ------------ CLAMP DEFINITION
+ ------------ ADD(C) DEFINITION
  ----------------------------------------------------------------------------*/
 
 limits_optional: 
@@ -5145,42 +5248,38 @@ add_definition:
                 variable_add_inplace_vars( _environment, $1, $4 );
             }
         }
-    }
-    | Identifier field_optional OP_COMMA OP_HASH const_expr {
+    } | 
+    Identifier field_optional OP_COMMA OP_HASH const_expr {
         if ( $2 ) {
             variable_add_inplace_type( _environment, $1, $2, $5 );
         } else {
             variable_add_inplace( _environment, $1, $5 );
         }
-    }
-    | Identifier field_optional OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
+    } | 
+    Identifier field_optional OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, $9 );
         }
-    }
-    | Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
+    } | 
+    Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr clamp_optional {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, $9 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, $9 );
         }
-    }
-    | Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
+    } | 
+    Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr clamp_optional {
         if ( $2 ) {
             add_complex_type( _environment, $1, $2, $5, $8, $11, $12 );
         } else {
             add_complex( _environment, $1, $5, $8, $11, $12 );
         }
-    }
-    | OSP Identifier CSP OP_COMMA expr {
-        variable_add_inplace_mt( _environment, $2, $5 );
-    }
-    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
-        add_complex_mt( _environment, $2, $5, $7, $9, $10 );
-    }
-    | Identifier OP {
+    } | 
+    OSP Identifier CSP OP_COMMA expr { variable_add_inplace_mt( _environment, $2, $5 ); } | 
+    OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional { add_complex_mt( _environment, $2, $5, $7, $9, $10 ); } |
+    Identifier OP {
         parser_array_init( _environment );        
     } indexes CP field_optional OP_COMMA expr limits_optional {
         if ( $6 ) {
@@ -5190,8 +5289,7 @@ add_definition:
             add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, ((struct _Environment *)_environment)->clamp );
         }
         parser_array_cleanup( _environment );
-    }
-    ;
+    };
 
 addc_definition:
     Identifier field_optional OP_COMMA expr OP_COMMA expr TO expr  {
@@ -5200,25 +5298,23 @@ addc_definition:
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, 1 );
         }
-    }
-    | Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
+    } | 
+    Identifier field_optional OP_COMMA expr OP_COMMA expr OP_COMMA expr  {
         if ( $2 ) {
             add_complex_type_vars( _environment, $1, $2, $4, $6, $8, 1 );
         } else {
             add_complex_vars( _environment, $1, $4, $6, $8, 1 );
         }
-    }
-    | Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
+    } | 
+    Identifier field_optional OP_COMMA OP_HASH const_expr OP_COMMA OP_HASH const_expr TO OP_HASH const_expr {
         if ( $2 ) {
             add_complex_type( _environment, $1, $2, $5, $8, $11, 1 );
         } else {
             add_complex( _environment, $1, $5, $8, $11, 1 );
         }
-    }
-    | OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional {
-        add_complex_mt( _environment, $2, $5, $7, $9, 1 );
-    }
-    | Identifier OP {
+    } | 
+    OSP Identifier CSP OP_COMMA expr OP_COMMA expr TO expr clamp_optional { add_complex_mt( _environment, $2, $5, $7, $9, 1 ); } |
+    Identifier OP {
         parser_array_init( _environment );        
     } indexes CP field_optional OP_COMMA expr limits_optional {
         if ( $6 ) {
@@ -5228,19 +5324,20 @@ addc_definition:
             add_complex_array( _environment, $1, $8, ((struct _Environment *)_environment)->lowerLimit, ((struct _Environment *)_environment)->upperLimit, 1 );
         }
         parser_array_cleanup( _environment );
-    }
+    };
+
+/*-----------------------------------------------------------------------------
+ ------------ XOR DEFINITION
+ ----------------------------------------------------------------------------*/
 
 xor_definition:
-    Identifier OP_COMMA expr {
-        variable_xor_inplace_vars( _environment, $1, $3 );
-    }
-    | Identifier OP_COMMA OP_HASH const_expr {
-        variable_xor_inplace( _environment, $1, $4 );
-    }
-    | OSP Identifier CSP OP_COMMA expr {
-        variable_xor_inplace_mt( _environment, $2, $5 );
-    }
-    ;
+    Identifier OP_COMMA expr { variable_xor_inplace_vars( _environment, $1, $3 ); } | 
+    Identifier OP_COMMA OP_HASH const_expr { variable_xor_inplace( _environment, $1, $4 ); } |
+    OSP Identifier CSP OP_COMMA expr { variable_xor_inplace_mt( _environment, $2, $5 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ SWAP DEFINITION
+ ----------------------------------------------------------------------------*/
 
 swap_definition:
     Identifier as_datatype_suffix_optional OP_COMMA Identifier as_datatype_suffix_optional {
@@ -5248,24 +5345,21 @@ swap_definition:
             CRITICAL_CANNOT_SWAP_DIFFERENT_DATATYPES( $1, $4 );
         }
         variable_swap( _environment, $1, $4 );
-    }
-    ;
+    };
 
-perc:
-    |
-    OP_PERC;
+/*-----------------------------------------------------------------------------
+ ------------ MUL DEFINITION
+ ----------------------------------------------------------------------------*/
 
 mul_definition:
-    Identifier perc OP_COMMA expr {
-        variable_move( _environment, variable_mul( _environment, $1, $4 )->name, $1 );
-    }
-    ;
+    Identifier perc OP_COMMA expr { variable_move( _environment, variable_mul( _environment, $1, $4 )->name, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ DIV DEFINITION
+ ----------------------------------------------------------------------------*/
 
 div_definition:
-    Identifier perc OP_COMMA expr {
-        variable_move( _environment, variable_div( _environment, $1, $4, NULL )->name, $1 );
-    }
-    |
+    Identifier perc OP_COMMA expr { variable_move( _environment, variable_div( _environment, $1, $4, NULL )->name, $1 ); } |
     Identifier perc OP_COMMA OP_HASH const_expr {
         if ( log2($5) != (int)log2($5) ) {
             Variable * v = variable_retrieve( _environment, $1 );
@@ -5275,200 +5369,11 @@ div_definition:
         } else {
             variable_move( _environment, variable_div2_const( _environment, $1, $5, NULL )->name, $1 );
         }
-    }
-    |
+    } |
     Identifier perc OP_COMMA expr OP_COMMA Identifier perc {
         variable_retrieve_or_define( _environment, $6, ((struct _Environment *)_environment)->defaultVariableType, 0);
         variable_move( _environment, variable_div( _environment, $1, $4, $6 )->name, $1 );
-    }
-    ;
-
-dimensions:
-    {
-          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = -1;
-          ++((struct _Environment *)_environment)->arrayDimensions;
-    }
-    | const_expr {
-          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
-          ++((struct _Environment *)_environment)->arrayDimensions;
-    }
-    | const_expr OP_COMMA dimensions {
-          ((struct _Environment *)_environment)->arrayDimensionsEach[((struct _Environment *)_environment)->arrayDimensions] = $1;
-          ++((struct _Environment *)_environment)->arrayDimensions;
-    }
-    ;
-
-datatype: 
-    BIT {
-        $$ = VT_BIT;
-    }
-    | BYTE {
-        $$ = VT_BYTE;
-    }
-    | SIGNED BYTE {
-        $$ = VT_SBYTE;
-    }
-    | SBYTE {
-        $$ = VT_SBYTE;
-    }
-    | WORD {
-        $$ = VT_WORD;
-    }
-    | INT {
-        $$ = VT_SWORD;
-    }
-    | INTEGER {
-        $$ = VT_SWORD;
-    }
-    | SIGNED WORD {
-        $$ = VT_SWORD;
-    }
-    | DWORD {
-        $$ = VT_DWORD;
-    }
-    | SIGNED DWORD {
-        $$ = VT_SDWORD;
-    }
-    | LONG {
-        $$ = VT_SDWORD;
-    }
-    | float_or_single {
-        $$ = VT_FLOAT;
-    }
-    | NUMBER {
-        $$ = VT_NUMBER;
-    }
-    | ADDRESS {
-        $$ = VT_ADDRESS;
-    }
-    | POSITION {
-        $$ = VT_POSITION;
-    }
-    | COLOR {
-        $$ = VT_COLOR;
-    }
-    | VECTOR {
-        $$ = VT_VECTOR2;
-    }
-    | COLOUR {
-        $$ = VT_COLOR;
-    }
-    | STRING {
-        $$ = VT_DSTRING;
-    }
-    | IMAGE {
-        $$ = VT_IMAGE;
-    }
-    | IMAGES {
-        $$ = VT_IMAGES;
-    }
-    | ATLAS {
-        $$ = VT_IMAGES;
-    }
-    | SEQUENCE {
-        $$ = VT_SEQUENCE;
-    }
-    | IMAGEREF {
-        $$ = VT_IMAGEREF;
-    }
-    | PATH {
-        $$ = VT_PATH;
-    }
-    | MUSIC {
-        $$ = VT_MUSIC;
-    }
-    | BLIT {
-        $$ = VT_BLIT;
-    }
-    | SPRITE {
-        $$ = VT_SPRITE;
-    }
-    | MSPRITE {
-        $$ = VT_MSPRITE;
-    }
-    | TILE {
-        $$ = VT_TILE;
-    }
-    | TILES {
-        $$ = VT_TILES;
-    }
-    | TILESET {
-        $$ = VT_TILESET;
-    }
-    | TILEMAP {
-        $$ = VT_TILEMAP;
-    }
-    | BUFFER {
-        $$ = VT_BUFFER;
-    }
-    | DOJOKA {
-        $$ = VT_DOJOKA;
-    }
-    | TASK {
-        $$ = VT_THREAD;
-    }
-    | THREAD {
-        $$ = VT_THREAD;
-    }
-    | Identifier {
-        $$ = VT_TYPE;
-        Type * type = type_find( ((struct _Environment *)_environment)->types, $1 );
-        if ( ! type ) {
-            CRITICAL_UNKNOWN_TYPE( $1 );
-        }
-        ((struct _Environment *)_environment)->currentType = type;
     };
-
-const_array_definition:
-    const_expr {
-        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
-        Constant * first = currentArray->arrayInitialization;
-        Constant * c = malloc( sizeof( Constant ) );
-        memset( c, 0, sizeof( Constant ) );
-        c->value = $1;
-        if ( first ) {
-            while( first->next ) {
-                first = first->next;
-            }
-            first->next = c;
-        } else {
-            currentArray->arrayInitialization = c;
-        }        
-    }
-    | const_expr_floating {
-        Variable * currentArray = ((struct _Environment *)_environment)->currentArray;
-        Constant * first = currentArray->arrayInitialization;
-        Constant * c = malloc( sizeof( Constant ) );
-        memset( c, 0, sizeof( Constant ) );
-        c->valueFloating = $1;
-        if ( first ) {
-            while( first->next ) {
-                first = first->next;
-            }
-            first->next = c;
-        } else {
-            currentArray->arrayInitialization = c;
-        }        
-    };
-
-const_array_definitions1:
-    const_array_definition {
-
-    }
-    | const_array_definition {
-        
-    } OP_COMMA const_array_definitions1;
-
-const_array_definitions: 
-    {
-
-    }
-    | const_array_definitions1 {
-
-    };
-
-text_or_csv: 
-    TEXT | CSV;
 
 array_assign_buffer:
  buffer_definition_prefix BufferDefinitionHex {
