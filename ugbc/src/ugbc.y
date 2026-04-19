@@ -10525,8 +10525,8 @@ statement2nc:
     YIELD { yield( _environment ); };
 
 statement2:
-    statement2nc
     |
+    statement2nc
     ;
 
 statement: 
@@ -10554,54 +10554,48 @@ statement:
     statement2;
 
 statements_no_linenumbers:
-      statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); }
-    | statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); }
-    ;
+    statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } | 
+    statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); };
 
 statements_with_linenumbers:
-      Integer {
-        label_define_numeric( _environment, $1 );
-        char lineNumber[MAX_TEMPORARY_STORAGE];
-        sprintf(lineNumber, "_linenumber%d", $1 );
-        cpu_label( _environment, lineNumber);
-        ((Environment *)_environment)->lastDefinedLabel = strdup( lineNumber );
-        ((Environment *)_environment)->lastDefinedLabelIsNumeric = 1;
-        ((Environment *)_environment)->lastDefinedLabelNumeric = $1;
-    } statements_no_linenumbers { 
-        ((Environment *)_environment)->yylineno = yylineno;
-    };
+    Integer {
+            label_define_numeric( _environment, $1 );
+            char lineNumber[MAX_TEMPORARY_STORAGE];
+            sprintf(lineNumber, "_linenumber%d", $1 );
+            cpu_label( _environment, lineNumber);
+            ((Environment *)_environment)->lastDefinedLabel = strdup( lineNumber );
+            ((Environment *)_environment)->lastDefinedLabelIsNumeric = 1;
+            ((Environment *)_environment)->lastDefinedLabelNumeric = $1;
+        } statements_no_linenumbers { 
+            ((Environment *)_environment)->yylineno = yylineno;
+        };
 
-emit_additional_info: {
+emit_additional_info:  {
+            int producedLines = ((Environment *)_environment)->producedAssemblyLines 
+                    - ((Environment *)_environment)->previousProducedAssemblyLines;
 
-    int producedLines = ((Environment *)_environment)->producedAssemblyLines 
-            - ((Environment *)_environment)->previousProducedAssemblyLines;
+            outline1("; P:%d", producedLines); 
 
-    outline1("; P:%d", producedLines); 
+            adiline2( "P:0:%d:%d", ((Environment *)_environment)->yylineno - 1 - yyconcatlineno, producedLines );
+            
+            ((Environment *)_environment)->previousProducedAssemblyLines = 
+                ((Environment *)_environment)->producedAssemblyLines; 
 
-    adiline2( "P:0:%d:%d", ((Environment *)_environment)->yylineno - 1 - yyconcatlineno, producedLines );
-    
-    ((Environment *)_environment)->previousProducedAssemblyLines = 
-        ((Environment *)_environment)->producedAssemblyLines; 
-
-};
+        };
 
 statements_complex3:
-    statements_no_linenumbers emit_additional_info
-    | statements_with_linenumbers emit_additional_info
-    ;
+    statements_no_linenumbers emit_additional_info | 
+    statements_with_linenumbers emit_additional_info;
 
 statements_complex2:
     statements_complex3;
 
 statements_complex:
-      statements_complex2
-    | statements_complex2 NewLine { yyconcatlineno = 0; } statements_complex
-    ;
+    statements_complex2 | 
+    statements_complex2 NewLine { yyconcatlineno = 0; } statements_complex;
 
 program : 
-  statements_complex 
-  { /*printf( "  %d:\n", yylineno ); ++yylineno; ((Environment *)_environment)->yylineno = yylineno; */ outline1("; L:%d", yylineno); }
-  emit_additional_info;
+    statements_complex { outline1("; L:%d", yylineno); } emit_additional_info;
 
 %%
 
