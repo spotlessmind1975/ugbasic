@@ -50,7 +50,7 @@ void target_linkage( Environment * _environment ) {
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
-    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL && _environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW ) {
+    if ( (_environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL) && (_environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW) && (_environment->outputFileType != OUTPUT_FILE_TYPE_SDDRIVE) ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 
@@ -90,10 +90,17 @@ void target_linkage( Environment * _environment ) {
     
     }
 
-	if ( _environment->outputFileType == OUTPUT_FILE_TYPE_K7_NEW ) {
-	    convertbintok7( _environment );
-	} else {
-	    convertbintok7_original( _environment );
+	switch( _environment->outputFileType ) {
+		case OUTPUT_FILE_TYPE_K7_NEW:
+		    convertbintok7( _environment );
+			break;
+		case OUTPUT_FILE_TYPE_K7_ORIGINAL:
+		    convertbintok7_original( _environment );
+			break;
+		case OUTPUT_FILE_TYPE_SDDRIVE:
+		    convertbintosddrive( _environment );
+			break;
+		default:
 	}
 
 }

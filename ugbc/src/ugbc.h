@@ -270,7 +270,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_RAM = 12,
     OUTPUT_FILE_TYPE_GB = 13,
     OUTPUT_FILE_TYPE_COM = 14,
-    OUTPUT_FILE_TYPE_VZ = 15
+    OUTPUT_FILE_TYPE_VZ = 15,
+    OUTPUT_FILE_TYPE_SDDRIVE = 16
 
 } OutputFileType;
 

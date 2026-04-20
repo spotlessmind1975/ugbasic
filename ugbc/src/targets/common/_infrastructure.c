@@ -182,7 +182,8 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "dsk",
     "atr",
     "reu",
-    "ram"
+    "ram",
+    "sddrive"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -17520,6 +17521,8 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                         _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
                     } else if ( strcmp( optarg, "vz") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+                    } else if ( strcmp( optarg, "sddrive") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_SDDRIVE;
                     } else {
                         CRITICAL2("Unknown output format", optarg);
                     }

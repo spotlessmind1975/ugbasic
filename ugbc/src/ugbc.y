@@ -10719,14 +10719,15 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif defined(__gb__)
     printf("\t                gb - cartridge ROM\n" );
 #elif defined(__mo5__)
-    printf("\t                k7o - K7 format (original algorithm)\n" );
     printf("\t                k7 - K7 format\n" );
+    printf("\t                k7o - K7 format (original algorithm)\n" );
 #elif defined(__msx1__)
     printf("\t                rom - cartridge ROM\n" );
     printf("\t                dsk - DSK image\n" );
 #elif defined(__pc128op__)
-    printf("\t                k7o - K7 format (original algorithm)\n" );
+    printf("\t                sddrive - USBDRIVE compatible format\n" );
     printf("\t                k7 - K7 format\n" );
+    printf("\t                k7o - K7 format (original algorithm)\n" );
 #elif defined(__pc1403__)
     printf("\t                ram - RAM loadable by debugger\n" );
 #elif defined(__pccga__)
