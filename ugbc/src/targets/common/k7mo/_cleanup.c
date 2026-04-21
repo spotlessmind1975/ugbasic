@@ -465,29 +465,37 @@ int convertbintosddrive(Environment * _environment) {
     // printf( "E -- 0x%4.4x  0x%4.4x  | Loader snapshot\n", start, end );
 
     // F	0x43c0	0x43d0	Registri CPU + HW		
-	// 0x1fc0 contenuto del registro X
+	// 0x1fc0 contenuto del registro D
     // start = ftell( sddrive );
+    int regD = 0;
+    fwrite( &regD, 2, 1, sddrive );
+	// 0x1fc2 contenuto del registro X
     int regX = 0;
     fwrite( &regX, 2, 1, sddrive );
-	// 0x1fc2 contenuto del registro Y
+	// 0x1fc4 contenuto del registro Y
     int regY = 0;
     fwrite( &regY, 2, 1, sddrive );
-	// 0x1fc4 contenuto del registro S
+	// 0x1fc6 contenuto del registro S
     int regS = 0x5fe0;
     fwrite( &regS, 2, 1, sddrive );
-	// 0x1fc6 contenuto del registro U
+	// 0x1fc8 contenuto del registro U
     int regU = 0xa7c0;
     fwrite( &regU, 2, 1, sddrive );
-	// 0x1fc8 contenuto del registro DP
+	// 0x1fca contenuto del registro DP
     char regDP = 0x20;
     fwrite( &regDP, 1, 1, sddrive );
-	// 0x1fc9 contenuto del registro CC
+	// 0x1fcb contenuto del registro CC
     char regCC = 0x80;
-    fwrite( &regCC, 2, 1, sddrive );
-	// 0x1fcc contenuto del registro PC
-    int regPC = 0x3000;
+    fwrite( &regCC, 1, 1, sddrive );
+	// 0x1fcc contenuto del registro PC (endianess)
+    int regPC = 0x0030;
     fwrite( &regPC, 2, 1, sddrive );
-	// 0x1fd0 contenuto del registro 0xa7c0
+	// 0x1fcd byte di scostamento
+    char ignored = 0x00;
+    fwrite( &ignored, 1, 1, sddrive );
+    char ignored2 = 0x00;
+    fwrite( &ignored2, 1, 1, sddrive );
+	// 0x1fce contenuto del registro 0xa7c0
     char ra7c0 = 0x91;
     fwrite( &ra7c0, 1, 1, sddrive );	
 	// 0x1fd1 contenuto del registro 0xa7e4
@@ -506,7 +514,7 @@ int convertbintosddrive(Environment * _environment) {
 
     // G	0x43d0	0x43ff	(spazio libero)		
     // start = ftell( sddrive );
-    for( int i=0x43d1; i<=0x43ff; ++i ) {
+    for( int i=0x43d4; i<=0x43ff; ++i ) {
         char zero = 0;
         fwrite( &zero, 1, 1, sddrive );;
     }
