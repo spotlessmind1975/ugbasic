@@ -100,9 +100,11 @@ PC128STARTUP3
     DECA
     BNE   PC128STARTUP3
 
+@IF outputFileType != SDDRIVE
     LDB   #$14            ; shut down cursor
     SWI
     FCB   $02
+@ENDIF
 
     ANDCC #$AF
 

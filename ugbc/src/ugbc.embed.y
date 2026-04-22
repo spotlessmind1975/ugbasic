@@ -90,7 +90,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 C64REU GB VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC1403 PC128OP MO5 CPC COCO VZ200
 %token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
-%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8 PCCGA
+%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8 PCCGA SDDRIVE
 
 %token <string> Identifier
 %token <string> Content
@@ -139,6 +139,9 @@ output :
     }
     | ATR {
         $$ = OUTPUT_FILE_TYPE_ATR;
+    }
+    | SDDRIVE {
+        $$ = OUTPUT_FILE_TYPE_SDDRIVE;
     }
     | REU {
         $$ = OUTPUT_FILE_TYPE_REU;
