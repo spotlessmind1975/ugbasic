@@ -2159,7 +2159,7 @@ Variable * ted_new_sequence( Environment * _environment, int _sequences, int _fr
         CRITICAL_NEW_IMAGES_UNSUPPORTED_MODE( _mode );
     }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new images)" );
 
     char * buffer = malloc ( size2 );
     memset( buffer, 0, size2 );
