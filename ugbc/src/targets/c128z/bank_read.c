@@ -73,6 +73,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
         default:
             outline1("LD BC, $%4.4x", (unsigned short) (_size&0xffff) );
             outline0("CALL BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -106,6 +107,7 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
     outline1("LD BC, (%s)", size->realName );
     outline1("LD A, (%s)", bank->realName );
     outline0("CALL BANKREAD");
+    _environment->bankAccessOptimization.readn = 1;
 
     outline0("; end bank read");
 
