@@ -854,6 +854,8 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART");
 
+    deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( bank, src_hw_c64_bank_asm );
 
     if ( _environment->chainUsed ) {
@@ -889,9 +891,8 @@ void variable_cleanup( Environment * _environment ) {
         outline1("   .RES $%4.4x", lastAddress - _environment->program.startingAddress - 5 );;
     }
 
-    deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( syscall, src_hw_c64_syscall_asm);
     deploy_inplace_preferred( startup, src_hw_c64_startup_asm);
-    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
     deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
     deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
