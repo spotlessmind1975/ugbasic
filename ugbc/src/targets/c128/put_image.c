@@ -69,7 +69,6 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
-        realFrame = frame;
     }
     Variable * sequence = NULL;
     if ( _sequence) {
