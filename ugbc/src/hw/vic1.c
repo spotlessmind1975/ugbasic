@@ -1938,7 +1938,7 @@ Variable * vic1_new_sequence( Environment * _environment, int _sequences, int _f
     //     CRITICAL_NEW_IMAGE_UNSUPPORTED_MODE( _mode );
     // }
 
-    Variable * result = variable_temporary( _environment, VT_IMAGES, "(new images)" );
+    Variable * result = variable_temporary( _environment, VT_SEQUENCE, "(new images)" );
 
     result->size = size;
     result->frameSize = frameSize;
