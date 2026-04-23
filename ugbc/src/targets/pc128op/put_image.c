@@ -470,6 +470,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDX %s+6", image->realName );
     outline1("LDU %s+2", image->realName );
     outline0("JSR BANKREAD");
+    _environment->bankAccessOptimization.readn = 1;
     
     cpu_label( _environment, labelDecompressionDone );
 
