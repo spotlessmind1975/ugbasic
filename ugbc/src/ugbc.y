@@ -10801,6 +10801,10 @@ int main( int _argc, char *_argv[] ) {
     
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
+        if ( ! fh ) {
+            fprintf(stderr, "Unable to open source file: %s (%d - %s)\n", _environment->sourceFileName, errno, strerror(errno) );
+            exit(EXIT_FAILURE);
+        }
         fseek( fh, 0, SEEK_END );
         int sourceSize = ftell( fh );
         fseek( fh, 0, SEEK_SET );
