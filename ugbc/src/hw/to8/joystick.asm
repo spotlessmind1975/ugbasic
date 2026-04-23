@@ -99,7 +99,7 @@ JFIREX0
 
     PULS D
 
-JFIREX0DONE:
+JFIREX0DONE
     CMPA #0
     
     ; Done.
