@@ -18,9 +18,9 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
         RGB(0,0,255),RGB(255,0,255),RGB(0,255,255),RGB(255,255,255), _
         RGB(187,187,187),RGB(221,119,119),RGB(119,221,119)
     '
-    tile1 := LOAD IMAGE("drop.png")
-    '
     DOUBLE BUFFER ON
+    '
+    tile1 := LOAD IMAGE("drop.png")
     '
     CLS BLACK
     PUT IMAGE tile1 AT 80, 100
