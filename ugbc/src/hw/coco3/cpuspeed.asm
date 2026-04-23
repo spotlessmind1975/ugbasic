@@ -42,7 +42,7 @@
 ; If B=2 then set the speed at 1.79 Mhz
 ; If B=3 or otherwise, then set the speed at 2.864 MHz
 ;
-CPUSPEED:
+CPUSPEED
     DECB
     BEQ     CPUSPEED1
     DECB
