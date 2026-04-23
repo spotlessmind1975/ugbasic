@@ -56,7 +56,7 @@ Variable * jfire( Environment * _environment, int _port ) {
         deploy_preferred( keyboard, src_hw_to8_keyboard_asm );
         deploy( joystick, src_hw_to8_joystick_asm );
 
-        outline1( "LDB $%2.2x", _port );
+        outline1( "LDB $#%2.2x", _port );
         outline0( "JSR JFIRE" );
         outline1( "STA %s", result->realName );
 
@@ -74,6 +74,7 @@ Variable * jfire_vars( Environment * _environment, char * _port ) {
     }
 
     Variable * result = variable_temporary( _environment, jfireResultType, "(result of J*)" );
+    Variable * port = variable_retrieve( _environment, _port );
 
     if ( _environment->joystickConfig.notEmulated ) {
 
@@ -84,7 +85,7 @@ Variable * jfire_vars( Environment * _environment, char * _port ) {
         deploy_preferred( keyboard, src_hw_to8_keyboard_asm );
         deploy( joystick, src_hw_to8_joystick_asm );
 
-        outline1( "LDB %s", _port );
+        outline1( "LDB %s", port->realName );
         outline0( "JSR JFIRE" );
         outline1( "STA %s", result->realName );
 
