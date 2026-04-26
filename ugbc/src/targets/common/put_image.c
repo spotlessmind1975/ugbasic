@@ -50,7 +50,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _x Abscissa of the point to draw
  * @param _y Ordinate of the point
  */
-void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
-    put_image_vars_flags( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+void put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags, int _color ) {
+    put_image_vars_flags( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, _color );
 }
 

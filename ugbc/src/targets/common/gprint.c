@@ -157,7 +157,7 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
             cpu_move_8bit_indirect2( _environment, address->realName, letter->realName );
 
-            put_image( _environment, _atlas, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
+            put_image( _environment, _atlas, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE, 0 );
 
             if ( atlas->type == VT_IMAGEREF ) {
                 variable_add_inplace_vars( _environment, dx->name, atlasFrameWidth->name );
@@ -226,7 +226,7 @@ void gprint( Environment * _environment, char * _atlas, char * _text, char * _x,
 
                 cpu_move_8bit_indirect2( _environment, paramAddress->realName, letter->realName );
 
-                put_image( _environment, paramAtlas->name, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE );
+                put_image( _environment, paramAtlas->name, dx->name, y->name, NULL, NULL, letter->name, NULL, FLAG_WITH_PALETTE, 0 );
 
                 outline0(";variable_add_inplace_vars");
                 variable_add_inplace_vars( _environment, dx->name, paramFrameWidth->name );

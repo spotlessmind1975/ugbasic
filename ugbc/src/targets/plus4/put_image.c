@@ -156,7 +156,7 @@ potrebbe non essere disponibile su tutti i target e le modalità grafiche.
 
 </usermanual> */
 
-void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, _color ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -390,7 +390,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
 }
 
-void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
 
     MAKE_LABEL
 
@@ -508,7 +508,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
 }
 
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
     
     if ( _environment->emptyProcedure ) {
         return;
@@ -521,10 +521,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_ADDRESS:
-            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, _color );
             break;
         case VT_IMAGEREF:
-            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, _color );
             break;            
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
@@ -532,7 +532,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
 }
 
-void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
+void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags, int _color ) {
 
     char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
     char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
@@ -550,5 +550,5 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         _environment->constants = flagsConstant;
     }
 
-    put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
+    put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter, _color );
 }

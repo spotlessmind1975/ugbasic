@@ -196,13 +196,13 @@ void put_tilemap_inline( Environment * _environment, char * _tilemap, int _flags
 
         // --- DRAW TILE --
 
-        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  _flags );
+        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  _flags, 0 );
         cpu_jump( _environment, labelDonePutImage );
 
         // --- DRAW PADDING TILE --
 
         cpu_label( _environment, labelPadding );
-        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL,  _flags );
+        put_image( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL,  _flags, 0 );
 
         // From here and ahead, we drawed the tile so we must calculate the
         // next conditions and actions to do. We arrive here both if we drawed
