@@ -1917,7 +1917,7 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
 
 }
 
-void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _color ) {
+void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy_preferred( putimage, src_hw_ef936x_put_image_asm );
@@ -2022,15 +2022,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
         outline0("CLR <IMAGEF" );
     }
 
-    if ( _color ) {
-        outline1("LDA #$%2.2x", ( ( _color & 0x0f ) << 4 ) | ( _color & 0x0f ) );
-        outline0("JSR PUTIMAGESETCOLOR");
-        outline0("JSR PUTIMAGE");
-        outline0("JSR PUTIMAGECLRCOLOR");
-    } else {
-        outline0("JSR PUTIMAGE");
-    }
-
+    outline0("JSR PUTIMAGE");
     
 }
 

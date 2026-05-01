@@ -51,7 +51,7 @@ extern char DATATYPE_AS_STRING[][16];
  * @param _y Ordinate of the point
  */
 
- void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
+ void put_image_vars_original( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -149,7 +149,7 @@ extern char DATATYPE_AS_STRING[][16];
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags, _color );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 Variable * frame = NULL;
@@ -163,15 +163,15 @@ extern char DATATYPE_AS_STRING[][16];
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags, _color );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, "", image->frameSize, image->frameCount, _flags, _color );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->name, image->frameSize, image->frameCount, _flags, _color );
+                        ef936x_put_image( _environment, resource, _x1, _y1, "", sequence->name, image->frameSize, image->frameCount, _flags );
                     } else {
-                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, sequence->name, image->frameSize, image->frameCount, _flags, _color );
+                        ef936x_put_image( _environment, resource, _x1, _y1, frame->name, sequence->name, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -269,7 +269,7 @@ extern char DATATYPE_AS_STRING[][16];
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags, _color );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 Variable * sequence = NULL;
@@ -300,9 +300,9 @@ extern char DATATYPE_AS_STRING[][16];
                 }
 
                 if ( !frame ) {
-                    ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags, _color );
+                    ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    ef936x_put_image( _environment, resource, _x1, _y1, frame->name, NULL, image->frameSize, 0, _flags, _color );
+                    ef936x_put_image( _environment, resource, _x1, _y1, frame->name, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -359,18 +359,19 @@ extern char DATATYPE_AS_STRING[][16];
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags, _color );
+                ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             } else {
-                ef936x_put_image( _environment, resource, _x1, _y1, NULL, NULL, 1, 0, _flags, _color );
+                ef936x_put_image( _environment, resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             }
             break;
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
 
+
 }
 
-void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     MAKE_LABEL
 
@@ -492,7 +493,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags, _color );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
 
     cpu_jump( _environment, labelDone );
 
@@ -503,7 +504,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags, _color );
+    ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
 
     cpu_label( _environment, labelDone );
 
@@ -513,7 +514,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
         
 }
 
-void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
+void put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     if ( _environment->emptyProcedure ) {
         return;
@@ -526,10 +527,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_ADDRESS:
-            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, _color );
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
             break;
         case VT_IMAGEREF:
-            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, _color );
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
             break;            
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
@@ -537,7 +538,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
 }
 
-void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags, int _color ) {
+void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
     _flags = _flags & ( ( FLAG_DOUBLE_Y << 8 ) | FLAG_TRANSPARENCY );
 
@@ -565,5 +566,6 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
         sprintf( flagsConstantParameter, "#0000" );
     }
     
-    put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter, _color );
+    put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
 }
+

@@ -366,7 +366,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
             char skipIfSamePositionLabel2[MAX_TEMPORARY_STORAGE]; sprintf( skipIfSamePositionLabel2, "%sskip0same2", _prefix );
             cpu_compare_and_branch_8bit_const( _environment, prefixDummyVar->realName, 0x00, skipIfSamePositionLabel2, 1 );
             cpu_compare_and_branch_8bit_const( _environment, variable_xor( _environment, variable_xor( _environment, prefixXVar->name, prefixOXVar->name )->name, variable_xor( _environment, prefixYVar->name, prefixOYVar->name )->name )->realName, 0x00, skipIfSamePositionLabel, 1 );
-            put_image( _environment, prefixBackgroundVar->name, prefixOXVar->name, prefixOYVar->name, NULL, NULL, NULL, NULL, 0, 0 );
+            put_image( _environment, prefixBackgroundVar->name, prefixOXVar->name, prefixOYVar->name, NULL, NULL, NULL, NULL, 0 );
             cpu_label( _environment, skipIfSamePositionLabel2 );
             get_image( _environment, prefixBackgroundVar->name, prefixXVar->name, prefixYVar->name, NULL, NULL, NULL, NULL, 0 );
             variable_move( _environment, prefixXVar->name, prefixOXVar->name );
@@ -434,7 +434,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 cpu_dec( _environment, prefixFrameVar->realName );
@@ -475,7 +475,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 // 	INC [prefix]Frame
@@ -526,7 +526,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 if ( _environment->animationReverse ) {
@@ -583,7 +583,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 // ADD [prefix]Frame, [prefix]FrameDirection
@@ -645,7 +645,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 // ADD [prefix]Frame, [prefix]FrameDirection
@@ -717,7 +717,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 // 	INC [prefix]Frame
@@ -763,7 +763,7 @@ void animation( Environment * _environment, char * _identifier, char * _atlas, c
                     cpu_call( _environment, updateSpriteDataWithImage );
                     sprite_at_vars( _environment, prefix->name, prefixXVar->name, prefixYVar->name );
                 } else {
-                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE, 0 );
+                    put_image( _environment, atlas->name, prefixXVar->name, prefixYVar->name, NULL, NULL, prefixFrameVar->name, NULL, FLAG_WITH_PALETTE );
                 }
 
                 // 	INC [prefix]Frame

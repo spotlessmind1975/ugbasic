@@ -209,7 +209,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
             // --- DRAW TILE --
 
             outline1("; put_image_vars, image = %s...", tileset->name );
-            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->realName, 0 );
+            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, frame->name, NULL,  flags->realName );
             cpu_jump( _environment, labelDonePutImage );
 
             // --- DRAW PADDING TILE --
@@ -218,7 +218,7 @@ void put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, 
             cpu_compare_and_branch_8bit_const(  _environment, padFrame->realName, 0x00, labelDonePutImage, 1 );
 
             outline1("; put_image_vars, image = %s...", tileset->name );
-            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->realName, 0 );
+            put_image_vars( _environment, tileset->name, x->name, y->name, NULL, NULL, padFrame->name, NULL, flags->realName );
 
             // From here and ahead, we drawed the tile so we must calculate the
             // next conditions and actions to do. We arrive here both if we drawed
