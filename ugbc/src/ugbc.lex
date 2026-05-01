@@ -105,6 +105,14 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
         } \
     }
 
+#define YY_USER_ACTION_RESET \
+    { \
+        yylloc.first_line = 1; \
+        yylloc.first_column = 1; \
+        yylloc.last_line = 1; \
+        yylloc.last_column = 1; \
+    }
+
 %}
 
 %x incl
@@ -152,10 +160,7 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
     yyconcatlineno = 0;
     yycolno = 0;
     yyposno = 0;
-    yylloc.first_line = 1;
-    yylloc.first_column = 1;
-    yylloc.last_line = 1;
-    yylloc.last_column = 1;
+    YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
@@ -198,10 +203,7 @@ INCLUDE             BEGIN(incl);
     yyconcatlineno = 0;
     yycolno = 0;
     yyposno = 0;
-    yylloc.first_line = 1;
-    yylloc.first_column = 1;
-    yylloc.last_line = 1;
-    yylloc.last_column = 1;
+    YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
