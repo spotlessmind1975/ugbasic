@@ -10779,11 +10779,13 @@ int main( int _argc, char *_argv[] ) {
 
     environment_parse_command_line( _environment, _argc, _argv );
 
+    _environment->sourceFileName = strdup(_argv[optind] );
+    
+    environment_setup_retrohack( _environment );
+
     if ( _environment->tenLinerRulesEnforced ) {
         environment_setup_10liner( _environment );
     }
-
-    _environment->sourceFileName = strdup(_argv[optind] );
     
     if ( _environment->tenLinerRulesEnforced ) {
         FILE * fh = fopen( _environment->sourceFileName, "rb" );
