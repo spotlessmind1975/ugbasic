@@ -6430,7 +6430,12 @@ Variable * variable_compare_const( Environment * _environment, char * _source, i
         case 8:
             cpu_compare_8bit_const( _environment, source->realName, _destination, result->realName, 1 );
             break;
-        case 1: 
+        case 1: {
+            Variable * converted = variable_temporary( _environment, VT_BYTE, "(byte)" );
+            variable_move_1bit_8bit( _environment, source, converted );
+            cpu_compare_8bit_const( _environment, source->realName, _destination, result->realName, 1 );
+            break;
+        }            
         case 0: 
             CRITICAL_CANNOT_COMPARE_CONST(DATATYPE_AS_STRING[source->type]);
             break;        
