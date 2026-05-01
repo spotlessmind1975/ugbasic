@@ -3358,6 +3358,7 @@ typedef struct _Environment {
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
 int yyerror ( Environment * _ignored, const char * _message );
+int yywarning ( Environment * _ignored, const char * _message );
 
 #if defined(_DEBUG)
     #define CRITICAL( s ) { \
@@ -3876,10 +3877,10 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_BUILD_INVALID_FILENAME_K7(f) CRITICALB2("B002 - invalid filename for K7 format", f );
 #define CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM(s) CRITICALB2i("B003 - binary file too big for ROM image", s );
 
-#define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
-#define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
-#define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
-#define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
+#define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { yywarning(_environment, s ); }
+#define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %s", s, v); yywarning(_environment, message ); }
+#define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %i", s, v); yywarning(_environment, message ); }
+#define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %s %s", s, v1, v2); yywarning(_environment, message ); }
 #define WARNING_BITWIDTH( v1, v2 ) WARNING3("W001 - Multiplication could loose precision", v1, v2 );
 #define WARNING_DOWNCAST( v1, v2 ) WARNING3("W002 - Implicit downcasting to less bitwidth (precision loss)", v1, v2 );
 #define WARNING_SCREEN_MODE( v1 ) WARNING2i("W003 - Screen mode unsupported", v1 );
