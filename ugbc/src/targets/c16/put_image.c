@@ -388,7 +388,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
 }
 
-void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags, int _color ) {
+void put_image_vars_imageref( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags ) {
 
     MAKE_LABEL
 
