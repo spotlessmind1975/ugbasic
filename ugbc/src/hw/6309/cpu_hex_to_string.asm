@@ -35,12 +35,31 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+H2STRINGCALCSIZE
+    ADDA #2
+    MUL
+    RTS
+
 H2STRING
     CMPB #0
     BNE H2STRINGA
     RTS
 
+H2STRINGSEP
+    LDA <MATHPTR6
+    BEQ H2STRINGSEPDONE
+    DEC <MATHPTR7
+    BNE H2STRINGSEPDONE
+    LDA #'-'
+    STA ,Y+
+    LDA <MATHPTR6
+    STA <MATHPTR7
+H2STRINGSEPDONE
+    RTS
+
 H2STRINGA
+    STA <MATHPTR6
+    STA <MATHPTR7
     LDA #0
     TFR D, U
     ; LDB #0
@@ -49,11 +68,12 @@ H2STRINGA
 H2STRINGL1
     LDA ,X
     JSR H2STRINGBYTE
-    LDA <MATHPTR2
-    STA 1,Y
     LDA <MATHPTR1
-    STA 0,Y
-    LEAY 2, Y
+    STA ,Y+
+    BSR H2STRINGSEP
+    LDA <MATHPTR2
+    STA ,Y+
+    BSR H2STRINGSEP
 H2STRINGL1A
     DECB
     LEAU -1, U

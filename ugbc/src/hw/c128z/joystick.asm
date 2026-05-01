@@ -93,6 +93,15 @@ JOYSTICKREAD0:
     AND $1F
     XOR $1F
     POP BC
+
+    CP 0
+    JR Z, JOYSTICKREAD0DONE
+
+    NOP
+    NOP
+    NOP
+
+JOYSTICKREAD0DONE:
     RET
 
 ; Read the position and button for second joystick (JOY(1))
@@ -117,6 +126,11 @@ JOYSTICKREAD1:
     POP BC
     RET
 
+JOYSTICKREAD:
+    CP 0
+    JR Z, JOYSTICKREAD0
+    JR JOYSTICKREAD1
+
 @IF joystickConfig.sync
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -129,11 +143,99 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK SYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   A = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
+
+        ; Is the button odd? So we can read directly
+        ; the fire button.
+
+        SRL A
+        JR C, JFIRE
+
+        ; Load the latch value.
+
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        LD A, (HL)
+
+        ; Check if latch is not zero.
+        
+        CP 0
+        JR Z, STRIGNONE
+
+        ; Reset the latch.
+
+        LD B, A
+        LD A, 0
+        LD (HL), A
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LD A, $FF
+
+    STRIGNONE:
+        RET
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   A = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        PUSH AF
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        POP AF
+        
+        ; Load the STRIG register from the hardware port.
+
+        CALL JOYSTICKREAD
+
+        ; Isolate the FIRE bit.
+
+        AND $10
+
+        ; Update the FIRE latch.
+
+        PUSH AF
+        OR (HL)
+        LD (HL), A
+        POP AF
+
+        ; Done.
+
+        RET
+
+        ; Read the FIRE button for a specific joystick
+        ;
+        ;   A = joystick number
+        ;   A = $00 FIRE was not pressed
+        ;       $FF FIRE was pressed
+        ;
+        JFIRE:
+            CALL JFIREX
+            CP 0
+            JR Z, JFIRENONE
+            LD A, $FF
+        JFIRENONE:
+            RET
+
     ; Wait for any fire is pressed on JOY(0)
 
     WAITFIRE0:
-        CALL JOYSTICKREAD0
-        AND $10
+        CALL JFIRE
+        CP 0
         JR Z, WAITFIRE0
         RET
 
@@ -144,19 +246,19 @@ JOYSTICKREAD1:
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
-        CALL JOYSTICKREAD1
-        AND $10
+        CALL JFIRE
+        CP 0
         JR Z, WAITFIRE1
         RET
 
     ; Wait for any fire is pressed, for any joystick.
 
     WAITFIRE:
-        CALL JOYSTICKREAD0
-        AND $10
+        LD A, 0
+        CALL JFIRE
         LD B, A
-        CALL JOYSTICKREAD1
-        AND $10
+        LD A, 1
+        CALL JFIRE
         OR B
         CP 0
         JR Z, WAITFIRE
@@ -173,10 +275,110 @@ JOYSTICKREAD1:
 ;- To enable: DEFINE JOYSTICK ASYNC
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-; Dedicated storage space for JOY(0) and JOY(1)
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   A = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
+    
+        ; Is the button odd? So we can read directly
+        ; the fire button.
 
-JOYSTICK0:      DB   $0
-JOYSTICK1:      DB   $0
+        SRL A
+        JR C, JFIRE
+
+        ; Load the latch value.
+
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        LD A, (HL)
+
+        ; Check if latch is not zero.
+        
+        CP 0
+        JR Z, STRIGNONE
+
+        ; Reset the latch.
+
+        LD B, A
+        LD A, 0
+        LD (HL), A
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LD A, $FF
+
+    STRIGNONE:
+        RET
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   A = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        LD B, A
+
+        PUSH AF
+        LD E, A
+        LD D, 0
+        LD HL, JOYSTICK0
+        ADD HL, DE
+        LD A, (HL)
+        LD DE, HL
+        POP AF
+        
+        ; Load the STRIG register from the hardware port.
+
+        LD A, (DE)
+
+        ; Isolate the FIRE bit.
+
+        AND $10
+
+        ; Update the FIRE latch.
+
+        PUSH AF
+        PUSH AF
+        LD A, B
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        POP AF
+        OR (HL)
+        LD (HL), A
+        POP AF
+
+        ; Done.
+
+        RET
+
+        ; Read the FIRE button for a specific joystick
+        ;
+        ;   A = joystick number
+        ;   A = $00 FIRE was not pressed
+        ;       $FF FIRE was pressed
+        ;
+        JFIRE:
+            CALL JFIREX
+            CP 0
+            JR Z, JFIRENONE
+            LD A, $FF
+        JFIRENONE:
+            RET
+
+
+    ; Dedicated storage space for JOY(0) and JOY(1)
+
+    JOYSTICK0:      DB   $0
+    JOYSTICK1:      DB   $0
 
     ; IRQ service for joystick
 
@@ -237,8 +439,8 @@ JOYSTICK1:      DB   $0
     ; Wait for any fire is pressed on JOY(0)
 
     WAITFIRE0:
-        LD A, (JOYSTICK0)
-        AND $10
+        LD A, 0
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE0
         RET
@@ -251,8 +453,8 @@ JOYSTICK1:      DB   $0
     ; Wait for any fire is pressed on JOY(1)
 
     WAITFIRE1:
-        LD A, (JOYSTICK1)
-        AND $10
+        LD A, 1
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE1
         RET
@@ -263,14 +465,14 @@ JOYSTICK1:      DB   $0
 
         ; Read dedicated storage for JOY(0)
 
-        LD A, (JOYSTICK0)
-        AND $10
+        LD A, 0
+        CALL JFIRE
         LD B, A
 
         ; Read dedicated storage for JOY(1)
 
-        LD A, (JOYSTICK1)
-        AND $10
+        LD A, 1
+        CALL JFIRE
         OR B
 
         ; If both are zero, recheck again.

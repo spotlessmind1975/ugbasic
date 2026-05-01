@@ -61,6 +61,9 @@ do { /* x-y+128<0 or 127-x+y<0 */                                            \
 
 void cpu_init( Environment * _environment ) {
 
+    _environment->stackSize = 0xffff;
+    _environment->stackStartAddress = 0x0000;
+    
 }
 
 /* Helper for 8/16 bits comparison */
@@ -93,7 +96,13 @@ static void cpu_compare_const( Environment * _environment, char *_source, int _d
 
     outline0("CLRB");
     outline2("LD%c %s",  REG, _source);
-    outline2("CMP%c #$%2.2x", REG, _destination);
+    if ( _destination ) {
+        if ( _bits==16 ) {
+            outline2("CMP%c #$%4.4x", REG, _destination);
+        } else {
+            outline2("CMP%c #$%2.2x", REG, _destination);
+        }
+    }
 
     if(_positive) {
         outline1("BNE %s", label);
@@ -168,7 +177,6 @@ static void cpu_less_than_and_branch_const( Environment * _environment, char *_s
 
     MAKE_LABEL
 
-    outline0("; cpu_less_than_and_branch_const");
     outline0("CLRB");
     outline2("LD%c %s",  REG, _source);
     outline2("CMP%c #$%4.4x", REG, _destination);
@@ -274,12 +282,10 @@ void cpu_ctoa( Environment * _environment ) {
 
     inline( cpu_ctoa )
 
-        outline1("BCS %syes", label );
         outline0("LDA #0");
-        outline1("JMP %s", label );
-        outhead1("%syes", label );
-        outline0("LDA #$ff");
-        outhead1("%s", label );
+        outline0("ROLA");
+        outline0("EORA #$FF");
+        outline0("ADDA #1");
 
     no_embedded( cpu_ctoa );
 
@@ -541,7 +547,12 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline0("JSR CPUFILL16");
         }
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }
+
         outline1("LDX %s", _address);
 
     done( )
@@ -567,7 +578,11 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
 
     embedded( cpu_fill, src_hw_6309_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDX #0");
+        }        
         outline1("LDX %s", _address);
         outline1("LDY #$%4.4x", _bytes );
         if ( _bytes < 256 ) {
@@ -631,7 +646,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
 
     embedded( cpu_fill, src_hw_6309_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }
         outline1("LDX #%s", _address);
         outline1("LDY %s", _bytes);
         outline0("JSR CPUFILL16");
@@ -659,7 +678,11 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
 
     embedded( cpu_fill, src_hw_6309_cpu_fill_asm );
 
-        outline1("LDA %s", _pattern );
+        if ( _pattern ) {
+            outline1("LDA %s", _pattern );
+        } else {
+            outline0("LDA #0");
+        }
         outline1("LDX #%s", _address);
         outline1("LDY #$%4.4x", _bytes);
 
@@ -5805,7 +5828,7 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
 
     MAKE_LABEL
 
@@ -5813,14 +5836,46 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_6309_cpu_hex_to_string_asm );
 
-        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 3 ) );
-        outline1("LDX #%s", _number );
+        outline1("LDA #$%2.2x", _separator?1:0 );
+        outline1("LDB %s", _size );
+        outline0("JSR H2STRINGCALCSIZE" );
+        outline1("STB %s", _string_size );
+
+    done()
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    embedded( cpu_hex_to_string, src_hw_6309_cpu_hex_to_string_asm );
+
+        outline1("LDA #$%2.2x", _separator?1:0 );
+        outline1("LDB #$%2.2x", (unsigned char)( _size & 0xff ) );
+        outline0("JSR H2STRINGCALCSIZE" );
+        outline1("STB %s", _string_size );
+
+    done()
+
+}
+
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _size, int _separator ) {
+
+    MAKE_LABEL
+
+    inline( cpu_hex_to_string )
+
+    embedded( cpu_hex_to_string, src_hw_6309_cpu_hex_to_string_asm );
+
+        outline1("LDA #$%2.2x", (unsigned char)( _separator * 3 ) );
+        outline1("LDB %s", _size );
+        outline1("LDX %s", _number );
         outline1("LDY %s", _string );
         
         outline0("JSR H2STRING" );
-
-        outline1("LDB #$%2.2x", (unsigned char)( _bits >> 2 ) );
-        outline1("STB %s", _string_size );
 
     done()
 
@@ -5828,6 +5883,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDY #%s", _string );
@@ -5838,6 +5894,7 @@ void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDA %s", _size );
@@ -5848,6 +5905,7 @@ void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDA #$%2.2x", _size );
@@ -5858,6 +5916,7 @@ void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 void cpu_dsfree( Environment * _environment, char * _index ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _index );
@@ -5867,6 +5926,7 @@ void cpu_dsfree( Environment * _environment, char * _index ) {
 
 void cpu_dswrite( Environment * _environment, char * _index ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _index );
@@ -5876,6 +5936,7 @@ void cpu_dswrite( Environment * _environment, char * _index ) {
 
 void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _index );
@@ -5886,6 +5947,7 @@ void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 void cpu_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline1( "LDB %s", _index );
@@ -5896,6 +5958,7 @@ void cpu_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 void cpu_dsgc( Environment * _environment ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline0( "JSR DSGC" );
@@ -5904,6 +5967,7 @@ void cpu_dsgc( Environment * _environment ) {
 
 void cpu_dsinit( Environment * _environment ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring, src_hw_6309_dstring_asm );
 
     outline0( "JSR DSINIT" );
@@ -5912,6 +5976,7 @@ void cpu_dsinit( Environment * _environment ) {
 
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
+    deploy_preferred( duff, src_hw_6309_duff_asm );
     deploy( dstring,src_hw_6309_dstring_asm );
 
     if ( _address || _size ) {
@@ -5926,6 +5991,30 @@ void cpu_dsdescriptor( Environment * _environment, char * _index, char * _addres
             outline1( "STA %s", _size );
         }
     }
+
+}
+
+void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) {
+
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring,src_hw_6309_dstring_asm );
+
+    outline1( "LDA %s", _original );
+    outline1( "LDB %s", _copy );
+    outline0( "JSR DSASSIGN" );
+    outline1( "STB %s", _copy );
+
+}
+
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
+
+    outline1( "LDY #%s", _string );
+    outline1( "LDB %s", _copy );
+    outline0( "JSR DSASSIGNSTR" );
+    outline1( "STB %s", _copy );
 
 }
 
@@ -7474,6 +7563,69 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
     
     outline1("LDD %s", address_displacement( _environment, _source, "2" ) );
     outline1("STD %s", _destination );
+
+}
+
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
+
+    deploy( encrypt, src_hw_6309_encrypt_asm );
+
+    outline1("LDX %s", _data );
+    outline1("LDU %s", _key );
+    outline1("LDY %s", _output );
+    outline1("LDA %s", _key_size );
+    outline1("LDB %s", _data_size );
+    outline0("JSR ENCRYPT" );
+
+}
+
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
+
+    deploy( decrypt, src_hw_6309_decrypt_asm );
+
+    outline1("LDX %s", _data );
+    outline1("LDU %s", _key );
+    outline1("LDY %s", _output );
+    outline1("LDA %s", _key_size );
+    outline1("LDB %s", _data_size );
+    outline0("JSR DECRYPT" );
+    cpu_ztoa( _environment );
+    outline1("STA %s", _result );
+
+}
+
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result ) {
+
+    deploy( hex2bin, src_hw_6309_hex2bin_asm );
+
+    outline1("LDX %s", _value_address );
+    outline1("LDA %s", _value_size );
+    outline1("LDY %s", _variable_address );
+    outline1("LDB %s", _variable_size );
+    outline0("JSR HEX2BIN" );
+    outline1("STA %s", _result );
+
+}
+
+void cpu_dsfill( Environment * _environment, char * _string, char * _value ) {
+
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
+
+    outline1( "LDB %s", _string );
+    outline1( "LDA %s", _value );
+    outline0( "JSR DSFILL" );
+
+}
+
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value ) {
+
+    deploy_preferred( duff, src_hw_6309_duff_asm );
+    deploy( dstring, src_hw_6309_dstring_asm );
+
+    outline1( "LDB %s", _string );
+    outline1( "LDA #$%2.2x", (unsigned char)(_value&0xff) );
+    outline0( "JSR DSFILL" );
 
 }
 

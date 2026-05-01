@@ -270,7 +270,8 @@ typedef enum _OutputFileType {
     OUTPUT_FILE_TYPE_RAM = 12,
     OUTPUT_FILE_TYPE_GB = 13,
     OUTPUT_FILE_TYPE_COM = 14,
-    OUTPUT_FILE_TYPE_VZ = 15
+    OUTPUT_FILE_TYPE_VZ = 15,
+    OUTPUT_FILE_TYPE_SDDRIVE = 16
 
 } OutputFileType;
 
@@ -295,6 +296,15 @@ struct _POBuffer {
 };
 
 typedef struct _POBuffer *POBuffer;
+
+struct _POVariable {
+    char *name; /* actual string */
+    int nb_read;
+    int nb_write;
+    struct _POVariable * next;
+};
+
+typedef struct _POVariable POVariable;
 
 /**
  * @brief Gamma correction type (for some palettes)
@@ -566,6 +576,7 @@ typedef struct _Resource {
 #define MAX_RESIDENT_SHAREDS            128
 #define PROTOTHREAD_DEFAULT_COUNT       16
 #define MAX_BUFFERED_OUTPUT             16
+#define MAX_FRAMES_PER_STRIP            32
 
 #define FONT_SCHEMA_EMBEDDED            0
 #define FONT_SCHEMA_STANDARD            1
@@ -953,6 +964,16 @@ typedef struct _ArrayReference {
 
 } ArrayReference;
 
+typedef struct _Strip {
+
+    int     id;
+    int     frames[MAX_FRAMES_PER_STRIP];
+    int     count;
+
+    struct _Strip * next;
+
+} Strip;
+
 /**
  * @brief Structure of a single variable
  */
@@ -1194,6 +1215,8 @@ typedef struct _Variable {
     Offsetting * offsettingSequences;
 
     SIDFILE * sidFile;
+
+    Strip   *   strips;
 
     /**
      *
@@ -1937,6 +1960,11 @@ typedef struct _Deployed {
     int flash;
     int chain;
     int syscall;
+    int gprint;
+    int encrypt;
+    int decrypt;
+    int hex2bin;
+    int cpuspeed;
     
 } Deployed;
 
@@ -2037,6 +2065,7 @@ typedef struct _VestigialConfig {
 typedef struct _FontConfig {
 
     int schema;
+    int optimized;
 
 } FontConfig;
 
@@ -2467,11 +2496,6 @@ typedef struct _Environment {
      * Current line parsed.
      */
     char * parsedLine;
-
-    /**
-     * Current line number in the BAS file.
-     */
-    int yylineno;
 
     /**
      * Last unique identification number 
@@ -2926,11 +2950,6 @@ typedef struct _Environment {
      */
     TileDescriptors * tilesets[MAX_TILESETS];
 
-    /**
-     * Debug during LOAD IMAGE.
-     */
-    int debugImageLoad;
-    
     int bankedLoadDefault;
     
     /**
@@ -3165,6 +3184,8 @@ typedef struct _Environment {
 
     int clsCalledOnce;
 
+    int clsSlow;
+
     int keyboardFullSupport;
 
     char * optionalX;
@@ -3267,6 +3288,19 @@ typedef struct _Environment {
 
     int chainUsed;
 
+    int currentStripMaxId;
+    Strip   *   currentStrip;
+
+    int gprintInline;
+    
+    int stackSize;
+
+    int stackStartAddress;
+
+    int dynamicConsole;
+
+    int horizontalScrollOff;
+    
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
     /* --------------------------------------------------------------------- */
@@ -3318,7 +3352,9 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
+int yylinenoget ( );
 int yyerror ( Environment * _ignored, const char * _message );
+int yywarning ( Environment * _ignored, const char * _message );
 
 #if defined(_DEBUG)
     #define CRITICAL( s ) { \
@@ -3348,6 +3384,12 @@ int yyerror ( Environment * _ignored, const char * _message );
     #define CRITICAL3i( s, v1, v2 ) { \
         char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3ii( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
+        sprintf(errorMessage, "%s (%d, %d) FILE: %s LINE: %d", s, v1, v2, __FILE__, __LINE__ ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
@@ -3385,6 +3427,12 @@ int yyerror ( Environment * _ignored, const char * _message );
     #define CRITICAL3i( s, v1, v2 ) { \
         char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
         sprintf(errorMessage, "%s (%s, %d)", s, v1, v2 ); \
+        target_cleanup( ((struct _Environment *)_environment) ); \
+        yyerror ( NULL, errorMessage ); \
+    }
+    #define CRITICAL3ii( s, v1, v2 ) { \
+        char errorMessage[MAX_TEMPORARY_STORAGE*10]; \
+        sprintf(errorMessage, "%s (%d, %d)", s, v1, v2 ); \
         target_cleanup( ((struct _Environment *)_environment) ); \
         yyerror ( NULL, errorMessage ); \
     }
@@ -3459,8 +3507,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_SQR_UNSUPPORTED( v, t ) CRITICAL3("E060 - SQR unsupported for variable of given datatype", v, t );
 #define CRITICAL_UNDEFINED_CONSTANT( c ) CRITICAL2("E061 - use of an undefined constant", c );
 #define CRITICAL_TYPE_MISMATCH_CONSTANT_NUMERIC( c ) CRITICAL2("E062 - use of an wrong type constant (numeric expected, string used)", c );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( w ) CRITICAL2i("E063 - invalid width for image, must be multiple of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h ) CRITICAL2i("E064 - invalid height for image, must be multiple of 8 pixels", h );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( w, m ) CRITICAL3ii("E063 - invalid width for image, must be a multiple of modulo pixels", w, m );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( h, m ) CRITICAL3ii("E064 - invalid height for image, must be a multiple of modulo pixels", h, m );
 #define CRITICAL_BIN_UNSUPPORTED( v, t ) CRITICAL3("E065 - BIN unsupported for variable of given datatype", v, t );
 #define CRITICAL_MUL2_INVALID_STEPS( v ) CRITICAL2("E066 - invalid steps for multiplication by 2", v );
 #define CRITICAL_UNABLE_TO_EMBED( v ) CRITICAL2("E067 - unable to embed library, only inline available", v );
@@ -3479,8 +3527,8 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_LOCAL_VARIABLE_OUTSIDE_PROCEDURE( c )  CRITICAL2("E079 - cannot define LOCAL vars outside PARALLEL PROCEDURE", c );
 #define CRITICAL_OR_UNSUPPORTED( v, t ) CRITICAL3("E080 - Bitwise OR unsupported for variable of given datatype", v, t );
 #define CRITICAL_NOT_UNSUPPORTED( v, t ) CRITICAL3("E081 - Bitwise NOT unsupported for variable of given datatype", v, t );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E082 - invalid width for framed image, must be multiple of 8 pixels", w );
-#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( h ) CRITICAL2i("E083 - invalid height for framed image, must be multiple of 8 pixels", h );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( w, m ) CRITICAL3ii("E082 - invalid width for framed image, must be multiple of modulo pixels", w, m );
+#define CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( h, m ) CRITICAL3ii("E083 - invalid height for framed image, must be multiple of modulo pixels", h, m );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_X( x ) CRITICAL2i("E084 - invalid offset x for image, must be >= 0 and < width", x );
 #define CRITICAL_IMAGE_CONVERTER_INVALID_OFFSET_Y( y ) CRITICAL2i("E085 - invalid offset y for image, must be >= 0 and < height", y );
 #define CRITICAL_IMAGES_LOAD_INVALID_FRAME_WIDTH( w ) CRITICAL2i("E086 - invalid frame width, not multiple of width", w );
@@ -3808,6 +3856,11 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_INVALID_FRAME_HEIGHT( s ) CRITICAL2("E401 - invalid frame height", s );
 #define CRITICAL_CANNOT_FLIP( s ) CRITICAL2("E402 - cannot FLIP this variable", s );
 #define CRITICAL_CANNOT_DGR_ON_EMBEDDED_FONT( ) CRITICAL("E403 - cannot use DGR without custom font" );
+#define CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( s ) CRITICAL2("E404 - cannot use STRIP with PUT IMAGE using ATLAS without STRIP", s );
+#define CRITICAL_CANNOT_DOUBLE_BUFFER_AFTER_LOADING_RESOURCES( ) CRITICAL("E405 - cannot enable DOUBLE BUFFER after loading resources" );
+#define CRITICAL_CANNOT_DECRYPT_TO_DATATYPE( s ) CRITICAL2("E406 - cannot DECRYPT on this kind of variable", s );
+#define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E407 - data type not supported for HEX2BIN", v, s );
+#define CRITICAL_DIVISION_BY_ZERO( ) CRITICAL("E408 - division by zero" );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -3820,10 +3873,10 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define CRITICAL_BUILD_INVALID_FILENAME_K7(f) CRITICALB2("B002 - invalid filename for K7 format", f );
 #define CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM(s) CRITICALB2i("B003 - binary file too big for ROM image", s );
 
-#define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, ((struct _Environment *)_environment)->yylineno ); }
-#define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
-#define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%i) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v, _environment->yylineno ); }
-#define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { fprintf(stderr, "WARNING during compilation of %s:\n\t%s (%s, %s) at %d\n", ((struct _Environment *)_environment)->sourceFileName, s, v1, v2, _environment->yylineno ); }
+#define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { yywarning(_environment, s ); }
+#define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %s", s, v); yywarning(_environment, message ); }
+#define WARNING2i( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %i", s, v); yywarning(_environment, message ); }
+#define WARNING3( s, v1, v2 ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %s %s", s, v1, v2); yywarning(_environment, message ); }
 #define WARNING_BITWIDTH( v1, v2 ) WARNING3("W001 - Multiplication could loose precision", v1, v2 );
 #define WARNING_DOWNCAST( v1, v2 ) WARNING3("W002 - Implicit downcasting to less bitwidth (precision loss)", v1, v2 );
 #define WARNING_SCREEN_MODE( v1 ) WARNING2i("W003 - Screen mode unsupported", v1 );
@@ -3834,6 +3887,15 @@ int yyerror ( Environment * _ignored, const char * _message );
 #define WARNING_DLOAD_IGNORED_OFFSET( f ) WARNING2("W008 - offset for DLOAD is ignored", f );
 #define WARNING_DEPRECATED( k ) WARNING2("W009 - keyword has been deprecated and has no effect", k );
 #define WARNING_DLOAD_IGNORED_FILENAME( f ) WARNING2("W010 - filename for DLOAD is ignored", f );
+
+#define CHECK_POWEROF2_INVALID_MULTIPLACTOR2( value ) \
+    if ( log2(value) != (int)log2(value) ) { \
+        CRITICAL_INVALID_MULTIPLICATOR2(value); \
+    }
+#define CHECK_NOTZERO_DIVISION_BY_ZERO( value ) \
+    if ( value == 0 ) { \
+        CRITICAL_DIVISION_BY_ZERO(); \
+    }
 
 int assemblyLineIsAComment( char * _buffer );
 const char* strstrcase( const char* _x, const char* _y );
@@ -4721,12 +4783,11 @@ char * strcopy( char * _dest, char * _source );
     }
 
 #define BUILD_TOOLCHAIN_CC65_EXEC( _environment, target, executableName, listingFileName, additionalParameters ) \
-    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -t %s -C \"%s\" \"%s\"", \
+    sprintf( commandLine, "\"%s\" %s -o \"%s\" %s -C \"%s\" \"%s\"", \
         executableName, \
         listingFileName, \
         _environment->exeFileName, \
         additionalParameters, \
-        target, \
         _environment->configurationFileName, \
         _environment->asmFileName ); \
     if ( system_call( _environment,  commandLine ) ) { \
@@ -5018,7 +5079,17 @@ char * strcopy( char * _dest, char * _source );
         BUILD_SAFE_MOVE( _environment, p, _environment->listingFileName ); \
     }
 
-void setup_embedded( Environment *_environment );
+void show_usage_and_exit( int _argc, char *_argv[] );
+
+char * import_file_name( char * _import_path );
+
+Environment * environment_create( void );
+void environment_setup_embedded( Environment *_environment );
+void environment_setup_default( Environment * _environment );
+void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] );
+void environment_setup_10liner( Environment * _environment );
+void environment_setup_retrohack( Environment * _environment );
+
 void begin_compilation( Environment * _environment );
 void target_initialization( Environment *_environment );
 void shell_injection( Environment * _environment );
@@ -5073,6 +5144,7 @@ int banks_get_default_resident( Environment * _environment, int _bank );
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value );
 void vars_emit_constants( Environment * _environment );
+void vars_emit_strips( Environment * _environment, char * _name, Strip * _strips );
 
 char * file_read_csv( Environment * _Environment, char * _filename, VariableType _type, int * _size, int * _count );
 
@@ -5093,6 +5165,11 @@ void tmp_buf_clr(void *key1);
 POBuffer po_buf_match(POBuffer _buf, const char *_pattern, ...);
 int po_buf_strcmp(POBuffer _s, POBuffer _t);
 int po_buf_is_hex(POBuffer _s);
+
+void po_var_init( );
+POVariable * po_var_register( char * _name );
+POVariable * po_var_find( char * _name );
+POVariable * po_var_lookup( char * _name );
 
 #define TMP_BUF         tmp_buf(__FILE__, __LINE__)
 #define TMP_BUF_CLR     tmp_buf_clr(__FILE__)
@@ -5312,7 +5389,8 @@ void                    const_define_numeric( Environment * _environment, char *
 void                    const_define_string( Environment * _environment, char * _name, char * _value );
 void                    const_define_float( Environment * _environment, char * _name, double _value );
 void                    const_emit( Environment * _environment, char * _name );
-Constant *              constant_find( Constant * _constant, char * _name );
+Constant *              constant_create( Environment * _environment, char * _name );
+Constant *              constant_find( Environment * _environment, char * _name );
 void                    copper_color( Environment * _environment, int _index, int _color );
 void                    copper_color_background( Environment * _environment, int _color );
 void                    copper_color_border( Environment * _environment, int _color );
@@ -5321,6 +5399,7 @@ void                    copper_wait( Environment * _environment, int _line );
 void                    copper_move( Environment * _environment, int _address1, int _address2, VariableType _VariableType );
 void                    copper_store( Environment * _environment, int _address, int _value, VariableType _VariableType );
 void                    copper_use( Environment * _environment, char * _name );
+void                    cpuspeed( Environment * _environment, char * _value );
 Variable *              create_path( Environment * _environment, char * _x0, char * _y0, char * _x1, char * _y1 );
 Variable *              create_vector( Environment * _environment, char * _x, char * _y );
 Variable *              csprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
@@ -5341,7 +5420,9 @@ DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _
 void                    data_string( Environment * _environment, char * _value );
 void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
+Variable *              decrypt( Environment * _environment, char * _data, char * _key, char * _var );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
+Variable *              deserialize( Environment * _environment, char * _data, char * _key, char * _var );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
 void                    dload( Environment * _environment, char * _filename, char * _offset, char * _address, char * _bank, char * _size );
 void                    double_buffer( Environment * _environment, int _enabled );
@@ -5418,6 +5499,7 @@ void                    dojo_get_message_inplace( Environment * _environment, ch
 void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    else_if_then_label( Environment * _environment );
+Variable *              encrypt( Environment * _environment, char * _data, char * _key );
 void                    end( Environment * _environment );
 void                    end_copper( Environment * _environment );  
 void                    end_for( Environment * _environment );
@@ -5438,6 +5520,7 @@ void                    end_while( Environment * _environment );
 void                    envelope( Environment * _environment, char * _voice, char * _attack, char * _decay, char * _sustain, char * _release );
 void                    error( Environment * _environment, char * _message );
 char *                  escape_newlines( char * _string );
+char *                  escape_newlines_full( char * _string, int _size );
 void                    every_cleanup( Environment * _environment );
 void                    every_off( Environment * _environment, char * _timer );
 void                    every_on( Environment * _environment, char * _timer );
@@ -5459,6 +5542,7 @@ void                    fade_in_color_vars( Environment * _environment, char * _
 void                    fade_ticks_var( Environment * _environment, char * _ticks );
 void                    fade_milliseconds_var( Environment * _environment, char * _millliseconds );
 void                    fade_out( Environment * _environment, char * _period  );
+void                    fast( Environment * _environment );
 void                    fcircle( Environment * _environment, char * _x, char * _y, char * _r, char *_c, int _preserve_color );
 void                    fellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    field_type( Environment * _environment, char * _name, VariableType _datatype );
@@ -5525,6 +5609,7 @@ void                    gosub_label( Environment * _environment, char * _label )
 void                    gosub_number( Environment * _environment, int _number );
 void                    goto_label( Environment * _environment, char * _label );
 void                    goto_number( Environment * _environment, int _number );
+void                    gprint( Environment * _environment, char * _atlas, char * _text, char * _x, char * _y );
 void                    graphic( Environment * _environment );
 void                    gr_locate( Environment * _environment, char * _x, char * _y );
 
@@ -5550,10 +5635,10 @@ Variable *              image_load( Environment * _environment, char * _filename
 Variable *              image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 int                     image_size( Environment * _environment, int _width, int _height );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
-void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+void                    image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x, int _modulo_y );
 void                    image_converter_asserts_free( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
-void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
-void                    image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height );
+void                    image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x );
+void                    image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_y );
 Variable *              image_extract( Environment * _environment, char * _images, int _frame, int * _sequence );
 char *                  image_extract_subimage( Environment * _environment, char * _source, int _width, int _height, int _frame_width, int _frame_height, int _x, int _y, int _depth );
 Variable *              image_get_height( Environment * _environment, char * _image );
@@ -5586,6 +5671,8 @@ int                     is_do_loop( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    jmove( Environment * _environment, char * _port, char * _x, char * _y, char * _minx, char * _maxx, char * _miny, char *_maxy, char * _xstep, char * _ystep  );
+Variable *              jfire( Environment * _environment, int _port );
+Variable *              jfire_vars( Environment * _environment, char * _port );
 Variable *              joy( Environment * _environment, int _port );
 Variable *              joydir( Environment * _environment, int _port );
 Variable *              joydir_semivars( Environment * _environment, char * _port );
@@ -5845,10 +5932,12 @@ Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type, int _big_endian );
 Variable *              serial_write( Environment * _environment, char * _data );
 Variable *              serial_write_type( Environment * _environment, char * _data, VariableType _type, int _big_endian );
+Variable *              serialize( Environment * _environment, char * _data, char * _key );
 void                    set_timer( Environment * _environment, char * _value );
 void                    shared( Environment * _environment );
 void                    shoot( Environment * _environment, int _channels );
 void                    slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination );
+void                    slow( Environment * _environment );
 void                    sound( Environment * _environment, int _freq, int _duration, int _channels );
 void                    sound_vars( Environment * _environment, char * _freq, char * _duration, char * _channels );
 void                    sound_off( Environment * _environment, int _channels );
@@ -5882,8 +5971,13 @@ void                    sprite_multicolor_var( Environment * _environment, char 
 void                    sprite_at( Environment * _environment, int _sprite, int _x, int _y );
 void                    sprite_at_vars( Environment * _environment, char * _sprite, char * _x, char * _y );
 Variable *              sqroot( Environment * _environment, char * _value );
+StaticString *          static_string_create( Environment * _environment, char * _value, int _size );
+StaticString *          static_string_create_filled( Environment * _environment, int _size, char _value );
+StaticString *          static_string_find_by_value( Environment * _environment, char * _value, int _Size );
 void                    stop_animation( Environment * _environment, char * _prefix );
 void                    stop_movement( Environment * _environment, char * _prefix );
+Variable *              strig( Environment * _environment, int _port );
+Variable *              strig_vars( Environment * _environment, char * _port );
 StaticString *          string_reserve( Environment * _environment, char * _value );
 Variable *              strptr( Environment * _environment, char * _name );
 void                    suspend_vars( Environment * _environment, char * _thread );
@@ -6001,7 +6095,8 @@ Variable *              variable_sr_const( Environment * _environment, char * _s
 void                    variable_global( Environment * _environment, char * _pattern );
 Variable *              variable_greater_than( Environment * _environment, char * _source, char * _dest, int _equal );
 Variable *              variable_greater_than_const( Environment * _environment, char * _source, int _dest, int _equal );
-Variable *              variable_hex( Environment * _environment, char * _value );
+Variable *              variable_hex( Environment * _environment, char * _value, int _separator );
+Variable *              variable_hex2bin( Environment * _environment, char * _value, char * _variable );
 Variable *              variable_export( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 Variable *              variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value );
 void                    variable_increment( Environment * _environment, char * _source );
@@ -6141,6 +6236,8 @@ Variable *              y_graphic_get( Environment * _environment, char * _y );
 Variable *              y_text_get( Environment * _environment, char * _y );
 
 #if defined(__atari__) 
+    #define targetDescription "ATARI 400/800"
+    #define defaultExtension "xex"
     #include "../src-generated/modules_atari.h"
     #include "hw/6502.h"
     #include "hw/antic.h"
@@ -6148,133 +6245,17 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pokey.h"
     #include "hw/atari.h"
 #elif defined(__atarixl__) 
+    #define targetDescription "ATARI XL/XEGS"
+    #define defaultExtension "xex"
     #include "../src-generated/modules_atarixl.h"
     #include "hw/6502.h"
     #include "hw/antic.h"
     #include "hw/gtia.h"
     #include "hw/pokey.h"
     #include "hw/atari.h"
-#elif __c64__
-    #include "../src-generated/modules_c64.h"
-    #include "hw/6502.h"
-    #include "hw/vic2.h"
-    #include "hw/sid.h"
-    #include "hw/c64.h"
-    #include "hw/cia.h"
-    #include "outputs/d64.h"
-#elif __plus4__
-    #include "../src-generated/modules_plus4.h"
-    #include "hw/6502.h"
-    #include "hw/ted.h"
-    #include "hw/plus4.h"
-#elif __zx__
-    #include "../src-generated/modules_zx.h"
-    #include "hw/z80.h"
-    #include "hw/zx.h"
-#elif __coco__ 
-    #include "../src-generated/modules_coco.h"
-    #include "hw/6809.h"
-    #include "hw/6847.h"
-    #include "hw/pia.h"
-    #include "hw/coco.h"
-    #include "hw/sn76489m.h"
-#elif __cocob__ 
-    #include "../src-generated/modules_cocob.h"
-    #include "hw/6309.h"
-    #include "hw/6847b.h"
-    #include "hw/pia.h"
-    #include "hw/cocob.h"
-    #include "hw/sn76489m.h"
-#elif __coco3__ 
-    #include "../src-generated/modules_coco3.h"
-    #include "hw/6809.h"
-    #include "hw/gime.h"
-    #include "hw/pia.h"
-    #include "hw/coco3.h"
-    #include "hw/sn76489m.h"
-#elif __coco3b__ 
-    #include "../src-generated/modules_coco3b.h"
-    #include "hw/6309.h"
-    #include "hw/gime.h"
-    #include "hw/pia.h"
-    #include "hw/coco3b.h"
-    #include "hw/sn76489m.h"
-#elif __d32__ 
-    #include "../src-generated/modules_d32.h"
-    #include "hw/6809.h"
-    #include "hw/6847.h"
-    #include "hw/pia.h"
-    #include "hw/d32.h"
-#elif __d32b__ 
-    #include "../src-generated/modules_d32b.h"
-    #include "hw/6309.h"
-    #include "hw/6847b.h"
-    #include "hw/pia.h"
-    #include "hw/d32b.h"
-#elif __d64__ 
-    #include "../src-generated/modules_d64.h"
-    #include "hw/6809.h"
-    #include "hw/6847.h"
-    #include "hw/pia.h"
-    #include "hw/d64.h"
-#elif __d64b__ 
-    #include "../src-generated/modules_d64b.h"
-    #include "hw/6309.h"
-    #include "hw/6847b.h"
-    #include "hw/pia.h"
-    #include "hw/d64b.h"
-#elif __pc128op__ 
-    #include "../src-generated/modules_pc128op.h"
-    #include "hw/6809.h"
-    #include "hw/ef936x.h"
-    #include "hw/pc128op.h"
-    #include "hw/sn76489m.h"
-#elif __to8__ 
-    #include "../src-generated/modules_to8.h"
-    #include "hw/6809.h"
-    #include "hw/ef936x.h"
-    #include "hw/to8.h"
-#elif __mo5__ 
-    #include "../src-generated/modules_mo5.h"
-    #include "hw/6809.h"
-    #include "hw/ef936x.h"
-    #include "hw/mo5.h"
-#elif __vic20__
-    #include "../src-generated/modules_vic20.h"
-    #include "hw/6502.h"
-    #include "hw/vic1.h"
-    #include "hw/vic20.h"
-    #include "outputs/d64.h"
-#elif __msx1__
-    #include "../src-generated/modules_msx1.h"
-    #include "hw/z80.h"
-    #include "hw/msx1.h"
-    #include "hw/tms9918.h"
-    #include "hw/ay8910.h"
-#elif __coleco__
-    #include "../src-generated/modules_coleco.h"
-    #include "hw/z80.h"
-    #include "hw/coleco.h"
-    #include "hw/tms9918.h"
-    #include "hw/sn76489z.h"
-#elif __sc3000__
-    #include "../src-generated/modules_sc3000.h"
-    #include "hw/z80.h"
-    #include "hw/sc3000.h"
-    #include "hw/tms9918.h"
-    #include "hw/sn76489z.h"
-#elif __sg1000__
-    #include "../src-generated/modules_sg1000.h"
-    #include "hw/z80.h"
-    #include "hw/sg1000.h"
-    #include "hw/tms9918.h"
-    #include "hw/sn76489z.h"
-#elif __cpc__
-    #include "../src-generated/modules_cpc.h"
-    #include "hw/z80.h"
-    #include "hw/cpc.h"
-    #include "hw/ay8910.h"
-#elif __c128__
+#elif defined(__c128__)
+    #define targetDescription "Commodore 128 (MOS 8510 native)"
+    #define defaultExtension "prg"
     #include "../src-generated/modules_c128.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
@@ -6282,18 +6263,34 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/cia.h"
     #include "hw/c128.h"
     #include "outputs/d64.h"
-#elif __c128z__
+#elif defined(__c128z__)
+    #define targetDescription "Commodore 128 (ZILOG Z80 native)"
+    #define defaultExtension "prg"
     #include "../src-generated/modules_c128z.h"
     #include "hw/z80.h"
     #include "hw/vdcz.h"
     #include "hw/sidz.h"
     #include "hw/c128z.h"
-#elif __vg5000__
-    #include "../src-generated/modules_vg5000.h"
-    #include "hw/z80.h"
-    #include "hw/vg5000.h"
-    #include "hw/ef9345.h"
-#elif __c64reu__
+#elif defined(__c16__)
+    #define targetDescription "Commodore 16"
+    #define defaultExtension "prg"
+    #include "../src-generated/modules_c16.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/c16.h"
+#elif defined(__c64__) 
+    #define targetDescription "Commodore 64"
+    #define defaultExtension "prg"
+    #include "../src-generated/modules_c64.h"
+    #include "hw/6502.h"
+    #include "hw/vic2.h"
+    #include "hw/sid.h"
+    #include "hw/c64.h"
+    #include "hw/cia.h"
+    #include "outputs/d64.h"
+#elif defined(__c64reu__)
+    #define targetDescription "Commodore 64 + REU"
+    #define defaultExtension "d64"
     #include "../src-generated/modules_c64reu.h"
     #include "hw/6502.h"
     #include "hw/vic2.h"
@@ -6301,32 +6298,193 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/cia.h"
     #include "hw/c64reu.h"
     #include "outputs/d64.h"
-#elif __pc1403__
-    #include "../src-generated/modules_pc1403.h"
-    #include "hw/sc61860.h"
-    #include "hw/pc1403.h"
-#elif __gb__
+#elif defined(__coco__)
+    #define targetDescription "TRS-80 Color Computer 1/2 (Motorola 6809)"
+    #define defaultExtension "dsk"
+    #include "../src-generated/modules_coco.h"
+    #include "hw/6809.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/coco.h"
+    #include "hw/sn76489m.h"
+#elif defined(__cocob__)
+    #define targetDescription "TRS-80 Color Computer 1/2 (Motorola 6309)"
+    #define defaultExtension "dsk"
+    #include "../src-generated/modules_cocob.h"
+    #include "hw/6309.h"
+    #include "hw/6847b.h"
+    #include "hw/pia.h"
+    #include "hw/cocob.h"
+    #include "hw/sn76489m.h"
+#elif defined(__coco3__)
+    #define targetDescription "TRS-80 Color Computer 3 (Motorola 6809)"
+    #define defaultExtension "dsk"
+    #include "../src-generated/modules_coco3.h"
+    #include "hw/6809.h"
+    #include "hw/gime.h"
+    #include "hw/pia.h"
+    #include "hw/coco3.h"
+    #include "hw/sn76489m.h"
+#elif defined(__coco3b__)
+    #define targetDescription "TRS-80 Color Computer 3 (Motorola 6309)"
+    #define defaultExtension "dsk"
+    #include "../src-generated/modules_coco3b.h"
+    #include "hw/6309.h"
+    #include "hw/gime.h"
+    #include "hw/pia.h"
+    #include "hw/coco3b.h"
+    #include "hw/sn76489m.h"
+#elif defined(__coleco__)
+    #define targetDescription "ColecoVision"
+    #define defaultExtension "rom"
+    #include "../src-generated/modules_coleco.h"
+    #include "hw/z80.h"
+    #include "hw/coleco.h"
+    #include "hw/tms9918.h"
+    #include "hw/sn76489z.h"
+#elif defined(__cpc__)
+    #define targetDescription "Amstrad CPC 664"
+    #define defaultExtension "dsk"
+    #include "../src-generated/modules_cpc.h"
+    #include "hw/z80.h"
+    #include "hw/cpc.h"
+    #include "hw/ay8910.h"
+#elif defined(__d32__) 
+    #define targetDescription "Dragon 32 (Motorola 6809)"
+    #define defaultExtension "bin"
+    #include "../src-generated/modules_d32.h"
+    #include "hw/6809.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/d32.h"
+#elif defined(__d32b__) 
+    #define targetDescription "Dragon 32 (Motorola 6309)"
+    #define defaultExtension "bin"
+    #include "../src-generated/modules_d32b.h"
+    #include "hw/6309.h"
+    #include "hw/6847b.h"
+    #include "hw/pia.h"
+    #include "hw/d32b.h"
+#elif defined(__d64__) 
+    #define targetDescription "Dragon 64 (Motorola 6809)"
+    #define defaultExtension "bin"
+    #include "../src-generated/modules_d64.h"
+    #include "hw/6809.h"
+    #include "hw/6847.h"
+    #include "hw/pia.h"
+    #include "hw/d64.h"
+#elif defined(__d64b__)
+    #define targetDescription "Dragon 64 (Motorola 6309)"
+    #define defaultExtension "bin"
+    #include "../src-generated/modules_d64b.h"
+    #include "hw/6309.h"
+    #include "hw/6847b.h"
+    #include "hw/pia.h"
+    #include "hw/d64b.h"
+#elif defined(__gb__)
+    #define targetDescription "Gameboy"
+    #define defaultExtension "gb"
     #include "../src-generated/modules_gb.h"
     #include "hw/sm83.h"
     #include "hw/gb.h"
-#elif __vz200__
-    #include "../src-generated/modules_vz200.h"
+#elif defined(__mo5__) 
+    #define targetDescription "Thomson MO5"
+    #define defaultExtension "k7"
+    #include "../src-generated/modules_mo5.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/mo5.h"
+#elif defined(__msx1__)
+    #define targetDescription "MSX"
+    #define defaultExtension "rom"
+    #include "../src-generated/modules_msx1.h"
     #include "hw/z80.h"
-    #include "hw/vz200.h"
-    #include "hw/6847z.h"
-#elif __c16__
-    #include "../src-generated/modules_c16.h"
-    #include "hw/6502.h"
-    #include "hw/ted.h"
-    #include "hw/c16.h"
-#elif __pccga__
+    #include "hw/msx1.h"
+    #include "hw/tms9918.h"
+    #include "hw/ay8910.h"
+#elif defined(__pc128op__) 
+    #define targetDescription "PC128 Olivetti Prodest / Thomson MO6"
+    #define defaultExtension "k7"
+    #include "../src-generated/modules_pc128op.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/pc128op.h"
+    #include "hw/sn76489m.h"
+#elif defined(__pc1403__)
+    #define targetDescription "Sharp PC-1403"
+    #define defaultExtension "ram"
+    #include "../src-generated/modules_pc1403.h"
+    #include "hw/sc61860.h"
+    #include "hw/pc1403.h"
+#elif defined(__pccga__)
+    #define targetDescription "PC IBM (CGA)"
+    #define defaultExtension "com"
     #include "../src-generated/modules_pccga.h"
     #include "hw/8086.h"
     #include "hw/cga.h"
     #include "hw/pccga.h"
+#elif defined(__plus4__)
+    #define targetDescription "Commodore PLUS/4"
+    #define defaultExtension "prg"
+    #include "../src-generated/modules_plus4.h"
+    #include "hw/6502.h"
+    #include "hw/ted.h"
+    #include "hw/plus4.h"
+#elif defined(__sc3000__)
+    #define targetDescription "SEGA SC-3000"
+    #define defaultExtension "rom"
+    #include "../src-generated/modules_sc3000.h"
+    #include "hw/z80.h"
+    #include "hw/sc3000.h"
+    #include "hw/tms9918.h"
+    #include "hw/sn76489z.h"
+#elif defined(__sg1000__)
+    #define targetDescription "SEGA SG-1000"
+    #define defaultExtension "rom"
+    #include "../src-generated/modules_sg1000.h"
+    #include "hw/z80.h"
+    #include "hw/sg1000.h"
+    #include "hw/tms9918.h"
+    #include "hw/sn76489z.h"
+#elif defined(__to8__) 
+    #define targetDescription "Thomson TO8"
+    #define defaultExtension "k7"
+    #include "../src-generated/modules_to8.h"
+    #include "hw/6809.h"
+    #include "hw/ef936x.h"
+    #include "hw/to8.h"
+#elif defined(__vg5000__)
+    #define targetDescription "Philips VG5000"
+    #define defaultExtension "k7"
+    #include "../src-generated/modules_vg5000.h"
+    #include "hw/z80.h"
+    #include "hw/vg5000.h"
+    #include "hw/ef9345.h"
+#elif defined(__vic20__)
+    #define targetDescription "Commodore VIC-20"
+    #define defaultExtension "prg"
+    #include "../src-generated/modules_vic20.h"
+    #include "hw/6502.h"
+    #include "hw/vic1.h"
+    #include "hw/vic20.h"
+    #include "outputs/d64.h"
+#elif defined(__vz200__)
+    #define targetDescription "VTech Laser200/210/305/310"
+    #define defaultExtension "vz"
+    #include "../src-generated/modules_vz200.h"
+    #include "hw/z80.h"
+    #include "hw/vz200.h"
+    #include "hw/6847z.h"
+#elif defined(__zx__)
+    #define targetDescription "ZX Spectrum 48K"
+    #define defaultExtension "tap"
+    #include "../src-generated/modules_zx.h"
+    #include "hw/z80.h"
+    #include "hw/zx.h"
 #endif
 
 #ifdef CPU_BIG_ENDIAN
+    #define ENDIANESSVALUE 1    /* big endian */
     #define IMAGE_GET_WIDTH( buffer, offset, width ) \
         if ( IMAGE_WIDTH_SIZE == 1 ) { \
             width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
@@ -6340,6 +6498,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
             height = 256*buffer[offset+IMAGE_HEIGHT_OFFSET] + buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
         }
 #else
+    #define ENDIANESSVALUE 0    /* little endian */
     #define IMAGE_GET_WIDTH( buffer, offset, width ) \
         if ( IMAGE_WIDTH_SIZE == 1 ) { \
             width = buffer[offset+IMAGE_WIDTH_OFFSET]; \
@@ -6352,6 +6511,12 @@ Variable *              y_text_get( Environment * _environment, char * _y );
         } else { \
             height = buffer[offset+IMAGE_HEIGHT_OFFSET] + 256 * buffer[offset+IMAGE_HEIGHT_OFFSET+1]; \
         }
+#endif
+
+#ifdef __BETA__
+    #define BETAVALUE 1
+#else
+    #define BETAVALUE 0
 #endif
 
 #endif

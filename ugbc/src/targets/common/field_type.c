@@ -58,6 +58,7 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
         case 1:
         case 0: {
             switch( _datatype ) {
+                case VT_DSTRING:
                 case VT_SPRITE:
                     dataTypefieldOffset = 1;
                     break;
@@ -92,6 +93,7 @@ void field_type( Environment * _environment, char * _name, VariableType _datatyp
                 case 1:
                 case 0: {
                     switch( current->type ) {
+                        case VT_DSTRING:
                         case VT_SPRITE:
                             fieldOffset = 1;
                             break;

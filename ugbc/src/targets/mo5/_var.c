@@ -76,7 +76,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 12", variable->realName);
+                        outhead1("%s rzb 14", variable->realName);
                     }   
                     break;
                 case VT_PATH:
@@ -307,6 +307,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 }
                 
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         
         variable = variable->next;
@@ -387,6 +394,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
+            outline0("ALIGN 2");
             outhead1("OFFSETS%4.4x", actual->size );
             out0("        fdb " );
             for( i=0; i<actual->count; ++i ) {
@@ -398,24 +406,39 @@ void variable_cleanup( Environment * _environment ) {
                 }
             }
             if ( actual->variables ) {
-                OffsettingVariable * actualVariable = actual->variables;
-                while( actualVariable ) {
-                    if ( actualVariable->sequence ) {
-                        outhead1("%soffsetsequence", actualVariable->variable->realName );
-                    } else {
-                        outhead1("%soffsetframe", actualVariable->variable->realName );
+                if ( actual->count == 1 ) {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
                     }
-                    actualVariable = actualVariable->next;
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline0("RTS");
+                } else {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
+                    }
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline1("LDX #OFFSETS%4.4x", actual->size );
+                    outline0("LDA #0" );
+                    outline0("ABX" );
+                    outline0("ABX" );
+                    outline0("LDD ,X" );
+                    outline0("LEAY D, Y" );
+                    outline0("RTS");
                 }
-                outhead1("fs%4.4xoffsetsequence", actual->size );
-                outhead1("fs%4.4xoffsetframe", actual->size );                 
-                outline1("LDX #OFFSETS%4.4x", actual->size );
-                outline0("LDA #0" );
-                outline0("ABX" );
-                outline0("ABX" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-                outline0("RTS");
             }
             actual = actual->next;
         }
@@ -435,7 +458,7 @@ void variable_cleanup( Environment * _environment ) {
 
         cpu_address_table_build( _environment, "EXECOFFSETS", values, address, count );
 
-        cpu_address_table_lookup( _environment, "EXECOFFSETS", count );        
+        cpu_address_table_lookup( _environment, "EXECOFFSETS", count );
 
     }
 
@@ -563,7 +586,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outline1("ORG $%4.4x", _environment->program.startingAddress);
     outhead0("CODESTART");
-    outline0("LDS #$A000");
+    outline1("LDS #$%4.4x", _environment->stackStartAddress);
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
@@ -594,6 +617,7 @@ void variable_cleanup( Environment * _environment ) {
                 outhead1("BANKREADBANK%2.2xXS", bank->id );
                 outline1("LDB #$%2.2x", bank->id );
                 outline0("JMP BANKREAD" );
+                _environment->bankAccessOptimization.readn = 1;
             }
             bank = bank->next;
         }
@@ -623,6 +647,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( keyboard, src_hw_mo5_keyboard_asm );
+    deploy_inplace_preferred( clsGraphic, src_hw_ef936x_cls_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );

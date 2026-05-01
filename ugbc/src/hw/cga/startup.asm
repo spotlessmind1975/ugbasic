@@ -193,6 +193,8 @@ CGASTARTUP:
     MOV ES, AX
     RET
 
+@IF dynamicConsole
+
 CONSOLECALCULATE:
     XOR DI, DI
     MOV AL, [CURRENTTILESWIDTH]
@@ -217,6 +219,8 @@ CONSOLECALCULATEL10:
     SAL CL, 1
     MOV [CONSOLEWB], CL
     RET
+
+@ENDIF
 
     ; Calculate position on the screen.
     ; Input  : CX = x; DX = y

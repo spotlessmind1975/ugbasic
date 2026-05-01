@@ -49,7 +49,7 @@
 
 void bank_read_semi_var( Environment * _environment, int _bank, int _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c64reu_bank_asm );
+    deploy_preferred( bank, src_hw_c64reu_bank_asm );
 
     outline1("LDA #$%2.2x", (unsigned char) ( _address1 & 0xff ) );
     outline0("STA TMPPTR");
@@ -65,14 +65,17 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
         case 1:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
@@ -81,6 +84,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
             outline0("STA MATHPTR1");
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -102,7 +106,7 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
  */
 void bank_read_vars( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c64reu_bank_asm );
+    deploy_preferred( bank, src_hw_c64reu_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -133,7 +137,7 @@ void bank_read_vars( Environment * _environment, char * _bank, char * _address1,
 
 void bank_read_vars_direct( Environment * _environment, char * _bank, char * _address1, char * _address2, char * _size ) {
 
-    deploy( bank, src_hw_c64reu_bank_asm );
+    deploy_preferred( bank, src_hw_c64reu_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -164,7 +168,7 @@ void bank_read_vars_direct( Environment * _environment, char * _bank, char * _ad
 
 void bank_read_vars_direct_size( Environment * _environment, char * _bank, char * _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c64reu_bank_asm );
+    deploy_preferred( bank, src_hw_c64reu_bank_asm );
 
     Variable * bank = variable_retrieve_or_define( _environment, _bank, VT_BYTE, 0 );
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
@@ -184,14 +188,17 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
         case 1:
             outline1("LDA %s", bank->realName );
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LDA %s", bank->realName );
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LDA %s", bank->realName );
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
@@ -200,6 +207,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
             outline0("STA MATHPTR1");
             outline1("LDA %s", bank->realName );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -209,7 +217,7 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
 
 void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, char * _address1, char * _address2, int _size ) {
 
-    deploy( bank, src_hw_c64reu_bank_asm );
+    deploy_preferred( bank, src_hw_c64reu_bank_asm );
 
     Variable * address1 = variable_retrieve_or_define( _environment, _address1, VT_ADDRESS, 0 );
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
@@ -228,14 +236,17 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
         case 1:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDA #$%2.2x", (unsigned char) ( _size & 0xff ) );
@@ -244,6 +255,7 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
             outline0("STA MATHPTR1");
             outline1("LDA #$%2.2x", _bank );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }

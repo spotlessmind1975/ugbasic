@@ -201,8 +201,8 @@ Infine, se l'immagine non dovesse cambiare durante il gameplay, può
 essere contrassegnata con l'attributo "READONLY": in questo caso, 
 l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 
-@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [ORIGIN(dx,dy)] [fl] [tr] [op] [bg] [bk] [READONLY]
-@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [READONLY]
+@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [ORIGIN(dx,dy)] [fl] [tr] [op] [bg] [bk] [READONLY]  [str]
+@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [READONLY] [str]
 @syntax     frame : [ FRAME SIZE(w, h) [OFFSET(dx,dy)] [ORIGIN(zx, zy)] | FRAME AUTO]
 @syntax     fl : [FLIP X] [FLIP Y] [FLIP XY] [FLIP YX] 
 @syntax          [COMPRESSED] [OVERLAYED] [EXACT]
@@ -211,6 +211,7 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @syntax     op : [OPACITY | OPACITY color]
 @syntax     bg : [BACKGROUND color]
 @syntax     bk : [UNBANKED | BANKED | BANKED(number)]
+@syntax     str : "[" STRIP [ID id] (f0,f1,...) [, STRIP [ID id] (f2,f3,...)] "]"
 
 @example starship = LOAD ATLAS("starship.png") FRAME SIZE (16, 16)
 @example starship2 = LOAD ATLAS("starship.png" AS "starship2") FRAME SIZE (32, 32) OFFSET(2,2)

@@ -83,7 +83,7 @@ IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
 @ENDIF
 
-JOYSTICKREAD:
+JOYSTICKREAD0:
     OUT	($C0),A
     NOP
     NOP
@@ -94,15 +94,21 @@ JOYSTICKREAD:
     AND $7F
     RET
 
-JOYSTICKREAD0:
-    LD A, 0
-    CALL JOYSTICKREAD
+JOYSTICKREAD1:
+    OUT	($C0),A
+    NOP
+    NOP
+    NOP
+    NOP
+    IN	A, ($FF)
+    CPL
+    AND $7F
     RET
 
-JOYSTICKREAD1:
-    LD A, 0
-    CALL JOYSTICKREAD
-    RET
+JOYSTICKREAD:
+    CP 0
+    JR Z, JOYSTICKREAD0
+    JR JOYSTICKREAD1
 
 @IF joystickConfig.sync
 
@@ -116,28 +122,116 @@ JOYSTICKREAD1:
     ;- To enable: DEFINE JOYSTICK SYNC
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-    WAITFIRE0:
-        CALL JOYSTICKREAD0
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   A = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
+
+        ; Is the button odd? So we can read directly
+        ; the fire button.
+
+        SRL A
+        JR C, JFIRE
+
+        ; Load the latch value.
+
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        LD A, (HL)
+
+        ; Check if latch is not zero.
+        
+        CP 0
+        JR Z, STRIGNONE
+
+        ; Reset the latch.
+
+        LD B, A
+        LD A, 0
+        LD (HL), A
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LD A, $FF
+
+    STRIGNONE:
+        RET
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   A = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        PUSH AF
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        POP AF
+        
+        ; Load the STRIG register from the hardware port.
+
+        CALL JOYSTICKREAD
+
+        ; Isolate the FIRE bit.
+
         AND $40
+
+        ; Update the FIRE latch.
+
+        PUSH AF
+        OR (HL)
+        LD (HL), A
+        POP AF
+
+        ; Done.
+
+        RET
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   A = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $FF FIRE was pressed
+    ;
+    JFIRE:
+        CALL JFIREX
+        CP 0
+        JR Z, JFIRENONE
+        LD A, $FF
+    JFIRENONE:
+        RET
+
+    WAITFIRE0:
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE0
         RET
 
     WAITFIREA:
-        CP $0
+        CP 0
         JR Z, WAITFIRE0
 
     WAITFIRE1:
-        CALL JOYSTICKREAD1
-        AND $40
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE1
         RET
 
     WAITFIRE:
-        CALL JOYSTICKREAD0
+        LD A, 0
+        CALL JFIRE
         LD B, A
-        CALL JOYSTICKREAD1
+        LD A, 1
+        CALL JFIRE
         OR B
         CP 0
         JR Z, WAITFIRE
@@ -153,6 +247,105 @@ JOYSTICKREAD1:
     ;-
     ;- To enable: DEFINE JOYSTICK ASYNC
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+    ; Read the FIRE button's latch for a specific joystick
+    ;
+    ;   A = joystick button id
+    ;   A = $00 FIRE was not pressed
+    ;       $ff FIRE was pressed
+    ;
+    STRIG:
+    
+        ; Is the button odd? So we can read directly
+        ; the fire button.
+
+        SRL A
+        JR C, JFIRE
+
+        ; Load the latch value.
+
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        LD A, (HL)
+
+        ; Check if latch is not zero.
+        
+        CP 0
+        JR Z, STRIGNONE
+
+        ; Reset the latch.
+
+        LD B, A
+        LD A, 0
+        LD (HL), A
+
+        ; TRUE, the joystick fire was pressed in the past.
+
+        LD A, $FF
+
+    STRIGNONE:
+        RET
+
+    ; Read the FIRE button for a specific joystick
+    ;
+    ;   A = joystick number
+    ;   A = $00 FIRE was not pressed
+    ;       $01 FIRE was pressed
+    ;
+    JFIREX:
+
+        LD B, A
+
+        PUSH AF
+        LD E, A
+        LD D, 0
+        LD HL, JOYSTICK0
+        ADD HL, DE
+        LD A, (HL)
+        LD DE, HL
+        POP AF
+        
+        ; Load the STRIG register from the hardware port.
+
+        LD A, (DE)
+
+        ; Isolate the FIRE bit.
+
+        AND $40
+
+        ; Update the FIRE latch.
+
+        PUSH AF
+        PUSH AF
+        LD A, B
+        LD E, A
+        LD D, 0
+        LD HL, JFIRELATCH
+        ADD HL, DE
+        POP AF
+        OR (HL)
+        LD (HL), A
+        POP AF
+
+        ; Done.
+
+        RET
+
+        ; Read the FIRE button for a specific joystick
+        ;
+        ;   A = joystick number
+        ;   A = $00 FIRE was not pressed
+        ;       $FF FIRE was pressed
+        ;
+        JFIRE:
+            CALL JFIREX
+            CP 0
+            JR Z, JFIRENONE
+            LD A, $FF
+        JFIRENONE:
+            RET
 
     ; IRQ service routine
 
@@ -186,8 +379,8 @@ JOYSTICKREAD1:
         RET
 
     WAITFIRE0:
-        LD A, (JOYSTICK0)
-        AND $40
+        LD A, 0
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE0
         RET
@@ -197,21 +390,21 @@ JOYSTICKREAD1:
         JR Z, WAITFIRE0
 
     WAITFIRE1:
-        LD A, (JOYSTICK1)
-        AND $40
+        LD A, 0
+        CALL JFIRE
         CP 0
         JR Z, WAITFIRE1
         RET
 
     WAITFIRE:
-        LD A, (JOYSTICK0)
+        LD A, 0
+        CALL JFIRE
         LD B, A
-        LD A, (JOYSTICK1)
+        LD A, 1
+        CALL JFIRE
         OR B
-        AND $40
         CP 0
         JR Z, WAITFIRE
         RET
 
 @ENDIF
-

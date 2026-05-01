@@ -75,7 +75,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        outline1("%s: defs 12", variable->realName);
+                        outline1("%s: defs 14", variable->realName);
                         outhead0("section code_user");
                     }
                     break;
@@ -196,7 +196,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
-                        outhead1("%s: db $0", variable->realName );
+                        outhead2("%s EQU $%4.4x", variable->realName, variable->absoluteAddress );
                     } else {
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
@@ -323,6 +323,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         variable = variable->next;
     }
@@ -485,8 +492,6 @@ void variable_cleanup( Environment * _environment ) {
     
     generate_cgoto_address_table( _environment );
     
-    banks_generate( _environment );
-
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -550,6 +555,7 @@ void variable_cleanup( Environment * _environment ) {
         outline0("DEFW $0");
 
         outhead0("CODESTART:")
+        outline1("LD SP, $%4.4x", _environment->stackStartAddress );
         
         outline0("CALL $0138");
         outline0("RRCA");
@@ -583,6 +589,7 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( startup, src_hw_msx1_startup_asm);
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
+    deploy_inplace_preferred( bank, src_hw_msx1_bank_asm);
 
     buffered_prepend_output( _environment );
 

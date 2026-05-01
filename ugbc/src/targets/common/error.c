@@ -75,7 +75,7 @@ void error( Environment * _environment, char * _message ) {
     Variable * line = variable_temporary( _environment, VT_WORD, "(line)" );
     Variable * at = variable_temporary( _environment, VT_STRING, "(at)" );
 
-    variable_store( _environment, line->name, ((Environment *)_environment)->yylineno );
+    variable_store( _environment, line->name, yylinenoget() );
     variable_store_string( _environment, at->name, " at " );
 
     home( _environment );

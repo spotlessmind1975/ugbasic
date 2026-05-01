@@ -772,6 +772,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+    
     if ( _environment->currentMode >= 2 && _environment->currentMode <= 7 ) {
         outline0( "JSR CONSOLECALCULATE" );
     }
@@ -819,7 +821,11 @@ static void calculate_frame_buffer( Environment * _environment, int _size_requir
     if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - _size_required ) ) {
         _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - _size_required );
     }
-    _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+    if ( _size_required > 1024 ) {
+        _environment->frameBufferStart = ( _environment->frameBufferStart >> 12 ) << 12;
+    } else {
+        _environment->frameBufferStart = ( _environment->frameBufferStart >> 8 ) << 8;
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -868,19 +874,46 @@ static unsigned char * dli_build( Environment * _environment,
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
-    if ( _copper_list && copperUsedLines[0] ) {
-        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+    if ( _environment->horizontalScrollOff || 
+        ( 
+            (_mode == TILEMAP_MODE_ANTIC2) || (_mode == TILEMAP_MODE_ANTIC3) ||
+            (_mode == TILEMAP_MODE_ANTIC4) || (_mode == TILEMAP_MODE_ANTIC6) ||
+            (_mode == TILEMAP_MODE_ANTIC7) 
+        )
+     ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        }
     } else {
-        DLI_LMS_VHSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, _mode, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, _mode, _environment->frameBufferStart );
+        }
     }
 
     *_screen_memory_offset = dliListCurrent - dliListStart - 2;
 
     for( int i=1; i<_rows; ++i ) {
-        if ( _copper_list && copperUsedLines[i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, _mode );
+        if ( _environment->horizontalScrollOff || 
+        ( 
+            (_mode == TILEMAP_MODE_ANTIC2) || (_mode == TILEMAP_MODE_ANTIC3) ||
+            (_mode == TILEMAP_MODE_ANTIC4) || (_mode == TILEMAP_MODE_ANTIC6) ||
+            (_mode == TILEMAP_MODE_ANTIC7) 
+        ) ) {
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, _mode );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, _mode );
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, _mode );
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, _mode );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, _mode );
+            }
         }
     }
 
@@ -893,6 +926,97 @@ static unsigned char * dli_build( Environment * _environment,
     *_dli_size = ( dliListCurrent - dliListStart );
 
     return dliListStart; 
+}
+
+static unsigned char * dli_build_antic12( Environment * _environment, 
+        CopperList * _copper_list,
+        int * _screen_memory_offset, int * _dlilist_start_offset,
+        int * _screen_memory_offset2, int * _dli_size ) {
+
+    int * copperUsedLines = NULL;
+    if ( _copper_list ) {
+        copperUsedLines = calculate_scanlines_for_copper_list( _copper_list );
+    }
+
+    unsigned char * dliListStart = malloc( DLI_COUNT );
+    unsigned char * dliListCurrent = dliListStart;
+
+    memset( dliListStart, 0, DLI_COUNT );
+
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+    DLI_BLANK( dliListCurrent, 8 );
+
+    if ( _environment->horizontalScrollOff ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, 12, _environment->frameBufferStart );
+        }
+    } else {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 12, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, 12, _environment->frameBufferStart );
+        }
+    }
+
+    *_screen_memory_offset = dliListCurrent - dliListStart - 2;
+
+    for( int i=1; i<96; ++i ) {
+        if ( _environment->horizontalScrollOff ) {
+            // 8	\Display ANTIC mode 12 for second mode line
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 12 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 12 );
+            }
+        } else {
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 12 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 12 );
+            }
+        }
+    }
+
+    int screenMemoryAddress2 = _environment->frameBufferStart + 4096;
+
+    _environment->frameBufferStart2 = screenMemoryAddress2;
+    
+    if ( _environment->horizontalScrollOff ) {
+        DLI_LMS_VSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    }
+
+    *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
+
+    for( int i=0; i<94; ++i ) {
+        if ( _environment->horizontalScrollOff ) {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );                    
+            }
+        } else {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            }
+        }
+    }
+
+    DLI_IRQ( dliListCurrent, 15 );
+
+    DLI_JVB( dliListCurrent, 0 );
+    *_dlilist_start_offset = dliListCurrent - dliListStart - 2;
+
+    *_dli_size = ( dliListCurrent - dliListStart );
+
+    return dliListStart;
+
 }
 
 static unsigned char * dli_build_antic15( Environment * _environment, 
@@ -914,20 +1038,36 @@ static unsigned char * dli_build_antic15( Environment * _environment,
     DLI_BLANK( dliListCurrent, 8 );
     DLI_BLANK( dliListCurrent, 8 );
 
-    if ( _copper_list && copperUsedLines[0] ) {
-        DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+    if ( _environment->horizontalScrollOff ) {
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        }
     } else {
-        DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        if ( _copper_list && copperUsedLines[0] ) {
+            DLI_LMS_VHSCROLL_IRQ( dliListCurrent, 15, _environment->frameBufferStart );
+        } else {
+            DLI_LMS_VHSCROLL( dliListCurrent, 15, _environment->frameBufferStart );
+        }
     }
 
     *_screen_memory_offset = dliListCurrent - dliListStart - 2;
 
     for( int i=1; i<96; ++i ) {
-        // 8	\Display ANTIC mode 15 for second mode line
-        if ( _copper_list && copperUsedLines[i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        if ( _environment->horizontalScrollOff ) {
+            // 8	\Display ANTIC mode 15 for second mode line
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+            if ( _copper_list && copperUsedLines[i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );
+            }
         }
     }
 
@@ -935,15 +1075,27 @@ static unsigned char * dli_build_antic15( Environment * _environment,
 
     _environment->frameBufferStart2 = screenMemoryAddress2;
     
-    DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    if ( _environment->horizontalScrollOff ) {
+        DLI_LMS_VSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    } else {
+        DLI_LMS_VHSCROLL( dliListCurrent, 15,  screenMemoryAddress2 );
+    }
 
     *_screen_memory_offset2 = dliListCurrent - dliListStart - 2;
 
     for( int i=0; i<94; ++i ) {
-        if ( _copper_list && copperUsedLines[96+i] ) {
-            DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+        if ( _environment->horizontalScrollOff ) {
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VSCROLL( dliListCurrent, 15 );                    
+            }
         } else {
-            DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            if ( _copper_list && copperUsedLines[96+i] ) {
+                DLI_MODE_VHSCROLL_IRQ( dliListCurrent, 15 );
+            } else {
+                DLI_MODE_VHSCROLL( dliListCurrent, 15 );                    
+            }
         }
     }
 
@@ -1008,7 +1160,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
         case BITMAP_MODE_ANTIC8:
 
-            calculate_frame_buffer( _environment, 240 );
+            calculate_frame_buffer( _environment, 240 + (1-_environment->horizontalScrollOff)*2*20 );
 
             rows = 24;
 
@@ -1033,7 +1185,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 80x48, 2 colors
         case BITMAP_MODE_ANTIC9:
 
-            calculate_frame_buffer( _environment, 480 );
+            calculate_frame_buffer( _environment, 480 + (1-_environment->horizontalScrollOff)*2*48 );
 
             rows = 48;
 
@@ -1055,7 +1207,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 80x48, 4 colors
         case BITMAP_MODE_ANTIC10:
 
-            calculate_frame_buffer( _environment, 960 );
+            calculate_frame_buffer( _environment, 960  + (1-_environment->horizontalScrollOff)*4*48 );
 
             rows = 48;
 
@@ -1077,7 +1229,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x96, 2 colors
         case BITMAP_MODE_ANTIC11: 
 
-            calculate_frame_buffer( _environment, 1920 );
+            calculate_frame_buffer( _environment, 1920 + (1-_environment->horizontalScrollOff)*96 );
 
             rows = 96;
 
@@ -1101,7 +1253,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x96, 4 colors
         case BITMAP_MODE_ANTIC13:
 
-            calculate_frame_buffer( _environment, 3840 );
+            calculate_frame_buffer( _environment, 3840  + (1-_environment->horizontalScrollOff)*96 );
 
             rows = 96;
 
@@ -1160,7 +1312,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
         // 160x192, 2 colors
         case BITMAP_MODE_ANTIC12:
 
-            calculate_frame_buffer( _environment, 3840 );
+            calculate_frame_buffer( _environment, 3840 + (1-_environment->horizontalScrollOff)*192 );
 
             rows = 192;
 
@@ -1383,6 +1535,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             copperList,
             &screenMemoryOffset, &dliListStartOffset,
             &screenMemoryOffset2, &dliSize );
+    } else if ( _screen_mode->id == BITMAP_MODE_ANTIC12 ) {
+        dliListStart = dli_build_antic12( _environment, 
+            copperList,
+            &screenMemoryOffset, &dliListStartOffset,
+            &screenMemoryOffset2, &dliSize );
     } else {
         dliListStart = dli_build( _environment, 
                 _screen_mode->id /*mode*/, 
@@ -1468,9 +1625,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
         outline0("SEI" );
         outline0("LDA #<DLI" );
-        outline0("STA $230" );
+        outline0("STA $0230" );
+        outline0("STA $D402" );
         outline0("LDA #>DLI" );
-        outline0("STA $231" );
+        outline0("STA $0231" );
+        outline0("STA $D403" );
         outline0("CLI" );
 
         label_stored_define_named( _environment, dliLabel );
@@ -1719,12 +1878,8 @@ void gtia_vertical_scroll( Environment * _environment, char * _displacement ) {
 
 void gtia_horizontal_scroll( Environment * _environment, char * _displacement ) {
 
-    outline1("LDY %s", _displacement );
-    outline0("LDA #<XSCROLLOFFSET" );
-    outline0("STA TMPPTR" );
-    outline0("LDA #>XSCROLLOFFSET" );
-    outline0("STA TMPPTR+1" );
-    outline0("LDA (TMPPTR),Y" );
+    outline1("LDA %s", _displacement );
+    outline0("AND #$0f" );
     outline0("STA $D404" );
 
 }
@@ -2529,7 +2684,7 @@ static Variable * gtia_image_converter_bitmap_mode_standard( Environment * _envi
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -2713,7 +2868,7 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -2845,10 +3000,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
                 }
             }
 
-            if ( _environment->debugImageLoad ) {
-                printf("%1.1x", colorIndex );
-            }
-
             adilinepixel(colorIndex);
 
             bitmask = colorIndex << (6 - ((image_x & 0x3) * 2));
@@ -2861,25 +3012,6 @@ static Variable * gtia_image_converter_multicolor_mode_standard( Environment * _
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
-    }
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].index, commonPalette[0].description );
-        } else {
-            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
-        }
-        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].index, commonPalette[1].description );
-        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].index, commonPalette[2].description );
-        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].index, commonPalette[3].description );
-        printf("\n" );
-        printf("\n" );
     }
 
     adilineendbitmap();

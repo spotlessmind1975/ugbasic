@@ -51,6 +51,70 @@
  * CODE SECTION 
  ****************************************************************************/
 
+#if defined(__atari__) 
+    char targetName[] = "atari";
+#elif defined(__atarixl__) 
+    char targetName[] = "atarixl";
+#elif defined(__c64__)
+    char targetName[] = "c64";
+#elif defined(__plus4__)
+    char targetName[] = "plus4";
+#elif defined(__c16__)
+    char targetName[] = "c16";
+#elif defined(__zx__)
+    char targetName[] = "zx";
+#elif defined(__coco__)
+    char targetName[] = "coco";
+#elif defined(__cocob__)
+    char targetName[] = "cocob";
+#elif defined(__coco3__)
+    char targetName[] = "coco3";
+#elif defined(__coco3b__)
+    char targetName[] = "coco3b";
+#elif defined(__d32__)
+    char targetName[] = "d32";
+#elif defined(__d32b__)
+    char targetName[] = "d32b";
+#elif defined(__d64__)
+    char targetName[] = "d64";
+#elif defined(__d64b__)
+    char targetName[] = "d64b";
+#elif defined(__gb__)
+    char targetName[] = "gb";
+#elif defined(__pc128op__)
+    char targetName[] = "pc128op";
+#elif defined(__to8__)
+    char targetName[] = "to8";
+#elif defined(__mo5__)
+    char targetName[] = "mo5";
+#elif defined(__vic20__)
+    char targetName[] = "vic20";
+#elif defined(__msx1__)
+    char targetName[] = "msx1";
+#elif defined(__coleco__)
+    char targetName[] = "coleco";
+#elif defined(__pccga__)
+    char targetName[] = "pccga";
+#elif defined(__sc3000__)
+    char targetName[] = "sc3000";
+#elif defined(__sg1000__)
+    char targetName[] = "sg1000";
+#elif defined(__cpc__)
+    char targetName[] = "cpc";
+#elif defined(__c128__)
+    char targetName[] = "c128";
+#elif defined(__c128z__)
+    char targetName[] = "c128z";
+#elif defined(__vg5000__)
+    char targetName[] = "vg5000";
+#elif defined(__c64reu__)
+    char targetName[] = "c64reu";
+#elif defined(__pc1403__)
+    char targetName[] = "pc1403";
+#elif defined(__vz200__)
+    char targetName[] = "vz200";
+#endif
+
 #define strcmp_nocase strcasecmp
 
 extern RGBi SYSTEM_PALETTE[];
@@ -118,7 +182,8 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "dsk",
     "atr",
     "reu",
-    "ram"
+    "ram",
+    "sddrive"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -130,7 +195,7 @@ void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
     } else if ( _variable->type == VT_DSTRING ) {
         neededSpace = 1;
     } else if ( _variable->type == VT_IMAGEREF ) {
-        neededSpace = 12;
+        neededSpace = 14;
     } else {
         neededSpace = VT_BITWIDTH( _variable->type ) ? ( VT_BITWIDTH( _variable->type ) >> 3 ) : _variable->size;   
     }
@@ -280,9 +345,34 @@ static Constant * constant_find_by_realname( Constant * _first, char * _name ) {
     return actual;
 }
 
-Constant * constant_find( Constant * _first, char * _name ) {
+Constant * constant_create( Environment * _environment, char * _name ) {
+    Constant * c3 = malloc( sizeof( Constant ) );
+    memset( c3, 0, sizeof( Constant ) );
+    c3->name = malloc( MAX_TEMPORARY_STORAGE );
+    memset( c3->name, 0, MAX_TEMPORARY_STORAGE );
+    if ( _name ) {
+        c3->name = strdup( _name );        
+    } else {
+        sprintf( c3->name, "tempconst%d", UNIQUE_ID );
+    }
+    c3->realName = strdup( c3->name );
 
-    Constant * actual = _first;
+    Constant * constLast = ((Environment *)_environment)->constants;
+    if ( constLast ) {
+        while( constLast->next ) {
+            constLast = constLast->next;
+        }
+        constLast->next = c3;
+    } else {
+        ((Environment *)_environment)->constants = c3;
+    }
+
+    return c3;
+}
+
+Constant * constant_find( Environment * _environment, char * _name ) {
+
+    Constant * actual = ((Environment *)_environment)->constants;
     while( actual ) {
         if ( strcmp( actual->name, _name ) == 0 ) {
             break;
@@ -635,7 +725,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
     // name already exists.
 
     if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
+        Constant * c = constant_find( _environment, _name );
         if ( c ) {
             CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
@@ -688,7 +778,7 @@ Variable * variable_define( Environment * _environment, char * _name, VariableTy
 Variable * variable_import( Environment * _environment, char * _name, VariableType _type, int _size_or_value ) {
 
     if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
+        Constant * c = constant_find( _environment, _name );
         if ( c ) {
             CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
@@ -822,7 +912,7 @@ Variable * variable_export( Environment * _environment, char * _name, VariableTy
 Variable * variable_define_no_init( Environment * _environment, char * _name, VariableType _type ) {
 
     if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
+        Constant * c = constant_find( _environment, _name );
         if ( c ) {
             CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
@@ -1048,7 +1138,7 @@ void variable_reset( Environment * _environment ) {
 Variable * variable_array_type( Environment * _environment, char *_name, VariableType _type ) {
 
     if (_environment->constants) {
-        Constant * c = constant_find( _environment->constants, _name );
+        Constant * c = constant_find( _environment, _name );
         if ( c ) {
             CRITICAL_CONSTANT_ALREADY_DEFINED_AS_VARIABLE( _name );
         }
@@ -1075,7 +1165,7 @@ Variable * variable_array_type( Environment * _environment, char *_name, Variabl
     } else if ( var->arrayType == VT_DOJOKA ) {
         size *= 4;
     } else if ( var->arrayType == VT_IMAGEREF ) {
-        size *= 16; // real: 12
+        size *= 16; // real: 14
     } else if ( var->arrayType == VT_PATH ) {
         size *= 16; // real: 16
     } else if ( var->arrayType == VT_VECTOR2 ) {
@@ -1671,7 +1761,7 @@ Variable * variable_store( Environment * _environment, char * _destination, unsi
                 } else if ( destination->arrayType == VT_DOJOKA ) {
                     size *= 4;
                 } else if ( destination->arrayType == VT_IMAGEREF ) {
-                    size *= 16; // Real: 12
+                    size *= 16; // Real: 14
                 } else if ( destination->arrayType == VT_PATH ) {
                     size *= 16; // Real: 16
                 } else if ( destination->arrayType == VT_VECTOR2 ) {
@@ -3356,15 +3446,18 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_DSTRING:
                             switch( target->type ) {
                                 case VT_DSTRING: {
-                                    Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                                    Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                                    cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
-                                    cpu_dsfree( _environment, target->realName );
-                                    cpu_dsalloc( _environment, sourceSize->realName, target->realName );
-                                    cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
-                                    cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
+                                    
+                                    // Variable * sourceAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    // Variable * sourceSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    // Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                                    // Variable * targetSize = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                                    // cpu_dsdescriptor( _environment, source->realName, sourceAddress->realName, sourceSize->realName );
+                                    // cpu_dsfree( _environment, target->realName );
+                                    // cpu_dsalloc( _environment, sourceSize->realName, target->realName );
+                                    // cpu_dsdescriptor( _environment, target->realName, targetAddress->realName, targetSize->realName );
+                                    // cpu_mem_move( _environment, sourceAddress->realName, targetAddress->realName, sourceSize->realName );
+
+                                    cpu_dsassign( _environment, source->realName, target->realName );
                                     break;
                                 }
                                 default:
@@ -3468,7 +3561,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                         case VT_IMAGEREF:
                             switch( target->type ) {
                                 case VT_IMAGEREF: {
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 12 );
+                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                                     break;
                                 }
                                 default:
@@ -3648,7 +3741,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                         cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
                                     // #endif
                                     cpu_dsfree( _environment, target->realName );
-                                    cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, target->realName );
+                                    cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name, 0 )->realName, target->realName );
                                     break;
                                 }
                                 case VT_DWORD: {
@@ -3674,7 +3767,28 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                         target->valueBuffer = malloc( source->size );
                                         memset( target->valueBuffer, 0, source->size );
                                     }
-                                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+
+                                    Type * type = source->typeType;
+                                    Field * first = type->first;
+                                    while( first ) {
+                                        if ( first->type == VT_DSTRING ) {
+                                            break;
+                                        }
+                                        first = first->next;
+                                    }
+
+                                    if ( !first ) {
+                                        cpu_mem_move_direct_size( _environment, source->realName, target->realName, source->size );
+                                    } else {
+                                        first = type->first;
+                                        while( first ) {
+                                            Variable * value = variable_temporary( _environment, first->type, "(field)" );
+                                            variable_move_from_type_inplace( _environment, source->name, first->name, value->name );
+                                            variable_move_type( _environment, target->name, first->name, value->name );
+                                            first = first->next;
+                                        }
+                                    }
+
                                     break;
                                 default:
                                     CRITICAL_CANNOT_CAST( source->typeType->name, DATATYPE_AS_STRING[target->type]);
@@ -3687,6 +3801,7 @@ Variable * variable_move( Environment * _environment, char * _source, char * _de
                                     if ( source->size > 255 ) {
                                         CRITICAL_CANNOT_CAST_BUFFER_STRING_SIZE( source->name, target->name );
                                     }
+                                    outline1("; LINE: %d", __LINE__);
                                     cpu_dsfree( _environment, target->realName );
                                     cpu_dsalloc_size( _environment, source->size, target->realName );
                                     Variable * targetAddress = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
@@ -3829,15 +3944,16 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
         case 0:
             switch( target->type ) {
                 case VT_DSTRING: {
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
-                    cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
-                    cpu_dsfree( _environment, target->realName );
-                    cpu_dsalloc( _environment, size->realName, target->realName );
-                    cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
-                    cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
+                    // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    // Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+                    // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+                    // cpu_dsdescriptor( _environment, source->realName, address->realName, size->realName );
+                    // cpu_dsfree( _environment, target->realName );
+                    // cpu_dsalloc( _environment, size->realName, target->realName );
+                    // cpu_dsdescriptor( _environment, target->realName, address2->realName, size2->realName );
+                    // cpu_mem_move( _environment, address->realName, address2->realName, size->realName );
+                    cpu_dsassign( _environment, source->realName, target->realName );
                     break;
                 }
                 case VT_SPRITE:
@@ -3967,9 +4083,9 @@ Variable * variable_move_naked( Environment * _environment, char * _source, char
                 }
                 case VT_IMAGEREF: {
                     if ( target->size == 0 ) {
-                        target->size = 12;
+                        target->size = 14;
                     }
-                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 12 );
+                    cpu_mem_move_direct_size( _environment, source->realName, target->realName, 14 );
                     break;
                 }
                 case VT_PATH: {
@@ -9016,7 +9132,7 @@ Variable * variable_string_str( Environment * _environment, char * _value ) {
                             cpu_swap_8bit( _environment, address_displacement( _environment, dojokaHandle->realName, "1" ), address_displacement( _environment, dojokaHandle->realName, "2" ) );
                         #endif
                         cpu_dsfree( _environment, result->realName );
-                        cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name )->realName, result->realName );
+                        cpu_move_8bit( _environment, variable_hex( _environment, dojokaHandle->name, 0 )->realName, result->realName );
                         value = NULL;
                     }
                     break;
@@ -9196,7 +9312,7 @@ lunghezza della stringa restituita dipende dalla dimensione (in byte) di ''expre
 
 @target all
  </usermanual> */
-Variable * variable_hex( Environment * _environment, char * _value ) {
+Variable * variable_hex( Environment * _environment, char * _value, int _separator ) {
 
     MAKE_LABEL
 
@@ -9205,19 +9321,37 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of BIN)" );
     Variable * pad = variable_temporary( _environment, VT_BYTE, "(is padding needed?)");
 
+    Variable * originalAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * originalSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+
     switch( VT_BITWIDTH( originalValue->type ) ) {
-        case 0:
-        case 1:
-            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
+        case 0: {
+            switch( originalValue->type ) {
+                case VT_STRING: {
+                    cpu_move_8bit( _environment, originalValue->realName, originalSize->realName );
+                    cpu_addressof_16bit( _environment, originalValue->realName, originalAddress->realName );
+                    cpu_inc_16bit( _environment, originalAddress->realName );
+                    cpu_hex_to_string_calc_string( _environment, originalSize->realName, _separator, size->realName );
+                    break;
+                }
+                case VT_DSTRING: {
+                    cpu_dsdescriptor( _environment, originalValue->realName, originalAddress->realName, originalSize->realName );
+                    cpu_hex_to_string_calc_string( _environment, originalSize->realName, _separator, size->realName );
+                    break;
+                }
+            }
             break;
+        }            
         case 32:
-            variable_store_string( _environment, result->name, "        " );
-            break;
         case 16:
-            variable_store_string( _environment, result->name, "    " );
-            break;
         case 8:
-            variable_store_string( _environment, result->name, "  " );
+            cpu_hex_to_string_calc_string_size( _environment, VT_BITWIDTH( originalValue->type ) >> 3, _separator, size->realName );
+            cpu_store_8bit( _environment, originalSize->realName, VT_BITWIDTH( originalValue->type ) >> 3 );
+            cpu_addressof_16bit( _environment, originalValue->realName, originalAddress->realName );
+            break;
+        default:
+            CRITICAL_HEX_UNSUPPORTED( _value, DATATYPE_AS_STRING[originalValue->type]);
             break;
     }
 
@@ -9226,11 +9360,99 @@ Variable * variable_hex( Environment * _environment, char * _value ) {
     char truncateLabel[MAX_TEMPORARY_STORAGE]; sprintf(truncateLabel, "%strunc", label); 
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of hex)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
-    cpu_dswrite( _environment, result->realName );
-    cpu_dsdescriptor( _environment, result->realName, address->realName, size->realName );
+    cpu_dsalloc( _environment, size->realName, result->realName );
+    cpu_dsdescriptor( _environment, result->realName, address->realName, NULL );
 
-    cpu_hex_to_string( _environment, originalValue->realName, address->realName, size->realName, VT_BITWIDTH( originalValue->type ) );
+    cpu_hex_to_string( _environment, originalAddress->realName, address->realName, originalSize->realName, _separator );
+
+    return result;
+    
+}
+
+/**
+ * @brief Emit code for <b>= HEX2BIN( ... )</b>
+ * 
+ * @param _environment Current calling environment
+ * @param _value  Number to convert to hexadecimal
+ * @return Variable* Result of conversion
+ */
+/* <usermanual>
+@keyword HEX2BIN
+
+@english
+
+The ''HEX2BIN'' command is a fundamental function for low-level data manipulation. 
+Its purpose is to interpret a readable string (consisting of hexadecimal characters) 
+and convert it to its original binary representation (a byte array or "buffer").
+It takes a string like ''48454C4C4F'' and converts it to the binary buffer 
+containing the corresponding byte values.
+
+@italian
+
+Il comando ''HEX2BIN'' è una funzione fondamentale per la manipolazione di dati a basso livello.
+Il suo scopo è interpretare una stringa leggibile (composta da caratteri esadecimali)
+e convertirla nella sua rappresentazione binaria originale (un array di byte o "buffer").
+Accetta una stringa come ''48454C4C4F'' e la converte nel buffer binario
+contenente i valori di byte corrispondenti.
+
+@syntax = HEX2BIN(expression TO var)
+
+@example DIM v AS INTEGER
+@example IF HEX2BIB("002A" TO v) THEN: PRINT "OK!": ENDIF
+
+@target all
+ </usermanual> */
+Variable * variable_hex2bin( Environment * _environment, char * _value, char * _variable ) {
+
+    MAKE_LABEL
+
+    Variable * value = variable_retrieve( _environment, _value );
+    Variable * variable = variable_retrieve( _environment, _variable );
+
+    Variable * valueAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * valueSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+    Variable * variableAddress = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
+    Variable * variableSize = variable_temporary( _environment, VT_BYTE, "(result of hex)" );
+
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(result of hex)" );
+
+    switch( value->type ) {
+        case VT_STRING: {
+            cpu_move_8bit( _environment, value->realName, valueSize->realName );
+            cpu_addressof_16bit( _environment, value->realName, valueAddress->realName );
+            cpu_inc_16bit( _environment, valueAddress->realName );
+            break;
+        }
+        case VT_DSTRING: {
+            cpu_dsdescriptor( _environment, value->realName, valueAddress->realName, valueSize->realName );
+            break;
+        }
+        default:
+            CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( _value, DATATYPE_AS_STRING[value->type]);
+    }
+
+    if ( VT_BITWIDTH( variable->type ) ) {
+        cpu_store_8bit( _environment, variableSize->realName, VT_BITWIDTH( variable->type ) >> 3 );
+        cpu_addressof_16bit( _environment, variable->realName, variableAddress->realName );
+    } else {
+        switch( variable->type ) {
+            case VT_TARRAY:
+            case VT_TYPE:
+            case VT_BUFFER: {
+                cpu_store_8bit( _environment, variableSize->realName, variable->size );
+                cpu_addressof_16bit( _environment, variable->realName, variableAddress->realName );
+                break;
+            };
+            case VT_DSTRING: {
+                cpu_dsdescriptor( _environment, variable->realName, variableAddress->realName, variableSize->realName );
+                break;
+            };
+            case VT_STRING:
+                CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( _variable, DATATYPE_AS_STRING[variable->type] );
+        }
+    }
+
+    cpu_hex_to_bin( _environment, valueAddress->realName, valueSize->realName, variableAddress->realName, variableSize->realName, result->realName );
 
     return result;
     
@@ -9291,33 +9513,30 @@ Variable * variable_string_string( Environment * _environment, char * _string, c
     Variable * result = variable_temporary( _environment, VT_DSTRING, "(result of STRING)");
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of LOWER)" );
-    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of LOWER)" );
-    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of LOWER)" );
+    Variable * pattern = variable_temporary( _environment, VT_BYTE, "(result of LOWER)" );
 
     cpu_dsfree( _environment, result->realName );
     cpu_dsalloc( _environment, repetitions->realName, result->realName );
 
     cpu_compare_and_branch_8bit_const( _environment, repetitions->realName, 0, label, 1 );
 
-    cpu_dsdescriptor( _environment, result->realName, address2->realName, size2->realName );
-
     switch( string->type ) {
         case VT_STRING: {
-            cpu_move_8bit( _environment, string->realName, size->realName );
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
+            cpu_peek( _environment, address->realName, pattern->realName );
             break;
         }
         case VT_DSTRING: {
-            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            cpu_dsdescriptor( _environment, string->realName, address->realName, NULL );
+            cpu_peek( _environment, address->realName, pattern->realName );
             break;
         }
         default:
             CRITICAL_STRING_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_fill_indirect( _environment, address2->realName, size2->realName, address->realName, 8 );
+    cpu_dsfill( _environment, result->realName, pattern->realName );
 
     cpu_label( _environment, label );
 
@@ -9461,11 +9680,13 @@ comandi, puoi creare semplici tabelle con colonne allineate. Puoi anche utilizza
  </usermanual> */
 Variable * variable_string_space( Environment * _environment, char * _repetitions  ) {
     
-    Variable * space = variable_temporary( _environment, VT_STRING, "(space)");
+    Variable * repetitions = variable_retrieve_or_define( _environment, _repetitions, VT_BYTE, 0 );    
+    Variable * spaces = variable_temporary( _environment, VT_DSTRING, "(space)");
     
-    variable_store_string( _environment, space->name, " " );
+    cpu_dsalloc( _environment, repetitions->realName, spaces->realName );
+    cpu_dsfill_value( _environment, spaces->realName, 32 );
 
-    return variable_string_string( _environment, space->name, _repetitions  );
+    return spaces;
     
 }
 
@@ -10057,7 +10278,7 @@ void variable_store_array_const( Environment * _environment, char * _array, int 
 }
 
 // @bit2: ok
-void variable_move_array_bit( Environment * _environment, Variable * _array, Variable * _value  ) {
+void variable_move_array_bit( Environment * _environment, Variable * _array, char * _value  ) {
 
     if ( _array->bankAssigned != -1 ) {
         CRITICAL_CANNOT_MOVE_BIT_ON_BANKED_ARRAY( _array->name );
@@ -10074,11 +10295,12 @@ void variable_move_array_bit( Environment * _environment, Variable * _array, Var
 
     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, positionInside->realName, _value->realName );
+    Variable * value = variable_retrieve_or_define( _environment, _value, _array->arrayType, 0 );
+    cpu_bit_inplace_8bit_extended_indirect( _environment, offset->realName, positionInside->realName, value->realName );
 
 }
 
-void variable_move_array_byte( Environment * _environment, Variable * _array, Variable * _value ) {
+void variable_move_array_byte( Environment * _environment, Variable * _array, char * _value ) {
 
     MAKE_LABEL;
 
@@ -10090,7 +10312,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 char precalculatedOffsetName[MAX_TEMPORARY_STORAGE];
                 sprintf( precalculatedOffsetName, "%s%2.2xaddr", _array->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
 
-                Constant * precalculatedOffset = constant_find( _environment->constants, precalculatedOffsetName );
+                Constant * precalculatedOffset = constant_find( _environment, precalculatedOffsetName );
                 
                 if ( !precalculatedOffset ) {
                     precalculatedOffset = malloc( sizeof( Constant ) );
@@ -10104,10 +10326,11 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                     _environment->constants = precalculatedOffset;
                 }
 
-                if ( _value->initializedByConstant ) {
-                    cpu_store_8bit( _environment, precalculatedOffset->realName, _value->value );
+                Variable * value = variable_retrieve_or_define( _environment, _value, _array->arrayType, 0 );
+                if ( value->initializedByConstant ) {
+                    cpu_store_8bit( _environment, precalculatedOffset->realName, value->value );
                 } else {
-                    cpu_move_8bit( _environment, _value->realName, precalculatedOffset->realName );
+                    cpu_move_8bit( _environment, value->realName, precalculatedOffset->realName );
                 }
 
                 return;
@@ -10116,10 +10339,11 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
 
         Variable * offset = calculate_offset_in_array_byte( _environment, _array->name );
 
-        if ( _value->initializedByConstant ) {
-            cpu_store_8bit_with_offset2( _environment, _array->realName, offset->realName, _value->value );
+        Variable * value = variable_retrieve_or_define( _environment, _value, _array->arrayType, 0 );
+        if ( value->initializedByConstant ) {
+            cpu_store_8bit_with_offset2( _environment, _array->realName, offset->realName, value->value );
         } else {
-            cpu_move_8bit_with_offset2( _environment, _value->realName, _array->realName, offset->realName );
+            cpu_move_8bit_with_offset2( _environment, value->realName, _array->realName, offset->realName );
         }
         return;
 
@@ -10168,56 +10392,67 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             break;
     }
 
+    Variable * value = variable_retrieve_or_define( _environment, _value, _array->arrayType, 0 );
+
     if ( _array->bankAssigned == -1 ) {
 
         cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
         switch( _array->arrayType ) {
             case VT_TYPE:
-                cpu_move_nbit_indirect( _environment, _array->typeType->size * 8, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, _array->typeType->size * 8, value->realName, offset->realName );
                 break;
             case VT_PATH:
-                cpu_move_nbit_indirect( _environment, 16 * 8, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, 16 * 8, value->realName, offset->realName );
                 break;
             case VT_VECTOR2:
-                cpu_move_nbit_indirect( _environment, 4 * 8, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, 4 * 8, value->realName, offset->realName );
                 break;
             case VT_IMAGEREF:
-                cpu_move_nbit_indirect( _environment, 12 * 8, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, 12 * 8, value->realName, offset->realName );
                 break;
             case VT_FLOAT:
-                cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, VT_FLOAT_BITWIDTH( _array->arrayPrecision ), value->realName, offset->realName );
                 break;
             case VT_NUMBER:
-                cpu_move_nbit_indirect( _environment, _environment->numberConfig.maxBytes << 3, _value->realName, offset->realName );
+                cpu_move_nbit_indirect( _environment, _environment->numberConfig.maxBytes << 3, value->realName, offset->realName );
                 break;
             case VT_TILES:
-                cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
+                cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
                 break;
             case VT_TILE:
             case VT_TILESET:
             case VT_SPRITE:
-                cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
                 break;
             case VT_MSPRITE:
-                cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
+                cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                 break;
             case VT_DSTRING: {
 
                 Variable * dstring = variable_temporary( _environment, _array->arrayType, "(array element)");
 
                 cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
-                cpu_dsfree( _environment, dstring->realName );
+                // cpu_dsfree( _environment, dstring->realName );
 
-                Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-                Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                // Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
                 
-                cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
-                cpu_dsalloc( _environment, size->realName, dstring->realName );
-                cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
-                cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                // cpu_dsdescriptor( _environment, _value->realName, address->realName, size->realName );
+                // cpu_dsalloc( _environment, size->realName, dstring->realName );
+                // cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+                // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                
+                if ( value->type == VT_STRING ) {
+                    cpu_dsassign_string( _environment, value->realName, dstring->realName );
+                } else if ( value->type == VT_DSTRING ) {
+                    cpu_dsassign( _environment, value->realName, dstring->realName );
+                } else {
+                    CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[value->type], DATATYPE_AS_STRING[_array->arrayType] );
+                }
+
                 cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
 
                 }
@@ -10225,13 +10460,13 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
-                        cpu_move_32bit_indirect( _environment, _value->realName, offset->realName );
+                        cpu_move_32bit_indirect( _environment, value->realName, offset->realName );
                         break;
                     case 16:
-                        cpu_move_16bit_indirect( _environment, _value->realName, offset->realName );
+                        cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                         break;
                     case 8:
-                        cpu_move_8bit_indirect( _environment, _value->realName, offset->realName );
+                        cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
                         break;
                     case 1:
                     case 0:
@@ -10245,7 +10480,7 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
         switch( _array->arrayType ) {
             case VT_TYPE:
                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
+                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, _array->typeType->size );
                 break;
             case VT_FLOAT:
             case VT_NUMBER:
@@ -10253,31 +10488,31 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 break;
             case VT_TILES:
                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
+                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 4 );
                 break;
             case VT_TILE:
             case VT_TILESET:
             case VT_SPRITE:
                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
+                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 1 );
                 break;
             case VT_MSPRITE:
                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
+                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 2 );
                 break;
             default:
                 switch( VT_BITWIDTH( _array->arrayType ) ) {
                     case 32:
                         cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 4 );
+                        bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 4 );
                         break;
                     case 16:
                         cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 2 );
+                        bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 2 );
                         break;
                     case 8:
                         cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                        bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 1 );
+                        bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 1 );
                         break;
                     case 1:
                         CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
@@ -10285,11 +10520,11 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                         switch( _array->arrayType ) {
                             case VT_PATH:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, 16 );
+                                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, 16 );
                                 break;
                             case VT_TYPE:
                                 cpu_math_add_16bit_const( _environment, offset->realName, _array->absoluteAddress, offset->realName );
-                                bank_write_vars_bank_direct_size( _environment, _value->name, _array->bankAssigned, offset->name, _array->typeType->size );
+                                bank_write_vars_bank_direct_size( _environment, value->name, _array->bankAssigned, offset->name, _array->typeType->size );
                                 break;
                             default:
                                 CRITICAL_DATATYPE_UNSUPPORTED("array(3)", DATATYPE_AS_STRING[_array->arrayType]);
@@ -10297,7 +10532,6 @@ void variable_move_array_byte( Environment * _environment, Variable * _array, Va
                 }
                 break;
         }
-        
 
     }
 }
@@ -10307,7 +10541,7 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
     MAKE_LABEL;
 
     Variable * array = variable_retrieve( _environment, _array );
-    Variable * value = variable_cast( _environment, _value, array->arrayType );
+    // Variable * value = variable_cast( _environment, _value, array->arrayType );
 
     if ( array->arrayDimensions != _environment->arrayIndexes[_environment->arrayNestedIndex] ) {
         CRITICAL_ARRAY_SIZE_MISMATCH( _array, array->arrayDimensions, _environment->arrayIndexes[_environment->arrayNestedIndex] );
@@ -10319,9 +10553,9 @@ void variable_move_array( Environment * _environment, char * _array, char * _val
     }
 
     if ( array->arrayType != VT_BIT ) {
-        variable_move_array_byte( _environment, array, value  );
+        variable_move_array_byte( _environment, array, _value  );
     } else {
-        variable_move_array_bit( _environment, array, value  );
+        variable_move_array_bit( _environment, array, _value  );
     }
 
 }
@@ -10358,21 +10592,26 @@ void variable_move_array_string( Environment * _environment, char * _array, char
             cpu_move_8bit( _environment, string->realName, size->realName );
             cpu_addressof_16bit( _environment, string->realName, address->realName );
             cpu_inc_16bit( _environment, address->realName );
+            cpu_dsfree( _environment, dstring->realName );
+            outline1("; LINE: %d", __LINE__);
+            cpu_dsalloc( _environment, size->realName, dstring->realName );
+            cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+            cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
             break;
         case VT_DSTRING:
-            cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            // cpu_dsdescriptor( _environment, string->realName, address->realName, size->realName );
+            // cpu_dsfree( _environment, dstring->realName );
+            // cpu_dsalloc( _environment, size->realName, dstring->realName );
+            // cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
+            // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+            cpu_dsassign( _environment, string->realName, dstring->realName );
             break;
         default:
             CRITICAL_LOWER_UNSUPPORTED( _string, DATATYPE_AS_STRING[string->type]);
     }
 
-    cpu_dsfree( _environment, dstring->realName );
-    cpu_dsalloc( _environment, size->realName, dstring->realName );
-    cpu_dsdescriptor( _environment, dstring->realName, address2->realName, size2->realName );
-    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
     cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
     cpu_store_8bit( _environment, dstring->realName, 0 );
-
 }
 
 // @bit2: ok
@@ -10464,7 +10703,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
                     char precalculatedOffsetName[MAX_TEMPORARY_STORAGE];
                     sprintf( precalculatedOffsetName, "%s%2.2xaddr", _array->name, _environment->arrayIndexesDirectEach[_environment->arrayNestedIndex][0] );
 
-                    Constant * precalculatedOffset = constant_find( _environment->constants, precalculatedOffsetName );
+                    Constant * precalculatedOffset = constant_find( _environment, precalculatedOffsetName );
                     
                     if ( !precalculatedOffset ) {
                         precalculatedOffset = malloc( sizeof( Constant ) );
@@ -10577,16 +10816,19 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                     cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
 
-                    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                    Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
-                    Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
-                    Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                    // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    // Variable * size = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
+                    // Variable * address2 = variable_temporary( _environment, VT_ADDRESS, "(result of array move)" );
+                    // Variable * size2 = variable_temporary( _environment, VT_BYTE, "(result of array move)" );
 
-                    cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
-                    cpu_dsfree( _environment, _result->realName );
-                    cpu_dsalloc( _environment, size->realName, _result->realName );
-                    cpu_dsdescriptor( _environment, _result->realName, address2->realName, size2->realName );
-                    cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+                    // cpu_dsdescriptor( _environment, dstring->realName, address->realName, size->realName );
+                    // cpu_dsfree( _environment, _result->realName );
+                    // outline1("; LINE: %d", __LINE__);
+                    // cpu_dsalloc( _environment, size->realName, _result->realName );
+                    // cpu_dsdescriptor( _environment, _result->realName, address2->realName, size2->realName );
+                    // cpu_mem_move(_environment, address->realName, address2->realName, size->realName );
+
+                    cpu_dsassign( _environment, dstring->realName, _result->realName );
 
                     break;
                 }
@@ -10621,7 +10863,7 @@ void variable_move_from_array_byte_inplace( Environment * _environment, Variable
 
                     cpu_math_add_16bit_with_16bit( _environment, offset->realName, _array->realName, offset->realName );
 
-                    cpu_move_nbit_indirect2( _environment, 12 * 8, offset->realName, _result->realName );
+                    cpu_move_nbit_indirect2( _environment, 14 * 8, offset->realName, _result->realName );
 
                     break;
 
@@ -11639,7 +11881,7 @@ void const_define_numeric( Environment * _environment, char * _name, int _value 
         CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
     }
 
-    Constant * c = constant_find( _environment->constants, _name );
+    Constant * c = constant_find( _environment, _name );
     if ( c ) {
         if ( c->type == CT_STRING ) {
             CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( _name );
@@ -11684,7 +11926,7 @@ void const_define_string( Environment * _environment, char * _name, char * _valu
         CRITICAL_VARIABLE_ALREADY_DEFINED_AS_CONSTANT( _name );
     }
 
-    Constant * c = constant_find( _environment->constants, _name );
+    Constant * c = constant_find( _environment, _name );
     if ( c ) {
         if ( ! c->valueString ) {
             CRITICAL_CONSTANT_REDEFINED_DIFFERENT_TYPE( _name );
@@ -12489,15 +12731,22 @@ void variable_array_shuffle( Environment * _environment, char * _name, int _roun
 
 }
 
-void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x, int _modulo_y ) {
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
     }
 
+    if ( _modulo_x == 0 ) {
+        _modulo_x = 8;
+    }
 
-    if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+    if ( _modulo_y == 0 ) {
+        _modulo_y = 8;
+    }
+
+    if ( (*_frame_width % _modulo_x) && !_environment->freeImageWidth ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_WIDTH( _width, _modulo_x );
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
@@ -12508,12 +12757,12 @@ void image_converter_asserts( Environment * _environment, int _width, int _heigh
         *_frame_height = _height;
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height, _modulo_y );
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height, _modulo_y );
     }
 
     if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
@@ -12543,7 +12792,7 @@ void image_converter_asserts_free( Environment * _environment, int _width, int _
 }
 
 
-void image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts_free_width( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_y ) {
 
     // if ( _width % 8 ) {
     //     CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
@@ -12551,6 +12800,10 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
+    }
+
+    if ( _modulo_y == 0 ) {
+        _modulo_y = 8;
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
@@ -12562,11 +12815,11 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
     }
 
     if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height );
+        CRITICAL_IMAGE_CONVERTER_INVALID_HEIGHT( _height, _modulo_y );
     }
 
-    if ( (*_frame_height % 8) && !_environment->freeImageHeight ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height );
+    if ( (*_frame_height % _modulo_y) && !_environment->freeImageHeight ) {
+        CRITICAL_IMAGE_CONVERTER_INVALID_FRAME_HEIGHT( *_frame_height, _modulo_y );
     }
 
     if ( (_offset_y < 0) || (_offset_y >= _height) || ( ( _offset_y + ( *_frame_height )) > _height ) ) {
@@ -12575,14 +12828,18 @@ void image_converter_asserts_free_width( Environment * _environment, int _width,
 
 }
 
-void image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height ) {
+void image_converter_asserts_free_height( Environment * _environment, int _width, int _height, int _offset_x, int _offset_y, int * _frame_width, int * _frame_height, int _modulo_x ) {
 
     if ( *_frame_width == 0 ) {
         *_frame_width = _width;
     }
 
+    if ( _modulo_x == 0 ) {
+        _modulo_x = 8;
+    }
+
     if ( (*_frame_width % 8) && !_environment->freeImageWidth ) {
-        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width );
+        CRITICAL_IMAGE_CONVERTER_INVALID_WIDTH( _width, _modulo_x );
     }
 
     if ( (_offset_x < 0) || (_offset_x >= _width) || ( ( _offset_x + (*_frame_width ) ) > _width ) ) {
@@ -13550,15 +13807,15 @@ int system_remove_safe( Environment * _environment, char * _filename ) {
 
 }
 
-char * escape_newlines( char * _string ) {
+char * escape_newlines_full( char * _string, int _size ) {
 
-    char * result = malloc( 6 * strlen( _string ) + 2 + MAX_TEMPORARY_STORAGE );
+    char * result = malloc( 6 * _size + 2 + MAX_TEMPORARY_STORAGE );
 
-    memset( result, 0, 6 * strlen( _string ) + 2 );
+    memset( result, 0, 6 * _size + 2 );
 
     char * p = _string, * q = result;
 
-    while( *p ) {
+    while( _size ) {
         if ( *p == '\n' || *p == '\r' ) {
             if ( (q-result) > 2 && ( *(q-1) == '"') && ( *(q-2) == ',') ) {
                 --q;
@@ -13636,6 +13893,7 @@ char * escape_newlines( char * _string ) {
         } else {
             *q++ = *p++;
         }
+        --_size;
     }
 
     *q = 0;
@@ -13684,6 +13942,12 @@ char * escape_newlines( char * _string ) {
     free( result2 );
     
     return result;
+
+}
+
+char * escape_newlines( char * _string ) {
+
+    return escape_newlines_full( _string, strlen( _string ) );
 
 }
 
@@ -14453,6 +14717,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     if ( var->offsettingFrames ) {
         offsetting_add_variable_reference( _environment, var->offsettingFrames, var, 0 );
     }
+    var->strips = expr->strips;
     if ( expr->typeType ) {
         var->typeType = expr->typeType;
         var->size = expr->typeType->size;
@@ -15967,7 +16232,22 @@ void variable_move_from_type_inplace( Environment * _environment, char * _type, 
             break;
         case 1:
         case 0:
-            CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            switch( field->type ) {
+                case VT_SPRITE:
+                    cpu_move_8bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+                    break;
+                case VT_MSPRITE:
+                    cpu_move_16bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), result->realName );
+                    break;
+                case VT_DSTRING: {
+                    Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                    cpu_move_8bit( _environment, address_displacement( _environment, typeVar->realName, offsetAsString ), dstring->realName );
+                    cpu_dsassign( _environment, dstring->realName, result->realName );
+                    break;
+                }
+                default:
+                    CRITICAL_DATATYPE_UNSUPPORTED("type", DATATYPE_AS_STRING[field->type]);
+            }
     }
 
 }
@@ -16000,6 +16280,9 @@ void variable_move_type( Environment * _environment, char * _type, char * _field
         case 1:
         case 0: {
             switch( field->type ) {
+                case VT_DSTRING:
+                    cpu_dsassign( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
+                    break;
                 case VT_SPRITE:
                     cpu_move_8bit( _environment, value->realName, address_displacement( _environment, typeVar->realName, offsetAsString ) );
                     break;
@@ -16063,6 +16346,13 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(type element)");
+                        cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_move_8bit_indirect( _environment, value->realName, offset->realName );
+                        break;
+                    };
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                         break;
@@ -16092,6 +16382,22 @@ void variable_move_array_type( Environment * _environment, char * _array, char *
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(array element)");
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, value->name, 1 );
+
+                        if ( value->type == VT_STRING ) {
+                            cpu_dsassign_string( _environment, value->realName, dstring->realName );
+                        } else if ( value->type == VT_DSTRING ) {
+                            cpu_dsassign( _environment, value->realName, dstring->realName );
+                        } else {
+                            CRITICAL_DATATYPE_MISMATCH( DATATYPE_AS_STRING[value->type], DATATYPE_AS_STRING[array->arrayType] );
+                        }
+
+                        bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    };
                     case VT_MSPRITE:
                         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
@@ -16190,6 +16496,12 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                        cpu_move_8bit_indirect2( _environment, offset->realName, dstring->realName );
+                        cpu_dsassign( _environment, dstring->realName, result->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
                         break;
@@ -16219,6 +16531,13 @@ void variable_move_from_array_type_inplace( Environment * _environment, char * _
                 case 1:
                 case 0:
                     switch( field->type ) {
+                        case VT_DSTRING: {
+                            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, dstring->name, 1 );
+                            cpu_dsassign( _environment, dstring->realName, result->realName );
+                            break;
+                        }
                         case VT_MSPRITE:
                             cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                             bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
@@ -16286,6 +16605,12 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                        cpu_move_16bit_indirect2( _environment, offset->realName, dstring->realName);
+                        cpu_dsassign( _environment, dstring->realName, result->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect2( _environment, offset->realName, result->realName);
                         break;
@@ -16315,6 +16640,13 @@ void variable_move_from_array1_type_inplace( Environment * _environment, char * 
                 case 1:
                 case 0:
                     switch( field->type ) {
+                        case VT_DSTRING: {
+                            Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)" );
+                            cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                            bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, dstring->name, 1 );
+                            cpu_dsassign( _environment, dstring->realName, result->realName );
+                            break;
+                        }
                         case VT_MSPRITE:
                             cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                             bank_read_vars_bank_direct_size( _environment, array->bankAssigned, offset->name, result->name, 2 );
@@ -16414,6 +16746,12 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)");
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_move_8bit_indirect( _environment, dstring->realName, offset->realName );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_move_16bit_indirect( _environment, value->realName, offset->realName );
                         break;
@@ -16443,6 +16781,13 @@ void variable_move_array1_type( Environment * _environment, char * _array, char 
             case 1:
             case 0:
                 switch( field->type ) {
+                    case VT_DSTRING: {
+                        Variable * dstring = variable_temporary( _environment, VT_DSTRING, "(string)");
+                        cpu_dsassign( _environment, value->realName, dstring->realName );
+                        cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
+                        bank_write_vars_bank_direct_size( _environment, dstring->name, array->bankAssigned, offset->name, 1 );
+                        break;
+                    }
                     case VT_MSPRITE:
                         cpu_math_add_16bit_const( _environment, offset->realName, array->absoluteAddress, offset->realName );
                         bank_write_vars_bank_direct_size( _environment, value->name, array->bankAssigned, offset->name, 2 );
@@ -16865,5 +17210,617 @@ CopperList * find_copper_list( Environment * _environment, char * _name ) {
     }
 
     return NULL;
+
+}
+
+char * import_file_name( char * _import_path ) {
+
+    char * importDeclaresFilename = malloc(MAX_TEMPORARY_STORAGE);
+    if ( _import_path ) {
+        sprintf(importDeclaresFilename, "%s/%s.bas", _import_path, targetName);
+    } else {
+        sprintf(importDeclaresFilename, "../../imports/%s.bas", targetName);
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "../imports/%s.bas", targetName);
+        }        
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
+        }
+        if( access( importDeclaresFilename, F_OK ) != 0 ) {
+            return NULL;
+        }
+    }
+
+    return importDeclaresFilename;
+
+}
+
+StaticString * static_string_find_by_value( Environment * _environment, char * _value, int _size ) {
+
+    StaticString * actual = ((Environment *)_environment)->strings;
+    while( actual ) {
+        if ( memcmp( actual->value, _value, _size ) == 0 ) {
+            break;
+        }
+        actual = actual->next;
+    }
+    return actual;
+}
+
+StaticString * static_string_create_filled( Environment * _environment, int _size, char _value ) {
+
+    StaticString * result = malloc( sizeof( StaticString ) );
+    memset( result, 0, sizeof( StaticString ) );
+    result->id = UNIQUE_ID;
+    result->value = malloc( _size );
+    memset( result->value, _value, _size );
+    result->size = _size;
+
+    StaticString * storedStaticString = static_string_find_by_value( _environment, result->value, result->size );
+    if ( storedStaticString ) {
+        return storedStaticString;
+    } else {
+        result->next = _environment->strings;
+        _environment->strings = result;
+        return result;
+    }
+
+}
+
+StaticString * static_string_create( Environment * _environment, char * _value, int _size ) {
+    StaticString * result = malloc( sizeof( StaticString ) );
+    memset( result, 0, sizeof( StaticString ) );
+    result->id = UNIQUE_ID;
+    result->value = malloc( _size );
+    memcpy( result->value, _value, _size );
+    result->size = _size;
+    StaticString * storedStaticString = static_string_find_by_value( _environment, _value, _size );
+    if ( storedStaticString ) {
+        return storedStaticString;
+    } else {
+        result->next = _environment->strings;
+        _environment->strings = result;
+        return result;
+    }
+}
+
+/*!
+ @brief Create a new environment
+
+ Allocate space and reset (put to zero) the content of the
+ Environment structure.
+
+ @return Environment just created
+*/
+Environment * environment_create( void ) {
+    Environment * environment = malloc( sizeof(Environment) );
+    memset( environment, 0, sizeof(Environment));
+    return environment;
+}
+
+/*!
+ @brief Setup default environment values
+
+ @param _environment Environment to change
+*/
+void environment_setup_default( Environment * _environment ) {
+
+    _environment->optionClip = 1;
+    _environment->optionReadSafe = 1;
+    _environment->warningsEnabled = 0;
+    _environment->defaultVariableType = VT_SWORD;
+    _environment->peepholeOptimizationLimit = 16;
+    _environment->floatType.precision = FT_FAST;
+    _environment->numberConfig.maxBytes = 4;
+    _environment->numberConfig.maxDigits = 10;
+    _environment->temporaryPath = get_default_temporary_path( );
+    _environment->protothreadConfig.count = PROTOTHREAD_DEFAULT_COUNT;
+    _environment->joystickConfig.sync = JOYSTICK_CONFIG_DEFAULT_SYNC;
+    _environment->keyboardConfig.sync = KEYBOARD_CONFIG_DEFAULT_SYNC;
+    _environment->printSafe = 1;
+    _environment->putImageSafe = 1;
+    _environment->getImageSafe = 1;
+    _environment->keyboardConfig.latency = 700 / 20;
+    _environment->keyboardConfig.delay = 150 / 20;
+    _environment->keyboardConfig.release = 150 / 20;
+    _environment->defaultPenColor = DEFAULT_PEN_COLOR;
+    _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
+    _environment->defaultArraySize = 10;
+    _environment->vestigialConfig.screenModeUnique = 1;
+
+    #if defined(__pc128op__) || defined(__to8__)
+        _environment->bankedLoadDefault = 1;
+    #endif
+
+    #if defined(__atari__) || defined(__atarixl__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+    #elif defined(__c64__) || defined(__plus4__) || defined(__c16__) || defined(__vic20__) || defined(__c128__) || defined(__c128z__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+    #elif defined(__zx__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+    #elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+    #elif defined(__d32__) || defined(__d32b__) || defined(__d64__) || defined(__d64b__) 
+        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+    #elif defined(__pc128op__) || defined(__to8__) || defined(__mo5__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+    #elif defined(__msx1__) || defined(__coleco__) || defined(__sc3000__) || defined(__sg1000__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+    #elif defined(__gb__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_GB;
+    #elif defined(__pccga__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
+    #elif defined(__cpc__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+    #elif defined(__vg5000__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+    #elif defined(__c64reu__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+    #elif defined(__pc1403__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+    #elif defined(__vz__)
+        _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+    #endif
+
+}
+
+extern int yydebug;
+extern char * importPath;
+
+/*!
+ @brief Parse command line parameters
+
+ @param _environment Environment to change
+ @param _argc The number of parameters given on the command line.
+ @param _argv The array of parameters given on the command line.
+*/
+void environment_parse_command_line( Environment * _environment, int _argc, char * _argv[] ) {
+
+    int opt;
+
+    while ((opt = getopt(_argc, _argv, "@1a:A:b:B:c:C:dD:Ee:Ffg:G:Ii:l:L:o:O:p:P:q:rR:st:T:VvWw:X:y")) != -1) {
+        switch (opt) {
+                case 'y':
+                    yydebug = 1;
+                    break;
+                case '@':
+                    show_troubleshooting_and_exit( _environment, _argc, _argv );
+                case 'a':
+                    if ( ! _environment->listingFileName ) {
+                        char listingFileName[MAX_TEMPORARY_STORAGE];
+                        sprintf( listingFileName, "%s.lst", get_temporary_filename( _environment ) );
+                        _environment->listingFileName = strdup(listingFileName);
+                    }
+                    _environment->analysis = 1;
+                    break;
+                case 'c':
+                    _environment->configurationFileName = strdup(optarg);
+                    break;
+                case 'B':
+                    if ( strcmp( optarg, "UGBASIC" ) ) {
+                        _environment->dialect = DI_UGBASIC;    
+                    } else if ( strcmp( optarg, "TSB" ) ) {
+                        _environment->dialect = DI_TSB;    
+                    } else {
+                        CRITICAL("Option '-B': unknown dialect.");
+                    }
+                    break;
+                case 'C':
+                    _environment->compilerFileName = strdup(optarg);
+                    if( access( _environment->compilerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-C': compiler not found.");
+                    }
+                    break;
+                case 'w':
+                    _environment->cmdFileName = strdup(optarg);
+                    if( access( _environment->cmdFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-w': replaced cmd.exe not found.");
+                    }
+                    break;
+                case 'b':
+                    _environment->decbFileName = strdup(optarg);
+                    if( access( _environment->decbFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-b': decb application not found.");
+                    }
+                    break;
+                case 'X':
+                    _environment->executerFileName = strdup(optarg);
+                    if( access( _environment->executerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-X': executer not found.");
+                    }
+                    break;
+                case 'F':
+                    _environment->dojoOnFujiNet = 1;
+                    break;
+                case 'f':
+                    _environment->dojoOnVirtualizedFujiNet = 1;
+                    break;
+                case 'P':
+                    _environment->profileFileName = strdup(optarg);
+                    break;
+                case 'A':
+                    _environment->appMakerFileName = strdup(optarg);
+                    if( access( _environment->appMakerFileName, F_OK ) != 0 ) {
+                        CRITICAL("Option '-A': app maker no found.");
+                    }
+                    break;
+                case 'i':
+                    importPath = strdup(optarg);
+                    break;
+                case 't':
+                    #if defined(__atari__) || defined(__atarixl__)
+                        _environment->dir2atrFileName = strdup(optarg);
+                        if( access( _environment->dir2atrFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': dir2atr  not found.");
+                        }
+                    #endif
+                    #if defined(__msx1__)
+                        _environment->dsktoolsFileName = strdup(optarg);
+                        if( access( _environment->dsktoolsFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': dsktools tool not found.");
+                        }
+                    #endif
+                    #if defined(__pc1403__)
+                        _environment->asLinkerFileName = strdup(optarg);
+                        if( access( _environment->asLinkerFileName, F_OK ) != 0 ) {
+                            CRITICAL("Option '-t': aslink tool not found.");
+                        }
+                    #endif
+                    break;
+                case 'T':
+                    _environment->temporaryPath = strdup(optarg);
+                    break;
+                case 'o':
+                    _environment->exeFileName = strdup(optarg);
+                    break;
+                case 'd':
+                    break;
+                case 'r':
+                    _environment->removeComments = 1;
+                    break;
+                case 'v':
+                    _environment->outputGeneratedFiles = 1;
+                    break;
+                case 'G':
+                    if ( strcmp( optarg, "none") == 0 || atoi( optarg ) == 0 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_NONE;
+                    } else if ( strcmp( optarg, "type1") == 0 || atoi( optarg ) == 1 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE1;
+                    } else if ( strcmp( optarg, "type2") == 0 || atoi( optarg ) == 2 ) {
+                        _environment->gammaCorrection = GAMMA_CORRECTION_TYPE2;
+                    }
+                    break;
+                case 'O':
+                    if ( strcmp( optarg, "bin") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_BIN;
+                    } else if ( strcmp( optarg, "prg") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_PRG;
+                    } else if ( strcmp( optarg, "xex") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_XEX;
+                    } else if ( strcmp( optarg, "k7o") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_ORIGINAL;
+                    } else if ( strcmp( optarg, "k7") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_K7_NEW;
+                    } else if ( strcmp( optarg, "tap") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_TAP;
+                    } else if ( strcmp( optarg, "rom") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ROM;
+                    } else if ( strcmp( optarg, "com") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_COM;
+                    } else if ( strcmp( optarg, "d64") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_D64;
+                    } else if ( strcmp( optarg, "gb") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_GB; 
+                    } else if ( strcmp( optarg, "ram") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
+                    } else if ( strcmp( optarg, "dsk") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+                    } else if ( strcmp( optarg, "atr") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
+                    } else if ( strcmp( optarg, "reu") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_REU;
+                    } else if ( strcmp( optarg, "vz") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_VZ;
+                    } else if ( strcmp( optarg, "sddrive") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_SDDRIVE;
+                    } else {
+                        CRITICAL2("Unknown output format", optarg);
+                    }
+                    break;
+                case 'D':
+                    _environment->additionalInfoFileName = strdup(optarg);
+                    if ( ! _environment->listingFileName ) {
+                        char * p = malloc( strlen( _environment->additionalInfoFileName ) + MAX_TEMPORARY_STORAGE );
+                        strcopy( p, _environment->additionalInfoFileName );
+                        char * q = strrchr( p, '.' );
+                        if ( q ) {
+                            strcopy( q, ".listing" );
+                        } 
+                        _environment->listingFileName = p;
+                    }
+                    break;
+                case 'W':
+                    _environment->warningsEnabled = 1;
+                    break;
+                case 'I':
+                    CRITICAL("Option '-I' has been removed, see bug#641" );
+                    break;
+                case 'l':
+                    _environment->debuggerLabelsFileName = strdup(optarg);
+                    break;
+                case 'L':
+                    _environment->listingFileName = strdup(optarg);
+                    break;
+                case 'E':
+                    _environment->embeddedStatsEnabled = 1;
+                    break;
+                case 'p':
+                    _environment->peepholeOptimizationLimit = atoi(optarg);
+                    break;
+                case 'R':
+                    _environment->ramSize = atoi(optarg);
+                    break;
+                case 'q':
+                    _environment->profileCycles = atoi(optarg);
+                    break;
+                case 'V':
+                    fprintf(stderr, "%s\n%s\n", UGBASIC_VERSION, UGBASIC_REVISION );
+                    exit(0);
+                    break;
+                case '1':
+                    _environment->tenLinerRulesEnforced = 1;
+                    break;
+                case 's':
+                    _environment->sandbox = 1;
+                    break;
+                case 'g': {
+                        char * p = strtok(optarg, ",");
+                        while(p) {
+                            if ( strcmp(p, "CLS_IMPLICIT" ) == 0 ) {
+                                ((struct _Environment *)_environment)->vestigialConfig.clsImplicit = 1;
+                            }
+                            if ( strstr(p, "STRING_COUNT=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.count = atoi(p+13);
+                            }
+                            if ( strstr(p, "STRING_SPACE=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->dstring.space = atoi(p+13);
+                            }
+                            p = strtok(NULL, ",");
+                        }
+                    }
+                    break;
+                case 'e': {
+                    char * p = strtok(optarg, ",");
+                    while (p) {
+
+                        parse_embedded( p, cpu_beq );
+                        parse_embedded( p, cpu_bneq );
+                        parse_embedded( p, cpu_busy_wait );
+                        parse_embedded( p, cpu_bveq );
+                        parse_embedded( p, cpu_bvneq );
+                        parse_embedded( p, cpu_combine_nibbles );
+                        parse_embedded( p, cpu_compare_16bit );
+                        parse_embedded( p, cpu_compare_32bit );
+                        parse_embedded( p, cpu_compare_8bit );
+                        parse_embedded( p, cpu_compare_and_branch_16bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_32bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_8bit_const );
+                        parse_embedded( p, cpu_compare_and_branch_char_const );
+                        parse_embedded( p, cpu_di );
+                        parse_embedded( p, cpu_ei );
+                        parse_embedded( p, cpu_inc );
+                        parse_embedded( p, cpu_inc_16bit );
+                        parse_embedded( p, cpu_inc_32bit );
+                        parse_embedded( p, cpu_dec );
+                        parse_embedded( p, cpu_dec_16bit );
+                        parse_embedded( p, cpu_less_than_16bit );
+                        parse_embedded( p, cpu_less_than_32bit );
+                        parse_embedded( p, cpu_less_than_8bit );
+                        parse_embedded( p, cpu_greater_than_16bit );
+                        parse_embedded( p, cpu_greater_than_32bit );
+                        parse_embedded( p, cpu_greater_than_8bit );
+                        parse_embedded( p, cpu_fill );
+                        parse_embedded( p, cpu_fill_blocks );
+                        parse_embedded( p, cpu_halt );
+                        parse_embedded( p, cpu_end );
+                        parse_embedded( p, cpu_jump );
+                        parse_embedded( p, cpu_call );
+                        parse_embedded( p, cpu_return );
+                        parse_embedded( p, cpu_pop );
+                        parse_embedded( p, cpu_label );
+                        parse_embedded( p, cpu_limit_16bit );
+                        parse_embedded( p, cpu_logical_not_8bit );
+                        parse_embedded( p, cpu_logical_and_8bit );
+                        parse_embedded( p, cpu_logical_or_8bit );
+                        parse_embedded( p, cpu_not_8bit );
+                        parse_embedded( p, cpu_and_8bit );
+                        parse_embedded( p, cpu_or_8bit );
+                        parse_embedded( p, cpu_swap_8bit );
+                        parse_embedded( p, cpu_not_16bit );
+                        parse_embedded( p, cpu_and_16bit );
+                        parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
+                        parse_embedded( p, cpu_not_16bit );
+                        parse_embedded( p, cpu_and_16bit );
+                        parse_embedded( p, cpu_or_16bit );
+                        parse_embedded( p, cpu_swap_16bit );
+                        parse_embedded( p, cpu_xor_16bit );
+                        parse_embedded( p, cpu_not_32bit );
+                        parse_embedded( p, cpu_and_32bit );
+                        parse_embedded( p, cpu_or_32bit );
+                        parse_embedded( p, cpu_xor_32bit );
+                        parse_embedded( p, cpu_swap_32bit );
+                        parse_embedded( p, cpu_math_add_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_16bit );
+                        parse_embedded( p, cpu_math_add_16bit_with_8bit );
+                        parse_embedded( p, cpu_math_add_32bit );
+                        parse_embedded( p, cpu_math_add_8bit );
+                        parse_embedded( p, cpu_math_and_const_16bit );
+                        parse_embedded( p, cpu_math_and_const_32bit );
+                        parse_embedded( p, cpu_math_and_const_8bit );
+                        parse_embedded( p, cpu_math_complement_const_16bit );
+                        parse_embedded( p, cpu_math_complement_const_32bit );
+                        parse_embedded( p, cpu_math_complement_const_8bit );
+                        parse_embedded( p, cpu_math_div2_const_16bit );
+                        parse_embedded( p, cpu_math_div2_const_32bit );
+                        parse_embedded( p, cpu_math_div2_const_8bit );
+                        parse_embedded( p, cpu_math_double_16bit );
+                        parse_embedded( p, cpu_math_double_32bit );
+                        parse_embedded( p, cpu_math_double_8bit );
+                        parse_embedded( p, cpu_math_mul_16bit_to_32bit );
+                        parse_embedded( p, cpu_math_mul_8bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_32bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_16bit_to_16bit );
+                        parse_embedded( p, cpu_math_div_8bit_to_8bit );
+                        parse_embedded( p, cpu_math_mul2_const_16bit );
+                        parse_embedded( p, cpu_math_mul2_const_32bit );
+                        parse_embedded( p, cpu_math_mul2_const_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit );
+                        parse_embedded( p, cpu_math_sub_32bit );
+                        parse_embedded( p, cpu_math_sub_8bit );
+                        parse_embedded( p, cpu_math_sub_16bit_with_8bit );
+                        parse_embedded( p, cpu_move_16bit );
+                        parse_embedded( p, cpu_addressof_16bit );
+                        parse_embedded( p, cpu_move_32bit );
+                        parse_embedded( p, cpu_move_8bit );
+                        parse_embedded( p, cpu_peek );
+                        parse_embedded( p, cpu_poke );
+                        parse_embedded( p, cpu_random );
+                        parse_embedded( p, cpu_random_16bit );
+                        parse_embedded( p, cpu_random_32bit );
+                        parse_embedded( p, cpu_random_8bit );
+                        parse_embedded( p, cpu_store_16bit );
+                        parse_embedded( p, cpu_store_32bit );
+                        parse_embedded( p, cpu_store_8bit );
+                        parse_embedded( p, cpu_mem_move );
+                        parse_embedded( p, cpu_mem_move_direct );
+                        parse_embedded( p, cpu_mem_move_size );
+                        parse_embedded( p, cpu_mem_move_direct_size );
+                        parse_embedded( p, cpu_mem_move_direct_indirect_size );
+                        parse_embedded( p, cpu_compare_memory );
+                        parse_embedded( p, cpu_compare_memory_size );
+                        parse_embedded( p, cpu_less_than_memory );
+                        parse_embedded( p, cpu_less_than_memory_size );
+                        parse_embedded( p, cpu_greater_than_memory );
+                        parse_embedded( p, cpu_greater_than_memory_size );
+                        parse_embedded( p, cpu_uppercase );
+                        parse_embedded( p, cpu_lowercase );
+                        parse_embedded( p, cpu_convert_string_into_16bit );
+                        parse_embedded( p, cpu_fill_indirect );
+                        parse_embedded( p, cpu_flip );
+                        parse_embedded( p, cpu_move_8bit_indirect );
+                        parse_embedded( p, cpu_move_8bit_indirect2 );
+                        parse_embedded( p, cpu_move_16bit_indirect );
+                        parse_embedded( p, cpu_move_16bit_indirect2 );
+                        parse_embedded( p, cpu_move_32bit_indirect );
+                        parse_embedded( p, cpu_move_32bit_indirect2 );
+                        parse_embedded( p, cpu_number_to_string );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset );
+                        parse_embedded( p, cpu_bits_to_string );
+                        parse_embedded( p, cpu_hex_to_string );
+                        parse_embedded( p, cpu_bit_check_extended );
+                        parse_embedded( p, cpu_move_8bit_indirect_with_offset2 );
+                        parse_embedded( p, cpu_dsdefine );
+                        parse_embedded( p, cpu_dsalloc );
+                        parse_embedded( p, cpu_dsfree );
+                        parse_embedded( p, cpu_dswrite );
+                        parse_embedded( p, cpu_dsresize );
+                        parse_embedded( p, cpu_dsresize_size );
+                        parse_embedded( p, cpu_dsgc );
+                        parse_embedded( p, cpu_dsdescriptor );
+                        parse_embedded( p, cpu_move_8bit_with_offset );
+                        parse_embedded( p, cpu_move_8bit_with_offset2 );
+                        parse_embedded( p, cpu_store_8bit_with_offset );
+                        parse_embedded( p, cpu_dsalloc_size );
+                        parse_embedded( p, cpu_complement2_8bit );
+                        parse_embedded( p, cpu_complement2_16bit );
+                        parse_embedded( p, cpu_complement2_32bit );
+                        parse_embedded( p, cpu_sqroot );
+
+                        p = strtok(NULL, ",");
+                    }
+
+                    }
+                    break;
+                default: /* '?' */
+                    show_usage_and_exit( _argc, _argv );
+                }
+    }
+
+    if ( ! _argv[optind] ) {
+        show_usage_and_exit( _argc, _argv );
+    }
+
+    if ( ! _argv[optind+1] && !_environment->exeFileName ) {
+        show_usage_and_exit( _argc, _argv );
+    }
+
+}
+
+void environment_setup_10liner( Environment * _environment ) {
+    _environment->dstring.space = 512;
+    _environment->dstring.count = 32;
+    _environment->defaultVariableType = VT_BYTE;
+    _environment->vestigialConfig.clsImplicit = 1;
+}
+
+void environment_setup_retrohack( Environment * _environment ) {
+
+    /* retrocompatible hacks */
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "ACME-INC") != NULL ) {
+        _environment->vestigialConfig.rchack_acme_1172 = 1;
+    }
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( strtoupper( _environment->sourceFileName ), "OSTRA") != NULL ) {
+        _environment->vestigialConfig.rchack_ostra_1172 = 1;
+    }
+
+    // If we are compiling "Beyond The Door" game with a recent
+    // version of the compiler (>1.17), we must enable the hack.
+    if ( strstr( _environment->sourceFileName, "btd-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_btd_1171 = 1;
+    }
+
+    // If we are compiling "Cocon" game with a recent
+    // version of the compiler (>1.16.3), we must use the disruptive
+    // optimization rule to reduce executable size.
+    if ( strstr( _environment->sourceFileName, "cocon.bas") != NULL ) {
+        _environment->vestigialConfig.rchack_cocon_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // If we are compiling "Pick the star" game with a recent
+    // version of the compiler (>1.16.3), we must use a different
+    // convention on joystick related return values (signed vs unsigned).
+    if ( strstr( _environment->sourceFileName, "pick-the-star-10liner") != NULL ) {
+        _environment->vestigialConfig.rchack_pick_the_star_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "4gravity" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
+        _environment->vestigialConfig.rchack_4gravity_1163 = 1;
+        _environment->vestigialConfig.rchack_4gravity_1164 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "falling_balls" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "falling-balls") != NULL ) {
+        _environment->vestigialConfig.rchack_falling_balls_1163 = 1;
+    }
+
+    /* retrocompatible hacks */
+    // We are compiling "Creepy carrots" game with a recent
+    // version of the compiler (>1.16.3).
+    if ( strstr( _environment->sourceFileName, "ccarrots") != NULL ) {
+        _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
+    }
 
 }

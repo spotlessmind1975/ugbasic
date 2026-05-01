@@ -620,6 +620,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     outline0( "CALL CONSOLECALCULATE" );
 
 }
@@ -1380,7 +1382,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -1554,7 +1556,7 @@ static Variable * cpc_image_converter_bitmap_mode_hires( Environment * _environm
 
 static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 4 ) {
@@ -1684,10 +1686,6 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
                 }
             }
 
-            if ( _environment->debugImageLoad ) {
-                printf("%1.1x", colorIndex );
-            }
-            
             adilinepixel(colorIndex);
 
             bitmask = ( ( colorIndex & 0x2 ) >> 1 ) << (3 - ((image_x & 0x3)));
@@ -1701,28 +1699,9 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
     }
 
     adilineendbitmap();
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-            printf("  background  (00) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
-        } else {
-            printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
-        }
-        printf("  pen         (01) = %2.2x (%s)\n", commonPalette[1].hardwareIndex, commonPalette[1].description );
-        printf("  pen         (10) = %2.2x (%s)\n", commonPalette[2].hardwareIndex, commonPalette[2].description );
-        printf("  pen         (11) = %2.2x (%s)\n", commonPalette[3].hardwareIndex, commonPalette[3].description );
-        printf("\n" );
-        printf("\n" );
-    }
 
     int hwIndex = 0;
     if ( lastUsedSlotInCommonPalette > 0 ) {
@@ -1761,7 +1740,7 @@ static Variable * cpc_image_converter_multicolor_mode_midres( Environment * _env
 
 static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 2 ) {
@@ -1895,10 +1874,6 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
                 }
             }
 
-            if ( _environment->debugImageLoad ) {
-                printf("%1.1x", colorIndex );
-            }
-
             adilinepixel(colorIndex);
             
             bitmask = ( ( colorIndex & 0x8 ) >> 3 ) << (1 - ((image_x & 0x1)));
@@ -1914,28 +1889,9 @@ static Variable * cpc_image_converter_multicolor_mode_lores( Environment * _envi
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
     }
 
     adilineendbitmap();
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-            printf("  background  (0000) = %2.2x (%s)\n", commonPalette[0].hardwareIndex, commonPalette[0].description );
-        } else {
-            printf("  background  (0000) = %2.2x (%s) [currently ignored since it can be overlayed]\n", commonPalette[0].index, commonPalette[0].description );
-        }
-        for(int i=1;i<lastUsedSlotInCommonPalette;++i) {
-            printf("  pen         (%d) = %2.2x (%s)\n", i, commonPalette[i].hardwareIndex, commonPalette[i].description );
-        }
-        printf("\n" );
-        printf("\n" );
-    }
 
     for( int i=0; i<16; ++i ) {
         int hwIndex = 0xff;

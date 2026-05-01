@@ -46,6 +46,10 @@ void target_initialization( Environment * _environment ) {
 
     cpu_init( _environment );
 
+#if defined(__atarixl__)
+    MEMORY_AREA_DEFINE( MAT_RAM, 0xd800, 0xfff0 );
+#endif
+
     banks_init( _environment );
 
     _environment->audioConfig.async = 1;

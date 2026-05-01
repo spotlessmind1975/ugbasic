@@ -42,8 +42,6 @@ sc_ppi_b         	= $DD
 sc_ppi_c         	= $DE
 sc_ppi_control   	= $DF
 
-INITIAL_STACK    	= $C700
-
 PPI_Setting         = 0x92
 PPI_PortC           = 0xDE
 PPI_Control         = 0xDF
@@ -125,8 +123,10 @@ COLD_RESET1:
 
 		DEFS 7
 
+@EMIT stackStartAddress AS initialStack
+
 RAM_TEST:
-		ld		sp, INITIAL_STACK
+		ld		sp, initialStack
 
 		ld		hl, $55aa
     	push	hl

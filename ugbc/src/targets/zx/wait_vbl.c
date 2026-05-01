@@ -47,5 +47,6 @@
  */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
-    // todo
+    zx_wait_vbl( _environment, _raster_line );
+
 }

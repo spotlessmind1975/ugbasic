@@ -269,14 +269,21 @@ void cpu_bit_inplace_8bit( Environment * _environment, char * _value, int _posit
 void cpu_bit_inplace_8bit_extended_indirect( Environment * _environment, char * address, char * _position, char * _bit );
 void cpu_number_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, int _Signed );
 void cpu_bits_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits, char * _zero, char * _one );
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits );
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _size, int _separator );
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size );
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size );
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index );
+void cpu_dsfill( Environment * _environment, char * _string, char * _value );
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value );
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index );
+void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu_dsfree( Environment * _environment, char * _index );
 void cpu_dswrite( Environment * _environment, char * _index );
 void cpu_dsresize( Environment * _environment, char * _index, char * _size );
 void cpu_dsresize_size( Environment * _environment, char * _index, int _size );
+void cpu_dsassign( Environment * _environment, char * _original, char * _copy );
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy );
 void cpu_dsgc( Environment * _environment );
 void cpu_dsinit( Environment * _environment );
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size );
@@ -284,7 +291,6 @@ void cpu_move_8bit_indirect_with_offset( Environment * _environment, char *_sour
 void cpu_move_8bit_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset );
 void cpu_store_8bit_with_offset( Environment * _environment, char *_destination, int _value, int _offset );
 void cpu_store_8bit_with_offset2( Environment * _environment, char *_destination, char * _offset, int _value  );
-void cpu_dsalloc_size( Environment * _environment, int _size, char * _index );
 void cpu_complement2_8bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_16bit( Environment * _environment, char * _source, char * _destination );
 void cpu_complement2_32bit( Environment * _environment, char * _source, char * _destination );
@@ -372,5 +378,9 @@ void cpu_f32ln( char * _x, char * _result );
 void cpu_f32log10( char * _x, char * _result );
 void cpu_f32mul( char * _x, char * _y, char * _result );
 void cpu_f32sub( char * _x, char * _y, char * _result );
+
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output );
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result );
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result );
 
 #endif

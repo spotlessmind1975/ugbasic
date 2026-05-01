@@ -142,6 +142,7 @@ noKeyHome:
 ; --- ROW 0 --------------------------------------------
 	call	PpiRowRead
 	bit		4,a				; Eng Dier's
+
 	jr		nz,noKeyEngDiers
 	res		5, c			; Right Trigger
 noKeyEngDiers:
@@ -151,15 +152,103 @@ keybExit:
 	cpl
 	ret
 
-WAITFIRE:
+; Read the FIRE button's latch for a specific joystick
+;
+;   A = joystick button id
+;   A = $00 FIRE was not pressed
+;       $ff FIRE was pressed
+;
+STRIG:
+
+	; Is the button odd? So we can read directly
+	; the fire button.
+
+	SRL A
+	JR C, JFIRE
+
+	; Load the latch value.
+
+	LD E, A
+	LD D, 0
+	LD HL, JFIRELATCH
+	ADD HL, DE
+	LD A, (HL)
+
+	; Check if latch is not zero.
+	
+	CP 0
+	JR Z, STRIGNONE
+
+	; Reset the latch.
+
+	LD B, A
+	LD A, 0
+	LD (HL), A
+
+	; TRUE, the joystick fire was pressed in the past.
+
+	LD A, $FF
+
+STRIGNONE:
+	RET
+
+; Read the FIRE button for a specific joystick
+;
+;   A = joystick number
+;   A = $00 FIRE was not pressed
+;       $01 FIRE was pressed
+;
+JFIREX:
+
+	PUSH AF
+	LD E, A
+	LD D, 0
+	LD HL, JFIRELATCH
+	ADD HL, DE
+	POP AF
+	
+	; Load the STRIG register from the hardware port.
+
 	CALL JOYSTICK
+
+	; Isolate the FIRE bit.
+
+	AND $10
+
+	; Update the FIRE latch.
+
+	PUSH AF
+	OR (HL)
+	LD (HL), A
+	POP AF
+
+	; Done.
+
+	RET
+
+; Read the FIRE button for a specific joystick
+;
+;   A = joystick number
+;   A = $00 FIRE was not pressed
+;       $FF FIRE was pressed
+;
+JFIRE:
+	CALL JFIREX
+	CP 0
+	JR Z, JFIRENONE
+	LD A, $FF
+JFIRENONE:
+	RET
+
+WAITFIRE:
+	CALL JFIRE
 	CP 0
 	JR Z, WAITFIRE
 	LD A, B
 	CP 0
 	JR Z, WAITFIRED
 WAITFIREL1:
-	CALL JOYSTICK
+	CALL JFIRE
 	CP 0
 	JR NZ, WAITFIREL1
 WAITFIRED:

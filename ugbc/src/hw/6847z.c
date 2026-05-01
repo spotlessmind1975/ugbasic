@@ -287,6 +287,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     // outline0( "JSR CONSOLECALCULATE" );
 
 }
@@ -954,7 +956,7 @@ static Variable * c6847z_image_converter_multicolor_mode_standard( Environment *
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts_free_height( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {

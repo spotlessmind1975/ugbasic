@@ -1,95 +1,73 @@
+/*****************************************************************************
+ * ugBASIC - an isomorphic BASIC language compiler for retrocomputers        *
+ *****************************************************************************
+ * Copyright 2021-2026 Marco Spedaletti (asimov@mclink.it)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *----------------------------------------------------------------------------
+ * Concesso in licenza secondo i termini della Licenza Apache, versione 2.0
+ * (la "Licenza"); è proibito usare questo file se non in conformità alla
+ * Licenza. Una copia della Licenza è disponibile all'indirizzo:
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Se non richiesto dalla legislazione vigente o concordato per iscritto,
+ * il software distribuito nei termini della Licenza è distribuito
+ * "COSÌ COM'È", SENZA GARANZIE O CONDIZIONI DI ALCUN TIPO, esplicite o
+ * implicite. Consultare la Licenza per il testo specifico che regola le
+ * autorizzazioni e le limitazioni previste dalla medesima.
+ ****************************************************************************/
+
+  /* cfr. yylineno variable inside ugbc.y */
+%option yylineno
+
 %{
 
 #include <stdio.h>
 #include <string.h>
 #include "ugbc.tab.h" /* The tokens */
 
+  /* cfr. yyconcatlineno variable inside ugbc.y */
+int yyconcatlineno;
+
 #define RETURN(b, c)    \
 {\
-    yycolno = (yycolno + yyleng) * c; \
     yyposno = (yyposno + yyleng); \
     return b; \
 }
 
+char * import_file_name( char * _import_path );
 char * strcopy( char * _dest, char * _source );
 char * strcopy( char * _dest, char * _source );
 
-extern int yycolno;
 extern int yyposno;
 
 extern char * filenamestacked[256];
-extern int yylinenostacked[];
-extern int yycolnostacked[];
 extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
+
+/*!
+   This variable keeps track of the current position, using the %locations
+   method from BISON.
+ */
+YYLTYPE yyllocstacked[256];
+
+  /* See importPath in ugbc.y */
 extern char * importPath;
 
-#if defined(__atari__) 
-    char targetName[] = "atari";
-#elif defined(__atarixl__) 
-    char targetName[] = "atarixl";
-#elif defined(__c64__)
-    char targetName[] = "c64";
-#elif defined(__plus4__)
-    char targetName[] = "plus4";
-#elif defined(__c16__)
-    char targetName[] = "c16";
-#elif defined(__zx__)
-    char targetName[] = "zx";
-#elif defined(__coco__)
-    char targetName[] = "coco";
-#elif defined(__cocob__)
-    char targetName[] = "cocob";
-#elif defined(__coco3__)
-    char targetName[] = "coco3";
-#elif defined(__coco3b__)
-    char targetName[] = "coco3b";
-#elif defined(__d32__)
-    char targetName[] = "d32";
-#elif defined(__d32b__)
-    char targetName[] = "d32b";
-#elif defined(__d64__)
-    char targetName[] = "d64";
-#elif defined(__d64b__)
-    char targetName[] = "d64b";
-#elif defined(__gb__)
-    char targetName[] = "gb";
-#elif defined(__pc128op__)
-    char targetName[] = "pc128op";
-#elif defined(__to8__)
-    char targetName[] = "to8";
-#elif defined(__mo5__)
-    char targetName[] = "mo5";
-#elif defined(__vic20__)
-    char targetName[] = "vic20";
-#elif defined(__msx1__)
-    char targetName[] = "msx1";
-#elif defined(__coleco__)
-    char targetName[] = "coleco";
-#elif defined(__pccga__)
-    char targetName[] = "pccga";
-#elif defined(__sc3000__)
-    char targetName[] = "sc3000";
-#elif defined(__sg1000__)
-    char targetName[] = "sg1000";
-#elif defined(__cpc__)
-    char targetName[] = "cpc";
-#elif defined(__c128__)
-    char targetName[] = "c128";
-#elif defined(__c128z__)
-    char targetName[] = "c128z";
-#elif defined(__vg5000__)
-    char targetName[] = "vg5000";
-#elif defined(__c64reu__)
-    char targetName[] = "c64reu";
-#elif defined(__pc1403__)
-    char targetName[] = "pc1403";
-#elif defined(__vz200__)
-    char targetName[] = "vz200";
-#endif
-
-int yyconcatlineno;
+  /* See targetName in _infrastructure */
+extern char targetName[];
 
 static char * translate_spaces( char * _original ) {
 
@@ -110,6 +88,27 @@ static char * translate_spaces( char * _original ) {
 
 char * strreplace( const char * _orig, const char * _rep, const char * _with);
 
+#define YY_USER_ACTION \
+    yylloc.first_line = yylloc.last_line; \
+    yylloc.first_column = yylloc.last_column; \
+    for(int i = 0; yytext[i] != '\0'; i++) { \
+        if(yytext[i] == '\n') { \
+            yylloc.last_line++; \
+            yylloc.last_column = 0; \
+        } \
+        else { \
+            yylloc.last_column++; \
+        } \
+    }
+
+#define YY_USER_ACTION_RESET \
+    { \
+        yylloc.first_line = 1; \
+        yylloc.first_column = 1; \
+        yylloc.last_line = 1; \
+        yylloc.last_column = 1; \
+    }
+
 %}
 
 %x incl
@@ -119,54 +118,41 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
 
 %%
 
-"IMPORT DECLARES"        BEGIN(impt);
-<impt>[ \t\n\r]*     { /* eat the white spaces */
-    char * importDeclaresFilename = malloc(1024);
-    if ( importPath ) {
-        sprintf(importDeclaresFilename, "%s/%s.bas", importPath, targetName);
-    } else {
-        sprintf(importDeclaresFilename, "../../imports/%s.bas", targetName);
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            sprintf(importDeclaresFilename, "../imports/%s.bas", targetName);
-        }        
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            sprintf(importDeclaresFilename, "imports/%s.bas", targetName);
+"IMPORT DECLARES"   { BEGIN(impt); };
+<impt>[ \t\n\r]*    {
+    char * importDeclaresFilename = import_file_name( importPath );
+    if ( !importDeclaresFilename ) {
+        if ( stacked == 0 ) {
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d)\n", yylloc.first_line, yylloc.first_column, (yyposno+1));
+        } else {
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
-        if( access( importDeclaresFilename, F_OK ) != 0 ) {
-            if ( stacked == 0 ) {
-                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
-            } else {
-                fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
-            }
-            exit(EXIT_FAILURE);
-        }
+        exit(EXIT_FAILURE);
     }
     yyin = fopen( importDeclaresFilename, "rt" );
     if ( ! yyin ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
-    yylinenostacked[stacked] = yylineno;
-    yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
+    memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n", yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n", yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
-    yylineno = 1;
     yyconcatlineno = 0;
-    yycolno = 0;
     yyposno = 0;
+    YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
@@ -177,9 +163,9 @@ INCLUDE             BEGIN(incl);
     yyin = fopen( filename, "rt" );
     if ( ! yyin ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d, %s)\n", yytext, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d, %s)\n", yytext, yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
@@ -190,24 +176,21 @@ INCLUDE             BEGIN(incl);
     } else {
         fseek(yyin, 0, SEEK_SET );
     }
-
-    yylinenostacked[stacked] = yylineno;
-    yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
+    memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n",  yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n",  yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
-    yylineno = 1;
     yyconcatlineno = 0;
-    yycolno = 0;
     yyposno = 0;
+    YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
@@ -215,9 +198,8 @@ INCLUDE             BEGIN(incl);
     yypop_buffer_state();
     if ( stacked ) {
         --stacked;
-        yylineno = yylinenostacked[stacked];
-        yycolno = yycolnostacked[stacked];
         yyposno = yyposnostacked[stacked];
+        memcpy( &yylloc, &yyllocstacked[stacked], sizeof( yylloc ) );
         yyconcatlineno = 0;
     }
     if ( !YY_CURRENT_BUFFER ) {
@@ -225,11 +207,11 @@ INCLUDE             BEGIN(incl);
     }
 }
 
-[\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
+[\t ]*"ASM"[^\n\r\x0a\x0d]+ { int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
 [\t ]*"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
-<asm>[\t ]*"END ASM" { yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
-<asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
-<asm>.{1,3} { yycolno += strlen(yytext); int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>[\t ]*"END ASM" { BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
+<asm>[\n\r\x0a\x0d]{1,3} { int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>.{1,3} { int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 
 [a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]*"]" { *(yytext+strlen(yytext)-1) = 0; yylval.string = strdup(yytext); RETURN(BufferDefinitionHex,1); }
 "["[0-9a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]*"]" { *(yytext+strlen(yytext)-1) = 0; yylval.string = strdup(yytext+1); RETURN(BufferDefinitionHex,1); }
@@ -240,8 +222,8 @@ INCLUDE             BEGIN(incl);
 "#["[0-9a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]* { yylval.string = strdup(yytext+1); RETURN(BufferDefinitionHex,1); }
 
 [\x0d] { }
-_[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
-[\x0a] { ++yylineno; RETURN(NewLine,0); }
+_[\x0a]|_[\x0d][\x0a] { ++yyconcatlineno; }
+[\x0a] { RETURN(NewLine,0); }
 "." { RETURN(OP_PERIOD,1); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }
@@ -598,6 +580,7 @@ CPU8501 { RETURN(CPU8501,1); }
 CPU8502 { RETURN(CPU8502,1); }
 CPUSC61860 { RETURN(CPUSC61860,1); }
 CPUSM83 { RETURN(CPUSM83,1); }
+CPUSPEED { RETURN(CPUSPEED,1); }
 CPUZ80 { RETURN(CPUZ80,1); }
 CREATE { RETURN(CREATE,1); }
 Crt { RETURN(CREATE,1); }
@@ -638,6 +621,8 @@ DEC { RETURN(DEC,1); }
 Dc { RETURN(DEC,1); }
 DECLARE { RETURN(DECLARE,1); }
 Dec { RETURN(DECLARE,1); }
+DECRYPT { RETURN(DECRYPT,1); }
+DEc { RETURN(DECRYPT,1); }
 DEFAULT { RETURN(DEFAULT,1); }
 Dft { RETURN(DEFAULT,1); }
 DEFDGR { RETURN(DEFDGR,1); }
@@ -650,6 +635,8 @@ DELAY { RETURN(DELAY,1); }
 Dy { RETURN(DELAY,1); }
 DELETE { RETURN(DELETE,1); }
 Del { RETURN(DELETE,1); }
+DESERIALIZE { RETURN(DESERIALIZE,1)}
+DE2 { RETURN(DESERIALIZE,1)}
 DESTINATION { RETURN(DESTINATION,1); }
 Ds { RETURN(DESTINATION,1); }
 DESTROY { RETURN(DESTROY,1); }
@@ -737,6 +724,8 @@ EMPTYTILE { RETURN(EMPTYTILE,1); }
 Emt { RETURN(EMPTYTILE,1); }
 EMULATION { RETURN(EMULATION,1); }
 EMu { RETURN(EMULATION,1); } 
+ENCRYPT { RETURN(ENCRYPT,1); }
+ENc { RETURN(ENCRYPT,1); }
 END { RETURN(END,1); }
 Ee { RETURN(END,1); }
 ENDCOPPER { RETURN(ENDCOPPER,1); }
@@ -875,6 +864,8 @@ GOTO { RETURN(GOTO,1); }
 Go { RETURN(GOTO,1); }
 GOSUB { RETURN(GOSUB,1); }
 Gs { RETURN(GOSUB,1); }
+GPRINT { RETURN(GPRINT,1); }
+Gp { RETURN(GPRINT,1); }
 GR { RETURN(GR,1); }
 GRAND { RETURN(GRAND,1); }
 GRAPHIC { RETURN(GRAPHIC,1); }
@@ -909,6 +900,8 @@ Hg { RETURN(HEIGHT,1); }
 HELICOPTER { RETURN(HELICOPTER,1); }
 HEX { RETURN(HEX,1); }
 HEX\$ { RETURN(HEX,1); }
+HEX2BIN { RETURN(HEX2BIN,1); }
+H2B { RETURN(HEX2BIN,1); }
 Hx { RETURN(HEX,1); }
 HIRES { RETURN(HIRES,1); }
 Hi { RETURN(HIRES,1); }
@@ -952,6 +945,8 @@ Ik { RETURN(INK,1); }
 INKB { RETURN(INKB,1); }
 I\$ { RETURN(INKB,1); }
 INKEY { RETURN(INKEY,1); }
+INLINE { RETURN(INLINE,1); }
+INl { RETURN(INLINE,1); }
 INDEX { RETURN(INDEX,1); }
 Idx { RETURN(INDEX,1); }
 INKEY\$ { RETURN(INKEY,1); }
@@ -1214,6 +1209,8 @@ ONLY { RETURN(ONLY,1); }
 On { RETURN(ONLY,1); }
 OPACITY { RETURN(OPACITY, 1); }
 Opc { RETURN(OPACITY, 1); }
+OPTIMIZED { RETURN(OPTIMIZED,1); }
+Oz { RETURN(OPTIMIZED,1); }
 OPTION { RETURN(OPTION,1); }
 Op { RETURN(OPTION,1); }
 OPEN { RETURN(OPEN,1); }
@@ -1508,6 +1505,8 @@ SEQUENCE { RETURN(SEQUENCE,1); }
 Seq { RETURN(SEQUENCE,1); }
 SERIAL { RETURN(SERIAL,1); }
 SEr { RETURN(SERIAL,1); }
+SERIALIZE { RETURN(SERIALIZE,1); }
+SE2 { RETURN(SERIALIZE,1); }
 SET { RETURN(SET,1); }
 Se { RETURN(SET,1); }
 SG1000 { RETURN(SG1000,1); }
@@ -1548,6 +1547,8 @@ SLe { RETURN(SLEEP,1); }
 SLICE { RETURN(SLICE,1); }
 SLOT { RETURN(SLOT,1); }
 SLc { RETURN(SLICE,1); }
+SLOW { RETURN(SLOW,1); }
+S4 { RETURN(SLOW,1); }
 SN76489 { RETURN(SN76489,1); }
 SOPRANO { RETURN(SOPRANO,1); }
 SOUND { RETURN(SOUND,1); }
@@ -1595,6 +1596,8 @@ S2 { RETURN(STORE,1); }
 STR { RETURN(STR,1); }
 STR\$ { RETURN(STR,1); }
 S\$ { RETURN(STR,1); }
+STRIG { RETURN(STRIG,1); }
+S3 { RETURN(STRIG,1); }
 STRING { RETURN(STRING,1); }
 S1 { RETURN(STRING,1); }
 STRING\$ { RETURN(STRING,1); }
@@ -1873,7 +1876,7 @@ ZX { RETURN(ZX,1); }
 [0-9]*\.[0-9]+E[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 [0-9]*\.[0-9]+E-[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 
-[ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
+[ \t]+ { yyposno = (yyposno + yyleng); }
 
 [a-z\_][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 [a-z\_][a-z0-9\_ ]+[ ][a-z0-9]+\n { yylval.string = translate_spaces(yytext); RETURN(IdentifierSpaced,1);  }
@@ -1882,7 +1885,7 @@ REG\([A-Z][A-Z]*\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylv
 REG\([0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 REG\([0-9]+,[0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 
-. { yycolno++; yyposno++; return(yytext[0]); }
+. { yyposno++; return(yytext[0]); }
 
 
 %%

@@ -189,6 +189,134 @@ PLOT1
 ; 64 x 32 elements is available in the display area. The element area is four
 ; dot-clocks wide by six lines high.
 PLOT2
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT2E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT2D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT2G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT2C                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT2E
+    CLR <PLOTCPE
+PLOT2D
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    PSHS D
+    CLR ,-S
+    INC ,S
+    ANDA #$1f
+    LSRA
+    BCS PLOT2S2
+    LSL ,S
+    LSL ,S
+PLOT2S2       
+    ANDB #$3f
+    LSRB
+    BCS PLOT2S3
+    LSL ,S
+PLOT2S3       
+    PSHS B
+    LDB #32
+    MUL
+    ADDD TEXTADDRESS
+    TFR D,X
+    LDB ,S+
+    ABX
+    LDB <PLOTCPE
+    BMI PLOT2CLEAR
+    LDA #$10
+    MUL
+    BRA PLOT2SKIP
+    LDB ,X
+    BPL PLOT2S4
+    ANDB #$70
+    FCB $21
+PLOT2S4
+    CLRB
+PLOT2SKIP
+    PSHS B
+    LDA ,X
+    BMI PLOT2S5
+    CLRA
+PLOT2S5       
+    ANDA #$0F
+    ORA 1,S
+    ORA ,S++
+    ORA #$80
+    STA ,X
+    PULS D,PC
+
+PLOT2CLEAR
+    LDB ,X
+    BPL PLOT2S6
+    ANDB #$70
+    FCB $21
+PLOT2S6
+    CLRB
+PLOT2SKIP2
+    PSHS B
+    LDA ,X
+    BMI PLOT2S7
+    CLRA
+PLOT2S7
+    LDB 1,S
+    LSRB
+    LDU #PLOT2MASK
+    ANDA B,U
+    ORA ,S++
+    ORA #$80
+    STA ,X
+    PULS D,PC
+PLOT2MASK
+    FCB %00001110, %00001101, %00001011, %00001011, %00000111
+
+PLOT2G
+    JSR PLOT2G
+    CMPB #0
+    BEQ PLOT2G0
+    LDB #$FF
+PLOT2G0
+    RTS
+    
+PLOT2C
+    CLR ,-S
+    INC ,S
+    ANDA #$1f
+    LSRA
+    BCS PLOT2S8
+    LSL ,S
+    LSL ,S
+PLOT2S8       
+    ANDB #$3f
+    LSRB
+    BCS PLOT2S9
+    LSL ,S
+PLOT2S9       
+    PSHS B
+    LDB #32
+    MUL
+    ADDD TEXTADDRESS
+    TFR D,X
+    LDB ,S+
+    ABX
+    LDB #$FF
+    LDA ,X
+    BPL PLOT2DONE
+    ANDA ,S+
+    BEQ PLOT2S10
+    LDB ,X
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    ANDB #7
+PLOT2S10
+    INCB
+PLOT2DONE
     RTS
 
 @ENDIF
@@ -200,7 +328,134 @@ PLOT2
 ; Six bits are used to generate this map and two data bits may be used to select 
 ; one of four colors in the display box. A 512 byte display memory is required. 
 ; The element area is four dot-clocks wide by four lines high.
+
+PLOT3YTMP   FCB 0, 86
+PLOT3XTMP       FCB         0
+PLOT3CTMP       FCB         0
+                FCB         0,3
+PLOT3MASK       FCB         160,144,136,132,130,129
+                FCB         223,239,247,251,253,254
+
 PLOT3
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT3E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT3D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT3G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT3C                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT3E
+    CLR <PLOTCPE
+PLOT3D
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    STA PLOT3YTMP
+    STB PLOT3XTMP
+    LDA <PLOTCPE
+    STA PLOT3CTMP
+
+    LDU #PLOT3MASK
+    LDD -6,U
+    MUL
+    STB -2,U
+    CLRB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB -4,U
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,X
+
+    LDD -2,U
+    MUL
+    LDB -4,U
+    LSRB
+    ROLA
+    LDB ,X
+    BMI PLOT3L1
+    LDB #128
+    STB ,X
+PLOT3L1     
+    LDB -3,U
+    BNE PLOT3L2
+    ADDA #6
+    LDB ,X
+    ANDB A,U
+    STB ,X
+    RTS
+
+PLOT3L2     
+    DECB
+    BNE PLOT3L3
+    LDB #191
+    ANDB ,X
+    BRA PLOT3L4
+PLOT3L3     
+    LDB #64
+    ORB ,X
+PLOT3L4
+    ORB A,U
+    STB ,X
+    RTS
+
+PLOT3Y2TEMP      FCB         0,86
+PLOT3X2TEMP      FCB         0
+                 FCB         0,3
+PLOT3MASK2       FCB         32,16,8,4,2,1
+
+PLOT3G
+    JSR PLOT3G
+    CMPB #0
+    BEQ PLOT3G0
+    LDB #$FF
+PLOT3G0
+    RTS
+    
+PLOT3C
+    LDA <(PLOTY+1)
+    LDB <(PLOTX+1)
+    STA PLOT3Y2TEMP
+    STB PLOT3X2TEMP
+    LDU #PLOT3MASK2
+    LDD -5,U
+    MUL
+    STB -2,U
+    CLRB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB -3,U
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,X
+    LDD -2,U
+    MUL
+    LDB -3,U
+    LSRB
+    ROLA
+    LDB ,X
+    BMI PLOT3L5
+    LDB #255
+    BRA PLOT3L6
+PLOT3L5     
+    ANDB A,U
+    BEQ PLOT3L6
+    LDB ,X
+    ANDB #64
+    BEQ PLOT3L7
+    LDB #1
+PLOT3L7
+    INCB
+PLOT3L6
     RTS
 
 @ENDIF
@@ -213,7 +468,109 @@ PLOT3
 ; A 2048 byte display memory is required. A density of 64 x 64 elements is 
 ; available in the display area. The element area is four dot-clocks wide 
 ; by three lines high.
+
+PLOT4PY      FCB 0,0
+PLOT4PX      FCB 0
+PLOT4PC      FCB 0
+PLOT4TMP    FCB 0
+
 PLOT4
+
+    LDA <PLOTM                  ;(0 = erase, 1 = set, 2 = get pixel, 3 = get color)
+    CMPA #0
+    BEQ PLOT4E                  ;if = 0 then branch to clear the point
+    CMPA #1
+    BEQ PLOT4D                  ;if = 1 then branch to draw the point
+    CMPA #2
+    BEQ PLOT4G                  ;if = 2 then branch to get the point (0/1)
+    CMPA #3
+    BEQ PLOT4PC                  ;if = 3 then branch to get the color index (0...15)
+
+PLOT4E
+    CLR <PLOTCPE
+PLOT4D
+    LDB <PLOTX+1
+    LDA <PLOTY
+    STA PLOT4PY
+    STB PLOT4PX
+    LDA <PLOTCPE
+    STA PLOT4PC
+
+PLOT4BG
+    LDD PLOT4PY
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB PLOT4PX
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,U
+    LDA ,U
+    BMI PLOT4LPX
+    LDA #128
+    STA ,U
+PLOT4LPX     
+    LDA PLOT4PX
+    LSRA
+    LDA #5
+    BCS PLOT4LPY
+    LSLA
+PLOT4LPY		
+    LDB PLOT4PC
+    BNE PLOT4LPZ
+    COMA
+    ANDA ,U
+    STA ,U
+    RTS
+PLOT4LPZ     
+    ORA ,U
+    ANDA #15
+    STA PLOT4TMP
+    ADDB #7
+    LSLB
+    LSLB
+    LSLB
+    LSLB
+    ADDB PLOT4TMP
+    STB ,U
+    RTS
+
+PLOT4G
+    STA PLOT4PY
+    STB PLOT4PX
+
+    LDD PLOT4PY
+    LSRA
+    RORB
+    LSRA
+    RORB
+    ADDB PLOT4PX
+    LSRA
+    RORB
+    ADDA TEXTADDRESS
+    TFR D,U
+    LDB ,U
+    BMI PLOT4LPK
+    LDB #255
+    RTS
+PLOT4LPK		
+    LDB PLOT4PX
+    LSRB
+    LDB #5
+    BCS PLOT4LPK2
+    LSLB
+PLOT4LPK2		
+    ANDB ,U
+    BEQ PLOT4LPK3
+    LDB ,U
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    SUBB #7
+PLOT4LPK3
     RTS
 
 @ENDIF
@@ -274,7 +631,7 @@ PLOT7
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -382,7 +739,7 @@ PLOT9
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -490,7 +847,7 @@ PLOT11
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -598,7 +955,7 @@ PLOT13
     LEAX D, X
 
     LDY #PLOTORBIT40
-    LDB PLOTCPE
+    LDB <PLOTCPE
     ANDB #$03
     LSLB
     LSLB
@@ -671,7 +1028,7 @@ PLOT14
 
     JSR PLOTPREPARE
 
-    LDA PLOTCPE
+    LDA <PLOTCPE
     CMPA #4
     BEQ PLOT14B
 

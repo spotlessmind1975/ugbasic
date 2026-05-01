@@ -77,7 +77,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 12,0", variable->realName);
+                        outhead1("%s: .res 14,0", variable->realName);
                     }        
                     break;
                 case VT_PATH:
@@ -356,6 +356,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
 
         variable = variable->next;
@@ -387,7 +394,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             outline0(" .res 4, 0" );
             break;
         case VT_IMAGEREF:
-            outhead1("%s: .res 12,0", _variable->realName);
+            outhead1("%s: .res 14,0", _variable->realName);
             break;
         case VT_PATH:
             outhead1("%s: .res 16,0", _variable->realName);
@@ -565,8 +572,13 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
 
             break;
         }
+    }
 
 
+    if( _variable->type == VT_IMAGES ) {
+        if ( _variable->strips ) {
+            vars_emit_strips( _environment, _variable->realName, _variable->strips );
+        }
     }
 
 }
@@ -857,7 +869,7 @@ void variable_cleanup( Environment * _environment ) {
         outhead0("CHAINEDSTART:");
         outline0("JMP CODESTART");
     }
-
+    
     if ( _environment->sidFiles && ( ! _environment->sidRelocAddress || _environment->sidRelocAddress <= 0x1000 ) ) {
         int lastAddress = 0;
         SIDFILE * actual = _environment->sidFiles;
@@ -884,6 +896,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dload, src_hw_c128_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_c128_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
+    deploy_inplace_preferred( bank, src_hw_c128_bank_asm );
+    deploy_inplace_preferred( console, src_hw_vic2_console_asm );
 
     // outhead0(".segment \"CODE\"" );
 

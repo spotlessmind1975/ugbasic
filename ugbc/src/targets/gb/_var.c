@@ -75,7 +75,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data");
-                        outline1("%s: defs 12", variable->realName);
+                        outline1("%s: defs 14", variable->realName);
                         outhead0("section code");
                     }
                     break;
@@ -397,6 +397,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         variable = variable->next;
     }

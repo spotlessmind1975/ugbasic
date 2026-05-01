@@ -40,7 +40,7 @@ PLOTC2DEST equ $4F ; $25
 
 XGR    fdb 0
 YGR    fdb 0
-LINE   fcb $ff, $ff
+LINE   fdb $ffff
 
 CLIPX1    fdb 0
 CLIPY1    fdb 0
@@ -56,8 +56,8 @@ CURRENTHEIGHT      fdb 200
 CURRENTTILES        fcb 255
 CURRENTTILESWIDTH      fcb 40
 CURRENTTILESHEIGHT      fcb 25
-CURRENTFRAMESIZE   fdb 40*200
-CURRENTSL          fcb 40
+CURRENTFRAMESIZE   EQU 40*200
+CURRENTSL          EQU 40
 FONTWIDTH       fcb 8
 FONTHEIGHT      fcb 8
 TILEMAPVISIBLE  fcb 0
@@ -143,6 +143,8 @@ CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
 CONSOLES2     rzb 4*2        ; <-- storage for memorize / remember on console
 
+@IF dynamicConsole
+
 CONSOLECALCULATE
     LDA CONSOLEH
     STA CONSOLEHB
@@ -173,6 +175,8 @@ CONSOLECALCULATE1
 CONSOLECALCULATE2
 CONSOLECALCULATE4
     RTS
+
+@ENDIF
 
 ;-----------------------------------------------------------------------------
 ; BITMAP MODE

@@ -57,6 +57,8 @@ PIA1CRA		EQU		DPPIA1CRA+IO	; Side A Control.
 PIA1DB		EQU		DPPIA1DB+IO	; Side A Data/DDR
 PIA1CRB		EQU		DPPIA1CRB+IO	; Side A Control.
 
+JFIRELATCH  fcb     $00, $00
+
 @IF joystickConfig.values
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -277,6 +279,95 @@ JOYSTICKREAD1
     JSR JOYSTICK
     RTS
 
+; Read the FIRE button's latch for a specific joystick
+;
+;   <PORT = joystick button id
+;   A = $00 FIRE was not pressed
+;       $ff FIRE was pressed
+;
+STRIG
+
+    LDB <PORT
+    LSRB
+    
+    ; Is the button odd? So we can read directly
+    ; the fire button.
+
+    BCS JFIRE
+
+    ; Load the latch value.
+
+    LDX #JFIRELATCH
+    LDA B, X
+
+    ; Check if latch is not zero.
+    
+    BEQ STRIGNONE
+
+    ; TRUE, the joystick fire was pressed in the past.
+
+    LDA #$FF
+
+    ; Reset the latch.
+    LDA #0
+    STA B, X
+    
+STRIGNONE
+    RTS
+
+JOYSTICKREAD
+    LDB <PORT
+    CMPB #0
+    BNE JOYSTICKREAD1
+    BEQ JOYSTICKREAD0
+
+; Read the FIRE button for a specific joystick
+;
+;   <PORT = joystick number
+;   A = $00 FIRE was not pressed
+;       $01 FIRE was pressed
+;
+JFIREX
+
+    ; Load the STRIG register from the hardware port.
+
+    JSR JOYSTICKREAD
+
+    ; Isolate the FIRE bit.
+
+    ANDA #$20
+
+    ; Update the FIRE latch.
+
+    PSHS D
+
+    LDB <PORT
+    LDX #JFIRELATCH
+    ORA B, X
+    STA B, X
+
+    PULS D
+
+    CMPA #0
+    
+    ; Done.
+
+    RTS
+
+; Read the FIRE button for a specific joystick
+;
+;   X = joystick number
+;   A = $00 FIRE was not pressed
+;       $FF FIRE was pressed
+;
+JFIRE
+    JSR JFIREX
+    BEQ JFIRENONE
+    LDA #$FF
+JFIRENONE
+    RTS
+
+
 @IF joystickConfig.sync
 
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -290,14 +381,16 @@ JOYSTICKREAD1
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 WAITFIRE0
-    JSR JOYSTICKREAD0
-    ANDA #$20
+    LDA #0
+    STA <PORT
+    JSR JFIRE
     BEQ WAITFIRE0
     CMPB #0
     BEQ WAITFIRE0D
 WAITFIRE0L1
-    JSR JOYSTICKREAD0
-    ANDA #$20
+    LDA #0
+    STA <PORT
+    JSR JFIRE
     BNE WAITFIRE0L1
 WAITFIRE0D
     RTS
@@ -307,34 +400,40 @@ WAITFIREA
     BEQ WAITFIRE0
 
 WAITFIRE1
-    JSR JOYSTICKREAD1
-    ANDA #$20
+    LDA #1
+    STA <PORT
+    JSR JFIRE
     BEQ WAITFIRE1
     CMPB #0
     BEQ WAITFIRE1D
 WAITFIRE1L1
-    JSR JOYSTICKREAD1
-    ANDA #$20
+    LDA #1
+    STA <PORT
+    JSR JFIRE
     BNE WAITFIRE1L1
 WAITFIRE1D
     RTS
 
 WAITFIRE
-    JSR JOYSTICKREAD0
-    ANDA #$20
+    LDA #0
+    STA <PORT
+    JSR JFIRE
     STA MATHPTR0
-    JSR JOYSTICKREAD1
-    ANDA #$20
+    LDA #1
+    STA <PORT
+    JSR JFIRE
     ORA MATHPTR0
     BEQ WAITFIRE
     CMPB #0
     BEQ WAITFIRED
 WAITFIREL1
-    JSR JOYSTICKREAD0
-    ANDA #$20
+    LDA #0
+    STA <PORT
+    JSR JFIRE
     STA MATHPTR0
-    JSR JOYSTICKREAD1
-    ANDA #$20
+    LDA #1
+    STA <PORT
+    JSR JFIRE
     ORA MATHPTR0
     BNE WAITFIREL1
 WAITFIRED

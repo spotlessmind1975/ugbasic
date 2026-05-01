@@ -62,6 +62,9 @@ ZXSTARTUP:
 ZXIRQSVC:
     DI
     PUSH AF
+    LD A, (VBLSYNC)
+    CP 0
+    JR NZ, ZXIRQSVCDONE
     PUSH BC
     PUSH DE
     PUSH HL
@@ -106,6 +109,9 @@ IRQVECTORSKIP:
     POP HL
     POP DE
     POP BC
+ZXIRQSVCDONE:
+    LD A, 0
+    LD (VBLSYNC), A
     POP AF
     EI
     RET

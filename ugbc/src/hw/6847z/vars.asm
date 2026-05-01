@@ -518,6 +518,8 @@
 
 ;     RTS
 
+@IF dynamicConsole
+
 ; CONSOLECALCULATE
 ;     LDA CONSOLEX1
 ;     STA MATHPTR0
@@ -546,6 +548,8 @@
 ;     ASL CONSOLEHB
 
 ;     RTS    
+
+@ENDIF
 
 ; CALCPOST0
 ;     PSHS D

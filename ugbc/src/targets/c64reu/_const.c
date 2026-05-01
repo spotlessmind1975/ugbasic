@@ -40,7 +40,7 @@
 
 void const_emit( Environment * _environment, char * _name ) {
 
-    Constant * c = constant_find( _environment->constants, _name );
+    Constant * c = constant_find( _environment, _name );
 
     if ( c ) {
             if ( !c->imported ) {

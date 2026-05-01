@@ -240,7 +240,7 @@
 #if defined(__atari__)
     #define FRAME_BUFFER_ADDRESS    0xbf00
 #else
-    #define FRAME_BUFFER_ADDRESS    0x9f0f
+    #define FRAME_BUFFER_ADDRESS    0xcf00
 #endif
 
 int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );

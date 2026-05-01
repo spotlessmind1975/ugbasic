@@ -74,6 +74,366 @@ TEXTATGO
     LDA DOUBLEBUFFERENABLED
     CMPA #0
     LBEQ TEXTATGOORIG
+    JMP TEXTATGODB
+
+TEXTATDBBMSP0DRAW
+; ----------------------------------------------------
+; ----------------------------------------------------
+; ----------------------------------------------------
+
+    PSHS D,Y,X
+
+    ORCC #$50
+
+    LDU #0
+    LDY #UDCCHAR
+    LDA <SCREENCODE
+    LDB #8
+    MUL
+    LEAY D, Y
+
+;     LDA CURRENTMODE
+;     CMPA #0
+;     BNE TEXTATDBBMSP00X
+;     JMP TEXTATDBBMSP00
+; TEXTATDBBMSP00X
+;     CMPA #1
+;     BNE TEXTATDBBMSP01X
+;     JMP TEXTATDBBMSP01
+; TEXTATDBBMSP01X
+;     CMPA #2
+;     BNE TEXTATDBBMSP02X
+;     JMP TEXTATDBBMSP02
+; TEXTATDBBMSP02X
+;     CMPA #3
+;     BNE TEXTATDBBMSP03X
+;     JMP TEXTATDBBMSP03
+; TEXTATDBBMSP03X
+;     CMPA #4
+;     BNE TEXTATDBBMSP04X
+;     JMP TEXTATDBBMSP04
+; TEXTATDBBMSP04X
+;     JMP TEXTATDBBMSP0E
+
+; TEXTATDBBMSP00
+; TEXTATDBBMSP01
+; TEXTATDBBMSP04
+
+; TEXTATDBBMSP0L1
+
+; @IF TO8
+
+;     LDA BASE_SEGMENT+$c3
+;     ORA #$01
+;     STA BASE_SEGMENT+$c3
+
+; @ELSE
+
+;     LDA BASE_SEGMENT+$c0
+;     ORA #$01
+;     STA BASE_SEGMENT+$c0
+
+; @ENDIF
+
+;     LDA ,Y
+;     STA ,X
+
+; @IF TO8
+
+;     LDA BASE_SEGMENT+$c3
+;     ANDA #$fe
+;     STA BASE_SEGMENT+$c3
+
+; @ELSE
+
+;     LDA BASE_SEGMENT+$c0
+;     ANDA #$fe
+;     STA BASE_SEGMENT+$c0
+
+; @ENDIF
+
+;     LDA <MATHPTR5
+;     STA ,X
+
+;     JMP TEXTATDBBMSP0L1M2
+
+; TEXTATDBBMSP0L1M
+
+;     PSHS X
+
+;     LDX <MATHPTR5
+
+;     LDA ,Y
+
+;     ANDA #$F0
+;     LSRA
+;     LSRA
+;     LSRA
+;     LSRA
+
+;     LDA A, X
+
+;     PULS X
+
+;     STA , X
+
+;     LEAX 1, X
+
+;     PSHS X
+
+;     LDX <MATHPTR5
+
+;     LDA ,Y
+
+;     ANDA #$0F
+
+;     LDA A, X
+
+;     PULS X
+
+;     STA , X
+
+;     JMP TEXTATDBBMSP0L1M2
+
+; TEXTATDBBMSP0L1M2
+    
+;     LDA #CURRENTSL
+;     LEAX A, X 
+
+;     LEAY 1, Y
+
+;     LEAU 1, U
+;     CMPU #8
+;     BEQ TEXTATDBBMSP0L1X
+;     JMP TEXTATDBBMSP0L1
+
+; TEXTATDBBMSP0L1X
+;     LDA #1
+;     JMP TEXTATDBBMSP0E
+
+; TEXTATDBBMSP02
+
+; TEXTATDBBMSP02L1
+
+; @IF TO8
+
+;     LDA BASE_SEGMENT+$c3
+;     ANDA #$fe
+;     STA BASE_SEGMENT+$c3
+
+; @ELSE
+
+;     LDA BASE_SEGMENT+$c0
+;     ORA #$01
+;     STA BASE_SEGMENT+$c0
+
+; @ENDIF
+
+;     LDA _PEN
+;     ANDA #$01
+;     CMPA #$01
+;     BEQ TEXTATDBBMSP02L1NO
+;     LDA ,Y
+;     STA ,X
+;     JMP TEXTATDBBMSP02L1DONE
+
+; TEXTATDBBMSP02L1NO
+;     LDA #0
+;     STA ,X
+
+; TEXTATDBBMSP02L1DONE
+
+; @IF TO8
+
+;     LDA BASE_SEGMENT+$c3
+;     ORA #$01
+;     STA BASE_SEGMENT+$c3
+
+; @ELSE
+
+;     LDA BASE_SEGMENT+$c0
+;     ANDA #$fe
+;     STA BASE_SEGMENT+$c0
+
+; @ENDIF
+
+;     LDA _PEN
+;     ANDA #$02
+;     CMPA #$02
+;     BEQ TEXTATDBBMSP02L2NO
+;     LDA ,Y
+;     STA ,X
+;     JMP TEXTATDBBMSP02L2DONE
+
+; TEXTATDBBMSP02L2NO
+;     LDA #0
+;     STA ,X
+
+; TEXTATDBBMSP02L2DONE
+
+;     LDA #CURRENTSL
+;     LEAX A, X 
+
+;     LEAY 1, Y
+
+;     LEAU 1, U
+;     CMPU #8
+;     BEQ TEXTATDBBMSP02L1X
+;     JMP TEXTATDBBMSP02L1
+
+; TEXTATDBBMSP02L1X
+;     LDA #1
+;     JMP TEXTATDBBMSP0E
+
+;
+
+TEXTATDBBMSP03
+
+    LDA ,Y
+    PSHS Y,D
+    LDY #TEXTATFLIP
+    ANDA #$0F
+    LEAY A, Y
+    LDA , Y
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR0
+    PULS D, Y
+
+    PSHS Y,D
+    LDY #TEXTATFLIP
+    ANDA #$F0
+    LSRA
+    LSRA
+    LSRA
+    LSRA
+    LEAY A, Y
+    LDA , Y
+    ORA <MATHPTR0
+    STA <MATHPTR0
+    PULS D, Y
+
+
+    PSHS U
+    LDU #2
+
+TEXTATDBBMSP03L1
+
+    LDA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+@IF PC128OP
+
+    PSHS D
+    LDA BANKSHADOW
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    STA <MATHPTR1
+    LDA $2000,X
+    ORA <MATHPTR1
+    STA $2000,X
+
+@IF PC128OP
+
+    PSHS D
+    LDA #7
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+@IF PC128OP
+
+    PSHS D
+    LDA BANKSHADOW
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+    STA <MATHPTR1
+    LDA ,X
+    ORA <MATHPTR1
+    STA ,X
+
+@IF PC128OP
+
+    PSHS D
+    LDA #7
+    STA BASE_SEGMENT+$E5
+    PULS D
+
+@ENDIF
+
+
+    LEAX 1, X
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+
+    LEAU -1, U
+
+    CMPU #0
+    BNE TEXTATDBBMSP03L1
+
+    LEAX -2, X 
+
+    PULS U
+    
+    LDA #CURRENTSL
+    LEAX A, X 
+
+    LEAY 1, Y
+
+    LEAU 1, U
+    CMPU #8
+    BEQ TEXTATDBBMSP03L1X
+    JMP TEXTATDBBMSP03
+
+TEXTATDBBMSP03L1X
+    LDA #2
+    JMP TEXTATDBBMSP0E
+
+TEXTATDBBMSP0E
+
+    ANDCC #$AF
+
+    PULS D,Y,X
+
+; ----------------------------------------------------
+; ----------------------------------------------------
+; ----------------------------------------------------
 
 ; ----------------------------------------------
 ; Version active on double buffering ON
@@ -295,355 +655,7 @@ TEXTATDBBMAT
 
 TEXTATDBBMSP0
 
-    PSHS D,Y,X
-
-    ORCC #$50
-
-    LDU #0
-    LDY #UDCCHAR
-    LDA <SCREENCODE
-    LDB #8
-    MUL
-    LEAY D, Y
-
-;     LDA CURRENTMODE
-;     CMPA #0
-;     BNE TEXTATDBBMSP00X
-;     JMP TEXTATDBBMSP00
-; TEXTATDBBMSP00X
-;     CMPA #1
-;     BNE TEXTATDBBMSP01X
-;     JMP TEXTATDBBMSP01
-; TEXTATDBBMSP01X
-;     CMPA #2
-;     BNE TEXTATDBBMSP02X
-;     JMP TEXTATDBBMSP02
-; TEXTATDBBMSP02X
-;     CMPA #3
-;     BNE TEXTATDBBMSP03X
-;     JMP TEXTATDBBMSP03
-; TEXTATDBBMSP03X
-;     CMPA #4
-;     BNE TEXTATDBBMSP04X
-;     JMP TEXTATDBBMSP04
-; TEXTATDBBMSP04X
-;     JMP TEXTATDBBMSP0E
-
-; TEXTATDBBMSP00
-; TEXTATDBBMSP01
-; TEXTATDBBMSP04
-
-; TEXTATDBBMSP0L1
-
-; @IF TO8
-
-;     LDA BASE_SEGMENT+$c3
-;     ORA #$01
-;     STA BASE_SEGMENT+$c3
-
-; @ELSE
-
-;     LDA BASE_SEGMENT+$c0
-;     ORA #$01
-;     STA BASE_SEGMENT+$c0
-
-; @ENDIF
-
-;     LDA ,Y
-;     STA ,X
-
-; @IF TO8
-
-;     LDA BASE_SEGMENT+$c3
-;     ANDA #$fe
-;     STA BASE_SEGMENT+$c3
-
-; @ELSE
-
-;     LDA BASE_SEGMENT+$c0
-;     ANDA #$fe
-;     STA BASE_SEGMENT+$c0
-
-; @ENDIF
-
-;     LDA <MATHPTR5
-;     STA ,X
-
-;     JMP TEXTATDBBMSP0L1M2
-
-; TEXTATDBBMSP0L1M
-
-;     PSHS X
-
-;     LDX <MATHPTR5
-
-;     LDA ,Y
-
-;     ANDA #$F0
-;     LSRA
-;     LSRA
-;     LSRA
-;     LSRA
-
-;     LDA A, X
-
-;     PULS X
-
-;     STA , X
-
-;     LEAX 1, X
-
-;     PSHS X
-
-;     LDX <MATHPTR5
-
-;     LDA ,Y
-
-;     ANDA #$0F
-
-;     LDA A, X
-
-;     PULS X
-
-;     STA , X
-
-;     JMP TEXTATDBBMSP0L1M2
-
-; TEXTATDBBMSP0L1M2
-    
-;     LDA CURRENTSL
-;     LEAX A, X 
-
-;     LEAY 1, Y
-
-;     LEAU 1, U
-;     CMPU #8
-;     BEQ TEXTATDBBMSP0L1X
-;     JMP TEXTATDBBMSP0L1
-
-; TEXTATDBBMSP0L1X
-;     LDA #1
-;     JMP TEXTATDBBMSP0E
-
-; TEXTATDBBMSP02
-
-; TEXTATDBBMSP02L1
-
-; @IF TO8
-
-;     LDA BASE_SEGMENT+$c3
-;     ANDA #$fe
-;     STA BASE_SEGMENT+$c3
-
-; @ELSE
-
-;     LDA BASE_SEGMENT+$c0
-;     ORA #$01
-;     STA BASE_SEGMENT+$c0
-
-; @ENDIF
-
-;     LDA _PEN
-;     ANDA #$01
-;     CMPA #$01
-;     BEQ TEXTATDBBMSP02L1NO
-;     LDA ,Y
-;     STA ,X
-;     JMP TEXTATDBBMSP02L1DONE
-
-; TEXTATDBBMSP02L1NO
-;     LDA #0
-;     STA ,X
-
-; TEXTATDBBMSP02L1DONE
-
-; @IF TO8
-
-;     LDA BASE_SEGMENT+$c3
-;     ORA #$01
-;     STA BASE_SEGMENT+$c3
-
-; @ELSE
-
-;     LDA BASE_SEGMENT+$c0
-;     ANDA #$fe
-;     STA BASE_SEGMENT+$c0
-
-; @ENDIF
-
-;     LDA _PEN
-;     ANDA #$02
-;     CMPA #$02
-;     BEQ TEXTATDBBMSP02L2NO
-;     LDA ,Y
-;     STA ,X
-;     JMP TEXTATDBBMSP02L2DONE
-
-; TEXTATDBBMSP02L2NO
-;     LDA #0
-;     STA ,X
-
-; TEXTATDBBMSP02L2DONE
-
-;     LDA CURRENTSL
-;     LEAX A, X 
-
-;     LEAY 1, Y
-
-;     LEAU 1, U
-;     CMPU #8
-;     BEQ TEXTATDBBMSP02L1X
-;     JMP TEXTATDBBMSP02L1
-
-; TEXTATDBBMSP02L1X
-;     LDA #1
-;     JMP TEXTATDBBMSP0E
-
-;
-
-TEXTATDBBMSP03
-
-    LDA ,Y
-    PSHS Y,D
-    LDY #TEXTATFLIP
-    ANDA #$0F
-    LEAY A, Y
-    LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR0
-    PULS D, Y
-
-    PSHS Y,D
-    LDY #TEXTATFLIP
-    ANDA #$F0
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    LEAY A, Y
-    LDA , Y
-    ORA <MATHPTR0
-    STA <MATHPTR0
-    PULS D, Y
-
-
-    PSHS U
-    LDU #2
-
-TEXTATDBBMSP03L1
-
-    LDA <MATHPTR0
-    ANDA #$03
-
-    PSHS Y
-    LDY #TEXTATBITMASK
-    LDB A, Y
-    LDA _PEN
-    ANDA #$0F
-    MUL
-    TFR B, A
-    PULS Y
-
-@IF PC128OP
-
-    PSHS D
-    LDA BANKSHADOW
-    STA BASE_SEGMENT+$E5
-    PULS D
-
-@ENDIF
-
-    STA <MATHPTR1
-    LDA $2000,X
-    ORA <MATHPTR1
-    STA $2000,X
-
-@IF PC128OP
-
-    PSHS D
-    LDA #7
-    STA BASE_SEGMENT+$E5
-    PULS D
-
-@ENDIF
-
-    LDA <MATHPTR0
-    LSRA
-    LSRA
-    STA <MATHPTR0
-    ANDA #$03
-
-    PSHS Y
-    LDY #TEXTATBITMASK
-    LDB A, Y
-    LDA _PEN
-    ANDA #$0F
-    MUL
-    TFR B, A
-    PULS Y
-
-@IF PC128OP
-
-    PSHS D
-    LDA BANKSHADOW
-    STA BASE_SEGMENT+$E5
-    PULS D
-
-@ENDIF
-
-    STA <MATHPTR1
-    LDA ,X
-    ORA <MATHPTR1
-    STA ,X
-
-@IF PC128OP
-
-    PSHS D
-    LDA #7
-    STA BASE_SEGMENT+$E5
-    PULS D
-
-@ENDIF
-
-
-    LEAX 1, X
-
-    LDA <MATHPTR0
-    LSRA
-    LSRA
-    STA <MATHPTR0
-
-    LEAU -1, U
-
-    CMPU #0
-    BNE TEXTATDBBMSP03L1
-
-    LEAX -2, X 
-
-    PULS U
-    
-    LDA CURRENTSL
-    LEAX A, X 
-
-    LEAY 1, Y
-
-    LEAU 1, U
-    CMPU #8
-    BEQ TEXTATDBBMSP03L1X
-    JMP TEXTATDBBMSP03
-
-TEXTATDBBMSP03L1X
-    LDA #2
-    JMP TEXTATDBBMSP0E
-
-TEXTATDBBMSP0E
-
-    ANDCC #$AF
-
-    PULS D,Y,X
+    JSR TEXTATDBBMSP0DRAW
 
     LDA CURRENTMODE
     CMPA #3
@@ -691,7 +703,7 @@ TEXTATDBBMINCX2
 TEXTATDBBMNEXT2
     LDA CONSOLEX1
     STA <XCURSYS
-    LDA CURRENTSL
+    LDA #CURRENTSL
     LEAX A, X
     LEAX A, X
     LEAX A, X
@@ -746,6 +758,341 @@ TEXTATDBBMEND
 ; ----------------------------------------------
 ; Version active on double buffering OFF
 ; ----------------------------------------------
+
+TEXTATBMSP0DRAW
+
+    PSHS D,Y,X
+
+    LDU #0
+    LDY #UDCCHAR
+    LDA <SCREENCODE
+    LDB #8
+    MUL
+    LEAY D, Y
+
+    LDA CURRENTMODE
+    CMPA #0
+    BNE TEXTATBMSP00X
+    JMP TEXTATBMSP00
+TEXTATBMSP00X
+    CMPA #1
+    BNE TEXTATBMSP01X
+    JMP TEXTATBMSP01
+TEXTATBMSP01X
+    CMPA #2
+    BNE TEXTATBMSP02X
+    JMP TEXTATBMSP02
+TEXTATBMSP02X
+    CMPA #3
+    BNE TEXTATBMSP03X
+    JMP TEXTATBMSP03
+TEXTATBMSP03X
+    CMPA #4
+    BNE TEXTATBMSP04X
+    JMP TEXTATBMSP04
+TEXTATBMSP04X
+    JMP TEXTATBMSP0E
+
+TEXTATBMSP00
+TEXTATBMSP01
+TEXTATBMSP04
+
+TEXTATBMSP0L1
+
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ORA #$01
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ORA #$01
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
+
+    LDA ,Y
+    STA ,X
+
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ANDA #$fe
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ANDA #$fe
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
+
+    LDA <MATHPTR5
+    STA ,X
+
+    JMP TEXTATBMSP0L1M2
+
+TEXTATBMSP0L1M
+
+    PSHS X
+
+    LDX <MATHPTR5
+
+    LDA ,Y
+
+    ANDA #$F0
+    LSRA
+    LSRA
+    LSRA
+    LSRA
+
+    LDA A, X
+
+    PULS X
+
+    STA , X
+
+    LEAX 1, X
+
+    PSHS X
+
+    LDX <MATHPTR5
+
+    LDA ,Y
+
+    ANDA #$0F
+
+    LDA A, X
+
+    PULS X
+
+    STA , X
+
+    JMP TEXTATBMSP0L1M2
+
+TEXTATBMSP0L1M2
+    
+    LDA #CURRENTSL
+    LEAX A, X 
+
+    LEAY 1, Y
+
+    LEAU 1, U
+    CMPU #8
+    BEQ TEXTATBMSP0L1X
+    JMP TEXTATBMSP0L1
+
+TEXTATBMSP0L1X
+    LDA #1
+    JMP TEXTATBMSP0E
+
+TEXTATBMSP02
+
+TEXTATBMSP02L1
+
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ANDA #$fe
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ORA #$01
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
+
+    LDA _PEN
+    ANDA #$01
+    CMPA #$01
+    BEQ TEXTATBMSP02L1NO
+    LDA ,Y
+    STA ,X
+    JMP TEXTATBMSP02L1DONE
+
+TEXTATBMSP02L1NO
+    LDA #0
+    STA ,X
+
+TEXTATBMSP02L1DONE
+
+@IF TO8
+
+    LDA BASE_SEGMENT+$c3
+    ORA #$01
+    STA BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDA BASE_SEGMENT+$c0
+    ANDA #$fe
+    STA BASE_SEGMENT+$c0
+
+@ENDIF
+
+    LDA _PEN
+    ANDA #$02
+    CMPA #$02
+    BEQ TEXTATBMSP02L2NO
+    LDA ,Y
+    STA ,X
+    JMP TEXTATBMSP02L2DONE
+
+TEXTATBMSP02L2NO
+    LDA #0
+    STA ,X
+
+TEXTATBMSP02L2DONE
+
+    LDA #CURRENTSL
+    LEAX A, X 
+
+    LEAY 1, Y
+
+    LEAU 1, U
+    CMPU #8
+    BEQ TEXTATBMSP02L1X
+    JMP TEXTATBMSP02L1
+
+TEXTATBMSP02L1X
+    LDA #1
+    JMP TEXTATBMSP0E
+
+;
+
+TEXTATBMSP03
+
+    LDA ,Y
+
+    PSHS Y,D
+    LDY #TEXTATFLIP
+    ANDA #$0F
+    LEAY A, Y
+    LDA , Y
+    ASLA
+    ASLA
+    ASLA
+    ASLA
+    STA <MATHPTR0
+    PULS D, Y
+
+    PSHS Y,D
+    LDY #TEXTATFLIP
+    ANDA #$F0
+    LSRA
+    LSRA
+    LSRA
+    LSRA
+    LEAY A, Y
+    LDA , Y
+    ORA <MATHPTR0
+    STA <MATHPTR0
+    PULS D, Y
+
+    PSHS U
+    LDU #2
+
+TEXTATBMSP03L1
+
+    LDA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+@IF TO8
+
+    LDB BASE_SEGMENT+$c3
+    ANDB #$fe
+    STB BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDB BASE_SEGMENT+$c0
+    ORB #$01
+    STB BASE_SEGMENT+$c0
+
+@ENDIF
+
+    STA ,X
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+    ANDA #$03
+
+    PSHS Y
+    LDY #TEXTATBITMASK
+    LDB A, Y
+    LDA _PEN
+    ANDA #$0F
+    MUL
+    TFR B, A
+    PULS Y
+
+@IF TO8
+
+    LDB BASE_SEGMENT+$c3
+    ORB #$01
+    STB BASE_SEGMENT+$c3
+
+@ELSE
+
+    LDB BASE_SEGMENT+$c0
+    ANDB #$fe
+    STB BASE_SEGMENT+$c0
+
+@ENDIF
+
+    STA ,X+
+
+    LDA <MATHPTR0
+    LSRA
+    LSRA
+    STA <MATHPTR0
+
+    LEAU -1, U
+
+    CMPU #0
+    BNE TEXTATBMSP03L1
+
+    LEAX -2, X 
+
+    PULS U
+    
+    LDA #CURRENTSL
+    LEAX A, X 
+
+    LEAY 1, Y
+
+    LEAU 1, U
+    CMPU #8
+    BEQ TEXTATBMSP03L1X
+    JMP TEXTATBMSP03
+
+TEXTATBMSP03L1X
+    LDA #2
+    JMP TEXTATBMSP0E
+
+;
+
+TEXTATBMSP0E
+
+    PULS D,Y,X
+
+    RTS
 
 TEXTATGOORIG
 
@@ -938,337 +1285,8 @@ TEXTATBMAT
 
 TEXTATBMSP0
 
-    PSHS D,Y,X
-
-    LDU #0
-    LDY #UDCCHAR
-    LDA <SCREENCODE
-    LDB #8
-    MUL
-    LEAY D, Y
-
-    LDA CURRENTMODE
-    CMPA #0
-    BNE TEXTATBMSP00X
-    JMP TEXTATBMSP00
-TEXTATBMSP00X
-    CMPA #1
-    BNE TEXTATBMSP01X
-    JMP TEXTATBMSP01
-TEXTATBMSP01X
-    CMPA #2
-    BNE TEXTATBMSP02X
-    JMP TEXTATBMSP02
-TEXTATBMSP02X
-    CMPA #3
-    BNE TEXTATBMSP03X
-    JMP TEXTATBMSP03
-TEXTATBMSP03X
-    CMPA #4
-    BNE TEXTATBMSP04X
-    JMP TEXTATBMSP04
-TEXTATBMSP04X
-    JMP TEXTATBMSP0E
-
-TEXTATBMSP00
-TEXTATBMSP01
-TEXTATBMSP04
-
-TEXTATBMSP0L1
-
-@IF TO8
-
-    LDA BASE_SEGMENT+$c3
-    ORA #$01
-    STA BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDA BASE_SEGMENT+$c0
-    ORA #$01
-    STA BASE_SEGMENT+$c0
-
-@ENDIF
-
-    LDA ,Y
-    STA ,X
-
-@IF TO8
-
-    LDA BASE_SEGMENT+$c3
-    ANDA #$fe
-    STA BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDA BASE_SEGMENT+$c0
-    ANDA #$fe
-    STA BASE_SEGMENT+$c0
-
-@ENDIF
-
-    LDA <MATHPTR5
-    STA ,X
-
-    JMP TEXTATBMSP0L1M2
-
-TEXTATBMSP0L1M
-
-    PSHS X
-
-    LDX <MATHPTR5
-
-    LDA ,Y
-
-    ANDA #$F0
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-
-    LDA A, X
-
-    PULS X
-
-    STA , X
-
-    LEAX 1, X
-
-    PSHS X
-
-    LDX <MATHPTR5
-
-    LDA ,Y
-
-    ANDA #$0F
-
-    LDA A, X
-
-    PULS X
-
-    STA , X
-
-    JMP TEXTATBMSP0L1M2
-
-TEXTATBMSP0L1M2
+    JSR TEXTATBMSP0DRAW
     
-    LDA CURRENTSL
-    LEAX A, X 
-
-    LEAY 1, Y
-
-    LEAU 1, U
-    CMPU #8
-    BEQ TEXTATBMSP0L1X
-    JMP TEXTATBMSP0L1
-
-TEXTATBMSP0L1X
-    LDA #1
-    JMP TEXTATBMSP0E
-
-TEXTATBMSP02
-
-TEXTATBMSP02L1
-
-@IF TO8
-
-    LDA BASE_SEGMENT+$c3
-    ANDA #$fe
-    STA BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDA BASE_SEGMENT+$c0
-    ORA #$01
-    STA BASE_SEGMENT+$c0
-
-@ENDIF
-
-    LDA _PEN
-    ANDA #$01
-    CMPA #$01
-    BEQ TEXTATBMSP02L1NO
-    LDA ,Y
-    STA ,X
-    JMP TEXTATBMSP02L1DONE
-
-TEXTATBMSP02L1NO
-    LDA #0
-    STA ,X
-
-TEXTATBMSP02L1DONE
-
-@IF TO8
-
-    LDA BASE_SEGMENT+$c3
-    ORA #$01
-    STA BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDA BASE_SEGMENT+$c0
-    ANDA #$fe
-    STA BASE_SEGMENT+$c0
-
-@ENDIF
-
-    LDA _PEN
-    ANDA #$02
-    CMPA #$02
-    BEQ TEXTATBMSP02L2NO
-    LDA ,Y
-    STA ,X
-    JMP TEXTATBMSP02L2DONE
-
-TEXTATBMSP02L2NO
-    LDA #0
-    STA ,X
-
-TEXTATBMSP02L2DONE
-
-    LDA CURRENTSL
-    LEAX A, X 
-
-    LEAY 1, Y
-
-    LEAU 1, U
-    CMPU #8
-    BEQ TEXTATBMSP02L1X
-    JMP TEXTATBMSP02L1
-
-TEXTATBMSP02L1X
-    LDA #1
-    JMP TEXTATBMSP0E
-
-;
-
-TEXTATBMSP03
-
-    LDA ,Y
-
-    PSHS Y,D
-    LDY #TEXTATFLIP
-    ANDA #$0F
-    LEAY A, Y
-    LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
-    STA <MATHPTR0
-    PULS D, Y
-
-    PSHS Y,D
-    LDY #TEXTATFLIP
-    ANDA #$F0
-    LSRA
-    LSRA
-    LSRA
-    LSRA
-    LEAY A, Y
-    LDA , Y
-    ORA <MATHPTR0
-    STA <MATHPTR0
-    PULS D, Y
-
-    PSHS U
-    LDU #2
-
-TEXTATBMSP03L1
-
-    LDA <MATHPTR0
-    ANDA #$03
-
-    PSHS Y
-    LDY #TEXTATBITMASK
-    LDB A, Y
-    LDA _PEN
-    ANDA #$0F
-    MUL
-    TFR B, A
-    PULS Y
-
-@IF TO8
-
-    LDB BASE_SEGMENT+$c3
-    ANDB #$fe
-    STB BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDB BASE_SEGMENT+$c0
-    ORB #$01
-    STB BASE_SEGMENT+$c0
-
-@ENDIF
-
-    STA ,X
-
-    LDA <MATHPTR0
-    LSRA
-    LSRA
-    STA <MATHPTR0
-    ANDA #$03
-
-    PSHS Y
-    LDY #TEXTATBITMASK
-    LDB A, Y
-    LDA _PEN
-    ANDA #$0F
-    MUL
-    TFR B, A
-    PULS Y
-
-@IF TO8
-
-    LDB BASE_SEGMENT+$c3
-    ORB #$01
-    STB BASE_SEGMENT+$c3
-
-@ELSE
-
-    LDB BASE_SEGMENT+$c0
-    ANDB #$fe
-    STB BASE_SEGMENT+$c0
-
-@ENDIF
-
-    STA ,X+
-
-    LDA <MATHPTR0
-    LSRA
-    LSRA
-    STA <MATHPTR0
-
-    LEAU -1, U
-
-    CMPU #0
-    BNE TEXTATBMSP03L1
-
-    LEAX -2, X 
-
-    PULS U
-    
-    LDA CURRENTSL
-    LEAX A, X 
-
-    LEAY 1, Y
-
-    LEAU 1, U
-    CMPU #8
-    BEQ TEXTATBMSP03L1X
-    JMP TEXTATBMSP03
-
-TEXTATBMSP03L1X
-    LDA #2
-    JMP TEXTATBMSP0E
-
-;
-
-TEXTATBMSP0E
-
-    PULS D,Y,X
-
     LDA CURRENTMODE
     CMPA #3
     BEQ TEXTATBMSP0E3
@@ -1308,7 +1326,7 @@ TEXTATBMINCX2
 TEXTATBMNEXT2
     LDA CONSOLEX1
     STA <XCURSYS
-    LDA CURRENTSL
+    LDA #CURRENTSL
     LEAX A, X
     LEAX A, X
     LEAX A, X

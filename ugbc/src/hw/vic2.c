@@ -1220,7 +1220,9 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
-    deploy( console, src_hw_vic2_console_asm );
+    deploy_preferred( console, src_hw_vic2_console_asm );
+
+    _environment->dynamicConsole = 1;
 
     outline0( "JSR CONSOLECALCULATE" );
 
@@ -2618,7 +2620,7 @@ static int calculate_sequences_size( Environment * _environment, int _sequences,
 
 static Variable * vic2_image_converter_bitmap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -2702,7 +2704,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -2839,7 +2841,7 @@ static Variable * vic2_image_converter_multicolor_mode_standard( Environment * _
 
 static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -3050,7 +3052,7 @@ static Variable * vic2_image_converter_tilemap_mode_standard( Environment * _env
 
 static Variable * vic2_image_converter_tilemap_mode_multicolor( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {

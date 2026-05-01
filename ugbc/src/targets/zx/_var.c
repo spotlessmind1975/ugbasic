@@ -60,7 +60,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     outline1("%s: defs 4", variable->realName);
                     break;
                 case VT_IMAGEREF:
-                    outline1("%s: defs 12", variable->realName);
+                    outline1("%s: defs 14", variable->realName);
                     break;
                 case VT_PATH:
                     outline1("%s: defs 16", variable->realName);
@@ -224,6 +224,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         variable = variable->next;
     }
@@ -382,6 +389,8 @@ void variable_cleanup( Environment * _environment ) {
 
     banks_generate( _environment );
         
+    deploy_inplace_preferred( vars,src_hw_zx_vars_asm);
+
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
         while( actual ) {
@@ -485,5 +494,30 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->deployed.dstring ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
+
+    if ( _environment->descriptors ) {
+        outhead0("UDCCHAR:" );
+        int i=0,j=0;
+        for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
+            outline1("; $%2.2x ", i);
+            out0("DEFB " );
+            for(j=0;j<7;++j) {
+                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+            }
+            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+        }
+    }
+
+    buffered_push_output( _environment );
+
+    outhead0("ORG 32768");
+    outhead0("CODESTART:");
+    outline1("LD SP, $%4.4x", _environment->stackStartAddress);
+    outline0("CALL ZXSTARTUP");
+    cpu_call( _environment, "VARINIT" );
+    outline0("CALL PROTOTHREADINIT" );
+    outline0("CALL ZXSTARTUP2" );
+
+    buffered_prepend_output( _environment );
 
 }

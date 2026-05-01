@@ -42,9 +42,10 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    _environment->program.startingAddress = 0x3000;
-
     cpu_init( _environment );
+    _environment->program.startingAddress = 0x3000;
+    _environment->stackStartAddress = 0xa000;
+    _environment->stackSize = 512;
 
     int * bankIds = NULL;
     int bankMax = 0;

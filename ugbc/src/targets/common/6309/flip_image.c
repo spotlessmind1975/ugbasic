@@ -46,7 +46,7 @@ void flip_image_vars_direction( Environment * _environment, char * _image, char 
     char directionConstantName[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantName, "FLIPIMAGEDIRECTION%4.4x", _direction );
     char directionConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( directionConstantParameter, "#FLIPIMAGEDIRECTION%4.4x", _direction );
     
-    Constant * directionConstant = constant_find( _environment->constants, directionConstantName );
+    Constant * directionConstant = constant_find( _environment, directionConstantName );
     
     if ( !directionConstant ) {
         directionConstant = malloc( sizeof( Constant ) );

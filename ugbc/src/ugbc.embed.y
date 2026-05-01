@@ -90,7 +90,7 @@ char *str_replace( char *orig, char *rep, char *with ) {
 %token IF ELSE ELSEIF ENDIF EMIT AS NewLine
 %token ATARI ATARIXL C128 C128Z C64 C64REU GB VIC20 ZX COLECO SC3000 SG1000 MSX MSX1 DRAGON DRAGON32 DRAGON64 PC1403 PC128OP MO5 CPC COCO VZ200
 %token COCO1 COCO2 COCO3 MACRO ENDMACRO INLINE
-%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8 PCCGA
+%token BIN PRG XEX K7O K7N K7 TAP ROM D64 DSK ATR REU TO8 PCCGA SDDRIVE
 
 %token <string> Identifier
 %token <string> Content
@@ -139,6 +139,9 @@ output :
     }
     | ATR {
         $$ = OUTPUT_FILE_TYPE_ATR;
+    }
+    | SDDRIVE {
+        $$ = OUTPUT_FILE_TYPE_SDDRIVE;
     }
     | REU {
         $$ = OUTPUT_FILE_TYPE_REU;
@@ -464,6 +467,26 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "bankAccessOptimization" ) == 0 ) {
+            if ( strcmp( $3, "read1" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read1;
+            } else if ( strcmp( $3, "read2" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read2;
+            } else if ( strcmp( $3, "read4" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read4;
+            } else if ( strcmp( $3, "readn" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.readn;
+            } else if ( strcmp( $3, "write1" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read1;
+            } else if ( strcmp( $3, "write2" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read2;
+            } else if ( strcmp( $3, "write4" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.read4;
+            } else if ( strcmp( $3, "writen" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->bankAccessOptimization.readn;
+            } else {
+                $$ = 0;
+            }
         } else if ( strcmp( $1, "fontConfig" ) == 0 ) {
             if ( strcmp( $3, "schema" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->fontConfig.schema;
@@ -590,6 +613,14 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->putImageSafe;
         } else if ( strcmp( $1, "getImageSafe" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->getImageSafe;
+        } else if ( strcmp( $1, "stackStartAddress" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->stackStartAddress;
+        } else if ( strcmp( $1, "stackSize" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->stackSize;
+        } else if ( strcmp( $1, "dynamicConsole" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->dynamicConsole;
+        } else if ( strcmp( $1, "horizontalScrollOff" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->horizontalScrollOff;
         } else if ( strcmp( $1, "descriptors" ) == 0 ) {
             if ( ((struct _Environment *)_environment)->descriptors ) {
                 $$ = 1;
@@ -639,6 +670,8 @@ const_factor:
             } else {
                 $$ = 0;
             }
+        } else if ( strcmp( $1, "clsSlow" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->clsSlow;
         } else if ( strcmp( $1, "scaleX" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->scaleX;
         } else if ( strcmp( $1, "scaleY" ) == 0 ) {
@@ -791,8 +824,14 @@ embed2:
             } else {
                 vars_emit_constant_integer( _environment, $5, 0xff );
             }
+        } else if ( strcmp( $3, "horizontalScrollOff" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->horizontalScrollOff );
         } else if ( strcmp( $3, "scaleX" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleX );
+        } else if ( strcmp( $3, "stackSize" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->stackSize );
+        } else if ( strcmp( $3, "stackStartAddress" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->stackStartAddress );
         } else if ( strcmp( $3, "scaleY" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->scaleY );
         } else if ( strcmp( $3, "offsetX" ) == 0 ) {

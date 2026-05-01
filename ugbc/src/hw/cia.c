@@ -51,8 +51,8 @@ void cia_wait_key_or_fire( Environment * _environment, int _port, int _release )
     if ( _port == -1 ) {
         outline0("JSR WAITKEYFIRE");
     } else {
-        outline1("LDA #$%2.2x", _port );
-        outline0("JSR WAITKEYFIREA");
+        outline1("LDX #$%2.2x", _port );
+        outline0("JSR WAITKEYFIREX");
     }
    
 }
@@ -81,7 +81,7 @@ void cia_wait_fire( Environment * _environment, int _port, int _release ) {
 
     deploy( joystick, src_hw_cia_joystick_asm );
 
-    outline1("LDX #$%2.2x", _release );
+    outline1("LDY #$%2.2x", _release );
     switch( _port ) {
         case -1:
             outline0("JSR WAITFIRE");
@@ -102,12 +102,12 @@ void cia_wait_fire_semivar( Environment * _environment, char * _port, int _relea
 
     deploy( joystick, src_hw_cia_joystick_asm );
 
-    outline1("LDX #$%2.2x", _release );
+    outline1("LDY #$%2.2x", _release );
     if ( ! _port ) {
         outline0("JSR WAITFIRE");
     } else {
-        outline1("LDA %s", _port );
-        outline0("JSR WAITFIREA");
+        outline1("LDX %s", _port );
+        outline0("JSR WAITFIREX");
     }
    
 }

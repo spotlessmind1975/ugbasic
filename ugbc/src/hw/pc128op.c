@@ -415,6 +415,8 @@ void pc128op_dload( Environment * _environment, char * _address, char * _bank, c
     deploy_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_preferred( bank, src_hw_pc128op_bank_asm );        
     deploy( dload, src_hw_pc128op_dload_asm);
+    _environment->bankAccessOptimization.readn = 1;
+    _environment->bankAccessOptimization.writen = 1;
 
     if ( _bank ) {
         outline1("LDA %s", _bank );

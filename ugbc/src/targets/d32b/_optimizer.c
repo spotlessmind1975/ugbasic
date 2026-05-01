@@ -277,7 +277,8 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "DUFFDEVICE"))  return 0;
     if(po_buf_match(name, "_TAB"))  return 0;
     if(po_buf_match(name, "ISV"))  return 0;
-    
+    if(po_buf_match(name, "BINTO^"))  return 0;
+
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;
     if(po_buf_match(name, "XCUR"))    return 1;
@@ -289,6 +290,24 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "XGR"))     return 1;
     if(po_buf_match(name, "YGR"))     return 1;
     if(po_buf_match(name, "FREE_"))   return 1;
+    if(po_buf_match(name, "CONSOLE"))   return 1;
+    if(po_buf_match(name, "ORIGIN"))   return 1;
+    if(po_buf_match(name, "RESOLUTION"))   return 1;
+    if(po_buf_match(name, "TILEMAPVISIBLE"))   return 1;
+    if(po_buf_match(name, "DOUBLEBUFFERENABLED"))   return 1;
+    if(po_buf_match(name, "LINE"))   return 1;
+    if(po_buf_match(name, "XSCROLL"))   return 1;
+    if(po_buf_match(name, "YSCROLL"))   return 1;
+    if(po_buf_match(name, "BLIT"))   return 1;
+    if(po_buf_match(name, "CURRENTMODE"))   return 1;
+    if(po_buf_match(name, "BITMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "COLORMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "DATAPTR"))   return 1;
+    if(po_buf_match(name, "DOJOERROR"))   return 1;
+    if(po_buf_match(name, "XCURSYS"))   return 1;
+    if(po_buf_match(name, "YCURSYS"))   return 1;
+    if(po_buf_match(name, "<XCURSYS"))   return 1;
+    if(po_buf_match(name, "<YCURSYS"))   return 1;
 
     return 0;
 }
@@ -304,6 +323,12 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     POBuffer v3 = TMP_BUF;
     POBuffer v4 = TMP_BUF;
     POBuffer v5 = TMP_BUF;
+
+    if ( po_buf_match( buf[0], " CLRA" )
+    &&   po_buf_match( buf[1], " ANDA") ) {
+        optim( buf[1], RULE "(CLEAR*,?,AND*)->(CLEAR*)", NULL);
+        ++_environment->removedAssemblyLines;
+    }
 
     /* move B stuff after A stuff */
     if( (po_buf_match(buf[0], " LDB *", v1) || po_buf_match(buf[0], " STB *", v1)) && !strchr("AD$", v1->str[0]) && strstr(v1->str, "BASE_SEGMENT" ) == NULL
@@ -436,7 +461,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     }
 
     if ( _isZero(po_buf_match(buf[0], " LD* #*", v1, v2) )
-    &&   strchr("AB", _toUpper(*v1->str)) ) {
+    &&   strchr("AB", _toUpper(*v1->str))
+    && ( !po_buf_match(buf[1], " ROL*", v3) || (*v1->str != *v3->str) )
+    ) {
         optim(buf[0], RULE "(LOAD#0)->(CLEAR)", "\tCLR%c", _toUpper(*v1->str));
     }
 
@@ -892,8 +919,19 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
 
     if( po_buf_match(buf[0], " LDB *", v1)
     &&  po_buf_match(buf[1], " LDB *", v2)
+    &&  strstr( v2->str, "," ) == NULL
         ) {
         optim(buf[0], RULE "(LDB,LDB)->(LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDY #$*", v1)
+    &&  po_buf_match(buf[1], " LEAY *,Y", v2)
+        ) {
+        long address = strtol( v1->str, NULL, 16 );
+        long offset = strtol( v2->str, NULL, 16 );
+        optim(buf[0], RULE "(LDY#,LEAY+)->(LDY#+)", "\tLDY #$%4.4x", (unsigned int)(address+offset) );
+        optim(buf[1], RULE "(LDY#,LEAY+)->(LDY#+)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
@@ -904,6 +942,55 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ) {
         optim(buf[0], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", " CLRA" );
         optim(buf[1], RULE "(LD#0,STD,LDB,ADD)->(CLRA,LDB)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+
+    if( po_buf_match(buf[0], " LDD *", v1) && po_buf_match(buf[1], " LDD *", v2 ) ) {
+        optim(buf[0], RULE "(LDD,LDD)->(LDD)", NULL );
+    }
+
+    if( po_buf_match(buf[0], " CLRA") && po_buf_match(buf[1], " CLRB" ) && po_buf_match(buf[2], " LDD *", v1 ) ) {
+        optim(buf[0], RULE "(CLRA,CLRB,LDD)->(LDD)", NULL );
+        optim(buf[1], RULE "(CLRA,CLRB,LDD)->(LDD)", NULL );
+    }
+
+    if( po_buf_match(buf[0], " CLRD") && po_buf_match(buf[1], " LDD *", v1 ) ) {
+        optim(buf[0], RULE "(CLRS,LDD)->(LDD)", NULL );
+    }
+
+    if( po_buf_match(buf[0], " LDD #0000") || po_buf_match(buf[0], " LDD #$0000") ) {
+        optim(buf[0], RULE "(LDD#0000)->(CLRA, CLRB)", "\tCLRD" );
+    }
+
+    if( po_buf_match(buf[0], " LDD #$*", v1)
+    &&  po_buf_match(buf[1], " LDB #$*", v3, v2)
+        ) {
+        optim(buf[0], RULE "(LDD#,LDB#)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
+    }
+
+    if( po_buf_match(buf[0], " LDD #$*", v1)
+    &&  po_buf_match(buf[1], " CLRB")
+        ) {
+        optim(buf[0], RULE "(LDD#,CLRB)->(LDA)", "\tLDA #$%2.2x", (unsigned char)(atoi( v1->str ) >> 8 ) );
+    }
+
+    if( po_buf_match(buf[0], " CLRB", v1)
+    &&  po_buf_match(buf[1], " LDD")
+        ) {
+        optim(buf[0], RULE "(CLRB,LDD)->(LDD)", NULL );
+    }
+
+    if( po_buf_match(buf[0], " CLRA")
+    &&  po_buf_match(buf[1], " LDD *", v1)
+        ) {
+        optim(buf[0], RULE "(CLRA,LDD)->(LDD)", NULL );
+        ++_environment->removedAssemblyLines;
+    }
+    
+    if( po_buf_match(buf[0], " LDB #$*", v1)
+    &&  po_buf_match(buf[1], " LDD #$*", v2)
+        ) {
+        optim(buf[0], RULE "(LDB#,LDD#)->(LDD)", NULL );
         ++_environment->removedAssemblyLines;
     }
 
@@ -1369,6 +1456,7 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
     ||  po_buf_match( buf[0], " ROL <*", arg)
     ||  po_buf_match( buf[0], " ROR <*", arg)
     ||  po_buf_match( buf[0], " TST< *", arg)
+
     ) if(vars_ok(arg)) {
         struct var *v = vars_get(arg);
         v->nb_wr++;
@@ -1521,7 +1609,7 @@ static void vars_remove(Environment * _environment, POBuffer buf[LOOK_AHEAD]) {
     POBuffer op  = TMP_BUF;
     
     if(!DO_UNREAD) return;
-    
+
     /* unread */
     if(po_buf_match( buf[0], " ST* *", op, var) && vars_ok(var)) {
         struct var *v = vars_get(var);
@@ -2702,6 +2790,7 @@ void target_peephole_optimizer( Environment * _environment ) {
                 --optimization_limit_count;
             };
             optim_pass(_environment, buf, DEADVARS);
+            optim_remove_unused_temporary( _environment );
         } while(change&&optimization_limit_count);
         optim_pass(_environment, buf, RELOCATION1);
         optim_pass(_environment, buf, RELOCATION2);

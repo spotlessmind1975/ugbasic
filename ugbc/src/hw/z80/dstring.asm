@@ -386,3 +386,52 @@ DSINIT:
     LD DE, stringsspace
     LD (FREE_STRING), DE
     RET
+
+; DSASSIGNSTR(HL) -> B
+DSASSIGNSTR:
+    PUSH BC
+    CALL DSDEFINE
+    LD A, B
+    POP BC
+; DSASSIGN(A) -> B
+DSASSIGN:
+    PUSH AF
+    CALL DSFREE
+    POP AF
+    LD B, A
+    CALL DSDESCRIPTOR
+    LD L, (IX+1)
+    LD H, (IX+2)
+    PUSH HL
+    LD A, (IX)
+    LD C, A
+    CALL DSALLOC
+    PUSH BC
+    CALL DSDESCRIPTOR
+    LD E, (IX+1)
+    LD D, (IX+2)
+    LD A, (IX)
+    POP BC
+    POP HL
+    PUSH BC
+    LD C, A
+    LD B, 0
+    CALL DUFFDEVICE
+    POP BC
+    RET
+
+; DSFILL(B,A)
+DSFILL:
+    PUSH AF
+    CALL DSDESCRIPTOR
+    LD A, (IX)
+    LD B, A
+    LD E, (IX+1)
+    LD D, (IX+2)
+    POP AF
+DSFILL1:
+    LD (DE), A
+    INC DE
+    DEC B
+    JR NZ, DSFILL1
+    RET

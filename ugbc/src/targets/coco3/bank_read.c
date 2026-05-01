@@ -60,16 +60,20 @@ void bank_read_semi_var( Environment * _environment, int _bank, int _address1, c
     switch( _size ) {
         case 1:
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -150,16 +154,20 @@ void bank_read_vars_direct_size( Environment * _environment, char * _bank, char 
     switch( _size ) {
         case 1:
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -183,16 +191,20 @@ void bank_read_vars_bank_direct_size_vars( Environment * _environment, int _bank
     switch( _size ) {
         case 1:
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }
@@ -216,16 +228,20 @@ void bank_read_vars_bank_direct_size( Environment * _environment, int _bank, cha
     switch( _size ) {
         case 1:
             outline0("JSR BANKREAD1");
+            _environment->bankAccessOptimization.read1 = 1;
             break;
         case 2:
             outline0("JSR BANKREAD2");
+            _environment->bankAccessOptimization.read2 = 1;
             break;
         case 4:
             outline0("JSR BANKREAD4");
+            _environment->bankAccessOptimization.read4 = 1;
             break;
         default:
             outline1("LDU #$%4.4x", _size );
             outline0("JSR BANKREAD");
+            _environment->bankAccessOptimization.readn = 1;
             break;
 
     }

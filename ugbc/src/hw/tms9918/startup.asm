@@ -588,7 +588,7 @@ WAITVBL2:
         JR Z, WAITVBL2
         RET
 
-
+@IF dynamicConsole
 
 CONSOLECALCULATE:
     LD HL, (TEXTADDRESS)
@@ -610,3 +610,5 @@ CONSOLECALCULATEL10:
     ADD HL, DE
     LD (CONSOLESA), HL
     RET
+
+@ENDIF

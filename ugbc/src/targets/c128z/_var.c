@@ -71,7 +71,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outline1("%s: defs 12", variable->realName);
+                        outline1("%s: defs 14", variable->realName);
                     }
                     break;
                 case VT_PATH:
@@ -435,11 +435,10 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace( startup, src_hw_c128z_startup_asm);
     deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
+    deploy_inplace_preferred( bank, src_hw_c128z_bank_asm );
     deploy( startup, src_hw_c128z_startup2_asm);
 
     generate_cgoto_address_table( _environment );
-
-    banks_generate( _environment );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];
@@ -561,5 +560,9 @@ void variable_cleanup( Environment * _environment ) {
         outhead1("max_free_string = $%4.4x", _environment->dstring.space == 0 ? DSTRING_DEFAULT_SPACE : _environment->dstring.space );
     }
 
+    outhead0("CODESTART:")
+    outline1("LD SP, $%4.4x", _environment->stackStartAddress );
+
+    buffered_prepend_output( _environment );
 
 }

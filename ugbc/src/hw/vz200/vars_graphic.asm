@@ -667,6 +667,8 @@
 ;     POP AF
 ;     RET
 
+@IF dynamicConsole
+
 ; CONSOLECALCULATE:
 
 ;     CALL TEXTATPIXPOS
@@ -706,6 +708,7 @@
 
 ;     RET
 
+@ENDIF
 
 ; ; Convert a color in range 0..15 to bitmask valid for mode 0
 ; ; Input: 

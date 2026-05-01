@@ -82,6 +82,7 @@ Loop * loop = _environment->loops;
         if ( _environment->anyProtothread && !_environment->protothreadForbid ) {
             run_parallel( _environment );
         }
+        deploy( vbl, src_hw_ef936x_vbl_asm);
         cpu_call( _environment, "WAITVBL");
         deploy_embedded( cpu_mem_move, src_hw_6809_cpu_mem_move_asm );
         if ( _environment->doubleBufferEnabled ) {

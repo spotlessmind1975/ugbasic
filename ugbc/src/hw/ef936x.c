@@ -360,6 +360,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     outline0( "JSR CONSOLECALCULATE" );
 
 }
@@ -439,7 +441,6 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
-    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
@@ -670,7 +671,7 @@ void ef936x_get_height( Environment * _environment, char *_result ) {
 
 void ef936x_cls( Environment * _environment ) {
     
-    deploy( clsGraphic, src_hw_ef936x_cls_asm );
+    deploy_preferred( clsGraphic, src_hw_ef936x_cls_asm );
     
     outline0("JSR CLS");
 
@@ -706,7 +707,7 @@ void ef936x_text( Environment * _environment, char * _text, char * _text_size, i
 
     deploy_preferred( ef936xvars, src_hw_ef936x_vars_asm);
     deploy( vScrollText, src_hw_ef936x_vscroll_text_asm );
-    deploy( clsGraphic, src_hw_ef936x_cls_asm );
+    deploy_preferred( clsGraphic, src_hw_ef936x_cls_asm );
 
     if( ! _environment->descriptors ) {
         font_descriptors_init( _environment, 0 );
@@ -812,7 +813,6 @@ void ef936x_initialization( Environment * _environment ) {
     cpu_store_16bit( _environment, "CLIPX2", _environment->screenWidth-1 );
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
-    cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 40*200 );
 
     cpu_store_16bit( _environment, "ORIGINX", 0 );
     cpu_store_16bit( _environment, "ORIGINY", 0 );
@@ -922,7 +922,7 @@ void ef936x_finalization( Environment * _environment ) {
     outline4("$%1.1x%1.1x%1.1x%1.1x", 0, EF936X_COMPONENT_BITMASK * 0x10 | ( ( palette[15].blue >> 4 ) & 0x0f ) , ( ( palette[15].green >> 4 ) & 0x0f ) , ( ( palette[15].red >> 4 ) & 0x0f )  );
 
     if ( _environment->vestigialConfig.clsImplicit ) {
-        deploy( clsGraphic, src_hw_ef936x_cls_asm );
+        deploy_preferred( clsGraphic, src_hw_ef936x_cls_asm );
 
     }
 
@@ -1403,17 +1403,9 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
                 if ( colorIndexes[xx] != colorBackground ) {
                     adilinepixel(colorForeground);
                     *( buffer + offset + 3) |= bitmask;
-                    if ( _environment->debugImageLoad ) {
-                        printf( "%1.1x", colorForeground );
-                    }
-                    // printf("*");
                 } else {
                     adilinepixel(colorBackground);
                     *( buffer + offset + 3) &= ~bitmask;
-                    // printf(" ");
-                    if ( _environment->debugImageLoad ) {
-                        printf( "%1.1x", colorBackground );
-                    }
                 }
 
                 offset = ( image_y * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
@@ -1426,22 +1418,10 @@ static Variable * ef936x_image_converter_multicolor_mode_standard( Environment *
 
         _source += ( _width - _frame_width ) * _depth;
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
     }
 
     adilineendbitmap();
 
-    // for(i=0; i<4; ++i ) {
-    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
-    // }
-
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-        printf("\n" );
-    }
-    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
 
     return result;

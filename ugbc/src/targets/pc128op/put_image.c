@@ -133,9 +133,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 if ( _environment->residentDetectionEnabled ) {
@@ -201,17 +203,41 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, bank->name, image->bankAssigned );
                 // Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                Variable * sequence = NULL;
+                if ( _sequence ) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
                 outline1("LDY #$%4.4x", image->absoluteAddress );
 
+                Variable * realFrame = NULL;
                 Variable * frame = NULL;
                 if ( _frame ) {
                     frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                    realFrame = frame;
+                }
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
                 }
 
                 if ( !frame ) {
                     ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, frame->name, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset_regy(_environment, NULL, realFrame->name, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -227,9 +253,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 if ( _environment->residentDetectionEnabled ) {
@@ -244,9 +272,31 @@ extern char DATATYPE_AS_STRING[][16];
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+                Variable * sequence = NULL;
+                if ( _sequence ) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
+                Variable * realFrame = NULL;
                 Variable * frame = NULL;
                 if ( _frame) {
                     frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                    realFrame = frame;
+                }
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
                 }
 
                 if ( !frame ) {
@@ -281,9 +331,11 @@ extern char DATATYPE_AS_STRING[][16];
                     // bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
                      if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKUNCOMPRESS%2.2xXSDR", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     } else {
                         outline1("LDY #%s", bankWindowName );
                         outline1("JSR BANKUNCOMPRESS%2.2xXS", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     };                    
                 } else {
                     // bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
@@ -291,9 +343,11 @@ extern char DATATYPE_AS_STRING[][16];
                     outline1("LDU #$%4.4x", image->size );
                     if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                         outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     } else {
                         outline1("LDX #%s", bankWindowName );
                         outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                        _environment->bankAccessOptimization.readn = 1;
                     };            
                 }
                 if ( _environment->residentDetectionEnabled ) {
@@ -406,6 +460,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDY %s+6", image->realName );
     outline1("LDU %s+2", image->realName );
     outline0("JSR BANKUNCOMPRESS");
+    _environment->bankAccessOptimization.readn = 1;
 
     cpu_jump( _environment, labelDecompressionDone );
 
@@ -415,6 +470,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDX %s+6", image->realName );
     outline1("LDU %s+2", image->realName );
     outline0("JSR BANKREAD");
+    _environment->bankAccessOptimization.readn = 1;
     
     cpu_label( _environment, labelDecompressionDone );
 
@@ -486,22 +542,30 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
 
     _flags = _flags & ( ( FLAG_DOUBLE_Y << 8 ) | FLAG_TRANSPARENCY );
 
-    char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
-    char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
-    
-    Constant * flagsConstant = constant_find( _environment->constants, flagsConstantName );
-    
-    if ( !flagsConstant ) {
-        flagsConstant = malloc( sizeof( Constant ) );
-        memset( flagsConstant, 0, sizeof( Constant ) );
-        flagsConstant->name = strdup( flagsConstantName );
-        flagsConstant->realName = strdup( flagsConstantName );
-        flagsConstant->value = _flags;
-        flagsConstant->type = CT_INTEGER;
-        flagsConstant->next = _environment->constants;
-        _environment->constants = flagsConstant;
-    }
+    char flagsConstantName[MAX_TEMPORARY_STORAGE];
+    char flagsConstantParameter[MAX_TEMPORARY_STORAGE];
 
+    if ( _flags ) {
+        sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
+        sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
+        
+        Constant * flagsConstant = constant_find( _environment, flagsConstantName );
+        
+        if ( !flagsConstant ) {
+            flagsConstant = malloc( sizeof( Constant ) );
+            memset( flagsConstant, 0, sizeof( Constant ) );
+            flagsConstant->name = strdup( flagsConstantName );
+            flagsConstant->realName = strdup( flagsConstantName );
+            flagsConstant->value = _flags;
+            flagsConstant->type = CT_INTEGER;
+            flagsConstant->next = _environment->constants;
+            _environment->constants = flagsConstant;
+        }
+
+    } else {
+        sprintf( flagsConstantParameter, "#0000" );
+    }
+    
     put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
 }
 

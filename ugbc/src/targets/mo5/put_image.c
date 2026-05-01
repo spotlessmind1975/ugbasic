@@ -63,13 +63,16 @@ extern char DATATYPE_AS_STRING[][16];
 
     Resource * resource = build_resource_for_sequence( _environment, _image, _frame, _sequence );
 
+    Variable * realFrame = NULL;
     Variable * frame = NULL;
     if ( _frame) {
         frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+        realFrame = frame;
     }
     Variable * sequence = NULL;
     if ( _sequence) {
         sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+        realFrame = frame;
     }
 
     switch( resource->type ) {
@@ -129,9 +132,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 // Optimization: D = $FFFF at the end of any BANKREAD
@@ -190,10 +195,27 @@ extern char DATATYPE_AS_STRING[][16];
                 // variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 // Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -206,9 +228,11 @@ extern char DATATYPE_AS_STRING[][16];
                 outline1("LDU #$%4.4x", image->frameSize );
                 if ( banks_get_default_resident( _environment, image->bankAssigned ) == image->residentAssigned ) {
                     outline1("JSR BANKREADBANK%2.2xXSDR", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 } else {
                     outline1("LDX #%s", bankWindowName );
                     outline1("JSR BANKREADBANK%2.2xXS", image->bankAssigned );
+                    _environment->bankAccessOptimization.readn = 1;
                 };
 
                 // Optimization: D = $FFFF at the end of any BANKREAD
@@ -221,6 +245,24 @@ extern char DATATYPE_AS_STRING[][16];
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     ef936x_put_image( _environment, resource, _x1, _y1, "", NULL, image->frameSize, 0, _flags );
                 } else {
@@ -349,6 +391,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline0("TFR Y, X" );
     outline1("LDY %s+6", image->realName );
     outline0("JSR BANKUNCOMPRESS");
+    _environment->bankAccessOptimization.readn = 1;
 
     cpu_jump( _environment, labelDecompressionDone );
 
@@ -358,6 +401,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LDX %s+6", image->realName );
     outline1("LDU %s+2", image->realName );
     outline0("JSR BANKREAD");
+    _environment->bankAccessOptimization.readn = 1;
 
     cpu_label( _environment, labelDecompressionDone );
 
@@ -431,7 +475,7 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
     char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
     char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
     
-    Constant * flagsConstant = constant_find( _environment->constants, flagsConstantName );
+    Constant * flagsConstant = constant_find( _environment, flagsConstantName );
     
     if ( !flagsConstant ) {
         flagsConstant = malloc( sizeof( Constant ) );

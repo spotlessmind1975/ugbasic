@@ -114,6 +114,9 @@ void cpu_init( Environment * _environment ) {
     variable_import( _environment, "HLP", VT_WORD, 0 );
     variable_global( _environment, "HLP" );
 
+    _environment->stackSize = 0xfffe - 0xff80;
+    _environment->stackStartAddress = 0xfffe;
+
 }
 
 void cpu_nop( Environment * _environment ) {
@@ -457,7 +460,12 @@ void cpu_fill( Environment * _environment, char * _address, char * _bytes, int _
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, (%s)", _address);
 
         if ( _bytes_width == 8 ) {
@@ -500,7 +508,12 @@ void cpu_fill_size( Environment * _environment, char * _address, int _bytes, cha
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, (%s)", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -580,7 +593,11 @@ void cpu_fill_direct( Environment * _environment, char * _address, char * _bytes
         outline0("LD C, A");
         outline1("LD A, (%s+1)", _bytes);
         outline0("LD B, A");
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
         outline1("LD HL, %s", _address);
         outline0("CALL CPUFILL16");
 
@@ -619,7 +636,12 @@ void cpu_fill_direct_size( Environment * _environment, char * _address, int _byt
             outline0("LD B, A");
         }
 
-        outline1("LD A, (%s)", _pattern);
+        if ( _pattern ) {
+            outline1("LD A, (%s)", _pattern);
+        } else {
+            outline0("LD A, 0");
+        }
+
         outline1("LD HL, %s", _address);
         if ( _bytes < 256 ) {
             outline0("CALL CPUFILL8");
@@ -6880,7 +6902,39 @@ void cpu_bits_to_string( Environment * _environment, char * _number, char * _str
 
 }
 
-void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _string_size, int _bits ) {
+void cpu_hex_to_string_calc_string( Environment * _environment, char * _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_sm83_cpu_math_mul_8bit_to_16bit_asm );
+
+    outline1("LD A, (%s)", _size );
+    outline0("LD (IYLR), A");
+    outline1("LD A, $%2.2x", 2 + (_separator?1:0));
+    outline0("LD (IXLR), A");
+    outline0("CALL CPUMUL8B8T16U");
+    outline0("LD A, L");
+    outline1("LD (%s), A", _string_size);
+
+}
+
+void cpu_hex_to_string_calc_string_size( Environment * _environment, int _size, int _separator, char * _string_size ) {
+
+    MAKE_LABEL
+
+    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_sm83_cpu_math_mul_8bit_to_16bit_asm );
+
+    outline1("LD A, $%2.2x", (unsigned char)(_size&0xff) );
+    outline0("LD (IYLR), A");
+    outline1("LD A, $%2.2x", 2 + (_separator?1:0));
+    outline0("LD (IXLR), A");
+    outline0("CALL CPUMUL8B8T16U");
+    outline0("LD A, L");
+    outline1("LD (%s), A", _string_size);
+
+}
+
+void cpu_hex_to_string( Environment * _environment, char * _number, char * _string, char * _size, int _separator ) {
 
     MAKE_LABEL
 
@@ -6888,63 +6942,13 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
     embedded( cpu_hex_to_string, src_hw_sm83_cpu_hex_to_string_asm );
 
-        outline1("LD A, $%2.2x", _bits);
-        outline0("LD (IXLR), A");
-
-        switch( _bits ) {
-            case 8:
-                outline1("LD A, (%s)", _number );
-                outline0("LD L, A" );
-                outline0("LD H, 0" );
-                outline0("PUSH HL");
-                outline1("LD HL, (%s)", _string );
-                outline0("LD D, H" );
-                outline0("LD E, L" );
-                outline0("POP HL");
-
-                outline0("CALL H2STRING" );
-                break;
-            case 16:
-
-                outline1("LD HL, (%s)", _number );
-                outline0("PUSH HL");
-                outline1("LD HL, (%s)", _string );
-                outline0("LD D, H" );
-                outline0("LD E, L" );
-                outline0("POP HL");
-
-                outline0("CALL H2STRING" );
-                break;
-
-            case 32:
-
-                outline1("LD HL, (%s)", address_displacement(_environment, _number, "2") );
-                outline0("PUSH HL");
-                outline1("LD HL, (%s)", _string );
-                outline0("LD D, H" );
-                outline0("LD E, L" );
-                outline0("POP HL");
-
-                outline0("CALL H2STRING" );
-
-                outline1("LD HL, (%s)", _number );
-                outline0("PUSH HL");
-                outline1("LD HL, (%s)", _string );
-                outline0("LD D, H" );
-                outline0("LD E, L" );
-                outline0("POP HL");
-                outline0("INC DE" );
-                outline0("INC DE" );
-                outline0("INC DE" );
-                outline0("INC DE" );
-
-                outline0("CALL H2STRING" );
-                break;
-
-        }
-
-        outline1("LD A, $%2.2x", ( _bits >> 2 ) );
-        outline1("LD (%s), A", _string_size );
+        outline1("LD B, $%2.2x", (unsigned char)(_separator*3));
+        outline1("LD A, (%s)", _size);
+        outline0("LD C, A");
+        outline1("LD HL, (%s)", _string );
+        outline0("LD DE, HL");
+        outline1("LD HL, (%s)", _number );
+        outline0("CALL H2STRING" );
 
     done()
 
@@ -6952,6 +6956,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD HL, %s", _string );
@@ -6963,6 +6968,7 @@ void cpu_dsdefine( Environment * _environment, char * _string, char * _index ) {
 
 void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _size );
@@ -6975,6 +6981,7 @@ void cpu_dsalloc( Environment * _environment, char * _size, char * _index ) {
 
 void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, $%2.2x", ( _size & 0xff ) );
@@ -6987,6 +6994,7 @@ void cpu_dsalloc_size( Environment * _environment, int _size, char * _index ) {
 
 void cpu_dsfree( Environment * _environment, char * _index ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -6997,6 +7005,7 @@ void cpu_dsfree( Environment * _environment, char * _index ) {
 
 void cpu_dswrite( Environment * _environment, char * _index ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7007,6 +7016,7 @@ void cpu_dswrite( Environment * _environment, char * _index ) {
 
 void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7019,6 +7029,7 @@ void cpu_dsresize( Environment * _environment, char * _index, char * _resize ) {
 
 void cpu_dsresize_size( Environment * _environment, char * _index, int _resize ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline1( "LD A, (%s)", _index );
@@ -7031,6 +7042,7 @@ void cpu_dsresize_size( Environment * _environment, char * _index, int _resize )
 
 void cpu_dsgc( Environment * _environment ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline0( "CALL DSGC" );
@@ -7039,6 +7051,7 @@ void cpu_dsgc( Environment * _environment ) {
 
 void cpu_dsinit( Environment * _environment ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     outline0( "CALL DSINIT" );
@@ -7047,6 +7060,7 @@ void cpu_dsinit( Environment * _environment ) {
 
 void cpu_dsdescriptor( Environment * _environment, char * _index, char * _address, char * _size ) {
 
+    deploy( duff, src_hw_sm83_duff_asm );
     deploy( dstring,src_hw_sm83_dstring_asm );
 
     if ( _address || _size ) {
@@ -7068,6 +7082,34 @@ void cpu_dsdescriptor( Environment * _environment, char * _index, char * _addres
         }
     }
 
+}
+
+void cpu_dsassign( Environment * _environment, char * _original, char * _copy ) {
+
+    deploy( duff, src_hw_sm83_duff_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _copy );
+    outline0( "LD B, A");
+    outline1( "LD A, (%s)", _original );
+    outline0( "CALL DSASSIGN" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _copy );
+
+}
+
+void cpu_dsassign_string( Environment * _environment, char * _string, char * _copy ) {
+
+    deploy( duff, src_hw_sm83_duff_asm );
+    deploy( dstring,src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _copy );
+    outline0( "LD B, A");
+    outline1( "LD HL, %s", _string );
+    outline0( "CALL DSASSIGNSTR" );
+    outline0( "LD A, B" );
+    outline1( "LD (%s), A", _copy );
+    
 }
 
 void cpu_move_8bit_indirect_with_offset2( Environment * _environment, char *_source, char * _value, char * _offset ) {
@@ -8385,5 +8427,80 @@ void cpu_float_single_exp( Environment * _environment, char * _value, char * _re
 
 }
 
+void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
+
+    deploy( encrypt, src_hw_sm83_encrypt_asm );
+
+    outline1("LD HL, (%s)", _output );
+    outline0("LD DE, HL" );
+    outline1("LD HL, (%s)", _key );
+    outline0("LD (IXR), HL" );
+    outline1("LD HL, (%s)", _data );
+    outline1("LD A, (%s)", _data_size );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _key_size );
+    outline0("LD B, A" );
+    outline0("CALL ENCRYPT" );
+
+}
+
+void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
+
+    deploy( decrypt, src_hw_sm83_decrypt_asm );
+
+    outline1("LD HL, (%s)", _output );
+    outline0("LD DE, HL" );
+    outline1("LD HL, (%s)", _key );
+    outline0("LD (IXR), HL" );
+    outline1("LD HL, (%s)", _data );
+    outline1("LD A, (%s)", _data_size );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _key_size );
+    outline0("LD B, A" );
+    outline0("CALL DECRYPT" );
+    cpu_ztoa( _environment );
+    outline1("LD (%s), A", _result );
+
+}
+
+void cpu_hex_to_bin( Environment * _environment, char * _value_address, char * _value_size, char * _variable_address, char * _variable_size, char * _result ) {
+
+    deploy( hex2bin, src_hw_sm83_hex2bin_asm );
+
+    outline1("LD HL, (%s)", _variable_address );
+    outline0("LD DE, HL");
+    outline1("LD HL, (%s)", _value_address );
+    outline1("LD A, (%s)", _value_size );
+    outline0("LD C, A" );
+    outline1("LD A, (%s)", _variable_size );
+    outline0("LD B, A" );
+    outline0("CALL HEX2BIN" );
+    outline1("LD (%s), A", _result );
+
+}
+
+void cpu_dsfill( Environment * _environment, char * _string, char * _value ) {
+
+    deploy_preferred( duff, src_hw_sm83_duff_asm );
+    deploy( dstring, src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _string );
+    outline0( "LD B, A" );
+    outline1( "LD A, (%s)", _value );
+    outline0( "CALL DSFILL" );
+
+}
+
+void cpu_dsfill_value( Environment * _environment, char * _string, int _value ) {
+
+    deploy_preferred( duff, src_hw_sm83_duff_asm );
+    deploy( dstring, src_hw_sm83_dstring_asm );
+
+    outline1( "LD A, (%s)", _string );
+    outline0( "LD B, A" );
+    outline1( "LD A, $%2.2x", (unsigned char)(_value&0xff) );
+    outline0( "CALL DSFILL" );
+
+}
 
 #endif

@@ -50,6 +50,8 @@ BANKREADG
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@IF bankAccessOptimization.read1
+
 ; Read 1 byte from GIME to memory
 ; A : bank
 ; Y : source memory address
@@ -65,6 +67,10 @@ BANKREAD1
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.read2
+
 ; Read 2 byte from GIME to memory
 ; A : bank
 ; Y : source memory address
@@ -79,6 +85,10 @@ BANKREAD2
     STD , X
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
+
+@ENDIF
+
+@IF bankAccessOptimization.read4
 
 ; Read 4 byte from GIME to memory
 ; A : bank
@@ -97,6 +107,10 @@ BANKREAD4
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.readn
+
 ; Read n byte(s) from GIME to memory
 ; A: bank
 ; Y: source memory address
@@ -107,6 +121,8 @@ BANKREAD
     TFR U, D
     JSR BANKREADG
     RTS
+
+@ENDIF
 
 ; General write data to GIME from memory
 ; Y: source memory address
@@ -123,6 +139,8 @@ BANKWRITEG
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@IF bankAccessOptimization.write1
+
 ; Read 1 byte from GIME to memory
 ; A : bank
 ; Y : source memory address
@@ -138,6 +156,10 @@ BANKWRITE1
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.write2
+
 ; Read 2 byte from GIME to memory
 ; A : bank
 ; Y : source memory address
@@ -152,6 +174,10 @@ BANKWRITE2
     STD , X
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
+
+@ENDIF
+
+@IF bankAccessOptimization.write4
 
 ; Read 4 byte from GIME to memory
 ; A : bank
@@ -170,6 +196,10 @@ BANKWRITE4
     JSR GIMEBANKSHADOWCHANGERESET
     RTS
 
+@ENDIF
+
+@IF bankAccessOptimization.writen
+
 ; Read n byte(s) from REU to memory
 ; A : bank
 ; <TMPPTR: source memory address
@@ -180,6 +210,8 @@ BANKWRITE
     TFR U, D
     JSR BANKWRITEG
     RTS
+
+@ENDIF
 
 ; Uncompress directly the data from bank.
 ;

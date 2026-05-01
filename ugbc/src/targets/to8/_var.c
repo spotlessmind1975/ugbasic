@@ -180,7 +180,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 12", variable->realName);
+                        outhead1("%s rzb 14", variable->realName);
                     }   
                     break;
                 case VT_PATH:
@@ -298,6 +298,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+            
         }
         
         variable = variable->next;
@@ -586,24 +593,39 @@ void variable_cleanup( Environment * _environment ) {
                 }
             }
             if ( actual->variables ) {
-                OffsettingVariable * actualVariable = actual->variables;
-                while( actualVariable ) {
-                    if ( actualVariable->sequence ) {
-                        outhead1("%soffsetsequence", actualVariable->variable->realName );
-                    } else {
-                        outhead1("%soffsetframe", actualVariable->variable->realName );
+                if ( actual->count == 1 ) {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
                     }
-                    actualVariable = actualVariable->next;
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline0("RTS");
+                } else {
+                    OffsettingVariable * actualVariable = actual->variables;
+                    while( actualVariable ) {
+                        if ( actualVariable->sequence ) {
+                            outhead1("%soffsetsequence", actualVariable->variable->realName );
+                        } else {
+                            outhead1("%soffsetframe", actualVariable->variable->realName );
+                        }
+                        actualVariable = actualVariable->next;
+                    }
+                    outhead1("fs%4.4xoffsetsequence", actual->size );
+                    outhead1("fs%4.4xoffsetframe", actual->size );                      
+                    outline1("LDX #OFFSETS%4.4x", actual->size );
+                    outline0("LDA #0" );
+                    outline0("ABX" );
+                    outline0("ABX" );
+                    outline0("LDD ,X" );
+                    outline0("LEAY D, Y" );
+                    outline0("RTS");
                 }
-                outhead1("fs%4.4xoffsetsequence", actual->size );
-                outhead1("fs%4.4xoffsetframe", actual->size );                      
-                outline1("LDX #OFFSETS%4.4x", actual->size );
-                outline0("LDA #0" );
-                outline0("ABX" );
-                outline0("ABX" );
-                outline0("LDD ,X" );
-                outline0("LEAY D, Y" );
-                outline0("RTS");
             }
             actual = actual->next;
         }
@@ -756,7 +778,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("LDS #STACK");
     outline0("JMP CODESTART2");
     outhead0("STACK");
-    outline0("rzb 256");
+    outline1("rzb %d", _environment->stackSize);
     outhead0("STACKEND");
 
     Bank * bank = _environment->expansionBanks;
@@ -772,6 +794,7 @@ void variable_cleanup( Environment * _environment ) {
             outhead1("BANKREADBANK%2.2xXS", bank->id );
             outline1("LDB #$%2.2x", bank->id );
             outline0("JMP BANKREAD" );
+            _environment->bankAccessOptimization.readn = 1;
 
             outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
             outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
@@ -855,6 +878,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( clsBox, src_hw_ef936x_cls_box_asm )
+    deploy_inplace_preferred( clsGraphic, src_hw_ef936x_cls_asm );
     deploy_inplace_preferred( scancode, src_hw_to8_scancode_asm );
     deploy_inplace_preferred( textEncodedAt, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );

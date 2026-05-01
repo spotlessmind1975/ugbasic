@@ -952,6 +952,9 @@ void cpu_nop( Environment * _environment ) {
 
 void cpu_init( Environment * _environment ) {
 
+    _environment->stackSize = 0x005b - 0x000c;
+    _environment->stackStartAddress = 0x005b;
+
 }
 
 void cpu_ztoa( Environment * _environment ) {

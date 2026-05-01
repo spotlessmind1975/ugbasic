@@ -116,7 +116,7 @@ PUTIMAGE1
 
 @ENDIF
 
-@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) )
+@IF !vestigialConfig.screenModeUnique || ( (currentMode == 2) || (currentMode == 3) )
 
 ; The ALPHA SEMIGRAPHICS – 4 mode translates bits 0 through 3 into a 4 x 6 dot 
 ; element in the standard 8 x 12 dot box. Three data bits may be used to select
@@ -125,11 +125,6 @@ PUTIMAGE1
 ; 64 x 32 elements is available in the display area. The element area is four
 ; dot-clocks wide by six lines high.
 PUTIMAGE2
-    RTS
-
-@ENDIF
-
-@IF !vestigialConfig.screenModeUnique || ( (currentMode == 3) )
 
 ; The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
 ; 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
@@ -137,7 +132,35 @@ PUTIMAGE2
 ; one of four colors in the display box. A 512 byte display memory is required. 
 ; The element area is four dot-clocks wide by four lines high.
 PUTIMAGE3
-    RTS
+
+    LDA #32
+    STA PUTIMAGECOMMONCWIDTH+1
+
+    LDX TEXTADDRESS
+    LDB <(IMAGEY+1)
+
+    LSLB
+    LSLB
+    ADDB <(IMAGEY+1)
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    CLRA
+    LEAX D, X
+
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    JMP PUTIMAGECOMMONC
 
 @ENDIF
 
@@ -150,10 +173,37 @@ PUTIMAGE3
 ; available in the display area. The element area is four dot-clocks wide 
 ; by three lines high.
 PUTIMAGE4
-    RTS
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
+
+    LDX TEXTADDRESS
+    LDB <(IMAGEY+1)
+
+    LSLB
+    LSLB
+    ADDB <(IMAGEY+1)
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    LSRB
+    CLRA
+    LEAX D, X
+
+    LDD <IMAGEX
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LSRA
+    RORB
+    LEAX D, X
+
+    JMP PUTIMAGECOMMONC
 
 @ENDIF
-
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 5) )
 
 ; The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
@@ -186,6 +236,9 @@ PUTIMAGE6
 ; colors. A 1K x 8 display memory is required. Each pixel equals 
 ; four dot-clocks by three scan lines.
 PUTIMAGE7
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -250,6 +303,9 @@ PUTIMAGE8
 ; colors. A 2K x 8 display memory is required. Each pixel equals
 ; two dot-clocks by three scan lines.
 PUTIMAGE9
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -318,6 +374,9 @@ PUTIMAGE10
 ; dot-clocks by two scan lines.
 PUTIMAGE11
 
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
+
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -384,6 +443,9 @@ PUTIMAGE12
 ;  A 6K x 8 display memory is required. Each pixel equals two dot-clocks 
 ;  by one scan line.
 PUTIMAGE13
+
+    LDA #64
+    STA PUTIMAGECOMMONCWIDTH+1
 
     LDX BITMAPADDRESS
     LDD <IMAGEY
@@ -640,6 +702,7 @@ PUTIMAGECOMMONC
     LSRA
     CMPA #0
     BNE PUTIMAGECL0
+PUTIMAGECOMMONCWIDTH
     LDA #64
 PUTIMAGECL0
     STA <IMAGEW

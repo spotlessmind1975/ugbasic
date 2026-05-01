@@ -137,7 +137,7 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
     outline1("LD A, $%2.2x", ( _displacement & 0xff ) );
     outline1("LD IXL, $%2.2x", ( _overlap & 0xff ) );
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( vScroll,src_hw_zx_vscroll_asm );
 
     outline0("CALL VSCROLL");
@@ -146,7 +146,7 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
 
 void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( vScroll, src_hw_zx_vscroll_asm );
     deploy( textEncodedAt, src_hw_zx_text_at_asm );
     deploy( cls, src_hw_zx_cls_asm );
@@ -170,7 +170,7 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
 
 void zx_cls( Environment * _environment, char * _pen, char * _paper ) {
 
-    deploy( vars,src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( cls, src_hw_zx_cls_asm );
 
     if ( _pen ) {
@@ -513,9 +513,9 @@ void zx_initialization( Environment * _environment ) {
 
     variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
     variable_global( _environment, "CONSOLESA" );
-    variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
+    variable_import( _environment, "CONSOLEHB", VT_BYTE, 192 );
     variable_global( _environment, "CONSOLEHB" );
-    variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
+    variable_import( _environment, "CONSOLEWB", VT_BYTE, 32 );
     variable_global( _environment, "CONSOLEWB" );
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
@@ -529,6 +529,7 @@ void zx_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = _environment->screenHeight / _environment->fontHeight;
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
     _environment->consoleTilesHeight = _environment->screenTilesHeight;
+    _environment->currentModeBW = 1;
 
     cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
     cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
@@ -541,6 +542,8 @@ void zx_initialization( Environment * _environment ) {
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
     console_init( _environment );
+
+    font_descriptors_init( _environment, 1 );
 
     if (_environment->vestigialConfig.clsImplicit ) {
         zx_cls( _environment, NULL, NULL );
@@ -561,6 +564,11 @@ void zx_finalization( Environment * _environment ) {
             outline0("RET");
             copperList = copperList->next;
         }    
+    }
+
+    if ( ! _environment->deployed.audio1startup ) {
+        cpu_label( _environment, "MUSICPLAYER" );
+        outline0( "RET" );
     }
 
 }
@@ -587,6 +595,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     outline0( "CALL CONSOLECALCULATE" );
 
 }
@@ -609,7 +619,7 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
 
 void zx_bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
 }
 
@@ -629,7 +639,7 @@ static Variable * zx_image_converter_bitmap_mode_standard( Environment * _enviro
 
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -1171,7 +1181,7 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
     MAKE_LABEL
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( putimage, src_hw_zx_put_image_asm );
 
     if ( _frame_size ) {
@@ -1197,7 +1207,7 @@ void zx_put_image( Environment * _environment, Resource * _image, char * _x, cha
 
 void zx_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( blitimage, src_hw_zx_blit_image_asm );
 
     if ( _source_count > 2 ) {
@@ -1251,7 +1261,7 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
 
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size = zx_image_size( _environment, _width, _height, _mode );
 
@@ -1277,7 +1287,7 @@ Variable * zx_new_image( Environment * _environment, int _width, int _height, in
 
 Variable * zx_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
     int frameSize = zx_image_size( _environment, _width, _height, _mode );
@@ -1311,7 +1321,7 @@ Variable * zx_new_images( Environment * _environment, int _frames, int _width, i
 
 Variable * zx_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode ) {
 
-    deploy( vars, src_hw_zx_vars_asm );
+    deploy_preferred( vars, src_hw_zx_vars_asm );
 
     int size2 = calculate_sequence_size( _environment, _sequences, _frames, _width, _height, _mode );
     int size = calculate_images_size( _environment, _frames, _width, _height, _mode );
@@ -1348,7 +1358,7 @@ void zx_get_image( Environment * _environment, char * _image, char * _x, char * 
     
     MAKE_LABEL
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( getimage, src_hw_zx_get_image_asm );
 
     zx_load_image_address_to_other_register( _environment, "HL", _image, _sequence, _frame, _frame_size, _frame_count );
@@ -1370,7 +1380,7 @@ void zx_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void zx_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1395,7 +1405,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -1433,7 +1443,7 @@ void zx_move_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -1461,7 +1471,7 @@ void zx_put_tiles( Environment * _environment, char * _tile, char * _x, char * _
 
 void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _x );
@@ -1478,7 +1488,7 @@ void zx_tile_at( Environment * _environment, char * _x, char * _y, char * _resul
 
 void zx_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( tiles, src_hw_zx_tiles_asm );
 
     outline1("LD A, (%s)", _tileset );
@@ -1523,7 +1533,8 @@ int zx_palette_extract( Environment * _environment, char * _data, int _width, in
 
 void zx_hscroll_line( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
+    deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
     deploy( textHScrollLine, src_hw_zx_hscroll_line_asm );
 
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
@@ -1537,7 +1548,7 @@ void zx_hscroll_line( Environment * _environment, int _direction, int _overlap )
 
 void zx_hscroll_screen( Environment * _environment, int _direction, int _overlap ) {
 
-    deploy( vars, src_hw_zx_vars_asm);
+    deploy_preferred( vars,src_hw_zx_vars_asm);
     deploy( textHScrollScreen, src_hw_zx_hscroll_screen_asm );
 
     outline1("LD A, 0x%2.2x", (unsigned char)(_direction));
@@ -1655,6 +1666,104 @@ void zx_put_key(  Environment * _environment, char *_string, char * _size ) {
     outline1("LD HL, (%s)", _string );
     outline1("LD A, (%s)", _size );
     outline0("CALL PUTKEY" );
+
+}
+
+void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
+
+    deploy_preferred( vars, src_hw_zx_vars_asm );
+    deploy( vbl, src_hw_zx_vbl_asm);
+
+    if ( ! _raster_line ) {
+        outline0("LD HL, 15624");
+        outline0("CALL WAITVBL");
+    } else {
+        Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 192 );
+        outline1("LD A, (%s)", raster_line->realName);
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("SLA A" );
+        outline0("LD L, A" );
+        outline0("LD H, 0" );
+        outline0("CALL WAITVBL");
+    }
+
+}
+
+static unsigned int SOUND_FREQUENCIES[] = {
+    0x6868, 0x628d, 0x5d03, 0x57bf, 0x52d7, 0x4e2b, 0x49cc, 0x45a3, 0x41b6, 0x3e06, 0x3a87, 0x373e,
+    0x3425, 0x3134, 0x2e6f, 0x2bd3, 0x295c, 0x2708, 0x24d5, 0x22c2, 0x20cd, 0x1ef4, 0x1d36, 0x1b90,
+    0x1a02, 0x188b, 0x1728, 0x15da, 0x149e, 0x1374, 0x125b, 0x1152, 0x1058, 0x0f6b, 0x0e9d, 0x0db8,
+    0x0cf2, 0x0c36, 0x0b86, 0x0add, 0x0a40, 0x09ab, 0x091e, 0x089a, 0x081c, 0x07a6, 0x0736, 0x06cd,
+    0x066a, 0x060c, 0x05b3, 0x0560, 0x0511, 0x04c6, 0x0480, 0x043d, 0x03ff, 0x03c4, 0x038c, 0x0357,
+    0x0325, 0x02f7, 0x02ca, 0x02a0, 0x0279, 0x0254, 0x0231, 0x020f, 0x01f0, 0x01d3, 0x01b7, 0x019c,
+    0x0183, 0x016c, 0x0156, 0x0141, 0x012d, 0x011b, 0x0109, 0x00f8, 0x00e9, 0x00da, 0x00cc, 0x00bf,
+    0x00b2, 0x00a7, 0x009c, 0x0091, 0x0087, 0x007e, 0x0075, 0x006d, 0x0065, 0x005e, 0x0057, 0x0050,
+    0x004a, 0x0044, 0x003e, 0x0039, 0x0034, 0x0030, 0x002b, 0x0027, 0x0023, 0x0020, 0x001c, 0x0019
+};
+
+static unsigned int SOUND_DURATIONS[] = {
+    0x0010 / 0x20, 0x0011 / 0x20, 0x0012 / 0x20, 0x0013 / 0x20, 0x0014 / 0x20, 0x0015 / 0x20, 0x0017 / 0x20, 0x0018 / 0x20, 0x0019 / 0x20, 0x001b / 0x20, 0x001d / 0x20, 0x001e / 0x20,
+    0x0020 / 0x20, 0x0022 / 0x20, 0x0024 / 0x20, 0x0026 / 0x20, 0x0029 / 0x20, 0x002b / 0x20, 0x002e / 0x20, 0x0031 / 0x20, 0x0033 / 0x20, 0x0037 / 0x20, 0x003a / 0x20, 0x003d / 0x20,
+    0x0041 / 0x20, 0x0045 / 0x20, 0x0049 / 0x20, 0x004d / 0x20, 0x0052 / 0x20, 0x0057 / 0x20, 0x005c / 0x20, 0x0062 / 0x20, 0x0067 / 0x20, 0x006e / 0x20, 0x0074 / 0x20, 0x007b / 0x20,
+    0x0082 / 0x20, 0x008a / 0x20, 0x0092 / 0x20, 0x009b / 0x20, 0x00a4 / 0x20, 0x00ae / 0x20, 0x00b9 / 0x20, 0x00c4 / 0x20, 0x00cf / 0x20, 0x00dc / 0x20, 0x00e9 / 0x20, 0x00f6 / 0x20,
+    0x0105 / 0x20, 0x0115 / 0x20, 0x0125 / 0x20, 0x0137 / 0x20, 0x0149 / 0x20, 0x015d / 0x20, 0x0172 / 0x20, 0x0188 / 0x20, 0x019f / 0x20, 0x01b8 / 0x20, 0x01d2 / 0x20, 0x01ed / 0x20,
+    0x020b / 0x20, 0x022a / 0x20, 0x024b / 0x20, 0x026e / 0x20, 0x0293 / 0x20, 0x02ba / 0x20, 0x02e4 / 0x20, 0x0310 / 0x20, 0x033e / 0x20, 0x0370 / 0x20, 0x03a4 / 0x20, 0x03db / 0x20,
+    0x0417 / 0x20, 0x0455 / 0x20, 0x0497 / 0x20, 0x04dd / 0x20, 0x0527 / 0x20, 0x0575 / 0x20, 0x05c8 / 0x20, 0x0620 / 0x20, 0x067d / 0x20, 0x06e0 / 0x20, 0x0749 / 0x20, 0x07b8 / 0x20,
+    0x082d / 0x20, 0x08a9 / 0x20, 0x092d / 0x20, 0x09b9 / 0x20, 0x0a4d / 0x20, 0x0aea / 0x20, 0x0b90 / 0x20, 0x0c40 / 0x20, 0x0cfa / 0x20, 0x0dc0 / 0x20, 0x0e91 / 0x20, 0x0f6f / 0x20,
+    0x105a / 0x20, 0x1153 / 0x20, 0x125b / 0x20, 0x1372 / 0x20, 0x149a / 0x20, 0x15d4 / 0x20, 0x1720 / 0x20, 0x1880 / 0x20, 0x19f5 / 0x20, 0x1b80 / 0x20, 0x1d23 / 0x20, 0x1ede / 0x20
+};
+
+void zx_set_pitch( Environment * _environment, int _channels, int _pitch, int _duration ) {
+
+    deploy( audio1startup, src_hw_zx_audio1_asm );
+
+    outline1("LD HL, $%4.4x", (unsigned short)(_pitch&0xffff) );
+    outline1("LD DE, $%4.4x", (unsigned short)(_duration&0xffff) );
+    outline0("CALL $03b5");
+
+}
+
+void zx_set_note( Environment * _environment, int _channels, int _note, int _duration ) {
+
+    zx_set_pitch( _environment, _channels, SOUND_FREQUENCIES[_note], SOUND_DURATIONS[_note] * ( _duration / 32 ) );
+
+}
+
+void zx_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch, char * _duration ) {
+
+    deploy( audio1startup, src_hw_zx_audio1_asm );
+
+    outline1("LD A, (%s)", _pitch );
+    outline0("LD L, A" );
+    outline1("LD A, (%s)", address_displacement(_environment, _pitch, "1") );
+    outline0("LD H, A" );
+    if ( _duration ) {
+        outline1("LD A, (%s)", _duration );
+        outline0("LD E, A" );
+        outline1("LD A, (%s)", address_displacement(_environment, _duration, "1") );
+        outline0("LD D, A" );
+    } else {
+        outline0("LD DE, 1000");
+    }
+    outline0("CALL $03b5" );
+
+}
+
+void zx_set_note_vars( Environment * _environment, char * _channels, char * _note, char * _duration ) {
+
+    deploy( audio1startup, src_hw_zx_audio1_asm );
+
+    outline1("LD A, (%s)", _note);
+    if ( _duration ) {
+        outline1("LD DE, (%s)", _duration);
+    } else {
+        outline0("LD DE, 1000");
+    }
+    outline0("CALL ZXAUDIO1NOTE" );
 
 }
 

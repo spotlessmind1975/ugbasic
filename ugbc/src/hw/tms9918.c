@@ -917,6 +917,8 @@ void console_calculate( Environment * _environment ) {
 
 void console_calculate_vars( Environment * _environment ) {
 
+    _environment->dynamicConsole = 1;
+
     outline0( "CALL CONSOLECALCULATE" );
 
 }
@@ -1835,7 +1837,7 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     // ignored on bitmap mode
     (void)!_transparent_color;
 
-    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height );
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 8 );
 
     if ( _environment->freeImageWidth ) {
         if ( _width % 8 ) {
@@ -1908,25 +1910,6 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     tms9918_image_converter_tiles( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        for( i=0; i<lastUsedSlotInCommonPalette; ++i ) {
-            printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
-        }
-        // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-        //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-        // } else {
-        //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-        // }
-        // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-        // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-        // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-        // printf("\n" );
-        // printf("\n" );
-    }
-    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
     return result;
@@ -2078,10 +2061,6 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
             int colorIndex = i;
 
-            if ( _environment->debugImageLoad ) {
-                printf( "%1.1x", colorIndex == 0 ? 0 : _color->index );
-            }
-
             bitmask = ( colorIndex == 0 ? 0 : 1 ) << (7 - ((image_x & 0x7)));
             *(buffer + offset) |= bitmask;
 
@@ -2091,9 +2070,6 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
         source += _depth * ( _width - image_x );
 
-        if ( _environment->debugImageLoad ) {
-            printf("\n" );
-        }
     }
 
     // printf("\n" );
@@ -2105,25 +2081,6 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
         *(buffer + ( ( _width >> 3 ) * _height )) = palette[1].index;
     }
 
-    if ( _environment->debugImageLoad ) {
-        printf("\n" );
-    
-        printf("PALETTE:\n" );
-        for( i=0; i<colorUsed; ++i ) {
-            printf("  (%2.2d) = %2.2d (%s)\n", i, palette[i].index, palette[i].description );
-        }
-        // if ( ( _flags & FLAG_OVERLAYED ) == 0 ) {
-        //     printf("  background  (00) = %2.2x (%s)\n", palette[0].index, palette[0].description );
-        // } else {
-        //     printf("  background  (00) = %2.2x (%s) [currently ignored since it can be overlayed]\n", palette[0].index, palette[0].description );
-        // }
-        // printf("  low screen  (01) = %2.2x (%s)\n", palette[1].index, palette[1].description );
-        // printf("  high screen (10) = %2.2x (%s)\n", palette[2].index, palette[2].description );
-        // printf("  colormap    (11) = %2.2x (%s)\n", palette[3].index, palette[3].description );
-        // printf("\n" );
-        // printf("\n" );
-    }
-    
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
     result->readonly = 1;

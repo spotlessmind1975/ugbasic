@@ -150,7 +150,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 12,0", variable->realName);
+                        outhead1("%s: .res 14,0", variable->realName);
                     }
                     break;
                 case VT_PATH:
@@ -360,6 +360,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
+
         }
 
         variable = variable->next;
@@ -396,7 +404,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         case VT_IMAGEREF:
             outhead1("%s:", _variable->realName );
-            outline0(" .res 12, 0" );
+            outline0(" .res 14, 0" );
             break;
         case VT_PATH:
             outhead1("%s:", _variable->realName );
@@ -579,6 +587,13 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
 
 
     }
+
+    if( _variable->type == VT_IMAGES ) {
+        if ( _variable->strips ) {
+            vars_emit_strips( _environment, _variable->realName, _variable->strips );
+        }
+    }
+
 
 }
 
@@ -844,6 +859,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
     deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
     deploy_inplace_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
+    deploy_inplace_preferred( bank, src_hw_c64reu_bank_asm );
+    deploy_inplace_preferred( console, src_hw_vic2_console_asm );
 
     // outhead0(".segment \"CODE\"" );
 

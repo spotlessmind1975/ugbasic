@@ -177,10 +177,41 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 variable_store( _environment, bank->name, image->bankAssigned );
                 Variable * offset = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
 
+                Variable * sequence = NULL;
+                if ( _sequence ) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
+                outline1("LDY #$%4.4x", image->absoluteAddress );
+
+                Variable * realFrame = NULL;
+                Variable * frame = NULL;
+                if ( _frame ) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                    realFrame = frame;
+                }
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline0("PSHS Y,D");
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                        outline0("PULS Y,D");
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
+
                 if ( !frame ) {
                     ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, frame->realName, image->frameSize, 0 );
+                    ef936x_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -201,10 +232,37 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 // }
 
             } else {
+
+                Variable * sequence = NULL;
+                if ( _sequence ) {
+                    sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+                }
+
+                Variable * realFrame = NULL;
+                Variable * frame = NULL;
+                if ( _frame) {
+                    frame = variable_retrieve_or_define( _environment, _frame, VT_BYTE, 0 );
+                    realFrame = frame;
+                }
+
+                if ( sequence ) {
+                    if ( image->strips ) {
+                        realFrame = variable_temporary( _environment, VT_BYTE, "(real frame)" );
+                        outline1("LDY #%sstrip", image->realName );
+                        outline1("LDA %s", sequence->realName );
+                        outline0("LSLA" );
+                        outline0("LDY A, Y");
+                        outline1("LDA %s", frame->realName );
+                        outline0("LDB A, Y" );
+                        outline1("STB %s", realFrame->realName );
+                    } else {
+                        CRITICAL_CANNOT_PUT_IMAGE_WITHOUT_STRIP( image->name );
+                    }
+                }
                 if ( !frame ) {
                     ef936x_flip_image( _environment, resource, "", NULL, image->frameSize, 0, _direction );
                 } else {
-                    ef936x_flip_image( _environment, resource, frame->realName, NULL, image->frameSize, 0, _direction );
+                    ef936x_flip_image( _environment, resource, realFrame->realName, NULL, image->frameSize, 0, _direction );
                 }
             }
             break;

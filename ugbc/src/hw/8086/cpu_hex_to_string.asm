@@ -35,72 +35,61 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; Routine per convertire un numero a 32 bit in esadecimale
-; Input:  DX:BX = numero a 32 bit
-;         DI    = indirizzo del buffer per la stringa esadecimale (8 byte)
-; Output: Buffer in DI contiene la stringa esadecimale
-; Registri modificati: AX, BX, CX, DX, DI
+; Input: 
+;       SI = memory area to convert
+;       CL = size of memory area to convert
+; Output:
+;       DI = location of ASCII string
 
-HEXTOSTRING32:
+H2STRING:
+    CMP CL, 0
+    JNZ H2STRINGA
+    RET
 
-    MOV AL, DH
-    SHR AL, 4
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
+H2STRINGA:
+    MOV CH, 0
+    ADD DI, CX
+    DEC DI
+    DEC CL
+H2STRINGL1:
+    MOV AL, [SI]
+    CALL H2STRINGBYTE
+    MOV [DI], BL
+    DEC DI
+    MOV [DI], BH
+    DEC DI
+    INC SI
+H2STRINGL1A:
+    DEC CL
+    CMP CL, 0xFF
+    JNZ H2STRINGL1
+    RET
 
-    MOV AL, DH
-    AND AL, 0x0f
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-    MOV AL, DL
-    SHR AL, 4
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-    MOV AL, DL
-    AND AL, 0x0f
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-HEXTOSTRING16:
-
-    MOV AL, BH
-    SHR AL, 4
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-    MOV AL, BH
-    AND AL, 0x0f
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-HEXTOSTRING8:
-
-    MOV AL, BL
-    SHR AL, 4
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-
-    MOV AL, BL
-    AND AL, 0x0f
-    CALL HEXTOSTRINGNB
-    MOV [DI], AL
-    INC DI
-    
-    RET             ; Ritorna dalla routine
-
-HEXTOSTRINGNB:
-    CMP AL, 9       ; Confronta se il nibble è un numero (0-9)
-    JBE HEXTOSTRINGNBN      ; Se <= 9, salta a IS_NUM
-    ADD AL, 7       ; Se è una lettera (A-F), aggiunge 7
-HEXTOSTRINGNBN:
-    ADD AL, '0'     ; Aggiunge il valore ASCII di '0'
-    RET             ; Ritorna dalla sottoroutine
+H2STRINGBYTE:
+    PUSH AX
+    SHR AL,1
+    SHR AL,1
+    SHR AL,1
+    SHR AL,1
+    CMP AL, 0x0a
+    JNC HEX2STRINGA    
+HEX2STRING0:
+    ADD AL, 48
+    MOV BH, AL
+    JMP HEX2STRINGLSB
+HEX2STRINGA:
+    ADD AL, 55
+    MOV BH, AL
+HEX2STRINGLSB:
+    POP AX
+    AND AL, 0x0F
+    CMP AL, 0x0a
+    JNC HEX2STRINGA2
+HEX2STRING02:
+    ADD AL, 48
+    MOV BL, AL
+    RET
+HEX2STRINGA2:
+    ADD AL, 55
+    MOV BL, AL
+    RET

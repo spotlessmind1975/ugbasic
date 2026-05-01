@@ -285,6 +285,8 @@ COLRADDRESS:
 COLRADDRESSL:
     DEFW 23296
 
+@IF dynamicConsole
+
 CONSOLECALCULATE:
 
     LD A, (CONSOLEH)
@@ -296,4 +298,33 @@ CONSOLECALCULATE:
     LD A, (CONSOLEW)
     LD (CONSOLEWB), A
 
+    RET
+
+@ENDIF
+
+CALCULATECOLOR:
+    PUSH AF
+    PUSH BC
+    LD A, (_PAPER)
+    AND $07
+    SLA A
+    SLA A
+    SLA A
+    LD B, A
+    PUSH BC
+    LD A, (_PEN)
+    AND $07
+    LD B, A
+    LD A, (_PEN)
+    AND $08
+    SLA A
+    SLA A
+    SLA A
+    SLA A
+    OR A, B    
+    POP BC
+    OR A, B
+    LD IXH, A
+    POP BC
+    POP AF
     RET

@@ -207,6 +207,13 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         
         variable = variable->next;
@@ -250,7 +257,7 @@ static void variable_cleanup_entry_byte( Environment * _environment, Variable * 
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 12", variable->realName);
+                        outhead1("%s rzb 14", variable->realName);
                     }   
                     break;
                 case VT_PATH:
@@ -688,9 +695,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("STA $FFDF");
     outline0("JMP CODESTART")
     if ( ( _environment->program.startingAddress - 0x2a00 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - 512 );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2a00 ) - _environment->stackSize );
     }
-    outhead0("IRQSTACK0 rzb 512");
+    outhead1("IRQSTACK0 rzb %d", _environment->stackSize );
     outhead0("IRQSTACK");
     outhead0("COCO3STARTUP2")
     if (_environment->dojoOnVirtualizedFujiNet ) {

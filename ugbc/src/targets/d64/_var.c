@@ -76,7 +76,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s rzb 12", variable->realName);
+                        outhead1("%s rzb 14", variable->realName);
                     }   
                     break;
                 case VT_PATH:
@@ -284,6 +284,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
         
         variable = variable->next;
@@ -554,9 +561,9 @@ void variable_cleanup( Environment * _environment ) {
     outline0("ORG $2800");
     outline0("JMP CODESTART" );
     if ( ( _environment->program.startingAddress - 0x2800 ) > 0 ) {
-        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) - 512 - 3 );
+        outhead1(" rzb %d", ( _environment->program.startingAddress - 0x2800 ) - _environment->stackSize - 3 );
     }
-    outhead0("IRQSTACKBEGIN rzb 510");
+    outhead1("IRQSTACKBEGIN rzb %d", _environment->stackSize - 2 );
     outhead0("IRQSTACKEND fcb $00, 00");
     outhead0("CODESTART");
     outline0("LDS #IRQSTACKEND");

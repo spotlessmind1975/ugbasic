@@ -81,7 +81,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea && variable->bankAssigned != -1 ) {
                         // outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 12,0", variable->realName);
+                        outhead1("%s: .res 14,0", variable->realName);
                     }        
                     break;
                 case VT_PATH:
@@ -360,6 +360,13 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
         }
 
         variable = variable->next;
@@ -395,7 +402,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             outline0(" .res 4, 0" );
             break;
         case VT_IMAGEREF:
-            outhead1("%s: .res 12,0", _variable->realName);
+            outhead1("%s: .res 14,0", _variable->realName);
             break;
         case VT_PATH:
             outhead1("%s: .res 16,0", _variable->realName);
@@ -574,6 +581,11 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             break;
         }
 
+        if( _variable->type == VT_IMAGES ) {
+            if ( _variable->strips ) {
+                vars_emit_strips( _environment, _variable->realName, _variable->strips );
+            }
+        }
 
     }
 
@@ -842,6 +854,10 @@ void variable_cleanup( Environment * _environment ) {
     outline0("NOP");
     outline0("JMP CODESTART");
 
+    deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
+    deploy_inplace_preferred( bank, src_hw_c64_bank_asm );
+
     if ( _environment->chainUsed ) {
         _environment->sysCallUsed = 1;
         deploy_preferred( syscall, src_hw_c64_syscall_asm);
@@ -875,9 +891,8 @@ void variable_cleanup( Environment * _environment ) {
         outline1("   .RES $%4.4x", lastAddress - _environment->program.startingAddress - 5 );;
     }
 
-    deploy_inplace_preferred( vars, src_hw_c64_vars_asm);
+    deploy_inplace_preferred( syscall, src_hw_c64_syscall_asm);
     deploy_inplace_preferred( startup, src_hw_c64_startup_asm);
-    deploy_inplace_preferred( vic2vars, src_hw_vic2_vars_asm );
     deploy_inplace_preferred( vic2startup, src_hw_vic2_startup_asm);
     deploy_inplace_preferred( vScrollTextDown, src_hw_vic2_vscroll_text_down_asm )
     deploy_inplace_preferred( vScrollTextUp, src_hw_vic2_vscroll_text_up_asm );
@@ -886,6 +901,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dload, src_hw_c64_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_c64_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_c64_chain_asm );
+    deploy_inplace_preferred( console, src_hw_vic2_console_asm );
 
     // Moved here for banking reasons.
 
@@ -941,7 +957,7 @@ void variable_cleanup( Environment * _environment ) {
     
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
-        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
+        outhead3("cstring%d: .byte %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines_full( staticStrings->value, staticStrings->size ) );
         staticStrings = staticStrings->next;
     }
 

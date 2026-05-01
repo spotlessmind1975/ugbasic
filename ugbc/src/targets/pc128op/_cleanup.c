@@ -59,9 +59,6 @@ void target_finalization( Environment * _environment ) {
         outline0( "LDD #DATAFIRSTSEGMENT" );
         outline0( "STD DATAPTR" );
         outline0( "RTS" );
-    } else {
-        outhead0( "DATAPREPARATION" );
-        outline0( "RTS" );
     }
 
 }
@@ -69,3 +66,4 @@ void target_finalization( Environment * _environment ) {
 void target_analysis( Environment * _environment ) {
     
 }
+

@@ -271,6 +271,7 @@ void pc128op_clear_key( Environment * _environment );
 void pc128op_busy_wait( Environment * _environment, char * _timing );
 int convertbintok7(Environment * _environment);
 int convertbintok7_original(Environment * _environment);
+int convertbintosddrive(Environment * _environment);
 void pc128op_joystick_semivars( Environment * _environment, char * _joystick, char * _result );
 void pc128op_joystick( Environment * _environment, int _joystick, char * _result );
 

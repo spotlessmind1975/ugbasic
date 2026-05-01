@@ -103,10 +103,17 @@ CLSANTIC8X:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 8 ) )
 
 CLSANTIC8:
+@IF horizontalScrollOff
     LDA #240
     STA TMPPTR
     LDA #0
     STA TMPPTR+1
+@ELSE
+    LDA #4
+    STA TMPPTR
+    LDA #1
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF
@@ -114,10 +121,17 @@ CLSANTIC8:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 9 ) )
 
 CLSANTIC9:
+@IF horizontalScrollOff
     LDA #$60
     STA TMPPTR
     LDA #$1
     STA TMPPTR+1
+@ELSE
+    LDA #$40
+    STA TMPPTR
+    LDA #$2
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF
@@ -125,10 +139,17 @@ CLSANTIC9:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 10 ) )
 
 CLSANTIC10:
+@IF horizontalScrollOff
     LDA #$80
     STA TMPPTR
     LDA #4
     STA TMPPTR+1
+@ELSE
+    LDA #20
+    STA TMPPTR
+    LDA #4
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF
@@ -136,10 +157,17 @@ CLSANTIC10:
 @IF !vestigialConfig.screenModeUnique || ( ( currentMode == 11 ) )
 
 CLSANTIC11:
+@IF horizontalScrollOff
     LDA #$80
     STA TMPPTR
     LDA #7
     STA TMPPTR+1
+@ELSE
+    LDA #$e0
+    STA TMPPTR
+    LDA #7
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF
@@ -158,10 +186,17 @@ CLSANTIC13:
 @IF !vestigialConfig.screenModeUnique || ( currentMode == 12 )
 
 CLSANTIC12:
+@IF horizontalScrollOff
     LDA #0
     STA TMPPTR
     LDA #$f
     STA TMPPTR+1
+@ELSE
+    LDA #$c0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF
@@ -170,10 +205,17 @@ CLSANTIC12:
 
 CLSANTIC15:
 CLSANTIC14:
+@IF horizontalScrollOff
     LDA #0
     STA TMPPTR
     LDA #$f
     STA TMPPTR+1
+@ELSE
+    LDA #$c0
+    STA TMPPTR
+    LDA #$f
+    STA TMPPTR+1
+@ENDIF
     JMP CLSG
 
 @ENDIF

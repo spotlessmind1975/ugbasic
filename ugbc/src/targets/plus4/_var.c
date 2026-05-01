@@ -76,7 +76,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     if ( variable->memoryArea ) {
                         // outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
-                        outhead1("%s: .res 12,0", variable->realName);
+                        outhead1("%s: .res 14,0", variable->realName);
                     }        
                     break;
                 case VT_PATH:
@@ -278,6 +278,14 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 }
             }
+
+            if( variable->type == VT_IMAGES ) {
+                if ( variable->strips ) {
+                    vars_emit_strips( _environment, variable->realName, variable->strips );
+                }
+            }
+
+
         }
         variable = variable->next;
     }
@@ -301,7 +309,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             outline0(" .res 4" );
             break;
         case VT_IMAGEREF:
-            outline0(" .res 12" );
+            outline0(" .res 14" );
             break;
         case VT_PATH:
             outline0(" .res 16" );
@@ -418,6 +426,12 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
             }
 
             break;
+        }
+    }
+
+    if( _variable->type == VT_IMAGES ) {
+        if ( _variable->strips ) {
+            vars_emit_strips( _environment, _variable->realName, _variable->strips );
         }
     }
 

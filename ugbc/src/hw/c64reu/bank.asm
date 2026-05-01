@@ -72,6 +72,8 @@ BANKREADG1:
 
     RTS
 
+@IF bankAccessOptimization.read1
+
 ; Read 1 byte from REU to memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -83,6 +85,10 @@ BANKREAD1:
     LDA #0
     STA BANKREADG1+1
     JMP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.read2
 
 ; Read 2 byte(s) from REU to memory
 ; A : bank
@@ -96,6 +102,10 @@ BANKREAD2:
     STA BANKREADG1+1
     JMP BANKREADG
 
+@ENDIF
+
+@IF bankAccessOptimization.read4
+
 ; Read 4 byte(s) from REU to memory
 ; A : bank
 ; TMPPTR: source memory address
@@ -107,6 +117,10 @@ BANKREAD4:
     LDA #0
     STA BANKREADG1+1
     JMP BANKREADG
+
+@ENDIF
+
+@IF bankAccessOptimization.readn
 
 ; Read n byte(s) from REU to memory
 ; A : bank
@@ -125,7 +139,9 @@ BANKREAD:
     JMP BANKREADG
 BANKREADX:
     RTS
-    
+
+@ENDIF
+
 ; General write data to REU from memory
 ; TMPPTR: source memory address
 ; A : bank
@@ -164,6 +180,8 @@ BANKWRITEG1:
     
     RTS
 
+@IF bankAccessOptimization.write1
+
 ; Write 1 byte from REU to memory
 ; TMPPTR: source memory address
 ; A : bank
@@ -175,6 +193,10 @@ BANKWRITE1:
     LDA #0
     STA BANKWRITEG1+1
     JMP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.write2
 
 ; Read 2 byte(s) from REU to memory
 ; TMPPTR: source memory address
@@ -188,6 +210,10 @@ BANKWRITE2:
     STA BANKWRITEG1+1
     JMP BANKWRITEG
 
+@ENDIF
+
+@IF bankAccessOptimization.write4
+
 ; Read 4 byte(s) from REU to memory
 ; TMPPTR: source memory address
 ; A : bank
@@ -199,6 +225,10 @@ BANKWRITE4:
     LDA #0
     STA BANKWRITEG1+1
     JMP BANKWRITEG
+
+@ENDIF
+
+@IF bankAccessOptimization.writen
 
 ; Read n byte(s) from REU to memory
 ; A : bank
@@ -213,3 +243,4 @@ BANKWRITE:
     STA BANKWRITEG1+1
     JMP BANKWRITEG
 
+@ENDIF

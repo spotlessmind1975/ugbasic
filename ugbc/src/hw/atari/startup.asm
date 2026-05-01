@@ -35,7 +35,131 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF ATARIXL
+
+ATARIXLPROCOSIN:
+    LDA $D301
+    ORA #$01
+    STA $D301
+    RTS
+
+ATARIXLPROCOSOUT:
+    LDA $D301
+    AND #$FE
+    STA $D301
+    RTS
+
+ATARIXLREQX: .BYTE $00
+
+ATARIXLHANDLEIRQ:
+
+    STA ATARIXLREQX
+    TAX
+    JSR ATARIXLPROCOSIN
+
+    LDA $FFF0, X
+    STA ATARIXLJMPVECTOR+1
+    LDA $FFF1, X
+    STA ATARIXLJMPVECTOR+2
+
+    LDA #>ATARIXLRETURNIRQ
+    PHA
+    LDA #<ATARIXLRETURNIRQ
+    PHA
+
+    CLI
+    PHP
+
+ATARIXLJMPVECTOR:
+    JMP $FFFF
+
+ATARIXLRETURNIRQ:
+
+    JSR ATARIXLPROCOSOUT
+    LDX ATARIXLREQX
+    PLA
+    RTI
+
+ATARIXLNMIIRQ:
+    PHA
+    LDA #$0A
+    JMP ATARIXLHANDLEIRQ
+
+ATARIXLIRQIRQ:
+    PHA
+    LDA #$0E
+    JMP ATARIXLHANDLEIRQ
+
+ATARIXLINSTCHARSET:
+    LDX #$04
+    LDY #$00
+ATARIXLINSTCHARSETL1:
+    JSR ATARIXLPROCOSIN
+    LDA $E000,Y
+    PHA
+    JSR ATARIXLPROCOSOUT
+    PLA
+    STA $E000,Y
+    INY
+    BNE ATARIXLINSTCHARSETL1
+    INC ATARIXLINSTCHARSETL1+5
+    INC ATARIXLINSTCHARSETL1+13
+    DEX
+    BNE ATARIXLINSTCHARSETL1
+    RTS
+
+ATARIXLINSTALLIRQS:
+    LDA #0
+    STA $D40E
+    SEI
+
+    JSR ATARIXLPROCOSOUT
+
+    LDA #<ATARIXLNMIIRQ
+    STA $FFFA
+    LDA #>ATARIXLNMIIRQ
+    STA $FFFB
+
+    LDA #<ATARIXLIRQIRQ
+    STA $FFFE
+    LDA #>ATARIXLIRQIRQ
+    STA $FFFF
+
+    JSR ATARIXLPROCOSIN
+
+    JSR ATARIXLINSTCHARSET
+
+    CLI
+
+    LDA #$40
+    STA $D40E
+
+    RTS
+
+@ENDIF  
+
+;-------------------------------------
+; Now the routine that lets you get to
+; the RAM that is under the OS.
+; There are actually 2 memory areas
+; present: 
+;    4K at $C000 to $CFFF, 49152 to 53247
+;   10K at $D800 to $FFFF, 55296 to 65535
+;
+; The last 6 bytes of the 10K area are not
+; usable, since that is where the interrupt
+; routines are located.  Therefore do not
+; use any RAM above $FFF9 (65529) or you
+; will crash the system.
+;------------------------------------- 
+
 ATARISTARTUP:
+
+@IF ATARIXL
+
+    JSR ATARIXLINSTALLIRQS
+
+@ENDIF
 
     LDA $D014
     AND #$0E
