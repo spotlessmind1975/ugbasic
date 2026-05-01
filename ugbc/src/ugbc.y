@@ -58,11 +58,6 @@
 extern int yylineno;
 
 /*!
-   This variable keeps track of the current column number when reading the input file.
- */
-int yycolno;
-
-/*!
    This variable keeps track of the current byte position when reading the input file.
  */
 int yyposno;
@@ -119,15 +114,6 @@ char * filenamestacked[256];
    which empties..
  */
 int yylinenostacked[256];
-
-/*!
-   This variable keeps track of the current column number when reading the input file
-   of files included recursively. When a file is included with the `INCLUDE` command, 
-   its actual line number is inserted into this stack, from top to bottom.
-   Conversely, when the file is finished reading, its name is popped from the stack, 
-   which empties..
- */
-int yycolnostacked[256];
 
 /*!
    This variable keeps track of the current byte position when reading the input file

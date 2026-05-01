@@ -42,7 +42,6 @@ int yyconcatlineno;
 
 #define RETURN(b, c)    \
 {\
-    yycolno = (yycolno + yyleng) * c; \
     yyposno = (yyposno + yyleng); \
     return b; \
 }
@@ -51,12 +50,10 @@ char * import_file_name( char * _import_path );
 char * strcopy( char * _dest, char * _source );
 char * strcopy( char * _dest, char * _source );
 
-extern int yycolno;
 extern int yyposno;
 
 extern char * filenamestacked[256];
 extern int yylinenostacked[];
-extern int yycolnostacked[];
 extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
@@ -127,38 +124,36 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
     char * importDeclaresFilename = import_file_name( importPath );
     if ( !importDeclaresFilename ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d)\n", yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d)\n", yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Missing import file at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     yyin = fopen( importDeclaresFilename, "rt" );
     if ( ! yyin ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d)\n", importDeclaresFilename, yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Missing import file %s at %d column %d (%d, %s)\n", importDeclaresFilename, yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     yylinenostacked[stacked] = yylineno;
-    yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
     memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n", yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n", yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
     yyconcatlineno = 0;
-    yycolno = 0;
     yyposno = 0;
     YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
@@ -171,9 +166,9 @@ INCLUDE             BEGIN(incl);
     yyin = fopen( filename, "rt" );
     if ( ! yyin ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d)\n", yytext, yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d, %s)\n", yytext, yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Missing include file %s at %d column %d (%d, %s)\n", yytext, yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
@@ -186,22 +181,20 @@ INCLUDE             BEGIN(incl);
     }
 
     yylinenostacked[stacked] = yylineno;
-    yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
     memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n",  yylineno, (yycolno+1), (yyposno+1));
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d)\n",  yylloc.first_line, yylloc.first_column, (yyposno+1));
         } else {
-            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylineno, (yycolno+1), (yyposno+1), filenamestacked[stacked]);
+            fprintf(stderr,  "*** ERROR: Maximum number of stacked include files reached (256) at %d column %d (%d, %s)\n", yylloc.first_line, yylloc.first_column, (yyposno+1), filenamestacked[stacked]);
         }
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
     yylineno = 1;
     yyconcatlineno = 0;
-    yycolno = 0;
     yyposno = 0;
     YY_USER_ACTION_RESET;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
@@ -212,7 +205,6 @@ INCLUDE             BEGIN(incl);
     if ( stacked ) {
         --stacked;
         yylineno = yylinenostacked[stacked];
-        yycolno = yycolnostacked[stacked];
         yyposno = yyposnostacked[stacked];
         memcpy( &yylloc, &yyllocstacked[stacked], sizeof( yylloc ) );
         yyconcatlineno = 0;
@@ -222,11 +214,11 @@ INCLUDE             BEGIN(incl);
     }
 }
 
-[\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; yycolno = 0; int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
+[\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
 [\t ]*"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
-<asm>[\t ]*"END ASM" { yycolno = 0; BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
-<asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; yycolno = 0; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
-<asm>.{1,3} { yycolno += strlen(yytext); int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>[\t ]*"END ASM" { BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
+<asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>.{1,3} { int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 
 [a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]*"]" { *(yytext+strlen(yytext)-1) = 0; yylval.string = strdup(yytext); RETURN(BufferDefinitionHex,1); }
 "["[0-9a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]*"]" { *(yytext+strlen(yytext)-1) = 0; yylval.string = strdup(yytext+1); RETURN(BufferDefinitionHex,1); }
@@ -237,7 +229,7 @@ INCLUDE             BEGIN(incl);
 "#["[0-9a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]* { yylval.string = strdup(yytext+1); RETURN(BufferDefinitionHex,1); }
 
 [\x0d] { }
-_[\x0a]|_[\x0d][\x0a] { yycolno = 0; ++yylineno; ++yyconcatlineno; }
+_[\x0a]|_[\x0d][\x0a] { ++yylineno; ++yyconcatlineno; }
 [\x0a] { ++yylineno; RETURN(NewLine,0); }
 "." { RETURN(OP_PERIOD,1); }
 ";" { RETURN(OP_SEMICOLON,1); }
@@ -1891,7 +1883,7 @@ ZX { RETURN(ZX,1); }
 [0-9]*\.[0-9]+E[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 [0-9]*\.[0-9]+E-[0-9]+ { yylval.floating = atof(yytext); RETURN(Float,1);  }
 
-[ \t]+ { yycolno = (yycolno + yyleng); yyposno = (yyposno + yyleng); }
+[ \t]+ { yyposno = (yyposno + yyleng); }
 
 [a-z\_][A-Za-z0-9\_]* { yylval.string = strdup(yytext); RETURN(Identifier,1);  }
 [a-z\_][a-z0-9\_ ]+[ ][a-z0-9]+\n { yylval.string = translate_spaces(yytext); RETURN(IdentifierSpaced,1);  }
@@ -1900,7 +1892,7 @@ REG\([A-Z][A-Z]*\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylv
 REG\([0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 REG\([0-9]+,[0-9]+\) { yylval.string = strdup(yytext+4); yylval.string[strlen(yylval.string)-1] = 0; RETURN(Register,1);  }
 
-. { yycolno++; yyposno++; return(yytext[0]); }
+. { yyposno++; return(yytext[0]); }
 
 
 %%
