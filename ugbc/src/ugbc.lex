@@ -53,7 +53,6 @@ char * strcopy( char * _dest, char * _source );
 extern int yyposno;
 
 extern char * filenamestacked[256];
-extern int yylinenostacked[];
 extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
@@ -139,7 +138,6 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
         }
         exit(EXIT_FAILURE);
     }
-    yylinenostacked[stacked] = yylineno;
     yyposnostacked[stacked] = yyposno;
     memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
@@ -152,7 +150,6 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
-    yylineno = 1;
     yyconcatlineno = 0;
     yyposno = 0;
     YY_USER_ACTION_RESET;
@@ -179,8 +176,6 @@ INCLUDE             BEGIN(incl);
     } else {
         fseek(yyin, 0, SEEK_SET );
     }
-
-    yylinenostacked[stacked] = yylineno;
     yyposnostacked[stacked] = yyposno;
     memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
@@ -193,7 +188,6 @@ INCLUDE             BEGIN(incl);
         exit(EXIT_FAILURE);
     }
     filenamestacked[stacked] = strdup( yytext );
-    yylineno = 1;
     yyconcatlineno = 0;
     yyposno = 0;
     YY_USER_ACTION_RESET;
@@ -204,7 +198,6 @@ INCLUDE             BEGIN(incl);
     yypop_buffer_state();
     if ( stacked ) {
         --stacked;
-        yylineno = yylinenostacked[stacked];
         yyposno = yyposnostacked[stacked];
         memcpy( &yylloc, &yyllocstacked[stacked], sizeof( yylloc ) );
         yyconcatlineno = 0;
@@ -214,10 +207,10 @@ INCLUDE             BEGIN(incl);
     }
 }
 
-[\t ]*"ASM"[^\n\r\x0a\x0d]+ { ++yylineno; int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
+[\t ]*"ASM"[^\n\r\x0a\x0d]+ { int p = strstr( yytext, "ASM" ) - yytext; yylval.string = strdup( yytext + p + 3 ); RETURN(AsmSnippet,1); }
 [\t ]*"BEGIN ASM" { BEGIN(asm); asmSnippet = strdup(""); }
 <asm>[\t ]*"END ASM" { BEGIN(INITIAL); yylval.string = strdup( asmSnippet ); RETURN(AsmSnippet,1); }
-<asm>[\n\r\x0a\x0d]{1,3} { for(int k=0; k<strlen(yytext); ++k ) { if(yytext[k]==10) ++yylineno; }; int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
+<asm>[\n\r\x0a\x0d]{1,3} { int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 <asm>.{1,3} { int sz = strlen(asmSnippet) + strlen(yytext) + 3; char * tmp = malloc( sz ); memset( tmp, 0, sz ); strcopy( tmp, asmSnippet ); strcat( tmp, yytext ); asmSnippet = tmp; } 
 
 [a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]*"]" { *(yytext+strlen(yytext)-1) = 0; yylval.string = strdup(yytext); RETURN(BufferDefinitionHex,1); }
@@ -229,8 +222,8 @@ INCLUDE             BEGIN(incl);
 "#["[0-9a-f][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]* { yylval.string = strdup(yytext+1); RETURN(BufferDefinitionHex,1); }
 
 [\x0d] { }
-_[\x0a]|_[\x0d][\x0a] { ++yylineno; ++yyconcatlineno; }
-[\x0a] { ++yylineno; RETURN(NewLine,0); }
+_[\x0a]|_[\x0d][\x0a] { ++yyconcatlineno; }
+[\x0a] { RETURN(NewLine,0); }
 "." { RETURN(OP_PERIOD,1); }
 ";" { RETURN(OP_SEMICOLON,1); }
 ":" { RETURN(OP_COLON,1); }

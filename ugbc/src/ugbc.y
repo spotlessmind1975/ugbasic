@@ -39,25 +39,6 @@
  *****************************************************************************/
 
 /*!
-   This variable keeps track of the current line number when reading the input file.
-   Instead of having to manually count each newline character (\n), we instructed 
-   Flex to automatically update this variable whenever it encounters a newline.
-   In Bison, we ensured that Flex supports and exports it by using the command
-   `%option yylineno` option in the definitions section.
-
-   Since the variable is defined in the Flex-generated code, we declare it as 
-   `extern` in Bison's C section to access it. Without this variable, when Bison 
-   encounters a syntax error, the `yyerror` function would simply return a terse 
-   "syntax error." With this variable, we can provide much more precise feedback 
-   to the user. If we reuse the same parser to parse multiple files sequentially, 
-   we reset `yylineno = 1;` before starting to parse a new file. Currently, this 
-   variable only counts rows. If we need to know exactly which column an ​​error 
-   is in (e.g., "line 10, character 5"), we use the more complex `YYLTYPE` 
-   structure with the `%locations` in Bison.
- */
-extern int yylineno;
-
-/*!
    This variable keeps track of the current byte position when reading the input file.
  */
 int yyposno;
@@ -105,15 +86,6 @@ int stacked = 0;
   reading, its name is popped from the stack, which empties.
   */
 char * filenamestacked[256];
-
-/*!
-   This variable keeps track of the current line number when reading the input file
-   of files included recursively. When a file is included with the `INCLUDE` command, 
-   its actual line number is inserted into this stack, from top to bottom.
-   Conversely, when the file is finished reading, its name is popped from the stack, 
-   which empties..
- */
-int yylinenostacked[256];
 
 /*!
    This variable keeps track of the current byte position when reading the input file
@@ -10547,7 +10519,7 @@ statement2:
 
 statement: 
     { 
-        if ( yylineno == 1 &&
+        if ( yylinenoget() == 1 &&
             ((Environment *)_environment)->previousProducedAssemblyLines != 
                 ((Environment *)_environment)->producedAssemblyLines &&
                 ((Environment *)_environment)->producedAssemblyLines
@@ -10557,21 +10529,19 @@ statement:
 
             outline0("; L:0");   
             outline1("; P:%d", producedLines); 
-            adiline2( "P:0:%d:%d", yylineno - 1, producedLines );
-
-            ((Environment *)_environment)->yylineno = yylineno;
+            adiline2( "P:0:%d:%d", yylinenoget() - 1, producedLines );
 
             ((Environment *)_environment)->previousProducedAssemblyLines = 
             ((Environment *)_environment)->producedAssemblyLines; 
         }
 
-        outline1("; L:%d", ((Environment *)_environment)->yylineno);   
+        outline1("; L:%d", yylinenoget() );   
     } 
     statement2;
 
 statements_no_linenumbers:
-    statement { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } | 
-    statement OP_COLON { ((Environment *)_environment)->yylineno = yylineno; variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); };
+    statement { variable_reset( _environment ); interleaved_instructions( _environment ); } | 
+    statement OP_COLON { variable_reset( _environment ); interleaved_instructions( _environment ); } statements_no_linenumbers { interleaved_instructions( _environment ); };
 
 statements_with_linenumbers:
     Integer {
@@ -10583,7 +10553,7 @@ statements_with_linenumbers:
             ((Environment *)_environment)->lastDefinedLabelIsNumeric = 1;
             ((Environment *)_environment)->lastDefinedLabelNumeric = $1;
         } statements_no_linenumbers { 
-            ((Environment *)_environment)->yylineno = yylineno;
+
         };
 
 emit_additional_info:  {
@@ -10592,7 +10562,7 @@ emit_additional_info:  {
 
             outline1("; P:%d", producedLines); 
 
-            adiline2( "P:0:%d:%d", ((Environment *)_environment)->yylineno - 1 - yyconcatlineno, producedLines );
+            adiline2( "P:0:%d:%d", yylinenoget() - 1 - yyconcatlineno, producedLines );
             
             ((Environment *)_environment)->previousProducedAssemblyLines = 
                 ((Environment *)_environment)->producedAssemblyLines; 
@@ -10611,7 +10581,7 @@ statements_complex:
     statements_complex2 NewLine { yyconcatlineno = 0; } statements_complex;
 
 program : 
-    statements_complex { outline1("; L:%d", yylineno); } emit_additional_info;
+    statements_complex { outline1("; L:%d", yylinenoget()); } emit_additional_info;
 
 %%
 
@@ -11173,4 +11143,8 @@ int yywarning ( Environment * _ignored, const char * _message ) /* Called by yyp
     
     exit(EXIT_FAILURE);
 
+}
+
+int yylinenoget ( ) {
+    return yylloc.first_line;
 }

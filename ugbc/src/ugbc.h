@@ -2498,11 +2498,6 @@ typedef struct _Environment {
     char * parsedLine;
 
     /**
-     * Current line number in the BAS file.
-     */
-    int yylineno;
-
-    /**
      * Last unique identification number 
      * (used for temporary variables and labels)
      */
@@ -3357,6 +3352,7 @@ typedef struct _Environment {
 #define UNIQUE_RESOURCE_ID   ((struct _Environment *)_environment)->uniqueResourceId++
 #define MAKE_LABEL  char label[32]; sprintf( label, "_label%d", UNIQUE_ID);
 
+int yylinenoget ( );
 int yyerror ( Environment * _ignored, const char * _message );
 int yywarning ( Environment * _ignored, const char * _message );
 
