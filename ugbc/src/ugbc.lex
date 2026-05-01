@@ -61,6 +61,12 @@ extern int yyposnostacked[];
 extern int stacked;
 extern char * asmSnippet;
 
+/*!
+   This variable keeps track of the current position, using the %locations
+   method from BISON.
+ */
+YYLTYPE yyllocstacked[256];
+
   /* See importPath in ugbc.y */
 extern char * importPath;
 
@@ -86,6 +92,19 @@ static char * translate_spaces( char * _original ) {
 
 char * strreplace( const char * _orig, const char * _rep, const char * _with);
 
+#define YY_USER_ACTION \
+    yylloc.first_line = yylloc.last_line; \
+    yylloc.first_column = yylloc.last_column; \
+    for(int i = 0; yytext[i] != '\0'; i++) { \
+        if(yytext[i] == '\n') { \
+            yylloc.last_line++; \
+            yylloc.last_column = 0; \
+        } \
+        else { \
+            yylloc.last_column++; \
+        } \
+    }
+
 %}
 
 %x incl
@@ -95,8 +114,8 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
 
 %%
 
-"IMPORT DECLARES"        BEGIN(impt);
-<impt>[ \t\n\r]*     { /* eat the white spaces */
+"IMPORT DECLARES"   { BEGIN(impt); };
+<impt>[ \t\n\r]*    {
     char * importDeclaresFilename = import_file_name( importPath );
     if ( !importDeclaresFilename ) {
         if ( stacked == 0 ) {
@@ -118,6 +137,7 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
     yylinenostacked[stacked] = yylineno;
     yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
+    memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
@@ -132,6 +152,10 @@ char * strreplace( const char * _orig, const char * _rep, const char * _with);
     yyconcatlineno = 0;
     yycolno = 0;
     yyposno = 0;
+    yylloc.first_line = 1;
+    yylloc.first_column = 1;
+    yylloc.last_line = 1;
+    yylloc.last_column = 1;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
@@ -159,6 +183,7 @@ INCLUDE             BEGIN(incl);
     yylinenostacked[stacked] = yylineno;
     yycolnostacked[stacked] = yycolno;
     yyposnostacked[stacked] = yyposno;
+    memcpy( &yyllocstacked[stacked], &yylloc, sizeof( yylloc ) );
     ++stacked;
     if ( stacked == 256 ) {
         if ( stacked == 0 ) {
@@ -173,6 +198,10 @@ INCLUDE             BEGIN(incl);
     yyconcatlineno = 0;
     yycolno = 0;
     yyposno = 0;
+    yylloc.first_line = 1;
+    yylloc.first_column = 1;
+    yylloc.last_line = 1;
+    yylloc.last_column = 1;
     yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
     BEGIN(INITIAL);
 }
@@ -183,6 +212,7 @@ INCLUDE             BEGIN(incl);
         yylineno = yylinenostacked[stacked];
         yycolno = yycolnostacked[stacked];
         yyposno = yyposnostacked[stacked];
+        memcpy( &yylloc, &yyllocstacked[stacked], sizeof( yylloc ) );
         yyconcatlineno = 0;
     }
     if ( !YY_CURRENT_BUFFER ) {
