@@ -194,6 +194,9 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "KEYBOARDSHIFT", VT_BYTE, 0 );
     variable_global( _environment, "KEYBOARDSHIFT" );
 
+    variable_import( _environment, "JFIRELATCH", VT_WORD, 0 );
+    variable_global( _environment, "JFIRELATCH" );
+
     for( int i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {
             
