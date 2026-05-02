@@ -1996,7 +1996,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
             break;
         case 16:
             if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.4x", y->value );
+                outline1("LDB #$%2.2x", y->value );
             } else {
                 outline1("LDB %s+1", y->realName );
             }
@@ -2158,7 +2158,7 @@ void ef936x_get_image( Environment * _environment, char * _image, char * _x, cha
     switch( VT_BITWIDTH( y->type ) ) {
         case 16:
             if ( y->initializedByConstant ) {
-                outline1("LDB #$%2.42", y->value );
+                outline1("LDB #$%2.2", y->value );
             } else {
                 outline1("LDB %s+1", y->realName );
             }
