@@ -608,7 +608,7 @@ const_expr_string_const:
         int sumSize = c1->valueString->size + c2->valueString->size;
         char * sumString = malloc( sumSize );
         memset( sumString, 0, sumSize );
-        memcpy( sumString, c1->valueString, c1->valueString->size );
+        memcpy( sumString, c1->valueString->value, c1->valueString->size );
         memcpy( sumString + c1->valueString->size, c2->valueString->value, c2->valueString->size );
         Constant * c = constant_create( _environment, NULL );
         c->valueString = static_string_create( _environment, sumString, sumSize );

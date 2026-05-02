@@ -17244,8 +17244,10 @@ StaticString * static_string_find_by_value( Environment * _environment, char * _
 
     StaticString * actual = ((Environment *)_environment)->strings;
     while( actual ) {
-        if ( memcmp( actual->value, _value, _size ) == 0 ) {
-            break;
+        if ( actual->size == _size ) {
+            if ( memcmp( actual->value, _value, _size ) == 0 ) {
+                break;
+            }
         }
         actual = actual->next;
     }
