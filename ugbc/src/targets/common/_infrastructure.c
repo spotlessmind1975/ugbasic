@@ -17334,6 +17334,7 @@ void environment_setup_default( Environment * _environment ) {
     _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
     _environment->defaultArraySize = 10;
     _environment->vestigialConfig.screenModeUnique = 1;
+    _environment->horizontalScrollOff = 1;
 
     #if defined(__pc128op__) || defined(__to8__)
         _environment->bankedLoadDefault = 1;
