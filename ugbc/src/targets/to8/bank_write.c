@@ -142,7 +142,7 @@ void bank_write_vars_bank_direct_size( Environment * _environment, char * _addre
     Variable * address2 = variable_retrieve_or_define( _environment, _address2, VT_ADDRESS, 0 );
 
     outline0("; bank write rv")
-    outline1("LDB #$%4.4x", _bank );
+    outline1("LDB #$%2.2x", _bank );
 
     switch( _size ) {
         case 1:
