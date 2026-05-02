@@ -17815,6 +17815,7 @@ void environment_setup_retrohack( Environment * _environment ) {
     if ( strstr( _environment->sourceFileName, "4gravity") != NULL ) {
         _environment->vestigialConfig.rchack_4gravity_1163 = 1;
         _environment->vestigialConfig.rchack_4gravity_1164 = 1;
+        _environment->vestigialConfig.rchack_4gravity_1181 = 1;
     }
 
     /* retrocompatible hacks */
