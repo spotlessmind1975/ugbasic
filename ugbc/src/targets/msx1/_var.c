@@ -578,6 +578,14 @@ void variable_cleanup( Environment * _environment ) {
         outline0("OR C");
         outline0("LD H, $80");
         outline0("CALL $0024");
+        outline0("LD A, 0");
+        outline0("LD ($6000), A");
+        outline0("LD A, 1");
+        outline0("LD ($6800), A");
+        outline0("LD A, 2");
+        outline0("LD ($7000), A");
+        outline0("LD A, 3");
+        outline0("LD ($7800), A");
 
     } else {
         outhead0("CODESTART:")

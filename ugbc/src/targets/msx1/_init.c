@@ -52,19 +52,19 @@ void target_initialization( Environment * _environment ) {
 
     switch( _environment->ramSize ) {
         case 128:
-            bankMax=16; /* 0...15 = 16 banks */
+            bankMax=8; /* 0...15 = 16 banks */
             break;
         case 256:
-            bankMax=32; /* 0...31 = 32 banks */
+            bankMax=16; /* 0...31 = 32 banks */
             break;
         case 512:
-            bankMax=64; /* 0...63 = 64 banks */
+            bankMax=32; /* 0...63 = 64 banks */
             break;
         case 1024:
-            bankMax=128; /* 0...127 = 128 banks */
+            bankMax=64; /* 0...127 = 128 banks */
             break;
         case 2048:
-            bankMax=256; /* 0...255 = 256 banks */
+            bankMax=128; /* 0...255 = 256 banks */
             break;
         case 0:
             bankMax=-1; 
