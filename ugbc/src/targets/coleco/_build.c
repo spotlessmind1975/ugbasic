@@ -138,6 +138,19 @@ void target_linkage( Environment * _environment ) {
 
     BUILD_TOOLCHAIN_Z88DK_GET_EXECUTABLE_APPMAKE( _environment, executableName );
 
+    char bankName[MAX_TEMPORARY_STORAGE];
+    memset(bankName, 0, MAX_TEMPORARY_STORAGE);
+    for( int i=0; i<256; ++i ) {
+        strcopy( bankName, _environment->asmFileName );
+        p = strstr( bankName, ".asm" );
+        if ( p ) {
+            *p = 0;
+        }
+        char temp[MAX_TEMPORARY_STORAGE];
+        sprintf(temp, "%s_BANK_%02X.bin", bankName, i );
+        remove(temp);
+    }
+
     char pipes[256];
 
     #ifdef _WIN32
