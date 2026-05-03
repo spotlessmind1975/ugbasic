@@ -85,9 +85,9 @@ void target_initialization( Environment * _environment ) {
 
         banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
 
-    }
+        banks_generate( _environment );
 
-    banks_generate( _environment );
+    }
 
     _environment->audioConfig.async = 1;
 

@@ -174,6 +174,17 @@ void generate_rom( Environment * _environment ) {
 
     char * p;
 
+    for( int i=0; i<256; ++i ) {
+        strcopy( bankName, _environment->asmFileName );
+        p = strstr( bankName, ".asm" );
+        if ( p ) {
+            *p = 0;
+        }
+        char temp[MAX_TEMPORARY_STORAGE];
+        sprintf(temp, "%s_BANK_%02X.bin", bankName, i );
+        remove(temp);
+    }
+
     strcopy( binaryName, _environment->asmFileName );
     p = strstr( binaryName, ".asm" );
     if ( p ) {
