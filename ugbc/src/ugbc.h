@@ -2061,6 +2061,11 @@ typedef struct _VestigialConfig {
     
     char rchack_ccarrots_1163;
 
+    // If 1 we are compiling "Hangword" game with
+    // a recent version of the compiler.
+
+    char rchack_hangword_1181;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {

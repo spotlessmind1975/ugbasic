@@ -17852,4 +17852,11 @@ void environment_setup_retrohack( Environment * _environment ) {
         _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
     }
 
+    /* retrocompatible hacks */
+    // We are compiling "Hangword" game with a recent
+    // version of the compiler (>1.18.1).
+    if ( strstr( _environment->sourceFileName, "hangword") != NULL ) {
+        _environment->vestigialConfig.rchack_hangword_1181 = 1;
+    }
+    
 }
