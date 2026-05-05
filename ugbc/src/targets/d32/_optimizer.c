@@ -1105,7 +1105,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[3], " LDD *", v3)
     &&  po_buf_match(buf[4], " ADDD *", v4)
     &&  po_buf_match(buf[5], " STD *", v5)
-        ) {
+    &&  strcmp( v2->str, v3->str ) == 0
+    &&  strcmp( v3->str, v5->str ) == 0
+    ) {
         optim(buf[0], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDX %s", v3->str );
         optim(buf[1], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDB %s", v1->str );
         optim(buf[2], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " ABX" );
