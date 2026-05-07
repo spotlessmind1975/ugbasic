@@ -49,7 +49,7 @@ Variable * jfire( Environment * _environment, int _port ) {
 
     cpc_joy( _environment, _port, result->realName );
     outline0("AND $10");
-    outline0("CP 0");
+    outline0("CP $10");
     cpu_ztoa( _environment );
     outline1("LD (%s), A", result->realName);
 
