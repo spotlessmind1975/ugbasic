@@ -48,6 +48,7 @@ Variable * jfire( Environment * _environment, int _port ) {
     Variable * result = variable_temporary( _environment, jfireResultType, "(result of J*)" );
 
     cpc_joy( _environment, _port, result->realName );
+    outline1("LD A,(%s)", result->realName );
     outline0("AND $10");
     outline0("CP $10");
     cpu_ztoa( _environment );
