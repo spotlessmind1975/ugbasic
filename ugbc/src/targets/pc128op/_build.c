@@ -466,24 +466,28 @@ int convertbintosddrive(Environment * _environment) {
 
     FILE * sddrive = fopen( _environment->exeFileName, "wb");
 
-    // A	0x0000	0x03ff	Boot loader (ASM)
+    /////////////////////////////////////////////////////////////////////
+
     // start = ftell( sddrive );
     fwrite( sddrive_boot_loader, sizeof(sddrive_boot_loader), 1, sddrive );
     // end = ftell( sddrive )-1;
 
-    // printf( "A -- 0x%4.4x  0x%4.4x  | Boot loader (ASM)\n", start, end );
+    // printf( "A	0x0000	0x03ff >>> 0x%4.4x  0x%4.4x  | Boot loader (ASM)\n", start, end );
+
+    /////////////////////////////////////////////////////////////////////
 
     // B	0x0400	0x233f	RAM (video 0)	0x0000	0x1f3f
     // start = ftell( sddrive );
     for( int i=0x0400; i<=0x233f; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
 
-    // printf( "B -- 0x%4.4x  0x%4.4x  | RAM (video 0)\n", start, end );
+    // printf( "B	0x0400	0x233f	>>> 0x%4.4x  0x%4.4x  | RAM (video 0)\n", start, end );
 
-    // C	0x2340	0x23ff	Registri HW + palette
+    /////////////////////////////////////////////////////////////////////
+
     // start = ftell( sddrive );
     //  0x2340 contenuto del registro $a7dc
     char ra7dc = 0x00;
@@ -493,32 +497,36 @@ int convertbintosddrive(Environment * _environment) {
     fwrite( &ra7dd, 1, 1, sddrive );;
     // 0x2342 16 words della palette
     for( int i=0x2342; i<=0x23ff; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
 
-    // printf( "C -- 0x%4.4x  0x%4.4x  | Registri HW + palette\n", start, end );
+    // printf( "C	0x2340	0x23ff	>>> 0x%4.4x  0x%4.4x  | Registri HW + palette\n", start, end );
+
+    /////////////////////////////////////////////////////////////////////
 
     // D	0x2400	0x433f	RAM (video 1)	0x0000	0x1f3f
     // start = ftell( sddrive );
     for( int i=0x2400; i<=0x433f; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
+    // printf( "D	0x2400	0x433f	>>> 0x%4.4x  0x%4.4x  | RAM (video 1)\n", start, end );
 
-    // printf( "D -- 0x%4.4x  0x%4.4x  | RAM (video 1)\n", start, end );
+    /////////////////////////////////////////////////////////////////////
 
-    // E	0x4340	0x43bf	Loader snapshot		
     // start = ftell( sddrive );
     fwrite( sddrive_restore, sizeof(sddrive_restore), 1, sddrive );
     for( int i=0x438f; i<0x43bf; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
-    // printf( "E -- 0x%4.4x  0x%4.4x  | Loader snapshot\n", start, end );
+    // printf( "E	0x4340	0x43bf	>>> 0x%4.4x  0x%4.4x  | Loader snapshot\n", start, end );
+
+    /////////////////////////////////////////////////////////////////////
 
     // F	0x43c0	0x43d0	Registri CPU + HW		
 	// 0x1fc0 contenuto del registro D
@@ -558,7 +566,7 @@ int convertbintosddrive(Environment * _environment) {
     char ra7e4 = 0x30;
     fwrite( &ra7e4, 1, 1, sddrive );	
 	// 0x1fd2 contenuto del registro 0xa7e5
-    char ra7e5 = 0x02;
+    char ra7e5 = 0x07;
     fwrite( &ra7e5, 1, 1, sddrive );	
 	// 0x1fd3 contenuto del registro 0xa7e6
     char ra7e6 = 0x00;
@@ -566,31 +574,35 @@ int convertbintosddrive(Environment * _environment) {
 	// 0x1fd4 contenuto del registro 0xa7e7
     // end = ftell( sddrive )-1;
     
-    // printf( "F -- 0x%4.4x  0x%4.4x  | Registri CPU + HW\n", start, end );
+    // printf( "F	0x43c0	0x43d0	>>> 0x%4.4x  0x%4.4x  | Registri CPU + HW\n", start, end );
 
-    // G	0x43d0	0x43ff	(spazio libero)		
+    /////////////////////////////////////////////////////////////////////
+
     // start = ftell( sddrive );
     for( int i=0x43d4; i<=0x43ff; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
 
-    // printf( "G -- 0x%4.4x  0x%4.4x  | (spazio libero)\n", start, end );
+    // printf( "G	0x43d0	0x43ff	>>> 0x%4.4x  0x%4.4x  | (spazio libero)\n", start, end );
 
     FILE * bin;
     char * bank;
     int bankSize;
 
+    /////////////////////////////////////////////////////////////////////
+
     // H	0x4400	0x81ff	RAM (banco 1)	0x2000	0x5fff
     // start = ftell( sddrive );
     for( int i=0x4400; i<=0x53ff; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     bankSize = 0x6000 - 0x3000;
     bin = fopen(temporaryFileName, "rb");
     bank = malloc( bankSize );
+    // memset( bank, 0x07, bankSize );
     (void)!fread( bank, bankSize, 1, bin );
     fwrite( bank, bankSize, 1, sddrive );	
     free(bank);
@@ -601,7 +613,8 @@ int convertbintosddrive(Environment * _environment) {
     bankSize = 0x4000;
     // I	0x8300	0xc2ff	RAM (banco 2)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 2 );
+    bank = findbank( _environment, 3 );
+    // memset( bank, 0x03, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
     
@@ -609,7 +622,8 @@ int convertbintosddrive(Environment * _environment) {
 
     // J	0xc300	0x102ff	RAM (banco 3)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 3 );
+    bank = findbank( _environment, 4 );
+    // memset( bank, 0x04, bankSize );
     fwrite( bank, bankSize, 1, sddrive );
     // end = ftell( sddrive )-1;
 
@@ -617,7 +631,8 @@ int convertbintosddrive(Environment * _environment) {
 
     // K	0x10300	0x142ff	RAM (banco 4)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 4 );
+    bank = findbank( _environment, 5 );
+    // memset( bank, 0x05, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
 
@@ -625,7 +640,8 @@ int convertbintosddrive(Environment * _environment) {
 
     // L	0x14300	0x182ff	RAM (banco 5)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 5 );
+    bank = findbank( _environment, 6 );
+    // memset( bank, 0x06, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
 
@@ -633,7 +649,8 @@ int convertbintosddrive(Environment * _environment) {
 
     // M	0x18300	0x1c2ff	RAM (banco 6)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 6 );
+    bank = findbank( _environment, 7 );
+    // memset( bank, 0x07, bankSize );
     fwrite( bank, bankSize, 1, sddrive );
     // end = ftell( sddrive )-1;
 
@@ -641,7 +658,8 @@ int convertbintosddrive(Environment * _environment) {
 
     // N	0x1c300	0x202ff	RAM (banco 7)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 7 );
+    bank = findbank( _environment, 8 );
+    // memset( bank, 0x08, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
 
@@ -650,7 +668,7 @@ int convertbintosddrive(Environment * _environment) {
     // O	0x20300	0x203ff	RAM (banco 1)	0x9e00	0x9fff
     // start = ftell( sddrive );
     for( int i=0x20300; i<=0x203ff; ++i ) {
-        char zero = 0;
+        char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
     // end = ftell( sddrive )-1;
