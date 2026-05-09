@@ -212,6 +212,21 @@ BANKLOADL2
 
 @ELSE
 
+    ORCC #$50
+
+    LDX #($6000+$4000-$0400)
+    LDY #$5E00
+    LDU #$0200
+
+RESTOREBANKL1
+    LDA ,X+
+    STA ,Y+
+    LEAU -1, U
+    CMPU #0
+    BNE RESTOREBANKL1
+    
+    ANDCC #$AF
+
     LDA #7
     STA BASE_SEGMENT+$E5
     STA BANKSHADOW

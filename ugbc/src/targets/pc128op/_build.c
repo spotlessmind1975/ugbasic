@@ -416,38 +416,20 @@ static char * findbank( Environment * _environment, int _bank ) {
 
     char * buffer = malloc( 0x4000 );
     memset( buffer, 0, 0x4000 );
-    Storage * storage = _environment->storage;
 
-    if ( storage ) {
-        
-        FileStorage * fileStorage = storage->files;
+    Bank * bank = _environment->expansionBanks;
 
-        Bank * bank = _environment->expansionBanks;
+    while( bank ) {
 
-        while( bank && fileStorage ) {
+        if ( bank->address && bank->id == _bank ) {
 
-            if ( bank->address && bank->id == _bank ) {
-
-                if ( fileStorage->content && fileStorage->size ) {
-                    memcpy( buffer, fileStorage->content, fileStorage->size );
-                } else {
-                    FILE * file = fopen( fileStorage->sourceName, "rb" );
-                    if ( !file ) {
-                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
-                    }
-                    fseek( file, 0, SEEK_END );
-                    int size = ftell( file );
-                    fseek( file, 0, SEEK_SET );
-                    (void)!fread( buffer, size, 1, file );
-                    fclose( file );
-                }
-                return buffer;
-            }
-
-            bank = bank->next;
-            fileStorage = fileStorage->next;
+            memcpy( buffer, bank->data, bank->address > 0x4000 ? 0x4000 : bank->address );
+            
+            return buffer;
 
         }
+
+        bank = bank->next;
 
     }
 
@@ -465,6 +447,9 @@ int convertbintosddrive(Environment * _environment) {
     BUILD_SAFE_MOVE( _environment, _environment->exeFileName, temporaryFileName );
 
     FILE * sddrive = fopen( _environment->exeFileName, "wb");
+
+    char savedReplacedCode[0x200];
+    memset( savedReplacedCode, 0, 0x200 );
 
     /////////////////////////////////////////////////////////////////////
 
@@ -566,12 +551,14 @@ int convertbintosddrive(Environment * _environment) {
     char ra7e4 = 0x30;
     fwrite( &ra7e4, 1, 1, sddrive );	
 	// 0x1fd2 contenuto del registro 0xa7e5
-    char ra7e5 = 0x07;
+    char ra7e5 = 0x06;
     fwrite( &ra7e5, 1, 1, sddrive );	
 	// 0x1fd3 contenuto del registro 0xa7e6
     char ra7e6 = 0x00;
     fwrite( &ra7e6, 1, 1, sddrive );	
 	// 0x1fd4 contenuto del registro 0xa7e7
+    char ra7e7 = 0x10;
+    fwrite( &ra7e7, 1, 1, sddrive );	
     // end = ftell( sddrive )-1;
     
     // printf( "F	0x43c0	0x43d0	>>> 0x%4.4x  0x%4.4x  | Registri CPU + HW\n", start, end );
@@ -579,7 +566,7 @@ int convertbintosddrive(Environment * _environment) {
     /////////////////////////////////////////////////////////////////////
 
     // start = ftell( sddrive );
-    for( int i=0x43d4; i<=0x43ff; ++i ) {
+    for( int i=0x43d5; i<=0x43ff; ++i ) {
         char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
@@ -599,13 +586,15 @@ int convertbintosddrive(Environment * _environment) {
         char zero = 0x00;
         fwrite( &zero, 1, 1, sddrive );;
     }
-    bankSize = 0x6000 - 0x3000;
+    bankSize = 0x6000 - 0x3000 - 0x200;
     bin = fopen(temporaryFileName, "rb");
     bank = malloc( bankSize );
     // memset( bank, 0x07, bankSize );
     (void)!fread( bank, bankSize, 1, bin );
     fwrite( bank, bankSize, 1, sddrive );	
     free(bank);
+    (void)!fread( savedReplacedCode, 0x200, 1, bin );
+
     // end = ftell( sddrive )-1;
 
     // printf( "H -- 0x%4.4x  0x%4.4x  | RAM (banco 1)\n", start, end );
@@ -613,7 +602,7 @@ int convertbintosddrive(Environment * _environment) {
     bankSize = 0x4000;
     // I	0x8300	0xc2ff	RAM (banco 2)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 3 );
+    bank = findbank( _environment, 2 );
     // memset( bank, 0x03, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
@@ -622,7 +611,7 @@ int convertbintosddrive(Environment * _environment) {
 
     // J	0xc300	0x102ff	RAM (banco 3)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 4 );
+    bank = findbank( _environment, 3 );
     // memset( bank, 0x04, bankSize );
     fwrite( bank, bankSize, 1, sddrive );
     // end = ftell( sddrive )-1;
@@ -631,7 +620,7 @@ int convertbintosddrive(Environment * _environment) {
 
     // K	0x10300	0x142ff	RAM (banco 4)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 5 );
+    bank = findbank( _environment, 4 );
     // memset( bank, 0x05, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
@@ -640,17 +629,18 @@ int convertbintosddrive(Environment * _environment) {
 
     // L	0x14300	0x182ff	RAM (banco 5)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 6 );
+    bank = findbank( _environment, 5 );
     // memset( bank, 0x06, bankSize );
     fwrite( bank, bankSize, 1, sddrive );	
-    // end = ftell( sddrive )-1;
+    end = ftell( sddrive )-1;
 
     // printf( "L -- 0x%4.4x  0x%4.4x  | RAM (banco 5)\n", start, end );
 
     // M	0x18300	0x1c2ff	RAM (banco 6)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 7 );
+    bank = findbank( _environment, 6 );
     // memset( bank, 0x07, bankSize );
+    memcpy( bank + 0x4000 - 0x400, savedReplacedCode, 0x200 );
     fwrite( bank, bankSize, 1, sddrive );
     // end = ftell( sddrive )-1;
 
@@ -658,10 +648,17 @@ int convertbintosddrive(Environment * _environment) {
 
     // N	0x1c300	0x202ff	RAM (banco 7)	0x6000	0x9e00
     // start = ftell( sddrive );
-    bank = findbank( _environment, 8 );
+    // bank = findbank( _environment, 8 );
     // memset( bank, 0x08, bankSize );
-    fwrite( bank, bankSize, 1, sddrive );	
+    // fwrite( bank, bankSize, 1, sddrive );	
     // end = ftell( sddrive )-1;
+
+    bank = malloc( bankSize );
+    // memset( bank, 0x07, bankSize );
+    // (void)!fread( bank, bankSize, 1, bin );
+    (void)!fread( bank, bankSize, 1, bin );
+    fwrite( bank, bankSize, 1, sddrive );	
+    free(bank);
 
     // printf( "N -- 0x%4.4x  0x%4.4x  | RAM (banco 7)\n", start, end );
 
