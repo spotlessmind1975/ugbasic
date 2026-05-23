@@ -162,6 +162,8 @@
 #define DSTRING_DEFAULT_COUNT           127
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void vz200_wait_key( Environment * _environment, int _release );
 void vz200_wait_fire( Environment * _environment, int _port, int _release );
 void vz200_wait_fire_semivar( Environment * _environment, char * _port, int _release );

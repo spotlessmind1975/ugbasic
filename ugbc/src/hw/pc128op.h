@@ -250,6 +250,8 @@
 #define DSTRING_DEFAULT_COUNT           127
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void pc128op_xpen( Environment * _environment, char * _destination );
 void pc128op_ypen( Environment * _environment, char * _destination );
 

@@ -1125,7 +1125,7 @@ integer_optional:
     Integer { $$ = $1; };
 
 readonly_optional: 
-    { $$ = -1; } | 
+    { $$ = READONLY_DEFAULT; } | 
     NOT READ ONLY { $$ = 0; } |
     NOT READONLY { $$ = 0; } |
     READ ONLY { $$ = 1; } |

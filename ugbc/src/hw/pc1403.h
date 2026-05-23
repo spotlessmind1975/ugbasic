@@ -253,6 +253,8 @@
 #define TEXT_COLUMNS_COUNT      24
 #define TEXT_ROWS_COUNT          1
 
+#define READONLY_DEFAULT   0
+
 void pc1403_initialization( Environment * _environment );
 
 void pc1403_wait_key( Environment * _environment, int _release );

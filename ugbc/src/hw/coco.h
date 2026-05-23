@@ -46,6 +46,8 @@
 #define DSTRING_DEFAULT_COUNT           32
 #define DSTRING_DEFAULT_SPACE           512
 
+#define READONLY_DEFAULT   0
+
 void coco_xpen( Environment * _environment, char * _destination );
 void coco_ypen( Environment * _environment, char * _destination );
 void coco_spen( Environment * _environment, char * _destination );

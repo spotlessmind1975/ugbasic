@@ -161,6 +161,8 @@
 #define DSTRING_DEFAULT_COUNT           16
 #define DSTRING_DEFAULT_SPACE           128
 
+#define READONLY_DEFAULT   1
+
 void sg1000_inkey( Environment * _environment, char * _pressed, char * _key );
 void sg1000_wait_fire( Environment * _environment, int _port, int _release );
 void sg1000_wait_fire_semivar( Environment * _environment, char * _port, int _release );

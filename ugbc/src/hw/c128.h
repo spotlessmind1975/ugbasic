@@ -46,6 +46,8 @@
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void c128_xpen( Environment * _environment, char * _destination );
 void c128_ypen( Environment * _environment, char * _destination );
 

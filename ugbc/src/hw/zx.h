@@ -235,6 +235,8 @@
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode );
 
 void zx_initialization( Environment * _environment );

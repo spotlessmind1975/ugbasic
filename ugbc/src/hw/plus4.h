@@ -142,6 +142,8 @@
 #define DSTRING_DEFAULT_COUNT           127
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void plus4_xpen( Environment * _environment, char * _destination );
 void plus4_ypen( Environment * _environment, char * _destination );
 

@@ -48,6 +48,8 @@
 #define DSTRING_DEFAULT_COUNT           255
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void c64reu_xpen( Environment * _environment, char * _destination );
 void c64reu_ypen( Environment * _environment, char * _destination );
 

@@ -142,6 +142,8 @@
 #define DSTRING_DEFAULT_COUNT           128
 #define DSTRING_DEFAULT_SPACE           512
 
+#define READONLY_DEFAULT   0
+
 void c16_xpen( Environment * _environment, char * _destination );
 void c16_ypen( Environment * _environment, char * _destination );
 

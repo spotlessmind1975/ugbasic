@@ -48,6 +48,8 @@
 #define DSTRING_DEFAULT_COUNT           32
 #define DSTRING_DEFAULT_SPACE           512
 
+#define READONLY_DEFAULT   0
+
 void coco3_xpen( Environment * _environment, char * _destination );
 void coco3_ypen( Environment * _environment, char * _destination );
 

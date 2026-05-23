@@ -155,6 +155,8 @@
 #define DSTRING_DEFAULT_COUNT           127
 #define DSTRING_DEFAULT_SPACE           1024
 
+#define READONLY_DEFAULT   0
+
 void vg5000_inkey( Environment * _environment, char * _pressed, char * _key );
 void vg5000_scancode( Environment * _environment, char * _pressed, char * _scacode );
 void vg5000_key_pressed( Environment * _environment, char *_scancode, char * _result );
