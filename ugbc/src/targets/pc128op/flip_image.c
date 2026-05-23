@@ -83,7 +83,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 sprintf(alreadyLoadedLabel, "%salready", label );
 
                 char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+                sprintf( bankWindowId, "(BANKWINDOW%2.2x-2)", image->residentAssigned );
 
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
@@ -278,15 +278,18 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
 
                 char bankWindowName[MAX_TEMPORARY_STORAGE];
                 sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
-
+                if ( _environment->residentDetectionEnabled ) {
                 cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                }
                 if ( image->uncompressedSize ) {
                     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
                 } else {
                     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
                 }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                if ( _environment->residentDetectionEnabled ) {
+                    cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                    cpu_label( _environment, alreadyLoadedLabel );
+                }
 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
