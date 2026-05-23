@@ -1119,6 +1119,9 @@ byte by byte (with the ''# [...]'' syntax ).
 
 The array could be assigned to a "read only" memory, in order
 to save RAM space. This can be done using ''READ ONLY'' flag.
+On the other hand, it can be marked with the ''NOT READONLY'' 
+attribute, to be able to be modified. Note that the default 
+behaviour depends on the target.
 
 Finally, the array can be assigned to a specific expansion
 bank by using the ''BANKED'' keyword. Otherwise, if an array
@@ -1184,7 +1187,7 @@ esplicitamente le strutture dati utilizzate.
 @syntax DIM name [AS type] (d1[,d2[,...]]) = #"["hex"]" [ro] [fl]
 @syntax DIM name [AS type] (d1[,d2[,...]]) = #{v,v,...} [ro] [fl]
 @syntax DIM name [AS type] WITH v (d1[,d2[,...]]) [ro] [fl]
-@syntax   ro: [READ ONLY|READONLY]
+@syntax   ro: [READ ONLY|READONLY|NOT READ ONLY|NOT READONLY]
 @syntax   fl: [BANKED|BANKED(n)|UNBANKED|FOR BANK READ|FOR BANK WRITE]
 
 @example DIM x(42)

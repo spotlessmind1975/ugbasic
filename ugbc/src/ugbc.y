@@ -1125,7 +1125,9 @@ integer_optional:
     Integer { $$ = $1; };
 
 readonly_optional: 
-    { $$ = 0; } | 
+    { $$ = -1; } | 
+    NOT READ ONLY { $$ = 0; } |
+    NOT READONLY { $$ = 0; } |
     READ ONLY { $$ = 1; } |
     READONLY { $$ = 1; };
 
@@ -3393,7 +3395,7 @@ exponential_less:
             $17, $18, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $19 ) {
+        if ( $19 != -1 ) {
             sequence->readonly = $19;
         }
         $$ = sequence->name;
@@ -3408,7 +3410,7 @@ exponential_less:
             $15, $16, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $17 ) {
+        if ( $17 != -1 ) {
             sequence->readonly = $17;
         }
         $$ = sequence->name;
@@ -3422,7 +3424,7 @@ exponential_less:
             $9, $10, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $11 ) {
+        if ( $11 != -1 ) {
             images->readonly = $11;
         }
         images->strips = ((struct _Environment *)_environment)->currentStrip;
@@ -3437,7 +3439,7 @@ exponential_less:
             $11, $12, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
-        if ( $11 ) {
+        if ( $11 != -1 ) {
             images->readonly = $11;
         }
         $$ = images->name;
@@ -3453,28 +3455,28 @@ exponential_less:
       } | 
     load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
-        if ( $10 ) {
+        if ( $10 != -1 ) {
             image->readonly = $10;
         }
         $$ = image->name;
       } | 
     load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
-        if ( $12 ) {
+        if ( $12 != -1 ) {
             image->readonly = $12;
         }
         $$ = image->name;
       } | 
     load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
-        if ( $12 ) {
+        if ( $12 != -1 ) {
             image->readonly = $12;
         }
         $$ = image->name;
       } | 
     load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
         Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
-        if ( $14 ) {
+        if ( $14 != -1 ) {
             image->readonly = $14;
         }
         $$ = image->name;
@@ -6493,7 +6495,9 @@ dim_definition:
         } array_assign readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $9;
+                if ( $9 != -1 ) {
+                    array->readonly = $9;
+                }
                 if ( $10 > 0 ) {
                     if ( ! banks_store( _environment, array, $10 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
@@ -6555,7 +6559,9 @@ dim_definition:
         } array_assign readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $11;
+                if ( $11 != -1 ) {
+                    array->readonly = $11;
+                }
                 if ( $12 > 0 ) {
                     if ( ! banks_store( _environment, array, $12 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
@@ -6585,7 +6591,9 @@ dim_definition:
         } readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $9;
+                if ( $9 != -1 ) {
+                    array->readonly = $9;
+                }
                 if ( $10 > 0 ) {
                     if ( ! banks_store( _environment, array, $10 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
@@ -6615,7 +6623,9 @@ dim_definition:
         } readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $10;
+                if ( $10 != -1 ) {
+                    array->readonly = $10;
+                }
                 if ( $11 > 0 ) {
                     if ( ! banks_store( _environment, array, $11 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
@@ -6667,7 +6677,9 @@ dim_definition:
         } array_assign readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $10;
+                if ( $10 != -1 ) {
+                    array->readonly = $10;
+                }
                 if ( $11 > 0 ) {
                     if ( ! banks_store( _environment, array, $11 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
@@ -6697,7 +6709,9 @@ dim_definition:
         } readonly_optional on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
-                array->readonly = $10;
+                if ( $10 != -1 ) {
+                    array->readonly = $10;
+                }
                 if ( $11 > 0 ) {
                     if ( ! banks_store( _environment, array, $11 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );

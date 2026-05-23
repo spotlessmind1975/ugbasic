@@ -90,6 +90,12 @@ frames. The very same for ''ROLL Y'' command, which does the same
 vertically. There is also the ''ROLL XY'' (or ''ROLL YX'') parameter to act, 
 simultaneously, on both directions.
 
+Finally, if the image is not expected to change during gameplay, it can be marked 
+with the ''READONLY'' attribute: in this case, the image will be stored 
+in read-only memory, if available. On the other hand, it can be marked
+with the ''NOT READONLY'' attribute, to be able to be modified. Note that
+the default behaviour depends on the target.
+
 @italian
 
 Il comando ''LOAD TILE'' consente di caricare un'immagine e convertirla in
@@ -146,11 +152,14 @@ usando la parola chiave ''UNBANKED''.
 
 Infine, se non è previsto che l'immagine cambi durante il gioco, può essere contrassegnata
 con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
-nella memoria di sola lettura, se disponibile.
+nella memoria di sola lettura, se disponibile. D'altra parte, può essere 
+contrassegnato con l'attributo ''NOT READONLY'' per poter essere modificato. 
+Si noti che il comportamento predefinito dipende dal computer target.
 
-@syntax = LOAD TILE( filename [AS alias][,mode] ) [fl] 
+@syntax = LOAD TILE( filename [AS alias][,mode] ) [fl] [ro]
 @syntax     fl : [FLIP X] [FLIP Y] [FLIP XY] [FLIP YX] 
 @syntax     fl : [ROLL X] [ROLL Y] [ROLL XY] [ROLL YX] 
+@syntax     ro : [READONLY | READ ONLY | NOT READONLY | NOT READ ONLY]
 
 @example starship = LOAD TILE("starship.png")
 @example starship2 = LOAD TILE("starship.png" AS "starship2")

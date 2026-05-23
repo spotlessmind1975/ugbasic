@@ -112,7 +112,9 @@ using the ''UNBANKED'' keyword.
 
 Finally, if the image is not expected to change during gameplay, it can be marked 
 with the ''READONLY'' attribute: in this case, the image will be stored 
-in read-only memory, if available.
+in read-only memory, if available. On the other hand, it can be marked
+with the ''NOT READONLY'' attribute, to be able to be modified. Note that
+the default behaviour depends on the target.
 
 @italian
 
@@ -172,15 +174,18 @@ usando la parola chiave ''UNBANKED''.
 
 Infine, se non è previsto che l'immagine cambi durante il gioco, può essere contrassegnata
 con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
-nella memoria di sola lettura, se disponibile.
+nella memoria di sola lettura, se disponibile. D'altra parte, può essere 
+contrassegnato con l'attributo ''NOT READONLY'' per poter essere modificato. 
+Si noti che il comportamento predefinito dipende dal computer target.
 
-@syntax = LOAD IMAGE( filename [AS alias][,mode] ) [fl] [tr] [op] [bg] [bk] [READONLY]
+@syntax = LOAD IMAGE( filename [AS alias][,mode] ) [fl] [tr] [op] [bg] [bk] [ro]
 @syntax     fl : [FLIP X] [FLIP Y] [FLIPXY] [FLIPYX] 
 @syntax          [COMPRESSED] [OVERLAYED] [EXACT]
 @syntax     tr : [TRANSPARENCY | TRANSPARENCY color]
 @syntax     op : [OPACITY | OPACITY color]
 @syntax     bg : [BACKGROUND color]
 @syntax     bk : [UNBANKED | BANKED | BANKED(number)]
+@syntax     ro : [READONLY | READ ONLY | NOT READONLY | NOT READ ONLY]
 
 @example starship = LOAD IMAGE("starship.png")
 @example starship2 = LOAD IMAGE("starship.png" AS "starship2")

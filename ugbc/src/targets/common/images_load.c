@@ -125,7 +125,9 @@ using the ''UNBANKED'' keyword.
 
 Finally, if the image is not expected to change during gameplay, it can be marked 
 with the ''READONLY'' attribute: in this case, the image will be stored 
-in read-only memory, if available.
+in read-only memory, if available. On the other hand, it can be marked
+with the ''NOT READONLY'' attribute, to be able to be modified. Note that
+the default behaviour depends on the target.
 
 @italian
 
@@ -197,12 +199,14 @@ il blocco residente condiviso, da utilizzare come target per questa
 immagine. Per alcuni target questo è il flag predefinito. Si può cambiare
 tale impostazione usando la parola chiave ''UNBANKED''.
 
-Infine, se l'immagine non dovesse cambiare durante il gameplay, può 
-essere contrassegnata con l'attributo "READONLY": in questo caso, 
-l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
+Infine, se non è previsto che l'immagine cambi durante il gioco, può essere contrassegnata
+con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
+nella memoria di sola lettura, se disponibile. D'altra parte, può essere 
+contrassegnato con l'attributo ''NOT READONLY'' per poter essere modificato. 
+Si noti che il comportamento predefinito dipende dal computer target.
 
 @syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [ORIGIN(dx,dy)] [fl] [tr] [op] [bg] [bk] [READONLY]  [str]
-@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [READONLY] [str]
+@syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [ro] [str]
 @syntax     frame : [ FRAME SIZE(w, h) [OFFSET(dx,dy)] [ORIGIN(zx, zy)] | FRAME AUTO]
 @syntax     fl : [FLIP X] [FLIP Y] [FLIP XY] [FLIP YX] 
 @syntax          [COMPRESSED] [OVERLAYED] [EXACT]
@@ -212,6 +216,7 @@ l'immagine verrà memorizzata Nella memoria di sola lettura, se disponibile.
 @syntax     bg : [BACKGROUND color]
 @syntax     bk : [UNBANKED | BANKED | BANKED(number)]
 @syntax     str : "[" STRIP [ID id] (f0,f1,...) [, STRIP [ID id] (f2,f3,...)] "]"
+@syntax     ro : [READONLY | READ ONLY | NOT READONLY | NOT READ ONLY]
 
 @example starship = LOAD ATLAS("starship.png") FRAME SIZE (16, 16)
 @example starship2 = LOAD ATLAS("starship.png" AS "starship2") FRAME SIZE (32, 32) OFFSET(2,2)
