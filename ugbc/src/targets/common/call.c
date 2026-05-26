@@ -158,7 +158,7 @@ void call_procedure( Environment * _environment, char * _name ) {
     if ( procedure->protothread ) {
         CRITICAL_PARALLEL_PROCEDURE_CANNOT_BE_CALLED(_name);
     }
-
+    
     if ( procedure->declared ) {
 
         int realParametersCount = 0;
@@ -228,6 +228,13 @@ void call_procedure( Environment * _environment, char * _name ) {
             cpu_jump( _environment, procedure->realName );
         } else {
             cpu_call( _environment, procedure->realName );
+
+            if ( _environment->vestigialConfig.rchack_ccarrots_1181 && strcmp( procedure->name, "putC" ) == 0 ) {
+                for( int i=0; i<24; ++i ) {
+                    wait_cycles( _environment, 255, 0 );
+                }
+            }
+
         }
 
     }

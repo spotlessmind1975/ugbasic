@@ -2060,6 +2060,7 @@ typedef struct _VestigialConfig {
     // a recent version of the compiler.
     
     char rchack_ccarrots_1163;
+    char rchack_ccarrots_1181;
 
     // If 1 we are compiling "Hangword" game with
     // a recent version of the compiler.

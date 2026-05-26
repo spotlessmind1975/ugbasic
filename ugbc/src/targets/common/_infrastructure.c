@@ -17850,6 +17850,7 @@ void environment_setup_retrohack( Environment * _environment ) {
     // version of the compiler (>1.16.3).
     if ( strstr( _environment->sourceFileName, "ccarrots") != NULL ) {
         _environment->vestigialConfig.rchack_ccarrots_1163 = 1;
+        _environment->vestigialConfig.rchack_ccarrots_1181 = 1;
     }
 
     /* retrocompatible hacks */
