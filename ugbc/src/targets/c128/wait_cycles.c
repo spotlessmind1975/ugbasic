@@ -102,6 +102,10 @@ specifica posizione del pennello video.
 </usermanual> */
 void wait_cycles( Environment * _environment, int _timing, int _parallel ) {
 
+    if ( _timing < 0 || _timing > 0xff ) {
+        CRITICAL_WAIT_CYCLES_INVALID_TIMING();
+    }
+
     if ( _environment->protothread && _environment->procedureName && _parallel ) {
 
         if ( _environment->protothreadForbid ) {
