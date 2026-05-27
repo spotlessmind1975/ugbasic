@@ -3420,7 +3420,7 @@ exponential_less:
             $3, NULL, 
             ((struct _Environment *)_environment)->currentMode, 
             ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, 
-            $8, $7+$8, 
+            $6, $7+$8, 
             $9, $10, 
             ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
             ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );

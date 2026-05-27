@@ -190,8 +190,6 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
     result->image->colorsCount = MAX_PALETTE;
     result->image->colorsCount = rgbi_extract_palette( _environment, result->image->data, result->image->width, result->image->height, result->image->depth, result->image->colors, result->image->colorsCount, 1 );
 
-    result->count = result->horizontal * result->vertical;
-
     adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, BITMAP_MODE_STANDARD );
 
     if ( layout_mode == 0 ) {
@@ -203,6 +201,8 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
         if( _flags & FLAG_ROLL_X ) {
             a = (result->frameWidth - 1);
         }
+
+        result->count = a * result->horizontal * result->vertical;
 
         i = 0;
         di = 1;
@@ -251,6 +251,8 @@ AtlasDescriptor * atlas_descriptor_create( Environment * _environment, char * _f
         int z;
 
         adiline5("LIS:%s:%s:%2.2x:%2.2x:%x", _filename, lookedFilename, result->count, result->horizontal, result->image->fileSize );
+
+        result->count = result->horizontal * result->vertical;
 
         // if( _flags & FLAG_FLIP_X ) {
         //     source = image_flip_x( _environment, source, width, height, depth );
