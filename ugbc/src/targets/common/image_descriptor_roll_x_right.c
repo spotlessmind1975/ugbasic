@@ -108,14 +108,14 @@ ImageDescriptor * image_descriptor_roll_x_right( Environment * _environment, Ima
         unsigned char * pixel1g = source + ( y * copy->width * copy->depth ) + 1;
         unsigned char * pixel1b = source + ( y * copy->width * copy->depth ) + 2;
         unsigned char * pixel1a = NULL;
-        if ( copy->depth ) {
+        if ( copy->depth > 3 ) {
             pixel1a = source + ( y * copy->width * copy->depth ) + 3;
         }
 
         *pixel1r = r;
         *pixel1g = g;
         *pixel1b = b;
-        if ( copy->depth ) {
+        if ( copy->depth > 3 ) {
             *pixel1a = a;
         }
 
