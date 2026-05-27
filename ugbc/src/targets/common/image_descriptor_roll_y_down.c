@@ -46,7 +46,7 @@ ImageDescriptor * image_descriptor_roll_y_down( Environment * _environment, Imag
     copy->next = NULL;
 
     copy->data = malloc( copy->size );
-    memset( copy->data, 0, copy->size );
+    memcpy( copy->data, _source_image->data, copy->size );
 
     copy->colors = malloc( sizeof( RGBi ) * copy->colorsCount );
     memcpy( copy->colors, _source_image->colors, sizeof( RGBi ) * copy->colorsCount );

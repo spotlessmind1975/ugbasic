@@ -46,7 +46,7 @@ ImageDescriptor * image_descriptor_roll_x_right( Environment * _environment, Ima
     copy->next = NULL;
 
     copy->data = malloc( copy->size );
-    memset( copy->data, 0, copy->size );
+    memcpy( copy->data, _source_image->data, copy->size );
 
     copy->colors = malloc( sizeof( RGBi ) * copy->colorsCount );
     memcpy( copy->colors, _source_image->colors, sizeof( RGBi ) * copy->colorsCount );
@@ -57,39 +57,68 @@ ImageDescriptor * image_descriptor_roll_x_right( Environment * _environment, Ima
 
     for( y=0; y<copy->height; ++y ) {
 
-        unsigned char * pixel2r = source + ( y * copy->width * 3 ) + ( (copy->width-1) * 3 );
-        unsigned char * pixel2g = source + ( y * copy->width * 3 ) + ( (copy->width-1) * 3 ) + 1;
-        unsigned char * pixel2b = source + ( y * copy->width * 3 ) + ( (copy->width-1) * 3 ) + 2;        
+        unsigned char * pixel2r = source + ( y * copy->width * copy->depth ) + ( (copy->width-1) * copy->depth );
+        unsigned char * pixel2g = source + ( y * copy->width * copy->depth ) + ( (copy->width-1) * copy->depth ) + 1;
+        unsigned char * pixel2b = source + ( y * copy->width * copy->depth ) + ( (copy->width-1) * copy->depth ) + 2;        
+        unsigned char * pixel2a = NULL;
+        if ( copy->depth > 3 ) {
+            pixel2a = source + ( y * copy->width * copy->depth ) + ( (copy->width-1) * copy->depth ) + 3;
+        }
 
-        unsigned char r, g, b;
+        unsigned char r, g, b, a;
         
         r = *pixel2r;
         g = *pixel2g;
         b = *pixel2b;
+        if ( copy->depth > 3 ) {
+            a = *pixel2a;
+        } else {
+            a = 255;
+        }
 
         for( x=(copy->width-2); x > -1; --x ) {
-            unsigned char * pixel1r = source + ( y * copy->width * 3 ) + ( x * 3 );
-            unsigned char * pixel1g = source + ( y * copy->width * 3 ) + ( x * 3 ) + 1;
-            unsigned char * pixel1b = source + ( y * copy->width * 3 ) + ( x * 3 ) + 2;
-            unsigned char * pixel2r = source + ( y * copy->width * 3 ) + ( (x+1) * 3 );
-            unsigned char * pixel2g = source + ( y * copy->width * 3 ) + ( (x+1) * 3 ) + 1;
-            unsigned char * pixel2b = source + ( y * copy->width * 3 ) + ( (x+1) * 3 ) + 2;
+            unsigned char * pixel1r = source + ( y * copy->width * copy->depth ) + ( x * copy->depth );
+            unsigned char * pixel1g = source + ( y * copy->width * copy->depth ) + ( x * copy->depth ) + 1;
+            unsigned char * pixel1b = source + ( y * copy->width * copy->depth ) + ( x * copy->depth ) + 2;
+            unsigned char * pixel1a = NULL;
+            if ( copy->depth > 3 ) {
+                pixel1a = source + ( y * copy->width * copy->depth ) + ( x * copy->depth ) + 3;
+            }
+
+            unsigned char * pixel2r = source + ( y * copy->width * copy->depth ) + ( (x+1) * copy->depth );
+            unsigned char * pixel2g = source + ( y * copy->width * copy->depth ) + ( (x+1) * copy->depth ) + 1;
+            unsigned char * pixel2b = source + ( y * copy->width * copy->depth ) + ( (x+1) * copy->depth ) + 2;
+            unsigned char * pixel2a = NULL;
+            if ( copy->depth > 3 ) {
+                pixel2a = source + ( y * copy->width * copy->depth ) + ( (x+1) * copy->depth ) + 3;
+            }
             
             // printf( "%d,%d : %2.2x%2.2x%2.2x -> %2.2x%2.2x%2.2x\n", y, x, (unsigned char) *pixel2r, (unsigned char) *pixel2g, (unsigned char) *pixel2b, (unsigned char) *pixel1r, (unsigned char) *pixel1g, (unsigned char) *pixel1b );
 
             *pixel2r = (unsigned char) *pixel1r;
             *pixel2g = (unsigned char) *pixel1g;
             *pixel2b = (unsigned char) *pixel1b;
+            if ( copy->depth > 3 ) {
+                *pixel2a = (unsigned char) *pixel1a;
+            }
 
         }
 
-        unsigned char * pixel1r = source + ( y * copy->width * 3 );
-        unsigned char * pixel1g = source + ( y * copy->width * 3 ) + 1;
-        unsigned char * pixel1b = source + ( y * copy->width * 3 ) + 2;
+        unsigned char * pixel1r = source + ( y * copy->width * copy->depth );
+        unsigned char * pixel1g = source + ( y * copy->width * copy->depth ) + 1;
+        unsigned char * pixel1b = source + ( y * copy->width * copy->depth ) + 2;
+        unsigned char * pixel1a = NULL;
+        if ( copy->depth ) {
+            pixel1a = source + ( y * copy->width * copy->depth ) + 3;
+        }
 
         *pixel1r = r;
         *pixel1g = g;
         *pixel1b = b;
+        if ( copy->depth ) {
+            *pixel1a = a;
+        }
+
     }
 
     return copy;
