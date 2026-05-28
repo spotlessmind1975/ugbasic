@@ -49,9 +49,12 @@
 @target to8
 </usermanual> */
 void color_border( Environment * _environment, int _color ) {
-	outline1("LDA #%d", _color&15);
+	outline0("LDA SYSTEM2REG");
+	outline0("ANDA #$F0");
+	outline1("ORA #$%2.2x", _color&15);
 	/* emmit0("STA <$86"); to be compatible with ROM routines */
-	outline0("ORA BASE_SEGMENT+$E4");
+	// outline0("ORA BASE_SEGMENT+$E4");
+	outline0("STA SYSTEM2REG");
 	outline0("STA BASE_SEGMENT+$DD");
 
 }
@@ -68,9 +71,11 @@ void color_border( Environment * _environment, int _color ) {
 void color_border_var( Environment * _environment, char * _color ) {
 	 Variable * var = variable_retrieve_or_define( _environment, _color, VT_COLOR, COLOR_BLACK );
 	
-	outline1("LDA %s", var->realName);
-	outline0("ANDA #$0F");
+	outline0("LDA SYSTEM2REG");
+	outline0("ANDA #$F0");
+	outline1("ORA %s", var->realName);
 	/* emmit0("STA <$86"); to be compatible with ROM routines */
-	outline0("ORA BASE_SEGMENT+$E4");
+	// outline0("ORA BASE_SEGMENT+$E4");
+	outline0("STA SYSTEM2REG");
 	outline0("STA BASE_SEGMENT+$DD");
 }
