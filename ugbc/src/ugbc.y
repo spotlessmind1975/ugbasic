@@ -3454,28 +3454,72 @@ exponential_less:
         $$ = tilemap_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 )->name;
       } | 
     load_image OP String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * image = image_load( _environment, $3, NULL, ((struct _Environment *)_environment)->currentMode, $5, $6+$7, $8, $9 );
+        
+        ParamsImageLoad params;
+        
+        params.filename = $3;
+        params.alias = NULL;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.flags = $5;
+        params.transparent_color = $6+$7;
+        params.background_color = $8;
+        params.bank_expansion = $9;
+
+        Variable * image = image_load( _environment, params );
         if ( $10 != -1 ) {
             image->readonly = $10;
         }
         $$ = image->name;
       } | 
     load_image OP String AS String CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * image = image_load( _environment, $3, $5, ((struct _Environment *)_environment)->currentMode, $7, $8+$9, $10, $11 );
+
+        ParamsImageLoad params;
+        
+        params.filename = $3;
+        params.alias = $5;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.flags = $7;
+        params.transparent_color = $8+$9;
+        params.background_color = $10;
+        params.bank_expansion = $11;
+
+        Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
             image->readonly = $12;
         }
         $$ = image->name;
       } | 
     load_image OP String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * image = image_load( _environment, $3, NULL, $5, $7, $8+$9, $10, $11 );
+
+        ParamsImageLoad params;
+        
+        params.filename = $3;
+        params.alias = NULL;
+        params.mode = $5;
+        params.flags = $7;
+        params.transparent_color = $8+$9;
+        params.background_color = $10;
+        params.bank_expansion = $11;
+
+        Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
             image->readonly = $12;
         }
         $$ = image->name;
       } | 
     load_image OP String AS String OP_COMMA Integer CP image_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * image = image_load( _environment, $3, $5, $7, $9, $10+$11, $12, $13 );
+
+        ParamsImageLoad params;
+
+        params.filename = $3;
+        params.alias = $5;
+        params.mode = $7;
+        params.flags = $9;
+        params.transparent_color = $10+$11;
+        params.background_color = $12;
+        params.bank_expansion = $13;
+
+        Variable * image = image_load( _environment, params );
         if ( $14 != -1 ) {
             image->readonly = $14;
         }

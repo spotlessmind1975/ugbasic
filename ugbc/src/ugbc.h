@@ -5205,6 +5205,20 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 // Common functions used by parser only
 //----------------------------------------------------------------------------
 
+// Function's parameters
+
+typedef struct _ParamsImageLoad {
+
+    char *      filename;
+    char *      alias;
+    int         mode;
+    int         flags;
+    int         transparent_color;
+    int         background_color;
+    int         bank_expansion;
+
+} ParamsImageLoad;
+
 //----------------------------------------------------------------------------
 // Array
 //----------------------------------------------------------------------------
@@ -5640,7 +5654,7 @@ void                    if_then( Environment * _environment, char * _expression 
 char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );
-Variable *              image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
+Variable *              image_load( Environment * _environment, ParamsImageLoad _ParamsImageLoad );
 Variable *              image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 int                     image_size( Environment * _environment, int _width, int _height );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );

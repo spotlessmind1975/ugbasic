@@ -202,7 +202,15 @@ Si noti che il comportamento predefinito dipende dal computer target.
 @alias LOAD IMAGE
 </usermanual> */
 
-Variable * image_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion ) {
+Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageLoad ) {
+
+    char * _filename = _ParamsImageLoad.filename;
+    char * _alias = _ParamsImageLoad.alias;
+    int _mode = _ParamsImageLoad.mode;
+    int _flags = _ParamsImageLoad.flags;
+    int _transparent_color = _ParamsImageLoad.transparent_color;
+    int _background_color = _ParamsImageLoad.background_color;
+    int _bank_expansion = _ParamsImageLoad.bank_expansion;
 
     // First of all, we create a variable to store the image.
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
