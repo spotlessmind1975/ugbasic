@@ -214,7 +214,11 @@ static int sequence_comparison(const void *_a, const void *_b) {
     const struct _MSC1Sequence *a = _a;
     const struct _MSC1Sequence *b = _b;
 
-    return b->count - a->count;
+    if ( ( b->count - a->count ) == 0 ) {
+        return b->value[0] - a->value[0];
+    } else {
+        return b->count - a->count;
+    }
 
 }
 
