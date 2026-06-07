@@ -1243,6 +1243,7 @@ datatype:
     VECTOR { $$ = VT_VECTOR2; } | 
     COLOUR { $$ = VT_COLOR; } | 
     STRING { $$ = VT_DSTRING; } | 
+    COMPILED IMAGE { $$ = VT_COMPILED_IMAGE; } | 
     IMAGE { $$ = VT_IMAGE; } | 
     IMAGES { $$ = VT_IMAGES; } | 
     ATLAS { $$ = VT_IMAGES; } | 

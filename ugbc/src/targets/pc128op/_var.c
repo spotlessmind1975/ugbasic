@@ -420,7 +420,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         // forced 2 bytes to even alignment
-                        outhead2("%s equ %4.4x", variable->realName, variable->absoluteAddress );
+                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress );
                     } else {
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
