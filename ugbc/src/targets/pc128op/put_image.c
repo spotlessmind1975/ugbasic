@@ -148,6 +148,7 @@ extern char DATATYPE_AS_STRING[][16];
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.isCompiled = 0;
 
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
 
@@ -268,6 +269,7 @@ extern char DATATYPE_AS_STRING[][16];
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.isCompiled = 0;
 
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, image->frameSize, 0, _flags );
                 
@@ -356,8 +358,10 @@ extern char DATATYPE_AS_STRING[][16];
                 }
 
                 Resource resource;
+                memset(&resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.isCompiled = 0;
 
                 ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             } else {
@@ -366,6 +370,7 @@ extern char DATATYPE_AS_STRING[][16];
             break;
         case VT_COMPILED_IMAGE:
             Resource resource;
+            memset(&resource, 0, sizeof( Resource ) );
             resource.realName = strdup( image->realName );
             resource.isAddress = 0;
             resource.isCompiled = 1;

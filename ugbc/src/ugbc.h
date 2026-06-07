@@ -5232,9 +5232,11 @@ typedef struct _ParamsImageCompile {
     
     char *      native_image_data;
     int         native_image_size;
+    int         native_image_bank;
 
     char *      compiled_image_data;
     int         compiled_image_size;
+    int         compiled_image_bank;
 
 } ParamsImageCompile;
 

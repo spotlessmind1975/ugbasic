@@ -1843,6 +1843,7 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data = malloc( finalSize );
         _params->compiled_image_size = finalSize;
+        _params->compiled_image_bank = -1;
 
         // _params->compiled_image_data = malloc( finalSize );
         // _params->compiled_image_size = finalSize;
@@ -1957,6 +1958,7 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data = malloc( finalSize );
         _params->compiled_image_size = finalSize;
+        _params->compiled_image_bank = _params->native_image_bank;
 
         // _params->compiled_image_data = malloc( finalSize );
         // _params->compiled_image_size = finalSize;
