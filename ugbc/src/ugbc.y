@@ -238,7 +238,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token CLARINET CLASS CLAVI CLEAN CLEAR CLEFT CLINE CLIP CLOSE CLR CLS CMOB
 %token CMOVE COARSE COCO COCO1 COCO2 COCO3 CODE COLECO COLLISION COLON COLOR
 %token COLORMAP COLORS COLOUR COLOURMAP COLOURS COLUMN COLUMNS COMBINE COMMA
-%token COMMODORE COMPILE COMPLETE COMPRESS COMPRESSED COMPRESSION CONFIGURE
+%token COMMODORE COMPILE COMPILED COMPLETE COMPRESS COMPRESSED COMPRESSION CONFIGURE
 %token CONNECTED CONSOLE CONST CONTRABASS CONTROL COPPER COPY COS COUNT CPC
 %token CPU6309 CPU6502 CPU6510 CPU6809 CPU7501 CPU8086 CPU8501 CPU8502
 %token CPUSC61860 CPUSM83 CPUSPEED CPUZ80 CREATE CRIGHT CRSR CRYSTAL CSET
@@ -388,6 +388,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flag
 %type <integer> load_flags 
 %type <integer> load_flags1 
+%type <integer> load_image
 %type <integer> memory_video_optional
 %type <integer> music_type
 %type <integer> on_bank_explicit
@@ -534,7 +535,18 @@ float_or_single: FLOAT | SINGLE;
 frame: FRAME | TILE;
 image_or_images:  IMAGE | IMAGES | ATLAS;
 images_or_atlas: IMAGES | ATLAS;
-load_image : LOAD IMAGE | IMAGE LOAD;
+load_image :    LOAD IMAGE {
+                    $$ = 0; 
+                } | 
+                IMAGE LOAD {
+                    $$ = 0; 
+                } | 
+                LOAD COMPILED IMAGE {
+                    $$ = 1; 
+                } | 
+                COMPILED IMAGE LOAD {
+                    $$ = 1; 
+                };
 load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
 load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
 load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
@@ -3464,6 +3476,7 @@ exponential_less:
         params.transparent_color = $6+$7;
         params.background_color = $8;
         params.bank_expansion = $9;
+        params.compiled = $1;
 
         Variable * image = image_load( _environment, params );
         if ( $10 != -1 ) {
@@ -3482,6 +3495,7 @@ exponential_less:
         params.transparent_color = $8+$9;
         params.background_color = $10;
         params.bank_expansion = $11;
+        params.compiled = $1;
 
         Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
@@ -3500,6 +3514,7 @@ exponential_less:
         params.transparent_color = $8+$9;
         params.background_color = $10;
         params.bank_expansion = $11;
+        params.compiled = $1;
 
         Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
@@ -3518,6 +3533,7 @@ exponential_less:
         params.transparent_color = $10+$11;
         params.background_color = $12;
         params.bank_expansion = $13;
+        params.compiled = $1;
 
         Variable * image = image_load( _environment, params );
         if ( $14 != -1 ) {

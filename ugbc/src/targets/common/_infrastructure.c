@@ -166,7 +166,8 @@ char DATATYPE_AS_STRING[][16] = {
     "PATH",
     "VECTOR",
     "TYPE",
-    "NUMBER"
+    "NUMBER",
+    "COMPILED IMAGE"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {

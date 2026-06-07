@@ -416,6 +416,80 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
             }
 
             switch( variable->type ) {
+                case VT_COMPILED_IMAGE:
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                        // forced 2 bytes to even alignment
+                        outhead2("%s equ %4.4x", variable->realName, variable->absoluteAddress );
+                    } else {
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size + 1 );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    // forced +1 byte to even alignment
+                                    if ( variable->size & 0x01 ) {
+                                        outhead2("%s    fcc %s,0", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                    }
+                                } else {
+                                    out1("%s fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
+                                            out0("   fcb ");
+                                        } else {
+                                            out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
+                                        }
+                                    }
+                                    // forced +1 byte to even alignment
+                                    if ( variable->size & 0x01 ) {
+                                        outhead1("$%2.2x, $0", variable->valueBuffer[(variable->size-1)]);
+                                    } else {
+                                        outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                    }
+                                }
+                            } else {
+                                // forced +1 byte to even alignment
+                                if ( variable->size & 0x01 ) {
+                                    outhead2("%s rzb %d", variable->realName, variable->size+1);
+                                } else {
+                                    outhead2("%s rzb %d", variable->realName, variable->size);
+                                }
+                            }
+                        } else {
+                            outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size + 1 );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    // forced +1 byte to even alignment
+                                    if ( variable->size & 0x01 ) {
+                                        outhead2("%s    fcc %s, 0", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
+                                    }
+                                } else {
+                                    out1("%scopy fcb ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("$%2.2x,", variable->valueBuffer[i]);
+                                    }
+                                    // forced +1 byte to even alignment
+                                    if ( variable->size & 0x01 ) {
+                                        outhead1("$%2.2x, $0", variable->valueBuffer[(variable->size-1)]);
+                                    } else {
+                                        outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
@@ -891,6 +965,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( startup, src_hw_pc128op_startup_asm);
     deploy_inplace_preferred( ef936xstartup, src_hw_ef936x_startup_asm);
     deploy_inplace_preferred( putimage, src_hw_ef936x_put_image_asm );
+    deploy_inplace_preferred( putimagecompiled, src_hw_ef936x_put_image_compiled_asm );
     deploy_inplace_preferred( getimage, src_hw_ef936x_get_image_asm );
     deploy_inplace_preferred( clsBox, src_hw_ef936x_cls_box_asm )
     deploy_inplace_preferred( clsGraphic, src_hw_ef936x_cls_asm );

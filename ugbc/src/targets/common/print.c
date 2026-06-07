@@ -250,6 +250,18 @@ void print( Environment * _environment, char * _value, int _new_line, int _raw )
 
                             break;
                         }
+                        case VT_COMPILED_IMAGE: {
+                            char bufferName[MAX_TEMPORARY_STORAGE];
+                            sprintf(bufferName, "@cimage(%s)", value->name);
+                            Variable * tmp = variable_temporary( _environment, VT_DSTRING, "(temporary for PRINT)");
+                            variable_store_string( _environment, tmp->name, bufferName );
+
+                            value->usedImage = 1;
+                            
+                            value = tmp;
+
+                            break;
+                        }                        
                         case VT_IMAGE: {
                             char bufferName[MAX_TEMPORARY_STORAGE];
                             sprintf(bufferName, "@image(%s)", value->name);

@@ -550,7 +550,10 @@ typedef enum _VariableType {
     VT_TYPE = 34,
 
     /** NUMBER */
-    VT_NUMBER = 35
+    VT_NUMBER = 35,
+
+    /** COMPILED IMAGE */
+    VT_COMPILED_IMAGE = 36
 
 } VariableType;
 
@@ -560,6 +563,7 @@ typedef struct _Resource {
     int             bankNumber;
     int             isAddress;
     int             compression;
+    int             isCompiled;
     VariableType    type;
 
 } Resource;
@@ -693,7 +697,8 @@ typedef struct _Resource {
         ( t == VT_MUSIC ) + \
         ( t == VT_TILEMAP ) + \
         ( t == VT_DOJOKA ) + \
-        ( t == VT_TYPE ) \
+        ( t == VT_TYPE ) + \
+        ( t == VT_COMPILED_IMAGE ) \
     )
 
 /**
@@ -1819,6 +1824,7 @@ typedef struct _Deployed {
     int putimagereu;
     int putimageram;
     int putimageramrle;
+    int putimagecompiled;
     int getimage;
     int puttilemap;
     int blitimage;
@@ -5216,8 +5222,21 @@ typedef struct _ParamsImageLoad {
     int         transparent_color;
     int         background_color;
     int         bank_expansion;
+    int         compiled;
 
 } ParamsImageLoad;
+
+typedef struct _ParamsImageCompile {
+
+    int         mode;
+    
+    char *      native_image_data;
+    int         native_image_size;
+
+    char *      compiled_image_data;
+    int         compiled_image_size;
+
+} ParamsImageCompile;
 
 //----------------------------------------------------------------------------
 // Array
@@ -5651,10 +5670,11 @@ void                    home( Environment * _environment );
 //----------------------------------------------------------------------------
 
 void                    if_then( Environment * _environment, char * _expression );
+void                    image_compile( Environment * _environment, ParamsImageCompile * _params );
 char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );
-Variable *              image_load( Environment * _environment, ParamsImageLoad _ParamsImageLoad );
+Variable *              image_load( Environment * _environment, ParamsImageLoad _params );
 Variable *              image_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 int                     image_size( Environment * _environment, int _width, int _height );
 Variable *              image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );

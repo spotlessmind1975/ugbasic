@@ -39,6 +39,9 @@
 
 PUTIMAGE
 
+    PSHS X
+    PULS X
+
 @IF vestigialConfig.doubleBufferSelected 
 
 @ELSE

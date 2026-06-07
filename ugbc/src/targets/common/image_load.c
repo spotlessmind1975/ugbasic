@@ -211,6 +211,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
     int _transparent_color = _ParamsImageLoad.transparent_color;
     int _background_color = _ParamsImageLoad.background_color;
     int _bank_expansion = _ParamsImageLoad.bank_expansion;
+    int _compiled = _ParamsImageLoad.compiled;
 
     // First of all, we create a variable to store the image.
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
@@ -275,7 +276,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
 
 #ifdef __c128__
 
-    if (!_environment->compressionForbidden&&_environment->enableRle) {
+    if (!_compiled&&!_environment->compressionForbidden&&_environment->enableRle) {
 
         // Try to compress the result of image conversion.
         // This means that the buffer will be compressed using RLE
@@ -312,10 +313,22 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
     }
 
 #endif
+
+    if ( _compiled ) {
+        ParamsImageCompile params;
+        params.mode = _mode;
+        params.native_image_data = result->valueBuffer;
+        params.native_image_size = result->size;
+        image_compile( _environment, &params );
+        result->valueBuffer = params.compiled_image_data;
+        result->size = params.compiled_image_size;
+        result->type = VT_COMPILED_IMAGE;
+    }
+
     // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        if ( !_environment->compressionForbidden ) {
+        if ( !_compiled&&!_environment->compressionForbidden ) {
 
             // Try to compress the result of image conversion.
             // This means that the buffer will be compressed using MSC1
