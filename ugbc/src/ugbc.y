@@ -3429,14 +3429,24 @@ exponential_less:
         $$ = sequence->name;
       } | 
     load_images OP String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional strips_definition_optional {
-        Variable * images = images_load( _environment, 
-            $3, NULL, 
-            ((struct _Environment *)_environment)->currentMode, 
-            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight, 
-            $6, $7+$8, 
-            $9, $10, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+
+        ParamsImagesLoad params;
+
+        params.filename = $3;
+        params.alias = NULL;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.frame_width = ((struct _Environment *)_environment)->frameWidth;
+        params.frame_height = ((struct _Environment *)_environment)->frameHeight;
+        params.flags = $6;
+        params.transparent_color = $7+$8;
+        params.background_color = $9;
+        params.bank_expansion = $10;
+        params.origin_x = ((struct _Environment *)_environment)->frameOriginX;
+        params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
+        params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
+        params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+            
+        Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {
             images->readonly = $11;
         }
@@ -3444,14 +3454,24 @@ exponential_less:
         $$ = images->name;
       } | 
     load_images OP String AS String CP frame_size images_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * images = images_load( _environment, 
-            $3, $5, 
-            ((struct _Environment *)_environment)->currentMode, 
-            ((struct _Environment *)_environment)->frameWidth, ((struct _Environment *)_environment)->frameHeight,
-            $8, $9+$10, 
-            $11, $12, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+
+        ParamsImagesLoad params;
+
+        params.filename = $3;
+        params.alias = $5;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.frame_width = ((struct _Environment *)_environment)->frameWidth;
+        params.frame_height = ((struct _Environment *)_environment)->frameHeight;
+        params.flags = $8;
+        params.transparent_color = $9+$10;
+        params.background_color = $11;
+        params.bank_expansion = $12;
+        params.origin_x = ((struct _Environment *)_environment)->frameOriginX;
+        params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
+        params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
+        params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+
+        Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {
             images->readonly = $11;
         }

@@ -5226,6 +5226,24 @@ typedef struct _ParamsImageLoad {
 
 } ParamsImageLoad;
 
+typedef struct _ParamsImagesLoad {
+
+    char *      filename;
+    char *      alias;
+    int         mode;
+    int         frame_width;
+    int         frame_height;
+    int         flags;
+    int         transparent_color;
+    int         background_color;
+    int         bank_expansion;
+    int         origin_x;
+    int         origin_y;
+    int         offset_x;
+    int         offset_y;
+
+} ParamsImagesLoad;
+
 typedef struct _ParamsImageCompile {
 
     int         mode;
@@ -5697,7 +5715,7 @@ char *                  image_roll_x_right( Environment * _environment, char * _
 char *                  image_roll_y_down( Environment * _environment, char * _source, int _width, int _height );
 Variable *              image_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _flags, int _transparent_color, int _background_color, int _bank_expansion );
 Variable *              images_storage( Environment * _environment, char * _source_name, char *_target_name, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
-Variable *              images_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
+Variable *              images_load( Environment * _environment, ParamsImagesLoad _params );
 Variable *              images_load_from_buffer( Environment * _environment, char * _buffer, int _buffer_size );
 void                    insert( Environment * _environment, char * _string, char * _x, char * _y, char * _w, char * _h, char * _color );
 Variable *              in_var( Environment * _environment, char * _port );
