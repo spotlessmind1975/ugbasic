@@ -321,10 +321,12 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
         params.native_image_size = result->size;
         params.native_image_bank = _bank_expansion;
         image_compile( _environment, &params );
-        result->valueBuffer = params.compiled_image_data;
-        result->size = params.compiled_image_size;
-        result->type = VT_COMPILED_IMAGE;
-        _bank_expansion = params.compiled_image_bank;
+        if ( params.compiled_image_data ) {
+            result->valueBuffer = params.compiled_image_data;
+            result->size = params.compiled_image_size;
+            result->type = VT_COMPILED_IMAGE;
+            _bank_expansion = params.compiled_image_bank;
+        }
     }
 
     // If a bank expasion has been requested, and there is at least one bank...

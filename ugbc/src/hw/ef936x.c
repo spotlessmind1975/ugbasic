@@ -1829,9 +1829,6 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsImageCompile * _params ) {
 
-    // _params->compiled_image_data = _params->native_image_data;
-    // _params->compiled_image_size = _params->native_image_size;
-
     int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/4;
     int height = (unsigned char)(_params->native_image_data[2]);
     int effectiveNativeImageSize = _params->native_image_size - 3;
@@ -1839,118 +1836,8 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
     if ( _environment->doubleBufferEnabled ) {
 
-        int finalSize = 2 + 2 * ( 6 + (height*width)*4 + height*2 ) + 1;
-
-        _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_size = finalSize;
-        _params->compiled_image_bank = -1;
-
-        // _params->compiled_image_data = malloc( finalSize );
-        // _params->compiled_image_size = finalSize;
-
-        // X = destination address on video buffer
-
-        // 3108  00080800000011011101110111011100 _image fcb $00,$08,$08,$00,$00,$00,$11,$01,$11,$01,$11,$01,$11,$01,$11, $00
-        // 3118  11000000001100111011101110111011         fcb $11,$00,$00,$00,$00,$11,$00,$11,$10,$11,$10,$11,$10,$11,$10,        $11
-        // 3128  00000000                fcb $00,$00,$00, $0
-
-        int currentPc = 0;
-        int currentData = 3;
-
-        // | 3Dkk  C6kk                    LDB #kk    
-
-        _params->compiled_image_data[currentPc++] = 0xc6;
-        _params->compiled_image_data[currentPc++] = offset;
-
-        // ....  3410                    PSHS X
-
-        _params->compiled_image_data[currentPc++] = 0x34;
-        _params->compiled_image_data[currentPc++] = 0x10;
-
-        // 373C  30898000                LEAX $8000,X
-
-        _params->compiled_image_data[currentPc++] = 0x30;
-        _params->compiled_image_data[currentPc++] = 0x89;
-        _params->compiled_image_data[currentPc++] = 0x80;
-        _params->compiled_image_data[currentPc++] = 0x00;
-
-        // For each height line:
-
-        for( int y=0; y<height; ++y ) {
-
-            // v For each width bytes data:
-
-            for( int x=0; x<width; ++x ) {
-
-                // | v
-                // | |
-                // | | ....  86dd                    LDA #$dd
-
-                _params->compiled_image_data[currentPc++] = 0x86;
-                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-
-                // | | ....  A780                    STA ,X+
-
-                _params->compiled_image_data[currentPc++] = 0xa7;
-                _params->compiled_image_data[currentPc++] = 0x80;
-
-                // | |
-
-            }
-
-            // | 3DEC  3085                    LEAX B,X 
-            // |
-
-            _params->compiled_image_data[currentPc++] = 0x30;
-            _params->compiled_image_data[currentPc++] = 0x85;
-
-        }
-
-        // ....  3510                    PULS X
-
-        _params->compiled_image_data[currentPc++] = 0x35;
-        _params->compiled_image_data[currentPc++] = 0x10;
-
-        // ....  30896000                LEAX $6000,X
-
-        _params->compiled_image_data[currentPc++] = 0x30;
-        _params->compiled_image_data[currentPc++] = 0x89;
-        _params->compiled_image_data[currentPc++] = 0x60;
-        _params->compiled_image_data[currentPc++] = 0x00;
-
-        // For each height line:
-
-        for( int y=0; y<height; ++y ) {
-
-            // v For each width bytes data:
-
-            for( int x=0; x<width; ++x ) {
-
-                // | v
-                // | |
-                // | | ....  86dd                    LDA #$dd
-
-                _params->compiled_image_data[currentPc++] = 0x86;
-                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-
-                // | | ....  A780                    STA ,X+
-
-                _params->compiled_image_data[currentPc++] = 0xa7;
-                _params->compiled_image_data[currentPc++] = 0x80;
-
-                // | |
-
-            }
-
-            // | 3DEC  3085                    LEAX B,X 
-            // |
-
-            _params->compiled_image_data[currentPc++] = 0x30;
-            _params->compiled_image_data[currentPc++] = 0x85;
-            
-        }
-
-        _params->compiled_image_data[currentPc++] = 0x39;
+        _params->compiled_image_data = NULL;
+        _params->compiled_image_size = 0;
 
     } else {
 
