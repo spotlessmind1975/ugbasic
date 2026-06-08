@@ -374,6 +374,7 @@ extern char DATATYPE_AS_STRING[][16];
             resource.realName = strdup( image->realName );
             resource.isAddress = 0;
             resource.isCompiled = 1;
+            resource.bankNumber = image->bankAssigned;
             ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             break;
         default:

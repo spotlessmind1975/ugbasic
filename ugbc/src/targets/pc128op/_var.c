@@ -419,8 +419,13 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_COMPILED_IMAGE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
-                        // forced 2 bytes to even alignment
-                        outhead2("%s equ $%4.4x", variable->realName, variable->absoluteAddress );
+                        outhead1("%s", variable->realName );
+                        outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
+                        outline1("LDA #$%2.2x", variable->bankAssigned );
+                        outline0("JSR PUTCIMAGEBANKIN" );
+                        outline1("JSR $%4.4x", variable->absoluteAddress );
+                        outline0("JSR PUTCIMAGEBANKOUT" );
+                        outline0("RTS" );
                     } else {
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {

@@ -2301,10 +2301,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
                 CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
         }
 
-        outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
-        outline0("JSR PUTCIMAGEBANKIN" );
         outline1("JSR %s", _image->realName );
-        outline0("JSR PUTCIMAGEBANKOUT" );
 
     } else {
 
