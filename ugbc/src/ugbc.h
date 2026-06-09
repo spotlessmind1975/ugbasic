@@ -553,7 +553,10 @@ typedef enum _VariableType {
     VT_NUMBER = 35,
 
     /** COMPILED IMAGE */
-    VT_COMPILED_IMAGE = 36
+    VT_COMPILED_IMAGE = 36,
+
+    /** COMPILED IMAGES */
+    VT_COMPILED_IMAGES = 37
 
 } VariableType;
 
@@ -698,7 +701,8 @@ typedef struct _Resource {
         ( t == VT_TILEMAP ) + \
         ( t == VT_DOJOKA ) + \
         ( t == VT_TYPE ) + \
-        ( t == VT_COMPILED_IMAGE ) \
+        ( t == VT_COMPILED_IMAGE ) + \
+        ( t == VT_COMPILED_IMAGES ) \
     )
 
 /**
@@ -1222,6 +1226,9 @@ typedef struct _Variable {
     SIDFILE * sidFile;
 
     Strip   *   strips;
+
+    int memoryOffsetCount;
+    int memoryOffset[ 256 ];
 
     /**
      *
@@ -5241,6 +5248,7 @@ typedef struct _ParamsImagesLoad {
     int         origin_y;
     int         offset_x;
     int         offset_y;
+    int         compiled;
 
 } ParamsImagesLoad;
 
@@ -5257,6 +5265,23 @@ typedef struct _ParamsImageCompile {
     int         compiled_image_bank;
 
 } ParamsImageCompile;
+
+typedef struct _ParamsImagesCompile {
+
+    int         mode;
+    
+    char *      native_images_data;
+    int         native_images_size;
+    int         native_images_bank;
+    int         native_images_frame_size;
+    int         native_images_frame_count;
+
+    char *      compiled_images_data;
+    int         compiled_images_size;
+    int         compiled_images_bank;
+    int         compiled_images_offset[ 256 ];
+
+} ParamsImagesCompile;
 
 //----------------------------------------------------------------------------
 // Array
@@ -5691,6 +5716,7 @@ void                    home( Environment * _environment );
 
 void                    if_then( Environment * _environment, char * _expression );
 void                    image_compile( Environment * _environment, ParamsImageCompile * _params );
+void                    images_compile( Environment * _environment, ParamsImagesCompile * _params );
 char *                  image_cut( Environment * _environment, char * _source, int _x, int _y, int _width, int _height );
 char *                  image_flip_x( Environment * _environment, char * _source, int _width, int _height, int _depth );
 char *                  image_flip_y( Environment * _environment, char * _source, int _width, int _height, int _depth );

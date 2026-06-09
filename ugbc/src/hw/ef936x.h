@@ -218,6 +218,7 @@ Variable * ef936x_get_raster_line( Environment * _environment );
 int ef936x_image_size( Environment * _environment, int _width, int _height, int _mode );
 Variable * ef936x_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
 void ef936x_image_compile( Environment * _environment, ParamsImageCompile * _params );
+void ef936x_images_compile( Environment * _environment, ParamsImagesCompile * _params );
 void ef936x_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void ef936x_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * ef936x_new_image( Environment * _environment, int _width, int _height, int _mode );

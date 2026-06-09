@@ -167,7 +167,8 @@ char DATATYPE_AS_STRING[][16] = {
     "VECTOR",
     "TYPE",
     "NUMBER",
-    "COMPILED IMAGE"
+    "COMPILED IMAGE",
+    "COMPILED IMAGES"
 };
 
 char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
@@ -14728,6 +14729,8 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
         var->absoluteAddress = expr->absoluteAddress;
         var->variableUniqueId = expr->variableUniqueId;
     }
+    memcpy( var->memoryOffset, expr->memoryOffset, expr->memoryOffsetCount * sizeof( int ) );
+    var->memoryOffsetCount = expr->memoryOffsetCount;
     var->sidFile = expr->sidFile;
     var->memoryArea = expr->memoryArea;
     var->arrayDimensions = expr->arrayDimensions;

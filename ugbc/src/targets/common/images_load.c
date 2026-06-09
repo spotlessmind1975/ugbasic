@@ -273,6 +273,7 @@ Variable * images_load( Environment * _environment, ParamsImagesLoad _params ) {
     int _origin_y = _params.origin_y;
     int _offset_x = _params.offset_x;
     int _offset_y = _params.offset_y;
+    int _compiled = _params.compiled;
 
     Variable * final = variable_temporary( _environment, VT_IMAGES, 0 );
 
@@ -375,6 +376,25 @@ Variable * images_load( Environment * _environment, ParamsImagesLoad _params ) {
 
     _environment->disableMemoryAreas = 0;
     
+    if ( _compiled ) {
+        ParamsImagesCompile params;
+        params.mode = _mode;
+        params.native_images_data = final->valueBuffer;
+        params.native_images_size = final->size;
+        params.native_images_bank = _bank_expansion;
+        params.native_images_frame_size = final->frameSize;
+        params.native_images_frame_count = final->frameCount;
+        images_compile( _environment, &params );
+        if ( params.compiled_images_data ) {
+            final->valueBuffer = params.compiled_images_data;
+            final->size = params.compiled_images_size;
+            final->type = VT_COMPILED_IMAGES;
+            final->memoryOffsetCount = params.native_images_frame_count;
+            memcpy( final->memoryOffset, params.compiled_images_offset, params.native_images_frame_count * sizeof( int ) );
+            _bank_expansion = params.compiled_images_bank;
+        }
+    }
+
     // stbi_image_free(source);
 
     if ( _bank_expansion && _environment->expansionBanks ) {

@@ -389,6 +389,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flags 
 %type <integer> load_flags1 
 %type <integer> load_image
+%type <integer> load_images
 %type <integer> memory_video_optional
 %type <integer> music_type
 %type <integer> on_bank_explicit
@@ -547,7 +548,30 @@ load_image :    LOAD IMAGE {
                 COMPILED IMAGE LOAD {
                     $$ = 1; 
                 };
-load_images: LOAD IMAGES | LOAD ATLAS | IMAGES LOAD | ATLAS LOAD;
+load_images:    LOAD IMAGES {
+                    $$ = 0; 
+                } | 
+                LOAD ATLAS {
+                    $$ = 0; 
+                } | 
+                IMAGES LOAD {
+                    $$ = 0; 
+                } | 
+                ATLAS LOAD {
+                    $$ = 0; 
+                } |
+                LOAD COMPILED IMAGES {
+                    $$ = 1; 
+                } | 
+                LOAD COMPILED ATLAS {
+                    $$ = 1; 
+                } | 
+                COMPILED IMAGES LOAD {
+                    $$ = 1; 
+                } | 
+                COMPILED ATLAS LOAD {
+                    $$ = 1; 
+                };
 load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
 load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
 load_tileset : LOAD TILESET | TILESET LOAD;
@@ -1245,6 +1269,7 @@ datatype:
     STRING { $$ = VT_DSTRING; } | 
     COMPILED IMAGE { $$ = VT_COMPILED_IMAGE; } | 
     IMAGE { $$ = VT_IMAGE; } | 
+    COMPILED IMAGES { $$ = VT_COMPILED_IMAGES; } | 
     IMAGES { $$ = VT_IMAGES; } | 
     ATLAS { $$ = VT_IMAGES; } | 
     SEQUENCE { $$ = VT_SEQUENCE; } | 
@@ -3445,6 +3470,7 @@ exponential_less:
         params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
         params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
         params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+        params.compiled = $1;
             
         Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {
@@ -3470,6 +3496,7 @@ exponential_less:
         params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
         params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
         params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+        params.compiled = $1;
 
         Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {

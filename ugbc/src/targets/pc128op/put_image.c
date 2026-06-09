@@ -369,14 +369,16 @@ extern char DATATYPE_AS_STRING[][16];
             }
             break;
         case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES: {
             Resource resource;
             memset(&resource, 0, sizeof( Resource ) );
             resource.realName = strdup( image->realName );
             resource.isAddress = 0;
             resource.isCompiled = 1;
             resource.bankNumber = image->bankAssigned;
-            ef936x_put_image( _environment, &resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
+            ef936x_put_image( _environment, &resource, _x1, _y1, _frame, NULL, 1, 0, _flags );
             break;
+        }
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
@@ -537,6 +539,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
     switch( image->type ) {
         case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES:
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
