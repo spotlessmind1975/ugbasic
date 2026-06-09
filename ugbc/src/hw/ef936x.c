@@ -1841,10 +1841,9 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
     } else {
 
-        int finalSize = 2 + 2 * ( 10 + (height*width)*4 + height*2 ) + 1;
+        int finalSize = width * height * 128;
 
         _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_size = finalSize;
         _params->compiled_image_bank = _params->native_image_bank;
 
         // _params->compiled_image_data = malloc( finalSize );
@@ -1973,6 +1972,9 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
         }
 
         _params->compiled_image_data[currentPc++] = 0x39;
+
+        _params->compiled_image_size = currentPc;
+        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
     }
 
