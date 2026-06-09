@@ -1885,27 +1885,59 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
         _params->compiled_image_data[currentPc++] = 0xc0;
 
+        int previousValue = _params->native_image_data[currentData]+1;
+
         // For each height line:
 
         for( int y=0; y<height; ++y ) {
 
             // v For each width bytes data:
 
-            for( int x=0; x<width; ++x ) {
+            if ( width & 0x01 ) {
 
-                // | v
-                // | |
-                // | | ....  86dd                    LDA #$dd
+                for( int x=0; x<width; ++x ) {
 
-                _params->compiled_image_data[currentPc++] = 0x86;
-                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    // | v
+                    // | |
+                    // | | ....  86dd                    LDA #$dd
 
-                // | | ....  A780                    STA ,X+
+                    if ( previousValue != _params->native_image_data[currentData] ) {
+                        previousValue = _params->native_image_data[currentData];
+                        _params->compiled_image_data[currentPc++] = 0x86;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                    }
 
-                _params->compiled_image_data[currentPc++] = 0xa7;
-                _params->compiled_image_data[currentPc++] = 0x80;
+                    // | | ....  A780                    STA ,X+
 
-                // | |
+                    _params->compiled_image_data[currentPc++] = 0xa7;
+                    _params->compiled_image_data[currentPc++] = 0x80;
+
+                    // | |
+
+                }
+
+            } else {
+
+                for( int x=0; x<width; x+=2 ) {
+
+                    // | v
+                    // | |
+                    // | | ....  CExxxx                  LDU #$xxxx
+
+                    _params->compiled_image_data[currentPc++] = 0xce;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+                    // | | 453C  EF81                    STU ,X++
+
+                    _params->compiled_image_data[currentPc++] = 0xef;
+                    _params->compiled_image_data[currentPc++] = 0x81;
+
+                    // | |
+
+                }
 
             }
 
@@ -1945,30 +1977,66 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
             // v For each width bytes data:
 
-            for( int x=0; x<width; ++x ) {
+            if ( width & 0x01 ) {
 
-                // | v
-                // | |
-                // | | ....  86dd                    LDA #$dd
+                for( int x=0; x<width; ++x ) {
 
-                _params->compiled_image_data[currentPc++] = 0x86;
-                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    // | v
+                    // | |
+                    // | | ....  86dd                    LDA #$dd
 
-                // | | ....  A780                    STA ,X+
+                    if ( previousValue != _params->native_image_data[currentData] ) {
+                        previousValue = _params->native_image_data[currentData];
+                        _params->compiled_image_data[currentPc++] = 0x86;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                    }
 
-                _params->compiled_image_data[currentPc++] = 0xa7;
-                _params->compiled_image_data[currentPc++] = 0x80;
+                    // | | ....  A780                    STA ,X+
 
-                // | |
+                    _params->compiled_image_data[currentPc++] = 0xa7;
+                    _params->compiled_image_data[currentPc++] = 0x80;
 
+                    // | |
+
+                }
+
+                // | 3DEC  3085                    LEAX B,X 
+                // |
+
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+                
+            } else {
+
+                for( int x=0; x<width; x+=2 ) {
+
+                    // | v
+                    // | |
+                    // | | ....  CExxxx                  LDU #$xxxx
+
+                    _params->compiled_image_data[currentPc++] = 0xce;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+                    // | | 453C  EF81                    STU ,X++
+
+                    _params->compiled_image_data[currentPc++] = 0xef;
+                    _params->compiled_image_data[currentPc++] = 0x81;
+
+                    // | |
+                    
+                }
+
+                // | 3DEC  3085                    LEAX B,X 
+                // |
+
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+                
             }
 
-            // | 3DEC  3085                    LEAX B,X 
-            // |
-
-            _params->compiled_image_data[currentPc++] = 0x30;
-            _params->compiled_image_data[currentPc++] = 0x85;
-            
         }
 
         _params->compiled_image_data[currentPc++] = 0x39;
@@ -1977,8 +2045,6 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
         _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
     }
-
-
 
 }
 
