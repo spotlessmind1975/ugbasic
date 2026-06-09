@@ -502,11 +502,11 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
                         outline1("LDA #$%2.2x", variable->bankAssigned );
                         outline0("JSR PUTCIMAGEBANKIN" );
-                        outline0("LDA #$04" );
+                        outline0("LDA #$03" );
                         outline0("MUL" );
-                        outline1("ADDD #%sJUMPER+7", variable->realName );
-                        outline1("STD %sJUMPER+1", variable->realName );
-                        outhead1("%sJUMPER", variable->realName );
+                        outline1("ADDD #JUMPER%s+7", variable->realName );
+                        outline1("STD JUMPER%s+1", variable->realName );
+                        outhead1("JUMPER%s", variable->realName );
                         outline0("JSR $0000" );
                         outline0("JSR PUTCIMAGEBANKOUT" );
                         outline0("RTS" );
@@ -517,16 +517,16 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s", variable->realName );
                         outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
-                        outline0("LDA #$04" );
+                        outline0("LDA #$03" );
                         outline0("MUL" );
-                        outline1("ADDD %sROUTINES", variable->realName );
-                        outline1("STD %sJUMPER+1", variable->realName );
-                        outhead1("%sJUMPER", variable->realName );
+                        outline1("ADDD #%sROUTINES", variable->realName );
+                        outline1("STD JUMPER%s+1", variable->realName );
+                        outhead1("JUMPER%s", variable->realName );
                         outline0("JMP $0000" );
                         outline0("RTS" );
                         outhead1("%sROUTINES", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline2("JMP $%4.4x+$%4.4x", variable->absoluteAddress, variable->memoryOffset[i] );
+                            outline1("JMP *+$%4.4x+3", variable->memoryOffset[i] );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {

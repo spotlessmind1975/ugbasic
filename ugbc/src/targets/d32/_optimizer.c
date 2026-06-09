@@ -278,6 +278,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "_TAB"))  return 0;
     if(po_buf_match(name, "ISV"))  return 0;
     if(po_buf_match(name, "BINTO^"))  return 0;
+    if(po_buf_match(name, "JUMPER^"))  return 0;
 
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;

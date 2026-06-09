@@ -1834,8 +1834,6 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
     int effectiveNativeImageSize = _params->native_image_size - 3;
     int offset = 40 - width;
 
-    printf( "ef936x_image_compile_multicolor_mode16( %d, %d )\n", width, height );
-
     if ( _environment->doubleBufferEnabled ) {
 
         _params->compiled_image_data = NULL;
@@ -2011,8 +2009,6 @@ void ef936x_images_compile_multicolor_mode16( Environment * _environment, Params
     int width = (((unsigned char)(_params->native_images_data[3])<<8) + (unsigned char)(_params->native_images_data[4]))/4;
     int height = (unsigned char)(_params->native_images_data[5]);
 
-    printf( "ef936x_images_compile_multicolor_mode16( %d, %d, %d )\n", width, height, _params->native_images_frame_size );
-
     if ( _environment->doubleBufferEnabled ) {
 
         _params->compiled_images_data = NULL;
@@ -2037,17 +2033,14 @@ void ef936x_images_compile_multicolor_mode16( Environment * _environment, Params
         int currentPc = 0;
 
         for( int i=0; i<_params->native_images_frame_count; ++i ) {
-            printf( "to be compiled %d\n", i );
             ParamsImageCompile params;
             params.mode = _params->mode;
             params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
             params.native_image_size = _params->native_images_frame_size;
             params.native_image_bank = _params->native_images_bank;
             image_compile( _environment, &params );
-            printf( "compiled %d\n", i );
             if ( params.compiled_image_data ) {
                 memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
-                printf( "copied %d\n", i );
                 _params->compiled_images_offset[i] = currentPc;
                 currentPc += params.compiled_image_size;
             } else {
