@@ -1971,6 +1971,8 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
         _params->compiled_image_data[currentPc++] = 0xc0;
 
+        previousValue = _params->native_image_data[currentData]+1;
+
         // For each height line:
 
         for( int y=0; y<height; ++y ) {
