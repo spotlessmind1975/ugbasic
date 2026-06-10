@@ -1926,9 +1926,15 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
                     // | |
                     // | | ....  CExxxx                  LDU #$xxxx
 
-                    _params->compiled_image_data[currentPc++] = 0xce;
-                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                        _params->compiled_image_data[currentPc++] = 0xce;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                        ++currentData;
+                    }
 
                     // | | 453C  EF81                    STU ,X++
 
@@ -2018,9 +2024,15 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
                     // | |
                     // | | ....  CExxxx                  LDU #$xxxx
 
-                    _params->compiled_image_data[currentPc++] = 0xce;
-                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                        _params->compiled_image_data[currentPc++] = 0xce;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                        ++currentData;
+                    }
 
                     // | | 453C  EF81                    STU ,X++
 
@@ -2046,6 +2058,7 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
         _params->compiled_image_size = currentPc;
         _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
+        // printf( "%d,%d,%f\n", _params->native_image_size, _params->compiled_image_size, (float) ( (float) _params->compiled_image_size / (float) _params->native_image_size ) );
     }
 
 }
