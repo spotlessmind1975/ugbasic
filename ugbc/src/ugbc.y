@@ -3474,7 +3474,7 @@ exponential_less:
             
         Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {
-            images->readonly = $11;
+            images->readonly = ($11 || $1) ? 0 : 1;
         }
         images->strips = ((struct _Environment *)_environment)->currentStrip;
         $$ = images->name;
@@ -3500,7 +3500,7 @@ exponential_less:
 
         Variable * images = images_load( _environment, params );
         if ( $11 != -1 ) {
-            images->readonly = $11;
+            images->readonly = ($11 || $1) ? 0 : 1;
         }
         $$ = images->name;
       } | 
@@ -3528,7 +3528,7 @@ exponential_less:
 
         Variable * image = image_load( _environment, params );
         if ( $10 != -1 ) {
-            image->readonly = $10;
+            image->readonly = ($10 || $1) ? 0 : 1;
         }
         $$ = image->name;
       } | 
@@ -3547,7 +3547,7 @@ exponential_less:
 
         Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
-            image->readonly = $12;
+            image->readonly = ($12 || $1) ? 0 : 1;
         }
         $$ = image->name;
       } | 
