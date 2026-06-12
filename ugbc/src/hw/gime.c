@@ -2664,6 +2664,374 @@ Variable * gime_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void gime_image_compile_bitmap_mode_hires( Environment * _environment, ParamsImageCompile * _params ) {
+
+    // X = destination video address
+
+    int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/8;
+    int height = (unsigned char)(_params->native_image_data[2]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->screenTilesWidth - width;
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_image_data = NULL;
+        _params->compiled_image_size = 0;
+
+    } else {
+
+        int finalSize = width * height * 256;
+
+        _params->compiled_image_data = malloc( finalSize );
+        _params->compiled_image_bank = _params->native_image_bank;
+
+        // _params->compiled_image_data = malloc( finalSize );
+        // _params->compiled_image_size = finalSize;
+
+        // X = destination address on video buffer
+
+        int currentPc = 0;
+        int currentData = 3;
+
+        // | 3Dkk  C6kk                    LDB #kk    
+
+        _params->compiled_image_data[currentPc++] = 0xc6;
+        _params->compiled_image_data[currentPc++] = offset;
+
+        int previousValue = _params->native_image_data[currentData]+1;
+
+        // For each height line:
+
+        for( int y=0; y<height; ++y ) {
+
+            // v For each width bytes data:
+
+            if ( width & 0x01 ) {
+
+                for( int x=0; x<width; ++x ) {
+
+                    // | v
+                    // | |
+                    // | | ....  86dd                    LDA #$dd
+
+                    if ( previousValue != _params->native_image_data[currentData] ) {
+                        previousValue = _params->native_image_data[currentData];
+                        _params->compiled_image_data[currentPc++] = 0x86;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                    }
+
+                    // | | ....  A780                    STA ,X+
+
+                    _params->compiled_image_data[currentPc++] = 0xa7;
+                    _params->compiled_image_data[currentPc++] = 0x80;
+
+                    // | |
+
+                }
+
+            } else {
+
+                for( int x=0; x<width; x+=2 ) {
+
+                    // | v
+                    // | |
+                    // | | ....  CExxxx                  LDU #$xxxx
+
+                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                        _params->compiled_image_data[currentPc++] = 0xce;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                        ++currentData;
+                    }
+
+                    // | | 453C  EF81                    STU ,X++
+
+                    _params->compiled_image_data[currentPc++] = 0xef;
+                    _params->compiled_image_data[currentPc++] = 0x81;
+
+                    // | |
+
+                }
+
+            }
+
+            if ( y < ( height - 1 ) ) {
+                // | 3DEC  3085                    LEAX B,X 
+                // |
+
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+            }
+
+        }
+
+        if ( _params->compiled_image_bank != -1 ) {
+            _params->compiled_image_data[currentPc++] = 0x39;
+        }
+
+        _params->compiled_image_size = currentPc;
+        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+    }
+
+}
+
+void gime_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int _mode = _params->mode;
+
+    switch( _mode ) {
+
+        case BITMAP_MODE_128x192x2:
+        case BITMAP_MODE_128x200x2:
+        case BITMAP_MODE_128x225x2:
+        case BITMAP_MODE_160x192x2:
+        case BITMAP_MODE_160x200x2:
+        case BITMAP_MODE_160x225x2:
+        case BITMAP_MODE_256x192x2:
+        case BITMAP_MODE_256x200x2:
+        case BITMAP_MODE_256x225x2:
+        case BITMAP_MODE_320x192x2:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_320x225x2:
+        case BITMAP_MODE_512x192x2:
+        case BITMAP_MODE_512x200x2:
+        case BITMAP_MODE_512x225x2:
+        case BITMAP_MODE_640x192x2:
+        case BITMAP_MODE_640x200x2:
+        case BITMAP_MODE_640x225x2:
+
+            gime_image_compile_bitmap_mode_hires( _environment, _params );
+            return;
+                    
+        case BITMAP_MODE_64x192x4:
+        case BITMAP_MODE_64x200x4:
+        case BITMAP_MODE_64x225x4:
+        case BITMAP_MODE_80x192x4:
+        case BITMAP_MODE_80x200x4:
+        case BITMAP_MODE_80x225x4:
+        case BITMAP_MODE_128x192x4:
+        case BITMAP_MODE_128x200x4:
+        case BITMAP_MODE_128x225x4:
+        case BITMAP_MODE_160x192x4:
+        case BITMAP_MODE_160x200x4:
+        case BITMAP_MODE_160x225x4:
+        case BITMAP_MODE_256x192x4:
+        case BITMAP_MODE_256x200x4:
+        case BITMAP_MODE_256x225x4:
+        case BITMAP_MODE_320x192x4:
+        case BITMAP_MODE_320x200x4:
+        case BITMAP_MODE_320x225x4:
+        case BITMAP_MODE_512x192x4:
+        case BITMAP_MODE_512x200x4:
+        case BITMAP_MODE_512x225x4:
+        case BITMAP_MODE_640x192x4:
+        case BITMAP_MODE_640x200x4:
+        case BITMAP_MODE_640x225x4:
+
+            // gime_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return;
+
+        case BITMAP_MODE_64x192x16:
+        case BITMAP_MODE_64x200x16:
+        case BITMAP_MODE_64x225x16:
+        case BITMAP_MODE_80x192x16:
+        case BITMAP_MODE_80x200x16:
+        case BITMAP_MODE_80x225x16:
+        case BITMAP_MODE_128x192x16:
+        case BITMAP_MODE_128x200x16:
+        case BITMAP_MODE_128x225x16:
+        case BITMAP_MODE_160x192x16:
+        case BITMAP_MODE_160x200x16:
+        case BITMAP_MODE_160x225x16:
+        case BITMAP_MODE_256x192x16:
+        case BITMAP_MODE_256x200x16:
+        case BITMAP_MODE_256x225x16:
+        case BITMAP_MODE_320x192x16:
+        case BITMAP_MODE_320x200x16:
+        case BITMAP_MODE_320x225x16:
+
+            // gime_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            return;
+
+    }
+
+    // return gime_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void gime_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_128x192x2:
+    //     case BITMAP_MODE_128x200x2:
+    //     case BITMAP_MODE_128x225x2:
+    //     case BITMAP_MODE_160x192x2:
+    //     case BITMAP_MODE_160x200x2:
+    //     case BITMAP_MODE_160x225x2:
+    //     case BITMAP_MODE_256x192x2:
+    //     case BITMAP_MODE_256x200x2:
+    //     case BITMAP_MODE_256x225x2:
+    //     case BITMAP_MODE_320x192x2:
+    //     case BITMAP_MODE_320x200x2:
+    //     case BITMAP_MODE_320x225x2:
+    //     case BITMAP_MODE_512x192x2:
+    //     case BITMAP_MODE_512x200x2:
+    //     case BITMAP_MODE_512x225x2:
+    //     case BITMAP_MODE_640x192x2:
+    //     case BITMAP_MODE_640x200x2:
+    //     case BITMAP_MODE_640x225x2:
+
+    //         return gime_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+                    
+    //     case BITMAP_MODE_64x192x4:
+    //     case BITMAP_MODE_64x200x4:
+    //     case BITMAP_MODE_64x225x4:
+    //     case BITMAP_MODE_80x192x4:
+    //     case BITMAP_MODE_80x200x4:
+    //     case BITMAP_MODE_80x225x4:
+    //     case BITMAP_MODE_128x192x4:
+    //     case BITMAP_MODE_128x200x4:
+    //     case BITMAP_MODE_128x225x4:
+    //     case BITMAP_MODE_160x192x4:
+    //     case BITMAP_MODE_160x200x4:
+    //     case BITMAP_MODE_160x225x4:
+    //     case BITMAP_MODE_256x192x4:
+    //     case BITMAP_MODE_256x200x4:
+    //     case BITMAP_MODE_256x225x4:
+    //     case BITMAP_MODE_320x192x4:
+    //     case BITMAP_MODE_320x200x4:
+    //     case BITMAP_MODE_320x225x4:
+    //     case BITMAP_MODE_512x192x4:
+    //     case BITMAP_MODE_512x200x4:
+    //     case BITMAP_MODE_512x225x4:
+    //     case BITMAP_MODE_640x192x4:
+    //     case BITMAP_MODE_640x200x4:
+    //     case BITMAP_MODE_640x225x4:
+
+    //         return gime_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //     case BITMAP_MODE_64x192x16:
+    //     case BITMAP_MODE_64x200x16:
+    //     case BITMAP_MODE_64x225x16:
+    //     case BITMAP_MODE_80x192x16:
+    //     case BITMAP_MODE_80x200x16:
+    //     case BITMAP_MODE_80x225x16:
+    //     case BITMAP_MODE_128x192x16:
+    //     case BITMAP_MODE_128x200x16:
+    //     case BITMAP_MODE_128x225x16:
+    //     case BITMAP_MODE_160x192x16:
+    //     case BITMAP_MODE_160x200x16:
+    //     case BITMAP_MODE_160x225x16:
+    //     case BITMAP_MODE_256x192x16:
+    //     case BITMAP_MODE_256x200x16:
+    //     case BITMAP_MODE_256x225x16:
+    //     case BITMAP_MODE_320x192x16:
+    //     case BITMAP_MODE_320x200x16:
+    //     case BITMAP_MODE_320x225x16:
+
+    //         return gime_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    // }
+
+    // return gime_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void gime_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_128x192x2:
+    //     case BITMAP_MODE_128x200x2:
+    //     case BITMAP_MODE_128x225x2:
+    //     case BITMAP_MODE_160x192x2:
+    //     case BITMAP_MODE_160x200x2:
+    //     case BITMAP_MODE_160x225x2:
+    //     case BITMAP_MODE_256x192x2:
+    //     case BITMAP_MODE_256x200x2:
+    //     case BITMAP_MODE_256x225x2:
+    //     case BITMAP_MODE_320x192x2:
+    //     case BITMAP_MODE_320x200x2:
+    //     case BITMAP_MODE_320x225x2:
+    //     case BITMAP_MODE_512x192x2:
+    //     case BITMAP_MODE_512x200x2:
+    //     case BITMAP_MODE_512x225x2:
+    //     case BITMAP_MODE_640x192x2:
+    //     case BITMAP_MODE_640x200x2:
+    //     case BITMAP_MODE_640x225x2:
+
+    //         return gime_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+                    
+    //     case BITMAP_MODE_64x192x4:
+    //     case BITMAP_MODE_64x200x4:
+    //     case BITMAP_MODE_64x225x4:
+    //     case BITMAP_MODE_80x192x4:
+    //     case BITMAP_MODE_80x200x4:
+    //     case BITMAP_MODE_80x225x4:
+    //     case BITMAP_MODE_128x192x4:
+    //     case BITMAP_MODE_128x200x4:
+    //     case BITMAP_MODE_128x225x4:
+    //     case BITMAP_MODE_160x192x4:
+    //     case BITMAP_MODE_160x200x4:
+    //     case BITMAP_MODE_160x225x4:
+    //     case BITMAP_MODE_256x192x4:
+    //     case BITMAP_MODE_256x200x4:
+    //     case BITMAP_MODE_256x225x4:
+    //     case BITMAP_MODE_320x192x4:
+    //     case BITMAP_MODE_320x200x4:
+    //     case BITMAP_MODE_320x225x4:
+    //     case BITMAP_MODE_512x192x4:
+    //     case BITMAP_MODE_512x200x4:
+    //     case BITMAP_MODE_512x225x4:
+    //     case BITMAP_MODE_640x192x4:
+    //     case BITMAP_MODE_640x200x4:
+    //     case BITMAP_MODE_640x225x4:
+
+    //         return gime_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //     case BITMAP_MODE_64x192x16:
+    //     case BITMAP_MODE_64x200x16:
+    //     case BITMAP_MODE_64x225x16:
+    //     case BITMAP_MODE_80x192x16:
+    //     case BITMAP_MODE_80x200x16:
+    //     case BITMAP_MODE_80x225x16:
+    //     case BITMAP_MODE_128x192x16:
+    //     case BITMAP_MODE_128x200x16:
+    //     case BITMAP_MODE_128x225x16:
+    //     case BITMAP_MODE_160x192x16:
+    //     case BITMAP_MODE_160x200x16:
+    //     case BITMAP_MODE_160x225x16:
+    //     case BITMAP_MODE_256x192x16:
+    //     case BITMAP_MODE_256x200x16:
+    //     case BITMAP_MODE_256x225x16:
+    //     case BITMAP_MODE_320x192x16:
+    //     case BITMAP_MODE_320x200x16:
+    //     case BITMAP_MODE_320x225x16:
+
+    //         return gime_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    // }
+
+    // return gime_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 static void gime_load_image_address_to_y( Environment * _environment, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     outline1("LDY #%s", _source );
@@ -2801,51 +3169,79 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
 
 void gime_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
     
-    deploy_preferred( gimevars, src_hw_gime_vars_asm);
-    deploy_preferred( putimage, src_hw_gime_put_image_asm );
+    if ( _image->isCompiled ) {
 
-    if ( _image->isAddress ) {
-        outline1("LDY %s", _image->realName );
-    } else {
-        outline1("LDY #%s", _image->realName );
-    }
-    if ( _frame_size ) {
+        Variable * x = variable_retrieve( _environment, _x );
+        Variable * y = variable_retrieve( _environment, _y );
+
+        outline1("LDD %s", x->realName );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", y->realName );
+        outline0("STD <IMAGEY" );
+
         if ( _sequence ) {
-            outline0("LEAY 3,y" );
-            if ( strlen(_sequence) == 0 ) {
-            } else {
-                outline1("LDB %s", _sequence );
-                outline1("JSR %soffsetframe", _image->realName );
-            }
-            if ( _frame ) {
-                if ( strlen(_frame) == 0 ) {
+            Variable * sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+            outline1("LDA %s", sequence->realName );
+            outline1("LDB #$%2.2x", _frame_count );
+            outline0("MUL");
+        } else {
+            outline0("CLRB");
+        }
+        if ( _frame ) {
+            Variable * frame = variable_retrieve( _environment, _frame );
+            outline1("ADDB %s", frame->realName );
+        }
+        outline1("JSR %s", _image->realName );
+
+    } else {
+
+        deploy_preferred( gimevars, src_hw_gime_vars_asm);
+        deploy_preferred( putimage, src_hw_gime_put_image_asm );
+
+        if ( _image->isAddress ) {
+            outline1("LDY %s", _image->realName );
+        } else {
+            outline1("LDY #%s", _image->realName );
+        }
+        if ( _frame_size ) {
+            if ( _sequence ) {
+                outline0("LEAY 3,y" );
+                if ( strlen(_sequence) == 0 ) {
                 } else {
-                    outline1("LDB %s", _frame );
+                    outline1("LDB %s", _sequence );
                     outline1("JSR %soffsetframe", _image->realName );
                 }
-            }
-        } else {
-            if ( _frame ) {
-                outline0("LEAY 3,y" );
-                if ( strlen(_frame) == 0 ) {
-                } else {
-                    outline1("LDB %s", _frame );
-                    outline1("JSR %soffsetframe", _image->realName );
+                if ( _frame ) {
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _frame );
+                        outline1("JSR %soffsetframe", _image->realName );
+                    }
+                }
+            } else {
+                if ( _frame ) {
+                    outline0("LEAY 3,y" );
+                    if ( strlen(_frame) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _frame );
+                        outline1("JSR %soffsetframe", _image->realName );
+                    }
                 }
             }
         }
+
+        outline1("LDD %s", _x );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", _y );
+        outline0("STD <IMAGEY" );
+
+        outline1("LDD %s", _flags );
+        outline0("STB <IMAGEF" );
+        outline0("STA <IMAGET" );
+
+        outline0("JSR PUTIMAGE");
+
     }
-
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
-
-    outline1("LDD %s", _flags );
-    outline0("STB <IMAGEF" );
-    outline0("STA <IMAGET" );
-
-    outline0("JSR PUTIMAGE");
 
 }
 

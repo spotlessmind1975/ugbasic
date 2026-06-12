@@ -458,8 +458,6 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                                     } else {
                                         outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
                                     }
-
-                                    outline0("RTS");
                                 }
                             } else {
                                 // forced +1 byte to even alignment
