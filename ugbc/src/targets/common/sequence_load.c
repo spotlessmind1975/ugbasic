@@ -237,7 +237,21 @@ Si noti che il comportamento predefinito dipende dal computer target.
 @ntarget gb
 </usermanual> */
 
-Variable * sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y ) {
+Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params ) {
+
+    char * _filename = _params.filename;
+    char * _alias = _params.alias;
+    int _mode = _params.mode;
+    int _frame_width = _params.frame_width;
+    int _frame_height = _params.frame_height;
+    int _flags = _params.flags;
+    int _transparent_color = _params.transparent_color;
+    int _background_color = _params.background_color;
+    int _bank_expansion = _params.bank_expansion;
+    int _origin_x = _params.origin_x;
+    int _origin_y = _params.origin_y;
+    int _offset_x = _params.offset_x;
+    int _offset_y = _params.offset_y;
 
     Variable * final = variable_temporary( _environment, VT_SEQUENCE, 0 );
 

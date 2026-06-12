@@ -3424,30 +3424,48 @@ exponential_less:
     LOAD MUSIC OP String CP on_bank_explicit { $$ = music_load( _environment, $4, NULL, abs($6) )->name; } | 
     LOAD MUSIC OP String AS String CP on_bank_explicit { $$ = music_load( _environment, $4, $6, abs($8) )->name; } | 
     load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
-        Variable * sequence = sequence_load( 
-            _environment, 
-            $3, $5, 
-            ((struct _Environment *)_environment)->currentMode, 
-            $10, $12, 
-            $14, $15+$16, 
-            $17, $18, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+
+        ParamsSequenceLoad params;
+
+        params.filename = $3;
+        params.alias = $5;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.frame_width = $10;
+        params.frame_height = $12;
+        params.flags = $14;
+        params.transparent_color = $15+$16;
+        params.background_color = $17;
+        params.bank_expansion = $18;
+        params.origin_x = ((struct _Environment *)_environment)->frameOriginX;
+        params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
+        params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
+        params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+
+        Variable * sequence = sequence_load(  _environment, params );
         if ( $19 != -1 ) {
             sequence->readonly = $19;
         }
         $$ = sequence->name;
       } | 
     load_sequence OP String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {        
-        Variable * sequence = sequence_load( 
-            _environment, 
-            $3, NULL, 
-            ((struct _Environment *)_environment)->currentMode, 
-            $8, $10, 
-            $12, $13+$14, 
-            $15, $16, 
-            ((struct _Environment *)_environment)->frameOriginX, ((struct _Environment *)_environment)->frameOriginY, 
-            ((struct _Environment *)_environment)->frameOffsetX, ((struct _Environment *)_environment)->frameOffsetY );
+
+        ParamsSequenceLoad params;
+
+        params.filename = $3;
+        params.alias = NULL;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.frame_width = $8;
+        params.frame_height = $10;
+        params.flags = $12;
+        params.transparent_color = $13+$14;
+        params.background_color = $15;
+        params.bank_expansion = $16;
+        params.origin_x = ((struct _Environment *)_environment)->frameOriginX;
+        params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
+        params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
+        params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+
+        Variable * sequence = sequence_load(  _environment, params );
         if ( $17 != -1 ) {
             sequence->readonly = $17;
         }

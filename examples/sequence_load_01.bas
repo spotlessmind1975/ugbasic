@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM STATIC IMAGES SEQUENCE LOADING AND DISPLAY OF A FRAME
 REM
 REM This small example will show how to load sequence from a single image.
@@ -19,7 +19,7 @@ REM come IMAGE, il che significa usare il primo fotogramma.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc128op,to8,cpc
 
-    BITMAP ENABLE (16)
+    SCREEN #3
     CLS
 
     sequence := LOAD SEQUENCE("sequence.png" ) FRAME SIZE (16,16)

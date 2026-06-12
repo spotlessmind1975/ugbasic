@@ -5252,6 +5252,24 @@ typedef struct _ParamsImagesLoad {
 
 } ParamsImagesLoad;
 
+typedef struct _ParamsSequenceLoad {
+
+    char *      filename;
+    char *      alias;
+    int         mode;
+    int         frame_width;
+    int         frame_height;
+    int         flags;
+    int         transparent_color;
+    int         background_color;
+    int         bank_expansion;
+    int         origin_x;
+    int         origin_y;
+    int         offset_x;
+    int         offset_y;
+
+} ParamsSequenceLoad;
+
 typedef struct _ParamsImageCompile {
 
     int         mode;
@@ -6015,7 +6033,7 @@ void                    screen_vertical_scroll( Environment * _environment, int 
 void                    screen_vertical_scroll_var( Environment * _environment, char * _displacement );
 void                    scroll( Environment * _environment, int _dx, int _dy );
 void                    select_case( Environment * _environment, char * _expression );
-Variable *              sequence_load( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
+Variable *              sequence_load( Environment * _environment, ParamsSequenceLoad _params );
 Variable *              sequence_storage( Environment * _environment, char * _filename, char * _alias, int _mode, int _frame_width, int _frame_height, int _flags, int _transparent_color, int _background_color, int _bank_expansion, int _origin_x, int _origin_y, int _offset_x, int _offset_y );
 Variable *              serial_read( Environment * _environment, char * _size );
 Variable *              serial_read_type( Environment * _environment, VariableType _type, int _big_endian );
