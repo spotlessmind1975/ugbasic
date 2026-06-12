@@ -311,6 +311,7 @@ Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params
     _environment->disableMemoryAreas = 1;
 
     ImageDescriptor * frame = atlasDescriptor->frames;
+    int totalFrameCount = 0;
     for(int i=0; i<atlasDescriptor->count; ++i) {
         Variable * partial = image_converter( _environment, frame->data, frame->width, frame->height, frame->depth, 0, 0, frame->width, frame->height, _mode, _transparent_color, _flags );
         if ( ! firstImage && ! lastImage ) {
@@ -322,6 +323,7 @@ Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params
         }
         bufferSize += partial->size;
         frame = frame->next;
+        ++totalFrameCount;
     }
 
     bufferSize += 3;
@@ -378,12 +380,12 @@ Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params
         params.native_sequence_size = final->size;
         params.native_sequence_bank = _bank_expansion;
         params.native_sequence_frame_size = final->frameSize;
-        params.native_sequence_frame_count = final->frameCount;
+        params.native_sequence_frame_count = totalFrameCount;
         sequence_compile( _environment, &params );
         if ( params.compiled_sequence_data ) {
             final->valueBuffer = params.compiled_sequence_data;
             final->size = params.compiled_sequence_size;
-            final->type = VT_COMPILED_IMAGES;
+            final->type = VT_COMPILED_SEQUENCE;
             final->memoryOffsetCount = params.native_sequence_frame_count;
             memcpy( final->memoryOffset, params.compiled_sequence_offset, params.native_sequence_frame_count * sizeof( int ) );
             _bank_expansion = params.compiled_sequence_bank;

@@ -556,7 +556,10 @@ typedef enum _VariableType {
     VT_COMPILED_IMAGE = 36,
 
     /** COMPILED IMAGES */
-    VT_COMPILED_IMAGES = 37
+    VT_COMPILED_IMAGES = 37,
+
+    /** COMPILED SEQUENCE */
+    VT_COMPILED_SEQUENCE = 38,
 
 } VariableType;
 
@@ -702,7 +705,8 @@ typedef struct _Resource {
         ( t == VT_DOJOKA ) + \
         ( t == VT_TYPE ) + \
         ( t == VT_COMPILED_IMAGE ) + \
-        ( t == VT_COMPILED_IMAGES ) \
+        ( t == VT_COMPILED_IMAGES ) + \
+        ( t == VT_COMPILED_SEQUENCE ) \
     )
 
 /**

@@ -1295,7 +1295,9 @@ datatype:
     IMAGE { $$ = VT_IMAGE; } | 
     COMPILED IMAGES { $$ = VT_COMPILED_IMAGES; } | 
     IMAGES { $$ = VT_IMAGES; } | 
+    COMPILED ATLAS { $$ = VT_COMPILED_IMAGES; } | 
     ATLAS { $$ = VT_IMAGES; } | 
+    COMPILED SEQUENCE { $$ = VT_COMPILED_SEQUENCE; } | 
     SEQUENCE { $$ = VT_SEQUENCE; } | 
     IMAGEREF { $$ = VT_IMAGEREF; } | 
     PATH { $$ = VT_PATH; } | 

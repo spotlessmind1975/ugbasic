@@ -2774,6 +2774,7 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
                 CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
         }
 
+        outline1("; sequence = %s", _sequence );
         if ( _sequence ) {
             Variable * sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
             outline1("LDA %s", sequence->realName );

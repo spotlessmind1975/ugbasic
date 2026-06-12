@@ -560,6 +560,65 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                     break;
                 case VT_IMAGE:
                 case VT_IMAGES:
+                case VT_COMPILED_SEQUENCE:
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                        outhead1("%s", variable->realName );
+                        outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
+                        outline1("LDA #$%2.2x", variable->bankAssigned );
+                        outline0("JSR PUTCIMAGEBANKIN" );
+                        outline0("LDA #$03" );
+                        outline0("MUL" );
+                        outline1("ADDD #JUMPER%s+7", variable->realName );
+                        outline1("STD JUMPER%s+1", variable->realName );
+                        outhead1("JUMPER%s", variable->realName );
+                        outline0("JSR $0000" );
+                        outline0("JSR PUTCIMAGEBANKOUT" );
+                        outline0("RTS" );
+                        for( int i=0; i<variable->memoryOffsetCount; ++i ) {
+                            outline2("JMP $%4.4x+$%4.4x", variable->absoluteAddress, variable->memoryOffset[i] );
+                        }
+                    } else {
+                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
+                        outhead1("%s", variable->realName );
+                        outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
+                        outline0("LDA #$03" );
+                        outline0("MUL" );
+                        outline1("ADDD #%sROUTINES", variable->realName );
+                        outline1("STD JUMPER%s+1", variable->realName );
+                        outhead1("JUMPER%s", variable->realName );
+                        outline0("JMP $0000" );
+                        outline0("RTS" );
+                        outhead1("%sROUTINES", variable->realName );
+                        for( int i=0; i<variable->memoryOffsetCount; ++i ) {
+                            outline1("JMP *+$%4.4x+3", variable->memoryOffset[i] );
+                        }
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                out0("   fcb ");
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
+                                        out0("   fcb ");
+                                    } else {
+                                        out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
+                                    }
+                                }
+                                // forced +1 byte to even alignment
+                                if ( variable->size & 0x01 ) {
+                                    outhead1("$%2.2x, $0", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                }
+                            } else {
+                                CRITICAL("COMPILED SEQUENCE not possible (2)");
+                            }
+                        } else {
+                            CRITICAL("COMPILED SEQUENCE not possible (1)");
+                        }
+                    }
+                    break;
                 case VT_SEQUENCE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
