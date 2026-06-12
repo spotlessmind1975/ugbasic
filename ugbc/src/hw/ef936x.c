@@ -2296,7 +2296,7 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
                     _params->compiled_image_data[currentPc++] = 0x30;
                     _params->compiled_image_data[currentPc++] = 0x85;
                 }
-                                
+
             }
 
         }
@@ -2316,10 +2316,10 @@ void ef936x_image_compile( Environment * _environment, ParamsImageCompile * _par
     int _mode = _params->mode;
 
     switch( _mode ) {
-        // case BITMAP_MODE_40_COLUMN:
         //     return ef936x_image_compile_multicolor_mode_standard( _environment, _params );
         //     return ef936x_image_compile_multicolor_mode4( _environment, _params );
         // case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_40_COLUMN:
         case BITMAP_MODE_BITMAP_4:
             return ef936x_image_compile_multicolor_mode4( _environment, _params );
         case BITMAP_MODE_BITMAP_16:
@@ -2445,8 +2445,7 @@ void ef936x_images_compile( Environment * _environment, ParamsImagesCompile * _p
     int _mode = _params->mode;
 
     switch( _mode ) {
-        // case BITMAP_MODE_40_COLUMN:
-        //     return ef936x_image_compile_multicolor_mode_standard( _environment, _params );
+        case BITMAP_MODE_40_COLUMN:
         case BITMAP_MODE_BITMAP_4:
             return ef936x_images_compile_multicolor_mode4( _environment, _params );
         // case BITMAP_MODE_80_COLUMN:
