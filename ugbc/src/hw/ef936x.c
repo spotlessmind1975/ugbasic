@@ -1947,11 +1947,13 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
             }
 
-            // | 3DEC  3085                    LEAX B,X 
-            // |
+            if ( y < ( height - 1 ) ) {
+                // | 3DEC  3085                    LEAX B,X 
+                // |
 
-            _params->compiled_image_data[currentPc++] = 0x30;
-            _params->compiled_image_data[currentPc++] = 0x85;
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+            }
 
         }
 
@@ -2010,11 +2012,13 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
                 }
 
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+                if ( y < ( height - 1 ) ) {
+                    // | 3DEC  3085                    LEAX B,X 
+                    // |
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
+                    _params->compiled_image_data[currentPc++] = 0x30;
+                    _params->compiled_image_data[currentPc++] = 0x85;
+                }
                 
             } else {
 
@@ -2043,12 +2047,14 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
                     
                 }
 
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+                if ( y < ( height - 1 ) ) {
+                    // | 3DEC  3085                    LEAX B,X 
+                    // |
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
-                
+                    _params->compiled_image_data[currentPc++] = 0x30;
+                    _params->compiled_image_data[currentPc++] = 0x85;
+                }
+
             }
 
         }
@@ -2183,11 +2189,13 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
             }
 
-            // | 3DEC  3085                    LEAX B,X 
-            // |
+            if ( y < ( height - 1 ) ) {
+                // | 3DEC  3085                    LEAX B,X 
+                // |
 
-            _params->compiled_image_data[currentPc++] = 0x30;
-            _params->compiled_image_data[currentPc++] = 0x85;
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+            }
 
         }
 
@@ -2246,11 +2254,13 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
                 }
 
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+                if ( y < ( height - 1 ) ) {
+                    // | 3DEC  3085                    LEAX B,X 
+                    // |
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
+                    _params->compiled_image_data[currentPc++] = 0x30;
+                    _params->compiled_image_data[currentPc++] = 0x85;
+                }
                 
             } else {
 
@@ -2279,12 +2289,14 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
                     
                 }
 
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+                if ( y < ( height - 1 ) ) {
+                    // | 3DEC  3085                    LEAX B,X 
+                    // |
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
-                
+                    _params->compiled_image_data[currentPc++] = 0x30;
+                    _params->compiled_image_data[currentPc++] = 0x85;
+                }
+                                
             }
 
         }
