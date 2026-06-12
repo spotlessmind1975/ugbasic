@@ -390,6 +390,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flags1 
 %type <integer> load_image
 %type <integer> load_images
+%type <integer> load_sequence
 %type <integer> memory_video_optional
 %type <integer> music_type
 %type <integer> on_bank_explicit
@@ -572,7 +573,30 @@ load_images:    LOAD IMAGES {
                 COMPILED ATLAS LOAD {
                     $$ = 1; 
                 };
-load_sequence: LOAD SEQUENCE | SEQUENCE LOAD | LOAD STRIP | STRIP LOAD;
+load_sequence:  LOAD SEQUENCE {
+                    $$ = 0; 
+                } | 
+                SEQUENCE LOAD {
+                    $$ = 0; 
+                } | 
+                LOAD STRIP {
+                    $$ = 0; 
+                } | 
+                STRIP LOAD {
+                    $$ = 0; 
+                } |
+                LOAD COMPILED SEQUENCE {
+                    $$ = 1; 
+                } | 
+                COMPILED SEQUENCE LOAD {
+                    $$ = 1; 
+                } | 
+                LOAD COMPILED STRIP {
+                    $$ = 1; 
+                } | 
+                COMPILED STRIP LOAD {
+                    $$ = 1; 
+                } ;
 load_tilemap : LOAD TILEMAP | TILEMAP LOAD;
 load_tileset : LOAD TILESET | TILESET LOAD;
 milliseconds: MS | MILLISECOND | MILLISECONDS;
@@ -3440,10 +3464,11 @@ exponential_less:
         params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
         params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
         params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+        params.compiled = $1;
 
         Variable * sequence = sequence_load(  _environment, params );
         if ( $19 != -1 ) {
-            sequence->readonly = $19;
+            sequence->readonly = ($19 || $1) ? 0 : 1;
         }
         $$ = sequence->name;
       } | 
@@ -3464,10 +3489,11 @@ exponential_less:
         params.origin_y = ((struct _Environment *)_environment)->frameOriginY;
         params.offset_x = ((struct _Environment *)_environment)->frameOffsetX;
         params.offset_y = ((struct _Environment *)_environment)->frameOffsetY;
+        params.compiled = $1;
 
         Variable * sequence = sequence_load(  _environment, params );
         if ( $17 != -1 ) {
-            sequence->readonly = $17;
+            sequence->readonly = ($17 || $1) ? 0 : 1;
         }
         $$ = sequence->name;
       } | 

@@ -2456,8 +2456,8 @@ void ef936x_images_compile( Environment * _environment, ParamsImagesCompile * _p
         //     break;
     }
 
-    _params->compiled_images_data = _params->native_images_data;
-    _params->compiled_images_size = _params->native_images_size;
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
 
 }
 
@@ -2548,6 +2548,133 @@ static void ef936x_load_image_address_to_register( Environment * _environment, c
     if ( _register ) {
         outline1("STY %s", _register );
     }
+
+}
+
+void ef936x_sequence_compile_multicolor_mode4( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/8;
+    int height = (unsigned char)(_params->native_sequence_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_sequence_data = NULL;
+        _params->compiled_sequence_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+        _params->compiled_sequence_data = malloc( finalSize );
+        _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+        // _params->compiled_image_data = malloc( finalSize );
+        // _params->compiled_image_size = finalSize;
+
+        // X = destination address on video buffer
+
+        // 3108  00080800000011011101110111011100 _image fcb $00,$08,$08,$00,$00,$00,$11,$01,$11,$01,$11,$01,$11,$01,$11, $00
+        // 3118  11000000001100111011101110111011         fcb $11,$00,$00,$00,$00,$11,$00,$11,$10,$11,$10,$11,$10,$11,$10,        $11
+        // 3128  00000000                fcb $00,$00,$00, $0
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+            params.native_image_size = _params->native_sequence_frame_size;
+            params.native_image_bank = _params->native_sequence_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_sequence_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_sequence_data = NULL;
+                _params->compiled_sequence_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_sequence_size = currentPc;
+        _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+    }
+
+}
+
+void ef936x_sequence_compile_multicolor_mode16( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/4;
+    int height = (unsigned char)(_params->native_sequence_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_sequence_data = NULL;
+        _params->compiled_sequence_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+        _params->compiled_sequence_data = malloc( finalSize );
+        _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+        // _params->compiled_image_data = malloc( finalSize );
+        // _params->compiled_image_size = finalSize;
+
+        // X = destination address on video buffer
+
+        // 3108  00080800000011011101110111011100 _image fcb $00,$08,$08,$00,$00,$00,$11,$01,$11,$01,$11,$01,$11,$01,$11, $00
+        // 3118  11000000001100111011101110111011         fcb $11,$00,$00,$00,$00,$11,$00,$11,$10,$11,$10,$11,$10,$11,$10,        $11
+        // 3128  00000000                fcb $00,$00,$00, $0
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+            params.native_image_size = _params->native_sequence_frame_size;
+            params.native_image_bank = _params->native_sequence_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_sequence_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_sequence_data = NULL;
+                _params->compiled_sequence_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_sequence_size = currentPc;
+        _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+    }
+
+}
+
+void ef936x_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int _mode = _params->mode;
+
+    switch( _mode ) {
+        case BITMAP_MODE_40_COLUMN:
+        case BITMAP_MODE_BITMAP_4:
+            return ef936x_sequence_compile_multicolor_mode4( _environment, _params );
+        // case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_16:
+            return ef936x_sequence_compile_multicolor_mode16( _environment, _params );
+        // case BITMAP_MODE_PAGE:
+        //     // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+        //     break;
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
 
 }
 
@@ -2647,9 +2774,17 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
                 CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
         }
 
+        if ( _sequence ) {
+            Variable * sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
+            outline1("LDA %s", sequence->realName );
+            outline1("LDB #$%2.2x", _frame_count );
+            outline0("MUL");
+        } else {
+            outline0("CLRB");
+        }
         if ( _frame ) {
             Variable * frame = variable_retrieve( _environment, _frame );
-            outline1("LDB %s", frame->realName );
+            outline1("ADDB %s", frame->realName );
         }
         outline1("JSR %s", _image->realName );
 

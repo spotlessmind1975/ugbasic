@@ -123,11 +123,19 @@ For some targets this is the default. If you want,
 you can move the image onto the resident memory by
 using the ''UNBANKED'' keyword.
 
-Finally, if the image is not expected to change during gameplay, it can be marked 
+If the image is not expected to change during gameplay, it can be marked 
 with the ''READONLY'' attribute: in this case, the image will be stored 
 in read-only memory, if available. On the other hand, it can be marked
 with the ''NOT READONLY'' attribute, to be able to be modified. Note that
 the default behaviour depends on the target.
+
+The ''COMPILED'' parameter can be used to generate a compiled ''ATLAS'', 
+meaning not simply converting the graphic data and making it available 
+for various instructions, but generating a true "program" that draws the 
+represented image. This flag significantly improves performance, but comes 
+with a number of limitations. The two most important are that the image 
+will not be editable, even if loaded into RAM, and that it will not be 
+possible to apply effects such as ''FLIP'' and transparency.
 
 @italian
 
@@ -204,6 +212,15 @@ con l'attributo ''READONLY'': in questo caso, l'immagine verrà archiviata
 nella memoria di sola lettura, se disponibile. D'altra parte, può essere 
 contrassegnato con l'attributo ''NOT READONLY'' per poter essere modificato. 
 Si noti che il comportamento predefinito dipende dal computer target.
+
+Il parametro ''COMPILED'' può essere utilizzato per generare un ''ATLAS''
+compilata, cioè non semplicemente convertendo i dati grafici e rendendoli 
+disponibili per le varie istruzioni, ma generando un vero e proprio
+"programma" che disegna l'immagine rappresentata. Tale flag comporta un
+miglioramento notevole delle performance, al costo di una serie di limitazioni.
+Le due più importanti sono legate al fatto che l'immagine non sarà modificabile,
+anche se caricata in RAM, e che non sarà possibile applicare effetti quali
+''FLIP'' e trasparenze.
 
 @syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [ORIGIN(dx,dy)] [fl] [tr] [op] [bg] [bk] [READONLY]  [str]
 @syntax = LOAD ATLAS( filename [AS alias][,mode] ) frame [fl] [tr] [op] [bg] [bk] [ro] [str]

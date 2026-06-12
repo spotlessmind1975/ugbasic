@@ -22,7 +22,7 @@ REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc12
     SCREEN #3
     CLS
 
-    sequence := LOAD SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
+    sequence := LOAD COMPILED SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
 
     PUT IMAGE sequence SEQUENCE 1 FRAME 0 AT 0,0
 
