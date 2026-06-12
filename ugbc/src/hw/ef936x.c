@@ -1827,6 +1827,242 @@ Variable * ef936x_image_converter( Environment * _environment, char * _data, int
 
 }
 
+void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/8;
+    int height = (unsigned char)(_params->native_image_data[2]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = 40 - width;
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_image_data = NULL;
+        _params->compiled_image_size = 0;
+
+    } else {
+
+        int finalSize = width * height * 256;
+
+        _params->compiled_image_data = malloc( finalSize );
+        _params->compiled_image_bank = _params->native_image_bank;
+
+        // _params->compiled_image_data = malloc( finalSize );
+        // _params->compiled_image_size = finalSize;
+
+        // X = destination address on video buffer
+
+        // 3108  00080800000011011101110111011100 _image fcb $00,$08,$08,$00,$00,$00,$11,$01,$11,$01,$11,$01,$11,$01,$11, $00
+        // 3118  11000000001100111011101110111011         fcb $11,$00,$00,$00,$00,$11,$00,$11,$10,$11,$10,$11,$10,$11,$10,        $11
+        // 3128  00000000                fcb $00,$00,$00, $0
+
+        int currentPc = 0;
+        int currentData = 3;
+
+        // | 3Dkk  C6kk                    LDB #kk    
+
+        _params->compiled_image_data[currentPc++] = 0xc6;
+        _params->compiled_image_data[currentPc++] = offset;
+
+        // ....  3410                    PSHS X
+
+        _params->compiled_image_data[currentPc++] = 0x34;
+        _params->compiled_image_data[currentPc++] = 0x10;
+
+        // 3D91  B6xxC0                  LDA BASE_SEGMENT+$c0
+
+        _params->compiled_image_data[currentPc++] = 0xb6;
+        _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+        _params->compiled_image_data[currentPc++] = 0xc0;
+
+        // 3D94  8A01                    ORA #$01
+        
+        _params->compiled_image_data[currentPc++] = 0x8a;
+        _params->compiled_image_data[currentPc++] = 0x01;
+
+        // 3D96  B7xxC0                  STA BASE_SEGMENT+$c0
+
+        _params->compiled_image_data[currentPc++] = 0xb7;
+        _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+        _params->compiled_image_data[currentPc++] = 0xc0;
+
+        int previousValue = _params->native_image_data[currentData]+1;
+
+        // For each height line:
+
+        for( int y=0; y<height; ++y ) {
+
+            // v For each width bytes data:
+
+            if ( width & 0x01 ) {
+
+                for( int x=0; x<width; ++x ) {
+
+                    // | v
+                    // | |
+                    // | | ....  86dd                    LDA #$dd
+
+                    if ( previousValue != _params->native_image_data[currentData] ) {
+                        previousValue = _params->native_image_data[currentData];
+                        _params->compiled_image_data[currentPc++] = 0x86;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                    }
+
+                    // | | ....  A780                    STA ,X+
+
+                    _params->compiled_image_data[currentPc++] = 0xa7;
+                    _params->compiled_image_data[currentPc++] = 0x80;
+
+                    // | |
+
+                }
+
+            } else {
+
+                for( int x=0; x<width; x+=2 ) {
+
+                    // | v
+                    // | |
+                    // | | ....  CExxxx                  LDU #$xxxx
+
+                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                        _params->compiled_image_data[currentPc++] = 0xce;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                        ++currentData;
+                    }
+
+                    // | | 453C  EF81                    STU ,X++
+
+                    _params->compiled_image_data[currentPc++] = 0xef;
+                    _params->compiled_image_data[currentPc++] = 0x81;
+
+                    // | |
+
+                }
+
+            }
+
+            // | 3DEC  3085                    LEAX B,X 
+            // |
+
+            _params->compiled_image_data[currentPc++] = 0x30;
+            _params->compiled_image_data[currentPc++] = 0x85;
+
+        }
+
+        // ....  3510                    PULS X
+
+        _params->compiled_image_data[currentPc++] = 0x35;
+        _params->compiled_image_data[currentPc++] = 0x10;
+
+        // 3E15  B6xxC0                  LDA BASE_SEGMENT+$c0
+
+        _params->compiled_image_data[currentPc++] = 0xb6;
+        _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+        _params->compiled_image_data[currentPc++] = 0xC0;
+
+        // 3E18  84FE                    ANDA #$fe
+
+        _params->compiled_image_data[currentPc++] = 0x84;
+        _params->compiled_image_data[currentPc++] = 0xfe;
+
+        // 3E1A  B7xxC0                  STA BASE_SEGMENT+$c0
+
+        _params->compiled_image_data[currentPc++] = 0xb7;
+        _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+        _params->compiled_image_data[currentPc++] = 0xc0;
+
+        previousValue = _params->native_image_data[currentData]+1;
+
+        // For each height line:
+
+        for( int y=0; y<height; ++y ) {
+
+            // v For each width bytes data:
+
+            if ( width & 0x01 ) {
+
+                for( int x=0; x<width; ++x ) {
+
+                    // | v
+                    // | |
+                    // | | ....  86dd                    LDA #$dd
+
+                    if ( previousValue != _params->native_image_data[currentData] ) {
+                        previousValue = _params->native_image_data[currentData];
+                        _params->compiled_image_data[currentPc++] = 0x86;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                    }
+
+                    // | | ....  A780                    STA ,X+
+
+                    _params->compiled_image_data[currentPc++] = 0xa7;
+                    _params->compiled_image_data[currentPc++] = 0x80;
+
+                    // | |
+
+                }
+
+                // | 3DEC  3085                    LEAX B,X 
+                // |
+
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+                
+            } else {
+
+                for( int x=0; x<width; x+=2 ) {
+
+                    // | v
+                    // | |
+                    // | | ....  CExxxx                  LDU #$xxxx
+
+                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                        _params->compiled_image_data[currentPc++] = 0xce;
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    } else {
+                        ++currentData;
+                        ++currentData;
+                    }
+
+                    // | | 453C  EF81                    STU ,X++
+
+                    _params->compiled_image_data[currentPc++] = 0xef;
+                    _params->compiled_image_data[currentPc++] = 0x81;
+
+                    // | |
+                    
+                }
+
+                // | 3DEC  3085                    LEAX B,X 
+                // |
+
+                _params->compiled_image_data[currentPc++] = 0x30;
+                _params->compiled_image_data[currentPc++] = 0x85;
+                
+            }
+
+        }
+
+        _params->compiled_image_data[currentPc++] = 0x39;
+
+        _params->compiled_image_size = currentPc;
+        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+        // printf( "%d,%d,%f\n", _params->native_image_size, _params->compiled_image_size, (float) ( (float) _params->compiled_image_size / (float) _params->native_image_size ) );
+    }
+
+}
+
 void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsImageCompile * _params ) {
 
     int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/4;
@@ -1964,7 +2200,7 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data[currentPc++] = 0xb6;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
-        _params->compiled_image_data[currentPc++] = 0x15;
+        _params->compiled_image_data[currentPc++] = 0xC0;
 
         // 3E18  84FE                    ANDA #$fe
 
@@ -2070,9 +2306,10 @@ void ef936x_image_compile( Environment * _environment, ParamsImageCompile * _par
     switch( _mode ) {
         // case BITMAP_MODE_40_COLUMN:
         //     return ef936x_image_compile_multicolor_mode_standard( _environment, _params );
-        // case BITMAP_MODE_BITMAP_4:
         //     return ef936x_image_compile_multicolor_mode4( _environment, _params );
         // case BITMAP_MODE_80_COLUMN:
+        case BITMAP_MODE_BITMAP_4:
+            return ef936x_image_compile_multicolor_mode4( _environment, _params );
         case BITMAP_MODE_BITMAP_16:
             return ef936x_image_compile_multicolor_mode16( _environment, _params );
         // case BITMAP_MODE_PAGE:
@@ -2080,8 +2317,61 @@ void ef936x_image_compile( Environment * _environment, ParamsImageCompile * _par
         //     break;
     }
 
-    _params->compiled_image_data = _params->native_image_data;
-    _params->compiled_image_size = _params->native_image_size;
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void ef936x_images_compile_multicolor_mode4( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_images_data[3])<<8) + (unsigned char)(_params->native_images_data[4]))/8;
+    int height = (unsigned char)(_params->native_images_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_images_data = NULL;
+        _params->compiled_images_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_images_frame_count * 256;
+
+        _params->compiled_images_data = malloc( finalSize );
+        _params->compiled_images_bank = _params->native_images_bank;
+
+        // _params->compiled_image_data = malloc( finalSize );
+        // _params->compiled_image_size = finalSize;
+
+        // X = destination address on video buffer
+
+        // 3108  00080800000011011101110111011100 _image fcb $00,$08,$08,$00,$00,$00,$11,$01,$11,$01,$11,$01,$11,$01,$11, $00
+        // 3118  11000000001100111011101110111011         fcb $11,$00,$00,$00,$00,$11,$00,$11,$10,$11,$10,$11,$10,$11,$10,        $11
+        // 3128  00000000                fcb $00,$00,$00, $0
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_images_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+            params.native_image_size = _params->native_images_frame_size;
+            params.native_image_bank = _params->native_images_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_images_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_images_data = NULL;
+                _params->compiled_images_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_images_size = currentPc;
+        _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+    }
 
 }
 
@@ -2145,8 +2435,8 @@ void ef936x_images_compile( Environment * _environment, ParamsImagesCompile * _p
     switch( _mode ) {
         // case BITMAP_MODE_40_COLUMN:
         //     return ef936x_image_compile_multicolor_mode_standard( _environment, _params );
-        // case BITMAP_MODE_BITMAP_4:
-        //     return ef936x_image_compile_multicolor_mode4( _environment, _params );
+        case BITMAP_MODE_BITMAP_4:
+            return ef936x_images_compile_multicolor_mode4( _environment, _params );
         // case BITMAP_MODE_80_COLUMN:
         case BITMAP_MODE_BITMAP_16:
             return ef936x_images_compile_multicolor_mode16( _environment, _params );

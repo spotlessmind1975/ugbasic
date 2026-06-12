@@ -440,7 +440,9 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                                         outhead2("%s    fcc %s", variable->realName, escape_newlines( string ) );
                                     }
                                 } else {
-                                    out1("%s fcb ", variable->realName);
+                                    out1("%s ", variable->realName);
+                                    outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
+                                    out0("  fcb ");
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         if ( ( ( i + 1 ) % 16 ) == 0 ) {
@@ -456,6 +458,8 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                                     } else {
                                         outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
                                     }
+
+                                    outline0("RTS");
                                 }
                             } else {
                                 // forced +1 byte to even alignment
