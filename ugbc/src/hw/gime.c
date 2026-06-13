@@ -2817,139 +2817,130 @@ void gime_image_compile_bitmap_mode_hires( Environment * _environment, ParamsIma
     int effectiveNativeImageSize = _params->native_image_size - 3;
     int offset = _environment->screenTilesWidth - width;
 
-    if ( _environment->doubleBufferEnabled ) {
+    int finalSize = width * height * 256;
 
-        _params->compiled_image_data = NULL;
-        _params->compiled_image_size = 0;
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
 
-    } else {
+    // _params->compiled_image_data = malloc( finalSize );
+    // _params->compiled_image_size = finalSize;
 
-        int finalSize = width * height * 256;
+    // X = destination address on video buffer
 
-        _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_bank = _params->native_image_bank;
+    int currentPc = 0;
+    int currentData = 3;
 
-        // _params->compiled_image_data = malloc( finalSize );
-        // _params->compiled_image_size = finalSize;
+    // | 3Dkk  C6kk                    LDB #kk    
 
-        // X = destination address on video buffer
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
 
-        int currentPc = 0;
-        int currentData = 3;
+    int previousValue = _params->native_image_data[currentData]+1;
 
-        // | 3Dkk  C6kk                    LDB #kk    
+    // For each height line:
 
-        _params->compiled_image_data[currentPc++] = 0xc6;
-        _params->compiled_image_data[currentPc++] = offset;
+    for( int y=0; y<height; ++y ) {
 
-        int previousValue = _params->native_image_data[currentData]+1;
+        // v For each width bytes data:
 
-        // For each height line:
+        if ( width & 0x01 ) {
 
-        for( int y=0; y<height; ++y ) {
+            for( int x=0; x<width; ++x ) {
 
-            // v For each width bytes data:
+                // | v
+                // | |
+                // | | ....  86dd                    LDA #$dd
 
-            if ( width & 0x01 ) {
-
-                for( int x=0; x<width; ++x ) {
-
-                    // | v
-                    // | |
-                    // | | ....  86dd                    LDA #$dd
-
-                    if ( previousValue != _params->native_image_data[currentData] ) {
-                        previousValue = _params->native_image_data[currentData];
-                        _params->compiled_image_data[currentPc++] = 0x86;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                    }
-
-                    // | | ....  A780                    STA ,X+
-
-                    _params->compiled_image_data[currentPc++] = 0xa7;
-                    _params->compiled_image_data[currentPc++] = 0x80;
-
-                    // | |
-
+                if ( previousValue != _params->native_image_data[currentData] ) {
+                    previousValue = _params->native_image_data[currentData];
+                    _params->compiled_image_data[currentPc++] = 0x86;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
                 }
 
-            } else {
+                // | | ....  A780                    STA ,X+
 
-                for( int x=0; x<width; x+=2 ) {
+                _params->compiled_image_data[currentPc++] = 0xa7;
+                _params->compiled_image_data[currentPc++] = 0x80;
 
-                    // | v
-                    // | |
-                    // | | ....  CExxxx                  LDU #$xxxx
-
-                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
-                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
-                        _params->compiled_image_data[currentPc++] = 0xce;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                        ++currentData;
-                    }
-
-                    // | | 453C  EF81                    STU ,X++
-
-                    _params->compiled_image_data[currentPc++] = 0xef;
-                    _params->compiled_image_data[currentPc++] = 0x81;
-
-                    // | |
-
-                }
+                // | |
 
             }
 
-            if ( y < ( height - 1 ) ) {
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+        } else {
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
+            for( int x=0; x<width; x+=2 ) {
+
+                // | v
+                // | |
+                // | | ....  CExxxx                  LDU #$xxxx
+
+                if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                    previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                    _params->compiled_image_data[currentPc++] = 0xce;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
+                    ++currentData;
+                }
+
+                // | | 453C  EF81                    STU ,X++
+
+                _params->compiled_image_data[currentPc++] = 0xef;
+                _params->compiled_image_data[currentPc++] = 0x81;
+
+                // | |
+
             }
 
         }
 
-        // 2EE9  8EFFB0                  LDX #$FFB0
+        if ( y < ( height - 1 ) ) {
+            // | 3DEC  3085                    LEAX B,X 
+            // |
 
-        _params->compiled_image_data[currentPc++] = 0x8e;
-        _params->compiled_image_data[currentPc++] = 0xff;
-        _params->compiled_image_data[currentPc++] = 0xb0;
-
-        // 32E9  4F                      CLRA
-
-        _params->compiled_image_data[currentPc++] = 0x4F;
-
-        for( int i=0; i<_environment->screenColors; ++i ) {
-
-            // | 3Dkk  C6kk                    LDB #kk
-
-            _params->compiled_image_data[currentPc++] = 0xc6;
-            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-
-            // 2EEC  E786                    STB A,X
-
-            _params->compiled_image_data[currentPc++] = 0xe7;
-            _params->compiled_image_data[currentPc++] = 0x86;
-
-            // 32EF  4C                      INCA
-
-            _params->compiled_image_data[currentPc++] = 0x4c;
-
+            _params->compiled_image_data[currentPc++] = 0x30;
+            _params->compiled_image_data[currentPc++] = 0x85;
         }
-
-        if ( _params->compiled_image_bank != -1 ) {
-            _params->compiled_image_data[currentPc++] = 0x39;
-        }
-
-        _params->compiled_image_size = currentPc;
-        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
     }
+
+    // 2EE9  8EFFB0                  LDX #$FFB0
+
+    _params->compiled_image_data[currentPc++] = 0x8e;
+    _params->compiled_image_data[currentPc++] = 0xff;
+    _params->compiled_image_data[currentPc++] = 0xb0;
+
+    // 32E9  4F                      CLRA
+
+    _params->compiled_image_data[currentPc++] = 0x4F;
+
+    for( int i=0; i<_environment->screenColors; ++i ) {
+
+        // | 3Dkk  C6kk                    LDB #kk
+
+        _params->compiled_image_data[currentPc++] = 0xc6;
+        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+        // 2EEC  E786                    STB A,X
+
+        _params->compiled_image_data[currentPc++] = 0xe7;
+        _params->compiled_image_data[currentPc++] = 0x86;
+
+        // 32EF  4C                      INCA
+
+        _params->compiled_image_data[currentPc++] = 0x4c;
+
+    }
+
+    if ( _params->compiled_image_bank != -1 ) {
+        _params->compiled_image_data[currentPc++] = 0x39;
+    }
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
 }
 
@@ -2962,139 +2953,130 @@ void gime_image_compile_multicolor_mode_midres( Environment * _environment, Para
     int effectiveNativeImageSize = _params->native_image_size - 3;
     int offset = _environment->screenTilesWidth * 2 - width;
 
-    if ( _environment->doubleBufferEnabled ) {
+    int finalSize = width * height * 256;
 
-        _params->compiled_image_data = NULL;
-        _params->compiled_image_size = 0;
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
 
-    } else {
+    // _params->compiled_image_data = malloc( finalSize );
+    // _params->compiled_image_size = finalSize;
 
-        int finalSize = width * height * 256;
+    // X = destination address on video buffer
 
-        _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_bank = _params->native_image_bank;
+    int currentPc = 0;
+    int currentData = 3;
 
-        // _params->compiled_image_data = malloc( finalSize );
-        // _params->compiled_image_size = finalSize;
+    // | 3Dkk  C6kk                    LDB #kk    
 
-        // X = destination address on video buffer
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
 
-        int currentPc = 0;
-        int currentData = 3;
+    int previousValue = _params->native_image_data[currentData]+1;
 
-        // | 3Dkk  C6kk                    LDB #kk    
+    // For each height line:
 
-        _params->compiled_image_data[currentPc++] = 0xc6;
-        _params->compiled_image_data[currentPc++] = offset;
+    for( int y=0; y<height; ++y ) {
 
-        int previousValue = _params->native_image_data[currentData]+1;
+        // v For each width bytes data:
 
-        // For each height line:
+        if ( width & 0x01 ) {
 
-        for( int y=0; y<height; ++y ) {
+            for( int x=0; x<width; ++x ) {
 
-            // v For each width bytes data:
+                // | v
+                // | |
+                // | | ....  86dd                    LDA #$dd
 
-            if ( width & 0x01 ) {
-
-                for( int x=0; x<width; ++x ) {
-
-                    // | v
-                    // | |
-                    // | | ....  86dd                    LDA #$dd
-
-                    if ( previousValue != _params->native_image_data[currentData] ) {
-                        previousValue = _params->native_image_data[currentData];
-                        _params->compiled_image_data[currentPc++] = 0x86;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                    }
-
-                    // | | ....  A780                    STA ,X+
-
-                    _params->compiled_image_data[currentPc++] = 0xa7;
-                    _params->compiled_image_data[currentPc++] = 0x80;
-
-                    // | |
-
+                if ( previousValue != _params->native_image_data[currentData] ) {
+                    previousValue = _params->native_image_data[currentData];
+                    _params->compiled_image_data[currentPc++] = 0x86;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
                 }
 
-            } else {
+                // | | ....  A780                    STA ,X+
 
-                for( int x=0; x<width; x+=2 ) {
+                _params->compiled_image_data[currentPc++] = 0xa7;
+                _params->compiled_image_data[currentPc++] = 0x80;
 
-                    // | v
-                    // | |
-                    // | | ....  CExxxx                  LDU #$xxxx
-
-                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
-                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
-                        _params->compiled_image_data[currentPc++] = 0xce;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                        ++currentData;
-                    }
-
-                    // | | 453C  EF81                    STU ,X++
-
-                    _params->compiled_image_data[currentPc++] = 0xef;
-                    _params->compiled_image_data[currentPc++] = 0x81;
-
-                    // | |
-
-                }
+                // | |
 
             }
 
-            if ( y < ( height - 1 ) ) {
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+        } else {
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
+            for( int x=0; x<width; x+=2 ) {
+
+                // | v
+                // | |
+                // | | ....  CExxxx                  LDU #$xxxx
+
+                if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                    previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                    _params->compiled_image_data[currentPc++] = 0xce;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
+                    ++currentData;
+                }
+
+                // | | 453C  EF81                    STU ,X++
+
+                _params->compiled_image_data[currentPc++] = 0xef;
+                _params->compiled_image_data[currentPc++] = 0x81;
+
+                // | |
+
             }
 
         }
 
-        // 2EE9  8EFFB0                  LDX #$FFB0
+        if ( y < ( height - 1 ) ) {
+            // | 3DEC  3085                    LEAX B,X 
+            // |
 
-        _params->compiled_image_data[currentPc++] = 0x8e;
-        _params->compiled_image_data[currentPc++] = 0xff;
-        _params->compiled_image_data[currentPc++] = 0xb0;
-
-        // 32E9  4F                      CLRA
-
-        _params->compiled_image_data[currentPc++] = 0x4F;
-
-        for( int i=0; i<_environment->screenColors; ++i ) {
-
-            // | 3Dkk  C6kk                    LDB #kk
-
-            _params->compiled_image_data[currentPc++] = 0xc6;
-            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-
-            // 2EEC  E786                    STB A,X
-
-            _params->compiled_image_data[currentPc++] = 0xe7;
-            _params->compiled_image_data[currentPc++] = 0x86;
-
-            // 32EF  4C                      INCA
-
-            _params->compiled_image_data[currentPc++] = 0x4c;
-
+            _params->compiled_image_data[currentPc++] = 0x30;
+            _params->compiled_image_data[currentPc++] = 0x85;
         }
-
-        if ( _params->compiled_image_bank != -1 ) {
-            _params->compiled_image_data[currentPc++] = 0x39;
-        }
-
-        _params->compiled_image_size = currentPc;
-        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
     }
+
+    // 2EE9  8EFFB0                  LDX #$FFB0
+
+    _params->compiled_image_data[currentPc++] = 0x8e;
+    _params->compiled_image_data[currentPc++] = 0xff;
+    _params->compiled_image_data[currentPc++] = 0xb0;
+
+    // 32E9  4F                      CLRA
+
+    _params->compiled_image_data[currentPc++] = 0x4F;
+
+    for( int i=0; i<_environment->screenColors; ++i ) {
+
+        // | 3Dkk  C6kk                    LDB #kk
+
+        _params->compiled_image_data[currentPc++] = 0xc6;
+        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+        // 2EEC  E786                    STB A,X
+
+        _params->compiled_image_data[currentPc++] = 0xe7;
+        _params->compiled_image_data[currentPc++] = 0x86;
+
+        // 32EF  4C                      INCA
+
+        _params->compiled_image_data[currentPc++] = 0x4c;
+
+    }
+
+    if ( _params->compiled_image_bank != -1 ) {
+        _params->compiled_image_data[currentPc++] = 0x39;
+    }
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
 }
 
@@ -3107,139 +3089,130 @@ void gime_image_compile_multicolor_mode_lores( Environment * _environment, Param
     int effectiveNativeImageSize = _params->native_image_size - 3;
     int offset = _environment->screenTilesWidth * 4 - width;
 
-    if ( _environment->doubleBufferEnabled ) {
+    int finalSize = width * height * 256;
 
-        _params->compiled_image_data = NULL;
-        _params->compiled_image_size = 0;
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
 
-    } else {
+    // _params->compiled_image_data = malloc( finalSize );
+    // _params->compiled_image_size = finalSize;
 
-        int finalSize = width * height * 256;
+    // X = destination address on video buffer
 
-        _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_bank = _params->native_image_bank;
+    int currentPc = 0;
+    int currentData = 3;
 
-        // _params->compiled_image_data = malloc( finalSize );
-        // _params->compiled_image_size = finalSize;
+    // | 3Dkk  C6kk                    LDB #kk    
 
-        // X = destination address on video buffer
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
 
-        int currentPc = 0;
-        int currentData = 3;
+    int previousValue = _params->native_image_data[currentData]+1;
 
-        // | 3Dkk  C6kk                    LDB #kk    
+    // For each height line:
 
-        _params->compiled_image_data[currentPc++] = 0xc6;
-        _params->compiled_image_data[currentPc++] = offset;
+    for( int y=0; y<height; ++y ) {
 
-        int previousValue = _params->native_image_data[currentData]+1;
+        // v For each width bytes data:
 
-        // For each height line:
+        if ( width & 0x01 ) {
 
-        for( int y=0; y<height; ++y ) {
+            for( int x=0; x<width; ++x ) {
 
-            // v For each width bytes data:
+                // | v
+                // | |
+                // | | ....  86dd                    LDA #$dd
 
-            if ( width & 0x01 ) {
-
-                for( int x=0; x<width; ++x ) {
-
-                    // | v
-                    // | |
-                    // | | ....  86dd                    LDA #$dd
-
-                    if ( previousValue != _params->native_image_data[currentData] ) {
-                        previousValue = _params->native_image_data[currentData];
-                        _params->compiled_image_data[currentPc++] = 0x86;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                    }
-
-                    // | | ....  A780                    STA ,X+
-
-                    _params->compiled_image_data[currentPc++] = 0xa7;
-                    _params->compiled_image_data[currentPc++] = 0x80;
-
-                    // | |
-
+                if ( previousValue != _params->native_image_data[currentData] ) {
+                    previousValue = _params->native_image_data[currentData];
+                    _params->compiled_image_data[currentPc++] = 0x86;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
                 }
 
-            } else {
+                // | | ....  A780                    STA ,X+
 
-                for( int x=0; x<width; x+=2 ) {
+                _params->compiled_image_data[currentPc++] = 0xa7;
+                _params->compiled_image_data[currentPc++] = 0x80;
 
-                    // | v
-                    // | |
-                    // | | ....  CExxxx                  LDU #$xxxx
-
-                    if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
-                        previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
-                        _params->compiled_image_data[currentPc++] = 0xce;
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-                    } else {
-                        ++currentData;
-                        ++currentData;
-                    }
-
-                    // | | 453C  EF81                    STU ,X++
-
-                    _params->compiled_image_data[currentPc++] = 0xef;
-                    _params->compiled_image_data[currentPc++] = 0x81;
-
-                    // | |
-
-                }
+                // | |
 
             }
 
-            if ( y < ( height - 1 ) ) {
-                // | 3DEC  3085                    LEAX B,X 
-                // |
+        } else {
 
-                _params->compiled_image_data[currentPc++] = 0x30;
-                _params->compiled_image_data[currentPc++] = 0x85;
+            for( int x=0; x<width; x+=2 ) {
+
+                // | v
+                // | |
+                // | | ....  CExxxx                  LDU #$xxxx
+
+                if ( previousValue != (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1] ) {
+                    previousValue = (_params->native_image_data[currentData]<<8) + _params->native_image_data[currentData+1];
+                    _params->compiled_image_data[currentPc++] = 0xce;
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+                } else {
+                    ++currentData;
+                    ++currentData;
+                }
+
+                // | | 453C  EF81                    STU ,X++
+
+                _params->compiled_image_data[currentPc++] = 0xef;
+                _params->compiled_image_data[currentPc++] = 0x81;
+
+                // | |
+
             }
 
         }
 
-        // 2EE9  8EFFB0                  LDX #$FFB0
+        if ( y < ( height - 1 ) ) {
+            // | 3DEC  3085                    LEAX B,X 
+            // |
 
-        _params->compiled_image_data[currentPc++] = 0x8e;
-        _params->compiled_image_data[currentPc++] = 0xff;
-        _params->compiled_image_data[currentPc++] = 0xb0;
-
-        // 32E9  4F                      CLRA
-
-        _params->compiled_image_data[currentPc++] = 0x4F;
-
-        for( int i=0; i<_environment->screenColors; ++i ) {
-
-            // | 3Dkk  C6kk                    LDB #kk
-
-            _params->compiled_image_data[currentPc++] = 0xc6;
-            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
-
-            // 2EEC  E786                    STB A,X
-
-            _params->compiled_image_data[currentPc++] = 0xe7;
-            _params->compiled_image_data[currentPc++] = 0x86;
-
-            // 32EF  4C                      INCA
-
-            _params->compiled_image_data[currentPc++] = 0x4c;
-
+            _params->compiled_image_data[currentPc++] = 0x30;
+            _params->compiled_image_data[currentPc++] = 0x85;
         }
-
-        if ( _params->compiled_image_bank != -1 ) {
-            _params->compiled_image_data[currentPc++] = 0x39;
-        }
-
-        _params->compiled_image_size = currentPc;
-        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
     }
+
+    // 2EE9  8EFFB0                  LDX #$FFB0
+
+    _params->compiled_image_data[currentPc++] = 0x8e;
+    _params->compiled_image_data[currentPc++] = 0xff;
+    _params->compiled_image_data[currentPc++] = 0xb0;
+
+    // 32E9  4F                      CLRA
+
+    _params->compiled_image_data[currentPc++] = 0x4F;
+
+    for( int i=0; i<_environment->screenColors; ++i ) {
+
+        // | 3Dkk  C6kk                    LDB #kk
+
+        _params->compiled_image_data[currentPc++] = 0xc6;
+        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+        // 2EEC  E786                    STB A,X
+
+        _params->compiled_image_data[currentPc++] = 0xe7;
+        _params->compiled_image_data[currentPc++] = 0x86;
+
+        // 32EF  4C                      INCA
+
+        _params->compiled_image_data[currentPc++] = 0x4c;
+
+    }
+
+    if ( _params->compiled_image_bank != -1 ) {
+        _params->compiled_image_data[currentPc++] = 0x39;
+    }
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
 }
 
