@@ -118,7 +118,7 @@ CLSGX0
 
     LEAU -1, U
     CMPU #0
-    BNE CLSGX0
+    BGE CLSGX0
 
     ; The CLINE command do not need to switch from one bank to another 
     ; during video RAM operation. This routine can simply bank in video 

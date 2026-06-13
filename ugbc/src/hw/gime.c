@@ -349,14 +349,14 @@ void console_calculate( Environment * _environment ) {
     if ( bitmap ) {
         switch( _environment->screenColors ) {
             case 2:
-                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight );
+                currentFrameSize = _environment->screenTilesWidth * _environment->screenHeight;
                 break;
             case 4:
-                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 2;
+                currentFrameSize = _environment->screenTilesWidth * 2 * _environment->screenHeight;;
                 break;
             case 16:
             default:
-                currentFrameSize = ( ( _environment->screenWidth / 8 ) * _environment->screenHeight ) * 4;
+                currentFrameSize = _environment->screenTilesWidth * 4 * _environment->screenHeight;;
                 break;
         }
     } else {
@@ -410,6 +410,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -420,6 +422,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -430,6 +434,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -440,6 +446,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -450,6 +458,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -460,6 +470,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -470,6 +482,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -480,6 +494,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -490,6 +506,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -500,6 +518,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -510,6 +530,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -520,6 +542,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
             _environment->screenColors = 16;
             break;
 
@@ -534,6 +558,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -544,6 +570,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -554,6 +582,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 29;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -564,6 +594,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -574,6 +606,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -584,6 +618,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -594,6 +630,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -604,6 +642,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -614,6 +654,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -624,6 +666,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -634,6 +678,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -644,6 +690,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -654,6 +702,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -664,6 +714,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -674,6 +726,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -684,6 +738,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -694,6 +750,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -704,6 +762,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -714,6 +774,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -724,6 +786,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -734,6 +798,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 8;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -744,6 +810,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -754,6 +822,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -764,6 +834,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -774,6 +846,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -784,6 +858,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -794,6 +870,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -804,6 +882,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -814,6 +894,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -824,6 +906,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 10;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -834,6 +918,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -844,6 +930,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -854,6 +942,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -864,6 +954,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -874,6 +966,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -884,6 +978,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -894,6 +990,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -904,6 +1002,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -914,6 +1014,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 16;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -924,6 +1026,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 2;
             break;
 
@@ -934,6 +1038,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 2;
             break;
 
@@ -944,6 +1050,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 2;
             break;
 
@@ -954,6 +1062,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -964,6 +1074,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -974,6 +1086,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -984,6 +1098,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -994,6 +1110,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -1004,6 +1122,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 20;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -1014,6 +1134,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -1024,6 +1146,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -1034,6 +1158,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 64;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -1044,6 +1170,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -1054,6 +1182,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -1064,6 +1194,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -1074,6 +1206,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 4;
             break;
 
@@ -1084,6 +1218,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 4;
             break;
 
@@ -1094,6 +1230,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 80;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 4;
             break;
 
@@ -1104,6 +1242,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 24;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 192;
             _environment->screenColors = 16;
             break;
 
@@ -1114,6 +1254,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 25;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 200;
             _environment->screenColors = 16;
             break;
 
@@ -1124,6 +1266,8 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
 
             _environment->screenTilesWidth = 40;
             _environment->screenTilesHeight = 28;
+            _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
+            _environment->screenHeight = 225;
             _environment->screenColors = 16;
             break;
 
@@ -1131,8 +1275,6 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
     }
 
-    _environment->screenWidth = _environment->screenTilesWidth * _environment->fontWidth;
-    _environment->screenHeight = _environment->screenTilesHeight * _environment->fontHeight;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
 
     int currentFrameSize;
