@@ -2774,7 +2774,6 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
                 CRITICAL_PUT_IMAGE_Y_UNSUPPORTED( _y, DATATYPE_AS_STRING[y->type]);
         }
 
-        outline1("; sequence = %s", _sequence );
         if ( _sequence ) {
             Variable * sequence = variable_retrieve( _environment, _sequence );
             switch( VT_BITWIDTH( sequence->type ) ) {

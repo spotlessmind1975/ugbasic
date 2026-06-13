@@ -111,6 +111,8 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+ extern char DATATYPE_AS_STRING[][16];
+
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
 
     return RGB2GIME( _red, _green, _blue );
@@ -2770,6 +2772,34 @@ void gime_image_compile_bitmap_mode_hires( Environment * _environment, ParamsIma
 
         }
 
+        // 2EE9  8EFFB0                  LDX #$FFB0
+
+        _params->compiled_image_data[currentPc++] = 0x8e;
+        _params->compiled_image_data[currentPc++] = 0xff;
+        _params->compiled_image_data[currentPc++] = 0xb0;
+
+        // 32E9  4F                      CLRA
+
+        _params->compiled_image_data[currentPc++] = 0x4F;
+
+        for( int i=0; i<_environment->screenColors; ++i ) {
+
+            // | 3Dkk  C6kk                    LDB #kk
+
+            _params->compiled_image_data[currentPc++] = 0xc6;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 2EEC  E786                    STB A,X
+
+            _params->compiled_image_data[currentPc++] = 0xe7;
+            _params->compiled_image_data[currentPc++] = 0x86;
+
+            // 32EF  4C                      INCA
+
+            _params->compiled_image_data[currentPc++] = 0x4c;
+
+        }
+
         if ( _params->compiled_image_bank != -1 ) {
             _params->compiled_image_data[currentPc++] = 0x39;
         }
@@ -2788,7 +2818,7 @@ void gime_image_compile_multicolor_mode_midres( Environment * _environment, Para
     int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/4;
     int height = (unsigned char)(_params->native_image_data[2]);
     int effectiveNativeImageSize = _params->native_image_size - 3;
-    int offset = _environment->screenTilesWidth - width;
+    int offset = _environment->screenTilesWidth * 2 - width;
 
     if ( _environment->doubleBufferEnabled ) {
 
@@ -2884,6 +2914,34 @@ void gime_image_compile_multicolor_mode_midres( Environment * _environment, Para
                 _params->compiled_image_data[currentPc++] = 0x30;
                 _params->compiled_image_data[currentPc++] = 0x85;
             }
+
+        }
+
+        // 2EE9  8EFFB0                  LDX #$FFB0
+
+        _params->compiled_image_data[currentPc++] = 0x8e;
+        _params->compiled_image_data[currentPc++] = 0xff;
+        _params->compiled_image_data[currentPc++] = 0xb0;
+
+        // 32E9  4F                      CLRA
+
+        _params->compiled_image_data[currentPc++] = 0x4F;
+
+        for( int i=0; i<_environment->screenColors; ++i ) {
+
+            // | 3Dkk  C6kk                    LDB #kk
+
+            _params->compiled_image_data[currentPc++] = 0xc6;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 2EEC  E786                    STB A,X
+
+            _params->compiled_image_data[currentPc++] = 0xe7;
+            _params->compiled_image_data[currentPc++] = 0x86;
+
+            // 32EF  4C                      INCA
+
+            _params->compiled_image_data[currentPc++] = 0x4c;
 
         }
 
@@ -2905,7 +2963,7 @@ void gime_image_compile_multicolor_mode_lores( Environment * _environment, Param
     int width = (((unsigned char)(_params->native_image_data[0])<<8) + (unsigned char)(_params->native_image_data[1]))/2;
     int height = (unsigned char)(_params->native_image_data[2]);
     int effectiveNativeImageSize = _params->native_image_size - 3;
-    int offset = _environment->screenTilesWidth - width;
+    int offset = _environment->screenTilesWidth * 4 - width;
 
     if ( _environment->doubleBufferEnabled ) {
 
@@ -3001,6 +3059,34 @@ void gime_image_compile_multicolor_mode_lores( Environment * _environment, Param
                 _params->compiled_image_data[currentPc++] = 0x30;
                 _params->compiled_image_data[currentPc++] = 0x85;
             }
+
+        }
+
+        // 2EE9  8EFFB0                  LDX #$FFB0
+
+        _params->compiled_image_data[currentPc++] = 0x8e;
+        _params->compiled_image_data[currentPc++] = 0xff;
+        _params->compiled_image_data[currentPc++] = 0xb0;
+
+        // 32E9  4F                      CLRA
+
+        _params->compiled_image_data[currentPc++] = 0x4F;
+
+        for( int i=0; i<_environment->screenColors; ++i ) {
+
+            // | 3Dkk  C6kk                    LDB #kk
+
+            _params->compiled_image_data[currentPc++] = 0xc6;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 2EEC  E786                    STB A,X
+
+            _params->compiled_image_data[currentPc++] = 0xe7;
+            _params->compiled_image_data[currentPc++] = 0x86;
+
+            // 32EF  4C                      INCA
+
+            _params->compiled_image_data[currentPc++] = 0x4c;
 
         }
 
@@ -3557,8 +3643,20 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         outline0("STD <IMAGEY" );
 
         if ( _sequence ) {
-            Variable * sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
-            outline1("LDA %s", sequence->realName );
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+            switch( VT_BITWIDTH( sequence->type ) ) {
+                case 32:
+                    outline1("LDA %s+3", sequence->realName );
+                    break;
+                case 16:
+                    outline1("LDA %s+1", sequence->realName );
+                    break;
+                case 8:
+                    outline1("LDA %s", sequence->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( _sequence, DATATYPE_AS_STRING[sequence->type]);
+            }
             outline1("LDB #$%2.2x", _frame_count );
             outline0("MUL");
         } else {
@@ -3566,7 +3664,21 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         }
         if ( _frame ) {
             Variable * frame = variable_retrieve( _environment, _frame );
-            outline1("ADDB %s", frame->realName );
+
+            switch( VT_BITWIDTH( frame->type ) ) {
+                case 32:
+                    outline1("ADDB %s+3", frame->realName );
+                    break;
+                case 16:
+                    outline1("ADDB %s+1", frame->realName );
+                    break;
+                case 8:
+                    outline1("ADDB %s", frame->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( _frame, DATATYPE_AS_STRING[frame->type]);
+            }
+
         }
         outline1("JSR %s", _image->realName );
 
