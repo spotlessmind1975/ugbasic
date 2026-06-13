@@ -3886,6 +3886,8 @@ int yywarning ( Environment * _ignored, const char * _message );
 #define CRITICAL_HEX2BIN_UNSUPPORTED_DATATYPE( v, s ) CRITICAL3("E407 - data type not supported for HEX2BIN", v, s );
 #define CRITICAL_DIVISION_BY_ZERO( ) CRITICAL("E408 - division by zero" );
 #define CRITICAL_WAIT_CYCLES_INVALID_TIMING( ) CRITICAL("E409 - invalid value for WAIT CYCLES" );
+#define CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( v, t ) CRITICAL3("E410 - PUT IMAGE unsupported for given datatype for frame number", v, t );
+#define CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( v, t ) CRITICAL3("E411 - PUT IMAGE unsupported for given datatype for strip/sequence number", v, t );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

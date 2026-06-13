@@ -516,7 +516,6 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                             outline2("JMP $%4.4x+$%4.4x", variable->absoluteAddress, variable->memoryOffset[i] );
                         }
                     } else {
-                        outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         outhead1("%s", variable->realName );
                         outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
                         outline0("LDA #$03" );
@@ -528,7 +527,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outline0("RTS" );
                         outhead1("%sROUTINES", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline2("JMP *+$%4.4x+3*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
+                            outline2("JMP *+$%4.4x+3*%d-3", variable->memoryOffset[i], variable->memoryOffsetCount );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
@@ -587,7 +586,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outline0("RTS" );
                         outhead1("%sROUTINES", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline1("JMP *+$%4.4x+3", variable->memoryOffset[i] );
+                            outline2("JMP *+$%4.4x+3*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {

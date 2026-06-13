@@ -516,7 +516,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outline0("RTS" );
                         outhead1("%sROUTINES", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline1("JMP *+$%4.4x+3", variable->memoryOffset[i] );
+                            outline2("JMP *+$%4.4x+3*%d-3", variable->memoryOffset[i], variable->memoryOffsetCount );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {

@@ -2776,8 +2776,20 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
 
         outline1("; sequence = %s", _sequence );
         if ( _sequence ) {
-            Variable * sequence = variable_retrieve_or_define( _environment, _sequence, VT_BYTE, 0 );
-            outline1("LDA %s", sequence->realName );
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+            switch( VT_BITWIDTH( sequence->type ) ) {
+                case 32:
+                    outline1("LDA %s+3", sequence->realName );
+                    break;
+                case 16:
+                    outline1("LDA %s+1", sequence->realName );
+                    break;
+                case 8:
+                    outline1("LDA %s", sequence->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( _sequence, DATATYPE_AS_STRING[sequence->type]);
+            }
             outline1("LDB #$%2.2x", _frame_count );
             outline0("MUL");
         } else {
@@ -2785,7 +2797,21 @@ void ef936x_put_image( Environment * _environment, Resource * _image, char * _x,
         }
         if ( _frame ) {
             Variable * frame = variable_retrieve( _environment, _frame );
-            outline1("ADDB %s", frame->realName );
+
+            switch( VT_BITWIDTH( frame->type ) ) {
+                case 32:
+                    outline1("ADDB %s+3", frame->realName );
+                    break;
+                case 16:
+                    outline1("ADDB %s+1", frame->realName );
+                    break;
+                case 8:
+                    outline1("ADDB %s", frame->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( _frame, DATATYPE_AS_STRING[frame->type]);
+            }
+
         }
         outline1("JSR %s", _image->realName );
 
