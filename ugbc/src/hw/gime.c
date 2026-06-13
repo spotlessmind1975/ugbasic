@@ -3413,80 +3413,223 @@ void gime_images_compile( Environment * _environment, ParamsImagesCompile * _par
 
 }
 
+void gime_sequence_compile_bitmap_mode_hires( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/8;
+    int height = (unsigned char)(_params->native_sequence_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_sequence_data = NULL;
+        _params->compiled_sequence_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+        _params->compiled_sequence_data = malloc( finalSize );
+        _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+        // X = destination address on video buffer
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+            params.native_image_size = _params->native_sequence_frame_size;
+            params.native_image_bank = _params->native_sequence_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_sequence_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_sequence_data = NULL;
+                _params->compiled_sequence_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_sequence_size = currentPc;
+        _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+    }
+
+}
+
+void gime_sequence_compile_multicolor_mode_midres( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/4;
+    int height = (unsigned char)(_params->native_sequence_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_sequence_data = NULL;
+        _params->compiled_sequence_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+        _params->compiled_sequence_data = malloc( finalSize );
+        _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+        // X = destination address on video buffer
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+            params.native_image_size = _params->native_sequence_frame_size;
+            params.native_image_bank = _params->native_sequence_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_sequence_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_sequence_data = NULL;
+                _params->compiled_sequence_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_sequence_size = currentPc;
+        _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+    }
+
+}
+
+void gime_sequence_compile_multicolor_mode_lores( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/2;
+    int height = (unsigned char)(_params->native_sequence_data[5]);
+
+    if ( _environment->doubleBufferEnabled ) {
+
+        _params->compiled_sequence_data = NULL;
+        _params->compiled_sequence_size = 0;
+
+    } else {
+
+        int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+        _params->compiled_sequence_data = malloc( finalSize );
+        _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+        // X = destination address on video buffer
+
+        int currentPc = 0;
+
+        for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+            ParamsImageCompile params;
+            params.mode = _params->mode;
+            params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+            params.native_image_size = _params->native_sequence_frame_size;
+            params.native_image_bank = _params->native_sequence_bank;
+            image_compile( _environment, &params );
+            if ( params.compiled_image_data ) {
+                memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+                _params->compiled_sequence_offset[i] = currentPc;
+                currentPc += params.compiled_image_size;
+            } else {
+                _params->compiled_sequence_data = NULL;
+                _params->compiled_sequence_size = 0;
+                return;
+            }
+        }
+
+        _params->compiled_sequence_size = currentPc;
+        _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+    }
+
+}
+
 void gime_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
 
-    // switch( _mode ) {
+    int _mode = _params->mode;
 
-    //     case BITMAP_MODE_128x192x2:
-    //     case BITMAP_MODE_128x200x2:
-    //     case BITMAP_MODE_128x225x2:
-    //     case BITMAP_MODE_160x192x2:
-    //     case BITMAP_MODE_160x200x2:
-    //     case BITMAP_MODE_160x225x2:
-    //     case BITMAP_MODE_256x192x2:
-    //     case BITMAP_MODE_256x200x2:
-    //     case BITMAP_MODE_256x225x2:
-    //     case BITMAP_MODE_320x192x2:
-    //     case BITMAP_MODE_320x200x2:
-    //     case BITMAP_MODE_320x225x2:
-    //     case BITMAP_MODE_512x192x2:
-    //     case BITMAP_MODE_512x200x2:
-    //     case BITMAP_MODE_512x225x2:
-    //     case BITMAP_MODE_640x192x2:
-    //     case BITMAP_MODE_640x200x2:
-    //     case BITMAP_MODE_640x225x2:
+    switch( _mode ) {
 
-    //         return gime_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case BITMAP_MODE_128x192x2:
+        case BITMAP_MODE_128x200x2:
+        case BITMAP_MODE_128x225x2:
+        case BITMAP_MODE_160x192x2:
+        case BITMAP_MODE_160x200x2:
+        case BITMAP_MODE_160x225x2:
+        case BITMAP_MODE_256x192x2:
+        case BITMAP_MODE_256x200x2:
+        case BITMAP_MODE_256x225x2:
+        case BITMAP_MODE_320x192x2:
+        case BITMAP_MODE_320x200x2:
+        case BITMAP_MODE_320x225x2:
+        case BITMAP_MODE_512x192x2:
+        case BITMAP_MODE_512x200x2:
+        case BITMAP_MODE_512x225x2:
+        case BITMAP_MODE_640x192x2:
+        case BITMAP_MODE_640x200x2:
+        case BITMAP_MODE_640x225x2:
+
+            gime_sequence_compile_bitmap_mode_hires( _environment, _params );
+            return;
                     
-    //     case BITMAP_MODE_64x192x4:
-    //     case BITMAP_MODE_64x200x4:
-    //     case BITMAP_MODE_64x225x4:
-    //     case BITMAP_MODE_80x192x4:
-    //     case BITMAP_MODE_80x200x4:
-    //     case BITMAP_MODE_80x225x4:
-    //     case BITMAP_MODE_128x192x4:
-    //     case BITMAP_MODE_128x200x4:
-    //     case BITMAP_MODE_128x225x4:
-    //     case BITMAP_MODE_160x192x4:
-    //     case BITMAP_MODE_160x200x4:
-    //     case BITMAP_MODE_160x225x4:
-    //     case BITMAP_MODE_256x192x4:
-    //     case BITMAP_MODE_256x200x4:
-    //     case BITMAP_MODE_256x225x4:
-    //     case BITMAP_MODE_320x192x4:
-    //     case BITMAP_MODE_320x200x4:
-    //     case BITMAP_MODE_320x225x4:
-    //     case BITMAP_MODE_512x192x4:
-    //     case BITMAP_MODE_512x200x4:
-    //     case BITMAP_MODE_512x225x4:
-    //     case BITMAP_MODE_640x192x4:
-    //     case BITMAP_MODE_640x200x4:
-    //     case BITMAP_MODE_640x225x4:
+        case BITMAP_MODE_64x192x4:
+        case BITMAP_MODE_64x200x4:
+        case BITMAP_MODE_64x225x4:
+        case BITMAP_MODE_80x192x4:
+        case BITMAP_MODE_80x200x4:
+        case BITMAP_MODE_80x225x4:
+        case BITMAP_MODE_128x192x4:
+        case BITMAP_MODE_128x200x4:
+        case BITMAP_MODE_128x225x4:
+        case BITMAP_MODE_160x192x4:
+        case BITMAP_MODE_160x200x4:
+        case BITMAP_MODE_160x225x4:
+        case BITMAP_MODE_256x192x4:
+        case BITMAP_MODE_256x200x4:
+        case BITMAP_MODE_256x225x4:
+        case BITMAP_MODE_320x192x4:
+        case BITMAP_MODE_320x200x4:
+        case BITMAP_MODE_320x225x4:
+        case BITMAP_MODE_512x192x4:
+        case BITMAP_MODE_512x200x4:
+        case BITMAP_MODE_512x225x4:
+        case BITMAP_MODE_640x192x4:
+        case BITMAP_MODE_640x200x4:
+        case BITMAP_MODE_640x225x4:
 
-    //         return gime_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            gime_sequence_compile_multicolor_mode_midres( _environment, _params );
+            return;
 
-    //     case BITMAP_MODE_64x192x16:
-    //     case BITMAP_MODE_64x200x16:
-    //     case BITMAP_MODE_64x225x16:
-    //     case BITMAP_MODE_80x192x16:
-    //     case BITMAP_MODE_80x200x16:
-    //     case BITMAP_MODE_80x225x16:
-    //     case BITMAP_MODE_128x192x16:
-    //     case BITMAP_MODE_128x200x16:
-    //     case BITMAP_MODE_128x225x16:
-    //     case BITMAP_MODE_160x192x16:
-    //     case BITMAP_MODE_160x200x16:
-    //     case BITMAP_MODE_160x225x16:
-    //     case BITMAP_MODE_256x192x16:
-    //     case BITMAP_MODE_256x200x16:
-    //     case BITMAP_MODE_256x225x16:
-    //     case BITMAP_MODE_320x192x16:
-    //     case BITMAP_MODE_320x200x16:
-    //     case BITMAP_MODE_320x225x16:
+        case BITMAP_MODE_64x192x16:
+        case BITMAP_MODE_64x200x16:
+        case BITMAP_MODE_64x225x16:
+        case BITMAP_MODE_80x192x16:
+        case BITMAP_MODE_80x200x16:
+        case BITMAP_MODE_80x225x16:
+        case BITMAP_MODE_128x192x16:
+        case BITMAP_MODE_128x200x16:
+        case BITMAP_MODE_128x225x16:
+        case BITMAP_MODE_160x192x16:
+        case BITMAP_MODE_160x200x16:
+        case BITMAP_MODE_160x225x16:
+        case BITMAP_MODE_256x192x16:
+        case BITMAP_MODE_256x200x16:
+        case BITMAP_MODE_256x225x16:
+        case BITMAP_MODE_320x192x16:
+        case BITMAP_MODE_320x200x16:
+        case BITMAP_MODE_320x225x16:
 
-    //         return gime_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            gime_sequence_compile_multicolor_mode_lores( _environment, _params );
+            return;
 
-    // }
+    }
 
     // return gime_new_image( _environment, 8, 8, _mode );
 
