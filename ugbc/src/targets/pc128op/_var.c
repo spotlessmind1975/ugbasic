@@ -528,7 +528,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         outline0("RTS" );
                         outhead1("%sROUTINES", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline1("JMP *+$%4.4x+3", variable->memoryOffset[i] );
+                            outline2("JMP *+$%4.4x+3*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
@@ -556,8 +556,6 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         }
                     }
                     break;
-                case VT_IMAGE:
-                case VT_IMAGES:
                 case VT_COMPILED_SEQUENCE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
@@ -617,6 +615,8 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                         }
                     }
                     break;
+                case VT_IMAGE:
+                case VT_IMAGES:
                 case VT_SEQUENCE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
