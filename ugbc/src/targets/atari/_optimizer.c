@@ -807,6 +807,13 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         };
 
     if( 
+        po_buf_match( buf[0], " JSR *",  arg ) 
+     ) if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->nb_rd++;
+        };
+
+    if( 
         po_buf_match( buf[0], " INC *",  arg )
      ) if(vars_ok(arg)) {
             struct var *v = vars_get(arg);
