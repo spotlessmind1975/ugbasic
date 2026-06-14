@@ -2645,6 +2645,69 @@ Variable * vdcz_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void vdcz_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_STANDARD_INT:
+
+            // return vcdz_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_MULTICOLOR_INT:
+
+            // return vdcz_image_converter_bitmap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    }
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void vdcz_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_STANDARD_INT:
+
+            // return vcdz_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_MULTICOLOR_INT:
+
+            // return vdcz_image_converter_bitmap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    }
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void vdcz_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+        case BITMAP_MODE_STANDARD_INT:
+
+            // return vcdz_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+        case BITMAP_MODE_MULTICOLOR:
+        case BITMAP_MODE_MULTICOLOR_INT:
+
+            // return vdcz_image_converter_bitmap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 Variable * vdcz_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _flags ) {
 
     Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
