@@ -3327,6 +3327,12 @@ void gtia_image_compile_bitmap_mode_standard( Environment * _environment, Params
     int currentData = 3;
 
     for( int y=0; y<height; ++y ) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
         for( int x=0; x<width; ++x ) {
 
             // 000012r 1  A9 xx        	LDA #xx

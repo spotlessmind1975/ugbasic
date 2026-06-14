@@ -3320,6 +3320,704 @@ Variable * vic2_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void vic2_image_compile_bitmap_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((((unsigned char)(_params->native_image_data[0])) + ((unsigned char)(_params->native_image_data[1])<<8)))/8;
+    int height = (unsigned char)(_params->native_image_data[2])/8;
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // PLOTDEST = destination of graphic data
+
+    int currentPc = 0;
+    int currentData = 3;
+
+    for(int y=0; y<height; ++y) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
+        for( int x=0; x<width*8; ++x) {
+
+            // 000403r 1  A9 00        	LDA #1-1
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 000489r 1  91 1A        	STA (PLOTDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 00048Br 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+        }
+
+        if ( y < ( height -1 ) ) {
+
+            // 0004AAr 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ABr 1  A5 1A        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 0004ADr 1  6D rr rr     	ADC CURRENTTILESWIDTH
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x40;
+
+            // 0004B0r 1  85 1A        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 0004B2r 1  A5 1B        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x1b;
+
+            // 0004B4r 1  69 00        	ADC #0
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x01;
+
+            // 0004B6r 1  85 1B        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x1b;
+
+        }
+
+    }
+
+    for(int y=0; y<height; ++y) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
+        for( int x=0; x<width; ++x) {
+
+            // 000403r 1  A9 00        	LDA #1-1
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 000489r 1  91 1A        	STA (PLOTCDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 00048Br 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+
+        }
+
+        if ( y < ( height -1 ) ) {
+
+            // 0004AAr 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ABr 1  A5 1A        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ADr 1  6D rr rr     	ADC CURRENTTILESWIDTH
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 40;
+
+            // 0004B0r 1  85 1A        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004B2r 1  A5 1B        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x19;
+
+            // 0004B4r 1  69 00        	ADC #0
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x00;
+
+            // 0004B6r 1  85 1B        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x19;
+
+        }
+
+    }
+
+    // 000610r 1  60           	RTS
+
+    _params->compiled_image_data[currentPc++] = 0x60;
+        
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void vic2_image_compile_multicolor_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((((unsigned char)(_params->native_image_data[0])) + ((unsigned char)(_params->native_image_data[1])<<8)))/4;
+    int height = (unsigned char)(_params->native_image_data[2])/8;
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = 40;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // PLOTDEST = destination of graphic data
+
+    int currentPc = 0;
+    int currentData = 3;
+
+    for(int y=0; y<height; ++y) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
+        for( int x=0; x<width*8; ++x) {
+
+            // 000403r 1  A9 00        	LDA #1-1
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 000489r 1  91 1A        	STA (PLOTDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 00048Br 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+        }
+
+        if ( y < ( height -1 ) ) {
+
+            // 0004AAr 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ABr 1  A5 1A        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 0004ADr 1  6D rr rr     	ADC CURRENTTILESWIDTH
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 40;
+
+            // 0004B0r 1  85 1A        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x1a;
+
+            // 0004B2r 1  A5 1B        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x1b;
+
+            // 0004B4r 1  69 00        	ADC #0
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x01;
+
+            // 0004B6r 1  85 1B        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x1b;
+
+        }
+
+    }
+
+    for(int y=0; y<height; ++y) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
+        for( int x=0; x<width; ++x) {
+
+            // 000403r 1  A9 00        	LDA #1-1
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 000489r 1  91 1A        	STA (PLOTCDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 00048Br 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+
+        }
+
+        if ( y < ( height -1 ) ) {
+
+            // 0004AAr 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ABr 1  A5 1A        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ADr 1  6D rr rr     	ADC CURRENTTILESWIDTH
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 40;
+
+            // 0004B0r 1  85 1A        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004B2r 1  A5 1B        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x19;
+
+            // 0004B4r 1  69 00        	ADC #0
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x00;
+
+            // 0004B6r 1  85 1B        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x19;
+
+        }
+
+    }
+
+    for(int y=0; y<height; ++y) {
+
+        // 0003ADr 1  A0 00        	LDY #0
+        
+        _params->compiled_image_data[currentPc++] = 0xa0;
+        _params->compiled_image_data[currentPc++] = 0x00;
+
+        for( int x=0; x<width; ++x) {
+
+            // 000403r 1  A9 00        	LDA #1-1
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 000489r 1  91 1A        	STA (PLOTCDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x16;
+
+            // 00048Br 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+
+        }
+
+        if ( y < ( height -1 ) ) {
+
+            // 0004AAr 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0004ABr 1  A5 1A        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x16;
+
+            // 0004ADr 1  6D rr rr     	ADC CURRENTTILESWIDTH
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 40;
+
+            // 0004B0r 1  85 1A        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x16;
+
+            // 0004B2r 1  A5 1B        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x17;
+
+            // 0004B4r 1  69 00        	ADC #0
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x00;
+
+            // 0004B6r 1  85 1B        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x17;
+
+        }
+
+    }
+
+    // 000610r 1  60           	RTS
+
+    _params->compiled_image_data[currentPc++] = 0x60;
+        
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void vic2_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            vic2_image_compile_bitmap_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            vic2_image_compile_multicolor_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+            // return vic2_image_compile_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_MULTICOLOR:
+            // return vic2_image_compile_tilemap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void vic2_images_compile_bitmap_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = ((((unsigned char)(_params->native_images_data[3])) + ((unsigned char)(_params->native_images_data[4])<<8)))/8;
+    int height = (unsigned char)(_params->native_images_data[5])/8;
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void vic2_images_compile_multicolor_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = ((((unsigned char)(_params->native_images_data[3])) + ((unsigned char)(_params->native_images_data[4])<<8)))/4;
+    int height = (unsigned char)(_params->native_images_data[5])/8;
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void vic2_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            vic2_images_compile_bitmap_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            vic2_images_compile_multicolor_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+            // return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_MULTICOLOR:
+            // return vic2_image_converter_tilemap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void vic2_sequence_compile_bitmap_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/8;
+    int height = (unsigned char)(_params->native_sequence_data[5])/8;
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void vic2_sequence_compile_multicolor_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (((unsigned char)(_params->native_sequence_data[3])<<8) + (unsigned char)(_params->native_sequence_data[4]))/4;
+    int height = (unsigned char)(_params->native_sequence_data[5])/8;
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void vic2_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    switch( _params->mode ) {
+
+        case BITMAP_MODE_STANDARD:
+
+            vic2_sequence_compile_bitmap_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            vic2_sequence_compile_multicolor_mode_standard( _environment, _params );
+            return;
+
+        case BITMAP_MODE_AH:
+        case BITMAP_MODE_AIFLI:
+        case BITMAP_MODE_ASSLACE:
+        case BITMAP_MODE_ECI:
+        case BITMAP_MODE_IAFLI:
+        case BITMAP_MODE_IH:
+        case BITMAP_MODE_MRFLI:
+        case BITMAP_MODE_MUCSUFLI:
+        case BITMAP_MODE_MUCSUH:
+        case BITMAP_MODE_MUFLI:
+        case BITMAP_MODE_MUIFLI:
+        case BITMAP_MODE_NUFLI:
+        case BITMAP_MODE_NUIFLI:
+        case BITMAP_MODE_SH:
+        case BITMAP_MODE_SHFLI:
+        case BITMAP_MODE_SHI:
+        case BITMAP_MODE_SHIFLI:
+        case BITMAP_MODE_SHIFXL:
+        case BITMAP_MODE_UFLI:
+        case BITMAP_MODE_UIFLI:
+        case BITMAP_MODE_TRIFLI:
+        case BITMAP_MODE_XFLI:
+        case BITMAP_MODE_XIFLI:
+        case BITMAP_MODE_FLI:
+        case BITMAP_MODE_HCB:
+        case BITMAP_MODE_IFLI:
+        case BITMAP_MODE_MUCSU:
+        case BITMAP_MODE_MCI:
+        case BITMAP_MODE_MEGATEXT:
+        case BITMAP_MODE_PRS:
+        case TILEMAP_MODE_STANDARD:
+            // return vic2_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_MULTICOLOR:
+            // return vic2_image_converter_tilemap_mode_multicolor( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 Variable * vic2_sprite_converter( Environment * _environment, char * _source, int _width, int _height, int _depth, RGBi * _color, int _flags, int _slot_x, int _slot_y ) {
 
     RGBi palette[MAX_PALETTE];
@@ -3875,61 +4573,106 @@ static void vic2_load_image_address_to_register( Environment * _environment, cha
 
 void vic2_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
+    deploy( vic2vars, src_hw_vic2_vars_asm);
+    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
+
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vic2vars, src_hw_vic2_vars_asm);
-    deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
-    deploy_deferred( putimageram, src_hw_vic2_put_image_ram_asm );
-    deploy( putimage, src_hw_vic2_put_image_asm );
-#ifdef __c64reu__
-    deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
-    deploy_deferred( putimagereu, src_hw_vic2_put_image_reu_asm );
-#endif
+    if ( _image->isCompiled ) {
 
-#ifdef __c128__
-    if ( _environment->enableRle ) {
-        deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
-    }
-#endif
+        deploy( putimagecompiled, src_hw_vic2_put_image_compiled_asm );
 
-    MAKE_LABEL
+        if ( x->initializedByConstant ) {
+            outline1("LDA #$%2.2x", (x->value&0xff) );    
+        } else {
+            outline1("LDA %s", x->realName );    
+        }
+        outline0("STA IMAGEX" );
+        if ( x->initializedByConstant ) {
+            outline1("LDA #$%2.2x", ((x->value>>8)&0xff) );    
+        } else {
+            outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
+        }
+        outline0("STA IMAGEX+1" );
+        if ( y->initializedByConstant ) {
+            outline1("LDA #$%2.2x", (y->value&0xff) );    
+        } else {
+            outline1("LDA %s", y->realName );
+        }
+        outline0("STA IMAGEY" );
 
-    if ( _frame_size ) {
-        vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
-    }
+        if ( _sequence ) {
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+            Variable * frameCount = variable_temporary( _environment, VT_WORD, "(frameCount)" );
+            variable_store( _environment, frameCount->name, _frame_count );
+            cpu_math_mul_8bit_to_16bit( _environment, sequence->realName, frameCount->realName, frameCount->realName, 0 );
+            outline1("LDA %s", frameCount->realName);
+        } else {
+            outline0("LDA #0");
+        }
+        if ( _frame ) {
+            Variable * frame = variable_retrieve( _environment, _frame );
+            outline1("ADC %s", frame->realName);
+        }
 
-    if ( x->initializedByConstant ) {
-        outline1("LDA #$%2.2x", (x->value&0xff) );    
+        outline1("JSR %s", _image->realName);
+
     } else {
-        outline1("LDA %s", x->realName );    
-    }
-    outline0("STA IMAGEX" );
-    if ( x->initializedByConstant ) {
-        outline1("LDA #$%2.2x", ((x->value>>8)&0xff) );    
-    } else {
-        outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
-    }
-    outline0("STA IMAGEX+1" );
-    if ( y->initializedByConstant ) {
-        outline1("LDA #$%2.2x", (y->value&0xff) );    
-    } else {
-        outline1("LDA %s", y->realName );
-    }
-    outline0("STA IMAGEY" );
-    if ( strchr( _flags, '#' ) ) {
-        outline1("LDA #((%s)&255)", _flags+1 );
-        outline0("STA IMAGEF" );
-        outline1("LDA #(((%s)>>8)&255)", _flags+1 );
-        outline0("STA IMAGET" );
-    } else {
-        outline1("LDA %s", _flags );
-        outline0("STA IMAGEF" );
-        outline1("LDA %s", address_displacement(_environment, _flags, "1") );
-        outline0("STA IMAGET" );
-    }
 
-    outline0("JSR PUTIMAGE");
+
+        deploy_deferred( putimageram, src_hw_vic2_put_image_ram_asm );
+        deploy( putimage, src_hw_vic2_put_image_asm );
+    #ifdef __c64reu__
+        deploy_embedded( cpu_math_mul_8bit_to_16bit, src_hw_6502_cpu_math_mul_8bit_to_16bit_asm )
+        deploy_deferred( putimagereu, src_hw_vic2_put_image_reu_asm );
+    #endif
+
+    #ifdef __c128__
+        if ( _environment->enableRle ) {
+            deploy( putimageramrle, src_hw_vic2_put_image_ram_rle_asm );
+        }
+    #endif
+
+        MAKE_LABEL
+
+        if ( _frame_size ) {
+            vic2_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );
+        }
+
+        if ( x->initializedByConstant ) {
+            outline1("LDA #$%2.2x", (x->value&0xff) );    
+        } else {
+            outline1("LDA %s", x->realName );    
+        }
+        outline0("STA IMAGEX" );
+        if ( x->initializedByConstant ) {
+            outline1("LDA #$%2.2x", ((x->value>>8)&0xff) );    
+        } else {
+            outline1("LDA %s", address_displacement(_environment, x->realName, "1") );
+        }
+        outline0("STA IMAGEX+1" );
+        if ( y->initializedByConstant ) {
+            outline1("LDA #$%2.2x", (y->value&0xff) );    
+        } else {
+            outline1("LDA %s", y->realName );
+        }
+        outline0("STA IMAGEY" );
+        if ( strchr( _flags, '#' ) ) {
+            outline1("LDA #((%s)&255)", _flags+1 );
+            outline0("STA IMAGEF" );
+            outline1("LDA #(((%s)>>8)&255)", _flags+1 );
+            outline0("STA IMAGET" );
+        } else {
+            outline1("LDA %s", _flags );
+            outline0("STA IMAGEF" );
+            outline1("LDA %s", address_displacement(_environment, _flags, "1") );
+            outline0("STA IMAGET" );
+        }
+
+        outline0("JSR PUTIMAGE");
+
+    }
 
 }
 

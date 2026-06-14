@@ -19,7 +19,7 @@ REM come IMAGE, il che significa usare il primo fotogramma.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc128op,to8,cpc
 
-    SCREEN #9
+    SCREEN #2
     CLS
 
     sequence := LOAD COMPILED SEQUENCE("sequence.png" ) FRAME SIZE (16,16)
