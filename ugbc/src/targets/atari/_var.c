@@ -290,6 +290,50 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         }
                     }
                     break;
+                case VT_COMPILED_IMAGES:
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead1("%s: .byte $0", variable->realName );
+                    } else {
+                        outhead1("%s:", variable->realName );
+                        outline0("ASL A");
+                        outline0("TAX");
+                        outline1("LDA %sROUTINES, X", variable->realName);
+                        outline0("STA $84");
+                        outline1("LDA %sROUTINES+1, X", variable->realName);
+                        outline0("STA $85");
+                        outline1("JSR PUTCIMAGE%dCALCPOS", _environment->currentMode );
+                        outline0("JMP ($84)");
+                        outhead1("%sROUTINES:", variable->realName );
+                        for( int i=0; i<variable->memoryOffsetCount; ++i ) {
+                            outline2(".WORD *+$%4.4x+2*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
+                        }
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                out0("   .byte ");
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
+                                        out0("   .byte ");
+                                    } else {
+                                        out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
+                                    }
+                                }
+                                // forced +1 byte to even alignment
+                                if ( variable->size & 0x01 ) {
+                                    outhead1("$%2.2x, $0", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                }
+                            } else {
+                                CRITICAL("COMPILED IMAGES not possible (2)");
+                            }
+                        } else {
+                            CRITICAL("COMPILED IMAGES not possible (1)");
+                        }
+                    }
+                    break;                    
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
