@@ -1214,7 +1214,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenWidth = 80;
             _environment->screenHeight = rows;
             _environment->screenColors = 4;
-            _environment->currentModeBW = 1;
+            _environment->currentModeBW = 2;
 
             currentHeight = 48;
             scanline = 20;
@@ -3435,12 +3435,12 @@ void gtia_image_compile( Environment * _environment, ParamsImageCompile * _param
         case BITMAP_MODE_ANTIC9:
             return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
-        // // Graphics 5 (ANTIC A or 10)
-        // // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
-        // // the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
-        // // about 1K.
-        // case BITMAP_MODE_ANTIC10:
-        //     return gtia_image_compile_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Graphics 5 (ANTIC A or 10)
+        // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
+        // the four color registers. With only four adjacent pixels encoded within a byte, the screen uses twice as much memory, 
+        // about 1K.
+        case BITMAP_MODE_ANTIC10:
+            return gtia_image_compile_multicolor_mode_standard( _environment, _params );
 
         // // Graphics 6 (ANTIC B or 11)
         // // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 

@@ -252,7 +252,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                         outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
                                     } else {
                                         out1("%s: ", variable->realName);
-                                        outline1("JSR PUTCIMAGE%1.1xCALCPOS", _environment->currentMode );
+                                        outline1("JSR PUTCIMAGE%dCALCPOS", _environment->currentMode );
                                         out1("    .byte ", variable->realName);
                                         int i=0;
                                         for (i=0; i<(variable->size-1); ++i ) {
