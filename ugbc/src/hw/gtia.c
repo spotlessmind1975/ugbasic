@@ -3456,31 +3456,31 @@ void gtia_image_compile( Environment * _environment, ParamsImageCompile * _param
         case BITMAP_MODE_ANTIC13:
             return gtia_image_compile_multicolor_mode_standard( _environment, _params );
 
-        // // Graphics 8 (ANTIC F or 15)
-        // // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
-        // // this one-color, two-luminance mode. There are 192 rows of 320 dots in the full screen mode. Graphics 8 is memory 
-        // // intensive; it takes 8K bytes (eight pixels/byte) to address an entire screen. The color scheme is quite similar to that 
-        // // in GRAPHICS mode 0. Color register #2 sets the background color. Color register #1 sets the luminance. Changing the color
-        // // in this register has no effect, but, this doesn't mean that you are limited to just one color.
-        // // Fortunately, the pixels are each one half of a color clock. It takes two pixels to span one color clock made up of
-        // // alternating columns of complementary colors. If the background is set to black, these columns consist of blue and 
-        // // green stripes. If only the odd-columned pixels are plotted, you get blue pixels. If only the odd-columned pixels 
-        // // are plotted, you get green pixels. And if pairs of adjacent pixels are plotted, you get white. So by cleverly 
-        // // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
-        // // on background color and luminance.
-        // case BITMAP_MODE_ANTIC15:
-        //     return gtia_image_compile_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Graphics 8 (ANTIC F or 15)
+        // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
+        // this one-color, two-luminance mode. There are 192 rows of 320 dots in the full screen mode. Graphics 8 is memory 
+        // intensive; it takes 8K bytes (eight pixels/byte) to address an entire screen. The color scheme is quite similar to that 
+        // in GRAPHICS mode 0. Color register #2 sets the background color. Color register #1 sets the luminance. Changing the color
+        // in this register has no effect, but, this doesn't mean that you are limited to just one color.
+        // Fortunately, the pixels are each one half of a color clock. It takes two pixels to span one color clock made up of
+        // alternating columns of complementary colors. If the background is set to black, these columns consist of blue and 
+        // green stripes. If only the odd-columned pixels are plotted, you get blue pixels. If only the odd-columned pixels 
+        // are plotted, you get green pixels. And if pairs of adjacent pixels are plotted, you get white. So by cleverly 
+        // staggering the pixel patterns, you can achieve three colors. This method is called artifacting. This all depends
+        // on background color and luminance.
+        case BITMAP_MODE_ANTIC15:
+            return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
-        // // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
-        // // an equivalent graphics mode on the newer XL models.
+        // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
+        // an equivalent graphics mode on the newer XL models.
 
-        // // Antic C (Graphics 14-XL computers only)
-        // // This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
-        // // it receives its color information from color register #0, otherwise the color is set to the background color 
-        // // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
-        // // only uses 4K of screen memory and doesn't have artifacting problems.
-        // case BITMAP_MODE_ANTIC12:
-        //     return gtia_image_compile_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Antic C (Graphics 14-XL computers only)
+        // This two-color, bit-mapped mode the eight bits correspond directly to the pixels on the screen. If a pixel is lit 
+        // it receives its color information from color register #0, otherwise the color is set to the background color 
+        // register #4. Each pixel is one scan line high and one color clock wide. This mode's advantages are that it 
+        // only uses 4K of screen memory and doesn't have artifacting problems.
+        case BITMAP_MODE_ANTIC12:
+            return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
         // // Antic E (Graphics 15-XL computers only)
         // // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
