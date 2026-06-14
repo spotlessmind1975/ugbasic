@@ -3184,133 +3184,230 @@ void gtia_image_compile_multicolor_mode_standard( Environment * _environment, Pa
     int effectiveNativeImageSize = _params->native_image_size - 3;
     int offset = ( _environment->screenWidth / 8 ) * _environment->currentModeBW  - width;
 
-    if ( _environment->doubleBufferEnabled ) {
+    int finalSize = width * height * 256;
 
-        _params->compiled_image_data = NULL;
-        _params->compiled_image_size = 0;
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
 
-    } else {
+    // PLOTDEST = destination of graphic data
 
-        int finalSize = width * height * 256;
+    int currentPc = 0;
+    int currentData = 3;
 
-        _params->compiled_image_data = malloc( finalSize );
-        _params->compiled_image_bank = _params->native_image_bank;
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
 
-        // PLOTDEST = destination of graphic data
+            // 000012r 1  A9 xx        	LDA #xx
 
-        int currentPc = 0;
-        int currentData = 3;
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
 
-        for( int y=0; y<height; ++y ) {
-            for( int x=0; x<width; ++x ) {
+            // 00038Ar 1  91 8C        	STA (PLOTDEST),Y
 
-                // 000012r 1  A9 xx        	LDA #xx
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x8c;
 
-                _params->compiled_image_data[currentPc++] = 0xa9;
-                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            // 00007Fr 1  C8           	INY
 
-                // 00038Ar 1  91 8C        	STA (PLOTDEST),Y
-
-                _params->compiled_image_data[currentPc++] = 0x91;
-                _params->compiled_image_data[currentPc++] = 0x8c;
-
-                // 00007Fr 1  C8           	INY
-
-                _params->compiled_image_data[currentPc++] = 0xc8;
-
-            }
-
-            if ( y < ( height - 1 ) ) {
-
-                // 000777r 1  18           	CLC
-
-                _params->compiled_image_data[currentPc++] = 0x18;
-
-                // 0005BEr 1  A5 8C        	LDA PLOTDEST
-
-                _params->compiled_image_data[currentPc++] = 0xa5;
-                _params->compiled_image_data[currentPc++] = 0x8c;
-
-                // 0005C7r 1  69 00        	ADC #xx
-
-                _params->compiled_image_data[currentPc++] = 0x69;
-                _params->compiled_image_data[currentPc++] = offset;
-
-                // 0005C3r 1  85 8C        	STA PLOTDEST
-
-                _params->compiled_image_data[currentPc++] = 0x85;
-                _params->compiled_image_data[currentPc++] = 0x8c;
-
-                // 0005C5r 1  A5 8D        	LDA PLOTDEST+1
-
-                _params->compiled_image_data[currentPc++] = 0xa5;
-                _params->compiled_image_data[currentPc++] = 0x8d;
-
-                // 0005C7r 1  69 00        	ADC #00
-                _params->compiled_image_data[currentPc++] = 0x69;
-                _params->compiled_image_data[currentPc++] = 0x00;
-
-                // 0005C9r 1  85 8D        	STA PLOTDEST+1
-
-                _params->compiled_image_data[currentPc++] = 0x85;
-                _params->compiled_image_data[currentPc++] = 0x8d;
-
-            }
+            _params->compiled_image_data[currentPc++] = 0xc8;
 
         }
 
-        // 000012r 1  A9 xx        	LDA #xx
+        if ( y < ( height - 1 ) ) {
 
-        _params->compiled_image_data[currentPc++] = 0xa9;
-        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            // 000777r 1  18           	CLC
 
-        // 000675r 1  8D C8 02     	STA $02C8
+            _params->compiled_image_data[currentPc++] = 0x18;
 
-        _params->compiled_image_data[currentPc++] = 0x8d;
-        _params->compiled_image_data[currentPc++] = 0xc8;
-        _params->compiled_image_data[currentPc++] = 0x02;
+            // 0005BEr 1  A5 8C        	LDA PLOTDEST
 
-        // 000012r 1  A9 xx        	LDA #xx
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x8c;
 
-        _params->compiled_image_data[currentPc++] = 0xa9;
-        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            // 0005C7r 1  69 00        	ADC #xx
 
-        // 000675r 1  8D C4 02     	STA $02C4
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = offset;
 
-        _params->compiled_image_data[currentPc++] = 0x8d;
-        _params->compiled_image_data[currentPc++] = 0xc4;
-        _params->compiled_image_data[currentPc++] = 0x02;
+            // 0005C3r 1  85 8C        	STA PLOTDEST
 
-        // 000012r 1  A9 xx        	LDA #xx
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x8c;
 
-        _params->compiled_image_data[currentPc++] = 0xa9;
-        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            // 0005C5r 1  A5 8D        	LDA PLOTDEST+1
 
-        // 000675r 1  8D C4 02     	STA $02C5
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x8d;
 
-        _params->compiled_image_data[currentPc++] = 0x8d;
-        _params->compiled_image_data[currentPc++] = 0xc5;
-        _params->compiled_image_data[currentPc++] = 0x02;
+            // 0005C7r 1  69 00        	ADC #00
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x00;
 
-        // 000012r 1  A9 xx        	LDA #xx
+            // 0005C9r 1  85 8D        	STA PLOTDEST+1
 
-        _params->compiled_image_data[currentPc++] = 0xa9;
-        _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x8d;
 
-        // 000675r 1  8D C4 02     	STA $02C5
-
-        _params->compiled_image_data[currentPc++] = 0x8d;
-        _params->compiled_image_data[currentPc++] = 0xc6;
-        _params->compiled_image_data[currentPc++] = 0x02;
-
-        // 000610r 1  60           	RTS
-
-        _params->compiled_image_data[currentPc++] = 0x60;
-
-        _params->compiled_image_size = currentPc;
-        _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+        }
 
     }
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C8 02     	STA $02C8
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc8;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C4 02     	STA $02C4
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc4;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C4 02     	STA $02C5
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc5;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C4 02     	STA $02C5
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000610r 1  60           	RTS
+
+    _params->compiled_image_data[currentPc++] = 0x60;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void gtia_image_compile_bitmap_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((((unsigned char)(_params->native_image_data[0])) + ((unsigned char)(_params->native_image_data[1])<<8)))/8;
+    int height = (unsigned char)(_params->native_image_data[2]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = ( _environment->screenWidth / 8 ) * _environment->currentModeBW  - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // PLOTDEST = destination of graphic data
+
+    int currentPc = 0;
+    int currentData = 3;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // 000012r 1  A9 xx        	LDA #xx
+
+            _params->compiled_image_data[currentPc++] = 0xa9;
+            _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+            // 00038Ar 1  91 8C        	STA (PLOTDEST),Y
+
+            _params->compiled_image_data[currentPc++] = 0x91;
+            _params->compiled_image_data[currentPc++] = 0x8c;
+
+            // 00007Fr 1  C8           	INY
+
+            _params->compiled_image_data[currentPc++] = 0xc8;
+
+        }
+
+        if ( y < ( height - 1 ) ) {
+
+            // 000777r 1  18           	CLC
+
+            _params->compiled_image_data[currentPc++] = 0x18;
+
+            // 0005BEr 1  A5 8C        	LDA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x8c;
+
+            // 0005C7r 1  69 00        	ADC #xx
+
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = offset;
+
+            // 0005C3r 1  85 8C        	STA PLOTDEST
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x8c;
+
+            // 0005C5r 1  A5 8D        	LDA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0xa5;
+            _params->compiled_image_data[currentPc++] = 0x8d;
+
+            // 0005C7r 1  69 00        	ADC #00
+            _params->compiled_image_data[currentPc++] = 0x69;
+            _params->compiled_image_data[currentPc++] = 0x00;
+
+            // 0005C9r 1  85 8D        	STA PLOTDEST+1
+
+            _params->compiled_image_data[currentPc++] = 0x85;
+            _params->compiled_image_data[currentPc++] = 0x8d;
+
+        }
+
+    }
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C8 02     	STA $02C8
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc8;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000012r 1  A9 xx        	LDA #xx
+
+    _params->compiled_image_data[currentPc++] = 0xa9;
+    _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+
+    // 000675r 1  8D C4 02     	STA $02C4
+
+    _params->compiled_image_data[currentPc++] = 0x8d;
+    _params->compiled_image_data[currentPc++] = 0xc4;
+    _params->compiled_image_data[currentPc++] = 0x02;
+
+    // 000610r 1  60           	RTS
+
+    _params->compiled_image_data[currentPc++] = 0x60;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
 
 }
 
@@ -3329,14 +3426,14 @@ void gtia_image_compile( Environment * _environment, ParamsImageCompile * _param
         case BITMAP_MODE_ANTIC8:
             return gtia_image_compile_multicolor_mode_standard( _environment, _params );
 
-        // // Graphics 4 (ANTIC 9)
-        // // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
-        // // pixels fit on a full screen. A single bit is used to store each pixel's color register. A zero refers to the background 
-        // // color register and a one to the foreground color register. The mode is used primarily to conserve screen memory. 
-        // // Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
-        // // memory is needed for a display of similiar-sized pixels.
-        // case BITMAP_MODE_ANTIC9:
-        //     return gtia_image_compile_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Graphics 4 (ANTIC 9)
+        // This is a two-color graphics mode with four times the resolution of GRAPHICS 3. The pixels are 4 x 4, and 48 rows of 80 
+        // pixels fit on a full screen. A single bit is used to store each pixel's color register. A zero refers to the background 
+        // color register and a one to the foreground color register. The mode is used primarily to conserve screen memory. 
+        // Only one bit is used for the color, so eight adjacent pixels are encoded within one byte, and only half as much screen 
+        // memory is needed for a display of similiar-sized pixels.
+        case BITMAP_MODE_ANTIC9:
+            return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
         // // Graphics 5 (ANTIC A or 10)
         // // This is the four color equivalent of GRAPHICS 4 sized pixels. The pixels are 4 x 4, but two bits are required to address 
