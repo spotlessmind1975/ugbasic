@@ -3442,19 +3442,19 @@ void gtia_image_compile( Environment * _environment, ParamsImageCompile * _param
         case BITMAP_MODE_ANTIC10:
             return gtia_image_compile_multicolor_mode_standard( _environment, _params );
 
-        // // Graphics 6 (ANTIC B or 11)
-        // // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
-        // // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
-        // case BITMAP_MODE_ANTIC11:
-        //     return gtia_image_compile_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Graphics 6 (ANTIC B or 11)
+        // This two color graphics mode has reasonably fine resolution. The 2 x 2 sized pixels allow 96 rows of 160 pixels to fit 
+        // on a full screen. Although only a single bit is used to encode the color, screen memory still requires approximately 2K.
+        case BITMAP_MODE_ANTIC11:
+            return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
-        // // Graphics 7 (ANTIC D or 13)
-        // // This is the four color equivalent to GRAPHICS mode 6. It is the finest resolution four color mode and naturally the
-        // // most popular. The color is encoded in two bit-pairs exactly the same way as in GRAPHICS 3. The memory requirements 
-        // // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
-        // // with another 104 bytes for the display list.
-        // case BITMAP_MODE_ANTIC13:
-        //     return gtia_image_compile_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Graphics 7 (ANTIC D or 13)
+        // This is the four color equivalent to GRAPHICS mode 6. It is the finest resolution four color mode and naturally the
+        // most popular. The color is encoded in two bit-pairs exactly the same way as in GRAPHICS 3. The memory requirements 
+        // of course is much greater as there are 96 rows of 160 - 2 x 2 sized pixels. It requires 3840 bytes of screen memory
+        // with another 104 bytes for the display list.
+        case BITMAP_MODE_ANTIC13:
+            return gtia_image_compile_multicolor_mode_standard( _environment, _params );
 
         // // Graphics 8 (ANTIC F or 15)
         // // This mode is definitely the finest resolution available on the Atari. Individual dot-sized pixels can be addressed in 
