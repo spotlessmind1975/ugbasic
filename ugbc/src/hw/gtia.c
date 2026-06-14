@@ -3482,13 +3482,13 @@ void gtia_image_compile( Environment * _environment, ParamsImageCompile * _param
         case BITMAP_MODE_ANTIC12:
             return gtia_image_compile_bitmap_mode_standard( _environment, _params );
 
-        // // Antic E (Graphics 15-XL computers only)
-        // // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
-        // // GRAPHIC 7. Each byte is divided into four pairs of bits. Like the character data in ANTIC 4, the bit pairs point to a
-        // // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
-        // // more control, but this mode uses a lot more memory, approximately
-        // case BITMAP_MODE_ANTIC14:
-        //     return gtia_image_compile_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height , _transparent_color, _flags );
+        // Antic E (Graphics 15-XL computers only)
+        // This four-color, bit-mapped mode is sometimes known as BASIC 7 1/2. Its resolution is 160 x 192 or twice that of 
+        // GRAPHIC 7. Each byte is divided into four pairs of bits. Like the character data in ANTIC 4, the bit pairs point to a
+        // particular color register. The screen data, however, is not character data but individual bytes. The user has a lot
+        // more control, but this mode uses a lot more memory, approximately
+        case BITMAP_MODE_ANTIC14:
+            return gtia_image_compile_multicolor_mode_standard( _environment, _params);
 
         // // Graphics Mode 0 (ANTIC 2)
         // // This is the normal-sized character or text mode that the computer defaults to on start up. 
