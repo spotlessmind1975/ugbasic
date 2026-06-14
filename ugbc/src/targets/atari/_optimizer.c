@@ -770,6 +770,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "$^"))  return 0;
     if(po_buf_match(name, "(^"))  return 0;
     if(po_buf_match(name, "ATARIXL"))  return 0;
+    if(po_buf_match(name, "PLOT"))  return 0;
 
     // if(name->str[0]=='_')      return 1;
     // if(po_buf_match(name, "CLIP"))    return 1;

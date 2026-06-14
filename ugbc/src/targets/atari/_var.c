@@ -291,6 +291,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_COMPILED_IMAGES:
+                case VT_COMPILED_SEQUENCE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s: .byte $0", variable->realName );
@@ -306,7 +307,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline0("JMP ($84)");
                         outhead1("%sROUTINES:", variable->realName );
                         for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                            outline2(".WORD *+$%4.4x+2*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
+                            outline3(".WORD *+$%4.4x+2*%d-2*%d", variable->memoryOffset[i], variable->memoryOffsetCount, i );
                         }
                         if ( ! variable->absoluteAddress ) {
                             if ( variable->valueBuffer ) {
