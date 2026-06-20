@@ -169,6 +169,104 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     break;
                 case VT_BLIT:
                     break;                
+                case VT_COMPILED_IMAGE:
+                    if ( variable->usedImage ) {
+                        if ( variable->bankAssigned != -1 ) {
+                            outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                            outhead1("%s: .byte $0", variable->realName );
+                        } else {
+                            if ( ! variable->absoluteAddress ) {
+                                if ( variable->valueBuffer && ! variable->onStorage ) {
+                                    if ( variable->printable ) {
+                                        char * string = malloc( variable->size + 1 );
+                                        memset( string, 0, variable->size + 1 );
+                                        memcpy( string, variable->valueBuffer, variable->size );
+                                        outhead2("%s: .byte %s", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        out1("%s: ", variable->realName);
+                                        outline1("JSR PUTCIMAGE%dCALCPOS", _environment->currentMode );
+                                        out0("   .byte ");
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            if ( ( ( i+1 ) % 16 ) == 0 ) {
+                                                outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                                out0("  .byte ");
+                                            } else {
+                                                out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                            }
+                                        }
+                                        outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                    }
+                                } else {
+                                    outhead2("%s: .res %d,0", variable->realName, variable->size);
+                                }
+                            } else {
+                                if ( ! variable->memoryArea && variable->valueBuffer && ! variable->onStorage && variable->bankAssigned == -1 ) {
+                                    outhead2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                                    if ( variable->printable ) {
+                                        char * string = malloc( variable->size + 1 );
+                                        memset( string, 0, variable->size + 1 );
+                                        memcpy( string, variable->valueBuffer, variable->size );
+                                        outhead2("%scopy: .byte %s", variable->realName, escape_newlines( string ) );
+                                    } else {
+                                        out1("%scopy: .byte ", variable->realName);
+                                        int i=0;
+                                        for (i=0; i<(variable->size-1); ++i ) {
+                                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                        }
+                                        outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                    }
+                                }
+                            }
+                        }
+
+                    }
+                    break;
+                case VT_COMPILED_IMAGES:
+                case VT_COMPILED_SEQUENCE:
+                    if ( variable->bankAssigned != -1 ) {
+                        outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
+                        outhead1("%s: .byte $0", variable->realName );
+                    } else {
+                        outhead1("%s:", variable->realName );
+                        outline0("ASL A");
+                        outline0("TAX");
+                        outline1("LDA %sROUTINES, X", variable->realName);
+                        outline0("STA $84");
+                        outline1("LDA %sROUTINES+1, X", variable->realName);
+                        outline0("STA $85");
+                        outline1("JSR PUTCIMAGE%dCALCPOS", _environment->currentMode );
+                        outline0("JMP ($84)");
+                        outhead1("%sROUTINES:", variable->realName );
+                        for( int i=0; i<variable->memoryOffsetCount; ++i ) {
+                            outline3(".WORD *+$%4.4x+2*%d-2*%d", variable->memoryOffset[i], variable->memoryOffsetCount, i );
+                        }
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->valueBuffer ) {
+                                out0("   .byte ");
+                                int i=0;
+                                for (i=0; i<(variable->size-1); ++i ) {
+                                    if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                        outline1("$%2.2x", (unsigned char)variable->valueBuffer[i]);
+                                        out0("   .byte ");
+                                    } else {
+                                        out1("$%2.2x,", (unsigned char)variable->valueBuffer[i]);
+                                    }
+                                }
+                                // forced +1 byte to even alignment
+                                if ( variable->size & 0x01 ) {
+                                    outhead1("$%2.2x, $0", variable->valueBuffer[(variable->size-1)]);
+                                } else {
+                                    outhead1("$%2.2x", variable->valueBuffer[(variable->size-1)]);
+                                }
+                            } else {
+                                CRITICAL("COMPILED IMAGES not possible (2)");
+                            }
+                        } else {
+                            CRITICAL("COMPILED IMAGES not possible (1)");
+                        }
+                    }
+                    break;
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:

@@ -514,6 +514,73 @@ static void ted_image_converter_tiles_multicolor( Environment * _environment, ch
 
 }
 
+void ted_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    switch( _params->mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            // return ted_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            // return ted_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void ted_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    switch( _params->mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            // return ted_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            // return ted_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void ted_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    switch( _params->mode ) {
+        case BITMAP_MODE_STANDARD:
+
+            // return ted_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case BITMAP_MODE_MULTICOLOR:
+
+            // return ted_image_converter_multicolor_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        case TILEMAP_MODE_STANDARD:
+        case TILEMAP_MODE_MULTICOLOR:
+        case TILEMAP_MODE_EXTENDED:
+            break;
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
+
 void ted_collision( Environment * _environment, char * _sprite_mask, char * _result ) {
 
 }

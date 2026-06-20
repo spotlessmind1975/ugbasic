@@ -308,6 +308,18 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
             }
             break;
+        case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES:
+        case VT_COMPILED_SEQUENCE: {
+            Resource resource;
+            memset(&resource, 0, sizeof( Resource ) );
+            resource.realName = strdup( image->realName );
+            resource.isAddress = 0;
+            resource.isCompiled = 1;
+            resource.bankNumber = image->bankAssigned;
+            vic2_put_image( _environment, &resource, x1->name, y1->name, _frame, _sequence, 1, image->frameCount, _flags );
+            break;
+        }
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
@@ -441,6 +453,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     Variable * image = variable_retrieve( _environment, _image );
 
     switch( image->type ) {
+        case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES:
+        case VT_COMPILED_SEQUENCE:
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
