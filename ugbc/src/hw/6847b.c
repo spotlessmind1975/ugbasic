@@ -53,6 +53,47 @@ static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
         }
 };
 
+static RGBi SYSTEM_PALETTE_SG4[9] =
+        // SEMIGRAPHICS 4
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0xff, 0x00, 0xff, 1, "GREEN" },        
+            { 0xff, 0xff, 0x00, 0xff, 2, "YELLOW" },        
+            { 0x00, 0x00, 0xff, 0xff, 3, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 4, "RED" },        
+            { 0xff, 0xff, 0xff, 0xff, 5, "BUFF" },        
+            { 0x00, 0xff, 0xff, 0xff, 6, "CYAN" },        
+            { 0xff, 0x00, 0xff, 0xff, 7, "MAGENTA" },  
+            { 0xff, 0x80, 0x00, 0xff, 8, "ORANGE" }
+        }
+;
+
+static RGBi SYSTEM_PALETTE_SG6[4] =
+        // SEMIGRAPHICS 4
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0x00, 0x00, 0xff, 1, "UNUSED" },        
+            { 0x00, 0x00, 0xff, 0xff, 2, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 3, "RED" }
+        }
+;
+
+static RGBi SYSTEM_PALETTE_SG8[9] =
+        // SEMIGRAPHICS 8
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0xff, 0x00, 0xff, 1, "GREEN" },        
+            { 0xff, 0xff, 0x00, 0xff, 2, "YELLOW" },        
+            { 0x00, 0x00, 0xff, 0xff, 3, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 4, "RED" },        
+            { 0xff, 0xff, 0xff, 0xff, 5, "BUFF" },        
+            { 0x00, 0xff, 0xff, 0xff, 6, "CYAN" },        
+            { 0xff, 0x00, 0xff, 0xff, 7, "MAGENTA" },  
+            { 0xff, 0x80, 0x00, 0xff, 8, "ORANGE" }
+        }
+;
+
+
 static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
 
 static RGBi * commonPalette;
@@ -355,6 +396,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
             SET_VIDEOAT_0400;
             VDG_TEXT;
@@ -369,6 +411,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 31 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
         // 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
@@ -381,6 +424,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
             SET_VIDEOAT_0400;
             VDG_TEXT;
@@ -395,6 +439,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 47 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
         // standard 8 x 12 dot box. This mode requires four memory locations per box 
@@ -408,11 +453,13 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
         // standard 8 x 12 dot box. This mode requires six memory locations per box and 
@@ -425,11 +472,13 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
         // the standard 8 x 12 dot box. This mode requires twelve memory locations 
@@ -443,11 +492,13 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 64 x 64 Color Graphics mode generates a display matrix of 64 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -459,6 +510,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 64 / 4;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -473,7 +525,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 64 / 4 );            
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );            
             break;
         // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
         // by 64 elements high. Each element may be either ON or OFF. However, 
@@ -486,6 +538,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -500,7 +553,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );            
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 64 Color Graphics mode generates a display matrix 128 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -512,6 +565,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -526,7 +580,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 96 Graphics mode generates a display matrix 128 
         // elements wide by 96 elements high. Each element may be either 
@@ -539,6 +593,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -553,7 +608,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1536 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 96 Color Graphics mode generates a display 128 elements 
         // wide by 96 elements high. Each element may be one of four colors. 
@@ -565,6 +620,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -579,7 +635,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 192 Graphics mode generates a display matrix 128 elements 
         // wide by 192 elements high. Each element may be either ON or OFF,
@@ -592,6 +648,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -606,7 +663,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
         // wide by 192 elements high. Each element may be one of four colors.
@@ -618,6 +675,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -632,7 +690,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 256 x 192 Graphics mode generates a display 256 elements wide by 
         // 192 elements high. Each element may be either ON or OFF, but the ON 
@@ -645,6 +703,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 256 / 8;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -659,7 +718,7 @@ int c6847b_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 256 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
@@ -1043,6 +1102,7 @@ void c6847b_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( TILEMAP_MODE_EXTERNAL, 0, 32, 16, 2, 8, 8, "Alphanumeric External");
     SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS4, 0, 64, 32, 8, 8, 8, "Semigraphics 4" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS6, 0, 64, 48, 4, 8, 8, "Semigraphics 6" );
+    SCREEN_MODE_DEFINE( TILEMAP_MODE_SEMIGRAPHICS8, 0, 64, 64, 8, 8, 8, "Semigraphics 8" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_COLOR6, 1, 128, 192, 4, 8, 8, "Color Graphics 6" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_RESOLUTION6, 1, 256, 192, 2, 8, 8, "Resolution Graphics 6" );
@@ -1190,8 +1250,10 @@ int c6847b_image_size( Environment * _environment, int _width, int _height, int 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return 3 + ( ( _width >> 3 ) * ( _height / 12 ) );
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
@@ -1230,8 +1292,10 @@ static int calculate_images_size( Environment * _environment, int _frames, int _
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return 3 + ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
@@ -1270,8 +1334,10 @@ static int calculate_sequence_size( Environment * _environment, int _sequences, 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+                return 3 + ( ( 3 + ( ( _width >> 3 ) * ( _height / 12 ) ) ) * _frames ) * _sequences;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072

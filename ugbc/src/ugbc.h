@@ -2587,6 +2587,8 @@ typedef struct _Environment {
     int enableRle;
     
     int mspriteMsbokAddress;
+
+    int currentSl;
     
     /**
      * List of dataSegments.

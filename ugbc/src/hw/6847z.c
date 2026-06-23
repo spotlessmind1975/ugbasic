@@ -45,15 +45,56 @@ static RGBi SYSTEM_PALETTE_ALTERNATE[][4] = {
             { 0x88, 0x00, 0x00, 0xff, 3, "RED" }
         },
         {
-            // { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
-            { 0xf0, 0xf0, 0xf0, 0xff, 0, "BUFF" },
-            { 0xaa, 0xff, 0xe6, 0xff, 1, "CYAN" },
-            { 0xcc, 0x44, 0xcc, 0xff, 2, "MAGENTA" },
-            { 0xa1, 0x68, 0x3c, 0xff, 3, "ORANGE" }            
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },        
+            { 0xf0, 0xf0, 0xf0, 0xff, 5, "BUFF" },
+            { 0xaa, 0xff, 0xe6, 0xff, 6, "CYAN" },
+            { 0xcc, 0x44, 0xcc, 0xff, 7, "MAGENTA" } //,
+            // { 0xa1, 0x68, 0x3c, 0xff, 8, "ORANGE" }            
         }
 };
 
-static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[1][0];
+static RGBi SYSTEM_PALETTE_SG4[9] =
+        // SEMIGRAPHICS 4
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0xff, 0x00, 0xff, 1, "GREEN" },        
+            { 0xff, 0xff, 0x00, 0xff, 2, "YELLOW" },        
+            { 0x00, 0x00, 0xff, 0xff, 3, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 4, "RED" },        
+            { 0xff, 0xff, 0xff, 0xff, 5, "BUFF" },        
+            { 0x00, 0xff, 0xff, 0xff, 6, "CYAN" },        
+            { 0xff, 0x00, 0xff, 0xff, 7, "MAGENTA" },  
+            { 0xff, 0x80, 0x00, 0xff, 8, "ORANGE" }
+        }
+;
+
+static RGBi SYSTEM_PALETTE_SG6[4] =
+        // SEMIGRAPHICS 4
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0x00, 0x00, 0xff, 1, "UNUSED" },        
+            { 0x00, 0x00, 0xff, 0xff, 2, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 3, "RED" }
+        }
+;
+
+static RGBi SYSTEM_PALETTE_SG8[9] =
+        // SEMIGRAPHICS 8
+        {
+            { 0x00, 0x00, 0x00, 0xff, 0, "BLACK" },
+            { 0x00, 0xff, 0x00, 0xff, 1, "GREEN" },        
+            { 0xff, 0xff, 0x00, 0xff, 2, "YELLOW" },        
+            { 0x00, 0x00, 0xff, 0xff, 3, "BLUE" },        
+            { 0xff, 0x00, 0x00, 0xff, 4, "RED" },        
+            { 0xff, 0xff, 0xff, 0xff, 5, "BUFF" },        
+            { 0x00, 0xff, 0xff, 0xff, 6, "CYAN" },        
+            { 0xff, 0x00, 0xff, 0xff, 7, "MAGENTA" },  
+            { 0xff, 0x80, 0x00, 0xff, 8, "ORANGE" }
+        }
+;
+
+
+static RGBi * SYSTEM_PALETTE = &SYSTEM_PALETTE_ALTERNATE[0][0];
 
 static RGBi * commonPalette;
 int lastUsedSlotInCommonPalette = 0;
@@ -338,6 +379,7 @@ int c6847z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             outline0("LD HL, $6800");
             outline0("LD A, (HL)");
@@ -348,7 +390,7 @@ int c6847z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
     }
 

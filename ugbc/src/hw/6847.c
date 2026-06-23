@@ -103,6 +103,8 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -396,6 +398,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             // Semigraphic-4 0 X X 0 0 0 0 32x16 ch, 64x32 pixels
             SET_VIDEOAT_0400;
             VDG_TEXT;
@@ -410,7 +413,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 31 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
-            cpu_store_8bit( _environment, "CURRENTSL", 32 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 6 mode maps six 4 x 4 dot elements into the standard
         // 8 x 12 dot alphanumeric box, a screen density of 64 x 48 elements is available. 
@@ -423,6 +426,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             // Semigraphic-6 0 X X 1 0 0 0 64x48 pixels
             SET_VIDEOAT_0400;
             VDG_TEXT;
@@ -437,6 +441,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 47 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 512 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 8 mode maps eight 4 x 3 dot elements into the 
         // standard 8 x 12 dot box. This mode requires four memory locations per box 
@@ -450,11 +455,13 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 12 mode maps twelve 4 x 2 dot elements into the 
         // standard 8 x 12 dot box. This mode requires six memory locations per box and 
@@ -467,11 +474,13 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The ALPHA SEMIGRAPHICS – 24 mode maps twenty-four 4 x 1 dot elements into 
         // the standard 8 x 12 dot box. This mode requires twelve memory locations 
@@ -485,11 +494,13 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = 32;
             _environment->screenTilesHeight = 16;
             _environment->screenColors = 4;
+            _environment->currentSl = 32;
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 63 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 64 x 64 Color Graphics mode generates a display matrix of 64 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -501,6 +512,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 64 / 4;
             // Full graphic 1-C 1 0 0 0 0 0 1 64x64x4 $400(1024)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -515,7 +527,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 64 / 4 );            
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );            
             break;
         // The 128 x 64 Graphics Mode generates a matrix 128 elements wide 
         // by 64 elements high. Each element may be either ON or OFF. However, 
@@ -528,6 +540,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 1-R 1 0 0 1 0 0 1 128x64x2 $400(1024)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -542,7 +555,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1024 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );            
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 64 Color Graphics mode generates a display matrix 128 
         // elements wide by 64 elements high. Each element may be one of four 
@@ -554,6 +567,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 2-C 1 0 1 0 0 1 0 128x64x4 $800(2048)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -568,7 +582,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 63 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 2048 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 96 Graphics mode generates a display matrix 128 
         // elements wide by 96 elements high. Each element may be either 
@@ -581,6 +595,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 2-R 1 0 1 1 0 1 1 128x96x2 $600(1536)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -595,7 +610,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 1536 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 96 Color Graphics mode generates a display 128 elements 
         // wide by 96 elements high. Each element may be one of four colors. 
@@ -607,6 +622,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 3-C 1 1 0 0 1 0 0 128x96x4 $C00(3072)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -621,7 +637,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 95 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 192 Graphics mode generates a display matrix 128 elements 
         // wide by 192 elements high. Each element may be either ON or OFF,
@@ -634,6 +650,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 128 / 8;
             // Full graphic 3-R 1 1 0 1 1 0 1 128x192x2 $C00(3072)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -648,7 +665,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 3072 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 128 x 192 Color Graphics mode generates a display 128 elements 
         // wide by 192 elements high. Each element may be one of four colors.
@@ -660,6 +677,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 4;
+            _environment->currentSl = 128 / 4;
             // Full graphic 6-C 1 1 1 0 1 1 0 128x192x4 $1800(6144)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -674,7 +692,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 128 / 4 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         // The 256 x 192 Graphics mode generates a display 256 elements wide by 
         // 192 elements high. Each element may be either ON or OFF, but the ON 
@@ -687,6 +705,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             _environment->screenTilesWidth = _environment->screenWidth/_environment->fontWidth;
             _environment->screenTilesHeight = _environment->screenHeight/_environment->fontHeight;
             _environment->screenColors = 2;
+            _environment->currentSl = 256 / 8;
             // Full graphic 6-R 1 1 1 1 1 1 0 256x192x2 $1800(6144)
             SET_VIDEOAT_0400;
             VDG_GRAPH;
@@ -701,7 +720,7 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
             cpu_store_16bit( _environment, "CLIPY1", 0 );
             cpu_store_16bit( _environment, "CLIPY2", 191 );
             cpu_store_16bit( _environment, "CURRENTFRAMESIZE", 6144 );
-            cpu_store_8bit( _environment, "CURRENTSL", 256 / 8 );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         default:
             CRITICAL_SCREEN_UNSUPPORTED( _screen_mode->id );
@@ -1677,6 +1696,531 @@ static Variable * c6847_image_converter_multicolor_mode_standard( Environment * 
 
 }
 
+void c6847_image_compile_multicolor_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/4;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847_image_compile_bitmap_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/8;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847_image_compile_sg4( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/4;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847_image_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847_image_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847_image_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void c6847_images_compile_multicolor_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3])/4;
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847_images_compile_bitmap_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3])/8;
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847_images_compile_sg4( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3]);
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847_images_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847_images_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847_images_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void c6847_sequence_compile_multicolor_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3])/4;
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847_sequence_compile_bitmap_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3])/8;
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847_sequence_compile_sg4( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3]);
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847_sequence_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847_sequence_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847_sequence_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 
 static int sg4_blocks[128][4] = {
     {0,0,0,0}, {1,0,0,0}, {0,1,0,0}, {1,1,0,0}, {0,0,1,0}, {1,0,1,0}, {0,1,1,0}, {1,1,1,0}, {0,0,0,1}, {1,0,0,1}, {0,1,0,1}, {1,1,0,1}, {0,0,1,1}, {1,0,1,1}, {0,1,1,1}, {1,1,1,1},
@@ -1894,7 +2438,7 @@ static Variable * c6847_image_converter_sg4( Environment * _environment, char * 
     // Color of the pixel to convert
     RGBi rgb;
 
-    *(buffer) = _frame_width;
+    *(buffer) = _frame_width / 2;
     *(buffer+1) = _frame_height / 12;
     *(buffer+2) = 0;
 
@@ -2620,53 +3164,109 @@ void c6847_put_image( Environment * _environment, Resource * _source, char * _x,
     deploy_preferred( c6847vars, src_hw_6847_vars_asm);
     deploy( putimage, src_hw_6847_put_image_asm );
 
-    if ( _source->isAddress ) {
-        outline1("LDY %s", _source->realName );
-    } else {
-        outline1("LDY #%s", _source->realName );
-    }
+    if ( _source->isCompiled) {
 
-    if ( _frame_size ) {
-        if ( !_sequence && !_frame ) {
+        deploy_preferred( putimagecompiled, src_hw_6847_put_image_compiled_asm );
+
+        Variable * x = variable_retrieve( _environment, _x );
+        Variable * y = variable_retrieve( _environment, _y );
+
+        outline1("LDD %s", x->realName );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", y->realName );
+        outline0("STD <IMAGEY" );
+
+        if ( _sequence ) {
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+            switch( VT_BITWIDTH( sequence->type ) ) {
+                case 32:
+                    outline1("LDA %s+3", sequence->realName );
+                    break;
+                case 16:
+                    outline1("LDA %s+1", sequence->realName );
+                    break;
+                case 8:
+                    outline1("LDA %s", sequence->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( _sequence, DATATYPE_AS_STRING[sequence->type]);
+            }
+            outline1("LDB #$%2.2x", _frame_count );
+            outline0("MUL");
         } else {
-            if ( _sequence ) {
-                outline0("LEAY 3,y" );
-                if ( strlen(_sequence) == 0 ) {
-                } else {
-                    outline1("LDB %s", _sequence );
-                    outline1("JSR %soffsetsequence", _source->realName );
-                }
-                if ( _frame ) {
-                    if ( strlen(_frame) == 0 ) {
-                    } else {
-                        outline1("LDB %s", _frame );
-                        outline1("JSR %soffsetframe", _source->realName );
-                    }
-                }
-            } else {
-                if ( _frame ) {
-                    outline0("LEAY 3,y" );
-                    if ( strlen(_frame) == 0 ) {
-                    } else {
-                        outline1("LDB %s", _frame );
-                        outline1("JSR %soffsetframe", _source->realName );
-                    }
-                }
+            outline0("CLRB");
+        }
+        if ( _frame ) {
+            Variable * frame = variable_retrieve( _environment, _frame );
+
+            switch( VT_BITWIDTH( frame->type ) ) {
+                case 32:
+                    outline1("ADDB %s+3", frame->realName );
+                    break;
+                case 16:
+                    outline1("ADDB %s+1", frame->realName );
+                    break;
+                case 8:
+                    outline1("ADDB %s", frame->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( _frame, DATATYPE_AS_STRING[frame->type]);
             }
 
         }
+        outline1("JSR %s", _source->realName );
+
+    } else {
+
+        if ( _source->isAddress ) {
+            outline1("LDY %s", _source->realName );
+        } else {
+            outline1("LDY #%s", _source->realName );
+        }
+
+        if ( _frame_size ) {
+            if ( !_sequence && !_frame ) {
+            } else {
+                if ( _sequence ) {
+                    outline0("LEAY 3,y" );
+                    if ( strlen(_sequence) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _sequence );
+                        outline1("JSR %soffsetsequence", _source->realName );
+                    }
+                    if ( _frame ) {
+                        if ( strlen(_frame) == 0 ) {
+                        } else {
+                            outline1("LDB %s", _frame );
+                            outline1("JSR %soffsetframe", _source->realName );
+                        }
+                    }
+                } else {
+                    if ( _frame ) {
+                        outline0("LEAY 3,y" );
+                        if ( strlen(_frame) == 0 ) {
+                        } else {
+                            outline1("LDB %s", _frame );
+                            outline1("JSR %soffsetframe", _source->realName );
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        outline1("LDD %s", _x );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", _y );
+        outline0("STD <IMAGEY" );
+
+        outline1("LDD %s", _flags );
+        outline0("STB <IMAGEF" );
+        outline0("STA <IMAGET" );
+
+        outline0("JSR PUTIMAGE");
+
     }
-    
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
-
-    outline1("LDD %s", _flags );
-    outline0("STB <IMAGEF" );
-    outline0("STA <IMAGET" );
-
-    outline0("JSR PUTIMAGE");
     
 }
 

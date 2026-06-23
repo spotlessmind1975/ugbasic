@@ -1173,11 +1173,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 10;
 
-            scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             
             break;        
 
@@ -1198,11 +1198,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 10:
 
-            scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Graphics 5 (ANTIC A or 10)
@@ -1220,12 +1220,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 20;
 
             currentHeight = 48;
-            scanline = 20;
+            
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Graphics 6 (ANTIC B or 11)
@@ -1242,12 +1243,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
             currentHeight = 96;
-            scanline = 20;
+
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
         break;
 
         // Graphics 7 (ANTIC D or 13)
@@ -1266,12 +1268,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 40;
 
             currentHeight = 96;
-            scanline = 40;
+
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
         break;
 
         // Graphics 8 (ANTIC F or 15)
@@ -1297,13 +1300,13 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 40;
 
             screenMemoryAddress2 = _environment->frameBufferStart + 4096;
 
-            scanline = 40;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
         break;
             
         // The following five graphics modes have no equivalent in BASIC on older machine but if indicated do correspond to
@@ -1325,11 +1328,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
-            scanline = 20;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Antic E (Graphics 15-XL computers only)
@@ -1348,8 +1351,8 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 10;
 
-            scanline = 10;
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 20 );
             cpu_store_8bit( _environment, "CURRENTSL", scanline );
@@ -1375,10 +1378,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Graphics 1 (ANTIC 6)
@@ -1402,10 +1406,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Graphics 2 (ANTIC 7)
@@ -1422,10 +1427,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 204 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 224 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         // Antic 3
@@ -1444,10 +1450,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
         
         // Antic 4 (Graphics 12-XL computers only)
@@ -1469,10 +1476,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
         break;
 
         // Antic 5 (Graphics 13-XL computers only)
@@ -1489,10 +1497,11 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows * _environment->fontHeight;
             _environment->screenColors = 4;
             _environment->currentModeBW = 2;
+            _environment->currentSl = 20;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 152 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 192 );
-            cpu_store_8bit( _environment, "CURRENTSL", scanline );
+            cpu_store_8bit( _environment, "CURRENTSL", _environment->currentSl );
             break;
 
         default:
