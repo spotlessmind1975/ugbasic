@@ -103,6 +103,8 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
+extern char DATATYPE_AS_STRING[][16];
+
 /**
  * @brief <i>VIC-II</i>: emit code to check for collision
  * 
@@ -1694,14 +1696,1341 @@ static Variable * c6847b_image_converter_multicolor_mode_standard( Environment *
 
 }
 
+void c6847b_image_compile_multicolor_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/4;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847b_image_compile_bitmap_mode_standard( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/8;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847b_image_compile_sg4( Environment * _environment, ParamsImageCompile * _params ) {
+
+    int width = ((unsigned char)(_params->native_image_data[0]))/4;
+    int height = (unsigned char)(_params->native_image_data[1]);
+    int effectiveNativeImageSize = _params->native_image_size - 3;
+    int offset = _environment->currentSl - width;
+
+    int finalSize = width * height * 256;
+
+    _params->compiled_image_data = malloc( finalSize );
+    _params->compiled_image_bank = _params->native_image_bank;
+
+    // X = destination address on video buffer
+
+    int currentPc = 0;
+    int currentData = 3;
+    int previousValue = _params->native_image_data[currentData] + 1;
+
+    // | 3Dkk  C6kk                    LDB #kk    
+
+    _params->compiled_image_data[currentPc++] = 0xc6;
+    _params->compiled_image_data[currentPc++] = offset;
+
+    for( int y=0; y<height; ++y ) {
+        for( int x=0; x<width; ++x ) {
+
+            // | v
+            // | |
+            // | | ....  86dd                    LDA #$dd
+
+            if ( previousValue != _params->native_image_data[currentData] ) {
+                previousValue = _params->native_image_data[currentData];
+                _params->compiled_image_data[currentPc++] = 0x86;
+                _params->compiled_image_data[currentPc++] = _params->native_image_data[currentData++];
+            } else {
+                ++currentData;
+            }
+
+            // | | ....  A780                    STA ,X+
+
+            _params->compiled_image_data[currentPc++] = 0xa7;
+            _params->compiled_image_data[currentPc++] = 0x80;            
+
+        }
+
+        // 3395  3085                    LEAX B,X
+        
+        _params->compiled_image_data[currentPc++] = 0x30;
+        _params->compiled_image_data[currentPc++] = 0x85;
+
+    }
+
+    // 347E  39                      RTS
+    
+    _params->compiled_image_data[currentPc++] = 0x39;
+
+    _params->compiled_image_size = currentPc;
+    _params->compiled_image_data = realloc( _params->compiled_image_data, _params->compiled_image_size );
+
+}
+
+void c6847b_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847b_image_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847b_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847b_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847b_image_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847b_image_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void c6847b_images_compile_multicolor_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3])/4;
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847b_images_compile_bitmap_mode_standard( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3])/8;
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847b_images_compile_sg4( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_images_data[3]);
+    int height = (unsigned char)(_params->native_images_data[4]);
+
+    int finalSize = width * height * _params->native_images_frame_count * 256;
+
+    _params->compiled_images_data = malloc( finalSize );
+    _params->compiled_images_bank = _params->native_images_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_images_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_images_data+3+i*_params->native_images_frame_size;
+        params.native_image_size = _params->native_images_frame_size;
+        params.native_image_bank = _params->native_images_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_images_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_images_data = NULL;
+            _params->compiled_images_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_images_size = currentPc;
+    _params->compiled_images_data = realloc( _params->compiled_images_data, _params->compiled_images_size );
+
+}
+
+void c6847b_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847b_images_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847b_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847b_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847b_images_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847b_images_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void c6847b_sequence_compile_multicolor_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3])/4;
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847b_sequence_compile_bitmap_mode_standard( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3])/8;
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847b_sequence_compile_sg4( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    int width = (unsigned char)(_params->native_sequence_data[3]);
+    int height = (unsigned char)(_params->native_sequence_data[4]);
+
+    int finalSize = width * height * _params->native_sequence_frame_count * 256;
+
+    _params->compiled_sequence_data = malloc( finalSize );
+    _params->compiled_sequence_bank = _params->native_sequence_bank;
+
+    int currentPc = 0;
+
+    for( int i=0; i<_params->native_sequence_frame_count; ++i ) {
+        ParamsImageCompile params;
+        params.mode = _params->mode;
+        params.native_image_data = _params->native_sequence_data+3+i*_params->native_sequence_frame_size;
+        params.native_image_size = _params->native_sequence_frame_size;
+        params.native_image_bank = _params->native_sequence_bank;
+        image_compile( _environment, &params );
+        if ( params.compiled_image_data ) {
+            memcpy( _params->compiled_sequence_data + currentPc, params.compiled_image_data, params.compiled_image_size );
+            _params->compiled_sequence_offset[i] = currentPc;
+            currentPc += params.compiled_image_size;
+        } else {
+            _params->compiled_sequence_data = NULL;
+            _params->compiled_sequence_size = 0;
+            return;
+        }
+    }
+
+    _params->compiled_sequence_size = currentPc;
+    _params->compiled_sequence_data = realloc( _params->compiled_sequence_data, _params->compiled_sequence_size );
+
+}
+
+void c6847b_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    switch( _params->mode ) {
+        case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
+        case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
+        case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847b_sequence_compile_sg4( _environment, _params );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+        //     return c6847b_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+        //     return c6847b_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+        //     break;
+        // case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
+        // case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
+        //     break;
+        case BITMAP_MODE_COLOR1:            // Color Graphics 1	64 × 64	4	1024
+        case BITMAP_MODE_COLOR2:            // Color Graphics 2	128 × 64	4	2048
+        case BITMAP_MODE_COLOR3:            // Color Graphics 3	128 × 96	4	3072
+        case BITMAP_MODE_COLOR6:            // Color Graphics 6	128 × 192	4	6144
+
+            return c6847b_sequence_compile_multicolor_mode_standard( _environment, _params );
+
+            break;
+
+        case BITMAP_MODE_RESOLUTION1:       // Resolution Graphics 1	128 × 64	1 + Black	1024
+        case BITMAP_MODE_RESOLUTION2:       // Resolution Graphics 2 128 × 96	1 + Black	1536
+        case BITMAP_MODE_RESOLUTION3:       // Resolution Graphics 3	128 × 192	1 + Black	3072
+        case BITMAP_MODE_RESOLUTION6:       // Resolution Graphics 6	256 × 192	1 + Black	6144            break;
+
+            return c6847b_sequence_compile_bitmap_mode_standard( _environment, _params );
+
+    }
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
+
+static int sg4_blocks[128][4] = {
+    {0,0,0,0}, {1,0,0,0}, {0,1,0,0}, {1,1,0,0}, {0,0,1,0}, {1,0,1,0}, {0,1,1,0}, {1,1,1,0}, {0,0,0,1}, {1,0,0,1}, {0,1,0,1}, {1,1,0,1}, {0,0,1,1}, {1,0,1,1}, {0,1,1,1}, {1,1,1,1},
+    {0,0,0,0}, {2,0,0,0}, {0,2,0,0}, {2,2,0,0}, {0,0,2,0}, {2,0,2,0}, {0,2,2,0}, {2,2,2,0}, {0,0,0,2}, {2,0,0,2}, {0,2,0,2}, {2,2,0,2}, {0,0,2,2}, {2,0,2,2}, {0,2,2,2}, {2,2,2,2},
+    {0,0,0,0}, {3,0,0,0}, {0,3,0,0}, {3,3,0,0}, {0,0,3,0}, {3,0,3,0}, {0,3,3,0}, {3,3,3,0}, {0,0,0,3}, {3,0,0,3}, {0,3,0,3}, {3,3,0,3}, {0,0,3,3}, {3,0,3,3}, {0,3,3,3}, {3,3,3,3},
+    {0,0,0,0}, {4,0,0,0}, {0,4,0,0}, {4,4,0,0}, {0,0,4,0}, {4,0,4,0}, {0,4,4,0}, {4,4,4,0}, {0,0,0,4}, {4,0,0,4}, {0,4,0,4}, {4,4,0,4}, {0,0,4,4}, {4,0,4,4}, {0,4,4,4}, {4,4,4,4},
+    {0,0,0,0}, {5,0,0,0}, {0,5,0,0}, {5,5,0,0}, {0,0,5,0}, {5,0,5,0}, {0,5,5,0}, {5,5,5,0}, {0,0,0,5}, {5,0,0,5}, {0,5,0,5}, {5,5,0,5}, {0,0,5,5}, {5,0,5,5}, {0,5,5,5}, {5,5,5,5},
+    {0,0,0,0}, {6,0,0,0}, {0,6,0,0}, {6,6,0,0}, {0,0,6,0}, {6,0,6,0}, {0,6,6,0}, {6,6,6,0}, {0,0,0,6}, {6,0,0,6}, {0,6,0,6}, {6,6,0,6}, {0,0,6,6}, {6,0,6,6}, {0,6,6,6}, {6,6,6,6},
+    {0,0,0,0}, {7,0,0,0}, {0,7,0,0}, {7,7,0,0}, {0,0,7,0}, {7,0,7,0}, {0,7,7,0}, {7,7,7,0}, {0,0,0,7}, {7,0,0,7}, {0,7,0,7}, {7,7,0,7}, {0,0,7,7}, {7,0,7,7}, {0,7,7,7}, {7,7,7,7},
+    {0,0,0,0}, {8,0,0,0}, {0,8,0,0}, {8,8,0,0}, {0,0,8,0}, {8,0,8,0}, {0,8,8,0}, {8,8,8,0}, {0,0,0,8}, {8,0,0,8}, {0,8,0,8}, {8,8,0,8}, {0,0,8,8}, {8,0,8,8}, {0,8,8,8}, {8,8,8,8}
+};
+
+static int pow2( int _value ) {
+    return _value*_value;
+}
+
+static int c6847b_image_converter_sg4_block( Environment * _environment, char * _source, int _width, int _depth ) {
+
+    int x, y, i;
+
+    int block[8][12];
+    int sampled_block[2][2];
+    int sg4_blocks_distance[128];
+
+    memset(block, 0, 8 * 12 * sizeof(int));
+
+    for (y = 0; y < 12; ++y) {
+        for (x = 0; x < 8; ++x) {
+
+            RGBi rgb;
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // printf( " | %2.2x%2.2x%2.2x = ", rgb.red, rgb.green, rgb.blue );
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<sizeof(SYSTEM_PALETTE_SG4)/sizeof(RGBi); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE_SG4[i], &rgb );
+                    // printf( " <---> (%d) = %d; ", i, distance );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE_SG4[i].index;
+                    }
+                }
+            }
+
+            block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+            _source += _depth;
+
+        }
+
+        // printf( "\n" );
+
+        _source += ( _width - 8 ) * _depth;
+
+    }
+
+    for (y = 0; y < 2; ++y) {
+        for (x = 0; x < 2; ++x) {
+
+            int y2, x2;
+            int colorCount[9];
+
+            memset( colorCount, 0, 9 * sizeof( int ) );
+
+            for( y2 = 0; y2 < 6; ++y2 ) {
+                for( x2 = 0; x2 < 4; ++x2 ) {
+                    colorCount[block[4*x+x2][6*y+y2]]++;
+                }
+            }
+
+            int colorCountMax = 0;
+            int colorIndex = 0;
+
+            for( i = 0; i<9; ++i ) {
+                if ( colorCount[i] > colorCountMax ) {
+                    colorCountMax = colorCount[i];
+                    colorIndex = i;
+                }
+            }
+
+            sampled_block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+        }
+
+        // printf( "\n" );
+
+    }
+
+    int min_sg4_block_distance = 9999;
+    int min_sg4_block_number = 0;
+
+    for( i=0; i<128; ++i ) {
+        int absoluteDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg4_blocks[i][3] ) +
+                pow2( sampled_block[1][0] - sg4_blocks[i][2] ) +
+                pow2( sampled_block[0][1] - sg4_blocks[i][1] ) +
+                pow2( sampled_block[1][1] - sg4_blocks[i][0] ) 
+            );
+
+        int diagonalDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg4_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg4_blocks[i][0] ) 
+            ) +
+            (int)sqrt( 
+                pow2( sampled_block[1][0] - sg4_blocks[i][2] ) +
+                pow2( sampled_block[0][1] - sg4_blocks[i][1] )
+            )
+            ;
+
+        // printf( "%d) absDis = %d, diagDis = %d, * = %d, min = %d\n", i, absoluteDistance, diagonalDistance, (absoluteDistance * diagonalDistance), min_sg4_block_distance );
+
+        if ( (absoluteDistance * diagonalDistance) < min_sg4_block_distance ) {
+            min_sg4_block_distance = (absoluteDistance * diagonalDistance);
+            min_sg4_block_number = i;
+        }
+
+    }
+
+    // printf( "--> %d\n", min_sg4_block_number );
+
+    return 0x80 | ( min_sg4_block_number & 0x7f );
+
+}
+
+static Variable * c6847b_image_converter_sg4( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 2 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 2 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 2 ) {
+            _height = ( ( ( _height - 1 ) / 12 ) - 1 ) * 12;
+        }
+        if ( _frame_height % 2 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 12 ) - 1 ) * 12;
+        }
+    }
+    
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 12 );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 9) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_SG4[0];
+
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_SG4) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_SG4) / sizeof(RGBi)), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = c6847b_image_size( _environment, _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS4, 0 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS4 );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width / 2;
+    *(buffer+1) = _frame_height / 12;
+    *(buffer+2) = 0;
+
+    _source += ( ( _offset_y * (_width>>3) ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; image_y+=12) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+            
+            // printf( "\n\nx = %d, y = %d\n", image_x, image_y );
+
+            offset = ( ( image_y / 12 ) * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+
+            int colorIndex = c6847b_image_converter_sg4_block( _environment, _source, _width, _depth );
+
+            // printf( "%d\n", offset );
+            *(buffer + 3 + offset) = colorIndex;
+
+            adilinepixel(colorIndex);
+
+            _source += 8 * _depth;
+
+        }
+
+        _source += 12 * _width * _depth;
+        _source -= _frame_width * _depth;
+
+        // printf("\n" );
+    }
+
+    adilineendbitmap();
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+static int sg6_blocks[256][6] = {
+{0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0}, {0,0,0,0,0,0},
+{0,0,0,0,0,0}, {1,0,0,0,0,0}, {0,1,0,0,0,0}, {1,1,0,0,0,0}, {0,0,1,0,0,0}, {1,0,1,0,0,0}, {0,1,1,0,0,0}, {1,1,1,0,0,0}, {0,0,0,1,0,0}, {1,0,0,1,0,0}, {0,1,0,1,0,0}, {1,1,0,1,0,0}, {0,0,1,1,0,0}, {1,0,1,1,0,0}, {0,1,1,1,0,0}, {1,1,1,1,0,0}, {0,0,0,0,1,0}, {1,0,0,0,1,0}, {0,1,0,0,1,0}, {1,1,0,0,1,0}, {0,0,1,0,1,0}, {1,0,1,0,1,0}, {0,1,1,0,1,0}, {1,1,1,0,1,0}, {0,0,0,1,1,0}, {1,0,0,1,1,0}, {0,1,0,1,1,0}, {1,1,0,1,1,0}, {0,0,1,1,1,0}, {1,0,1,1,1,0}, {0,1,1,1,1,0}, {1,1,1,1,1,0}, {0,0,0,0,0,1}, {1,0,0,0,0,1}, {0,1,0,0,0,1}, {1,1,0,0,0,1}, {0,0,1,0,0,1}, {1,0,1,0,0,1}, {0,1,1,0,0,1}, {1,1,1,0,0,1}, {0,0,0,1,0,1}, {1,0,0,1,0,1}, {0,1,0,1,0,1}, {1,1,0,1,0,1}, {0,0,1,1,0,1}, {1,0,1,1,0,1}, {0,1,1,1,0,1}, {1,1,1,1,0,1}, {0,0,0,0,1,1}, {1,0,0,0,1,1}, {0,1,0,0,1,1}, {1,1,0,0,1,1}, {0,0,1,0,1,1}, {1,0,1,0,1,1}, {0,1,1,0,1,1}, {1,1,1,0,1,1}, {0,0,0,1,1,1}, {1,0,0,1,1,1}, {0,1,0,1,1,1}, {1,1,0,1,1,1}, {0,0,1,1,1,1}, {1,0,1,1,1,1}, {0,1,1,1,1,1}, {1,1,1,1,1,1},
+{0,0,0,0,0,0}, {2,0,0,0,0,0}, {0,2,0,0,0,0}, {2,2,0,0,0,0}, {0,0,2,0,0,0}, {2,0,2,0,0,0}, {0,2,2,0,0,0}, {2,2,2,0,0,0}, {0,0,0,2,0,0}, {2,0,0,2,0,0}, {0,2,0,2,0,0}, {2,2,0,2,0,0}, {0,0,2,2,0,0}, {2,0,2,2,0,0}, {0,2,2,2,0,0}, {2,2,2,2,0,0}, {0,0,0,0,2,0}, {2,0,0,0,2,0}, {0,2,0,0,2,0}, {2,2,0,0,2,0}, {0,0,2,0,2,0}, {2,0,2,0,2,0}, {0,2,2,0,2,0}, {2,2,2,0,2,0}, {0,0,0,2,2,0}, {2,0,0,2,2,0}, {0,2,0,2,2,0}, {2,2,0,2,2,0}, {0,0,2,2,2,0}, {2,0,2,2,2,0}, {0,2,2,2,2,0}, {2,2,2,2,2,0}, {0,0,0,0,0,2}, {2,0,0,0,0,2}, {0,2,0,0,0,2}, {2,2,0,0,0,2}, {0,0,2,0,0,2}, {2,0,2,0,0,2}, {0,2,2,0,0,2}, {2,2,2,0,0,2}, {0,0,0,2,0,2}, {2,0,0,2,0,2}, {0,2,0,2,0,2}, {2,2,0,2,0,2}, {0,0,2,2,0,2}, {2,0,2,2,0,2}, {0,2,2,2,0,2}, {2,2,2,2,0,2}, {0,0,0,0,2,2}, {2,0,0,0,2,2}, {0,2,0,0,2,2}, {2,2,0,0,2,2}, {0,0,2,0,2,2}, {2,0,2,0,2,2}, {0,2,2,0,2,2}, {2,2,2,0,2,2}, {0,0,0,2,2,2}, {2,0,0,2,2,2}, {0,2,0,2,2,2}, {2,2,0,2,2,2}, {0,0,2,2,2,2}, {2,0,2,2,2,2}, {0,2,2,2,2,2}, {2,2,2,2,2,2},
+{0,0,0,0,0,0}, {3,0,0,0,0,0}, {0,3,0,0,0,0}, {3,3,0,0,0,0}, {0,0,3,0,0,0}, {3,0,3,0,0,0}, {0,3,3,0,0,0}, {3,3,3,0,0,0}, {0,0,0,3,0,0}, {3,0,0,3,0,0}, {0,3,0,3,0,0}, {3,3,0,3,0,0}, {0,0,3,3,0,0}, {3,0,3,3,0,0}, {0,3,3,3,0,0}, {3,3,3,3,0,0}, {0,0,0,0,3,0}, {3,0,0,0,3,0}, {0,3,0,0,3,0}, {3,3,0,0,3,0}, {0,0,3,0,3,0}, {3,0,3,0,3,0}, {0,3,3,0,3,0}, {3,3,3,0,3,0}, {0,0,0,3,3,0}, {3,0,0,3,3,0}, {0,3,0,3,3,0}, {3,3,0,3,3,0}, {0,0,3,3,3,0}, {3,0,3,3,3,0}, {0,3,3,3,3,0}, {3,3,3,3,3,0}, {0,0,0,0,0,3}, {3,0,0,0,0,3}, {0,3,0,0,0,3}, {3,3,0,0,0,3}, {0,0,3,0,0,3}, {3,0,3,0,0,3}, {0,3,3,0,0,3}, {3,3,3,0,0,3}, {0,0,0,3,0,3}, {3,0,0,3,0,3}, {0,3,0,3,0,3}, {3,3,0,3,0,3}, {0,0,3,3,0,3}, {3,0,3,3,0,3}, {0,3,3,3,0,3}, {3,3,3,3,0,3}, {0,0,0,0,3,3}, {3,0,0,0,3,3}, {0,3,0,0,3,3}, {3,3,0,0,3,3}, {0,0,3,0,3,3}, {3,0,3,0,3,3}, {0,3,3,0,3,3}, {3,3,3,0,3,3}, {0,0,0,3,3,3}, {3,0,0,3,3,3}, {0,3,0,3,3,3}, {3,3,0,3,3,3}, {0,0,3,3,3,3}, {3,0,3,3,3,3}, {0,3,3,3,3,3}, {3,3,3,3,3,3},
+};
+
+static int c6847b_image_converter_sg6_block( Environment * _environment, char * _source, int _width, int _depth ) {
+
+    int x, y, i;
+
+    int block[8][12];
+    int sampled_block[2][3];
+    int sg6_blocks_distance[256];
+
+    memset(block, 0, 8 * 12 * sizeof(int));
+
+    for (y = 0; y < 12; ++y) {
+        for (x = 0; x < 8; ++x) {
+
+            RGBi rgb;
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // printf( " | %2.2x%2.2x%2.2x = ", rgb.red, rgb.green, rgb.blue );
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<sizeof(SYSTEM_PALETTE_SG6)/sizeof(RGBi); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE_SG6[i], &rgb );
+                    // printf( " <---> (%d) = %d; ", i, distance );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE_SG6[i].index;
+                    }
+                }
+            }
+
+            block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+            _source += _depth;
+
+        }
+
+        // printf( "\n" );
+
+        _source += ( _width - 8 ) * _depth;
+
+    }
+
+    for (y = 0; y < 3; ++y) {
+        for (x = 0; x < 2; ++x) {
+
+            int y2, x2;
+            int colorCount[4];
+
+            memset( colorCount, 0, 4 * sizeof( int ) );
+
+            for( y2 = 0; y2 < 4; ++y2 ) {
+                for( x2 = 0; x2 < 4; ++x2 ) {
+                    colorCount[block[4*x+x2][4*y+y2]]++;
+                }
+            }
+
+            int colorCountMax = 0;
+            int colorIndex = 0;
+
+            for( i = 0; i<4; ++i ) {
+                if ( colorCount[i] > colorCountMax ) {
+                    colorCountMax = colorCount[i];
+                    colorIndex = i;
+                }
+            }
+
+            sampled_block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+        }
+
+        // printf( "\n" );
+
+    }
+
+    int min_sg6_block_distance = 9999;
+    int min_sg6_block_number = 0;
+
+    for( i=0; i<256; ++i ) {
+        int absoluteDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg6_blocks[i][5] ) +
+                pow2( sampled_block[1][0] - sg6_blocks[i][4] ) +
+                pow2( sampled_block[0][1] - sg6_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[0][2] - sg6_blocks[i][1] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) 
+            );
+
+        int diagonalDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg6_blocks[i][5] ) +
+                pow2( sampled_block[0][1] - sg6_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) 
+            ) +
+            (int)sqrt( 
+                pow2( sampled_block[1][0] - sg6_blocks[i][4] ) +
+                pow2( sampled_block[1][1] - sg6_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg6_blocks[i][0] ) +
+                pow2( sampled_block[0][2] - sg6_blocks[i][1] )
+            )
+            ;
+
+        // printf( "%d) absDis = %d, diagDis = %d, * = %d, min = %d\n", i, absoluteDistance, diagonalDistance, (absoluteDistance * diagonalDistance), min_sg6_block_distance );
+
+        if ( (absoluteDistance * diagonalDistance) < min_sg6_block_distance ) {
+            min_sg6_block_distance = (absoluteDistance * diagonalDistance);
+            min_sg6_block_number = i;
+        }
+
+    }
+
+    // printf( "--> %d\n", min_sg6_block_number );
+
+    return 0x80 | min_sg6_block_number;
+
+}
+
+static Variable * c6847b_image_converter_sg6( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 2 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 2 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 2 ) {
+            _height = ( ( ( _height - 1 ) / 12 ) - 1 ) * 12;
+        }
+        if ( _frame_height % 2 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 12 ) - 1 ) * 12;
+        }
+    }
+    
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 12 );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 5) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_SG6[0];
+
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi)), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = c6847b_image_size( _environment, _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6, 0 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6 );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height / 12;
+    *(buffer+2) = 0;
+
+    _source += ( ( _offset_y * (_width>>3) ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; image_y+=12) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+            
+            // printf( "\n\nx = %d, y = %d\n", image_x, image_y );
+
+            offset = ( ( image_y / 12 ) * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+
+            int colorIndex = c6847b_image_converter_sg6_block( _environment, _source, _width, _depth );
+
+            // printf( "%d\n", offset );
+            *(buffer + 3 + offset) = colorIndex;
+
+            adilinepixel(colorIndex);
+
+            _source += 8 * _depth;
+
+        }
+
+        _source += 12 * _width * _depth;
+        _source -= _frame_width * _depth;
+
+        // printf("\n" );
+    }
+
+    adilineendbitmap();
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
+static int sg8_blocks[256*8][8] = {
+    {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0},
+    {0,0,0,0,0,0,0,0}, {1,0,0,0,0,0,0,0}, {0,1,0,0,0,0,0,0}, {1,1,0,0,0,0,0,0}, {0,0,1,0,0,0,0,0}, {1,0,1,0,0,0,0,0}, {0,1,1,0,0,0,0,0}, {1,1,1,0,0,0,0,0}, {0,0,0,1,0,0,0,0}, {1,0,0,1,0,0,0,0}, {0,1,0,1,0,0,0,0}, {1,1,0,1,0,0,0,0}, {0,0,1,1,0,0,0,0}, {1,0,1,1,0,0,0,0}, {0,1,1,1,0,0,0,0}, {1,1,1,1,0,0,0,0}, {0,0,0,0,1,0,0,0}, {1,0,0,0,1,0,0,0}, {0,1,0,0,1,0,0,0}, {1,1,0,0,1,0,0,0}, {0,0,1,0,1,0,0,0}, {1,0,1,0,1,0,0,0}, {0,1,1,0,1,0,0,0}, {1,1,1,0,1,0,0,0}, {0,0,0,1,1,0,0,0}, {1,0,0,1,1,0,0,0}, {0,1,0,1,1,0,0,0}, {1,1,0,1,1,0,0,0}, {0,0,1,1,1,0,0,0}, {1,0,1,1,1,0,0,0}, {0,1,1,1,1,0,0,0}, {1,1,1,1,1,0,0,0}, {0,0,0,0,0,1,0,0}, {1,0,0,0,0,1,0,0}, {0,1,0,0,0,1,0,0}, {1,1,0,0,0,1,0,0}, {0,0,1,0,0,1,0,0}, {1,0,1,0,0,1,0,0}, {0,1,1,0,0,1,0,0}, {1,1,1,0,0,1,0,0}, {0,0,0,1,0,1,0,0}, {1,0,0,1,0,1,0,0}, {0,1,0,1,0,1,0,0}, {1,1,0,1,0,1,0,0}, {0,0,1,1,0,1,0,0}, {1,0,1,1,0,1,0,0}, {0,1,1,1,0,1,0,0}, {1,1,1,1,0,1,0,0}, {0,0,0,0,1,1,0,0}, {1,0,0,0,1,1,0,0}, {0,1,0,0,1,1,0,0}, {1,1,0,0,1,1,0,0}, {0,0,1,0,1,1,0,0}, {1,0,1,0,1,1,0,0}, {0,1,1,0,1,1,0,0}, {1,1,1,0,1,1,0,0}, {0,0,0,1,1,1,0,0}, {1,0,0,1,1,1,0,0}, {0,1,0,1,1,1,0,0}, {1,1,0,1,1,1,0,0}, {0,0,1,1,1,1,0,0}, {1,0,1,1,1,1,0,0}, {0,1,1,1,1,1,0,0}, {1,1,1,1,1,1,0,0}, {0,0,0,0,0,0,1,0}, {1,0,0,0,0,0,1,0}, {0,1,0,0,0,0,1,0}, {1,1,0,0,0,0,1,0}, {0,0,1,0,0,0,1,0}, {1,0,1,0,0,0,1,0}, {0,1,1,0,0,0,1,0}, {1,1,1,0,0,0,1,0}, {0,0,0,1,0,0,1,0}, {1,0,0,1,0,0,1,0}, {0,1,0,1,0,0,1,0}, {1,1,0,1,0,0,1,0}, {0,0,1,1,0,0,1,0}, {1,0,1,1,0,0,1,0}, {0,1,1,1,0,0,1,0}, {1,1,1,1,0,0,1,0}, {0,0,0,0,1,0,1,0}, {1,0,0,0,1,0,1,0}, {0,1,0,0,1,0,1,0}, {1,1,0,0,1,0,1,0}, {0,0,1,0,1,0,1,0}, {1,0,1,0,1,0,1,0}, {0,1,1,0,1,0,1,0}, {1,1,1,0,1,0,1,0}, {0,0,0,1,1,0,1,0}, {1,0,0,1,1,0,1,0}, {0,1,0,1,1,0,1,0}, {1,1,0,1,1,0,1,0}, {0,0,1,1,1,0,1,0}, {1,0,1,1,1,0,1,0}, {0,1,1,1,1,0,1,0}, {1,1,1,1,1,0,1,0}, {0,0,0,0,0,1,1,0}, {1,0,0,0,0,1,1,0}, {0,1,0,0,0,1,1,0}, {1,1,0,0,0,1,1,0}, {0,0,1,0,0,1,1,0}, {1,0,1,0,0,1,1,0}, {0,1,1,0,0,1,1,0}, {1,1,1,0,0,1,1,0}, {0,0,0,1,0,1,1,0}, {1,0,0,1,0,1,1,0}, {0,1,0,1,0,1,1,0}, {1,1,0,1,0,1,1,0}, {0,0,1,1,0,1,1,0}, {1,0,1,1,0,1,1,0}, {0,1,1,1,0,1,1,0}, {1,1,1,1,0,1,1,0}, {0,0,0,0,1,1,1,0}, {1,0,0,0,1,1,1,0}, {0,1,0,0,1,1,1,0}, {1,1,0,0,1,1,1,0}, {0,0,1,0,1,1,1,0}, {1,0,1,0,1,1,1,0}, {0,1,1,0,1,1,1,0}, {1,1,1,0,1,1,1,0}, {0,0,0,1,1,1,1,0}, {1,0,0,1,1,1,1,0}, {0,1,0,1,1,1,1,0}, {1,1,0,1,1,1,1,0}, {0,0,1,1,1,1,1,0}, {1,0,1,1,1,1,1,0}, {0,1,1,1,1,1,1,0}, {1,1,1,1,1,1,1,0}, {0,0,0,0,0,0,0,1}, {1,0,0,0,0,0,0,1}, {0,1,0,0,0,0,0,1}, {1,1,0,0,0,0,0,1}, {0,0,1,0,0,0,0,1}, {1,0,1,0,0,0,0,1}, {0,1,1,0,0,0,0,1}, {1,1,1,0,0,0,0,1}, {0,0,0,1,0,0,0,1}, {1,0,0,1,0,0,0,1}, {0,1,0,1,0,0,0,1}, {1,1,0,1,0,0,0,1}, {0,0,1,1,0,0,0,1}, {1,0,1,1,0,0,0,1}, {0,1,1,1,0,0,0,1}, {1,1,1,1,0,0,0,1}, {0,0,0,0,1,0,0,1}, {1,0,0,0,1,0,0,1}, {0,1,0,0,1,0,0,1}, {1,1,0,0,1,0,0,1}, {0,0,1,0,1,0,0,1}, {1,0,1,0,1,0,0,1}, {0,1,1,0,1,0,0,1}, {1,1,1,0,1,0,0,1}, {0,0,0,1,1,0,0,1}, {1,0,0,1,1,0,0,1}, {0,1,0,1,1,0,0,1}, {1,1,0,1,1,0,0,1}, {0,0,1,1,1,0,0,1}, {1,0,1,1,1,0,0,1}, {0,1,1,1,1,0,0,1}, {1,1,1,1,1,0,0,1}, {0,0,0,0,0,1,0,1}, {1,0,0,0,0,1,0,1}, {0,1,0,0,0,1,0,1}, {1,1,0,0,0,1,0,1}, {0,0,1,0,0,1,0,1}, {1,0,1,0,0,1,0,1}, {0,1,1,0,0,1,0,1}, {1,1,1,0,0,1,0,1}, {0,0,0,1,0,1,0,1}, {1,0,0,1,0,1,0,1}, {0,1,0,1,0,1,0,1}, {1,1,0,1,0,1,0,1}, {0,0,1,1,0,1,0,1}, {1,0,1,1,0,1,0,1}, {0,1,1,1,0,1,0,1}, {1,1,1,1,0,1,0,1}, {0,0,0,0,1,1,0,1}, {1,0,0,0,1,1,0,1}, {0,1,0,0,1,1,0,1}, {1,1,0,0,1,1,0,1}, {0,0,1,0,1,1,0,1}, {1,0,1,0,1,1,0,1}, {0,1,1,0,1,1,0,1}, {1,1,1,0,1,1,0,1}, {0,0,0,1,1,1,0,1}, {1,0,0,1,1,1,0,1}, {0,1,0,1,1,1,0,1}, {1,1,0,1,1,1,0,1}, {0,0,1,1,1,1,0,1}, {1,0,1,1,1,1,0,1}, {0,1,1,1,1,1,0,1}, {1,1,1,1,1,1,0,1}, {0,0,0,0,0,0,1,1}, {1,0,0,0,0,0,1,1}, {0,1,0,0,0,0,1,1}, {1,1,0,0,0,0,1,1}, {0,0,1,0,0,0,1,1}, {1,0,1,0,0,0,1,1}, {0,1,1,0,0,0,1,1}, {1,1,1,0,0,0,1,1}, {0,0,0,1,0,0,1,1}, {1,0,0,1,0,0,1,1}, {0,1,0,1,0,0,1,1}, {1,1,0,1,0,0,1,1}, {0,0,1,1,0,0,1,1}, {1,0,1,1,0,0,1,1}, {0,1,1,1,0,0,1,1}, {1,1,1,1,0,0,1,1}, {0,0,0,0,1,0,1,1}, {1,0,0,0,1,0,1,1}, {0,1,0,0,1,0,1,1}, {1,1,0,0,1,0,1,1}, {0,0,1,0,1,0,1,1}, {1,0,1,0,1,0,1,1}, {0,1,1,0,1,0,1,1}, {1,1,1,0,1,0,1,1}, {0,0,0,1,1,0,1,1}, {1,0,0,1,1,0,1,1}, {0,1,0,1,1,0,1,1}, {1,1,0,1,1,0,1,1}, {0,0,1,1,1,0,1,1}, {1,0,1,1,1,0,1,1}, {0,1,1,1,1,0,1,1}, {1,1,1,1,1,0,1,1}, {0,0,0,0,0,1,1,1}, {1,0,0,0,0,1,1,1}, {0,1,0,0,0,1,1,1}, {1,1,0,0,0,1,1,1}, {0,0,1,0,0,1,1,1}, {1,0,1,0,0,1,1,1}, {0,1,1,0,0,1,1,1}, {1,1,1,0,0,1,1,1}, {0,0,0,1,0,1,1,1}, {1,0,0,1,0,1,1,1}, {0,1,0,1,0,1,1,1}, {1,1,0,1,0,1,1,1}, {0,0,1,1,0,1,1,1}, {1,0,1,1,0,1,1,1}, {0,1,1,1,0,1,1,1}, {1,1,1,1,0,1,1,1}, {0,0,0,0,1,1,1,1}, {1,0,0,0,1,1,1,1}, {0,1,0,0,1,1,1,1}, {1,1,0,0,1,1,1,1}, {0,0,1,0,1,1,1,1}, {1,0,1,0,1,1,1,1}, {0,1,1,0,1,1,1,1}, {1,1,1,0,1,1,1,1}, {0,0,0,1,1,1,1,1}, {1,0,0,1,1,1,1,1}, {0,1,0,1,1,1,1,1}, {1,1,0,1,1,1,1,1}, {0,0,1,1,1,1,1,1}, {1,0,1,1,1,1,1,1}, {0,1,1,1,1,1,1,1}, {1,1,1,1,1,1,1,1},
+    {0,0,0,0,0,0,0,0}, {2,0,0,0,0,0,0,0}, {0,2,0,0,0,0,0,0}, {2,2,0,0,0,0,0,0}, {0,0,2,0,0,0,0,0}, {2,0,2,0,0,0,0,0}, {0,2,2,0,0,0,0,0}, {2,2,2,0,0,0,0,0}, {0,0,0,2,0,0,0,0}, {2,0,0,2,0,0,0,0}, {0,2,0,2,0,0,0,0}, {2,2,0,2,0,0,0,0}, {0,0,2,2,0,0,0,0}, {2,0,2,2,0,0,0,0}, {0,2,2,2,0,0,0,0}, {2,2,2,2,0,0,0,0}, {0,0,0,0,2,0,0,0}, {2,0,0,0,2,0,0,0}, {0,2,0,0,2,0,0,0}, {2,2,0,0,2,0,0,0}, {0,0,2,0,2,0,0,0}, {2,0,2,0,2,0,0,0}, {0,2,2,0,2,0,0,0}, {2,2,2,0,2,0,0,0}, {0,0,0,2,2,0,0,0}, {2,0,0,2,2,0,0,0}, {0,2,0,2,2,0,0,0}, {2,2,0,2,2,0,0,0}, {0,0,2,2,2,0,0,0}, {2,0,2,2,2,0,0,0}, {0,2,2,2,2,0,0,0}, {2,2,2,2,2,0,0,0}, {0,0,0,0,0,2,0,0}, {2,0,0,0,0,2,0,0}, {0,2,0,0,0,2,0,0}, {2,2,0,0,0,2,0,0}, {0,0,2,0,0,2,0,0}, {2,0,2,0,0,2,0,0}, {0,2,2,0,0,2,0,0}, {2,2,2,0,0,2,0,0}, {0,0,0,2,0,2,0,0}, {2,0,0,2,0,2,0,0}, {0,2,0,2,0,2,0,0}, {2,2,0,2,0,2,0,0}, {0,0,2,2,0,2,0,0}, {2,0,2,2,0,2,0,0}, {0,2,2,2,0,2,0,0}, {2,2,2,2,0,2,0,0}, {0,0,0,0,2,2,0,0}, {2,0,0,0,2,2,0,0}, {0,2,0,0,2,2,0,0}, {2,2,0,0,2,2,0,0}, {0,0,2,0,2,2,0,0}, {2,0,2,0,2,2,0,0}, {0,2,2,0,2,2,0,0}, {2,2,2,0,2,2,0,0}, {0,0,0,2,2,2,0,0}, {2,0,0,2,2,2,0,0}, {0,2,0,2,2,2,0,0}, {2,2,0,2,2,2,0,0}, {0,0,2,2,2,2,0,0}, {2,0,2,2,2,2,0,0}, {0,2,2,2,2,2,0,0}, {2,2,2,2,2,2,0,0}, {0,0,0,0,0,0,2,0}, {2,0,0,0,0,0,2,0}, {0,2,0,0,0,0,2,0}, {2,2,0,0,0,0,2,0}, {0,0,2,0,0,0,2,0}, {2,0,2,0,0,0,2,0}, {0,2,2,0,0,0,2,0}, {2,2,2,0,0,0,2,0}, {0,0,0,2,0,0,2,0}, {2,0,0,2,0,0,2,0}, {0,2,0,2,0,0,2,0}, {2,2,0,2,0,0,2,0}, {0,0,2,2,0,0,2,0}, {2,0,2,2,0,0,2,0}, {0,2,2,2,0,0,2,0}, {2,2,2,2,0,0,2,0}, {0,0,0,0,2,0,2,0}, {2,0,0,0,2,0,2,0}, {0,2,0,0,2,0,2,0}, {2,2,0,0,2,0,2,0}, {0,0,2,0,2,0,2,0}, {2,0,2,0,2,0,2,0}, {0,2,2,0,2,0,2,0}, {2,2,2,0,2,0,2,0}, {0,0,0,2,2,0,2,0}, {2,0,0,2,2,0,2,0}, {0,2,0,2,2,0,2,0}, {2,2,0,2,2,0,2,0}, {0,0,2,2,2,0,2,0}, {2,0,2,2,2,0,2,0}, {0,2,2,2,2,0,2,0}, {2,2,2,2,2,0,2,0}, {0,0,0,0,0,2,2,0}, {2,0,0,0,0,2,2,0}, {0,2,0,0,0,2,2,0}, {2,2,0,0,0,2,2,0}, {0,0,2,0,0,2,2,0}, {2,0,2,0,0,2,2,0}, {0,2,2,0,0,2,2,0}, {2,2,2,0,0,2,2,0}, {0,0,0,2,0,2,2,0}, {2,0,0,2,0,2,2,0}, {0,2,0,2,0,2,2,0}, {2,2,0,2,0,2,2,0}, {0,0,2,2,0,2,2,0}, {2,0,2,2,0,2,2,0}, {0,2,2,2,0,2,2,0}, {2,2,2,2,0,2,2,0}, {0,0,0,0,2,2,2,0}, {2,0,0,0,2,2,2,0}, {0,2,0,0,2,2,2,0}, {2,2,0,0,2,2,2,0}, {0,0,2,0,2,2,2,0}, {2,0,2,0,2,2,2,0}, {0,2,2,0,2,2,2,0}, {2,2,2,0,2,2,2,0}, {0,0,0,2,2,2,2,0}, {2,0,0,2,2,2,2,0}, {0,2,0,2,2,2,2,0}, {2,2,0,2,2,2,2,0}, {0,0,2,2,2,2,2,0}, {2,0,2,2,2,2,2,0}, {0,2,2,2,2,2,2,0}, {2,2,2,2,2,2,2,0}, {0,0,0,0,0,0,0,2}, {2,0,0,0,0,0,0,2}, {0,2,0,0,0,0,0,2}, {2,2,0,0,0,0,0,2}, {0,0,2,0,0,0,0,2}, {2,0,2,0,0,0,0,2}, {0,2,2,0,0,0,0,2}, {2,2,2,0,0,0,0,2}, {0,0,0,2,0,0,0,2}, {2,0,0,2,0,0,0,2}, {0,2,0,2,0,0,0,2}, {2,2,0,2,0,0,0,2}, {0,0,2,2,0,0,0,2}, {2,0,2,2,0,0,0,2}, {0,2,2,2,0,0,0,2}, {2,2,2,2,0,0,0,2}, {0,0,0,0,2,0,0,2}, {2,0,0,0,2,0,0,2}, {0,2,0,0,2,0,0,2}, {2,2,0,0,2,0,0,2}, {0,0,2,0,2,0,0,2}, {2,0,2,0,2,0,0,2}, {0,2,2,0,2,0,0,2}, {2,2,2,0,2,0,0,2}, {0,0,0,2,2,0,0,2}, {2,0,0,2,2,0,0,2}, {0,2,0,2,2,0,0,2}, {2,2,0,2,2,0,0,2}, {0,0,2,2,2,0,0,2}, {2,0,2,2,2,0,0,2}, {0,2,2,2,2,0,0,2}, {2,2,2,2,2,0,0,2}, {0,0,0,0,0,2,0,2}, {2,0,0,0,0,2,0,2}, {0,2,0,0,0,2,0,2}, {2,2,0,0,0,2,0,2}, {0,0,2,0,0,2,0,2}, {2,0,2,0,0,2,0,2}, {0,2,2,0,0,2,0,2}, {2,2,2,0,0,2,0,2}, {0,0,0,2,0,2,0,2}, {2,0,0,2,0,2,0,2}, {0,2,0,2,0,2,0,2}, {2,2,0,2,0,2,0,2}, {0,0,2,2,0,2,0,2}, {2,0,2,2,0,2,0,2}, {0,2,2,2,0,2,0,2}, {2,2,2,2,0,2,0,2}, {0,0,0,0,2,2,0,2}, {2,0,0,0,2,2,0,2}, {0,2,0,0,2,2,0,2}, {2,2,0,0,2,2,0,2}, {0,0,2,0,2,2,0,2}, {2,0,2,0,2,2,0,2}, {0,2,2,0,2,2,0,2}, {2,2,2,0,2,2,0,2}, {0,0,0,2,2,2,0,2}, {2,0,0,2,2,2,0,2}, {0,2,0,2,2,2,0,2}, {2,2,0,2,2,2,0,2}, {0,0,2,2,2,2,0,2}, {2,0,2,2,2,2,0,2}, {0,2,2,2,2,2,0,2}, {2,2,2,2,2,2,0,2}, {0,0,0,0,0,0,2,2}, {2,0,0,0,0,0,2,2}, {0,2,0,0,0,0,2,2}, {2,2,0,0,0,0,2,2}, {0,0,2,0,0,0,2,2}, {2,0,2,0,0,0,2,2}, {0,2,2,0,0,0,2,2}, {2,2,2,0,0,0,2,2}, {0,0,0,2,0,0,2,2}, {2,0,0,2,0,0,2,2}, {0,2,0,2,0,0,2,2}, {2,2,0,2,0,0,2,2}, {0,0,2,2,0,0,2,2}, {2,0,2,2,0,0,2,2}, {0,2,2,2,0,0,2,2}, {2,2,2,2,0,0,2,2}, {0,0,0,0,2,0,2,2}, {2,0,0,0,2,0,2,2}, {0,2,0,0,2,0,2,2}, {2,2,0,0,2,0,2,2}, {0,0,2,0,2,0,2,2}, {2,0,2,0,2,0,2,2}, {0,2,2,0,2,0,2,2}, {2,2,2,0,2,0,2,2}, {0,0,0,2,2,0,2,2}, {2,0,0,2,2,0,2,2}, {0,2,0,2,2,0,2,2}, {2,2,0,2,2,0,2,2}, {0,0,2,2,2,0,2,2}, {2,0,2,2,2,0,2,2}, {0,2,2,2,2,0,2,2}, {2,2,2,2,2,0,2,2}, {0,0,0,0,0,2,2,2}, {2,0,0,0,0,2,2,2}, {0,2,0,0,0,2,2,2}, {2,2,0,0,0,2,2,2}, {0,0,2,0,0,2,2,2}, {2,0,2,0,0,2,2,2}, {0,2,2,0,0,2,2,2}, {2,2,2,0,0,2,2,2}, {0,0,0,2,0,2,2,2}, {2,0,0,2,0,2,2,2}, {0,2,0,2,0,2,2,2}, {2,2,0,2,0,2,2,2}, {0,0,2,2,0,2,2,2}, {2,0,2,2,0,2,2,2}, {0,2,2,2,0,2,2,2}, {2,2,2,2,0,2,2,2}, {0,0,0,0,2,2,2,2}, {2,0,0,0,2,2,2,2}, {0,2,0,0,2,2,2,2}, {2,2,0,0,2,2,2,2}, {0,0,2,0,2,2,2,2}, {2,0,2,0,2,2,2,2}, {0,2,2,0,2,2,2,2}, {2,2,2,0,2,2,2,2}, {0,0,0,2,2,2,2,2}, {2,0,0,2,2,2,2,2}, {0,2,0,2,2,2,2,2}, {2,2,0,2,2,2,2,2}, {0,0,2,2,2,2,2,2}, {2,0,2,2,2,2,2,2}, {0,2,2,2,2,2,2,2}, {2,2,2,2,2,2,2,2},
+    {0,0,0,0,0,0,0,0}, {3,0,0,0,0,0,0,0}, {0,3,0,0,0,0,0,0}, {3,3,0,0,0,0,0,0}, {0,0,3,0,0,0,0,0}, {3,0,3,0,0,0,0,0}, {0,3,3,0,0,0,0,0}, {3,3,3,0,0,0,0,0}, {0,0,0,3,0,0,0,0}, {3,0,0,3,0,0,0,0}, {0,3,0,3,0,0,0,0}, {3,3,0,3,0,0,0,0}, {0,0,3,3,0,0,0,0}, {3,0,3,3,0,0,0,0}, {0,3,3,3,0,0,0,0}, {3,3,3,3,0,0,0,0}, {0,0,0,0,3,0,0,0}, {3,0,0,0,3,0,0,0}, {0,3,0,0,3,0,0,0}, {3,3,0,0,3,0,0,0}, {0,0,3,0,3,0,0,0}, {3,0,3,0,3,0,0,0}, {0,3,3,0,3,0,0,0}, {3,3,3,0,3,0,0,0}, {0,0,0,3,3,0,0,0}, {3,0,0,3,3,0,0,0}, {0,3,0,3,3,0,0,0}, {3,3,0,3,3,0,0,0}, {0,0,3,3,3,0,0,0}, {3,0,3,3,3,0,0,0}, {0,3,3,3,3,0,0,0}, {3,3,3,3,3,0,0,0}, {0,0,0,0,0,3,0,0}, {3,0,0,0,0,3,0,0}, {0,3,0,0,0,3,0,0}, {3,3,0,0,0,3,0,0}, {0,0,3,0,0,3,0,0}, {3,0,3,0,0,3,0,0}, {0,3,3,0,0,3,0,0}, {3,3,3,0,0,3,0,0}, {0,0,0,3,0,3,0,0}, {3,0,0,3,0,3,0,0}, {0,3,0,3,0,3,0,0}, {3,3,0,3,0,3,0,0}, {0,0,3,3,0,3,0,0}, {3,0,3,3,0,3,0,0}, {0,3,3,3,0,3,0,0}, {3,3,3,3,0,3,0,0}, {0,0,0,0,3,3,0,0}, {3,0,0,0,3,3,0,0}, {0,3,0,0,3,3,0,0}, {3,3,0,0,3,3,0,0}, {0,0,3,0,3,3,0,0}, {3,0,3,0,3,3,0,0}, {0,3,3,0,3,3,0,0}, {3,3,3,0,3,3,0,0}, {0,0,0,3,3,3,0,0}, {3,0,0,3,3,3,0,0}, {0,3,0,3,3,3,0,0}, {3,3,0,3,3,3,0,0}, {0,0,3,3,3,3,0,0}, {3,0,3,3,3,3,0,0}, {0,3,3,3,3,3,0,0}, {3,3,3,3,3,3,0,0}, {0,0,0,0,0,0,3,0}, {3,0,0,0,0,0,3,0}, {0,3,0,0,0,0,3,0}, {3,3,0,0,0,0,3,0}, {0,0,3,0,0,0,3,0}, {3,0,3,0,0,0,3,0}, {0,3,3,0,0,0,3,0}, {3,3,3,0,0,0,3,0}, {0,0,0,3,0,0,3,0}, {3,0,0,3,0,0,3,0}, {0,3,0,3,0,0,3,0}, {3,3,0,3,0,0,3,0}, {0,0,3,3,0,0,3,0}, {3,0,3,3,0,0,3,0}, {0,3,3,3,0,0,3,0}, {3,3,3,3,0,0,3,0}, {0,0,0,0,3,0,3,0}, {3,0,0,0,3,0,3,0}, {0,3,0,0,3,0,3,0}, {3,3,0,0,3,0,3,0}, {0,0,3,0,3,0,3,0}, {3,0,3,0,3,0,3,0}, {0,3,3,0,3,0,3,0}, {3,3,3,0,3,0,3,0}, {0,0,0,3,3,0,3,0}, {3,0,0,3,3,0,3,0}, {0,3,0,3,3,0,3,0}, {3,3,0,3,3,0,3,0}, {0,0,3,3,3,0,3,0}, {3,0,3,3,3,0,3,0}, {0,3,3,3,3,0,3,0}, {3,3,3,3,3,0,3,0}, {0,0,0,0,0,3,3,0}, {3,0,0,0,0,3,3,0}, {0,3,0,0,0,3,3,0}, {3,3,0,0,0,3,3,0}, {0,0,3,0,0,3,3,0}, {3,0,3,0,0,3,3,0}, {0,3,3,0,0,3,3,0}, {3,3,3,0,0,3,3,0}, {0,0,0,3,0,3,3,0}, {3,0,0,3,0,3,3,0}, {0,3,0,3,0,3,3,0}, {3,3,0,3,0,3,3,0}, {0,0,3,3,0,3,3,0}, {3,0,3,3,0,3,3,0}, {0,3,3,3,0,3,3,0}, {3,3,3,3,0,3,3,0}, {0,0,0,0,3,3,3,0}, {3,0,0,0,3,3,3,0}, {0,3,0,0,3,3,3,0}, {3,3,0,0,3,3,3,0}, {0,0,3,0,3,3,3,0}, {3,0,3,0,3,3,3,0}, {0,3,3,0,3,3,3,0}, {3,3,3,0,3,3,3,0}, {0,0,0,3,3,3,3,0}, {3,0,0,3,3,3,3,0}, {0,3,0,3,3,3,3,0}, {3,3,0,3,3,3,3,0}, {0,0,3,3,3,3,3,0}, {3,0,3,3,3,3,3,0}, {0,3,3,3,3,3,3,0}, {3,3,3,3,3,3,3,0}, {0,0,0,0,0,0,0,3}, {3,0,0,0,0,0,0,3}, {0,3,0,0,0,0,0,3}, {3,3,0,0,0,0,0,3}, {0,0,3,0,0,0,0,3}, {3,0,3,0,0,0,0,3}, {0,3,3,0,0,0,0,3}, {3,3,3,0,0,0,0,3}, {0,0,0,3,0,0,0,3}, {3,0,0,3,0,0,0,3}, {0,3,0,3,0,0,0,3}, {3,3,0,3,0,0,0,3}, {0,0,3,3,0,0,0,3}, {3,0,3,3,0,0,0,3}, {0,3,3,3,0,0,0,3}, {3,3,3,3,0,0,0,3}, {0,0,0,0,3,0,0,3}, {3,0,0,0,3,0,0,3}, {0,3,0,0,3,0,0,3}, {3,3,0,0,3,0,0,3}, {0,0,3,0,3,0,0,3}, {3,0,3,0,3,0,0,3}, {0,3,3,0,3,0,0,3}, {3,3,3,0,3,0,0,3}, {0,0,0,3,3,0,0,3}, {3,0,0,3,3,0,0,3}, {0,3,0,3,3,0,0,3}, {3,3,0,3,3,0,0,3}, {0,0,3,3,3,0,0,3}, {3,0,3,3,3,0,0,3}, {0,3,3,3,3,0,0,3}, {3,3,3,3,3,0,0,3}, {0,0,0,0,0,3,0,3}, {3,0,0,0,0,3,0,3}, {0,3,0,0,0,3,0,3}, {3,3,0,0,0,3,0,3}, {0,0,3,0,0,3,0,3}, {3,0,3,0,0,3,0,3}, {0,3,3,0,0,3,0,3}, {3,3,3,0,0,3,0,3}, {0,0,0,3,0,3,0,3}, {3,0,0,3,0,3,0,3}, {0,3,0,3,0,3,0,3}, {3,3,0,3,0,3,0,3}, {0,0,3,3,0,3,0,3}, {3,0,3,3,0,3,0,3}, {0,3,3,3,0,3,0,3}, {3,3,3,3,0,3,0,3}, {0,0,0,0,3,3,0,3}, {3,0,0,0,3,3,0,3}, {0,3,0,0,3,3,0,3}, {3,3,0,0,3,3,0,3}, {0,0,3,0,3,3,0,3}, {3,0,3,0,3,3,0,3}, {0,3,3,0,3,3,0,3}, {3,3,3,0,3,3,0,3}, {0,0,0,3,3,3,0,3}, {3,0,0,3,3,3,0,3}, {0,3,0,3,3,3,0,3}, {3,3,0,3,3,3,0,3}, {0,0,3,3,3,3,0,3}, {3,0,3,3,3,3,0,3}, {0,3,3,3,3,3,0,3}, {3,3,3,3,3,3,0,3}, {0,0,0,0,0,0,3,3}, {3,0,0,0,0,0,3,3}, {0,3,0,0,0,0,3,3}, {3,3,0,0,0,0,3,3}, {0,0,3,0,0,0,3,3}, {3,0,3,0,0,0,3,3}, {0,3,3,0,0,0,3,3}, {3,3,3,0,0,0,3,3}, {0,0,0,3,0,0,3,3}, {3,0,0,3,0,0,3,3}, {0,3,0,3,0,0,3,3}, {3,3,0,3,0,0,3,3}, {0,0,3,3,0,0,3,3}, {3,0,3,3,0,0,3,3}, {0,3,3,3,0,0,3,3}, {3,3,3,3,0,0,3,3}, {0,0,0,0,3,0,3,3}, {3,0,0,0,3,0,3,3}, {0,3,0,0,3,0,3,3}, {3,3,0,0,3,0,3,3}, {0,0,3,0,3,0,3,3}, {3,0,3,0,3,0,3,3}, {0,3,3,0,3,0,3,3}, {3,3,3,0,3,0,3,3}, {0,0,0,3,3,0,3,3}, {3,0,0,3,3,0,3,3}, {0,3,0,3,3,0,3,3}, {3,3,0,3,3,0,3,3}, {0,0,3,3,3,0,3,3}, {3,0,3,3,3,0,3,3}, {0,3,3,3,3,0,3,3}, {3,3,3,3,3,0,3,3}, {0,0,0,0,0,3,3,3}, {3,0,0,0,0,3,3,3}, {0,3,0,0,0,3,3,3}, {3,3,0,0,0,3,3,3}, {0,0,3,0,0,3,3,3}, {3,0,3,0,0,3,3,3}, {0,3,3,0,0,3,3,3}, {3,3,3,0,0,3,3,3}, {0,0,0,3,0,3,3,3}, {3,0,0,3,0,3,3,3}, {0,3,0,3,0,3,3,3}, {3,3,0,3,0,3,3,3}, {0,0,3,3,0,3,3,3}, {3,0,3,3,0,3,3,3}, {0,3,3,3,0,3,3,3}, {3,3,3,3,0,3,3,3}, {0,0,0,0,3,3,3,3}, {3,0,0,0,3,3,3,3}, {0,3,0,0,3,3,3,3}, {3,3,0,0,3,3,3,3}, {0,0,3,0,3,3,3,3}, {3,0,3,0,3,3,3,3}, {0,3,3,0,3,3,3,3}, {3,3,3,0,3,3,3,3}, {0,0,0,3,3,3,3,3}, {3,0,0,3,3,3,3,3}, {0,3,0,3,3,3,3,3}, {3,3,0,3,3,3,3,3}, {0,0,3,3,3,3,3,3}, {3,0,3,3,3,3,3,3}, {0,3,3,3,3,3,3,3}, {3,3,3,3,3,3,3,3},
+    {0,0,0,0,0,0,0,0}, {4,0,0,0,0,0,0,0}, {0,4,0,0,0,0,0,0}, {4,4,0,0,0,0,0,0}, {0,0,4,0,0,0,0,0}, {4,0,4,0,0,0,0,0}, {0,4,4,0,0,0,0,0}, {4,4,4,0,0,0,0,0}, {0,0,0,4,0,0,0,0}, {4,0,0,4,0,0,0,0}, {0,4,0,4,0,0,0,0}, {4,4,0,4,0,0,0,0}, {0,0,4,4,0,0,0,0}, {4,0,4,4,0,0,0,0}, {0,4,4,4,0,0,0,0}, {4,4,4,4,0,0,0,0}, {0,0,0,0,4,0,0,0}, {4,0,0,0,4,0,0,0}, {0,4,0,0,4,0,0,0}, {4,4,0,0,4,0,0,0}, {0,0,4,0,4,0,0,0}, {4,0,4,0,4,0,0,0}, {0,4,4,0,4,0,0,0}, {4,4,4,0,4,0,0,0}, {0,0,0,4,4,0,0,0}, {4,0,0,4,4,0,0,0}, {0,4,0,4,4,0,0,0}, {4,4,0,4,4,0,0,0}, {0,0,4,4,4,0,0,0}, {4,0,4,4,4,0,0,0}, {0,4,4,4,4,0,0,0}, {4,4,4,4,4,0,0,0}, {0,0,0,0,0,4,0,0}, {4,0,0,0,0,4,0,0}, {0,4,0,0,0,4,0,0}, {4,4,0,0,0,4,0,0}, {0,0,4,0,0,4,0,0}, {4,0,4,0,0,4,0,0}, {0,4,4,0,0,4,0,0}, {4,4,4,0,0,4,0,0}, {0,0,0,4,0,4,0,0}, {4,0,0,4,0,4,0,0}, {0,4,0,4,0,4,0,0}, {4,4,0,4,0,4,0,0}, {0,0,4,4,0,4,0,0}, {4,0,4,4,0,4,0,0}, {0,4,4,4,0,4,0,0}, {4,4,4,4,0,4,0,0}, {0,0,0,0,4,4,0,0}, {4,0,0,0,4,4,0,0}, {0,4,0,0,4,4,0,0}, {4,4,0,0,4,4,0,0}, {0,0,4,0,4,4,0,0}, {4,0,4,0,4,4,0,0}, {0,4,4,0,4,4,0,0}, {4,4,4,0,4,4,0,0}, {0,0,0,4,4,4,0,0}, {4,0,0,4,4,4,0,0}, {0,4,0,4,4,4,0,0}, {4,4,0,4,4,4,0,0}, {0,0,4,4,4,4,0,0}, {4,0,4,4,4,4,0,0}, {0,4,4,4,4,4,0,0}, {4,4,4,4,4,4,0,0}, {0,0,0,0,0,0,4,0}, {4,0,0,0,0,0,4,0}, {0,4,0,0,0,0,4,0}, {4,4,0,0,0,0,4,0}, {0,0,4,0,0,0,4,0}, {4,0,4,0,0,0,4,0}, {0,4,4,0,0,0,4,0}, {4,4,4,0,0,0,4,0}, {0,0,0,4,0,0,4,0}, {4,0,0,4,0,0,4,0}, {0,4,0,4,0,0,4,0}, {4,4,0,4,0,0,4,0}, {0,0,4,4,0,0,4,0}, {4,0,4,4,0,0,4,0}, {0,4,4,4,0,0,4,0}, {4,4,4,4,0,0,4,0}, {0,0,0,0,4,0,4,0}, {4,0,0,0,4,0,4,0}, {0,4,0,0,4,0,4,0}, {4,4,0,0,4,0,4,0}, {0,0,4,0,4,0,4,0}, {4,0,4,0,4,0,4,0}, {0,4,4,0,4,0,4,0}, {4,4,4,0,4,0,4,0}, {0,0,0,4,4,0,4,0}, {4,0,0,4,4,0,4,0}, {0,4,0,4,4,0,4,0}, {4,4,0,4,4,0,4,0}, {0,0,4,4,4,0,4,0}, {4,0,4,4,4,0,4,0}, {0,4,4,4,4,0,4,0}, {4,4,4,4,4,0,4,0}, {0,0,0,0,0,4,4,0}, {4,0,0,0,0,4,4,0}, {0,4,0,0,0,4,4,0}, {4,4,0,0,0,4,4,0}, {0,0,4,0,0,4,4,0}, {4,0,4,0,0,4,4,0}, {0,4,4,0,0,4,4,0}, {4,4,4,0,0,4,4,0}, {0,0,0,4,0,4,4,0}, {4,0,0,4,0,4,4,0}, {0,4,0,4,0,4,4,0}, {4,4,0,4,0,4,4,0}, {0,0,4,4,0,4,4,0}, {4,0,4,4,0,4,4,0}, {0,4,4,4,0,4,4,0}, {4,4,4,4,0,4,4,0}, {0,0,0,0,4,4,4,0}, {4,0,0,0,4,4,4,0}, {0,4,0,0,4,4,4,0}, {4,4,0,0,4,4,4,0}, {0,0,4,0,4,4,4,0}, {4,0,4,0,4,4,4,0}, {0,4,4,0,4,4,4,0}, {4,4,4,0,4,4,4,0}, {0,0,0,4,4,4,4,0}, {4,0,0,4,4,4,4,0}, {0,4,0,4,4,4,4,0}, {4,4,0,4,4,4,4,0}, {0,0,4,4,4,4,4,0}, {4,0,4,4,4,4,4,0}, {0,4,4,4,4,4,4,0}, {4,4,4,4,4,4,4,0}, {0,0,0,0,0,0,0,4}, {4,0,0,0,0,0,0,4}, {0,4,0,0,0,0,0,4}, {4,4,0,0,0,0,0,4}, {0,0,4,0,0,0,0,4}, {4,0,4,0,0,0,0,4}, {0,4,4,0,0,0,0,4}, {4,4,4,0,0,0,0,4}, {0,0,0,4,0,0,0,4}, {4,0,0,4,0,0,0,4}, {0,4,0,4,0,0,0,4}, {4,4,0,4,0,0,0,4}, {0,0,4,4,0,0,0,4}, {4,0,4,4,0,0,0,4}, {0,4,4,4,0,0,0,4}, {4,4,4,4,0,0,0,4}, {0,0,0,0,4,0,0,4}, {4,0,0,0,4,0,0,4}, {0,4,0,0,4,0,0,4}, {4,4,0,0,4,0,0,4}, {0,0,4,0,4,0,0,4}, {4,0,4,0,4,0,0,4}, {0,4,4,0,4,0,0,4}, {4,4,4,0,4,0,0,4}, {0,0,0,4,4,0,0,4}, {4,0,0,4,4,0,0,4}, {0,4,0,4,4,0,0,4}, {4,4,0,4,4,0,0,4}, {0,0,4,4,4,0,0,4}, {4,0,4,4,4,0,0,4}, {0,4,4,4,4,0,0,4}, {4,4,4,4,4,0,0,4}, {0,0,0,0,0,4,0,4}, {4,0,0,0,0,4,0,4}, {0,4,0,0,0,4,0,4}, {4,4,0,0,0,4,0,4}, {0,0,4,0,0,4,0,4}, {4,0,4,0,0,4,0,4}, {0,4,4,0,0,4,0,4}, {4,4,4,0,0,4,0,4}, {0,0,0,4,0,4,0,4}, {4,0,0,4,0,4,0,4}, {0,4,0,4,0,4,0,4}, {4,4,0,4,0,4,0,4}, {0,0,4,4,0,4,0,4}, {4,0,4,4,0,4,0,4}, {0,4,4,4,0,4,0,4}, {4,4,4,4,0,4,0,4}, {0,0,0,0,4,4,0,4}, {4,0,0,0,4,4,0,4}, {0,4,0,0,4,4,0,4}, {4,4,0,0,4,4,0,4}, {0,0,4,0,4,4,0,4}, {4,0,4,0,4,4,0,4}, {0,4,4,0,4,4,0,4}, {4,4,4,0,4,4,0,4}, {0,0,0,4,4,4,0,4}, {4,0,0,4,4,4,0,4}, {0,4,0,4,4,4,0,4}, {4,4,0,4,4,4,0,4}, {0,0,4,4,4,4,0,4}, {4,0,4,4,4,4,0,4}, {0,4,4,4,4,4,0,4}, {4,4,4,4,4,4,0,4}, {0,0,0,0,0,0,4,4}, {4,0,0,0,0,0,4,4}, {0,4,0,0,0,0,4,4}, {4,4,0,0,0,0,4,4}, {0,0,4,0,0,0,4,4}, {4,0,4,0,0,0,4,4}, {0,4,4,0,0,0,4,4}, {4,4,4,0,0,0,4,4}, {0,0,0,4,0,0,4,4}, {4,0,0,4,0,0,4,4}, {0,4,0,4,0,0,4,4}, {4,4,0,4,0,0,4,4}, {0,0,4,4,0,0,4,4}, {4,0,4,4,0,0,4,4}, {0,4,4,4,0,0,4,4}, {4,4,4,4,0,0,4,4}, {0,0,0,0,4,0,4,4}, {4,0,0,0,4,0,4,4}, {0,4,0,0,4,0,4,4}, {4,4,0,0,4,0,4,4}, {0,0,4,0,4,0,4,4}, {4,0,4,0,4,0,4,4}, {0,4,4,0,4,0,4,4}, {4,4,4,0,4,0,4,4}, {0,0,0,4,4,0,4,4}, {4,0,0,4,4,0,4,4}, {0,4,0,4,4,0,4,4}, {4,4,0,4,4,0,4,4}, {0,0,4,4,4,0,4,4}, {4,0,4,4,4,0,4,4}, {0,4,4,4,4,0,4,4}, {4,4,4,4,4,0,4,4}, {0,0,0,0,0,4,4,4}, {4,0,0,0,0,4,4,4}, {0,4,0,0,0,4,4,4}, {4,4,0,0,0,4,4,4}, {0,0,4,0,0,4,4,4}, {4,0,4,0,0,4,4,4}, {0,4,4,0,0,4,4,4}, {4,4,4,0,0,4,4,4}, {0,0,0,4,0,4,4,4}, {4,0,0,4,0,4,4,4}, {0,4,0,4,0,4,4,4}, {4,4,0,4,0,4,4,4}, {0,0,4,4,0,4,4,4}, {4,0,4,4,0,4,4,4}, {0,4,4,4,0,4,4,4}, {4,4,4,4,0,4,4,4}, {0,0,0,0,4,4,4,4}, {4,0,0,0,4,4,4,4}, {0,4,0,0,4,4,4,4}, {4,4,0,0,4,4,4,4}, {0,0,4,0,4,4,4,4}, {4,0,4,0,4,4,4,4}, {0,4,4,0,4,4,4,4}, {4,4,4,0,4,4,4,4}, {0,0,0,4,4,4,4,4}, {4,0,0,4,4,4,4,4}, {0,4,0,4,4,4,4,4}, {4,4,0,4,4,4,4,4}, {0,0,4,4,4,4,4,4}, {4,0,4,4,4,4,4,4}, {0,4,4,4,4,4,4,4}, {4,4,4,4,4,4,4,4},
+    {0,0,0,0,0,0,0,0}, {5,0,0,0,0,0,0,0}, {0,5,0,0,0,0,0,0}, {5,5,0,0,0,0,0,0}, {0,0,5,0,0,0,0,0}, {5,0,5,0,0,0,0,0}, {0,5,5,0,0,0,0,0}, {5,5,5,0,0,0,0,0}, {0,0,0,5,0,0,0,0}, {5,0,0,5,0,0,0,0}, {0,5,0,5,0,0,0,0}, {5,5,0,5,0,0,0,0}, {0,0,5,5,0,0,0,0}, {5,0,5,5,0,0,0,0}, {0,5,5,5,0,0,0,0}, {5,5,5,5,0,0,0,0}, {0,0,0,0,5,0,0,0}, {5,0,0,0,5,0,0,0}, {0,5,0,0,5,0,0,0}, {5,5,0,0,5,0,0,0}, {0,0,5,0,5,0,0,0}, {5,0,5,0,5,0,0,0}, {0,5,5,0,5,0,0,0}, {5,5,5,0,5,0,0,0}, {0,0,0,5,5,0,0,0}, {5,0,0,5,5,0,0,0}, {0,5,0,5,5,0,0,0}, {5,5,0,5,5,0,0,0}, {0,0,5,5,5,0,0,0}, {5,0,5,5,5,0,0,0}, {0,5,5,5,5,0,0,0}, {5,5,5,5,5,0,0,0}, {0,0,0,0,0,5,0,0}, {5,0,0,0,0,5,0,0}, {0,5,0,0,0,5,0,0}, {5,5,0,0,0,5,0,0}, {0,0,5,0,0,5,0,0}, {5,0,5,0,0,5,0,0}, {0,5,5,0,0,5,0,0}, {5,5,5,0,0,5,0,0}, {0,0,0,5,0,5,0,0}, {5,0,0,5,0,5,0,0}, {0,5,0,5,0,5,0,0}, {5,5,0,5,0,5,0,0}, {0,0,5,5,0,5,0,0}, {5,0,5,5,0,5,0,0}, {0,5,5,5,0,5,0,0}, {5,5,5,5,0,5,0,0}, {0,0,0,0,5,5,0,0}, {5,0,0,0,5,5,0,0}, {0,5,0,0,5,5,0,0}, {5,5,0,0,5,5,0,0}, {0,0,5,0,5,5,0,0}, {5,0,5,0,5,5,0,0}, {0,5,5,0,5,5,0,0}, {5,5,5,0,5,5,0,0}, {0,0,0,5,5,5,0,0}, {5,0,0,5,5,5,0,0}, {0,5,0,5,5,5,0,0}, {5,5,0,5,5,5,0,0}, {0,0,5,5,5,5,0,0}, {5,0,5,5,5,5,0,0}, {0,5,5,5,5,5,0,0}, {5,5,5,5,5,5,0,0}, {0,0,0,0,0,0,5,0}, {5,0,0,0,0,0,5,0}, {0,5,0,0,0,0,5,0}, {5,5,0,0,0,0,5,0}, {0,0,5,0,0,0,5,0}, {5,0,5,0,0,0,5,0}, {0,5,5,0,0,0,5,0}, {5,5,5,0,0,0,5,0}, {0,0,0,5,0,0,5,0}, {5,0,0,5,0,0,5,0}, {0,5,0,5,0,0,5,0}, {5,5,0,5,0,0,5,0}, {0,0,5,5,0,0,5,0}, {5,0,5,5,0,0,5,0}, {0,5,5,5,0,0,5,0}, {5,5,5,5,0,0,5,0}, {0,0,0,0,5,0,5,0}, {5,0,0,0,5,0,5,0}, {0,5,0,0,5,0,5,0}, {5,5,0,0,5,0,5,0}, {0,0,5,0,5,0,5,0}, {5,0,5,0,5,0,5,0}, {0,5,5,0,5,0,5,0}, {5,5,5,0,5,0,5,0}, {0,0,0,5,5,0,5,0}, {5,0,0,5,5,0,5,0}, {0,5,0,5,5,0,5,0}, {5,5,0,5,5,0,5,0}, {0,0,5,5,5,0,5,0}, {5,0,5,5,5,0,5,0}, {0,5,5,5,5,0,5,0}, {5,5,5,5,5,0,5,0}, {0,0,0,0,0,5,5,0}, {5,0,0,0,0,5,5,0}, {0,5,0,0,0,5,5,0}, {5,5,0,0,0,5,5,0}, {0,0,5,0,0,5,5,0}, {5,0,5,0,0,5,5,0}, {0,5,5,0,0,5,5,0}, {5,5,5,0,0,5,5,0}, {0,0,0,5,0,5,5,0}, {5,0,0,5,0,5,5,0}, {0,5,0,5,0,5,5,0}, {5,5,0,5,0,5,5,0}, {0,0,5,5,0,5,5,0}, {5,0,5,5,0,5,5,0}, {0,5,5,5,0,5,5,0}, {5,5,5,5,0,5,5,0}, {0,0,0,0,5,5,5,0}, {5,0,0,0,5,5,5,0}, {0,5,0,0,5,5,5,0}, {5,5,0,0,5,5,5,0}, {0,0,5,0,5,5,5,0}, {5,0,5,0,5,5,5,0}, {0,5,5,0,5,5,5,0}, {5,5,5,0,5,5,5,0}, {0,0,0,5,5,5,5,0}, {5,0,0,5,5,5,5,0}, {0,5,0,5,5,5,5,0}, {5,5,0,5,5,5,5,0}, {0,0,5,5,5,5,5,0}, {5,0,5,5,5,5,5,0}, {0,5,5,5,5,5,5,0}, {5,5,5,5,5,5,5,0}, {0,0,0,0,0,0,0,5}, {5,0,0,0,0,0,0,5}, {0,5,0,0,0,0,0,5}, {5,5,0,0,0,0,0,5}, {0,0,5,0,0,0,0,5}, {5,0,5,0,0,0,0,5}, {0,5,5,0,0,0,0,5}, {5,5,5,0,0,0,0,5}, {0,0,0,5,0,0,0,5}, {5,0,0,5,0,0,0,5}, {0,5,0,5,0,0,0,5}, {5,5,0,5,0,0,0,5}, {0,0,5,5,0,0,0,5}, {5,0,5,5,0,0,0,5}, {0,5,5,5,0,0,0,5}, {5,5,5,5,0,0,0,5}, {0,0,0,0,5,0,0,5}, {5,0,0,0,5,0,0,5}, {0,5,0,0,5,0,0,5}, {5,5,0,0,5,0,0,5}, {0,0,5,0,5,0,0,5}, {5,0,5,0,5,0,0,5}, {0,5,5,0,5,0,0,5}, {5,5,5,0,5,0,0,5}, {0,0,0,5,5,0,0,5}, {5,0,0,5,5,0,0,5}, {0,5,0,5,5,0,0,5}, {5,5,0,5,5,0,0,5}, {0,0,5,5,5,0,0,5}, {5,0,5,5,5,0,0,5}, {0,5,5,5,5,0,0,5}, {5,5,5,5,5,0,0,5}, {0,0,0,0,0,5,0,5}, {5,0,0,0,0,5,0,5}, {0,5,0,0,0,5,0,5}, {5,5,0,0,0,5,0,5}, {0,0,5,0,0,5,0,5}, {5,0,5,0,0,5,0,5}, {0,5,5,0,0,5,0,5}, {5,5,5,0,0,5,0,5}, {0,0,0,5,0,5,0,5}, {5,0,0,5,0,5,0,5}, {0,5,0,5,0,5,0,5}, {5,5,0,5,0,5,0,5}, {0,0,5,5,0,5,0,5}, {5,0,5,5,0,5,0,5}, {0,5,5,5,0,5,0,5}, {5,5,5,5,0,5,0,5}, {0,0,0,0,5,5,0,5}, {5,0,0,0,5,5,0,5}, {0,5,0,0,5,5,0,5}, {5,5,0,0,5,5,0,5}, {0,0,5,0,5,5,0,5}, {5,0,5,0,5,5,0,5}, {0,5,5,0,5,5,0,5}, {5,5,5,0,5,5,0,5}, {0,0,0,5,5,5,0,5}, {5,0,0,5,5,5,0,5}, {0,5,0,5,5,5,0,5}, {5,5,0,5,5,5,0,5}, {0,0,5,5,5,5,0,5}, {5,0,5,5,5,5,0,5}, {0,5,5,5,5,5,0,5}, {5,5,5,5,5,5,0,5}, {0,0,0,0,0,0,5,5}, {5,0,0,0,0,0,5,5}, {0,5,0,0,0,0,5,5}, {5,5,0,0,0,0,5,5}, {0,0,5,0,0,0,5,5}, {5,0,5,0,0,0,5,5}, {0,5,5,0,0,0,5,5}, {5,5,5,0,0,0,5,5}, {0,0,0,5,0,0,5,5}, {5,0,0,5,0,0,5,5}, {0,5,0,5,0,0,5,5}, {5,5,0,5,0,0,5,5}, {0,0,5,5,0,0,5,5}, {5,0,5,5,0,0,5,5}, {0,5,5,5,0,0,5,5}, {5,5,5,5,0,0,5,5}, {0,0,0,0,5,0,5,5}, {5,0,0,0,5,0,5,5}, {0,5,0,0,5,0,5,5}, {5,5,0,0,5,0,5,5}, {0,0,5,0,5,0,5,5}, {5,0,5,0,5,0,5,5}, {0,5,5,0,5,0,5,5}, {5,5,5,0,5,0,5,5}, {0,0,0,5,5,0,5,5}, {5,0,0,5,5,0,5,5}, {0,5,0,5,5,0,5,5}, {5,5,0,5,5,0,5,5}, {0,0,5,5,5,0,5,5}, {5,0,5,5,5,0,5,5}, {0,5,5,5,5,0,5,5}, {5,5,5,5,5,0,5,5}, {0,0,0,0,0,5,5,5}, {5,0,0,0,0,5,5,5}, {0,5,0,0,0,5,5,5}, {5,5,0,0,0,5,5,5}, {0,0,5,0,0,5,5,5}, {5,0,5,0,0,5,5,5}, {0,5,5,0,0,5,5,5}, {5,5,5,0,0,5,5,5}, {0,0,0,5,0,5,5,5}, {5,0,0,5,0,5,5,5}, {0,5,0,5,0,5,5,5}, {5,5,0,5,0,5,5,5}, {0,0,5,5,0,5,5,5}, {5,0,5,5,0,5,5,5}, {0,5,5,5,0,5,5,5}, {5,5,5,5,0,5,5,5}, {0,0,0,0,5,5,5,5}, {5,0,0,0,5,5,5,5}, {0,5,0,0,5,5,5,5}, {5,5,0,0,5,5,5,5}, {0,0,5,0,5,5,5,5}, {5,0,5,0,5,5,5,5}, {0,5,5,0,5,5,5,5}, {5,5,5,0,5,5,5,5}, {0,0,0,5,5,5,5,5}, {5,0,0,5,5,5,5,5}, {0,5,0,5,5,5,5,5}, {5,5,0,5,5,5,5,5}, {0,0,5,5,5,5,5,5}, {5,0,5,5,5,5,5,5}, {0,5,5,5,5,5,5,5}, {5,5,5,5,5,5,5,5},
+    {0,0,0,0,0,0,0,0}, {6,0,0,0,0,0,0,0}, {0,6,0,0,0,0,0,0}, {6,6,0,0,0,0,0,0}, {0,0,6,0,0,0,0,0}, {6,0,6,0,0,0,0,0}, {0,6,6,0,0,0,0,0}, {6,6,6,0,0,0,0,0}, {0,0,0,6,0,0,0,0}, {6,0,0,6,0,0,0,0}, {0,6,0,6,0,0,0,0}, {6,6,0,6,0,0,0,0}, {0,0,6,6,0,0,0,0}, {6,0,6,6,0,0,0,0}, {0,6,6,6,0,0,0,0}, {6,6,6,6,0,0,0,0}, {0,0,0,0,6,0,0,0}, {6,0,0,0,6,0,0,0}, {0,6,0,0,6,0,0,0}, {6,6,0,0,6,0,0,0}, {0,0,6,0,6,0,0,0}, {6,0,6,0,6,0,0,0}, {0,6,6,0,6,0,0,0}, {6,6,6,0,6,0,0,0}, {0,0,0,6,6,0,0,0}, {6,0,0,6,6,0,0,0}, {0,6,0,6,6,0,0,0}, {6,6,0,6,6,0,0,0}, {0,0,6,6,6,0,0,0}, {6,0,6,6,6,0,0,0}, {0,6,6,6,6,0,0,0}, {6,6,6,6,6,0,0,0}, {0,0,0,0,0,6,0,0}, {6,0,0,0,0,6,0,0}, {0,6,0,0,0,6,0,0}, {6,6,0,0,0,6,0,0}, {0,0,6,0,0,6,0,0}, {6,0,6,0,0,6,0,0}, {0,6,6,0,0,6,0,0}, {6,6,6,0,0,6,0,0}, {0,0,0,6,0,6,0,0}, {6,0,0,6,0,6,0,0}, {0,6,0,6,0,6,0,0}, {6,6,0,6,0,6,0,0}, {0,0,6,6,0,6,0,0}, {6,0,6,6,0,6,0,0}, {0,6,6,6,0,6,0,0}, {6,6,6,6,0,6,0,0}, {0,0,0,0,6,6,0,0}, {6,0,0,0,6,6,0,0}, {0,6,0,0,6,6,0,0}, {6,6,0,0,6,6,0,0}, {0,0,6,0,6,6,0,0}, {6,0,6,0,6,6,0,0}, {0,6,6,0,6,6,0,0}, {6,6,6,0,6,6,0,0}, {0,0,0,6,6,6,0,0}, {6,0,0,6,6,6,0,0}, {0,6,0,6,6,6,0,0}, {6,6,0,6,6,6,0,0}, {0,0,6,6,6,6,0,0}, {6,0,6,6,6,6,0,0}, {0,6,6,6,6,6,0,0}, {6,6,6,6,6,6,0,0}, {0,0,0,0,0,0,6,0}, {6,0,0,0,0,0,6,0}, {0,6,0,0,0,0,6,0}, {6,6,0,0,0,0,6,0}, {0,0,6,0,0,0,6,0}, {6,0,6,0,0,0,6,0}, {0,6,6,0,0,0,6,0}, {6,6,6,0,0,0,6,0}, {0,0,0,6,0,0,6,0}, {6,0,0,6,0,0,6,0}, {0,6,0,6,0,0,6,0}, {6,6,0,6,0,0,6,0}, {0,0,6,6,0,0,6,0}, {6,0,6,6,0,0,6,0}, {0,6,6,6,0,0,6,0}, {6,6,6,6,0,0,6,0}, {0,0,0,0,6,0,6,0}, {6,0,0,0,6,0,6,0}, {0,6,0,0,6,0,6,0}, {6,6,0,0,6,0,6,0}, {0,0,6,0,6,0,6,0}, {6,0,6,0,6,0,6,0}, {0,6,6,0,6,0,6,0}, {6,6,6,0,6,0,6,0}, {0,0,0,6,6,0,6,0}, {6,0,0,6,6,0,6,0}, {0,6,0,6,6,0,6,0}, {6,6,0,6,6,0,6,0}, {0,0,6,6,6,0,6,0}, {6,0,6,6,6,0,6,0}, {0,6,6,6,6,0,6,0}, {6,6,6,6,6,0,6,0}, {0,0,0,0,0,6,6,0}, {6,0,0,0,0,6,6,0}, {0,6,0,0,0,6,6,0}, {6,6,0,0,0,6,6,0}, {0,0,6,0,0,6,6,0}, {6,0,6,0,0,6,6,0}, {0,6,6,0,0,6,6,0}, {6,6,6,0,0,6,6,0}, {0,0,0,6,0,6,6,0}, {6,0,0,6,0,6,6,0}, {0,6,0,6,0,6,6,0}, {6,6,0,6,0,6,6,0}, {0,0,6,6,0,6,6,0}, {6,0,6,6,0,6,6,0}, {0,6,6,6,0,6,6,0}, {6,6,6,6,0,6,6,0}, {0,0,0,0,6,6,6,0}, {6,0,0,0,6,6,6,0}, {0,6,0,0,6,6,6,0}, {6,6,0,0,6,6,6,0}, {0,0,6,0,6,6,6,0}, {6,0,6,0,6,6,6,0}, {0,6,6,0,6,6,6,0}, {6,6,6,0,6,6,6,0}, {0,0,0,6,6,6,6,0}, {6,0,0,6,6,6,6,0}, {0,6,0,6,6,6,6,0}, {6,6,0,6,6,6,6,0}, {0,0,6,6,6,6,6,0}, {6,0,6,6,6,6,6,0}, {0,6,6,6,6,6,6,0}, {6,6,6,6,6,6,6,0}, {0,0,0,0,0,0,0,6}, {6,0,0,0,0,0,0,6}, {0,6,0,0,0,0,0,6}, {6,6,0,0,0,0,0,6}, {0,0,6,0,0,0,0,6}, {6,0,6,0,0,0,0,6}, {0,6,6,0,0,0,0,6}, {6,6,6,0,0,0,0,6}, {0,0,0,6,0,0,0,6}, {6,0,0,6,0,0,0,6}, {0,6,0,6,0,0,0,6}, {6,6,0,6,0,0,0,6}, {0,0,6,6,0,0,0,6}, {6,0,6,6,0,0,0,6}, {0,6,6,6,0,0,0,6}, {6,6,6,6,0,0,0,6}, {0,0,0,0,6,0,0,6}, {6,0,0,0,6,0,0,6}, {0,6,0,0,6,0,0,6}, {6,6,0,0,6,0,0,6}, {0,0,6,0,6,0,0,6}, {6,0,6,0,6,0,0,6}, {0,6,6,0,6,0,0,6}, {6,6,6,0,6,0,0,6}, {0,0,0,6,6,0,0,6}, {6,0,0,6,6,0,0,6}, {0,6,0,6,6,0,0,6}, {6,6,0,6,6,0,0,6}, {0,0,6,6,6,0,0,6}, {6,0,6,6,6,0,0,6}, {0,6,6,6,6,0,0,6}, {6,6,6,6,6,0,0,6}, {0,0,0,0,0,6,0,6}, {6,0,0,0,0,6,0,6}, {0,6,0,0,0,6,0,6}, {6,6,0,0,0,6,0,6}, {0,0,6,0,0,6,0,6}, {6,0,6,0,0,6,0,6}, {0,6,6,0,0,6,0,6}, {6,6,6,0,0,6,0,6}, {0,0,0,6,0,6,0,6}, {6,0,0,6,0,6,0,6}, {0,6,0,6,0,6,0,6}, {6,6,0,6,0,6,0,6}, {0,0,6,6,0,6,0,6}, {6,0,6,6,0,6,0,6}, {0,6,6,6,0,6,0,6}, {6,6,6,6,0,6,0,6}, {0,0,0,0,6,6,0,6}, {6,0,0,0,6,6,0,6}, {0,6,0,0,6,6,0,6}, {6,6,0,0,6,6,0,6}, {0,0,6,0,6,6,0,6}, {6,0,6,0,6,6,0,6}, {0,6,6,0,6,6,0,6}, {6,6,6,0,6,6,0,6}, {0,0,0,6,6,6,0,6}, {6,0,0,6,6,6,0,6}, {0,6,0,6,6,6,0,6}, {6,6,0,6,6,6,0,6}, {0,0,6,6,6,6,0,6}, {6,0,6,6,6,6,0,6}, {0,6,6,6,6,6,0,6}, {6,6,6,6,6,6,0,6}, {0,0,0,0,0,0,6,6}, {6,0,0,0,0,0,6,6}, {0,6,0,0,0,0,6,6}, {6,6,0,0,0,0,6,6}, {0,0,6,0,0,0,6,6}, {6,0,6,0,0,0,6,6}, {0,6,6,0,0,0,6,6}, {6,6,6,0,0,0,6,6}, {0,0,0,6,0,0,6,6}, {6,0,0,6,0,0,6,6}, {0,6,0,6,0,0,6,6}, {6,6,0,6,0,0,6,6}, {0,0,6,6,0,0,6,6}, {6,0,6,6,0,0,6,6}, {0,6,6,6,0,0,6,6}, {6,6,6,6,0,0,6,6}, {0,0,0,0,6,0,6,6}, {6,0,0,0,6,0,6,6}, {0,6,0,0,6,0,6,6}, {6,6,0,0,6,0,6,6}, {0,0,6,0,6,0,6,6}, {6,0,6,0,6,0,6,6}, {0,6,6,0,6,0,6,6}, {6,6,6,0,6,0,6,6}, {0,0,0,6,6,0,6,6}, {6,0,0,6,6,0,6,6}, {0,6,0,6,6,0,6,6}, {6,6,0,6,6,0,6,6}, {0,0,6,6,6,0,6,6}, {6,0,6,6,6,0,6,6}, {0,6,6,6,6,0,6,6}, {6,6,6,6,6,0,6,6}, {0,0,0,0,0,6,6,6}, {6,0,0,0,0,6,6,6}, {0,6,0,0,0,6,6,6}, {6,6,0,0,0,6,6,6}, {0,0,6,0,0,6,6,6}, {6,0,6,0,0,6,6,6}, {0,6,6,0,0,6,6,6}, {6,6,6,0,0,6,6,6}, {0,0,0,6,0,6,6,6}, {6,0,0,6,0,6,6,6}, {0,6,0,6,0,6,6,6}, {6,6,0,6,0,6,6,6}, {0,0,6,6,0,6,6,6}, {6,0,6,6,0,6,6,6}, {0,6,6,6,0,6,6,6}, {6,6,6,6,0,6,6,6}, {0,0,0,0,6,6,6,6}, {6,0,0,0,6,6,6,6}, {0,6,0,0,6,6,6,6}, {6,6,0,0,6,6,6,6}, {0,0,6,0,6,6,6,6}, {6,0,6,0,6,6,6,6}, {0,6,6,0,6,6,6,6}, {6,6,6,0,6,6,6,6}, {0,0,0,6,6,6,6,6}, {6,0,0,6,6,6,6,6}, {0,6,0,6,6,6,6,6}, {6,6,0,6,6,6,6,6}, {0,0,6,6,6,6,6,6}, {6,0,6,6,6,6,6,6}, {0,6,6,6,6,6,6,6}, {6,6,6,6,6,6,6,6},
+    {0,0,0,0,0,0,0,0}, {7,0,0,0,0,0,0,0}, {0,7,0,0,0,0,0,0}, {7,7,0,0,0,0,0,0}, {0,0,7,0,0,0,0,0}, {7,0,7,0,0,0,0,0}, {0,7,7,0,0,0,0,0}, {7,7,7,0,0,0,0,0}, {0,0,0,7,0,0,0,0}, {7,0,0,7,0,0,0,0}, {0,7,0,7,0,0,0,0}, {7,7,0,7,0,0,0,0}, {0,0,7,7,0,0,0,0}, {7,0,7,7,0,0,0,0}, {0,7,7,7,0,0,0,0}, {7,7,7,7,0,0,0,0}, {0,0,0,0,7,0,0,0}, {7,0,0,0,7,0,0,0}, {0,7,0,0,7,0,0,0}, {7,7,0,0,7,0,0,0}, {0,0,7,0,7,0,0,0}, {7,0,7,0,7,0,0,0}, {0,7,7,0,7,0,0,0}, {7,7,7,0,7,0,0,0}, {0,0,0,7,7,0,0,0}, {7,0,0,7,7,0,0,0}, {0,7,0,7,7,0,0,0}, {7,7,0,7,7,0,0,0}, {0,0,7,7,7,0,0,0}, {7,0,7,7,7,0,0,0}, {0,7,7,7,7,0,0,0}, {7,7,7,7,7,0,0,0}, {0,0,0,0,0,7,0,0}, {7,0,0,0,0,7,0,0}, {0,7,0,0,0,7,0,0}, {7,7,0,0,0,7,0,0}, {0,0,7,0,0,7,0,0}, {7,0,7,0,0,7,0,0}, {0,7,7,0,0,7,0,0}, {7,7,7,0,0,7,0,0}, {0,0,0,7,0,7,0,0}, {7,0,0,7,0,7,0,0}, {0,7,0,7,0,7,0,0}, {7,7,0,7,0,7,0,0}, {0,0,7,7,0,7,0,0}, {7,0,7,7,0,7,0,0}, {0,7,7,7,0,7,0,0}, {7,7,7,7,0,7,0,0}, {0,0,0,0,7,7,0,0}, {7,0,0,0,7,7,0,0}, {0,7,0,0,7,7,0,0}, {7,7,0,0,7,7,0,0}, {0,0,7,0,7,7,0,0}, {7,0,7,0,7,7,0,0}, {0,7,7,0,7,7,0,0}, {7,7,7,0,7,7,0,0}, {0,0,0,7,7,7,0,0}, {7,0,0,7,7,7,0,0}, {0,7,0,7,7,7,0,0}, {7,7,0,7,7,7,0,0}, {0,0,7,7,7,7,0,0}, {7,0,7,7,7,7,0,0}, {0,7,7,7,7,7,0,0}, {7,7,7,7,7,7,0,0}, {0,0,0,0,0,0,7,0}, {7,0,0,0,0,0,7,0}, {0,7,0,0,0,0,7,0}, {7,7,0,0,0,0,7,0}, {0,0,7,0,0,0,7,0}, {7,0,7,0,0,0,7,0}, {0,7,7,0,0,0,7,0}, {7,7,7,0,0,0,7,0}, {0,0,0,7,0,0,7,0}, {7,0,0,7,0,0,7,0}, {0,7,0,7,0,0,7,0}, {7,7,0,7,0,0,7,0}, {0,0,7,7,0,0,7,0}, {7,0,7,7,0,0,7,0}, {0,7,7,7,0,0,7,0}, {7,7,7,7,0,0,7,0}, {0,0,0,0,7,0,7,0}, {7,0,0,0,7,0,7,0}, {0,7,0,0,7,0,7,0}, {7,7,0,0,7,0,7,0}, {0,0,7,0,7,0,7,0}, {7,0,7,0,7,0,7,0}, {0,7,7,0,7,0,7,0}, {7,7,7,0,7,0,7,0}, {0,0,0,7,7,0,7,0}, {7,0,0,7,7,0,7,0}, {0,7,0,7,7,0,7,0}, {7,7,0,7,7,0,7,0}, {0,0,7,7,7,0,7,0}, {7,0,7,7,7,0,7,0}, {0,7,7,7,7,0,7,0}, {7,7,7,7,7,0,7,0}, {0,0,0,0,0,7,7,0}, {7,0,0,0,0,7,7,0}, {0,7,0,0,0,7,7,0}, {7,7,0,0,0,7,7,0}, {0,0,7,0,0,7,7,0}, {7,0,7,0,0,7,7,0}, {0,7,7,0,0,7,7,0}, {7,7,7,0,0,7,7,0}, {0,0,0,7,0,7,7,0}, {7,0,0,7,0,7,7,0}, {0,7,0,7,0,7,7,0}, {7,7,0,7,0,7,7,0}, {0,0,7,7,0,7,7,0}, {7,0,7,7,0,7,7,0}, {0,7,7,7,0,7,7,0}, {7,7,7,7,0,7,7,0}, {0,0,0,0,7,7,7,0}, {7,0,0,0,7,7,7,0}, {0,7,0,0,7,7,7,0}, {7,7,0,0,7,7,7,0}, {0,0,7,0,7,7,7,0}, {7,0,7,0,7,7,7,0}, {0,7,7,0,7,7,7,0}, {7,7,7,0,7,7,7,0}, {0,0,0,7,7,7,7,0}, {7,0,0,7,7,7,7,0}, {0,7,0,7,7,7,7,0}, {7,7,0,7,7,7,7,0}, {0,0,7,7,7,7,7,0}, {7,0,7,7,7,7,7,0}, {0,7,7,7,7,7,7,0}, {7,7,7,7,7,7,7,0}, {0,0,0,0,0,0,0,7}, {7,0,0,0,0,0,0,7}, {0,7,0,0,0,0,0,7}, {7,7,0,0,0,0,0,7}, {0,0,7,0,0,0,0,7}, {7,0,7,0,0,0,0,7}, {0,7,7,0,0,0,0,7}, {7,7,7,0,0,0,0,7}, {0,0,0,7,0,0,0,7}, {7,0,0,7,0,0,0,7}, {0,7,0,7,0,0,0,7}, {7,7,0,7,0,0,0,7}, {0,0,7,7,0,0,0,7}, {7,0,7,7,0,0,0,7}, {0,7,7,7,0,0,0,7}, {7,7,7,7,0,0,0,7}, {0,0,0,0,7,0,0,7}, {7,0,0,0,7,0,0,7}, {0,7,0,0,7,0,0,7}, {7,7,0,0,7,0,0,7}, {0,0,7,0,7,0,0,7}, {7,0,7,0,7,0,0,7}, {0,7,7,0,7,0,0,7}, {7,7,7,0,7,0,0,7}, {0,0,0,7,7,0,0,7}, {7,0,0,7,7,0,0,7}, {0,7,0,7,7,0,0,7}, {7,7,0,7,7,0,0,7}, {0,0,7,7,7,0,0,7}, {7,0,7,7,7,0,0,7}, {0,7,7,7,7,0,0,7}, {7,7,7,7,7,0,0,7}, {0,0,0,0,0,7,0,7}, {7,0,0,0,0,7,0,7}, {0,7,0,0,0,7,0,7}, {7,7,0,0,0,7,0,7}, {0,0,7,0,0,7,0,7}, {7,0,7,0,0,7,0,7}, {0,7,7,0,0,7,0,7}, {7,7,7,0,0,7,0,7}, {0,0,0,7,0,7,0,7}, {7,0,0,7,0,7,0,7}, {0,7,0,7,0,7,0,7}, {7,7,0,7,0,7,0,7}, {0,0,7,7,0,7,0,7}, {7,0,7,7,0,7,0,7}, {0,7,7,7,0,7,0,7}, {7,7,7,7,0,7,0,7}, {0,0,0,0,7,7,0,7}, {7,0,0,0,7,7,0,7}, {0,7,0,0,7,7,0,7}, {7,7,0,0,7,7,0,7}, {0,0,7,0,7,7,0,7}, {7,0,7,0,7,7,0,7}, {0,7,7,0,7,7,0,7}, {7,7,7,0,7,7,0,7}, {0,0,0,7,7,7,0,7}, {7,0,0,7,7,7,0,7}, {0,7,0,7,7,7,0,7}, {7,7,0,7,7,7,0,7}, {0,0,7,7,7,7,0,7}, {7,0,7,7,7,7,0,7}, {0,7,7,7,7,7,0,7}, {7,7,7,7,7,7,0,7}, {0,0,0,0,0,0,7,7}, {7,0,0,0,0,0,7,7}, {0,7,0,0,0,0,7,7}, {7,7,0,0,0,0,7,7}, {0,0,7,0,0,0,7,7}, {7,0,7,0,0,0,7,7}, {0,7,7,0,0,0,7,7}, {7,7,7,0,0,0,7,7}, {0,0,0,7,0,0,7,7}, {7,0,0,7,0,0,7,7}, {0,7,0,7,0,0,7,7}, {7,7,0,7,0,0,7,7}, {0,0,7,7,0,0,7,7}, {7,0,7,7,0,0,7,7}, {0,7,7,7,0,0,7,7}, {7,7,7,7,0,0,7,7}, {0,0,0,0,7,0,7,7}, {7,0,0,0,7,0,7,7}, {0,7,0,0,7,0,7,7}, {7,7,0,0,7,0,7,7}, {0,0,7,0,7,0,7,7}, {7,0,7,0,7,0,7,7}, {0,7,7,0,7,0,7,7}, {7,7,7,0,7,0,7,7}, {0,0,0,7,7,0,7,7}, {7,0,0,7,7,0,7,7}, {0,7,0,7,7,0,7,7}, {7,7,0,7,7,0,7,7}, {0,0,7,7,7,0,7,7}, {7,0,7,7,7,0,7,7}, {0,7,7,7,7,0,7,7}, {7,7,7,7,7,0,7,7}, {0,0,0,0,0,7,7,7}, {7,0,0,0,0,7,7,7}, {0,7,0,0,0,7,7,7}, {7,7,0,0,0,7,7,7}, {0,0,7,0,0,7,7,7}, {7,0,7,0,0,7,7,7}, {0,7,7,0,0,7,7,7}, {7,7,7,0,0,7,7,7}, {0,0,0,7,0,7,7,7}, {7,0,0,7,0,7,7,7}, {0,7,0,7,0,7,7,7}, {7,7,0,7,0,7,7,7}, {0,0,7,7,0,7,7,7}, {7,0,7,7,0,7,7,7}, {0,7,7,7,0,7,7,7}, {7,7,7,7,0,7,7,7}, {0,0,0,0,7,7,7,7}, {7,0,0,0,7,7,7,7}, {0,7,0,0,7,7,7,7}, {7,7,0,0,7,7,7,7}, {0,0,7,0,7,7,7,7}, {7,0,7,0,7,7,7,7}, {0,7,7,0,7,7,7,7}, {7,7,7,0,7,7,7,7}, {0,0,0,7,7,7,7,7}, {7,0,0,7,7,7,7,7}, {0,7,0,7,7,7,7,7}, {7,7,0,7,7,7,7,7}, {0,0,7,7,7,7,7,7}, {7,0,7,7,7,7,7,7}, {0,7,7,7,7,7,7,7}, {7,7,7,7,7,7,7,7}
+};
+
+static int c6847b_image_converter_sg8_block( Environment * _environment, char * _source, int _width, int _depth ) {
+
+    int x, y, i;
+
+    int block[8][12];
+    int sampled_block[2][3];
+    int sg8_blocks_distance[256];
+
+    memset(block, 0, 8 * 12 * sizeof(int));
+
+    for (y = 0; y < 12; ++y) {
+        for (x = 0; x < 8; ++x) {
+
+            RGBi rgb;
+
+            // Take the color of the pixel
+            rgb.red = *_source;
+            rgb.green = *(_source + 1);
+            rgb.blue = *(_source + 2);
+            if ( _depth > 3 ) {
+                rgb.alpha = *(_source + 3);
+            } else {
+                rgb.alpha = 255;
+            }
+            if ( rgb.alpha == 0 ) {
+                rgb.red = 0;
+                rgb.green = 0;
+                rgb.blue = 0;
+            }
+
+            // printf( " | %2.2x%2.2x%2.2x = ", rgb.red, rgb.green, rgb.blue );
+
+            int colorIndex = 0;
+
+            if ( rgb.alpha < 255 ) {
+                colorIndex = 0;
+            } else {
+                int minDistance = 9999;
+                for( int i=0; i<sizeof(SYSTEM_PALETTE_SG8)/sizeof(RGBi); ++i ) {
+                    int distance = rgbi_distance(&SYSTEM_PALETTE_SG8[i], &rgb );
+                    if ( distance < minDistance ) {
+                        minDistance = distance;
+                        colorIndex = SYSTEM_PALETTE_SG8[i].index;
+                    }
+                }
+            }
+
+            block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+            _source += _depth;
+
+        }
+
+        // printf( "\n" );
+
+        _source += ( _width - 8 ) * _depth;
+
+    }
+
+    for (y = 0; y < 4; ++y) {
+        for (x = 0; x < 2; ++x) {
+
+            int y2, x2;
+            int colorCount[4];
+
+            memset( colorCount, 0, 6 * sizeof( int ) );
+
+            for( y2 = 0; y2 < 3; ++y2 ) {
+                for( x2 = 0; x2 < 2; ++x2 ) {
+                    colorCount[block[4*x+x2][3*y+y2]]++;
+                }
+            }
+
+            int colorCountMax = 0;
+            int colorIndex = 0;
+
+            for( i = 0; i<4; ++i ) {
+                if ( colorCount[i] > colorCountMax ) {
+                    colorCountMax = colorCount[i];
+                    colorIndex = i;
+                }
+            }
+
+            sampled_block[x][y] = colorIndex;
+
+            // printf( "%x", colorIndex );
+
+        }
+
+        // printf( "\n" );
+
+    }
+
+    int min_sg8_block_distance = 9999;
+    int min_sg8_block_number = 0;
+
+    for( i=0; i<256*8; ++i ) {
+        int absoluteDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg8_blocks[i][5] ) +
+                pow2( sampled_block[1][0] - sg8_blocks[i][4] ) +
+                pow2( sampled_block[0][1] - sg8_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg8_blocks[i][2] ) +
+                pow2( sampled_block[0][2] - sg8_blocks[i][1] ) +
+                pow2( sampled_block[1][2] - sg8_blocks[i][0] ) 
+            );
+
+        int diagonalDistance = 
+            (int)sqrt( 
+                pow2( sampled_block[0][0] - sg8_blocks[i][5] ) +
+                pow2( sampled_block[0][1] - sg8_blocks[i][3] ) +
+                pow2( sampled_block[1][1] - sg8_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg8_blocks[i][0] ) 
+            ) +
+            (int)sqrt( 
+                pow2( sampled_block[1][0] - sg8_blocks[i][4] ) +
+                pow2( sampled_block[1][1] - sg8_blocks[i][2] ) +
+                pow2( sampled_block[1][2] - sg8_blocks[i][0] ) +
+                pow2( sampled_block[0][2] - sg8_blocks[i][1] )
+            )
+            ;
+
+        // printf( "%d) absDis = %d, diagDis = %d, * = %d, min = %d\n", i, absoluteDistance, diagonalDistance, (absoluteDistance * diagonalDistance), min_sg8_block_distance );
+
+        if ( (absoluteDistance * diagonalDistance) < min_sg8_block_distance ) {
+            min_sg8_block_distance = (absoluteDistance * diagonalDistance);
+            min_sg8_block_number = i;
+        }
+
+    }
+
+    // printf( "--> %d\n", min_sg8_block_number );
+
+    return 0x80 | min_sg8_block_number;
+
+}
+
+static Variable * c6847b_image_converter_sg8( Environment * _environment, char * _source, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _transparent_color, int _flags ) {
+
+    // ignored on bitmap mode
+    (void)!_transparent_color;
+
+    if ( _environment->freeImageWidth ) {
+        if ( _width % 2 ) {
+            _width = ( ( ( _width - 1 ) / 8 ) - 1 ) * 8;
+        }
+        if ( _frame_width % 2 ) {
+            _frame_width = ( ( ( _frame_width - 1 ) / 8 ) - 1 ) * 8;
+        }
+    }
+    
+    if ( _environment->freeImageHeight ) {
+        if ( _height % 2 ) {
+            _height = ( ( ( _height - 1 ) / 12 ) - 1 ) * 12;
+        }
+        if ( _frame_height % 2 ) {
+            _frame_height = ( ( ( _frame_height - 1 ) / 12 ) - 1 ) * 12;
+        }
+    }
+    
+    image_converter_asserts( _environment, _width, _height, _offset_x, _offset_y, &_frame_width, &_frame_height, 8, 12 );
+
+    RGBi * palette = malloc_palette( MAX_PALETTE );
+    
+    int paletteColorCount = rgbi_extract_palette(_environment, _source, _width, _height, _depth, palette, MAX_PALETTE, ( ( _flags & FLAG_EXACT ) ? 0 : 1 ) /* sorted */);
+
+    if (paletteColorCount > 5) {
+        CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
+    }
+
+    int i, j, k;
+
+    SYSTEM_PALETTE = &SYSTEM_PALETTE_SG6[0];
+
+    commonPalette = palette_match( palette, paletteColorCount, SYSTEM_PALETTE, sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi) );
+    commonPalette = palette_remove_duplicates( commonPalette, paletteColorCount, &paletteColorCount );
+    lastUsedSlotInCommonPalette = paletteColorCount;
+    adilinepalette( "CPM1:%d", paletteColorCount, commonPalette );
+
+    adilinepalette( "CPMS:%d", (int)(sizeof(SYSTEM_PALETTE_SG6) / sizeof(RGBi)), SYSTEM_PALETTE );
+
+    Variable * result = variable_temporary( _environment, VT_IMAGE, 0 );
+    result->originalColors = lastUsedSlotInCommonPalette;
+    memcpy( result->originalPalette, commonPalette, lastUsedSlotInCommonPalette * sizeof( RGBi ) );
+
+    int bufferSize = c6847b_image_size( _environment, _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6, 0 );
+    
+    adiline3("BMP:%4.4x:%4.4x:%2.2x", _frame_width, _frame_height, TILEMAP_MODE_SEMIGRAPHICS6 );
+
+    char * buffer = malloc ( bufferSize );
+    memset( buffer, 0, bufferSize );
+
+    // Position of the pixel in the original image
+    int image_x, image_y;
+    
+    // Position of the pixel, in terms of tiles
+    int tile_x, tile_y;
+    
+    // Position of the pixel, in terms of offset and bitmask
+    int offset, offsetc, bitmask;
+
+    // Color of the pixel to convert
+    RGBi rgb;
+
+    *(buffer) = _frame_width;
+    *(buffer+1) = _frame_height / 12;
+    *(buffer+2) = 0;
+
+    _source += ( ( _offset_y * (_width>>3) ) + _offset_x ) * _depth;
+
+    adilinebeginbitmap("BMD");
+
+    // Loop for all the source surface.
+    for (image_y = 0; image_y < _frame_height; image_y+=12) {
+        for (image_x = 0; image_x < _frame_width; image_x+=8) {
+            
+            // printf( "\n\nx = %d, y = %d\n", image_x, image_y );
+
+            offset = ( ( image_y / 12 ) * ( _frame_width >> 3 ) ) + ( image_x >> 3 );
+
+            int colorIndex = c6847b_image_converter_sg8_block( _environment, _source, _width, _depth );
+
+            // printf( "%d\n", offset );
+            *(buffer + 3 + offset) = colorIndex;
+
+            adilinepixel(colorIndex);
+
+            _source += 8 * _depth;
+
+        }
+
+        _source += 12 * _width * _depth;
+        _source -= _frame_width * _depth;
+
+        // printf("\n" );
+    }
+
+    adilineendbitmap();
+
+    // for(i=0; i<4; ++i ) {
+    //     printf( "%1.1x = %2.2x\n", i, palette[i].index );
+    // }
+
+    // printf("\n" );
+    // printf("\n" );
+
+    variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
+
+    return result;
+
+}
+
 Variable * c6847b_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags ) {
 
     switch( _mode ) {
         case TILEMAP_MODE_INTERNAL:         // Alphanumeric Internal	32 × 16	2	512
         case TILEMAP_MODE_EXTERNAL:         // Alphanumeric External	32 × 16	2	512
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS4:    // Semigraphics 4	        64 × 32	8	512
+            return c6847b_image_converter_sg4( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS6:    // Semigraphics 6	        64 × 48	4	512
+            return c6847b_image_converter_sg6( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS8:    // Semigraphics 8	        64 × 64	2	512
+            return c6847b_image_converter_sg8( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+            break;
         case TILEMAP_MODE_SEMIGRAPHICS12:    // Semigraphics 6	        64 × 96 1	3072
         case TILEMAP_MODE_SEMIGRAPHICS24:    // Semigraphics 6	        64 × 96 1	3072
             break;
@@ -1832,56 +3161,112 @@ void c6847b_blit_image( Environment * _environment, char * _sources[], int _sour
 
 void c6847b_put_image( Environment * _environment, Resource * _source, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy_preferred( c6847bvars, src_hw_6847b_vars_asm);
+    deploy_preferred( c6847vars, src_hw_6847b_vars_asm);
     deploy( putimage, src_hw_6847b_put_image_asm );
 
-    if ( _source->isAddress ) {
-        outline1("LDY %s", _source->realName );
-    } else {
-        outline1("LDY #%s", _source->realName );
-    }
+    if ( _source->isCompiled) {
 
-    if ( _frame_size ) {
-        if ( !_sequence && !_frame ) {
+        deploy_preferred( putimagecompiled, src_hw_6847b_put_image_compiled_asm );
+
+        Variable * x = variable_retrieve( _environment, _x );
+        Variable * y = variable_retrieve( _environment, _y );
+
+        outline1("LDD %s", x->realName );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", y->realName );
+        outline0("STD <IMAGEY" );
+
+        if ( _sequence ) {
+            Variable * sequence = variable_retrieve( _environment, _sequence );
+            switch( VT_BITWIDTH( sequence->type ) ) {
+                case 32:
+                    outline1("LDA %s+3", sequence->realName );
+                    break;
+                case 16:
+                    outline1("LDA %s+1", sequence->realName );
+                    break;
+                case 8:
+                    outline1("LDA %s", sequence->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( _sequence, DATATYPE_AS_STRING[sequence->type]);
+            }
+            outline1("LDB #$%2.2x", _frame_count );
+            outline0("MUL");
         } else {
-            if ( _sequence ) {
-                outline0("LEAY 3,y" );
-                if ( strlen(_sequence) == 0 ) {
-                } else {
-                    outline1("LDB %s", _sequence );
-                    outline1("JSR %soffsetsequence", _source->realName );
-                }
-                if ( _frame ) {
-                    if ( strlen(_frame) == 0 ) {
-                    } else {
-                        outline1("LDB %s", _frame );
-                        outline1("JSR %soffsetframe", _source->realName );
-                    }
-                }
-            } else {
-                if ( _frame ) {
-                    outline0("LEAY 3,y" );
-                    if ( strlen(_frame) == 0 ) {
-                    } else {
-                        outline1("LDB %s", _frame );
-                        outline1("JSR %soffsetframe", _source->realName );
-                    }
-                }
+            outline0("CLRB");
+        }
+        if ( _frame ) {
+            Variable * frame = variable_retrieve( _environment, _frame );
+
+            switch( VT_BITWIDTH( frame->type ) ) {
+                case 32:
+                    outline1("ADDB %s+3", frame->realName );
+                    break;
+                case 16:
+                    outline1("ADDB %s+1", frame->realName );
+                    break;
+                case 8:
+                    outline1("ADDB %s", frame->realName );
+                    break;
+                default:
+                    CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( _frame, DATATYPE_AS_STRING[frame->type]);
             }
 
         }
+        outline1("JSR %s", _source->realName );
+
+    } else {
+
+        if ( _source->isAddress ) {
+            outline1("LDY %s", _source->realName );
+        } else {
+            outline1("LDY #%s", _source->realName );
+        }
+
+        if ( _frame_size ) {
+            if ( !_sequence && !_frame ) {
+            } else {
+                if ( _sequence ) {
+                    outline0("LEAY 3,y" );
+                    if ( strlen(_sequence) == 0 ) {
+                    } else {
+                        outline1("LDB %s", _sequence );
+                        outline1("JSR %soffsetsequence", _source->realName );
+                    }
+                    if ( _frame ) {
+                        if ( strlen(_frame) == 0 ) {
+                        } else {
+                            outline1("LDB %s", _frame );
+                            outline1("JSR %soffsetframe", _source->realName );
+                        }
+                    }
+                } else {
+                    if ( _frame ) {
+                        outline0("LEAY 3,y" );
+                        if ( strlen(_frame) == 0 ) {
+                        } else {
+                            outline1("LDB %s", _frame );
+                            outline1("JSR %soffsetframe", _source->realName );
+                        }
+                    }
+                }
+
+            }
+        }
+        
+        outline1("LDD %s", _x );
+        outline0("STD <IMAGEX" );
+        outline1("LDD %s", _y );
+        outline0("STD <IMAGEY" );
+
+        outline1("LDD %s", _flags );
+        outline0("STB <IMAGEF" );
+        outline0("STA <IMAGET" );
+
+        outline0("JSR PUTIMAGE");
+
     }
-    
-    outline1("LDD %s", _x );
-    outline0("STD <IMAGEX" );
-    outline1("LDD %s", _y );
-    outline0("STD <IMAGEY" );
-
-    outline1("LDD %s", _flags );
-    outline0("STB <IMAGEF" );
-    outline0("STA <IMAGET" );
-
-    outline0("JSR PUTIMAGE");
     
 }
 
