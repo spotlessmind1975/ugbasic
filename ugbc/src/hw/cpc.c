@@ -1930,6 +1930,84 @@ Variable * cpc_image_converter( Environment * _environment, char * _data, int _w
 
 }
 
+void cpc_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+    //     case BITMAP_MODE_GRAPHIC1:
+
+    //         return cpc_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //     case BITMAP_MODE_GRAPHIC0:
+    //     case BITMAP_MODE_GRAPHIC3:
+
+    //         return cpc_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    // }
+
+    // return cpc_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void cpc_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+    //     case BITMAP_MODE_GRAPHIC1:
+
+    //         return cpc_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //     case BITMAP_MODE_GRAPHIC0:
+    //     case BITMAP_MODE_GRAPHIC3:
+
+    //         return cpc_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    // }
+
+    // return cpc_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void cpc_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return cpc_image_converter_bitmap_mode_hires( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+            
+    //     case BITMAP_MODE_GRAPHIC1:
+
+    //         return cpc_image_converter_multicolor_mode_midres( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //     case BITMAP_MODE_GRAPHIC0:
+    //     case BITMAP_MODE_GRAPHIC3:
+
+    //         return cpc_image_converter_multicolor_mode_lores( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    // }
+
+    // return cpc_new_image( _environment, 8, 8, _mode );
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 static void cpc_load_image_address_to_hl( Environment * _environment, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     outline1("LD HL, %s", _source );
