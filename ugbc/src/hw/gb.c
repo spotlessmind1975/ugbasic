@@ -1569,6 +1569,60 @@ Variable * gb_image_converter( Environment * _environment, char * _data, int _wi
 
 }
 
+void gb_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case TILEMAP_MODE_BGB:
+    //     case TILEMAP_MODE_CGB:
+
+    //         return gb_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return gb_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD );
+
+}
+
+void gb_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case TILEMAP_MODE_BGB:
+    //     case TILEMAP_MODE_CGB:
+
+    //         return gb_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return gb_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD );
+
+}
+
+void gb_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case TILEMAP_MODE_BGB:
+    //     case TILEMAP_MODE_CGB:
+
+    //         return gb_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return gb_new_image( _environment, 8, 8, TILEMAP_MODE_STANDARD );
+
+}
+
 static void gb_load_image_address_to_other_register( Environment * _environment, char * _register, char * _source, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
     // outline1("LD HL, %s", _source );
