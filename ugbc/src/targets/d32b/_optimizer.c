@@ -278,6 +278,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "_TAB"))  return 0;
     if(po_buf_match(name, "ISV"))  return 0;
     if(po_buf_match(name, "BINTO^"))  return 0;
+    if(po_buf_match(name, "JUMPER^"))  return 0;
 
     if(name->str[0]=='_')      return 1;
     if(po_buf_match(name, "CLIP"))    return 1;
@@ -1109,7 +1110,9 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
     &&  po_buf_match(buf[3], " LDD *", v3)
     &&  po_buf_match(buf[4], " ADDD *", v4)
     &&  po_buf_match(buf[5], " STD *", v5)
-        ) {
+    &&  strcmp( v2->str, v3->str ) == 0
+    &&  strcmp( v3->str, v5->str ) == 0
+    ) {
         optim(buf[0], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDX %s", v3->str );
         optim(buf[1], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " LDB %s", v1->str );
         optim(buf[2], RULE "(CLRA,LDB,STD,LDD,ADD,STD)->(CLRA,LDB)", " ABX" );
@@ -1386,13 +1389,16 @@ static void vars_scan(POBuffer buf[LOOK_AHEAD]) {
         // struct var *v = vars_get(buf);
         // v->flags |= NO_INLINE;
     // }
-
-    if( po_buf_match( buf[0], " * #*",  NULL, arg)
+    
+    if( po_buf_match( buf[0], " * #(*+1)", NULL, arg)
     ||  po_buf_match( buf[0], " * [*]", NULL, arg)
-    ||  po_buf_match( buf[0], " * <*", NULL, arg) ) if(vars_ok(arg)) {
-        struct var *v = vars_get(arg);
-        v->flags |= NO_REMOVE/*|NO_DP*/;
-        v->nb_rd++;
+    ||  po_buf_match( buf[0], " * <*", NULL, arg)
+    ||  po_buf_match( buf[0], " * #*",  NULL, arg) ) {
+        if(vars_ok(arg)) {
+            struct var *v = vars_get(arg);
+            v->flags |= NO_REMOVE/*|NO_DP*/;
+            v->nb_rd++;
+        }
     }
 
     if( po_buf_match( buf[0], " LDX #*",  arg)
