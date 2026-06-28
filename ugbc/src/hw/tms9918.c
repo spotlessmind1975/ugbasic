@@ -1527,7 +1527,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, 8, 8, "Graphic I" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, 8, 8, "Graphic II" );
@@ -2103,6 +2103,66 @@ Variable * tms9918_image_converter( Environment * _environment, char * _data, in
     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
 
     return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
+}
+
+void tms9918_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return tms9918_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void tms9918_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return tms9918_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void tms9918_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+    // switch( _mode ) {
+
+    //     case BITMAP_MODE_GRAPHIC2:
+
+    //         return tms9918_image_converter_bitmap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+
+    //         break;
+    // }
+
+    // WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+    // return tms9918_new_image( _environment, 8, 8, BITMAP_MODE_GRAPHIC2 );
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
 
 }
 
