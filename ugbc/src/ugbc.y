@@ -7702,6 +7702,8 @@ define_definition:
     IMAGE FREE WIDTH { ((struct _Environment *)_environment)->freeImageWidth = 1; } | 
     COLOR IMPLICIT { ((struct _Environment *)_environment)->colorImplicit = 1; } | 
     COLOR EXPLICIT { ((struct _Environment *)_environment)->colorImplicit = 0; } | 
+    COMPRESSION OFF { ((struct _Environment *)_environment)->compressionForbidden = 1; } | 
+    COMPRESSION ON { ((struct _Environment *)_environment)->compressionForbidden = 0; } | 
     COMPRESSION RLE ON { ((struct _Environment *)_environment)->enableRle = 1; } | 
     COMPRESSION RLE OFF { ((struct _Environment *)_environment)->enableRle = 0; } | 
     RESIDENT DETECTION ON { ((struct _Environment *)_environment)->residentDetectionEnabled = 1; } | 
