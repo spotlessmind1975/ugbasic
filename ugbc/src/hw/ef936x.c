@@ -1872,7 +1872,11 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
         _params->compiled_image_data[currentPc++] = 0xb6;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         // 3D94  8A01                    ORA #$01
         
@@ -1883,7 +1887,11 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
         _params->compiled_image_data[currentPc++] = 0xb7;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         int previousValue = _params->native_image_data[currentData]+1;
 
@@ -1966,7 +1974,11 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
         _params->compiled_image_data[currentPc++] = 0xb6;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
-        _params->compiled_image_data[currentPc++] = 0xC0;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
+        _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         // 3E18  84FE                    ANDA #$fe
 
@@ -1977,7 +1989,11 @@ void ef936x_image_compile_multicolor_mode4( Environment * _environment, ParamsIm
 
         _params->compiled_image_data[currentPc++] = 0xb7;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         previousValue = _params->native_image_data[currentData]+1;
 
@@ -2114,7 +2130,11 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data[currentPc++] = 0xb6;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         // 3D94  8A01                    ORA #$01
         
@@ -2125,7 +2145,11 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data[currentPc++] = 0xb7;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         int previousValue = _params->native_image_data[currentData]+1;
 
@@ -2208,7 +2232,11 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data[currentPc++] = 0xb6;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
-        _params->compiled_image_data[currentPc++] = 0xC0;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
+        _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         // 3E18  84FE                    ANDA #$fe
 
@@ -2219,7 +2247,11 @@ void ef936x_image_compile_multicolor_mode16( Environment * _environment, ParamsI
 
         _params->compiled_image_data[currentPc++] = 0xb7;
         _params->compiled_image_data[currentPc++] = BASE_SEGMENT;
+#if defined(__to8__)
+        _params->compiled_image_data[currentPc++] = 0xc3;
+#else
         _params->compiled_image_data[currentPc++] = 0xc0;
+#endif
 
         previousValue = _params->native_image_data[currentData]+1;
 
