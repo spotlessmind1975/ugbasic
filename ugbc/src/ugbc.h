@@ -4598,7 +4598,7 @@ int embed_scan_string (const char *);
 #define SPRITE_FLAG_TRANSPARENCY_COLOR  0x0200
 
 #define FLAG_TRANSPARENCY   32
-#define FLAG_DOUBLE_Y       64
+// #define FLAG_DOUBLE_Y       64  // available flag
 #define FLAG_EXACT          128
 #define FLAG_COMPRESSED     256
 #define FLAG_WITH_PALETTE   512
