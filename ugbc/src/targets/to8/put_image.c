@@ -472,7 +472,7 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
 void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
-    _flags = _flags & ( ( FLAG_DOUBLE_Y << 8 ) | FLAG_TRANSPARENCY );
+    _flags = _flags & FLAG_TRANSPARENCY;
 
     char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
     char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );

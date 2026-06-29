@@ -272,7 +272,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             resource.isAddress = 0;
             resource.isCompiled = 1;
             resource.bankNumber = image->bankAssigned;
-            c6847_put_image( _environment, &resource, _x1, _y1, _frame, _sequence, 1, image->frameCount, _flags );
+            c6847b_put_image( _environment, &resource, _x1, _y1, _frame, _sequence, 1, image->frameCount, _flags );
             break;
         }
         default:
