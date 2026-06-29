@@ -1694,6 +1694,60 @@ Variable * vic1_image_converter( Environment * _environment, char * _data, int _
 
 }
 
+void vic1_image_compile( Environment * _environment, ParamsImageCompile * _params ) {
+
+//    switch( _mode ) {
+//         case BITMAP_MODE_STANDARD:
+//         case TILEMAP_MODE_STANDARD:
+//             return vic1_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+//             break;
+//     }
+
+//     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+//     return vic1_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
+    _params->compiled_image_data = NULL;
+    _params->compiled_image_size = 0;
+
+}
+
+void vic1_images_compile( Environment * _environment, ParamsImagesCompile * _params ) {
+
+//    switch( _mode ) {
+//         case BITMAP_MODE_STANDARD:
+//         case TILEMAP_MODE_STANDARD:
+//             return vic1_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+//             break;
+//     }
+
+//     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+//     return vic1_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
+    _params->compiled_images_data = NULL;
+    _params->compiled_images_size = 0;
+
+}
+
+void vic1_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params ) {
+
+//    switch( _mode ) {
+//         case BITMAP_MODE_STANDARD:
+//         case TILEMAP_MODE_STANDARD:
+//             return vic1_image_converter_tilemap_mode_standard( _environment, _data, _width, _height, _depth, _offset_x, _offset_y, _frame_width, _frame_height, _transparent_color, _flags );
+//             break;
+//     }
+
+//     WARNING_IMAGE_CONVERTER_UNSUPPORTED_MODE( _mode );
+
+//     return vic1_new_image( _environment, 8, 8, BITMAP_MODE_STANDARD );
+
+    _params->compiled_sequence_data = NULL;
+    _params->compiled_sequence_size = 0;
+
+}
+
 void vic1_calculate_sequence_frame_offset( Environment * _environment, char * _offset, char * _sequence, char * _frame, int _frame_size, int _frame_count ) {
 
 }
