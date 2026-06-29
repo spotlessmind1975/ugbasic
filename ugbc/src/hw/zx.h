@@ -276,6 +276,9 @@ Variable * zx_get_raster_line( Environment * _environment );
 
 int zx_image_size( Environment * _environment, int _width, int _height, int _mode );
 Variable * zx_image_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, int _offset_x, int _offset_y, int _frame_width, int _frame_height, int _mode, int _transparent_color, int _flags );
+void zx_image_compile( Environment * _environment, ParamsImageCompile * _params );
+void zx_images_compile( Environment * _environment, ParamsImagesCompile * _params );
+void zx_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params );
 void zx_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void zx_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 Variable * zx_new_image( Environment * _environment, int _width, int _height, int _mode );
