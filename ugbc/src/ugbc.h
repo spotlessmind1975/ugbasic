@@ -5228,6 +5228,20 @@ int show_troubleshooting_and_exit( Environment * _environment, int _argc, char *
 
 // Function's parameters
 
+typedef struct _ParamsImageCompile {
+
+    int         mode;
+    
+    char *      native_image_data;
+    int         native_image_size;
+    int         native_image_bank;
+
+    char *      compiled_image_data;
+    int         compiled_image_size;
+    int         compiled_image_bank;
+
+} ParamsImageCompile;
+
 typedef struct _ParamsImageLoad {
 
     char *      filename;
@@ -5240,6 +5254,23 @@ typedef struct _ParamsImageLoad {
     int         compiled;
 
 } ParamsImageLoad;
+
+typedef struct _ParamsImagesCompile {
+
+    int         mode;
+    
+    char *      native_images_data;
+    int         native_images_size;
+    int         native_images_bank;
+    int         native_images_frame_size;
+    int         native_images_frame_count;
+
+    char *      compiled_images_data;
+    int         compiled_images_size;
+    int         compiled_images_bank;
+    int         compiled_images_offset[ 256 ];
+
+} ParamsImagesCompile;
 
 typedef struct _ParamsImagesLoad {
 
@@ -5260,6 +5291,23 @@ typedef struct _ParamsImagesLoad {
 
 } ParamsImagesLoad;
 
+typedef struct _ParamsSequenceCompile {
+
+    int         mode;
+    
+    char *      native_sequence_data;
+    int         native_sequence_size;
+    int         native_sequence_bank;
+    int         native_sequence_frame_size;
+    int         native_sequence_frame_count;
+
+    char *      compiled_sequence_data;
+    int         compiled_sequence_size;
+    int         compiled_sequence_bank;
+    int         compiled_sequence_offset[ 256 ];
+
+} ParamsSequenceCompile;
+
 typedef struct _ParamsSequenceLoad {
 
     char *      filename;
@@ -5278,54 +5326,6 @@ typedef struct _ParamsSequenceLoad {
     int         compiled;
 
 } ParamsSequenceLoad;
-
-typedef struct _ParamsImageCompile {
-
-    int         mode;
-    
-    char *      native_image_data;
-    int         native_image_size;
-    int         native_image_bank;
-
-    char *      compiled_image_data;
-    int         compiled_image_size;
-    int         compiled_image_bank;
-
-} ParamsImageCompile;
-
-typedef struct _ParamsImagesCompile {
-
-    int         mode;
-    
-    char *      native_images_data;
-    int         native_images_size;
-    int         native_images_bank;
-    int         native_images_frame_size;
-    int         native_images_frame_count;
-
-    char *      compiled_images_data;
-    int         compiled_images_size;
-    int         compiled_images_bank;
-    int         compiled_images_offset[ 256 ];
-
-} ParamsImagesCompile;
-
-typedef struct _ParamsSequenceCompile {
-
-    int         mode;
-    
-    char *      native_sequence_data;
-    int         native_sequence_size;
-    int         native_sequence_bank;
-    int         native_sequence_frame_size;
-    int         native_sequence_frame_count;
-
-    char *      compiled_sequence_data;
-    int         compiled_sequence_size;
-    int         compiled_sequence_bank;
-    int         compiled_sequence_offset[ 256 ];
-
-} ParamsSequenceCompile;
 
 //----------------------------------------------------------------------------
 // Array
