@@ -1198,7 +1198,7 @@ int gtia_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
             _environment->screenHeight = rows;
             _environment->screenColors = 2;
             _environment->currentModeBW = 1;
-            _environment->currentSl = 10:
+            _environment->currentSl = 10;
 
             cpu_store_8bit( _environment, "TEXTBLOCKREMAIN", 0 );
             cpu_store_8bit( _environment, "TEXTBLOCKREMAINPW", 40 );
