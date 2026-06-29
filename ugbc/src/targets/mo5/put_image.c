@@ -305,6 +305,18 @@ extern char DATATYPE_AS_STRING[][16];
                 ef936x_put_image( _environment, resource, _x1, _y1, NULL, NULL, 1, 0, _flags );
             }
             break;
+        case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES:
+        case VT_COMPILED_SEQUENCE: {
+            Resource resource;
+            memset(&resource, 0, sizeof( Resource ) );
+            resource.realName = strdup( image->realName );
+            resource.isAddress = 0;
+            resource.isCompiled = 1;
+            resource.bankNumber = image->bankAssigned;
+            ef936x_put_image( _environment, &resource, _x1, _y1, _frame, _sequence, 1, image->frameCount, _flags );
+            break;
+        }
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
@@ -453,6 +465,9 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     Variable * image = variable_retrieve( _environment, _image );
 
     switch( image->type ) {
+        case VT_COMPILED_IMAGE:
+        case VT_COMPILED_IMAGES:
+        case VT_COMPILED_SEQUENCE:
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
@@ -472,22 +487,30 @@ void put_image_vars_flags( Environment * _environment, char * _image, char * _x1
 
     _flags = _flags & ( ( FLAG_DOUBLE_Y << 8 ) | FLAG_TRANSPARENCY );
 
-    char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
-    char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
-    
-    Constant * flagsConstant = constant_find( _environment, flagsConstantName );
-    
-    if ( !flagsConstant ) {
-        flagsConstant = malloc( sizeof( Constant ) );
-        memset( flagsConstant, 0, sizeof( Constant ) );
-        flagsConstant->name = strdup( flagsConstantName );
-        flagsConstant->realName = strdup( flagsConstantName );
-        flagsConstant->value = _flags;
-        flagsConstant->type = CT_INTEGER;
-        flagsConstant->next = _environment->constants;
-        _environment->constants = flagsConstant;
-    }
+    char flagsConstantName[MAX_TEMPORARY_STORAGE];
+    char flagsConstantParameter[MAX_TEMPORARY_STORAGE];
 
+    if ( _flags ) {
+        sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
+        sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
+        
+        Constant * flagsConstant = constant_find( _environment, flagsConstantName );
+        
+        if ( !flagsConstant ) {
+            flagsConstant = malloc( sizeof( Constant ) );
+            memset( flagsConstant, 0, sizeof( Constant ) );
+            flagsConstant->name = strdup( flagsConstantName );
+            flagsConstant->realName = strdup( flagsConstantName );
+            flagsConstant->value = _flags;
+            flagsConstant->type = CT_INTEGER;
+            flagsConstant->next = _environment->constants;
+            _environment->constants = flagsConstant;
+        }
+
+    } else {
+        sprintf( flagsConstantParameter, "#0000" );
+    }
+    
     put_image_vars( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, flagsConstantParameter );
 }
 

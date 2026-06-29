@@ -38,6 +38,10 @@
  * CODE SECTION 
  ****************************************************************************/
 
+#include<stdlib.h>
+#include<stdio.h>
+#include<math.h>
+
 extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_linkage( Environment * _environment ) {
@@ -46,7 +50,7 @@ void target_linkage( Environment * _environment ) {
     char executableName[MAX_TEMPORARY_STORAGE];
     char listingFileName[MAX_TEMPORARY_STORAGE];
 
-    if ( _environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL && _environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW ) {
+    if ( (_environment->outputFileType != OUTPUT_FILE_TYPE_K7_ORIGINAL) && (_environment->outputFileType != OUTPUT_FILE_TYPE_K7_NEW) && (_environment->outputFileType != OUTPUT_FILE_TYPE_SDDRIVE) ) {
         CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
     }
 

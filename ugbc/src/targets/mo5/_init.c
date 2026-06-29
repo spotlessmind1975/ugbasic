@@ -42,8 +42,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    cpu_init( _environment );
     _environment->program.startingAddress = 0x3000;
+    cpu_init( _environment );
     _environment->stackStartAddress = 0xa000;
     _environment->stackSize = 512;
 
@@ -78,11 +78,11 @@ void target_initialization( Environment * _environment ) {
         banks_init_extended( _environment, bankIds, bankCount, BANK_SIZE );
 
     }
-    
-    // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
     outhead1("BASE_SEGMENT EQU $%4.4x", 0x0100 * BASE_SEGMENT );
     
+    // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
+
     variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
