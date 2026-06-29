@@ -184,38 +184,6 @@ PUTIMAGE0:
         CPY #255
         BNE PUTIMAGE0L1
 
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE0L1N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE0L1N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE0L1
-
-    PUTIMAGE0L1N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE0L1N:
-
-
         CLC
         LDA TMPPTR
         ADC IMAGEW
@@ -299,37 +267,6 @@ PUTIMAGE0:
         CPY #255
         BNE PUTIMAGE02L2
 
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE02L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE02L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE02L2
-
-    PUTIMAGE02L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE02L2N:
-
         DEC IMAGEH
         BNE PUTIMAGE0EX
         JMP PUTIMAGE0E
@@ -386,37 +323,6 @@ PUTIMAGE0:
         DEY
         CPY #255
         BNE PUTIMAGE016L2
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE016L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE016L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE016L2
-
-    PUTIMAGE016L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE016L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGE0E
@@ -558,38 +464,6 @@ PUTIMAGE1:
         CPY #255
         BNE PUTIMAGE1L1
 
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE1L1N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE1L1N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE1L1
-
-    PUTIMAGE1L1N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE1L1N:
-
-
         CLC
         LDA TMPPTR
         ADC IMAGEW
@@ -665,37 +539,6 @@ PUTIMAGE1:
         DEY
         CPY #255
         BNE PUTIMAGE116L2
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE116L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE116L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE116L2
-
-    PUTIMAGE116L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE116L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGE1E
@@ -1162,59 +1005,6 @@ PUTIMAGE2:
 
     PUTIMAGE2L1XX:
 
-        ; If the bit 6 of IMAGEF flag is set, a DOUBLE
-        ; effect has been required. So we have to copy
-        ; another time the very same line.
-        ; If not, we can go ahead.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE2L1N
-
-        ; If bit 1 of IMAGEF flag is set, the DOUBLE
-        ; effect has been already applied. So we can
-        ; go ahead.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE2L1N0
-
-        ; Enable both bits 6 and 1, so DOUBLE effect is
-        ; taking place.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Move ahead to the next line.
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        ; Reload and restart!
-
-        LDY #0
-        JMP PUTIMAGE2L1
-
-        ; If we reach this line, it means that
-        ; DOUBLE effect has been executed. So,
-        ; we can disable any related flag.
-
-    PUTIMAGE2L1N0:
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; If we reach this line, no DOUBLE
-        ; effect has been required.
-
-    PUTIMAGE2L1N:
-
         ; Move ahead in the data.
 
         CLC
@@ -1324,37 +1114,6 @@ PUTIMAGE2:
         DEY
         CPY #255
         BNE PUTIMAGE2L2
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE2L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE2L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTCDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTCDEST
-        LDA PLOTCDEST+1
-        ADC #0
-        STA PLOTCDEST+1
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE2L2
-
-    PUTIMAGE2L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGE2L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGE2E
@@ -1800,61 +1559,6 @@ PUTIMAGE3:
         SBC #0
         STA TMPPTR+1
 
-        ; IF the bit 6 of IMAGEF flag is set, a DOUBLE
-        ; effect has been required. So we have to copy
-        ; another time the very same line.
-        ; If not, we can go ahead.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE3L1XN
-
-        ; If bit 1 of IMAGEF flag is set, the DOUBLE
-        ; effect has been already applied. So we can
-        ; go ahead.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE3L1XN0
-
-        ; Enable both bits 6 and 1, so DOUBLE effect is
-        ; taking place.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Move ahead the video bitmap address of an entire
-        ; line, in order to copy the same bitmap on the
-        ; next video line.
-
-        CLC
-        LDA PLOTDEST
-        ADC #$40
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        ; Reload the width, and repeat another time.
-
-        LDA IMAGEW
-        ASL
-        JMP PUTIMAGE3L1U
-
-        ; If we reach this line, it means that
-        ; DOUBLE effect has been executed. So,
-        ; we can disable any related flag.
-
-    PUTIMAGE3L1XN0:
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; If we reach this line, no DOUBLE
-        ; effect has been required.
-
-    PUTIMAGE3L1XN:
     PUTIMAGE3L1F:
 
         ; Now we must go ahead, in order to access to the
@@ -2017,68 +1721,6 @@ PUTIMAGE3:
         CPY #255
         BNE PUTIMAGE3L2
 
-        ; If the bit 6 of IMAGEF flag is set, a DOUBLE
-        ; effect has been required. So we have to copy
-        ; another time the very same line.
-        ; If not, we can go ahead.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE3L2N
-
-        ; If bit 1 of IMAGEF flag is set, the DOUBLE
-        ; effect has been already applied. So we can
-        ; go ahead.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE3L2N0
-
-        ; Enable both bits 6 and 1, so DOUBLE effect is
-        ; taking place.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Move ahead to the next (color) line.
-
-        CLC
-        LDA PLOTCDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTCDEST
-        LDA PLOTCDEST+1
-        ADC #0
-        STA PLOTCDEST+1
-
-        CLC
-        LDA PLOTCDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTCDEST
-        LDA PLOTCDEST+1
-        ADC #0
-        STA PLOTCDEST+1
-
-        ; Reload the width and repeat the drawing.
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE3L2
-
-        ; If we reach this line, it means that
-        ; DOUBLE effect has been executed. So,
-        ; we can disable any related flag.
-
-    PUTIMAGE3L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; If we reach this line, no DOUBLE
-        ; effect has been required.
-
-    PUTIMAGE3L2N:
-
         ; Move ahead in the colour data.
 
         CLC
@@ -2206,69 +1848,6 @@ PUTIMAGE3:
         DEY
         CPY #255
         BNE PUTIMAGE3C2L2
-
-        ; IF the bit 6 of IMAGEF flag is set, a DOUBLE
-        ; effect has been required. So we have to copy
-        ; another time the very same line.
-        ; If not, we can go ahead.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGE3C2L2N
-
-        ; If bit 1 of IMAGEF flag is set, the DOUBLE
-        ; effect has been already applied. So we can
-        ; go ahead.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGE3C2L2N0
-
-        ; Enable both bits 6 and 1, so DOUBLE effect is
-        ; taking place.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Move ahead in video color map...
-
-        CLC
-        LDA PLOTC2DEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTC2DEST
-        LDA PLOTC2DEST+1
-        ADC #0
-        STA PLOTC2DEST+1
-
-        CLC
-        LDA PLOTC2DEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTC2DEST
-        LDA PLOTC2DEST+1
-        ADC #0
-        STA PLOTC2DEST+1
-        
-        ; ... and recopy another time the same colour.
-
-        LDA IMAGEW
-        TAY
-        DEY
-        JMP PUTIMAGE3C2L2
-
-        ; If we reach this line, it means that
-        ; DOUBLE effect has been executed. So,
-        ; we can disable any related flag.
-
-    PUTIMAGE3C2L2N0:
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; If we reach this line, no DOUBLE
-        ; effect has been required.
-
-    PUTIMAGE3C2L2N:
 
         ; Move ahead to the next line (in memory).
 

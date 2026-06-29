@@ -232,66 +232,6 @@ PUTIMAGEREU0:
         LDA #%10010001
         STA REUCOMMAND
 
-        ; Check for double flag repetition.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU0L1N
-
-        ; Check for double flag.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU0L1N0
-
-        ; Set the double flag.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Increase manually the destination address.
-
-        CLC
-        LDA REUC64BASE
-        ADC CURRENTTILESWIDTH
-        STA REUC64BASE
-        LDA REUC64BASE+1
-        ADC #0
-        STA REUC64BASE+1
-
-        SEC
-        LDA REUC64BASE
-        SBC IMAGEW
-        STA REUC64BASE
-        LDA REUC64BASE+1
-        SBC #0
-        STA REUC64BASE+1
-
-        ; Decrease manually the source address.
-
-        CLC
-        LDA REUREUBASE
-        SBC IMAGEW
-        STA REUC64BASE
-        LDA REUC64BASE+1
-        SBC #0
-        STA REUC64BASE+1
-
-        LDA IMAGEW
-        ; TAY
-        ; DEY
-        JMP PUTIMAGEREU0L1
-
-    PUTIMAGEREU0L1N0:
-
-        ; Reset the double flag.
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGEREU0L1N:
-
         ; Omit increase source address, since it is automatic.
         ;
         ; CLC
@@ -448,45 +388,6 @@ PUTIMAGEREU0:
         LDA #%10010001
         STA REUCOMMAND
 
-        ; Check for double flag.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU02L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU02L2N0
-
-        ; Set double flag.
-        ORA #65
-        STA IMAGEF
-
-        ; CLC
-        ; LDA PLOTDEST
-        ; ADC CURRENTTILESWIDTH
-        ; STA PLOTDEST
-        ; LDA PLOTDEST+1
-        ; ADC #0
-        ; STA PLOTDEST+1
-
-        LDA IMAGEW
-        ; TAY
-        ; DEY
-        JMP PUTIMAGEREU02L2
-
-    PUTIMAGEREU02L2N0:
-
-        ; Reset the double flag.
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; Draw next row
-
-    PUTIMAGEREU02L2N:
-
         DEC IMAGEH
         BNE PUTIMAGEREU0EX
         JMP PUTIMAGEREU0E
@@ -580,37 +481,6 @@ PUTIMAGEREU0:
         STA REUCONTROL
         LDA #%10010001
         STA REUCOMMAND
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU016L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU016L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        ; CLC
-        ; LDA PLOTDEST
-        ; ADC CURRENTTILESWIDTH
-        ; STA PLOTDEST
-        ; LDA PLOTDEST+1
-        ; ADC #0
-        ; STA PLOTDEST+1
-
-        LDA IMAGEW
-        ; TAY
-        ; DEY
-        JMP PUTIMAGEREU016L2
-
-    PUTIMAGEREU016L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGEREU016L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGEREU0E
@@ -768,67 +638,6 @@ PUTIMAGEREU1:
         LDA #%10010001
         STA REUCOMMAND
 
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU1L1N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU1L1N0
-
-        ORA #65
-        STA IMAGEF
-
-        ; Increase manually the destination address.
-
-        CLC
-        LDA REUC64BASE
-        ADC CURRENTTILESWIDTH
-        STA REUC64BASE
-        LDA REUC64BASE+1
-        ADC #0
-        STA REUC64BASE+1
-
-        SEC
-        LDA REUC64BASE
-        SBC IMAGEW
-        STA REUC64BASE
-        LDA REUC64BASE+1
-        SBC #0
-        STA REUC64BASE+1
-
-        ; Decrease manually the source address.
-
-        LDA REUREUBASE
-        STA TMPPTR2
-        LDA REUREUBASE+1
-        STA TMPPTR2+1
-
-        SEC
-        LDA TMPPTR2
-        SBC IMAGEW
-        STA TMPPTR2
-        LDA TMPPTR2+1
-        SBC #0
-        STA TMPPTR2+1
-
-        LDA TMPPTR2
-        STA REUREUBASE
-        LDA TMPPTR2+1
-        STA REUREUBASE+1
-
-        LDA IMAGEW
-        ; TAY
-        ; DEY
-        JMP PUTIMAGEREU1L1
-
-    PUTIMAGEREU1L1N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGEREU1L1N:
-
         ; CLC
         ; LDA TMPPTR
         ; ADC IMAGEW
@@ -945,37 +754,6 @@ PUTIMAGEREU1:
         STA REUCONTROL
         LDA #%10010001
         STA REUCOMMAND
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU116L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU116L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        ; CLC
-        ; LDA PLOTDEST
-        ; ADC CURRENTTILESWIDTH
-        ; STA PLOTDEST
-        ; LDA PLOTDEST+1
-        ; ADC #0
-        ; STA PLOTDEST+1
-
-        LDA IMAGEW
-        ; TAY
-        ; DEY
-        JMP PUTIMAGEREU116L2
-
-    PUTIMAGEREU116L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGEREU116L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGEREU1E
@@ -1493,59 +1271,6 @@ PUTIMAGEREU2:
 
     PUTIMAGEREU2L1XX:
 
-        ; If the bit 6 of IMAGEF flag is set, a DOUBLE
-        ; effect has been required. So we have to copy
-        ; another time the very same line.
-        ; If not, we can go ahead.
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU2L1N
-
-        ; If bit 1 of IMAGEF flag is set, the DOUBLE
-        ; effect has been already applied. So we can
-        ; go ahead.
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU2L1N0
-
-        ; Enable both bits 6 and 1, so DOUBLE effect is
-        ; taking place.
-
-        ORA #65
-        STA IMAGEF
-
-        ; Move ahead to the next line.
-
-        CLC
-        LDA PLOTDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTDEST
-        LDA PLOTDEST+1
-        ADC #0
-        STA PLOTDEST+1
-
-        ; Reload and restart!
-
-        LDY #0
-        JMP PUTIMAGEREU2L1
-
-        ; If we reach this line, it means that
-        ; DOUBLE effect has been executed. So,
-        ; we can disable any related flag.
-
-    PUTIMAGEREU2L1N0:
-
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-        ; If we reach this line, no DOUBLE
-        ; effect has been required.
-
-    PUTIMAGEREU2L1N:
-
         ; Move ahead in the data.
 
         ; CLC
@@ -1658,53 +1383,6 @@ PUTIMAGEREU2:
         INY
         CPY IMAGEW
         BNE PUTIMAGEREU2L2
-
-        LDA IMAGEF
-        AND #64
-        BEQ PUTIMAGEREU2L2N
-
-        LDA IMAGEF
-        AND #1
-        BNE PUTIMAGEREU2L2N0
-
-        ORA #65
-        STA IMAGEF
-
-        CLC
-        LDA PLOTCDEST
-        ADC CURRENTTILESWIDTH
-        STA PLOTCDEST
-        LDA PLOTCDEST+1
-        ADC #0
-        STA PLOTCDEST+1
-
-        LDA REUREUBASE
-        STA TMPPTR2
-        LDA REUREUBASE+1
-        STA TMPPTR2+1
-
-        SEC
-        LDA TMPPTR2
-        SBC IMAGEW
-        STA TMPPTR2
-        LDA TMPPTR2+1
-        SBC #0
-        STA TMPPTR2+1
-
-        LDA TMPPTR2
-        STA REUREUBASE
-        LDA TMPPTR2+1
-        STA REUREUBASE+1
-
-        LDY #0
-        JMP PUTIMAGEREU2L2
-
-    PUTIMAGEREU2L2N0:
-        LDA IMAGEF
-        AND #$FE
-        STA IMAGEF
-
-    PUTIMAGEREU2L2N:
 
         DEC IMAGEH
         BEQ PUTIMAGEREU2E
