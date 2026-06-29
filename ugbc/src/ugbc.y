@@ -348,9 +348,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> blit_binary_op 
 %type <integer> blit_compounded
 %type <integer> blit_expression 
-%type <integer> blit_image_flag
 %type <integer> blit_image_flags 
-%type <integer> blit_image_flags1 
 %type <integer> blit_operand
 %type <integer> blit_unary_op 
 %type <integer> box_mode 
@@ -1079,11 +1077,7 @@ tile_load_flag:
     TRANSPARENT { $$ = FLAG_TRANSPARENCY; };
 
 put_image_flag:
-    DOUBLE Y { $$ = FLAG_DOUBLE_Y; } |
     WITH TRANSPARENCY { $$ = FLAG_TRANSPARENCY; };
-
-blit_image_flag:
-    DOUBLE Y { $$ = FLAG_DOUBLE_Y; };
 
 load_flag:
     COMPRESSED { $$ = FLAG_COMPRESSED; };
@@ -1113,10 +1107,6 @@ sequence_load_flag:
 put_image_flags1:
     put_image_flag { $$ = $1; } | 
     put_image_flag put_image_flags1 { $$ = $1 | $2; };
-
-blit_image_flags1:
-    blit_image_flag { $$ = $1; } | 
-    blit_image_flag blit_image_flags1 { $$ = $1 | $2; };
 
 image_load_flags1:
     image_load_flag { $$ = $1; } | 
@@ -1165,8 +1155,7 @@ put_image_flags:
     put_image_flags1 { $$ = $1; };
 
 blit_image_flags:
-    { $$ = 0; } | 
-    blit_image_flags1 { $$ = $1; };
+    { $$ = 0; };
 
 load_flags:
     { $$ = 0; } | 
