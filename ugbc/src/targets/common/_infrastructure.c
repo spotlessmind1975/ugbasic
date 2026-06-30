@@ -17514,11 +17514,11 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                     _environment->outputGeneratedFiles = 1;
                     break;
                 case 'G':
-                    if ( strcmp( optarg, "none") == 0 || atoi( optarg ) == 0 ) {
+                    if ( strcmp( optarg, "none") == 0 ) {
                         _environment->gammaCorrection = GAMMA_CORRECTION_NONE;
-                    } else if ( strcmp( optarg, "type1") == 0 || atoi( optarg ) == 1 ) {
+                    } else if ( strcmp( optarg, "type1") == 0 ) {
                         _environment->gammaCorrection = GAMMA_CORRECTION_TYPE1;
-                    } else if ( strcmp( optarg, "type2") == 0 || atoi( optarg ) == 2 ) {
+                    } else if ( strcmp( optarg, "type2") == 0 ) {
                         _environment->gammaCorrection = GAMMA_CORRECTION_TYPE2;
                     } else {
                         CRITICAL("Option '-G': unknown gamma correction parameter.");

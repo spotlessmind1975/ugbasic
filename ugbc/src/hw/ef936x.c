@@ -862,6 +862,8 @@ void ef936x_finalization( Environment * _environment ) {
 
     int i;
 
+    outline1("; Active gamma correction = %d", _environment->gammaCorrection );
+    
     outhead0("COMMONPALETTE");
     out0("      fdb ");
 
@@ -891,8 +893,6 @@ void ef936x_finalization( Environment * _environment ) {
     }
 #endif
 
-    outline1("; Active gamma correction = %d", _environment->gammaCorrection );
-    
     for( i=0; i<15; ++i ) {
         switch( _environment->gammaCorrection ) {
             case GAMMA_CORRECTION_NONE:
