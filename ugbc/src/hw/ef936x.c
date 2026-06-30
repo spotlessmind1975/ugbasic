@@ -891,6 +891,8 @@ void ef936x_finalization( Environment * _environment ) {
     }
 #endif
 
+    outline1("; Active gamma correction = %d", _environment->gammaCorrection );
+    
     for( i=0; i<15; ++i ) {
         switch( _environment->gammaCorrection ) {
             case GAMMA_CORRECTION_NONE:
