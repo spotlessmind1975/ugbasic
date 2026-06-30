@@ -861,6 +861,8 @@ void ef936x_finalization( Environment * _environment ) {
 
     int i;
 
+    outline1("; Active gamma correction = %d", _environment->gammaCorrection );
+    
     outhead0("COMMONPALETTE");
     out0("      fdb ");
 
