@@ -17520,6 +17520,8 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                         _environment->gammaCorrection = GAMMA_CORRECTION_TYPE1;
                     } else if ( strcmp( optarg, "type2") == 0 || atoi( optarg ) == 2 ) {
                         _environment->gammaCorrection = GAMMA_CORRECTION_TYPE2;
+                    } else {
+                        CRITICAL("Option '-G': unknown gamma correction parameter.");
                     }
                     break;
                 case 'O':
