@@ -839,10 +839,9 @@ extern RGBi * commonPalette;
 // considering its very high gamma value.
 // Author: Samuel Devulder
 static int pc_to_ef936x(int _pc_color) {
-	// if(1) return (_pc_color>>4)&15;
-	double pc_color = _pc_color/255.0;
+	double pc_color = (double)(_pc_color)/255.0;
 	double ef936_color = 15*pow(pc_color, 1.67);
-	return 0x0F & (int)(ef936_color + 0.5);
+    return 0x0F & (int)(ef936_color + 0.5);
 }
 
 // Calculate gamma value for each component.
@@ -906,17 +905,17 @@ void ef936x_finalization( Environment * _environment ) {
             case GAMMA_CORRECTION_TYPE1:
                 out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
                     0, 
-                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( pc_to_ef936x( palette[i].blue >> 4 ) & 0x0f ) , 
-                    ( pc_to_ef936x( palette[i].green >> 4 ) & 0x0f ) , 
-                    ( pc_to_ef936x( palette[i].red >> 4 ) & 0x0f )  
+                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( pc_to_ef936x( palette[i].blue ) & 0x0f ) , 
+                    ( pc_to_ef936x( palette[i].green ) & 0x0f ) , 
+                    ( pc_to_ef936x( palette[i].red ) & 0x0f )  
                 );
                 break;
             case GAMMA_CORRECTION_TYPE2:
                 out4( "$%1.1x%1.1x%1.1x%1.1x, ", 
                     0, 
-                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( df_gamma( palette[i].blue >> 4 ) & 0x0f ) , 
-                    ( df_gamma( palette[i].green >> 4 ) & 0x0f ) , 
-                    ( df_gamma( palette[i].red >> 4 ) & 0x0f )  
+                    ( EF936X_COMPONENT_BITMASK * 0x10 ) | ( df_gamma( palette[i].blue ) & 0x0f ) , 
+                    ( df_gamma( palette[i].green ) & 0x0f ) , 
+                    ( df_gamma( palette[i].red ) & 0x0f )  
                 );
                 break;
         }
