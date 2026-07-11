@@ -263,7 +263,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     outline0("RTS" );
                     outhead1("%sROUTINES", variable->realName );
                     for( int i=0; i<variable->memoryOffsetCount; ++i ) {
-                        outline2("JMP *+$%4.4x+3*%d", variable->memoryOffset[i], variable->memoryOffsetCount );
+                        outline2("JMP *+$%4.4x+3*%d", variable->memoryOffset[i], (variable->memoryOffsetCount-i) );
                     }
                     if ( ! variable->absoluteAddress ) {
                         if ( variable->valueBuffer ) {

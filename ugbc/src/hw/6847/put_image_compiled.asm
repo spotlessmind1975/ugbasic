@@ -41,6 +41,8 @@
 PUTCIMAGE2CALCPOS
 PUTCIMAGE3CALCPOS
 
+    PSHS D
+
     LDX TEXTADDRESS
     LDB <(IMAGEY+1)
 
@@ -65,6 +67,8 @@ PUTCIMAGE3CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
+
     RTS
 
 @ENDIF
@@ -73,6 +77,8 @@ PUTCIMAGE3CALCPOS
 
 PUTCIMAGE7CALCPOS
 
+    PSHS D
+
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -90,6 +96,7 @@ PUTCIMAGE7CALCPOS
     LSRA
     RORB
     LEAX D,X 
+    PULS D
     RTS
 
 @ENDIF
@@ -97,6 +104,7 @@ PUTCIMAGE7CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 8) )
 
 PUTCIMAGE8CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -118,6 +126,7 @@ PUTCIMAGE8CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
@@ -125,6 +134,7 @@ PUTCIMAGE8CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 9) )
 
 PUTCIMAGE9CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -145,6 +155,7 @@ PUTCIMAGE9CALCPOS
     LSRA
     RORB
     LEAX D, X
+    PULS D
     RTS
 
 @ENDIF
@@ -152,6 +163,7 @@ PUTCIMAGE9CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 10) )
 
 PUTCIMAGE10CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -173,6 +185,7 @@ PUTCIMAGE10CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
@@ -180,6 +193,7 @@ PUTCIMAGE10CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 11) )
 
 PUTCIMAGE11CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -201,6 +215,7 @@ PUTCIMAGE11CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
@@ -208,6 +223,7 @@ PUTCIMAGE11CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 12) )
 
 PUTCIMAGE12CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -229,6 +245,7 @@ PUTCIMAGE12CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
@@ -236,6 +253,7 @@ PUTCIMAGE12CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 13) )
 
 PUTCIMAGE13CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -257,6 +275,7 @@ PUTCIMAGE13CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
@@ -264,6 +283,7 @@ PUTCIMAGE13CALCPOS
 @IF !vestigialConfig.screenModeUnique || ( (currentMode == 14) )
 
 PUTCIMAGE14CALCPOS
+    PSHS D
     LDX BITMAPADDRESS
     LDD <IMAGEY
     LSLB
@@ -287,6 +307,7 @@ PUTCIMAGE14CALCPOS
     RORB
     LEAX D, X
 
+    PULS D
     RTS
 
 @ENDIF
