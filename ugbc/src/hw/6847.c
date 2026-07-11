@@ -1714,7 +1714,7 @@ void c6847_image_compile_multicolor_mode_standard( Environment * _environment, P
     int currentData = 3;
     int previousValue = _params->native_image_data[currentData] + 1;
 
-    outline1("; %4.4x : LDB #kk", currentPc );
+    // outline1("; %4.4x : LDB #kk", currentPc );
 
     // | 3Dkk  C6kk                    LDB #kk    
 
@@ -1777,7 +1777,7 @@ void c6847_image_compile_bitmap_mode_standard( Environment * _environment, Param
     int currentData = 3;
     int previousValue = _params->native_image_data[currentData] + 1;
 
-    outline1("; %4.4x : LDB #kk", currentPc );
+    // outline1("; %4.4x : LDB #kk", currentPc );
     
     // | 3Dkk  C6kk                    LDB #kk    
 
@@ -1947,7 +1947,7 @@ void c6847_images_compile_multicolor_mode_standard( Environment * _environment, 
         params.native_image_bank = _params->native_images_bank;
         image_compile( _environment, &params );
         if ( params.compiled_image_data ) {
-            outline3("; %4.4x : image %d size %d", currentPc, i, params.compiled_image_size );
+            // outline3("; %4.4x : image %d size %d", currentPc, i, params.compiled_image_size );
             memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
             _params->compiled_images_offset[i] = currentPc;
             currentPc += params.compiled_image_size;
@@ -1983,7 +1983,7 @@ void c6847_images_compile_bitmap_mode_standard( Environment * _environment, Para
         params.native_image_bank = _params->native_images_bank;
         image_compile( _environment, &params );
         if ( params.compiled_image_data ) {
-            outline3("; %4.4x : image %d size %d", currentPc, i, params.compiled_image_size );
+            // outline3("; %4.4x : image %d size %d", currentPc, i, params.compiled_image_size );
             memcpy( _params->compiled_images_data + currentPc, params.compiled_image_data, params.compiled_image_size );
             _params->compiled_images_offset[i] = currentPc;
             currentPc += params.compiled_image_size;
