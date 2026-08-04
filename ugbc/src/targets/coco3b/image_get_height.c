@@ -49,19 +49,31 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_WORD, "(image height)" );
 
-    outline1("LDY #%s", image->realName );
-    switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDB 2,Y" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDB 5,Y" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
+    if ( image->bankAssigned != -1 ) {
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LDB #$%2.2x", image->originalHeight);
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LDB #$%2.2x", image->frameHeight);
+                break;
+        }
+    } else {
+        outline1("LDY #%s", image->realName );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline0("LDB 2,Y" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDB 5,Y" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }
+        outline0("CLRA" );
     }
-    outline0("CLRA" );
     outline1("STD %s", result->realName );
 
     return result;

@@ -49,22 +49,34 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image height)" );
 
-    outline1("LDA #<%s", image->realName );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", image->realName );
-    outline0("STA TMPPTR+1" );
-    switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDY #1" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDY #4" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
-    }        
-    outline0("LDA (TMPPTR),Y" );
+    if ( image->bankAssigned != -1 ) {
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LDA #$%2.2x", image->originalHeight);
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LDA #$%2.2x", image->frameHeight);
+                break;
+        }
+    } else {
+        outline1("LDA #<%s", image->realName );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", image->realName );
+        outline0("STA TMPPTR+1" );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline0("LDY #1" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDY #4" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }        
+        outline0("LDA (TMPPTR),Y" );
+    }
     outline1("STA %s", result->realName );
 
     return result;

@@ -49,25 +49,43 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
-    outline1("LDA #<%s", image->realName );
-    outline0("STA TMPPTR" );
-    outline1("LDA #>%s", image->realName );
-    outline0("STA TMPPTR+1" );
-    switch( image->type ) {
-        case VT_IMAGE:
-            outline0("LDY #0" );
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("LDY #3" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
-    }        
-    outline0("LDA (TMPPTR),Y" );
-    outline1("STA %s", result->realName );
-    outline0("LDA #0" );
-    outline1("STA %s", address_displacement(_environment, result->realName, "1") );
+    if ( image->bankAssigned != -1 ) {
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LDA #$%2.2x", (unsigned char) ( image->originalWidth & 0xff ) );
+                outline1("STA %s", result->realName );
+                outline1("LDA #$%2.2x", (unsigned char) ( (image->originalWidth>>8) & 0xff ) );
+                outline1("STA %s", address_displacement(_environment, result->realName, "1") );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LDA #$%2.2x", (unsigned char) ( image->frameWidth & 0xff ) );
+                outline1("STA %s", result->realName );
+                outline1("LDA #$%2.2x", (unsigned char) ( (image->frameWidth>>8) & 0xff ) );
+                outline1("STA %s", address_displacement(_environment, result->realName, "1") );
+                break;
+        }
+    } else {    
+        outline1("LDA #<%s", image->realName );
+        outline0("STA TMPPTR" );
+        outline1("LDA #>%s", image->realName );
+        outline0("STA TMPPTR+1" );
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline0("LDY #0" );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("LDY #3" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }        
+        outline0("LDA (TMPPTR),Y" );
+        outline1("STA %s", result->realName );
+        outline0("LDA #0" );
+        outline1("STA %s", address_displacement(_environment, result->realName, "1") );
+    }
 
     return result;
 

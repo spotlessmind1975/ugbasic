@@ -49,18 +49,30 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_BYTE, "(image width)" );
 
-    outline1("LD HL, %s", image->realName );
-    switch( image->type ) {
-        case VT_IMAGE:
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("ADD HL, 3" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
+    if ( image->bankAssigned != -1 ) {
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LD A, $%2.2x", image->originalWidth );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LD A, $%2.2x", image->frameWidth );
+                break;
+        }
+    } else {       
+        outline1("LD HL, %s", image->realName );
+        switch( image->type ) {
+            case VT_IMAGE:
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("ADD HL, 3" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }
+        outline0("LD A, (HL)" );
     }
-    outline0("LD A, (HL)" );
     outline1("LD (%s), A", result->realName );
 
     return result;

@@ -49,22 +49,38 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
     Variable * image = variable_retrieve( _environment, _image );
     Variable * result = variable_temporary( _environment, VT_WORD, "(image width)" );
 
-    outline1("LD HL, %s", image->realName );
-    switch( image->type ) {
-        case VT_IMAGE:
-            break;
-        case VT_IMAGES:
-        case VT_SEQUENCE:
-            outline0("ADD HL, 3" );
-            break;
-        default:
-            CRITICAL_NOT_IMAGE( _image );
-    }        
-    outline0("LD A, (HL)" );
-    outline1("LD (%s), A", result->realName );
-    outline0("INC HL" );
-    outline0("LD A, (HL)" );
-    outline1("LD (%s), A", address_displacement(_environment, result->realName, "1") );
+    if ( image->bankAssigned != -1 ) {
+        switch( image->type ) {
+            case VT_IMAGE:
+                outline1("LD DE, $%4.4x", image->originalWidth );
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline1("LD DE, $%4.4x", image->frameWidth );
+                break;
+        }
+        outline0("LD A, E" );
+        outline1("LD (%s), A", result->realName );
+        outline0("LD A, D" );
+        outline1("LD (%s), A", address_displacement(_environment, result->realName, "1") );
+    } else {        
+        outline1("LD HL, %s", image->realName );
+        switch( image->type ) {
+            case VT_IMAGE:
+                break;
+            case VT_IMAGES:
+            case VT_SEQUENCE:
+                outline0("ADD HL, 3" );
+                break;
+            default:
+                CRITICAL_NOT_IMAGE( _image );
+        }        
+        outline0("LD A, (HL)" );
+        outline1("LD (%s), A", result->realName );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline1("LD (%s), A", address_displacement(_environment, result->realName, "1") );
+    }
 
     return result;
 
