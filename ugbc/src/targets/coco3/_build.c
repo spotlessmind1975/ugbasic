@@ -183,7 +183,7 @@ void generate_dsk( Environment * _environment ) {
     // +------------+--------------....--------------+---------------+
     // 
 
-    sprintf( outputFileName, "%sprogram.exe", temporaryPath);
+    sprintf( outputFileName, "%sp.exe", temporaryPath);
     fh = fopen( outputFileName, "wb" );
     fputc( 0x00, fh );
     fputc( programExeSize >> 8, fh );
@@ -211,7 +211,7 @@ void generate_dsk( Environment * _environment ) {
             // |00|LEN |3000| .............................. |FF|00|00|00|00|
             // +------------+--------------....--------------+--------------+
 
-            sprintf( outputFileName, "%sprogram.%03d", temporaryPath, i);
+            sprintf( outputFileName, "%sp.%02d", temporaryPath, i);
             fh = fopen( outputFileName, "wb" );
             fputc( 0x00, fh );
             fputc( programDatsSize[i] >> 8, fh );
@@ -235,26 +235,24 @@ void generate_dsk( Environment * _environment ) {
 
     sprintf( basFileName, "%sloader.bas", temporaryPath);
     fh = fopen( basFileName, "wb" );
-    fprintf( fh, "1 REM ugBASIC loader\n" );
-    fprintf( fh, "2 REM --[ PROLOGUE ]--\n" );
-    fprintf( fh, "3 DATA  26, 80, 52, 16, 52,  6,142, 14\n");
-    fprintf( fh, "4 DATA   0,191,  0, 31, 31, 65, 16,206\n");
-    fprintf( fh, "5 DATA  15,  0, 16,255,  0, 33,198,255\n");
-    fprintf( fh, "6 DATA 166,133,167,229, 90, 38,249, 53\n");
-    fprintf( fh, "7 DATA   6, 53, 16, 28,159, 57, 26, 80\n");
-    fprintf( fh, "8 DATA 206, 16,  0,142, 42,  0, 16,142\n");
-    fprintf( fh, "9 DATA  42,  0,183,255,223,166,128,167\n");
-    fprintf( fh, "10DATA 160, 51, 95, 17,131,  0,  0, 38\n");
-    fprintf( fh, "11DATA 244,183,255,222, 28,159, 57, 26\n");
-    fprintf( fh, "12DATA  80,206, 16,  0,142, 42,  0, 16\n");
-    fprintf( fh, "13DATA 142,192,  0,183,255,223,134,  0\n");
-    fprintf( fh, "14DATA 183,255,166,166,128,167,160, 51\n");
-    fprintf( fh, "15DATA  95, 17,131,  0,  0, 38,244,134\n");
-    fprintf( fh, "16DATA  62,183,255,166,183,255,222, 28\n");
-    fprintf( fh, "17DATA 159, 57,  0\n" );
-    fprintf( fh, "18FORA=&HE00 TO &HE71:READX:POKEA,X:NEXTA\n" );
-    fprintf( fh, "19REM --[ MAIN ]--\n" );
-    fprintf( fh, "20CLEAR 999: EXEC &HE00: PRINT \"LOADING, PLEASE WAIT\";\n" );
+    fprintf( fh, "1REM ugBASIC %s\n", UGBASIC_VERSION );
+    fprintf( fh, "2DATA26,80,52,16,52,6,142,14\n");
+    fprintf( fh, "3DATA0,191,0,31,31,65,16,206\n");
+    fprintf( fh, "4DATA15,0,16,255,0,33,198,255\n");
+    fprintf( fh, "5DATA166,133,167,229,90,38,249,53\n");
+    fprintf( fh, "6DATA6,53,16,28,159,57,26,80\n");
+    fprintf( fh, "7DATA206,32,0,142,42,0,16,142\n");
+    fprintf( fh, "8DATA42,0,183,255,223,166,128,167\n");
+    fprintf( fh, "9DATA160,51,95,17,131,0,0,38\n");
+    fprintf( fh, "10DATA244,183,255,222,28,159,57,26\n");
+    fprintf( fh, "11DATA80,206,32,0,142,42,0,16\n");
+    fprintf( fh, "12DATA142,192,0,183,255,223,134,0\n");
+    fprintf( fh, "13DATA183,255,166,166,128,167,160,51\n");
+    fprintf( fh, "14DATA95,17,131,0,0,38,244,134\n");
+    fprintf( fh, "15DATA62,183,255,166,183,255,222,28\n");
+    fprintf( fh, "16DATA159,57,0\n" );
+    fprintf( fh, "17FORA=&HE00 TO&HE71:READX:POKEA,X:NEXTA\n" );
+    fprintf( fh, "20CLEAR999:EXEC&HE00:?\"WAIT\";\n" );
 
     int lineNr = 21;
 
@@ -265,23 +263,23 @@ void generate_dsk( Environment * _environment ) {
             char line[MAX_TEMPORARY_STORAGE];
 
             if ( bankSize > blockSize ) {
-                fprintf( fh, "%dLOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                fprintf( fh, "%dLOADM\"B0.%02d\":?\".\";\n", lineNr, bank->id);
                 ++lineNr;
 
-                fprintf( fh, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                fprintf( fh, "%dPOKE&HE51,&HC0:POKE&HE57,%d:EXEC&HE47\n", lineNr, bank->id);
                 ++lineNr;
 
-                fprintf( fh, "%dLOADM\"BANK1.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                fprintf( fh, "%dLOADM\"B1.%02d\":?\".\";\n", lineNr, bank->id);
                 ++lineNr;
 
-                fprintf( fh, "%dPOKE &HE51, &HD0: EXEC &HE47\n", lineNr);
+                fprintf( fh, "%dPOKE&HE51,&HD0:EXEC&HE47\n", lineNr);
                 ++lineNr;
 
             } else {
-                fprintf( fh, "%dEXEC &HE46: LOADM\"BANK0.%03d\":PRINT\".\";\n", lineNr, bank->id);
+                fprintf( fh, "%dEXEC&HE46:LOADM\"B0.%02d\":?\".\";\n", lineNr, bank->id);
                 ++lineNr;
 
-                fprintf( fh, "%dPOKE &HE51, &HC0: POKE &HE57, %d: EXEC &HE47\n", lineNr, bank->id);
+                fprintf( fh, "%dPOKE&HE51,&HC0:POKE&HE57,%d:EXEC&HE47\n", lineNr, bank->id);
                 ++lineNr;
 
             }
@@ -291,7 +289,7 @@ void generate_dsk( Environment * _environment ) {
     }
 
     for( int i=0; i<programDataCount; ++i ) {
-        fprintf( fh, "%dLOADM\"PROGRAM.%03d\":?\".\";\n", lineNr, i);
+        fprintf( fh, "%dLOADM\"P.%02d\":?\".\";\n", lineNr, i);
         ++lineNr;
         int address = 0x4d + i*32;
         int sizeHi = ( programDatsSize[i] >> 8 ) & 0xff;
@@ -299,7 +297,7 @@ void generate_dsk( Environment * _environment ) {
         fprintf( fh, "%dPOKE3632,%d:POKE3625,%d:POKE3626,%d:EXEC3620\n", lineNr, address, sizeHi, sizeLo );
         ++lineNr;
     }
-    fprintf( fh, "90PRINT \"...\";: LOADM\"PROGRAM.EXE\": PRINT \"...\": EXEC\n" );
+    fprintf( fh, "90?\".\";:LOADM\"P.EXE\":?\".\":EXEC\n" );
     fclose( fh );
 
     char binaryName[MAX_TEMPORARY_STORAGE];
@@ -362,7 +360,7 @@ void generate_dsk( Environment * _environment ) {
 
     remove( basFileName );
 
-    sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.exe\" \"%s,PROGRAM.EXE\"",
+    sprintf( commandLine, "\"%s\" copy -2 \"%sp.exe\" \"%s,P.EXE\"",
         executableName, 
         temporaryPath, 
         _environment->exeFileName );
@@ -373,7 +371,7 @@ void generate_dsk( Environment * _environment ) {
 
     if ( programDataCount ) {
         for( int i=0; i<programDataCount; ++i ) {
-            sprintf( commandLine, "\"%s\" copy -2 \"%sprogram.%03d\" \"%s,PROGRAM.%03d\"",
+            sprintf( commandLine, "\"%s\" copy -2 \"%sp.%02d\" \"%s,P.%02d\"",
                 executableName, 
                 temporaryPath,
                 i, 
@@ -488,13 +486,14 @@ void generate_dsk( Environment * _environment ) {
         if ( bankSize > 0 ) {
             int effectiveSize = blockSize > bankSize ? bankSize : blockSize;
             char bankFileName[MAX_TEMPORARY_STORAGE];
-            sprintf( bankFileName, "%sbank0.%03d", temporaryPath, bank->id );
+            sprintf( bankFileName, "%sb0.%02d", temporaryPath, bank->id );
             fh = fopen( bankFileName, "wb" );
             fputc( 0, fh );
             fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
             fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
             fputc( 0x2a, fh );
             fputc( 0x00, fh );
+
             fwrite( &bank->data[0], 1, effectiveSize, fh );
             fputc( 0xff, fh );
             fputc( 0x00, fh );
@@ -504,7 +503,7 @@ void generate_dsk( Environment * _environment ) {
             fputc( 0x00, fh );
             fclose( fh );
 
-            sprintf( commandLine, "\"%s\" copy -2 \"%sbank0.%03d\" \"%s,BANK0.%03d\"",
+            sprintf( commandLine, "\"%s\" copy -2 \"%sb0.%02d\" \"%s,B0.%02d\"",
                 executableName, 
                 temporaryPath, 
                 bank->id,
@@ -518,7 +517,7 @@ void generate_dsk( Environment * _environment ) {
 
             if ( bankSize > blockSize ) {
                 effectiveSize = bankSize - blockSize;
-                sprintf( bankFileName, "%sbank1.%03d", temporaryPath, bank->id );
+                sprintf( bankFileName, "%sb1.%02d", temporaryPath, bank->id );
                 fh = fopen( bankFileName, "wb" );
                 fputc( 0, fh );
                 fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
@@ -533,7 +532,7 @@ void generate_dsk( Environment * _environment ) {
                 fputc( 0x00, fh );
                 fputc( 0x00, fh );
                 fclose( fh );
-                sprintf( commandLine, "\"%s\" copy -2 \"%sbank1.%03d\" \"%s,BANK1.%03d\"",
+                sprintf( commandLine, "\"%s\" copy -2 \"%sb1.%02d\" \"%s,B1.%02d\"",
                     executableName, 
                     temporaryPath, 
                     bank->id,
