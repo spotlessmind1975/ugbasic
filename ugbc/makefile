@@ -453,7 +453,10 @@ src-generated/coco3_header.c:
 src-generated/coco3_footer.c:
 	@xxd -i $(subst src-generated/coco3_,data/coco3/,$(@:.c=.bin)) >$@
 
-COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c
+src-generated/coco3_loader2.c:
+	@xxd -i $(subst src-generated/coco3_,data/coco3/,$(@:.c=.bin)) >$@
+
+COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c src-generated/coco3_loader2.c
 
 # ----------------------------------------------------------------------------
 # LOADER FOR THOMSON TO8

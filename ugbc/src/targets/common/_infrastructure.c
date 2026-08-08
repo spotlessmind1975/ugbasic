@@ -185,7 +185,9 @@ char OUTPUT_FILE_TYPE_AS_STRING[][16] = {
     "atr",
     "reu",
     "ram",
-    "sddrive"
+    "sddrive",
+    "dskold",
+    "dsknew"
 };
 
 void memory_area_assign( MemoryArea * _first, Variable * _variable ) {
@@ -17549,6 +17551,10 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                         _environment->outputFileType = OUTPUT_FILE_TYPE_RAM;
                     } else if ( strcmp( optarg, "dsk") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_DSK;
+                    } else if ( strcmp( optarg, "dskold") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK_OLD;
+                    } else if ( strcmp( optarg, "dsknew") == 0 ) {
+                        _environment->outputFileType = OUTPUT_FILE_TYPE_DSK_NEW;
                     } else if ( strcmp( optarg, "atr") == 0 ) {
                         _environment->outputFileType = OUTPUT_FILE_TYPE_ATR;
                     } else if ( strcmp( optarg, "reu") == 0 ) {

@@ -97,7 +97,7 @@ void generate_bin( Environment * _environment ) {
 
 }
 
-void generate_dsk( Environment * _environment ) {
+void generate_dsk_old( Environment * _environment ) {
 
     // Let's cut the executable file into multiple segments.
     // The name of the binary is equal to the disk file name,
@@ -556,15 +556,474 @@ void generate_dsk( Environment * _environment ) {
 
 }
 
+void generate_dsk_new( Environment * _environment ) {
+
+    // Let's cut the executable file into multiple segments.
+    // The name of the binary is equal to the disk file name,
+    // but with a different extension.
+    char originalBinaryFile[MAX_TEMPORARY_STORAGE];
+    strcopy( originalBinaryFile, _environment->exeFileName );
+    char * p = strstr( originalBinaryFile, ".dsk" );
+    if ( p ) {
+        strcopy( p, ".bin" );
+    }
+
+    // Calculate the effective size.
+    FILE * fh = fopen( originalBinaryFile, "rb" );
+    int executableBinaryFileSize = 0;
+    if ( fh ) {
+        fseek( fh, 0, SEEK_END );
+        executableBinaryFileSize = ftell( fh );
+        fclose( fh );
+    } else {
+        CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK( _environment->exeFileName, originalBinaryFile );
+    }
+
+    // The LOADM command is able to read a limited size of binary file.
+    // So we are going to split the original file as follows:
+    // | $2a00 ............. $4d00 ... $4e00 ........ $xx00 .....
+    // +---------------------+---------+---------+....+---------+
+    // |   PROGRAM.EXE       | P01.DAT | P02.DAT |....| P0n.DAT |
+    // +---------------------+---------+---------+....+---------+
+    //
+
+    executableBinaryFileSize -= 5;
+    char * originalBinaryFileContent = malloc( executableBinaryFileSize );
+    fh = fopen( originalBinaryFile, "rb" );
+    (void)!fread( originalBinaryFileContent, 1, 5, fh);
+    (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
+    fclose( fh );
+
+    int programExeSize = 0x4d00 - _environment->program.startingAddress;
+    if ( executableBinaryFileSize < programExeSize ) {
+        programExeSize = executableBinaryFileSize;
+    }
+    char * programExe = malloc( programExeSize );
+    memcpy( programExe, originalBinaryFileContent, programExeSize );
+    executableBinaryFileSize -= programExeSize;
+
+    char * programDats[MAX_TEMPORARY_STORAGE];
+    int programDatsSize[MAX_TEMPORARY_STORAGE];
+    int programDataCount = 0;
+
+    int blockSize = 0x2000;
+    if ( executableBinaryFileSize ) {
+        char * originalBinaryFileContentPtr = originalBinaryFileContent + programExeSize;
+        while( executableBinaryFileSize ) {
+            if ( blockSize > executableBinaryFileSize ) {
+                blockSize = executableBinaryFileSize;
+                executableBinaryFileSize = blockSize;
+            }
+            programDats[programDataCount] = malloc( blockSize );
+            programDatsSize[programDataCount] = blockSize;
+            memcpy( programDats[programDataCount], originalBinaryFileContentPtr, blockSize );
+            executableBinaryFileSize -= blockSize;
+            originalBinaryFileContentPtr += blockSize;
+            ++programDataCount;
+        }
+    }
+
+    blockSize = 0x2000;
+
+    char temporaryPath[MAX_TEMPORARY_STORAGE];
+    strcopy( temporaryPath, _environment->temporaryPath );
+    strcat( temporaryPath, " " );
+    temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
+
+    char basFileName[MAX_TEMPORARY_STORAGE];
+    sprintf( basFileName, "%sloader.bas", temporaryPath);
+    fh = fopen( basFileName, "wb" );
+    fprintf( fh, "1REM ugBASIC %s\n", UGBASIC_VERSION );
+    fprintf( fh, "2LOADM\"LOADER.BIN\":EXEC&HE00\n");
+    fclose( fh );
+    
+    char outputFileName[MAX_TEMPORARY_STORAGE*2];
+
+    // Now we are going to write down the effective files, that must
+    // have the LOADM format, as follows:
+    //
+    // +------------+--------------....--------------+---------------+
+    // |  PREAMBLE  |              DATA              |    POSTAMBLE  |
+    // +------------+--------------....--------------+---------------+
+    // |00|LEN |LOAD| .............................. |FF|00|00| EXEC |
+    // +------------+--------------....--------------+---------------+
+    // 
+
+    sprintf( outputFileName, "%sp.exe", temporaryPath);
+    fh = fopen( outputFileName, "wb" );
+    fputc( 0x00, fh );
+    fputc( programExeSize >> 8, fh );
+    fputc( programExeSize & 0xff, fh );
+    fputc( _environment->program.startingAddress >> 8, fh );
+    fputc( _environment->program.startingAddress & 0xff, fh );
+    fwrite( programExe, 1, programExeSize, fh );
+    fputc( 0xff, fh );
+    fputc( 0x00, fh );
+    fputc( 0x00, fh );
+    fputc( _environment->program.startingAddress >> 8, fh );
+    fputc( _environment->program.startingAddress & 0xff, fh );
+    fclose( fh );
+
+    if ( programDataCount ) {
+        for( int i=0; i<programDataCount; ++i ) {
+
+            // The dat files will be loaded to a fixed position,
+            // because they will be copied under ROM bank
+            // using the LOADER.BAS.
+            //
+            // +------------+--------------....--------------+--------------+
+            // |  PREAMBLE  |              DATA              |    POSTAMBLE |
+            // +------------+--------------....--------------+--------------+
+            // |00|LEN |3000| .............................. |FF|00|00|00|00|
+            // +------------+--------------....--------------+--------------+
+
+            sprintf( outputFileName, "%sp.%03d", temporaryPath, i);
+            fh = fopen( outputFileName, "wb" );
+            fputc( 0x00, fh );
+            fputc( programDatsSize[i] >> 8, fh );
+            fputc( programDatsSize[i] & 0xff, fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fwrite( programDats[i], 1, programDatsSize[i], fh );
+            fputc( 0xff, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fclose( fh );
+
+        }
+    }
+
+    // Now we are going to create the ASM loader.
+
+    int loaderOffset = 0x190;
+    
+    int lineNr = 21;
+
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize ) {
+            char line[MAX_TEMPORARY_STORAGE];
+
+            if ( bankSize > blockSize ) {
+                sprintf( line, "B0      %03d", bank->id);
+                memcpy( &data_coco3_loader2_bin[loaderOffset], line, 11 );
+                data_coco3_loader2_bin[loaderOffset+11+2] = bank->id;
+                loaderOffset += 14;
+                sprintf( line, "B1      %03d", bank->id);
+                memcpy( &data_coco3_loader2_bin[loaderOffset], line, 11 );
+                data_coco3_loader2_bin[loaderOffset+11+2] = bank->id;
+                loaderOffset += 14;
+            } else {
+                sprintf( line, "B0      %03d", bank->id);
+                memcpy( &data_coco3_loader2_bin[loaderOffset], line, 11 );
+                data_coco3_loader2_bin[loaderOffset+11+2] = bank->id;
+                loaderOffset += 14;
+            }
+
+        }
+        bank = bank->next;
+    }
+
+    char line[MAX_TEMPORARY_STORAGE];
+    for( int i=0; i<programDataCount; ++i ) {
+        sprintf( line, "P       %03d", i );
+        memcpy( &data_coco3_loader2_bin[loaderOffset], line, 11 );
+        data_coco3_loader2_bin[loaderOffset+11] = 0x4d + i*32;
+        loaderOffset += 14;
+    }
+    sprintf( line, "P       EXE" );
+    memcpy( &data_coco3_loader2_bin[loaderOffset], line, 11 );
+    data_coco3_loader2_bin[loaderOffset+11] = 0x2a;
+    loaderOffset += 14;
+
+    char loaderFileName[MAX_TEMPORARY_STORAGE];
+    sprintf( loaderFileName, "%sloader.bin", temporaryPath );
+    fh = fopen( loaderFileName, "wb" );
+    fwrite( data_coco3_loader2_bin, data_coco3_loader2_bin_len, 1, fh );
+    fclose( fh );
+
+    char binaryName[MAX_TEMPORARY_STORAGE];
+
+    char executableName[MAX_TEMPORARY_STORAGE];
+    BUILD_TOOLCHAIN_DECB_GET_EXECUTABLE( _environment, executableName );
+
+    strcopy( binaryName, _environment->exeFileName );
+    Storage * storage = _environment->storage;
+    char buffer[MAX_TEMPORARY_STORAGE];
+    if ( storage ) {
+        char filemask[MAX_TEMPORARY_STORAGE];
+        strcopy( filemask, _environment->exeFileName );
+        char * basePath = find_last_path_separator( filemask );
+        if ( basePath ) {
+            ++basePath;
+            *basePath = 0;
+            if ( storage->fileName ) {
+                strcat( basePath, storage->fileName );
+            } else {
+                strcat( basePath, "disk%d.dsk" );
+            }
+        } else {
+            if ( storage->fileName ) {
+                strcopy( filemask, storage->fileName );
+            } else {
+                strcopy( filemask, "disk%d.dsk" );
+            }
+        }
+        sprintf( buffer, filemask, 0 );
+        if ( !strstr( buffer, ".dsk" ) ) {
+            strcat( buffer, ".dsk" );
+        }
+        _environment->exeFileName = strdup( buffer );
+    } else {
+        strcopy( binaryName, _environment->exeFileName );
+        char * p = strstr( binaryName, ".bin" );
+        if ( p ) {
+            strcopy( p, ".dsk" );
+        }
+        _environment->exeFileName = strdup( binaryName );
+    }
+
+    char commandLine[8*MAX_TEMPORARY_STORAGE];
+    remove( _environment->exeFileName );
+    sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, _environment->exeFileName );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n");
+        printf("Please use option '-I' to install chain tool.\n\n");
+    };
+
+    sprintf( commandLine, "\"%s\" copy -0 -t \"%s\" \"%s,LOADER.BAS\"",
+        executableName, 
+        basFileName, 
+        _environment->exeFileName );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n"); 
+        printf("Please use option '-I' to install chain tool.\n\n");
+    };
+
+    remove( basFileName );
+
+    sprintf( commandLine, "\"%s\" copy -2 \"%sloader.bin\" \"%s,LOADER.BIN\"",
+        executableName,
+        temporaryPath,
+        _environment->exeFileName );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n"); 
+        printf("Please use option '-I' to install chain tool.\n\n");
+    };
+
+    sprintf( commandLine, "\"%s\" copy -2 \"%sp.exe\" \"%s,P.EXE\"",
+        executableName, 
+        temporaryPath, 
+        _environment->exeFileName );
+    if ( system_call( _environment,  commandLine ) ) {
+        printf("The compilation of assembly program failed.\n\n"); 
+        printf("Please use option '-I' to install chain tool.\n\n");
+    };
+
+    if ( programDataCount ) {
+        for( int i=0; i<programDataCount; ++i ) {
+            sprintf( commandLine, "\"%s\" copy -2 \"%sp.%03d\" \"%s,P.%03d\"",
+                executableName, 
+                temporaryPath,
+                i, 
+                _environment->exeFileName,
+                i );
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n"); 
+                printf("Please use option '-I' to install chain tool.\n\n");
+            };
+        }
+    }
+
+    if ( _environment->outputGeneratedFiles ) {
+        printf( "%s\n", _environment->exeFileName );
+    }
+
+    if ( !storage ) {
+
+    } else {
+        strcopy( buffer, _environment->exeFileName );
+        int i=0;
+        while( storage ) {
+            FileStorage * fileStorage = storage->files;
+            while( fileStorage ) {                
+                int size;
+                char * buffer;
+
+                if ( fileStorage->content && fileStorage->size ) {
+                    size = fileStorage->size + 2;
+                    buffer = malloc( size );
+                    memset( buffer, 0, size );
+                    memcpy( buffer, fileStorage->content, fileStorage->size );
+                } else {
+                    FILE * file = fopen( fileStorage->sourceName, "rb" );
+                    if ( !file ) {
+                        CRITICAL_DLOAD_MISSING_FILE( fileStorage->sourceName );
+                    }
+                    fseek( file, 0, SEEK_END );
+                    size = ftell( file );
+                    fseek( file, 0, SEEK_SET );
+                    buffer = malloc( size + 2 );
+                    memset( buffer, 0, size + 2 );
+                    (void)!fread( buffer, size, 1, file );
+                    fclose( file );
+                }
+                char dataFilename[MAX_TEMPORARY_STORAGE];
+                sprintf( dataFilename, "%s%s", temporaryPath, fileStorage->targetName );
+                FILE * fileOut = fopen( dataFilename, "wb" );
+                if ( fileOut ) {
+                    fwrite( buffer, 1, size, fileOut );
+                    fclose(fileOut );
+                }
+                sprintf( commandLine, "\"%s\" copy -1 -b \"%s\" \"%s,%s\"",
+                    executableName, 
+                    dataFilename, 
+                    _environment->exeFileName,
+                    fileStorage->targetName );
+                if ( system_call( _environment,  commandLine ) ) {
+                    printf("The compilation of assembly program failed.\n\n"); 
+                    printf("Please use option '-I' to install chain tool.\n\n");
+                };
+
+                remove( dataFilename );
+                fileStorage = fileStorage->next;
+            }
+
+            storage = storage->next;
+            ++i;
+
+            if ( storage ) {
+
+                char filemask[MAX_TEMPORARY_STORAGE];
+                strcopy( filemask, _environment->exeFileName );
+                char * basePath = find_last_path_separator( filemask );
+                if ( basePath ) {
+                    ++basePath;
+                    *basePath = 0;
+                    if ( storage->fileName ) {
+                        strcat( basePath, storage->fileName );
+                    } else {
+                        strcat( basePath, "disk%d.dsk" );
+                    }
+                } else {
+                    if ( storage->fileName ) {
+                        strcopy( filemask, storage->fileName );
+                    } else {
+                        strcopy( filemask, "disk%d.dsk" );
+                    }
+                }
+                sprintf( buffer, filemask, i );
+                if ( !strstr( buffer, ".dsk" ) ) {
+                    strcat( buffer, ".dsk" );
+                }
+                remove( buffer );
+                sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, buffer );
+                if ( system_call( _environment,  commandLine ) ) {
+                    printf("The compilation of assembly program failed.\n\n");
+                    printf("Please use option '-I' to install chain tool.\n\n");
+                };
+                if ( _environment->outputGeneratedFiles ) {
+                    printf( "%s\n", buffer );
+                }
+            }
+
+        }
+
+    }
+
+    bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize > 0 ) {
+            int effectiveSize = blockSize > bankSize ? bankSize : blockSize;
+            char bankFileName[MAX_TEMPORARY_STORAGE];
+            sprintf( bankFileName, "%sb0.%03d", temporaryPath, bank->id );
+            fh = fopen( bankFileName, "wb" );
+            fputc( 0, fh );
+            fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+            fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+
+            fwrite( &bank->data[0], 1, effectiveSize, fh );
+            fputc( 0xff, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fputc( 0x2a, fh );
+            fputc( 0x00, fh );
+            fputc( 0x00, fh );
+            fclose( fh );
+
+            sprintf( commandLine, "\"%s\" copy -2 \"%sb0.%03d\" \"%s,B0.%03d\"",
+                executableName, 
+                temporaryPath, 
+                bank->id,
+                _environment->exeFileName,
+                bank->id );
+            if ( system_call( _environment,  commandLine ) ) {
+                printf("The compilation of assembly program failed.\n\n"); 
+                printf("Please use option '-I' to install chain tool.\n\n");
+                exit(0);
+            };
+
+            if ( bankSize > blockSize ) {
+                effectiveSize = bankSize - blockSize;
+                sprintf( bankFileName, "%sb1.%03d", temporaryPath, bank->id );
+                fh = fopen( bankFileName, "wb" );
+                fputc( 0, fh );
+                fputc( (unsigned char) ( ( effectiveSize >> 8 ) & 0xff ), fh );
+                fputc( (unsigned char) ( ( effectiveSize ) & 0xff ), fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fwrite( &bank->data[blockSize], 1, bankSize - blockSize, fh );
+                fputc( 0xff, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fputc( 0x2a, fh );
+                fputc( 0x00, fh );
+                fputc( 0x00, fh );
+                fclose( fh );
+                sprintf( commandLine, "\"%s\" copy -2 \"%sb1.%03d\" \"%s,B1.%03d\"",
+                    executableName, 
+                    temporaryPath, 
+                    bank->id,
+                    _environment->exeFileName,
+                    bank->id );
+                if ( system_call( _environment,  commandLine ) ) {
+                    printf("The compilation of assembly program failed.\n\n"); 
+                    printf("Please use option '-I' to install chain tool.\n\n");
+                    exit(0);
+                };
+
+            }
+
+        }
+
+        bank = bank->next;
+
+    }
+
+    remove( originalBinaryFile );
+
+}
+
 void target_linkage( Environment * _environment ) {
 
     switch( _environment->outputFileType ) {
         case OUTPUT_FILE_TYPE_BIN:
             generate_bin( _environment );
             break;
-        case OUTPUT_FILE_TYPE_DSK:
+        case OUTPUT_FILE_TYPE_DSK_OLD:
             generate_bin( _environment );
-            generate_dsk( _environment );
+            generate_dsk_old( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_DSK:
+        case OUTPUT_FILE_TYPE_DSK_NEW:
+            generate_bin( _environment );
+            generate_dsk_new( _environment );
             break;
         default:
             CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
