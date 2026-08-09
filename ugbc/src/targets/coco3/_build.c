@@ -697,7 +697,7 @@ void generate_dsk_new( Environment * _environment ) {
 
     // Now we are going to create the ASM loader.
 
-    int loaderOffset = 0x190;
+    int loaderOffset = 0x19e;
     
     int lineNr = 21;
 
