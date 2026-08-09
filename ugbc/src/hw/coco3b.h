@@ -39,7 +39,7 @@
 
 #define DEFAULT_PAINT_BUCKET_SIZE   512
 
-#define BANK_COUNT          0x2f
+#define BANK_COUNT          0x27
 #define BANK_SIZE           8192
 #define BANK_BASE_ADDRESS   0
 

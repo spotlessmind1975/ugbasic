@@ -459,6 +459,21 @@ src-generated/coco3_loader2.c:
 COCO3 := src-generated/coco3_header.c src-generated/coco3_footer.c src-generated/coco3_loader2.c
 
 # ----------------------------------------------------------------------------
+# PROLOGUE / EPILOGUE FOR BINARY ON COCO3B
+# ----------------------------------------------------------------------------
+
+src-generated/coco3b_header.c:
+	@xxd -i $(subst src-generated/coco3b_,data/coco3b/,$(@:.c=.bin)) >$@
+
+src-generated/coco3b_footer.c:
+	@xxd -i $(subst src-generated/coco3b_,data/coco3b/,$(@:.c=.bin)) >$@
+
+src-generated/coco3b_loader2.c:
+	@xxd -i $(subst src-generated/coco3b_,data/coco3b/,$(@:.c=.bin)) >$@
+
+COCO3B := src-generated/coco3b_header.c src-generated/coco3b_footer.c src-generated/coco3b_loader2.c
+
+# ----------------------------------------------------------------------------
 # LOADER FOR THOMSON TO8
 # ----------------------------------------------------------------------------
 
