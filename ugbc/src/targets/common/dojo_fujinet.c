@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
  
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 #if ! defined( __coco__ ) && ! defined( __cocob__ ) && ! defined( __atari__ ) && ! defined( __atarixl__ ) && ! defined( __coco3__ ) && ! defined( __coco3b__ ) 
 

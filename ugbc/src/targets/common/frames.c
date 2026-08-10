@@ -165,6 +165,12 @@ int frames( Environment * _environment, char * _image ) {
 
     Variable * v = variable_retrieve( _environment, _image );
     switch( v->type ) {
+        case VT_MOVIE:
+            if ( !v->valueBuffer ) {
+                CRITICAL_NOT_ASSIGNED_SEQUENCE( v->name );
+            }
+            return v->frameCount;
+            break;
         case VT_SEQUENCE:
             if ( !v->valueBuffer ) {
                 CRITICAL_NOT_ASSIGNED_SEQUENCE( v->name );

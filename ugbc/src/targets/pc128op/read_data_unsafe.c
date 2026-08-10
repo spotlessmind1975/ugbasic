@@ -39,7 +39,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void read_data_unsafe( Environment * _environment, char * _variable ) {
 

@@ -34,7 +34,7 @@
 
  #include "../../../ugbc.h"
  
- extern char DATATYPE_AS_STRING[][16];
+ extern char DATATYPE_AS_STRING[][32];
  
  void dojo_get_message_inplace( Environment * _environment, char * _port, char * _channel, char * _variable ) {
  

@@ -278,7 +278,7 @@ hardware che controllano aspetti critici del display.
 @seeAlso COPPER POKEW
 </usermanual> */
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void copper_store( Environment * _environment, int _address, int _value, VariableType _variableType ) {
 

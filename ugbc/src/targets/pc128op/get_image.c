@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 /**
  * @brief Emit ASM code for <b>GET IMAGE [image] AT [int],[int]</b>

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static void blit_define_bltu( Environment * _environment, int _op, char * _a, char * _c ) {
 

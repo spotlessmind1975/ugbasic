@@ -56,6 +56,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline1("LD A, #$%2.2x", (unsigned char) ( image->frameWidth & 0xff ) );
                 break;
         }
@@ -66,6 +67,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline0("ADD HL, 3" );
                 break;
             default:

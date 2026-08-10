@@ -40,7 +40,7 @@
 
 #if defined(__c128__) || defined(__c64__) || defined(__c64reu__)
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void wait_fire( Environment * _environment, int _port, int _release ) {
 

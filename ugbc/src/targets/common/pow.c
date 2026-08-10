@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 /**
  * @brief Emit code to raise a variable to a given variable

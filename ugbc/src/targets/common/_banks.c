@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size ) {
     

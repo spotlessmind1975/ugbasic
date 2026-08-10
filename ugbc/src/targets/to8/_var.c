@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 extern char BANK_TYPE_AS_STRING[][16];
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static void variable_cleanup_entry_multibyte( Environment * _environment, Variable * _first, int _bank_read_write ) {
 
@@ -617,6 +617,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MOVIE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead4("; relocated on bank %d (at %4.4x) for %d bytes (uncompressed: %d)", variable->bankAssigned, variable->absoluteAddress, variable->size, variable->uncompressedSize );
                         // forced 2 bytes to even alignment

@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 Variable * key_state( Environment * _environment, int _scancode ) {
 

@@ -41,7 +41,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void vars_emit_constant_integer( Environment * _environment, char * _name, int _value ) {
 

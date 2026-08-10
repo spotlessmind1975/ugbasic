@@ -41,7 +41,7 @@
 #if defined(__coco__) || defined(__coco3__) || defined(__d32__) || defined(__d64__) || \
     defined(__cocob__) || defined(__coco3b__) || defined(__d32b__) || defined(__d64b__)
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void put_key( Environment * _environment, char * _string ) {
 

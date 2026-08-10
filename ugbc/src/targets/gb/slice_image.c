@@ -38,7 +38,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void slice_image( Environment * _environment, char * _image, char * _frame, char * _sequence, char * _destination ) {
     

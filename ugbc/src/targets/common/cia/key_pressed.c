@@ -40,7 +40,7 @@
 
 #if defined(__c128__) || defined(__c64__) || defined(__c64reu__)
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 /* <usermanual>
 @keyword KEY PRESSED

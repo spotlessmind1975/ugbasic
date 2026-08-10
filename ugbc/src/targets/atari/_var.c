@@ -40,7 +40,7 @@
  ****************************************************************************/
 
 extern char BANK_TYPE_AS_STRING[][16];
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
 
@@ -258,6 +258,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MOVIE:
                     if ( variable->usedImage ) {
                         if ( variable->bankAssigned != -1 ) {
                             outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
@@ -501,6 +502,7 @@ static void variable_cleanup_memory_mapped( Environment * _environment, Variable
         case VT_IMAGE:
         case VT_IMAGES:
         case VT_SEQUENCE:
+        case VT_MOVIE:
             if ( _variable->usedImage ) {
                 if ( _variable->bankAssigned != -1 ) {
                     outhead2("; relocated on bank %d (at %4.4x)", _variable->bankAssigned, _variable->absoluteAddress );

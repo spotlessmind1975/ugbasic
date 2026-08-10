@@ -41,7 +41,7 @@
  * CODE SECTION 
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void environment_setup_embedded( Environment * _environment ) {
 

@@ -38,7 +38,7 @@
   * CODE SECTION 
   ****************************************************************************/
  
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 Variable * fujinet_read_type( Environment * _environment, VariableType _type ) {
 

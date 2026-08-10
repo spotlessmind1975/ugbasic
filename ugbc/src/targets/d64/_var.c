@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 extern char BANK_TYPE_AS_STRING[][16];
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static void variable_cleanup_entry( Environment * _environment, Variable * _first ) {
 
@@ -293,6 +293,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MOVIE:
                 case VT_MUSIC:
                 case VT_BUFFER:
                 case VT_TYPE:

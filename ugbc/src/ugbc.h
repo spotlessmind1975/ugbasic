@@ -563,6 +563,9 @@ typedef enum _VariableType {
     /** COMPILED SEQUENCE */
     VT_COMPILED_SEQUENCE = 38,
 
+    /** MOVIE */
+    VT_MOVIE = 39
+
 } VariableType;
 
 typedef struct _Resource {
@@ -702,6 +705,7 @@ typedef struct _Resource {
         ( t == VT_IMAGES ) + \
         ( t == VT_TILESET ) + \
         ( t == VT_SEQUENCE ) + \
+        ( t == VT_MOVIE ) + \
         ( t == VT_MUSIC ) + \
         ( t == VT_TILEMAP ) + \
         ( t == VT_DOJOKA ) + \

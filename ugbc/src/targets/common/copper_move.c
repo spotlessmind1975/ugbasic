@@ -115,7 +115,7 @@ che controllano gli aspetti critici del display.
 @alias COPPER MOVE
 </usermanual> */
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void copper_move( Environment * _environment, int _address1, int _address2, VariableType _variableType ) {
 

@@ -56,6 +56,7 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline1("LD A, $%2.2x", image->frameHeight);
                 break;
         }
@@ -67,6 +68,7 @@ Variable * image_get_height( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline0("ADD HL, 5" );
                 break;
             default:

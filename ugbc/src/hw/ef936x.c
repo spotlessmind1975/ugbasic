@@ -109,7 +109,7 @@ int lastUsedSlotInCommonPalette = 0;
  * CODE SECTION
  ****************************************************************************/
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static int rgbConverterFunction( int _red, int _green, int _blue ) {
     

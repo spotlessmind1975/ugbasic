@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 extern char BANK_TYPE_AS_STRING[][16];
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 static void variable_cleanup_entry_multibyte( Environment * _environment, Variable * _first ) {
 
@@ -610,6 +610,7 @@ static void variable_cleanup_entry_image( Environment * _environment, Variable *
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                case VT_MOVIE:
                     if ( variable->bankAssigned != -1 ) {
                         outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );
                         outhead1("%s fcb $0,$0", variable->realName );

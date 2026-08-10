@@ -157,7 +157,7 @@ char * asmSnippet = NULL;
     handle error cases or to allow you to loop through the array without knowing 
     its size beforehand.
   */
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 /*!
    In technical terms, it's an array (or list) of constant strings. Each string 
@@ -269,7 +269,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MEMCONT MEMDEF MEMLEN MEMLOAD MEMOR MEMORIZE MEMORY MEMPEEK MEMPOS
 %token MEMRESTORE MEMSAVE MESSAGE METALLIC MID MIDI MILLISECOND MILLISECONDS
 %token MIN MINUS MMOB MMOVE MO5 MOB MOD MODE UNIQUE C128 MONOCOLOR MONOCOLOUR
-%token MOVE MOVEMENT MOVING MS MSPRITE MSX MSX1 MUL MULTI MULTICOLOR
+%token MOVE MOVEMENT MOVIE MOVING MS MSPRITE MSX MSX1 MUL MULTI MULTICOLOR
 %token MULTICOLOUR MUSIC MUTED N NAME NAMED NARROW NEW NEWLINE NEXT NIBBLE
 %token NOISE NONE NOP NORMAL NOT NOTE NRM NTSC NULLkw NUMBER NYLON O OBOE
 %token OCARINA OF OFF OFFSET OLIVE ON ONLY OOHS OPACITY OPEN OPTIMIZED OPTION
@@ -1288,6 +1288,7 @@ datatype:
     ATLAS { $$ = VT_IMAGES; } | 
     COMPILED SEQUENCE { $$ = VT_COMPILED_SEQUENCE; } | 
     SEQUENCE { $$ = VT_SEQUENCE; } | 
+    MOVIE { $$ = VT_MOVIE; } | 
     IMAGEREF { $$ = VT_IMAGEREF; } | 
     PATH { $$ = VT_PATH; } | 
     MUSIC { $$ = VT_MUSIC; } | 
@@ -1516,11 +1517,11 @@ const_factor:
     | IMAGE WIDTH OP expr CP {
         if ( !((Environment *)_environment)->emptyProcedure ) {
         Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE && v->type != VT_MOVIE ) {
             CRITICAL_NOT_IMAGE( v->name );
         }
         int overallOffset = 0;
-        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
+        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE || v->type == VT_MOVIE ) {
             overallOffset = 3;
         }
         if ( !v->valueBuffer ) {
@@ -1532,6 +1533,7 @@ const_factor:
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 $$ = v->frameWidth;
                 break;
         }
@@ -1694,11 +1696,11 @@ const_factor:
     | IMAGE HEIGHT OP expr CP {
         if ( ! ((Environment *)_environment)->emptyProcedure ) {
         Variable * v = variable_retrieve( _environment, $4 );
-        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE ) {
+        if ( v->type != VT_IMAGE && v->type != VT_IMAGES && v->type != VT_SEQUENCE && v->type != VT_MOVIE ) {
             CRITICAL_NOT_IMAGE( v->name );
         }
         int overallOffset = 0;
-        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE ) {
+        if ( v->type == VT_IMAGES || v->type == VT_SEQUENCE || v->type == VT_MOVIE ) {
             overallOffset = 3;
         }
         if ( !v->valueBuffer ) {
@@ -1710,6 +1712,7 @@ const_factor:
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 $$ = v->frameHeight;
                 break;
         }
@@ -3642,6 +3645,7 @@ exponential_less:
             case VT_IMAGE:
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
             case VT_BUFFER:
             case VT_TYPE:
             case VT_STRING: 
@@ -10030,7 +10034,7 @@ statement2nc:
                     }
                 }
 
-                if ( expr->type == VT_IMAGE || expr->type == VT_IMAGES || expr->type == VT_SEQUENCE ) {
+                if ( expr->type == VT_IMAGE || expr->type == VT_IMAGES || expr->type == VT_SEQUENCE || expr->type == VT_MOVIE ) {
                     expr->usedImage = 1;
                     variable->usedImage = 1;
                 }

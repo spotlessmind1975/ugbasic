@@ -76,7 +76,7 @@ si creano diverse copper list, e si vuol passare da una all'altra.
 
 </usermanual> */
 
-extern char DATATYPE_AS_STRING[][16];
+extern char DATATYPE_AS_STRING[][32];
 
 void copper_use( Environment * _environment, char * _name ) {
 

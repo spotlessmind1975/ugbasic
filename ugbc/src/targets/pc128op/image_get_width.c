@@ -56,6 +56,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline1("LDD #$%4.4x", image->frameWidth );
                 break;
             default:
@@ -69,6 +70,7 @@ Variable * image_get_width( Environment * _environment, char * _image ) {
                 break;
             case VT_IMAGES:
             case VT_SEQUENCE:
+            case VT_MOVIE:
                 outline0("LDD 3,Y" );
                 break;
             default:
