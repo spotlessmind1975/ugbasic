@@ -3627,6 +3627,32 @@ exponential_less:
         }
         $$ = image->name;
       } | 
+    LOAD MOVIE { ((Environment *)_environment)->movieFilenamesCount = 0; } OP load_movie_params CP image_load_flags on_bank_implicit {
+
+        // for( int i=((Environment *)_environment)->movieFilenamesCount-1; i>0; --i ) {
+        //     printf( "%s\n", ((Environment *)_environment)->movieFilenames[i] );
+        // }
+        
+        // ParamsImageLoad params;
+
+        // params.filename = $3;
+        // params.alias = $5;
+        // params.mode = $7;
+        // params.flags = $9;
+        // params.transparent_color = $10+$11;
+        // params.background_color = $12;
+        // params.bank_expansion = $13;
+        // params.compiled = $1;
+
+        // Variable * image = image_load( _environment, params );
+        // if ( $14 != -1 ) {
+        //     image->readonly = $14;
+        // }
+        // $$ = image->name;
+
+        Variable * movie = variable_temporary( _environment, VT_MOVIE, "movie" );
+        $$ = movie->name;
+      } | 
     LOAD TILE OP String CP tile_load_flags {
         $$ = tile_load( _environment, $4, $6, NULL, -1 )->name;
       } | 
@@ -9655,6 +9681,15 @@ slow_definition:
 
 cpuspeed_definition:
     expr { cpuspeed( _environment, $1 ); };
+
+/*-----------------------------------------------------------------------------
+ ------------ LOAD MOVIE DEFINITION
+ ----------------------------------------------------------------------------*/
+
+load_movie_params:
+    String { ((Environment *)_environment)->movieFilenames[ ((Environment *)_environment)->movieFilenamesCount++ ] = strdup( $1 ); } |
+    String OP_COMMA load_movie_params { ((Environment *)_environment)->movieFilenames[ ((Environment *)_environment)->movieFilenamesCount++ ] = strdup( $1 ); }
+    ;
 
 /*-----------------------------------------------------------------------------
  ------------ OVERALL INSTRUCTIONS (SINGLE STATEMENTS, NO COLONS)

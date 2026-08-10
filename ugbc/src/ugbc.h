@@ -592,6 +592,7 @@ typedef struct _Resource {
 #define PROTOTHREAD_DEFAULT_COUNT       16
 #define MAX_BUFFERED_OUTPUT             16
 #define MAX_FRAMES_PER_STRIP            32
+#define MAX_MOVIE_FILENAMES             256
 
 #define FONT_SCHEMA_EMBEDDED            0
 #define FONT_SCHEMA_STANDARD            1
@@ -3332,6 +3333,9 @@ typedef struct _Environment {
     int dynamicConsole;
 
     int horizontalScrollOff;
+
+    int movieFilenamesCount;
+    char * movieFilenames[ MAX_MOVIE_FILENAMES ];
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
