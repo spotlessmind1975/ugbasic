@@ -3988,6 +3988,7 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         outline1("LDD %s", _flags );
         outline0("STB <IMAGEF" );
         outline0("STA <IMAGET" );
+        outline1("LDA #$%2.2x", _image->bankNumber );
 
         outline0("JSR PUTIMAGE");
 
