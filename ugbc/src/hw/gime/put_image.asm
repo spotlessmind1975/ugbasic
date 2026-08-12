@@ -66,7 +66,7 @@ PUTIMAGEGO
 
     JSR GIMEBANKVIDEO
 
-    ORCC #$50
+    ; ORCC #$50
 
     ; Convert <PLOTX, <PLOTY into the first byte of video RAM.
 
@@ -487,7 +487,7 @@ PUTIMAGEMSC1NOEXPBANK
 
 PUTIMAGEMSC1GO
 
-    ORCC #$50
+    ; ORCC #$50
 
     ; Convert <PLOTX, <PLOTY into the first byte of video RAM.
 
@@ -510,7 +510,7 @@ PUTIMAGEMSC1GO
 
     JSR GIMEBANKROM
 
-    ANDCC #$AF
+    ; ANDCC #$AF
     
     LDA #$3C
     STA $FFAC
@@ -709,7 +709,7 @@ PUTIMAGEMSC1COMMONE
 
     JSR GIMEBANKROM
 
-    ANDCC #$AF
+    ; ANDCC #$AF
 
     RTS
 PUTIMAGEMSC1COMMONEWITHPALETTE
@@ -723,7 +723,7 @@ PUTIMAGEMSC1COMMONEL1
 
     JSR GIMEBANKROM
 
-    ANDCC #$AF
+    ; ANDCC #$AF
 
     LDA #$3C
     STA $FFAC
@@ -861,7 +861,7 @@ PUTIMAGEMSC1COMMONENOBANK
 
     JSR GIMEBANKROM
 
-    ANDCC #$AF
+    ; ANDCC #$AF
 
     LDA #$3C
     STA $FFAC
@@ -879,7 +879,7 @@ PUTIMAGEMSC1COMMONEL1NOBANK
 
     JSR GIMEBANKROM
 
-    ANDCC #$AF
+    ; ANDCC #$AF
 
     LDA #$3C
     STA $FFAC
