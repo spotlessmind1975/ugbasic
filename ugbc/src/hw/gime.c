@@ -3990,7 +3990,11 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         outline0("STA <IMAGET" );
         outline1("LDA #$%2.2x", _image->bankNumber );
 
-        outline0("JSR PUTIMAGE");
+        if ( _image->compression ) {
+            outline0("JSR PUTIMAGEMSC1");
+        } else {
+            outline0("JSR PUTIMAGE");
+        }
 
     }
 

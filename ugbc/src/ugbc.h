@@ -1963,6 +1963,7 @@ typedef struct _Deployed {
     int dsave;
     int bank;
     int msc1;
+    int msc1_banked;
     int flipimagex;
     int flipimagey;
     int random;
