@@ -116,6 +116,11 @@ MSC1UNCOMPRESSBANKEDL0
     LDX #MSC1BUFFER
     ABX
 
+    COMB
+    COMA
+    ADDD #512
+    STD MSC1REFILLNEEDED
+
 MSC1UNCOMPRESSBANKEDL10
     ; Now we continue to decode the data from the
     ; source position.
