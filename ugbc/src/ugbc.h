@@ -5302,6 +5302,16 @@ typedef struct _ParamsImagesLoad {
 
 } ParamsImagesLoad;
 
+typedef struct _ParamsMovieLoad {
+
+    char *      filenames[MAX_MOVIE_FILENAMES];
+    int         filenamesCount;
+    int         mode;
+    int         flags;
+    int         bank_expansion;
+
+} ParamsMovieLoad;
+
 typedef struct _ParamsSequenceCompile {
 
     int         mode;
@@ -5891,6 +5901,7 @@ void                    mmove_video_memory( Environment * _environment, char * _
 void                    move( Environment * _environment, char * _prefix, char * _movement, char * _x, char * _y, char * _animation );
 void                    move_tile( Environment * _environment, char * _tile, char * _x, char * _y );
 void                    movement( Environment * _environment, char * _identifier, char * _atlas, char * _prefix );
+Variable *              movie_load( Environment * _environment, ParamsMovieLoad _params );
 Variable *              moving( Environment * _environment, char * _prefix, char * _movement );
 Variable *              msprite_init( Environment * _environment, char * _image, char * _sprite, int _flags );
 Variable *              msprite_duplicate( Environment * _environment, char * _original );

@@ -388,6 +388,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> load_flags1 
 %type <integer> load_image
 %type <integer> load_images
+%type <integer> load_movie
 %type <integer> load_sequence
 %type <integer> memory_video_optional
 %type <integer> music_type
@@ -570,6 +571,12 @@ load_images:    LOAD IMAGES {
                 } | 
                 COMPILED ATLAS LOAD {
                     $$ = 1; 
+                };
+load_movie :    LOAD MOVIE {
+                    $$ = 0; 
+                } | 
+                MOVIE LOAD {
+                    $$ = 0; 
                 };
 load_sequence:  LOAD SEQUENCE {
                     $$ = 0; 
@@ -3627,30 +3634,20 @@ exponential_less:
         }
         $$ = image->name;
       } | 
-    LOAD MOVIE { ((Environment *)_environment)->movieFilenamesCount = 0; } OP load_movie_params CP image_load_flags on_bank_implicit {
+    load_movie { ((Environment *)_environment)->movieFilenamesCount = 0; } OP load_movie_params CP on_bank_implicit {
 
-        // for( int i=((Environment *)_environment)->movieFilenamesCount-1; i>0; --i ) {
-        //     printf( "%s\n", ((Environment *)_environment)->movieFilenames[i] );
-        // }
-        
-        // ParamsImageLoad params;
+        ParamsMovieLoad params;
 
-        // params.filename = $3;
-        // params.alias = $5;
-        // params.mode = $7;
-        // params.flags = $9;
-        // params.transparent_color = $10+$11;
-        // params.background_color = $12;
-        // params.bank_expansion = $13;
-        // params.compiled = $1;
+        int j=0;
+        for( int i=((Environment *)_environment)->movieFilenamesCount-1; i>0; --i ) {
+            params.filenames[j] = strdup(((Environment *)_environment)->movieFilenames[i]);
+        }
+        params.filenamesCount;
 
-        // Variable * image = image_load( _environment, params );
-        // if ( $14 != -1 ) {
-        //     image->readonly = $14;
-        // }
-        // $$ = image->name;
+        params.mode = ((struct _Environment *)_environment)->currentMode;
+        params.bank_expansion = $6;
 
-        Variable * movie = variable_temporary( _environment, VT_MOVIE, "movie" );
+        Variable * movie = movie_load( _environment, params );
         $$ = movie->name;
       } | 
     LOAD TILE OP String CP tile_load_flags {
