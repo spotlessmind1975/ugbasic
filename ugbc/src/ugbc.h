@@ -1844,6 +1844,7 @@ typedef struct _Deployed {
     int putimageramrle;
     int putimagecompiled;
     int getimage;
+    int putmovie;
     int puttilemap;
     int blitimage;
     int sliceimagecopy;
@@ -5312,6 +5313,14 @@ typedef struct _ParamsMovieLoad {
 
 } ParamsMovieLoad;
 
+typedef struct _ParamsPutMovie {
+
+    char *      movie;
+    char *      x1;
+    char *      y1;
+    
+} ParamsPutMovie;
+
 typedef struct _ParamsSequenceCompile {
 
     int         mode;
@@ -6002,6 +6011,7 @@ void                    put_key( Environment * _environment, char * _string );
 void                    put_image( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
 void                    put_image_vars( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, char * _flags );
 void                    put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags );
+void                    put_movie( Environment * _environment, ParamsPutMovie * _params );
 void                    put_tile( Environment * _environment, char * _tile, char * _x, char * _y, char * _w, char * _h );
 void                    put_tilemap_vars( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, char * _padding_tile );
 void                    put_tilemap_inline( Environment * _environment, char * _tilemap, int _flags, char * _dx, char * _dy, char * _layer, int _padding_tile );

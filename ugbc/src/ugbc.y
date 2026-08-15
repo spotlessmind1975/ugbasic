@@ -5369,6 +5369,25 @@ put_definition_expression:
         Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
         put_image( _environment, $2, implicitX->name, implicitY->name, NULL, NULL, $6, $4, $7 );
     } | 
+    MOVIE expr {
+        Variable * implicitX = origin_resolution_relative_transform_x( _environment, NULL, 0 );
+        Variable * implicitY = origin_resolution_relative_transform_y( _environment, NULL, 0 );
+        
+        ParamsPutMovie params;
+        params.movie = strdup( $2 );
+        params.x1 = implicitX->name;
+        params.y1 = implicitY->name;
+        
+        put_movie( _environment, &params );
+    } | 
+    MOVIE expr AT optional_x OP_COMMA optional_y {
+        ParamsPutMovie params;
+        params.movie = strdup( $2 );
+        params.x1 = $4;
+        params.y1 = $6;
+        put_movie( _environment, &params );
+        gr_locate( _environment, $4, $6 );
+    } | 
     TILE expr AT optional_x OP_COMMA optional_y { put_tile( _environment, $2, $4, $6, NULL, NULL ); } |
     TILEMAP Identifier pad_optional put_image_flags { put_tilemap_vars( _environment, $2, $4 | FLAG_WITH_PALETTE, NULL, NULL, NULL, $3 ); } | 
     TILEMAP Identifier pad_optional LAYER expr put_image_flags { put_tilemap_vars( _environment, $2, $6 | FLAG_WITH_PALETTE, NULL, NULL, $5, $3 ); } | 

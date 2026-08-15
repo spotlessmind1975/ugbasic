@@ -4294,4 +4294,32 @@ void gime_flash_end( Environment * _environment ) {
 
 }
 
+void gime_put_movie( Environment * _environment, ParamsPutMovie * _params ) {
+    
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( putimage, src_hw_gime_put_image_asm );
+    deploy_preferred( putmovie, src_hw_gime_put_movie_asm );
+
+    Variable * movie = variable_retrieve( _environment, _params->movie );
+
+    if ( movie->bankAssigned ) {
+        outline1("LDY #$%4.4x", movie->absoluteAddress );
+    } else {
+        outline1("LDY #%s", movie->realName );
+    }
+    outline1("LDD %s", _params->x1 );
+    outline0("STD <IMAGEX" );
+    outline1("LDD %s", _params->y1 );
+    outline0("STD <IMAGEY" );
+
+    outline1("LDA #$%2.2x", (unsigned char)(movie->bankAssigned) );
+
+    if ( movie->uncompressedSize ) {
+        outline0("JSR PUTMOVIEMSC1");
+    } else {
+        outline0("JSR PUTMOVIE");
+    }
+
+}
+
 #endif

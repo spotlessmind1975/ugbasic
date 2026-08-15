@@ -929,6 +929,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );
+    deploy_inplace_preferred( putmovie, src_hw_gime_put_movie_asm );
     deploy_inplace_preferred( clsGraphic, src_hw_gime_cls_graphic_asm );
     deploy_inplace_preferred( clsText, src_hw_gime_cls_text_asm );
     deploy_inplace_preferred( blitimage, src_hw_gime_blit_image_asm );

@@ -307,6 +307,7 @@ void gime_images_compile( Environment * _environment, ParamsImagesCompile * _par
 void gime_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params );
 void gime_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
 void gime_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
+void gime_put_movie( Environment * _environment, ParamsPutMovie * _params );
 Variable * gime_new_image( Environment * _environment, int _width, int _height, int _mode );
 Variable * gime_new_images( Environment * _environment, int _frames, int _width, int _height, int _mode );
 Variable * gime_new_sequence( Environment * _environment, int _sequences, int _frames, int _width, int _height, int _mode );
