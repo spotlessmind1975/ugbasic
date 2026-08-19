@@ -63,13 +63,13 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     switch( VT_BITWIDTH( _type ) ) {
         case 8:
-            cpu_random_8bit( _environment, "$0113", result->realName );
+            cpu_random_8bit( _environment, "COCOTIMER+1", result->realName );
             break;
         case 16:
-            cpu_random_16bit( _environment, "$0113", result->realName );
+            cpu_random_16bit( _environment, "COCOTIMER+1", result->realName );
             break;
         case 32:
-            cpu_random_32bit( _environment, "$0113", result->realName );
+            cpu_random_32bit( _environment, "COCOTIMER+1", result->realName );
             break;
         default:
             CRITICAL_CANNOT_GENERATE_RANDOM( );            
