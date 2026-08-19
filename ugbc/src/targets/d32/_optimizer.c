@@ -558,6 +558,18 @@ static void basic_peephole(Environment * _environment, POBuffer buf[LOOK_AHEAD],
         ++_environment->removedAssemblyLines;
     }
 
+    if( (po_buf_match(buf[0], " AND* #*", v1, v4) )
+    && strcmp(v4->str, "$80")==0
+    && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
+    && po_buf_strcmp(v1, v2)==0
+    && (po_buf_match(buf[2], " BNE *", v5) )
+     ) {
+        optim(buf[0], RULE "(AND#$7F(8 bit),CMP#0,BNE)->(BMI)", NULL);
+        optim(buf[1], RULE "(AND#$7F(8 bit),CMP#0,BNE)->(BMI)", NULL);
+        optim(buf[2], RULE "(AND#$7F(8 bit),CMP#0,BNE)->(BMI)", " BMI %s", v5->str );
+        ++_environment->removedAssemblyLines;
+    }
+
     if( (po_buf_match(buf[0], " LD* ", v1) || po_buf_match(buf[0], " ST* ",v1))
     && _isZero(po_buf_match(buf[1], " CMP* #*", v2, v3))
     && ( !strcmp( v1->str, "D" ) || !strcmp( v1->str, "X" ) || !strcmp( v1->str, "Y" ) )
