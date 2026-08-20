@@ -35,98 +35,191 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+
 ; This routine will uncompress a MSC1 compressed memory block
 ; from an input stream to an output stream. Input stream must
 ; be pointed by <TMPPTR while the output stream must be pointed
 ; by <TMPPTR2.
-MSC1UNCOMPRESS
+; Optimized by Craig Allsop 2026/08.
 
-    ; Initialize the offsets for input and output streams.
-
-    ; Loop through the entire input stream.
-MSC1UNCOMPRESSL1
-    ; Take the current token from the input stream
-    ; and move to the next element of the stream.
-    LDA ,X+
-    ; If token is zero the stream is finished.
-    CMPA #$0
-    BNE MSC1UNCOMPRESSL1NE
+;
+; Finished decompression.
+;
+MSC1U_FINISH
     RTS
 
-    ; Check the kind of token.
-MSC1UNCOMPRESSL1NE
+;
+; Token(A) is positive (0-127) do literal copy.
+;
+MSC1U_LITERAL
+    ;
+    ; If token(A) is 0 the stream is finished.
+    ;
+    BEQ MSC1U_FINISH
+    ;
+    ; Take the number of literals (1...127),
+    ; and copy from the pointer to the output.
+    ; Divide count(A) by 2 and copy byte pairs.
+    ;
+    LSRA
+    ;
+    ; If count(A) was 1, then do one byte copy...
+    ; Note: this probably shouldn't exist in the
+    ; compressed stream as it costs 2 bytes for
+    ; one output.
+    ;
+    BEQ MSC1U_LITERALL_ONE
+
+;
+; Copy byte pairs x count(A).
+;
+MSC1U_LITERALL_PAIRS
+    LDU ,X++
+    STU ,Y++
+    DECA
+    BNE MSC1U_LITERALL_PAIRS
+    ;
+    ; If count is even, then done.
+    ;
+    BCC MSC1U_UNCOMPRESS_NEXT
+
+;
+; Copy last/one byte.
+;
+MSC1U_LITERALL_ONE
+    LDA ,X+
+    STA ,Y+
+    ;
+    ; Fall through to next token...
+    ;
+
+;
+; Entry Point:
+;
+MSC1UNCOMPRESS
+MSC1U_UNCOMPRESS_NEXT
+    ;
+    ; Take the next token from the input stream.
+    ;
+    LDA ,X+
+    ;
     ; If the upper bit of the token is clear,
     ; it means that there is a literal block
     ; to emit on the output stream.
-    TFR A, B
-    ANDB #$80
-    CMPB #$0
-    BNE MSC1UNCOMPRESSL1NE3
-    JMP MSC1LITERAL
-MSC1UNCOMPRESSL1NE3
+    ;
+    BPL MSC1U_LITERAL
+    ;
+    ; Token(A) bit 7 set, then its not end of stream,
+    ; (saves testing for it), fall through to dups...
+    ;
 
-    ; This code will parse the token, in order to
-    ; retrieve the number of repetitions and the
-    ; starting offset. Then, it will copy the very 
-    ; same 4 bytes for the number of repetitions given. 
-MSC1DUPES
-    TFR A, B
-
+;
+; This code will parse the token, in order to
+; retrieve the number of repetitions and the
+; starting offset. Then, it will copy the very 
+; same 4 bytes for the number of repetitions given. 
+;
+MSC1U_DUPES
+    ;
+    ; Keep token(A) for count.
+    ;
+    STA MSC1U_DUPES_TOKEN
+    ;
+    ; Extract the offset and create new source(U)
+    ;
+    LDB ,X+
+    ANDA #$03
+    NEGA        ; NEGD
+    NEGB
+    SBCA #0
+    LEAU D,X    ; U = X - D
+    ;
+    ; Restore token(B)
+    ;
+    LDB #$ff    ; *** must not be optimized away ***
+MSC1U_DUPES_TOKEN EQU *-1
+    ;
     ; Take out the number of repetitions.
+    ; Mask top bit and shift off 2 low bits, and
+    ; divide count by 2 for pairs loop.
+    ;
     ANDB #$7F
     LSRB
     LSRB
-    ; If repetitions is zero then repetitions
-    ; will be 32 times.
-    CMPB #$0
-    BNE MSC1DUPESNE
-    LDB #32
-MSC1DUPESNE
+    LSRB
+    ;
+    ; If count was >= 2
+    ;
+    BNE MSC1U_DUPES_PAIRS
+    ;
+    ; Else count was 0 or 1
+    ; If count was 1, then copy one lot.
+    ; A common case, this path should be short.
+    ;
+    BCS MSC1U_DUPES_ONE
+    ;
+    ; If count was zero then repetitions
+    ; will be 32 times. (16 pairs)
+    ;
+    LDB #16
+    ;
+    ; Fall through to copy pairs
+    ;
 
-    PSHS D
-
-    ; Extract the offset.
-    LEAX -1, X
-    LDD ,X++
-    ANDA #$03
-
-    STD <MATHPTR0
-
-    ; Recalculate the address from which to copy
-    ; the output into the output again.
-    TFR X, D
-    SUBD <MATHPTR0
-    TFR D, U
-
-    PULS D
-
-    ; Initialize the counter and copy the same 
-    ; 4 bytes for each repetition.
-MSC1DUPESL1
-    LDA ,U+
-    STA ,Y+
-    LDA ,U+
-    STA ,Y+
-    LDA ,U+
-    STA ,Y+
-    LDA ,U+
-    STA ,Y+
-    LEAU -4, U
+;
+; Copy pairs of 4 bytes.
+;
+MSC1U_DUPES_PAIRS
+    ;
+    ; Keep source(X) and copy the same 
+    ; 8 bytes for each repetition.
+    ;
+    STX <MATHPTR0
+    ;
+    ; Load the 4 bytes to repeat.
+    ;
+    LDX ,U
+    LDU 2,U
+;
+; The loop for pairs of 4 bytes.
+;
+MSC1U_DUPES_LOOP
+    ;
+    ; Write two lots of 4 bytes.
+    ;
+    STX ,Y++
+    STU ,Y++
+    STX ,Y++
+    STU ,Y++
     DECB
-    BNE MSC1DUPESL1
-    JMP MSC1UNCOMPRESSL1
+    BNE MSC1U_DUPES_LOOP
+    ;
+    ; If count is even, we're done with dups.
+    ;
+    BCC MSC1U_DUPES_END
+    ;
+    ; Else count is odd, write one more lot.
+    ;
+    STX ,Y++
+    STU ,Y++
+    ;
+    ; Fall through to end of dups.
+    ;
 
-MSC1LITERAL
-    TFR A, B
-    ; Take the number of literals (1...127),
-    ; and copy from the pointer to the output.
-    ANDB #$7F   
-MSC1LITERALL1
-    LDA ,X+
-    STA ,Y+
-    DECB
-    BNE MSC1LITERALL1
-    JMP MSC1UNCOMPRESSL1
+MSC1U_DUPES_END
+    ;
+    ; Reload source(X) and loop to next token.
+    ;
+    LDX <MATHPTR0
+    JMP MSC1U_UNCOMPRESS_NEXT
 
-MSC1UNCOMPRESSFINISH
-    RTS
+;
+; A highly common case, just copy one lot of
+; 4 bytes..
+;
+MSC1U_DUPES_ONE
+    LDD ,U
+    LDU 2,U
+    STD ,Y++
+    STU ,Y++
+    JMP MSC1U_UNCOMPRESS_NEXT
