@@ -35,7 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-
 ; This routine will uncompress a MSC1 compressed memory block
 ; from an input stream to an output stream. Input stream must
 ; be pointed by <TMPPTR while the output stream must be pointed
@@ -68,16 +67,16 @@ MSC1U_LITERAL
     ; compressed stream as it costs 2 bytes for
     ; one output.
     ;
-    BEQ MSC1U_LITERALL_ONE
+    BEQ MSC1U_LITERAL_ONE
 
 ;
 ; Copy byte pairs x count(A).
 ;
-MSC1U_LITERALL_PAIRS
+MSC1U_LITERAL_PAIRS
     LDU ,X++
     STU ,Y++
     DECA
-    BNE MSC1U_LITERALL_PAIRS
+    BNE MSC1U_LITERAL_PAIRS
     ;
     ; If count is even, then done.
     ;
@@ -86,7 +85,7 @@ MSC1U_LITERALL_PAIRS
 ;
 ; Copy last/one byte.
 ;
-MSC1U_LITERALL_ONE
+MSC1U_LITERAL_ONE
     LDA ,X+
     STA ,Y+
     ;
@@ -211,7 +210,7 @@ MSC1U_DUPES_END
     ; Reload source(X) and loop to next token.
     ;
     LDX <MATHPTR0
-    JMP MSC1U_UNCOMPRESS_NEXT
+    BRA MSC1U_UNCOMPRESS_NEXT
 
 ;
 ; A highly common case, just copy one lot of
@@ -222,4 +221,4 @@ MSC1U_DUPES_ONE
     LDU 2,U
     STD ,Y++
     STU ,Y++
-    JMP MSC1U_UNCOMPRESS_NEXT
+    BRA MSC1U_UNCOMPRESS_NEXT
