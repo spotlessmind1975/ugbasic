@@ -5186,7 +5186,7 @@ void banks_init( Environment * _environment );
 void banks_init_extended( Environment * _environment, int * _allowed, int _allowed_count, int _allowed_size );
 char * banks_get_address( Environment * _environment, int _bank );
 Variable * banks_get_address_var( Environment * _environment, char * _bank );
-int banks_store( Environment * _environment, Variable * _variable, int _resident );
+int banks_store( Environment * _environment, Variable * _variable, int _resident, int _contiguous );
 int banks_store_data( Environment * _environment, char * _data, int _size );
 int banks_any_used( Environment * _environment );
 void banks_generate( Environment * _environment );

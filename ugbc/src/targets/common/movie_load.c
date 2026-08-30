@@ -142,7 +142,7 @@ Variable * movie_load( Environment * _environment, ParamsMovieLoad _params ) {
     
     if ( _params.bank_expansion && _environment->expansionBanks ) {
 
-        if ( ! banks_store( _environment, final, _params.bank_expansion ) ) {
+        if ( ! banks_store( _environment, final, _params.bank_expansion, 0 ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _params.filenames[0] );
         }
 

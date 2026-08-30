@@ -141,7 +141,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
     // If a bank expasion has been requested, and there is at least one bank...
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
+        if ( ! banks_store( _environment, result, _bank_expansion, 0 ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
     } else if ( ( _flags & FLAG_COMPRESSED ) && _environment->expansionBanks ) {
@@ -191,7 +191,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         // buffer with the compressed one.
         else {
             result->valueBuffer = output;
-            if ( ! banks_store( _environment, result, 1 ) ) {
+            if ( ! banks_store( _environment, result, 1, 0 ) ) {
                 CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
             };
             free( result->valueBuffer );

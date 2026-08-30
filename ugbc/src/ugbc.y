@@ -6691,7 +6691,7 @@ dim_definition:
                     array->readonly = $9;
                 }
                 if ( $10 > 0 ) {
-                    if ( ! banks_store( _environment, array, $10 ) ) {
+                    if ( ! banks_store( _environment, array, $10, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $10 < 0 ) {
@@ -6755,7 +6755,7 @@ dim_definition:
                     array->readonly = $11;
                 }
                 if ( $12 > 0 ) {
-                    if ( ! banks_store( _environment, array, $12 ) ) {
+                    if ( ! banks_store( _environment, array, $12, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $12 < 0 ) {
@@ -6787,7 +6787,7 @@ dim_definition:
                     array->readonly = $9;
                 }
                 if ( $10 > 0 ) {
-                    if ( ! banks_store( _environment, array, $10 ) ) {
+                    if ( ! banks_store( _environment, array, $10, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $10 < 0 ) {
@@ -6819,7 +6819,7 @@ dim_definition:
                     array->readonly = $10;
                 }
                 if ( $11 > 0 ) {
-                    if ( ! banks_store( _environment, array, $11 ) ) {
+                    if ( ! banks_store( _environment, array, $11, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $11 < 0 ) {
@@ -6873,7 +6873,7 @@ dim_definition:
                     array->readonly = $10;
                 }
                 if ( $11 > 0 ) {
-                    if ( ! banks_store( _environment, array, $11 ) ) {
+                    if ( ! banks_store( _environment, array, $11, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $11 < 0 ) {
@@ -6905,7 +6905,7 @@ dim_definition:
                     array->readonly = $10;
                 }
                 if ( $11 > 0 ) {
-                    if ( ! banks_store( _environment, array, $11 ) ) {
+                    if ( ! banks_store( _environment, array, $11, 0 ) ) {
                         CRITICAL_STORAGE_BANKED_OUT_OF_MEMORY( array->name );
                     };
                 } else if ( $11 < 0 ) {

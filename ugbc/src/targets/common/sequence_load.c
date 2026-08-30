@@ -396,7 +396,7 @@ Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        if ( ! banks_store( _environment, final, _bank_expansion ) ) {
+        if ( ! banks_store( _environment, final, _bank_expansion, 0 ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
 
@@ -432,7 +432,7 @@ Variable * sequence_load( Environment * _environment, ParamsSequenceLoad _params
         // buffer with the compressed one.
         else {
             final->valueBuffer = output;
-            if ( ! banks_store( _environment, final, 1 ) ) {
+            if ( ! banks_store( _environment, final, 1, 0 ) ) {
                 CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
             };
             free( final->valueBuffer );

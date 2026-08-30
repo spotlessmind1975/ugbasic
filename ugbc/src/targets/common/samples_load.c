@@ -100,7 +100,7 @@ Variable * samples_load( Environment * _environment, char * _filename, char * _a
 
     if ( _bank_expansion && _environment->expansionBanks ) {
 
-        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
+        if ( ! banks_store( _environment, result, _bank_expansion, 1 ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
     }

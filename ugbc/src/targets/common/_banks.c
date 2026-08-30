@@ -167,7 +167,7 @@ Variable * banks_get_address_var( Environment * _environment, char * _bank ) {
 
 }
 
-int banks_store( Environment * _environment, Variable * _variable, int _resident ) {
+int banks_store( Environment * _environment, Variable * _variable, int _resident, int _contiguos ) {
 
     Bank * bank = _environment->expansionBanks;
 

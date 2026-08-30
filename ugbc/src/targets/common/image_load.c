@@ -384,7 +384,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
 
         }
 
-        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
+        if ( ! banks_store( _environment, result, _bank_expansion, 0 ) ) {
             CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
         }
 
@@ -421,7 +421,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
         // buffer with the compressed one.
         else {
             result->valueBuffer = output;
-            if ( ! banks_store( _environment, result, 1 ) ) {
+            if ( ! banks_store( _environment, result, 1, 0 ) ) {
                 CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
             };
             free( result->valueBuffer );
