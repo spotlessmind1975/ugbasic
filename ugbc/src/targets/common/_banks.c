@@ -167,7 +167,7 @@ Variable * banks_get_address_var( Environment * _environment, char * _bank ) {
 
 }
 
-int banks_store( Environment * _environment, Variable * _variable, int _resident, int _contiguos ) {
+int banks_store_standard( Environment * _environment, Variable * _variable, int _resident ) {
 
     Bank * bank = _environment->expansionBanks;
 
@@ -198,29 +198,29 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                 switch( VT_BITWIDTH( _variable->arrayType ) ) {
                     case 32: {
                         for( int i=0; i<(_variable->size); i+=4 ) {
-#ifdef CPU_BIG_ENDIAN
+    #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
                             bank->data[bank->address+i+2] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i+3] = ( _variable->value & 0xff );
-#else
+    #else
                             bank->data[bank->address+i+3] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+2] = ( ( _variable->value >> 16 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
-#endif                            
+    #endif                            
                         }
                         break;
                     }
                     case 16: {
                         for( int i=0; i<(_variable->size); i+=2 ) {
-#ifdef CPU_BIG_ENDIAN
+    #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i+1] = ( _variable->value & 0xff );
-#else
+    #else
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
-#endif                            
+    #endif                            
                         }
                         break;
                     }
@@ -237,29 +237,29 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
                 switch( VT_BITWIDTH( _variable->type ) ) {
                     case 32: {
                         for( int i=0; i<(_variable->size); i+=4 ) {
-#ifdef CPU_BIG_ENDIAN
+    #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 16 ) & 0xff );
                             bank->data[bank->address+i+2] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i+3] = ( _variable->value & 0xff );
-#else
+    #else
                             bank->data[bank->address+i+3] = ( ( _variable->value >> 24 ) & 0xff );
                             bank->data[bank->address+i+2] = ( ( _variable->value >> 16 ) & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
-#endif                            
+    #endif                            
                         }
                         break;
                     }
                     case 16: {
                         for( int i=0; i<(_variable->size); i+=2 ) {
-#ifdef CPU_BIG_ENDIAN
+    #ifdef CPU_BIG_ENDIAN
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
-#else
+    #else
                             bank->data[bank->address+i+1] = ( ( _variable->value >> 8 ) & 0xff );
                             bank->data[bank->address+i] = ( _variable->value & 0xff );
-#endif                            
+    #endif                            
                         }
                         break;
                     }
@@ -304,6 +304,86 @@ int banks_store( Environment * _environment, Variable * _variable, int _resident
     }
 
     return 1;
+
+}
+
+int banks_store_contiguos( Environment * _environment, Variable * _variable, int _resident ) {
+
+    Bank * previousBank = _environment->expansionBanks;
+    Bank * bank = previousBank->next;
+    Bank * firstBank = NULL;
+
+    int spaceNeeded = _variable->size;
+    while( previousBank && bank ) {
+        if ( previousBank->remains > 0 && bank->remains == bank->space ) {
+            if ( ! firstBank ) {
+                firstBank = previousBank;
+            }
+            spaceNeeded -= bank->space;
+            if ( spaceNeeded <= 0 ) {
+                break;
+            }
+        }
+        previousBank = bank;
+        bank = bank->next;
+    } 
+
+    if ( ! firstBank ) {
+        return 0;
+    }
+
+    memory_area_unassign( _environment->memoryAreas, _variable );
+
+    _variable->bankAssigned = firstBank->id;
+    _variable->absoluteAddress = firstBank->baseAddress + firstBank->address;
+    _variable->residentAssigned = _resident;
+    _variable->variableUniqueId = UNIQUE_RESOURCE_ID;
+    _variable->bankReadOrWrite = 1;
+
+    spaceNeeded = _variable->size;
+    if ( _variable->valueBuffer ) {
+        Bank * bank = firstBank;
+        int offset = 0;
+        while( spaceNeeded > 0 ) {
+            int remainSize = bank->remains;
+            if ( spaceNeeded < bank->remains ) {
+                remainSize = spaceNeeded;
+            }
+            memcpy( &bank->data[bank->address], _variable->valueBuffer + offset, remainSize );
+            offset += remainSize;
+            spaceNeeded -= remainSize;
+            bank->address += remainSize;
+            bank->remains = 0;
+            bank = bank->next;
+        }
+    } else {
+        Bank * bank = firstBank;
+        int offset = 0;
+        while( spaceNeeded > 0 ) {
+            int remainSize = bank->remains;
+            if ( spaceNeeded < bank->remains ) {
+                remainSize = spaceNeeded;
+            }
+            memset( &bank->data[bank->address], 0, remainSize );
+            offset += remainSize;
+            spaceNeeded -= remainSize;
+            bank->address += remainSize;
+            bank->remains = 0;
+            bank = bank->next;
+        }
+    }
+
+    return 1;
+
+}
+
+int banks_store( Environment * _environment, Variable * _variable, int _resident, int _contiguos ) {
+
+    if ( _contiguos ) {
+        return banks_store_contiguos( _environment, _variable, _resident );
+    } else {
+        return banks_store_standard( _environment, _variable, _resident );
+    }
 
 }
 
