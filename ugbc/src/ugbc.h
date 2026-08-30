@@ -568,7 +568,7 @@ typedef enum _VariableType {
 
     /** SAMPLES */
     VT_SAMPLES = 40
-    
+
 } VariableType;
 
 typedef struct _Resource {
@@ -716,7 +716,8 @@ typedef struct _Resource {
         ( t == VT_TYPE ) + \
         ( t == VT_COMPILED_IMAGE ) + \
         ( t == VT_COMPILED_IMAGES ) + \
-        ( t == VT_COMPILED_SEQUENCE ) \
+        ( t == VT_COMPILED_SEQUENCE ) + \
+        ( t == VT_SAMPLES ) \
     )
 
 /**
@@ -3905,6 +3906,8 @@ int yywarning ( Environment * _ignored, const char * _message );
 #define CRITICAL_WAIT_CYCLES_INVALID_TIMING( ) CRITICAL("E409 - invalid value for WAIT CYCLES" );
 #define CRITICAL_PUT_IMAGE_FRAME_UNSUPPORTED( v, t ) CRITICAL3("E410 - PUT IMAGE unsupported for given datatype for frame number", v, t );
 #define CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( v, t ) CRITICAL3("E411 - PUT IMAGE unsupported for given datatype for strip/sequence number", v, t );
+#define CRITICAL_CANNOT_LOAD_SAMPLES(f) CRITICAL2("E412 - cannot load SAMPLES", f );
+#define CRITICAL_CANNOT_LOAD_STEREO_SAMPLES(f) CRITICAL2("E413 - cannot load stereo SAMPLES", f );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );

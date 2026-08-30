@@ -146,6 +146,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SEQUENCE:
                 case VT_MOVIE:
                 case VT_MUSIC:
+                case VT_SAMPLES:
                 case VT_BUFFER:
                 if ( variable->bankAssigned != -1 ) {
                     outhead2("; relocated on bank %d (at %4.4x)", variable->bankAssigned, variable->absoluteAddress );

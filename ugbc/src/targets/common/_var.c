@@ -66,6 +66,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_MOVIE:
                 case VT_TILEMAP:
                 case VT_MUSIC:
+                case VT_SAMPLES:
                 case VT_TARRAY:
                 case VT_BLIT:
                 case VT_FLOAT:
@@ -103,6 +104,7 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
                 case VT_MOVIE:
                 case VT_TILEMAP:
                 case VT_MUSIC:
+                case VT_SAMPLES:
                 case VT_TARRAY:
                 case VT_BLIT:
                 case VT_FLOAT:

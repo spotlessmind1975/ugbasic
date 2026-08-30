@@ -207,6 +207,7 @@ static void variable_cleanup_entry_multibyte( Environment * _environment, Variab
                 case VT_SEQUENCE:
                 case VT_MOVIE:
                 case VT_MUSIC:
+                case VT_SAMPLES:
                 case VT_BUFFER:
                 case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {

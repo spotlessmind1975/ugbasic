@@ -311,6 +311,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_MUSIC:
+                case VT_SAMPLES:
                 case VT_BUFFER:
                 case VT_TYPE:
                     if ( variable->bankAssigned != -1 ) {

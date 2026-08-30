@@ -1299,6 +1299,7 @@ datatype:
     IMAGEREF { $$ = VT_IMAGEREF; } | 
     PATH { $$ = VT_PATH; } | 
     MUSIC { $$ = VT_MUSIC; } | 
+    SAMPLES { $$ = VT_SAMPLES; } | 
     BLIT { $$ = VT_BLIT; } | 
     SPRITE { $$ = VT_SPRITE; } | 
     MSPRITE { $$ = VT_MSPRITE; } | 
