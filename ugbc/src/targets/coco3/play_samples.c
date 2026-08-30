@@ -60,7 +60,13 @@ void play_samples_var( Environment * _environment, char * _expr ) {
         CRITICAL_CANNOT_PLAY_SAMPLES_NOT_SAMPLES( _expr );
     }
 
-    outline1("LDX #%s", samples->realName );
-    outline0("JSR PLAYSAMPLES" );
+    if ( samples->bankAssigned != -1 ) {
+        outline1("LDA #$%2.2x", samples->bankAssigned );
+        outline1("LDX #$%4.4x", samples->absoluteAddress );
+        outline0("JSR PLAYSAMPLESEXP" );
+    } else {
+        outline1("LDX #%s", samples->realName );
+        outline0("JSR PLAYSAMPLES" );
+    }
 
 }
