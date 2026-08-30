@@ -60,10 +60,40 @@ void play_samples_var( Environment * _environment, char * _expr ) {
         CRITICAL_CANNOT_PLAY_SAMPLES_NOT_SAMPLES( _expr );
     }
 
-    outline1("LDA #<%s", samples->realName );
-    outline0("STA PLAYSAMPLESL1+1" );
-    outline1("LDA #>%s", samples->realName );
-    outline0("STA PLAYSAMPLESL1+2" );
-    outline0("JSR PLAYSAMPLES" );
+    if ( samples->bankAssigned != -1 ) {
+
+        outline1("LDA #$%2.2x", (unsigned char)(samples->absoluteAddress&0xff) );
+        outline0("STA REUREUBASE" );
+        outline1("LDA #$%2.2x", (unsigned char)((samples->absoluteAddress>>8)&0xff) );
+        outline0("STA REUREUBASE+1" );
+        outline1("LDA #$%2.2x", (unsigned char)(samples->bankAssigned) );
+        outline0("STA REUREUBASE+2" );
+
+        if ( samples->size < 256 ) {
+            outline1("LDA #$%2.2x", (unsigned char)(samples->size&0xff) );
+            outline0("STA REUTRANSLEN" );
+            outline1("LDA #$%2.2x", (unsigned char)((samples->size>>8)&0xff) );
+            outline0("STA REUTRANSLEN+1" );
+        } else {
+            outline0("LDA #$00");
+            outline0("STA REUTRANSLEN" );
+            outline0("LDA #$1" );
+            outline0("STA REUTRANSLEN+1" );
+        }
+
+        outline1("LDA #<%s", samples->realName );
+        outline0("STA REUC64BASE" );
+        outline0("STA PLAYSAMPLESREUL1+1" );
+        outline1("LDA #>%s", samples->realName );
+        outline0("STA REUC64BASE+1" );
+        outline0("STA PLAYSAMPLESREUL1+2" );
+        outline0("JSR PLAYSAMPLESREU" );
+    } else {
+        outline1("LDA #<%s", samples->realName );
+        outline0("STA PLAYSAMPLESL1+1" );
+        outline1("LDA #>%s", samples->realName );
+        outline0("STA PLAYSAMPLESL1+2" );
+        outline0("JSR PLAYSAMPLES" );
+    }
 
 }

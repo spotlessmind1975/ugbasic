@@ -98,6 +98,13 @@ Variable * samples_load( Environment * _environment, char * _filename, char * _a
 
     Variable * result = samples_load_to_variable( _environment, _filename, _alias, _bank_expansion );
 
+    if ( _bank_expansion && _environment->expansionBanks ) {
+
+        if ( ! banks_store( _environment, result, _bank_expansion ) ) {
+            CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( _filename );
+        }
+    }
+
     LoadedFile * loaded = malloc( sizeof( LoadedFile ) );
     loaded->next = first;
     loaded->variable = result;
