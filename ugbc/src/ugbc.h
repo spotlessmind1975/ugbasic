@@ -564,8 +564,11 @@ typedef enum _VariableType {
     VT_COMPILED_SEQUENCE = 38,
 
     /** MOVIE */
-    VT_MOVIE = 39
+    VT_MOVIE = 39,
 
+    /** SAMPLES */
+    VT_SAMPLES = 40
+    
 } VariableType;
 
 typedef struct _Resource {
@@ -5918,6 +5921,8 @@ void                    msprite_update( Environment * _environment );
 Variable *              music_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 Variable *              music_storage( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+Variable *              samples_load( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
+Variable *              samples_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion );
 void                    music_var( Environment * _environment, char * _music, int _loop, int _music_type );
 void                    music_pause( Environment * _environment );
 void                    music_resume( Environment * _environment );

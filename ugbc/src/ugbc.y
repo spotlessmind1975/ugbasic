@@ -285,7 +285,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token RECORDER RECT RED REED REGISTER RELATIVE RELEASE RELOC REMEMBER REPEAT
 %token REPLACE RESET RESIDENT RESOLUTION RESPAWN RESTORE RESUME RETRIES RETURN
 %token REVERSE RGB RIGHT RIGHTB RIGHTW RING RLE RND ROCK ROLL ROT ROTATE ROUNDS
-%token ROW ROWS RUN RUNNING RUNSTOP S SAFE SAVE SAWTOOTH SAX SBYTE SC3000 SCALE
+%token ROW ROWS RUN RUNNING RUNSTOP S SAFE SAMPLES SAVE SAWTOOTH SAX SBYTE SC3000 SCALE
 %token SCAN SCANCODE SCANSHIFT SCI SCREEN SCROLL SEASHORE SECOND SECTION SEEK
 %token SELECT SEMICOLON SEMIGRAPHIC SEND SEPARATOR SEQUENCE SERIAL SERIALIZE
 %token SET SG1000 SGN SHADES SHAKUHACHI SHAMISEN SHANAI SHARED SHIFT SHOOT
@@ -3448,6 +3448,8 @@ exponential_less:
     LOAD OP String AS String OP_COMMA Integer CP on_bank_explicit load_flags { $$ = load( _environment, $3, $5, $7, abs($9), $10 )->name; } | 
     LOAD MUSIC OP String CP on_bank_explicit { $$ = music_load( _environment, $4, NULL, abs($6) )->name; } | 
     LOAD MUSIC OP String AS String CP on_bank_explicit { $$ = music_load( _environment, $4, $6, abs($8) )->name; } | 
+    LOAD SAMPLES OP String CP on_bank_explicit { $$ = samples_load( _environment, $4, NULL, abs($6) )->name; } | 
+    LOAD SAMPLES OP String AS String CP on_bank_explicit { $$ = samples_load( _environment, $4, $6, abs($8) )->name; } | 
     load_sequence OP String AS String CP frame SIZE OP const_expr OP_COMMA const_expr CP sequence_load_flags  using_transparency using_opacity using_background on_bank_implicit readonly_optional {
 
         ParamsSequenceLoad params;

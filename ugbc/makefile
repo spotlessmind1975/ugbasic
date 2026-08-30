@@ -35,18 +35,22 @@
 ifeq ($(OS),Windows_NT)
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
+LIBSNDFILE=../modules/libsndfile/src/.libs/libsndfile.a
+LIBSNDFILEPATH=../modules/libsndfile
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
+LIBSNDFILE=../modules/libsndfile/src/.libs/libsndfile.a
+LIBSNDFILEPATH=../modules/libsndfile
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=-lm $(LIBXML2)
+LIBS=-lm $(LIBXML2) $(LIBSNDFILE)
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
@@ -387,6 +391,16 @@ $(LIBXML2):
 	@cd $(LIBXML2PATH) && $(MAKE)
 
 libxml2: paths $(LIBXML2)
+
+#
+#
+#
+$(LIBSNDFILE):
+	@cd $(LIBSNDFILEPATH) && autoreconf -vif
+	@cd $(LIBSNDFILEPATH) && ./configure --enable-werror --enable-static=yes
+	@cd $(LIBSNDFILEPATH) && make
+
+libsndfile: paths $(LIBSNDFILE)
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -1252,6 +1266,7 @@ lib-cpu: $(OBJS_CPU)
 compiler: 
 	@$(MAKE) paths
 	@$(MAKE) libxml2
+	@$(MAKE) libsndfile
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
