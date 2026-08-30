@@ -207,7 +207,7 @@ Variable * vic2_sprite_converter( Environment * _environment, char * _data, int 
 void vic2_image_compile( Environment * _environment, ParamsImageCompile * _params );
 void vic2_images_compile( Environment * _environment, ParamsImagesCompile * _params );
 void vic2_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params );
-void vic2_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
+void vic2_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _full_screen );
 void vic2_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void vic2_wait_vbl( Environment * _environment, char * _raster_line );
 Variable * vic2_new_image( Environment * _environment, int _width, int _height, int _mode );

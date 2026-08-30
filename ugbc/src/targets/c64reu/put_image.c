@@ -138,20 +138,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags, 0 );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags, 0 );
                     } else {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags, 0 );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
                     } else {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
                     }
                 }
             }
@@ -202,7 +202,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags, 0 );
                 
             } else {
 
@@ -231,9 +231,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 }
 
                 if ( !frame ) {
-                    vic2_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags, 0 );
                 } else {
-                    vic2_put_image( _environment, resource, x1->name, y1->name, realFrame->realName, NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, resource, x1->name, y1->name, realFrame->realName, NULL, image->frameSize, 0, _flags, 0 );
                 }
             }
             break;
@@ -249,9 +249,10 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+                int fullscreen = ( (image->originalWidth == _environment->screenWidth) && (image->originalHeight == _environment->screenHeight) );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, fullscreen );
             } else {
-                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, 0 );
             }
             break;
         default:
@@ -383,7 +384,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.bankNumber = image->bankAssigned;
     resource.isAddress = 1;
 
-    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags, 0 );
 
     cpu_jump( _environment, labelDone );
 
@@ -392,7 +393,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, 0 );
 
     cpu_label( _environment, labelDone );
 

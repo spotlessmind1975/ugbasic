@@ -2274,7 +2274,9 @@ PUTIMAGEREU3:
         LDA IMAGEF
         AND #32
         CMP #32
-        BEQ PUTIMAGEREU3EFINAL
+        BNE PUTIMAGEREU3EFINALX
+        JMP PUTIMAGEREU3EFINAL
+    PUTIMAGEREU3EFINALX:
 
         ; IF bit 1 of IMAGET is cleared, it means that the image must be
         ; drawn without colors.
@@ -2282,7 +2284,9 @@ PUTIMAGEREU3:
         LDA IMAGET
         AND #2
         CMP #2
-        BNE PUTIMAGEREU3EFINAL
+        BNE PUTIMAGEREU3EFINALX2
+        JMP PUTIMAGEREU3EFINAL
+    PUTIMAGEREU3EFINALX2:
 
         ; Finally, load the last byte of the image: this is the
         ; background color for the entire image. To be set, if
@@ -2294,6 +2298,73 @@ PUTIMAGEREU3:
         NOP
         LDA C64REUBANKTMPBUF
         STA $D021
+
+        JMP PUTIMAGEREU3EFINAL
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGEREUFS:
+
+PUTIMAGEREU3FS:
+
+    LDA #$1F
+    STA REUCONTROL
+
+    CLC
+    LDA TMPPTR
+    ADC #3
+    STA REUREUBASE
+    LDA TMPPTR+1
+    ADC #0
+    STA REUREUBASE+1
+    LDA BANKPTR
+    STA REUREUBASE+2
+
+    LDA PLOTVBASELO
+    STA REUC64BASE
+    LDA PLOTVBASEHI
+    STA REUC64BASE+1
+    LDA #$40
+    STA REUTRANSLEN
+    LDA #$1f
+    STA REUTRANSLEN+1
+    LDA #%10010001
+    STA REUCOMMAND
+        
+    LDA PLOTCVBASELO
+    STA REUC64BASE
+    LDA PLOTCVBASEHI
+    STA REUC64BASE+1
+    LDA #$00
+    STA REUTRANSLEN
+    LDA #$04
+    STA REUTRANSLEN+1
+    LDA #%10010001
+    STA REUCOMMAND
+
+    LDA PLOTC2VBASELO
+    STA REUC64BASE
+    LDA PLOTC2VBASEHI
+    STA REUC64BASE+1
+    LDA #$00
+    STA REUTRANSLEN
+    LDA #$04
+    STA REUTRANSLEN+1
+    LDA #%10010001
+    STA REUCOMMAND
+
+    LDA #$21
+    STA REUC64BASE
+    LDA #$D0
+    STA REUC64BASE+1
+    LDA #$01
+    STA REUTRANSLEN
+    LDA #$00
+    STA REUTRANSLEN+1
+    LDA #%10010001
+    STA REUCOMMAND
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
     PUTIMAGEREU3EFINAL:
 

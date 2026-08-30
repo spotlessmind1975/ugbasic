@@ -129,20 +129,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags, 0 );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, "", "", image->frameSize, image->frameCount, _flags, 0 );
                     } else {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, "", image->frameSize, image->frameCount, _flags, 0 );
                     }
                 } else {
                     if ( !frame ) {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, "", sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
                     } else {
-                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        vic2_put_image( _environment, resource, x1->name, y1->name, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
                     }
                 }
             }
@@ -213,7 +213,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, image->frameSize, 0, _flags, 0 );
                 
             } else {
 
@@ -242,9 +242,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 }
 
                 if ( !frame ) {
-                    vic2_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, resource, x1->name, y1->name, "", NULL, image->frameSize, 0, _flags, 0 );
                 } else {
-                    vic2_put_image( _environment, resource, x1->name, y1->name, realFrame->realName, NULL, image->frameSize, 0, _flags );
+                    vic2_put_image( _environment, resource, x1->name, y1->name, realFrame->realName, NULL, image->frameSize, 0, _flags, 0 );
                 }
             }
             break;
@@ -274,9 +274,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+                vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, 0 );
             } else {
-                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+                vic2_put_image( _environment, resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, 0 );
             }
             break;
         case VT_COMPILED_IMAGE:
@@ -288,7 +288,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             resource.isAddress = 0;
             resource.isCompiled = 1;
             resource.bankNumber = image->bankAssigned;
-            vic2_put_image( _environment, &resource, x1->name, y1->name, _frame, _sequence, 1, image->frameCount, _flags );
+            vic2_put_image( _environment, &resource, x1->name, y1->name, _frame, _sequence, 1, image->frameCount, _flags, 0 );
             break;
         }
         default:
@@ -407,7 +407,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags );
+    vic2_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 1, 0, _flags, 0 );
     
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip:", label );
@@ -431,10 +431,10 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
         case VT_IMAGES:
         case VT_SEQUENCE:
         case VT_ADDRESS:
-            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            put_image_vars_original( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, 0 );
             break;
         case VT_IMAGEREF:
-            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags );
+            put_image_vars_imageref( _environment, _image, _x1, _y1, _x2, _y2, _frame, _sequence, _flags, 0 );
             break;            
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
@@ -444,8 +444,8 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
 
 void put_image_vars_flags( Environment * _environment, char * _image, char * _x1, char * _y1, char * _x2, char * _y2, char * _frame, char * _sequence, int _flags ) {
 
-    char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags );
-    char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags );
+    char flagsConstantName[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantName, "PUTIMAGEFLAGS%4.4x", _flags, 0 );
+    char flagsConstantParameter[MAX_TEMPORARY_STORAGE]; sprintf( flagsConstantParameter, "#PUTIMAGEFLAGS%4.4x", _flags, 0 );
     
     Constant * flagsConstant = constant_find( _environment, flagsConstantName );
     
