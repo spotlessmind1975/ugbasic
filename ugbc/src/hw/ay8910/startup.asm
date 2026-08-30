@@ -325,15 +325,13 @@ AY8910WRITE:
     PUSH BC
     PUSH AF
 
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
+    LD A, C
+    LD C, PSG_AP
     AND $FB
     OUT (C), A
 
-    LD A, PSG_WP
-    LD C, A
-    LD A, B
+    LD C, PSG_WP
+    LD A, IXL
     AND $FE
     OUT (C), A
 
