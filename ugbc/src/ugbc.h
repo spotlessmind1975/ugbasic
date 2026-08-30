@@ -1995,6 +1995,7 @@ typedef struct _Deployed {
     int decrypt;
     int hex2bin;
     int cpuspeed;
+    int play_samples;
     
 } Deployed;
 
@@ -3908,6 +3909,7 @@ int yywarning ( Environment * _ignored, const char * _message );
 #define CRITICAL_PUT_IMAGE_STRIP_UNSUPPORTED( v, t ) CRITICAL3("E411 - PUT IMAGE unsupported for given datatype for strip/sequence number", v, t );
 #define CRITICAL_CANNOT_LOAD_SAMPLES(f) CRITICAL2("E412 - cannot load SAMPLES", f );
 #define CRITICAL_CANNOT_LOAD_STEREO_SAMPLES(f) CRITICAL2("E413 - cannot load stereo SAMPLES", f );
+#define CRITICAL_CANNOT_PLAY_SAMPLES_NOT_SAMPLES(v) CRITICAL2("E414 - cannot PLAY SAMPLES on not SAMPLES variable", v );
 
 #define CRITICALB( s ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s\n", ((struct _Environment *)_environment)->sourceFileName, s ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
 #define CRITICALB2( s, v ) fprintf(stderr, "CRITICAL ERROR during building of %s:\n\t%s (%s)\n", ((struct _Environment *)_environment)->sourceFileName, s, v ); target_cleanup( ((struct _Environment *)_environment) ); exit( EXIT_FAILURE );
@@ -5995,6 +5997,7 @@ void                    play( Environment * _environment, int _note, int _durati
 void                    play_vars( Environment * _environment, char * _note, char * _duration, char * _channels );
 void                    play_off( Environment * _environment, int _channels );
 void                    play_off_var( Environment * _environment, char * _channels );
+void                    play_samples_var( Environment * _environment, char * _expr );
 void                    play_string( Environment * _environment, char * _string );
 void                    plot( Environment * _environment, char * _x, char * _y, char *_c, int _preserve_color );
 void                    pmode( Environment * _environment, int _mode, int _start_page );

@@ -7299,7 +7299,8 @@ play_definition_expression:
     expr OP_COMMA expr ON expr { play_vars( _environment, $1, $3, $5 ); } | 
     expr OP_COMMA expr OP_COMMA expr { play_vars( _environment, $3, $5, $1 ); } | 
     expr ON expr { play_vars( _environment, $1, NULL, $3 ); } | 
-    OFF ON expr { play_off_var( _environment, $3 ); };
+    OFF ON expr { play_off_var( _environment, $3 ); } |
+    SAMPLES expr { play_samples_var( _environment, $2 ); };
 
 play_definition: 
     play_definition_expression |
