@@ -73,6 +73,9 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
             ( ( 8 + ( sample0 >> 12 ) ) ) |
             ( ( ( 8 + ( sample1 >> 12 ) ) ) << 4 )
             ;
+        if ( samplesBuffer[i] == 0 ) {
+            samplesBuffer[i] = 0x11;
+        }
     } 
 
     samplesBuffer[effectiveLen-1] = 0;
