@@ -29,13 +29,14 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             PLAY SAMPLES ON COCO3                           *
+;*                             PLAY SAMPLES ON COCOB                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLAYSAMPLESINIT
+PLAYSAMPLES
+	ORCC #$50
 	LDA $ff01
 	ANDA #%11110111
 	STA $ff01
@@ -53,26 +54,6 @@ PLAYSAMPLESINIT
 	LDA $ff21
 	ORA #%00000100
 	STA $ff21
-	RTS
-
-PLAYSAMPLESCLEANUP
-	LDA $ff21
-	ANDA #%11111011
-	STA $ff21
-	LDA #%11111111
-	STA $ff20
-	LDA $ff21
-	ORA #%00000100
-	STA $ff21
-	LDA $ff23
-	ANDA #%11110111
-	STA $ff23
-	RTS
-
-PLAYSAMPLES
-	ORCC #$50
-
-	JSR PLAYSAMPLESINIT
 
 PLAYSAMPLESL1
 	LDA ,X+
@@ -101,73 +82,8 @@ PLAYSAMPLESL2L
 PLAYSAMPLESL2H
 	DECB
 	BNE PLAYSAMPLESL2H
+
 	JMP PLAYSAMPLESL1
-
 PLAYSAMPLESDONE
-
-	JSR PLAYSAMPLESCLEANUP
-
-    ANDCC #$AF
-    RTS
-
-PLAYSAMPLESEXP
-	ORCC #$50
-
-	STA MATHPTR0
-	STA $FFAC
-    TFR X, D
-    ADDD #$8000
-    TFR D, X
-	
-	JSR PLAYSAMPLESINIT
-
-    JSR GIMEBANKVIDEO
-	
-PLAYSAMPLESEXPL1
-	LDA ,X+
-	BEQ PLAYSAMPLESEXPDONE
-
-	PSHS D
-	ANDA #$0F
-	LSLA
-	LSLA
-	ANDA #$FC
-    STA $FF20
-
-	LDB #16
-PLAYSAMPLESEXPL2L
-	DECB
-	BNE PLAYSAMPLESEXPL2L
-
-	PULS D
-	ANDA #$F0
-	LSRA
-	LSRA
-	ANDA #$FC
-    STA $FF20
-
-	LDB #16
-PLAYSAMPLESEXPL2H
-	DECB
-	BNE PLAYSAMPLESEXPL2H
-
-	CMPX #$9FFF
-	BNE PLAYSAMPLESEXPCONTINUE
-
-	LDX #$8000
-	INC MATHPTR0
-	LDA MATHPTR0
-	STA $FFAC
-
-PLAYSAMPLESEXPCONTINUE
-	JMP PLAYSAMPLESEXPL1
-
-PLAYSAMPLESEXPDONE
-
-    JSR GIMEBANKROM
-    LDA #$3C
-    STA $FFAC
-	JSR PLAYSAMPLESCLEANUP
-
     ANDCC #$AF
     RTS
