@@ -35,12 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-PLAYSAMPLES:
-	DI
-PLAYSAMPLESL1:
-    LD A, (HL)
-	CMP 0
-	JR Z, PLAYSAMPLESDONE
+PLAYSAMPLE:
 	LD D, A        
 	LD A, $10
 	OUT ($FE), A
@@ -57,6 +52,29 @@ PLAYSAMPLESL1ON:
 PLAYSAMPLESL1OFF:
 	DEC D
 	JP NZ, PLAYSAMPLESL1OFF
+	RET
+
+PLAYSAMPLES:
+	DI
+PLAYSAMPLESL1:
+    LD A, (HL)
+	CMP 0
+	JR Z, PLAYSAMPLESDONE
+
+	PUSH AF
+	AND $0F
+	NOP
+	NOP
+	NOP
+	CALL PLAYSAMPLE
+
+	POP AF
+	SRL A
+	SRL A
+	SRL A
+	SRL A
+	CALL PLAYSAMPLE
+
 	INC HL
     JR PLAYSAMPLESL1
 PLAYSAMPLESDONE:

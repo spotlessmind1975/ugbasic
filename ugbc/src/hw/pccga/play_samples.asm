@@ -54,21 +54,35 @@ PLAYSAMPLESL1:
 	CMP AL, 0
 	JZ PLAYSAMPLESDONE
 
-    ; Invia il valore del PCM al Timer 2 (Porta 42h)
-    ; Nota: Per una precisione ideale a 8-bit si invia il valore come Byte Basso (LSB) 
-    ; e si azzera il Byte Alto (MSB) per resettare il ciclo del timer.
+	PUSH AX
+	AND AL, 0x0F
+	NOP
+	NOP
 	OUT 0x42, AL
 	MOV AL, 0
 	OUT 0x42, AL
 
-    ; --- 4. Loop di Ritardo (Timing / Frequenza di campionamento) ---
-    ; Questo ciclo introduce un ritardo necessario a stabilire la frequenza di riproduzione (es. 8kHz).
-    ; Nei PC storici si calcolava in base ai cicli della CPU; su macchine veloci richiede il timer di sistema.
 	PUSH CX
 	MOV CX, 0x00ff
-PLAYSAMPLESL2:
-	LOOP PLAYSAMPLESL2
+PLAYSAMPLESL2L:
+	LOOP PLAYSAMPLESL2L
 	POP CX
+
+	POP AX
+	SHR AL
+	SHR AL
+	SHR AL
+	SHR AL
+	OUT 0x42, AL
+	MOV AL, 0
+	OUT 0x42, AL
+
+	PUSH CX
+	MOV CX, 0x00ff
+PLAYSAMPLESL2L:
+	LOOP PLAYSAMPLESL2L
+	POP CX
+	
 	JMP PLAYSAMPLESL1
 
 PLAYSAMPLESDONE:
