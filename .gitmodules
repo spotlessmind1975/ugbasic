@@ -61,3 +61,6 @@
 [submodule "modules/libsndfile"]
 	path = modules/libsndfile
 	url = https://github.com/spotlessmind1975/libsndfile.git
+[submodule "modules/flac"]
+	path = modules/flac
+	url = https://github.com/spotlessmind1975/flac.git
