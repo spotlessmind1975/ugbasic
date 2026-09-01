@@ -458,6 +458,16 @@ $(LIBVORBISENC):
 
 libvorbisenc: paths $(LIBVORBISENC)
 
+#
+#
+#
+$(LIBOPUS):
+	@cd $(LIBOPUSPATH) && autogen.sh
+	@cd $(LIBOPUSPATH) && configure --enable-static=yes
+	@cd $(LIBOPUSPATH) && make
+
+libopus: paths $(LIBOPUS)
+
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # MODULES SECTION - embed ASM for each specific target
@@ -1327,6 +1337,7 @@ compiler:
 	@$(MAKE) libogg
 	@$(MAKE) libvorbis
 	@$(MAKE) libvorbisenc
+	@$(MAKE) libopus
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
