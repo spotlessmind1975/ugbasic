@@ -71,3 +71,6 @@
 [submodule "modules/vorbis"]
 	path = modules/vorbis
 	url = https://github.com/spotlessmind1975/vorbis.git
+[submodule "modules/opus"]
+	path = modules/opus
+	url = https://github.com/xiph/opus.git
