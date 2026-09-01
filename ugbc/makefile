@@ -40,6 +40,8 @@ LIBSNDFILECOMMON=../modules/libsndfile/src/.libs/libcommon.a
 LIBSNDFILEPATH=../modules/libsndfile
 LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
+LIBOGG=../modules/libogg/src/.libs/libogg.a
+LIBOGGPATH=../modules/libogg
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
@@ -48,15 +50,17 @@ LIBSNDFILECOMMON=../modules/libsndfile/src/.libs/libcommon.a
 LIBSNDFILEPATH=../modules/libsndfile
 LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
+LIBOGG=../modules/libogg/src/.libs/libogg.a
+LIBOGGPATH=../modules/libogg
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=-lm $(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBSNDFILECOMMON) -logg -lvorbisenc -lvorbis -lopus -lmpg123 -lmp3lame
+LIBS=-lm $(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBOGG) $(LIBSNDFILECOMMON) -lvorbisenc -lvorbis -lopus -lmpg123 -lmp3lame
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
@@ -416,6 +420,15 @@ $(LIBFLAC):
 	@cd $(LIBFLAC) && make
 
 libflac: paths $(LIBFLAC)
+
+#
+#
+#
+$(LIBOGG):
+	@cd $(LIBOGGPATH) && cmake .
+	@cd $(LIBOGG) && make
+
+libogg: paths $(LIBOGG)
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -1283,6 +1296,7 @@ compiler:
 	@$(MAKE) libxml2
 	@$(MAKE) libsndfile
 	@$(MAKE) libflac
+	@$(MAKE) libogg
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
