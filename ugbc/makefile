@@ -45,6 +45,8 @@ LIBOGGPATH=../modules/libogg
 LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
 LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
 LIBVORBISPATH=../modules/vorbis
+LIBOPUS=../modules/opus/.libs/libopus.a
+LIBOPUSPATH=../modules/opus
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
@@ -58,15 +60,17 @@ LIBOGGPATH=../modules/libogg
 LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
 LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
 LIBVORBISPATH=../modules/vorbis
+LIBOPUS=../modules/opus/.libs/libopus.a
+LIBOPUSPATH=../modules/opus
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBSNDFILECOMMON) -lmvec -lm -lopus -lmpg123 -lmp3lame
+LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBSNDFILECOMMON) -lmvec -lm -lmpg123 -lmp3lame
 
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
