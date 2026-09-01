@@ -42,6 +42,9 @@ LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
 LIBOGG=../modules/libogg/src/.libs/libogg.a
 LIBOGGPATH=../modules/libogg
+LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
+LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
+LIBVORBISPATH=../modules/vorbis
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
@@ -52,15 +55,19 @@ LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
 LIBOGG=../modules/libogg/src/.libs/libogg.a
 LIBOGGPATH=../modules/libogg
+LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
+LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
+LIBVORBISPATH=../modules/vorbis
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=-lm $(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBOGG) $(LIBSNDFILECOMMON) -lvorbisenc -lvorbis -lopus -lmpg123 -lmp3lame
+LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBSNDFILECOMMON) -lmvec -lm -lopus -lmpg123 -lmp3lame
+
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
 .PHONY: paths clean all bison flex
@@ -417,7 +424,7 @@ libsndfile: paths $(LIBSNDFILE)
 #
 $(LIBFLAC):
 	@cd $(LIBFLACPATH) && cmake .
-	@cd $(LIBFLAC) && make
+	@cd $(LIBFLACPATH) && make
 
 libflac: paths $(LIBFLAC)
 
@@ -426,9 +433,26 @@ libflac: paths $(LIBFLAC)
 #
 $(LIBOGG):
 	@cd $(LIBOGGPATH) && cmake .
-	@cd $(LIBOGG) && make
+	@cd $(LIBOGGPATH) && make
 
 libogg: paths $(LIBOGG)
+
+#
+#
+#
+$(LIBVORBIS):
+	@cd $(LIBVORBISPATH) && autogen.sh
+	@cd $(LIBVORBISPATH) && configure --enable-static=yes
+	@cd $(LIBVORBISPATH) && make
+
+libvorbis: paths $(LIBVORBIS)
+
+$(LIBVORBISENC):
+	@cd $(LIBVORBISPATH) && autogen.sh
+	@cd $(LIBVORBISPATH) && configure --enable-static=yes
+	@cd $(LIBVORBISPATH) && make
+
+libvorbisenc: paths $(LIBVORBISENC)
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -1297,6 +1321,8 @@ compiler:
 	@$(MAKE) libsndfile
 	@$(MAKE) libflac
 	@$(MAKE) libogg
+	@$(MAKE) libvorbis
+	@$(MAKE) libvorbisenc
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
