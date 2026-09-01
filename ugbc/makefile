@@ -408,6 +408,15 @@ $(LIBSNDFILE):
 
 libsndfile: paths $(LIBSNDFILE)
 
+#
+#
+#
+$(LIBFLAC):
+	@cd $(LIBFLACPATH) && cmake .
+	@cd $(LIBFLAC) && make
+
+libflac: paths $(LIBFLAC)
+
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
 # MODULES SECTION - embed ASM for each specific target
@@ -1273,6 +1282,7 @@ compiler:
 	@$(MAKE) paths
 	@$(MAKE) libxml2
 	@$(MAKE) libsndfile
+	@$(MAKE) libflac
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
