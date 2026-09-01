@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             PLAY SAMPLES ON COCO3                            *
+;*                             PLAY SAMPLES ON COCO3B                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -77,15 +77,32 @@ PLAYSAMPLES
 PLAYSAMPLESL1
 	LDA ,X+
 	BEQ PLAYSAMPLESDONE
+
+	PSHS D
+	ANDA #$0F
 	LSLA
 	LSLA
 	ANDA #$FC
     STA $FF20
-	LDB #20
-PLAYSAMPLESL2
+
+	LDB #16
+PLAYSAMPLESL2L
 	DECB
-	BNE PLAYSAMPLESL2
+	BNE PLAYSAMPLESL2L
+
+	PULS D
+	ANDA #$F0
+	LSRA
+	LSRA
+	ANDA #$FC
+    STA $FF20
+
+	LDB #16
+PLAYSAMPLESL2H
+	DECB
+	BNE PLAYSAMPLESL2H
 	JMP PLAYSAMPLESL1
+
 PLAYSAMPLESDONE
 
 	JSR PLAYSAMPLESCLEANUP
@@ -109,14 +126,30 @@ PLAYSAMPLESEXP
 PLAYSAMPLESEXPL1
 	LDA ,X+
 	BEQ PLAYSAMPLESEXPDONE
+
+	PSHS D
+	ANDA #$0F
 	LSLA
 	LSLA
 	ANDA #$FC
     STA $FF20
-	LDB #20
-PLAYSAMPLESEXPL2
+
+	LDB #16
+PLAYSAMPLESEXPL2L
 	DECB
-	BNE PLAYSAMPLESEXPL2
+	BNE PLAYSAMPLESEXPL2L
+
+	PULS D
+	ANDA #$F0
+	LSRA
+	LSRA
+	ANDA #$FC
+    STA $FF20
+
+	LDB #16
+PLAYSAMPLESEXPL2H
+	DECB
+	BNE PLAYSAMPLESEXPL2H
 
 	CMPX #$9FFF
 	BNE PLAYSAMPLESEXPCONTINUE
