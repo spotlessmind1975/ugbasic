@@ -107,9 +107,11 @@ ifeq ($(OS),Windows_NT)
   UGBCEXESUFFIX = $(BETASUFFIX).exe
   CFLAGS += -D_WIN32 -static
   LFLAGS += -static
+  CMAKE=$(MINGW_PREFIX)/bin/cmake
 else
   EXESUFFIX = 
   UGBCEXESUFFIX = $(BETASUFFIX)
+  CMAKE=cmake
 endif
 
 #-----------------------------------------------------------------------------
@@ -425,9 +427,8 @@ libxml2: paths $(LIBXML2)
 #
 #
 $(LIBSNDFILE):
-	@cd $(LIBSNDFILEPATH) && autoreconf -vif
-	@cd $(LIBSNDFILEPATH) && ./configure --enable-werror --enable-static=yes
-	@cd $(LIBSNDFILEPATH) && make
+	@cd $(LIBSNDFILEPATH) && ./configure --enable-static=yes
+	@cd $(LIBSNDFILEPATH) && $(MAKE)
 
 libsndfile: paths $(LIBSNDFILE)
 
@@ -435,8 +436,8 @@ libsndfile: paths $(LIBSNDFILE)
 #
 #
 $(LIBFLAC):
-	@cd $(LIBFLACPATH) && cmake --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -B build
-	@cd $(LIBFLACPATH) && make
+	@cd $(LIBFLACPATH) && $(CMAKE) --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -G "MSYS Makefiles"
+	@cd $(LIBFLACPATH) && $(MAKE)
 
 libflac: paths $(LIBFLAC)
 
@@ -446,6 +447,7 @@ libflac: paths $(LIBFLAC)
 $(LIBOGG):
 	@cd $(LIBOGGPATH) && autogen.sh
 	@cd $(LIBOGGPATH) && configure --enable-static=yes
+	@cd $(LIBOGGPATH) && $(MAKE)
 
 libogg: paths $(LIBOGG)
 
@@ -455,7 +457,7 @@ libogg: paths $(LIBOGG)
 $(LIBVORBIS):
 	@cd $(LIBVORBISPATH) && autogen.sh
 	@cd $(LIBVORBISPATH) && configure --enable-static=yes
-	@cd $(LIBVORBISPATH) && make
+	@cd $(LIBVORBISPATH) && $(MAKE)
 
 libvorbis: paths $(LIBVORBIS)
 
@@ -472,7 +474,7 @@ libvorbisenc: paths $(LIBVORBISENC)
 $(LIBOPUS):
 	@cd $(LIBOPUSPATH) && autogen.sh
 	@cd $(LIBOPUSPATH) && configure --enable-static=yes
-	@cd $(LIBOPUSPATH) && make
+	@cd $(LIBOPUSPATH) && $(MAKE)
 
 libopus: paths $(LIBOPUS)
 
@@ -481,7 +483,7 @@ libopus: paths $(LIBOPUS)
 #
 $(LIBMPG123):
 	@cd $(LIBMPG123PATH) && configure --enable-static --disable-shared --enable-libmpg123 --disable-modules
-	@cd $(LIBMPG123PATH) && make
+	@cd $(LIBMPG123PATH) && $(MAKE)
 
 libmpg123: paths $(LIBMPG123)
 
@@ -490,7 +492,7 @@ libmpg123: paths $(LIBMPG123)
 #
 $(LIBLAME):
 	@cd $(LIBLAMEPATH) && configure --enable-static=yes
-	@cd $(LIBOPUSPATH) && make
+	@cd $(LIBOPUSPATH) && $(MAKE)
 
 liblame: paths $(LIBLAME)
 
