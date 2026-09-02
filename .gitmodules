@@ -76,3 +76,6 @@
 [submodule "modules/mpg123"]
 	path = modules/mpg123
 	url = https://github.com/spotlessmind1975/mpg123.git
+[submodule "modules/lame"]
+	path = modules/lame
+	url = https://github.com/spotlessmind1975/lame.git
