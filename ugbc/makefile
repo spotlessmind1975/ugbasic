@@ -69,7 +69,7 @@ LIBOPUSPATH=../modules/opus
 LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
 LIBMPG123PATH=../modules/mpg123
 LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
-LIBLAMEPATH=../modules/lame/libmp3lame
+LIBLAMEPATH=../modules/lame
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
