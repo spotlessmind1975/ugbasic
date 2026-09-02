@@ -49,6 +49,8 @@ LIBOPUS=../modules/opus/.libs/libopus.a
 LIBOPUSPATH=../modules/opus
 LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
 LIBMPG123PATH=../modules/mpg123
+LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
+LIBLAMEPATH=../modules/lame/libmp3lame
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
@@ -66,15 +68,17 @@ LIBOPUS=../modules/opus/.libs/libopus.a
 LIBOPUSPATH=../modules/opus
 LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
 LIBMPG123PATH=../modules/mpg123
+LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
+LIBLAMEPATH=../modules/lame/libmp3lame
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -I $(LIBMPG123PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -I $(LIBLAMEPATH)/include -I $(LIBMPG123PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBSNDFILECOMMON) -lmvec -lm -lmp3lame
+LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME) $(LIBSNDFILECOMMON) -lmvec -lm
 
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
@@ -480,6 +484,15 @@ $(LIBMPG123):
 	@cd $(LIBMPG123PATH) && make
 
 libmpg123: paths $(LIBMPG123)
+
+#
+#
+#
+$(LIBLAME):
+	@cd $(LIBLAMEPATH) && configure --enable-static=yes
+	@cd $(LIBOPUSPATH) && make
+
+liblame: paths $(LIBLAME)
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -1352,6 +1365,7 @@ compiler:
 	@$(MAKE) libvorbisenc
 	@$(MAKE) libopus
 	@$(MAKE) libmpg123
+	@$(MAKE) liblame
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
