@@ -482,7 +482,7 @@ libopus: paths $(LIBOPUS)
 #
 #
 $(LIBMPG123):
-	@cd $(LIBMPG123PATH) && ./configure --enable-static --disable-shared --enable-libmpg123 --disable-modules
+	@cd $(LIBMPG123PATH) && ./configure --enable-static --disable-shared --disable-components --disable-modules --enable-libmpg123
 	@cd $(LIBMPG123PATH) && $(MAKE)
 
 libmpg123: paths $(LIBMPG123)
