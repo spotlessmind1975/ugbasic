@@ -14,14 +14,14 @@ build () {
 
 make target=atari clean
 
-build atari
-build atarixl
-build c128
-build c128z
-build c64
-build c64reu
-build coco
-build cocob
+#build atari
+#build atarixl
+#build c128
+#build c128z
+#build c64
+#build c64reu
+#build coco
+#build cocob
 build coco3
 build coco3b
 build coleco

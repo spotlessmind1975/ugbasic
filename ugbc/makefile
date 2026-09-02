@@ -445,8 +445,8 @@ libflac: paths $(LIBFLAC)
 #
 #
 $(LIBOGG):
-	@cd $(LIBOGGPATH) && autogen.sh
-	@cd $(LIBOGGPATH) && configure --enable-static=yes
+	@cd $(LIBOGGPATH) && ./autogen.sh
+	@cd $(LIBOGGPATH) && ./configure --enable-static=yes
 	@cd $(LIBOGGPATH) && $(MAKE)
 
 libogg: paths $(LIBOGG)
@@ -455,15 +455,15 @@ libogg: paths $(LIBOGG)
 #
 #
 $(LIBVORBIS):
-	@cd $(LIBVORBISPATH) && autogen.sh
-	@cd $(LIBVORBISPATH) && configure --enable-static=yes
+	@cd $(LIBVORBISPATH) && ./autogen.sh
+	@cd $(LIBVORBISPATH) && ./configure --enable-static=yes
 	@cd $(LIBVORBISPATH) && $(MAKE)
 
 libvorbis: paths $(LIBVORBIS)
 
 $(LIBVORBISENC):
-	@cd $(LIBVORBISPATH) && autogen.sh
-	@cd $(LIBVORBISPATH) && configure --enable-static=yes
+	@cd $(LIBVORBISPATH) && ./autogen.sh
+	@cd $(LIBVORBISPATH) && ./configure --enable-static=yes
 	@cd $(LIBVORBISPATH) && make
 
 libvorbisenc: paths $(LIBVORBISENC)
@@ -472,8 +472,8 @@ libvorbisenc: paths $(LIBVORBISENC)
 #
 #
 $(LIBOPUS):
-	@cd $(LIBOPUSPATH) && autogen.sh
-	@cd $(LIBOPUSPATH) && configure --enable-static=yes
+	@cd $(LIBOPUSPATH) && ./autogen.sh
+	@cd $(LIBOPUSPATH) && ./configure --enable-static=yes
 	@cd $(LIBOPUSPATH) && $(MAKE)
 
 libopus: paths $(LIBOPUS)
@@ -482,7 +482,7 @@ libopus: paths $(LIBOPUS)
 #
 #
 $(LIBMPG123):
-	@cd $(LIBMPG123PATH) && configure --enable-static --disable-shared --enable-libmpg123 --disable-modules
+	@cd $(LIBMPG123PATH) && ./configure --enable-static --disable-shared --enable-libmpg123 --disable-modules
 	@cd $(LIBMPG123PATH) && $(MAKE)
 
 libmpg123: paths $(LIBMPG123)
@@ -491,7 +491,7 @@ libmpg123: paths $(LIBMPG123)
 #
 #
 $(LIBLAME):
-	@cd $(LIBLAMEPATH) && configure --enable-static=yes --disable-frontend
+	@cd $(LIBLAMEPATH) && ./configure --enable-static=yes --disable-frontend
 	@cd $(LIBLAMEPATH) && $(MAKE)
 
 liblame: paths $(LIBLAME)
