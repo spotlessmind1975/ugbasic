@@ -1358,14 +1358,14 @@ lib-cpu: $(OBJS_CPU)
 compiler: 
 	@$(MAKE) paths
 	@$(MAKE) libxml2
-	@$(MAKE) libsndfile
-	@$(MAKE) libflac
-	@$(MAKE) libogg
-	@$(MAKE) libvorbis
-	@$(MAKE) libvorbisenc
-	@$(MAKE) libopus
 	@$(MAKE) libmpg123
 	@$(MAKE) liblame
+	@$(MAKE) libopus
+	@$(MAKE) libvorbis
+	@$(MAKE) libvorbisenc
+	@$(MAKE) libogg
+	@$(MAKE) libflac
+	@$(MAKE) libsndfile
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
