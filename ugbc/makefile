@@ -50,7 +50,7 @@ LIBOPUSPATH=../modules/opus
 LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
 LIBMPG123PATH=../modules/mpg123
 LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
-LIBLAMEPATH=../modules/lame/libmp3lame
+LIBLAMEPATH=../modules/lame
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
