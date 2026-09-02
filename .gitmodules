@@ -67,10 +67,12 @@
 [submodule "modules/libogg"]
 	path = modules/libogg
 	url = https://github.com/spotlessmind1975/libogg.git
-
 [submodule "modules/vorbis"]
 	path = modules/vorbis
 	url = https://github.com/spotlessmind1975/vorbis.git
 [submodule "modules/opus"]
 	path = modules/opus
 	url = https://github.com/xiph/opus.git
+[submodule "modules/mpg123"]
+	path = modules/mpg123
+	url = https://github.com/spotlessmind1975/mpg123.git
