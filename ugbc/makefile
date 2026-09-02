@@ -78,7 +78,7 @@ FLEX_OPTIONS=--8bit
 BISON_OPTIONS=-d
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -I $(LIBLAMEPATH)/include -I $(LIBMPG123PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME) $(LIBSNDFILECOMMON) -lmvec -lm
+LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME) $(LIBSNDFILECOMMON) -lmvec
 
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
@@ -491,8 +491,8 @@ libmpg123: paths $(LIBMPG123)
 #
 #
 $(LIBLAME):
-	@cd $(LIBLAMEPATH) && configure --enable-static=yes
-	@cd $(LIBOPUSPATH) && $(MAKE)
+	@cd $(LIBLAMEPATH) && configure --enable-static=yes --disable-frontend
+	@cd $(LIBLAMEPATH) && $(MAKE)
 
 liblame: paths $(LIBLAME)
 
