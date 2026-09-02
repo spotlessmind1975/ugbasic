@@ -435,7 +435,7 @@ libsndfile: paths $(LIBSNDFILE)
 #
 #
 $(LIBFLAC):
-	@cd $(LIBFLACPATH) && cmake .
+	@cd $(LIBFLACPATH) && cmake --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -B build
 	@cd $(LIBFLACPATH) && make
 
 libflac: paths $(LIBFLAC)
@@ -444,8 +444,8 @@ libflac: paths $(LIBFLAC)
 #
 #
 $(LIBOGG):
-	@cd $(LIBOGGPATH) && cmake .
-	@cd $(LIBOGGPATH) && make
+	@cd $(LIBOGGPATH) && autogen.sh
+	@cd $(LIBOGGPATH) && configure --enable-static=yes
 
 libogg: paths $(LIBOGG)
 
