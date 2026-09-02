@@ -428,7 +428,6 @@ libxml2: paths $(LIBXML2)
 #
 $(LIBSNDFILE):
 	@cd $(LIBSNDFILEPATH) && $(CMAKE) .
-	@cd $(LIBSNDFILEPATH) && ./configure --enable-static=yes
 	@cd $(LIBSNDFILEPATH) && $(MAKE)
 
 libsndfile: paths $(LIBSNDFILE)
