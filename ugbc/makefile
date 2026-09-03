@@ -108,10 +108,12 @@ ifeq ($(OS),Windows_NT)
   CFLAGS += -D_WIN32 -static
   LFLAGS += -static
   CMAKE=$(MINGW_PREFIX)/bin/cmake
+  CMAKEGENERATOR=MSYS Makefiles
 else
   EXESUFFIX = 
   UGBCEXESUFFIX = $(BETASUFFIX)
   CMAKE=cmake
+  CMAKEGENERATOR=Unix Makefiles
 endif
 
 #-----------------------------------------------------------------------------
@@ -427,7 +429,7 @@ libxml2: paths $(LIBXML2)
 #
 #
 $(LIBSNDFILE):
-	@cd $(LIBSNDFILEPATH) && $(CMAKE) .
+	@cd $(LIBSNDFILEPATH) && $(CMAKE) --fresh -S . -G "$(CMAKEGENERATOR)"
 	@cd $(LIBSNDFILEPATH) && $(MAKE)
 
 libsndfile: paths $(LIBSNDFILE)
@@ -436,7 +438,7 @@ libsndfile: paths $(LIBSNDFILE)
 #
 #
 $(LIBFLAC):
-	@cd $(LIBFLACPATH) && $(CMAKE) --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -G "MSYS Makefiles"
+	@cd $(LIBFLACPATH) && $(CMAKE) --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -G "$(CMAKEGENERATOR)"
 	@cd $(LIBFLACPATH) && $(MAKE)
 
 libflac: paths $(LIBFLAC)
