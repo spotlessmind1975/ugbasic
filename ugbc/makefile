@@ -35,8 +35,8 @@
 ifeq ($(OS),Windows_NT)
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
-LIBSNDFILE=../modules/libsndfile/src/.libs/libsndfile.a
-LIBSNDFILECOMMON=../modules/libsndfile/src/.libs/libcommon.a
+LIBSNDFILE=../modules/libsndfile/libsndfile.a
+LIBSNDFILECOMMON=../modules/libsndfile/libcommon.a
 LIBSNDFILEPATH=../modules/libsndfile
 LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
