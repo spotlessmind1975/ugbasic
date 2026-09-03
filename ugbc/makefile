@@ -55,7 +55,6 @@ else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
 LIBSNDFILE=../modules/libsndfile/src/.libs/libsndfile.a
-LIBSNDFILECOMMON=../modules/libsndfile/src/.libs/libcommon.a
 LIBSNDFILEPATH=../modules/libsndfile
 LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
 LIBFLACPATH=../modules/flac
@@ -78,7 +77,7 @@ FLEX_OPTIONS=--8bit
 BISON_OPTIONS=-d
 CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -I $(LIBLAMEPATH)/include -I $(LIBMPG123PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME) $(LIBSNDFILECOMMON)
+LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME)
 
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
