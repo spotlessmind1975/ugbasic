@@ -60,8 +60,6 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
 
     int effectiveLen = ( ( sfInfo.frames  - 1 ) / 2 ) + 2;
     
-    FILE * fh = fopen("samples.pcm", "wb");
-
     unsigned char * samplesBuffer = malloc( effectiveLen );
     memset( samplesBuffer, 0, effectiveLen );
     short * sample = malloc( sizeof( short ) * sfInfo.channels );
@@ -77,8 +75,6 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
         sample0 = sample0 / sfInfo.channels;
         short sample0s = (short) sample0;
 
-        fwrite(&sample0, 2, 1, fh );
-
         sf_readf_short ( sndFile, sample, 1 );
 
         long sample1 = 0;
@@ -88,7 +84,6 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
         sample1 = sample1 / sfInfo.channels;
 
         short sample1s = (short) sample1;
-        fwrite(&sample1s, 2, 1, fh );
 
         samplesBuffer[i>>1] = (unsigned char) 
             ( ( 8 + ( sample0 >> 12 ) ) ) |
@@ -98,8 +93,6 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
             samplesBuffer[i>>1] = 0x11;
         }
     } 
-
-    fclose( fh );
 
     samplesBuffer[effectiveLen-1] = 0;
     
