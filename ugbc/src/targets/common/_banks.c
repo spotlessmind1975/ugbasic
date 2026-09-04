@@ -355,6 +355,9 @@ int banks_store_contiguos( Environment * _environment, Variable * _variable, int
             bank->address += remainSize;
             bank->remains = 0;
             bank = bank->next;
+            if ( ! bank ) {
+                return 0;
+            }
         }
     } else {
         Bank * bank = firstBank;
@@ -370,6 +373,9 @@ int banks_store_contiguos( Environment * _environment, Variable * _variable, int
             bank->address += remainSize;
             bank->remains = 0;
             bank = bank->next;
+            if ( ! bank ) {
+                return 0;
+            }
         }
     }
 
