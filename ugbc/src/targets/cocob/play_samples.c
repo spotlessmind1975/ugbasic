@@ -48,7 +48,7 @@
  */
 /* <usermanual>
 @keyword PLAY SAMPLES
-@target c64
+@target cocob
 </usermanual> */
 void play_samples_var( Environment * _environment, char * _expr ) {
 

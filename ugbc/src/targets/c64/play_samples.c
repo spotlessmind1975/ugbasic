@@ -48,6 +48,24 @@
  */
 /* <usermanual>
 @keyword PLAY SAMPLES
+
+@english
+
+The ''PLAY SAMPLES'' command starts playback of the sample specified as a parameter. 
+Playback is synchronous, and program execution will be interrupted until playback 
+ends.
+
+Since it is possible to upload only one file of the same type at a time, it is necessary 
+to be able to indicate an "alias" with which to exceed this limit. In this regard, there is also 
+the ''AS'' syntax, which allows you to load the same file several times but with different names. 
+
+@italian
+
+@syntax PLAY SAMPLES var
+
+@example fugue = LOAD SAMPLES("fugue.wav")
+@example PLAY SAMPLES fugue
+
 @target c64
 </usermanual> */
 void play_samples_var( Environment * _environment, char * _expr ) {

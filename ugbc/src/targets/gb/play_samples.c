@@ -46,10 +46,6 @@
  * @param _environment Current calling environment
  * @param _channels channels to play off
  */
-/* <usermanual>
-@keyword PLAY SAMPLES
-@target c64
-</usermanual> */
 void play_samples_var( Environment * _environment, char * _expr ) {
 
     Variable * samples = variable_retrieve( _environment, _expr );

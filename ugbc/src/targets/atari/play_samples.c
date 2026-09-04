@@ -48,7 +48,8 @@
  */
 /* <usermanual>
 @keyword PLAY SAMPLES
-@target c64
+@target atari
+@target atarixl
 </usermanual> */
 void play_samples_var( Environment * _environment, char * _expr ) {
 
