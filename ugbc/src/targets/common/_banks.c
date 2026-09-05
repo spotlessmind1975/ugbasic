@@ -290,9 +290,15 @@ int banks_store_standard( Environment * _environment, Variable * _variable, int 
     // size as well.
 
     if ( _variable->uncompressedSize ) {
+#if defined(__coco3__) || defined(__coco3b__)
+        if ( _variable->type != VT_IMAGE && _variable->type != VT_SAMPLES ) {
+#endif
         if ( _environment->maxExpansionBankSize[_resident] < _variable->uncompressedSize ) {
             _environment->maxExpansionBankSize[_resident] = _variable->uncompressedSize;
         }
+#if ( defined(__coco3__) || defined(__coco3b__) )
+        }
+#endif
     } else if ( _variable->frameSize ) {
         if ( _environment->maxExpansionBankSize[_resident] < _variable->frameSize ) {
             _environment->maxExpansionBankSize[_resident] = _variable->frameSize;
