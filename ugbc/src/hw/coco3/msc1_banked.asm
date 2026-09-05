@@ -39,7 +39,7 @@
 MSC1SOURCE          FDB $0000
 
 ; The MSC1 buffer to be refilled.
-MSC1BUFFER          RZB 512
+MSC1BUFFER          RZB 2048
 
 ; Last address filled on buffer.
 MSC1BUFFEREND       FDB $0000
