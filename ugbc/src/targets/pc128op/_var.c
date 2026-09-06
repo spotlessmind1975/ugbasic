@@ -990,14 +990,18 @@ void variable_cleanup( Environment * _environment ) {
             deploy_preferred( bank, src_hw_pc128op_bank_asm );
 
             outhead1("BANKREADBANK%2.2xXSDR", bank->id );
-            outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+            if ( _environment->maxExpansionBankSize[bank->defaultResident] ) {
+                outline1("LDX #BANKWINDOW%2.2x", bank->defaultResident );
+            }
             outhead1("BANKREADBANK%2.2xXS", bank->id );
             outline1("LDB #$%2.2x", bank->id );
             outline0("JMP BANKREAD" );
             _environment->bankAccessOptimization.readn = 1;
 
             outhead1("BANKUNCOMPRESS%2.2xXSDR", bank->id );
-            outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
+            if ( _environment->maxExpansionBankSize[bank->defaultResident] ) {
+                outline1("LDY #BANKWINDOW%2.2x", bank->defaultResident );
+            }
             outhead1("BANKUNCOMPRESS%2.2xXS", bank->id );
             outline1("LDB #$%2.2x", bank->id );
             // outline0("LEAX $6000,X" );
@@ -1103,6 +1107,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( scancode, src_hw_pc128op_scancode_asm );
     deploy_inplace_preferred( textEncodedAtGraphic, src_hw_ef936x_text_at_asm );
     deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_ef936x_text_at_raw_asm );
+    deploy_inplace_preferred( play_samples, src_hw_pc128op_play_samples_asm );
 
     outhead0("CODESTART2");
     outline0("LDS #STACKEND");
