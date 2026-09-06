@@ -52,7 +52,7 @@
 </usermanual> */
 void play_samples_var( Environment * _environment, char * _expr ) {
 
-    deploy( play_samples, src_hw_pc128op_play_samples_asm);
+    deploy_preferred( play_samples, src_hw_pc128op_play_samples_asm);
 
     Variable * samples = variable_retrieve( _environment, _expr );
 
@@ -60,7 +60,13 @@ void play_samples_var( Environment * _environment, char * _expr ) {
         CRITICAL_CANNOT_PLAY_SAMPLES_NOT_SAMPLES( _expr );
     }
 
-    outline1("LDX #%s", samples->realName );
-    outline0("JSR PLAYSAMPLES" );
+    if ( samples->bankAssigned != -1 ) {
+        outline1("LDX #$%4.4x", samples->absoluteAddress );
+        outline1("LDB #$%2.2x", samples->bankAssigned );
+        outline0("JSR PLAYSAMPLESEXP" );
+    } else {
+        outline1("LDX #%s", samples->realName );
+        outline0("JSR PLAYSAMPLES" );
+    }
 
 }
