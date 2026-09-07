@@ -86,7 +86,7 @@ void target_initialization( Environment * _environment ) {
     deploy( vars, src_hw_c16_vars_asm);
     deploy_deferred( startup, src_hw_c16_startup_asm);
 
-    cpu_call( _environment, "PLUS4STARTUP" );
+    cpu_call( _environment, "C16STARTUP" );
 
     setup_text_variables( _environment );
 
