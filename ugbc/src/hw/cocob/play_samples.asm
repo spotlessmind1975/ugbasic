@@ -29,61 +29,79 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             PLAY SAMPLES ON COCOB                           *
+;*                             PLAY SAMPLES ON COCO                             *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 PLAYSAMPLES
-	ORCC #$50
-	LDA $ff01
-	ANDA #%11110111
-	STA $ff01
-	LDA $ff03
-	ANDA #%11110111
-	STA $ff03
-	LDA $ff23
-	ORA #%00001000
-	STA $ff23
-	LDA $ff21
-	ANDA #%11111011
-	STA $ff21
-	LDA #%11111100
-	STA $ff20
-	LDA $ff21
-	ORA #%00000100
-	STA $ff21
+    ORCC #$50
+    LDA $ff01
+    ANDA #%11110111
+    STA $ff01
+    LDA $ff03
+    ANDA #%11110111
+    STA $ff03
+    LDA $ff23
+    ORA #%00001000
+    STA $ff23
+    LDA $ff21
+    ANDA #%11111011
+    STA $ff21
+    LDA #%11111100
+    STA $ff20
+    LDA $ff21
+    ORA #%00000100
+    STA $ff21
 
 PLAYSAMPLESL1
-	LDA ,X+
-	BEQ PLAYSAMPLESDONE
+    LDA ,X+
+    BEQ PLAYSAMPLESDONE
 
-	PSHS D
-	ANDA #$0F
-	LSLA
-	LSLA
-	ANDA #$FC
+    PSHS D
+    ANDA #$0F
+    LSLA
+    LSLA
+    ANDA #$FC
     STA $FF20
 
-	LDB #16
+    LDB #16
 PLAYSAMPLESL2L
-	DECB
-	BNE PLAYSAMPLESL2L
+    DECB
+    BNE PLAYSAMPLESL2L
 
-	PULS D
-	ANDA #$F0
-	LSRA
-	LSRA
-	ANDA #$FC
+    PULS D
+    ANDA #$F0
+    LSRA
+    LSRA
+    ANDA #$FC
     STA $FF20
 
-	LDB #16
+    LDB #16
 PLAYSAMPLESL2H
-	DECB
-	BNE PLAYSAMPLESL2H
+    DECB
+    BNE PLAYSAMPLESL2H
 
-	JMP PLAYSAMPLESL1
+    NOP
+	NOP
+	BRA PLAYSAMPLESNOP
+PLAYSAMPLESNOP
+
+    JMP PLAYSAMPLESL1
 PLAYSAMPLESDONE
+
+    LDA $ff21
+    ANDA #%11111011
+    STA $ff21
+    LDA #%11111111
+    STA $ff20
+    LDA $ff21
+    ORA #%00000100
+    STA $ff21
+    LDA $ff23
+    ANDA #%11110111
+    STA $ff23
+
     ANDCC #$AF
     RTS

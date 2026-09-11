@@ -29,7 +29,7 @@
 ;  ****************************************************************************/
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 ;*                                                                             *
-;*                             PLAY SAMPLES ON COCO3B                           *
+;*                             PLAY SAMPLES ON COCO3                           *
 ;*                                                                             *
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
@@ -101,6 +101,12 @@ PLAYSAMPLESL2L
 PLAYSAMPLESL2H
 	DECB
 	BNE PLAYSAMPLESL2H
+
+    NOP
+	NOP
+	BRA PLAYSAMPLESNOP
+PLAYSAMPLESNOP
+	
 	JMP PLAYSAMPLESL1
 
 PLAYSAMPLESDONE
