@@ -14806,6 +14806,7 @@ Variable * variable_direct_assign( Environment * _environment, char * _var, char
     var->frameCount = expr->frameCount;
     var->readonly = expr->readonly;
     var->compression = expr->compression;
+    var->frequency = expr->frequency;
     expr->assigned = 1;
     var->offsettingFrames = expr->offsettingFrames;
     if ( var->offsettingFrames ) {
