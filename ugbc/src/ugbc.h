@@ -1245,6 +1245,8 @@ typedef struct _Variable {
     int memoryOffsetCount;
     int memoryOffset[ 256 ];
 
+    int frequency;
+
     /**
      *
      */
