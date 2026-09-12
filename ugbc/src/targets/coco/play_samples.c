@@ -60,7 +60,7 @@ void play_samples_var( Environment * _environment, char * _expr ) {
         CRITICAL_CANNOT_PLAY_SAMPLES_NOT_SAMPLES( _expr );
     }
 
-    frequency_to_delay[256] = {
+        int frequency_to_delay[256] = {
             27969,  24189,  21309,  19042,  17211,  15702,  14435,  13358,
             12430,  11623,  10914,  10287,  9728,   9226,   8774,   8364,
             7991,   7649,   7336,   7047,   6780,   6532,   6302,   6088,
@@ -99,12 +99,13 @@ void play_samples_var( Environment * _environment, char * _expr ) {
 
     for( int i=0; i<256; ++i ) {
         if ( frequency_to_delay[i] < samples->frequency ) {
-            delay = frequency_to_delay[i];
+            delay = i;
+            break;
         }
     }
 
     outline1("LDX #%s", samples->realName );
-    outline1("LDA #%2.2x", ( unsigned char) ( delay & 0xff ) );
+    outline1("LDA #$%2.2x", ( unsigned char) ( delay & 0xff ) );
     outline0("STA PLAYSAMPLESL2LR+1" );
     outline0("STA PLAYSAMPLESL2HR+1" );
     outline0("JSR PLAYSAMPLES" );

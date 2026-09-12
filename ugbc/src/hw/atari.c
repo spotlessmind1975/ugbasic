@@ -720,7 +720,7 @@ void atari_fujinet_writeds( Environment * _environment, char * _buffer, int _siz
     outline0( "STA TMPPTR2" );
     outline1( "LDA #>%s",_buffer );
     outline0( "STA TMPPTR2+1" );
-    outline1( "LDA #%2.2x", _size );
+    outline1( "LDA #$%2.2x", _size );
     outline0( "STA MATHPTR2" );
 
     cpu_call( _environment, "FUJINETWRITE" );

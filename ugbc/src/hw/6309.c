@@ -1251,7 +1251,7 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
             outline0("CMPA #$0");
             outline1("BEQ %spos1", label);
             outline0("LDX #$1");
-            outline1("LDA #%2.2x", (unsigned char)((_destination) & 0xff));
+            outline1("LDA #$%2.2x", (unsigned char)((_destination) & 0xff));
             outline0("EORA #$FF");
             outline0("ADDA #$1");
             outline0("STA <TMPPTR");
