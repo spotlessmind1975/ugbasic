@@ -106,12 +106,15 @@ void play_samples_var( Environment * _environment, char * _expr ) {
 
     if ( samples->bankAssigned != -1 ) {
         outline1("LDA #$%2.2x", ( unsigned char) ( delay & 0xff ) );
-        outline0("STA PLAYSAMPLESL2LR+1" );
-        outline0("STA PLAYSAMPLESL2HR+1" );
+        outline0("STA PLAYSAMPLESEXPL2LR+1" );
+        outline0("STA PLAYSAMPLESEXPL2HR+1" );
         outline1("LDA #$%2.2x", samples->bankAssigned );
         outline1("LDX #$%4.4x", samples->absoluteAddress );
         outline0("JSR PLAYSAMPLESEXP" );
     } else {
+        outline1("LDA #$%2.2x", ( unsigned char) ( delay & 0xff ) );
+        outline0("STA PLAYSAMPLESL2LR+1" );
+        outline0("STA PLAYSAMPLESL2HR+1" );
         outline1("LDX #%s", samples->realName );
         outline0("JSR PLAYSAMPLES" );
     }
