@@ -79,3 +79,6 @@
 [submodule "modules/lame"]
 	path = modules/lame
 	url = https://github.com/spotlessmind1975/lame.git
+[submodule "modules/dr_libs"]
+	path = modules/dr_libs
+	url = https://github.com/spotlessmind1975/dr_libs
