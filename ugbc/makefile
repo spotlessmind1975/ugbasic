@@ -35,49 +35,18 @@
 ifeq ($(OS),Windows_NT)
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
-LIBSNDFILE=../modules/libsndfile/libsndfile.a
-LIBSNDFILECOMMON=../modules/libsndfile/libcommon.a
-LIBSNDFILEPATH=../modules/libsndfile
-LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
-LIBFLACPATH=../modules/flac
-LIBOGG=../modules/libogg/src/.libs/libogg.a
-LIBOGGPATH=../modules/libogg
-LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
-LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
-LIBVORBISPATH=../modules/vorbis
-LIBOPUS=../modules/opus/.libs/libopus.a
-LIBOPUSPATH=../modules/opus
-LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
-LIBMPG123PATH=../modules/mpg123
-LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
-LIBLAMEPATH=../modules/lame
 else
 LIBXML2=../modules/libxml2/.libs/libxml2.a
 LIBXML2PATH=../modules/libxml2
-LIBSNDFILE=../modules/libsndfile/src/.libs/libsndfile.a
-LIBSNDFILEPATH=../modules/libsndfile
-LIBFLAC=../modules/flac/src/libFLAC/libFLAC.a
-LIBFLACPATH=../modules/flac
-LIBOGG=../modules/libogg/src/.libs/libogg.a
-LIBOGGPATH=../modules/libogg
-LIBVORBIS=../modules/vorbis/lib/.libs/libvorbis.a
-LIBVORBISENC=../modules/vorbis/lib/.libs/libvorbisenc.a
-LIBVORBISPATH=../modules/vorbis
-LIBOPUS=../modules/opus/.libs/libopus.a
-LIBOPUSPATH=../modules/opus
-LIBMPG123=../modules/mpg123/src/libmpg123/.libs/libmpg123.a
-LIBMPG123PATH=../modules/mpg123
-LIBLAME=../modules/lame/libmp3lame/.libs/libmp3lame.a
-LIBLAMEPATH=../modules/lame
 endif
 
 REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -I $(LIBSNDFILEPATH)/include -I $(LIBFLACPATH)/include -I $(LIBOGGPATH)/include -I $(LIBVORBISPATH)/include -I $(LIBOPUSPATH)/include -I $(LIBLAMEPATH)/include -I $(LIBMPG123PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
-LIBS=$(LIBXML2) $(LIBSNDFILE) $(LIBFLAC) $(LIBVORBISENC) $(LIBVORBIS) $(LIBOGG) $(LIBOPUS) $(LIBMPG123) $(LIBLAME)
+LIBS=$(LIBXML2)
 
 BETA=$(shell cat ../.git/HEAD | grep beta)
 
@@ -423,79 +392,6 @@ $(LIBXML2):
 	@cd $(LIBXML2PATH) && $(MAKE)
 
 libxml2: paths $(LIBXML2)
-
-#
-#
-#
-$(LIBSNDFILE):
-	@cd $(LIBSNDFILEPATH) && $(CMAKE) --fresh -S . -G "$(CMAKEGENERATOR)"
-	@cd $(LIBSNDFILEPATH) && $(MAKE)
-
-libsndfile: paths $(LIBSNDFILE)
-
-#
-#
-#
-$(LIBFLAC):
-	@cd $(LIBFLACPATH) && $(CMAKE) --fresh -D BUILD_PROGRAMS=OFF -D INSTALL_MANPAGES=OFF -S . -G "$(CMAKEGENERATOR)"
-	@cd $(LIBFLACPATH) && $(MAKE)
-
-libflac: paths $(LIBFLAC)
-
-#
-#
-#
-$(LIBOGG):
-	@cd $(LIBOGGPATH) && ./autogen.sh
-	@cd $(LIBOGGPATH) && ./configure --enable-static=yes
-	@cd $(LIBOGGPATH) && $(MAKE)
-
-libogg: paths $(LIBOGG)
-
-#
-#
-#
-$(LIBVORBIS):
-	@cd $(LIBVORBISPATH) && ./autogen.sh
-	@cd $(LIBVORBISPATH) && ./configure --enable-static=yes
-	@cd $(LIBVORBISPATH) && $(MAKE)
-
-libvorbis: paths $(LIBVORBIS)
-
-$(LIBVORBISENC):
-	@cd $(LIBVORBISPATH) && ./autogen.sh
-	@cd $(LIBVORBISPATH) && ./configure --enable-static=yes
-	@cd $(LIBVORBISPATH) && make
-
-libvorbisenc: paths $(LIBVORBISENC)
-
-#
-#
-#
-$(LIBOPUS):
-	@cd $(LIBOPUSPATH) && ./autogen.sh
-	@cd $(LIBOPUSPATH) && ./configure --enable-static=yes
-	@cd $(LIBOPUSPATH) && $(MAKE)
-
-libopus: paths $(LIBOPUS)
-
-#
-#
-#
-$(LIBMPG123):
-	@cd $(LIBMPG123PATH) && ./configure --enable-static --disable-shared --disable-components --disable-modules --enable-libmpg123
-	@cd $(LIBMPG123PATH) && $(MAKE)
-
-libmpg123: paths $(LIBMPG123)
-
-#
-#
-#
-$(LIBLAME):
-	@cd $(LIBLAMEPATH) && ./configure --enable-static=yes --disable-frontend
-	@cd $(LIBLAMEPATH) && $(MAKE)
-
-liblame: paths $(LIBLAME)
 
 # ----------------------------------------------------------------------------
 # ----------------------------------------------------------------------------
@@ -1361,14 +1257,6 @@ lib-cpu: $(OBJS_CPU)
 compiler: 
 	@$(MAKE) paths
 	@$(MAKE) libxml2
-	@$(MAKE) libmpg123
-	@$(MAKE) liblame
-	@$(MAKE) libopus
-	@$(MAKE) libvorbis
-	@$(MAKE) libvorbisenc
-	@$(MAKE) libogg
-	@$(MAKE) libflac
-	@$(MAKE) libsndfile
 	@$(MAKE) lib-cpu
 	@$(MAKE) $(OBJS)
 	@$(CC) $(LFLAGS) $(OBJS) -o exe/ugbc.$(target)$(UGBCEXESUFFIX) \
