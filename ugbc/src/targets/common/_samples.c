@@ -35,50 +35,56 @@
 #include "../../ugbc.h"
 
 #include <stdio.h>
-#include <sndfile.h>
+// #include <sndfile.h>
+#define DR_FLAC_IMPLEMENTATION
+#include "../../libs/dr_flac.h"
+
+#define DR_MP3_IMPLEMENTATION
+#include "../../libs/dr_mp3.h"
+
+#define DR_WAV_IMPLEMENTATION
+#include "../../libs/dr_wav.h"
 
 /****************************************************************************
  * CODE SECTION 
  ****************************************************************************/
 
-Variable * samples_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+static Variable * samples_load_mp3_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+
+    drmp3 mp3;
+    if (!drmp3_init_file(&mp3, _filename, NULL)) {
+        return NULL;
+    }
 
     Variable * result = variable_temporary( _environment, VT_SAMPLES, "(samples)");
 
-    SF_INFO sfInfo;
-    memset( &sfInfo, 0, sizeof(SF_INFO) );
-    SNDFILE * sndFile = sf_open( _filename, SFM_READ, &sfInfo) ;
+    result->frequency = mp3.sampleRate;
 
-    result->frequency = sfInfo.samplerate;
+    int pcmCount = drmp3_get_pcm_frame_count(&mp3);
+    int effectiveLen = ( ( pcmCount - 1 ) / 2 ) + 2;
 
-    if ( !sndFile ) {
-        CRITICAL_CANNOT_LOAD_SAMPLES(_filename);
-    }
-
-    int effectiveLen = ( ( sfInfo.frames  - 1 ) / 2 ) + 2;
-    
     unsigned char * samplesBuffer = malloc( effectiveLen );
     memset( samplesBuffer, 0, effectiveLen );
-    short * sample = malloc( sizeof( short ) * sfInfo.channels );
+    short * sample = malloc( sizeof( short ) * mp3.channels );
     short sample0 = 0, sample1 = 0;
-    for( int i = 0; i<sfInfo.frames; i+=2 ) {
+    for( int i = 0; i<pcmCount; i+=2 ) {
         
-        sf_readf_short ( sndFile, sample, 1 );
+        drmp3_read_pcm_frames_s16(&mp3, 1, sample);
 
         long sample0 = 0;
-        for( int j=0; j<sfInfo.channels; ++j ) {
+        for( int j=0; j<mp3.channels; ++j ) {
             sample0 += sample[j];
         }
-        sample0 = sample0 / sfInfo.channels;
+        sample0 = sample0 / mp3.channels;
         short sample0s = (short) sample0;
 
-        sf_readf_short ( sndFile, sample, 1 );
+        drmp3_read_pcm_frames_s16(&mp3, 1, sample);
 
         long sample1 = 0;
-        for( int j=0; j<sfInfo.channels; ++j ) {
+        for( int j=0; j<mp3.channels; ++j ) {
             sample1 += sample[j];
         }
-        sample1 = sample1 / sfInfo.channels;
+        sample1 = sample1 / mp3.channels;
 
         short sample1s = (short) sample1;
 
@@ -95,7 +101,143 @@ Variable * samples_load_to_variable( Environment * _environment, char * _filenam
     
     variable_store_buffer( _environment, result->name, samplesBuffer, effectiveLen, 0 );
 
-    sf_close( sndFile );
+    drmp3_uninit( &mp3 );
+
+    return result;
+
+}
+
+static Variable * samples_load_flac_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+
+    drflac* pFlac = drflac_open_file(_filename, NULL);
+    if (pFlac == NULL) {
+        return NULL;
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SAMPLES, "(samples)");
+
+    result->frequency = pFlac->sampleRate;
+
+    int pcmCount = pFlac->totalPCMFrameCount;
+    int effectiveLen = ( ( pcmCount - 1 ) / 2 ) + 2;
+
+    unsigned char * samplesBuffer = malloc( effectiveLen );
+    memset( samplesBuffer, 0, effectiveLen );
+    short * sample = malloc( sizeof( short ) * pFlac->channels );
+    short sample0 = 0, sample1 = 0;
+    for( int i = 0; i<pcmCount; i+=2 ) {
+        
+        drflac_read_pcm_frames_s16(pFlac, 1, sample);
+
+        long sample0 = 0;
+        for( int j=0; j<pFlac->channels; ++j ) {
+            sample0 += sample[j];
+        }
+        sample0 = sample0 / pFlac->channels;
+        short sample0s = (short) sample0;
+
+        drflac_read_pcm_frames_s16(pFlac, 1, sample);
+
+        long sample1 = 0;
+        for( int j=0; j<pFlac->channels; ++j ) {
+            sample1 += sample[j];
+        }
+        sample1 = sample1 / pFlac->channels;
+
+        short sample1s = (short) sample1;
+
+        samplesBuffer[i>>1] = (unsigned char) 
+            ( ( 8 + ( sample0 >> 12 ) ) ) |
+            ( ( ( 8 + ( sample1 >> 12 ) ) ) << 4 )
+            ;
+        if ( samplesBuffer[i>>1] == 0 ) {
+            samplesBuffer[i>>1] = 0x11;
+        }
+    } 
+
+    samplesBuffer[effectiveLen-1] = 0;
+    
+    variable_store_buffer( _environment, result->name, samplesBuffer, effectiveLen, 0 );
+
+    drflac_close( pFlac );
+
+    return result;
+
+}
+
+static Variable * samples_load_wav_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+
+    drwav wav;
+    if (!drwav_init_file(&wav, _filename, NULL)) {
+        return NULL;
+    }
+
+    Variable * result = variable_temporary( _environment, VT_SAMPLES, "(samples)");
+
+    result->frequency = wav.sampleRate;
+
+    int pcmCount = wav.totalPCMFrameCount;
+    int effectiveLen = ( ( pcmCount - 1 ) / 2 ) + 2;
+
+    unsigned char * samplesBuffer = malloc( effectiveLen );
+    memset( samplesBuffer, 0, effectiveLen );
+    short * sample = malloc( sizeof( short ) * wav.channels );
+    short sample0 = 0, sample1 = 0;
+    for( int i = 0; i<pcmCount; i+=2 ) {
+        
+        drwav_read_pcm_frames_s16(&wav, 1, sample);
+
+        long sample0 = 0;
+        for( int j=0; j<wav.channels; ++j ) {
+            sample0 += sample[j];
+        }
+        sample0 = sample0 / wav.channels;
+        short sample0s = (short) sample0;
+
+        drwav_read_pcm_frames_s16(&wav, 1, sample);
+
+        long sample1 = 0;
+        for( int j=0; j<wav.channels; ++j ) {
+            sample1 += sample[j];
+        }
+        sample1 = sample1 / wav.channels;
+
+        short sample1s = (short) sample1;
+
+        samplesBuffer[i>>1] = (unsigned char) 
+            ( ( 8 + ( sample0 >> 12 ) ) ) |
+            ( ( ( 8 + ( sample1 >> 12 ) ) ) << 4 )
+            ;
+        if ( samplesBuffer[i>>1] == 0 ) {
+            samplesBuffer[i>>1] = 0x11;
+        }
+    } 
+
+    samplesBuffer[effectiveLen-1] = 0;
+    
+    variable_store_buffer( _environment, result->name, samplesBuffer, effectiveLen, 0 );
+
+    drwav_uninit( &wav );
+
+    return result;
+
+}
+
+Variable * samples_load_to_variable( Environment * _environment, char * _filename, char * _alias, int _bank_expansion ) {
+
+    Variable * result = samples_load_mp3_to_variable( _environment, _filename, _alias, _bank_expansion );
+
+    if ( !result ) {
+        result = samples_load_flac_to_variable( _environment, _filename, _alias, _bank_expansion );
+    }
+
+    if ( !result ) {
+        result = samples_load_wav_to_variable( _environment, _filename, _alias, _bank_expansion );
+    }
+
+    if ( ! result ) {
+        CRITICAL_CANNOT_LOAD_SAMPLES(_filename);
+    }
 
     return result;
 
