@@ -10910,10 +10910,14 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
     printf("\t                d64 - D64 disk image\n" );
 #elif defined(__c128z__) || defined(__plus4__) || defined(__c16__)
     printf("\t                prg - program binary file\n" );
-#elif defined(__coco__) || defined(__cocob__) || defined(__coco3__) || defined(__coco3b__)
+#elif defined(__coco__) || defined(__cocob__)
+    printf("\t                bin    - COCO binary file\n" );
+    printf("\t                dsk    - COCO disk basic (binary loader)\n" );
+#elif defined(__coco3__) || defined(__coco3b__)
     printf("\t                bin    - COCO binary file\n" );
     printf("\t                dsk    - COCO disk basic (binary loader)\n" );
     printf("\t                dskold - COCO disk basic (BASIC loader)\n" );
+    printf("\t                ram    - COCO ram image for XRoar\n" );
 #elif defined(__coleco__)
     printf("\t                rom - cartridge ROM\n" );
 #elif defined(__cpc__)

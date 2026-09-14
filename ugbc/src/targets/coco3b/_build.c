@@ -1010,6 +1010,10 @@ void generate_dsk_new( Environment * _environment ) {
 
 }
 
+void generate_ram( Environment * _environment ) {
+
+}
+
 void target_linkage( Environment * _environment ) {
 
     switch( _environment->outputFileType ) {
@@ -1024,6 +1028,9 @@ void target_linkage( Environment * _environment ) {
         case OUTPUT_FILE_TYPE_DSK_NEW:
             generate_bin( _environment );
             generate_dsk_new( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_RAM:
+            generate_ram( _environment );
             break;
         default:
             CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );
