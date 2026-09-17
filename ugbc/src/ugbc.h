@@ -3923,6 +3923,7 @@ int yywarning ( Environment * _ignored, const char * _message );
 #define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_DSK(d,f) CRITICALB3("B001 - cannot read executable for disk image", d, f );
 #define CRITICAL_BUILD_INVALID_FILENAME_K7(f) CRITICALB2("B002 - invalid filename for K7 format", f );
 #define CRITICAL_BINARY_FILE_TOO_BIG_FOR_ROM(s) CRITICALB2i("B003 - binary file too big for ROM image", s );
+#define CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_RAM(d) CRITICALB2("B004 - cannot read executable for RAM image", d );
 
 #define WARNING( s ) if ( ((struct _Environment *)_environment)->warningsEnabled) { yywarning(_environment, s ); }
 #define WARNING2( s, v ) if ( ((struct _Environment *)_environment)->warningsEnabled) { char message[MAX_TEMPORARY_STORAGE]; sprintf(message, "%s %s", s, v); yywarning(_environment, message ); }
@@ -6504,6 +6505,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco3.h"
     #include "hw/sn76489m.h"
+    #include "outputs/decb.h"
 #elif defined(__coco3b__)
     #define targetDescription "TRS-80 Color Computer 3 (Motorola 6309)"
     #define defaultExtension "dsk"
@@ -6513,6 +6515,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco3b.h"
     #include "hw/sn76489m.h"
+    #include "outputs/decb.h"
 #elif defined(__coleco__)
     #define targetDescription "ColecoVision"
     #define defaultExtension "rom"
