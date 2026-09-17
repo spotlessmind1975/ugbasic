@@ -76,6 +76,8 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
         realFrame = frame;
     }
 
+    deploy_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
+    
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
@@ -268,10 +270,6 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.bankNumber = image->bankAssigned;
                 resource.isCompiled = 0;
                 resource.compression = image->uncompressedSize ? 1 : 0;
-
-                if ( resource.compression ) {
-                    deploy_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
-                }
                 
                 gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {
