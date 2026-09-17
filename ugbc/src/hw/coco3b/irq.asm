@@ -74,6 +74,8 @@ OLDD
 
 ISVCIRQ
 
+@IF outputFileType != RAM
+
     NOP
     NOP
     NOP
@@ -95,6 +97,8 @@ ISVCIRQ
 
     PSHS D
 
+@ENDIF
+
     LDA GIMEVIDMSHADOW
     BEQ SKIPGIMEROM
 
@@ -105,6 +109,7 @@ SKIPGIMEROM
 
     LDA GIMEMMU6
     STA BANKSHADOWSHADOW
+
     LDA #$3e
     STA GIMEMMU6
 
@@ -133,6 +138,8 @@ SKIPGIMEROM
     LDD #0
     STD $00e3
     STA $FFDE
+
+@IF outputFileType != RAM
 
     LDD 14,S
     STD OLDISVC2
@@ -176,6 +183,8 @@ ISVCIRQ2
     ; Save the actual D register
     STD OLDD
 
+@ENDIF
+
     LDA RAMENABLED
     BEQ ISVCIRQ2NORAM
     STA $FFDF
@@ -189,6 +198,10 @@ ISVCIRQMMUOK2
 
     LDA BANKSHADOWSHADOW
     STA GIMEMMU6
+    LDA GIMEINIT1SHADOW
+    STA GIMEINIT1
+
+@IF outputFileType != RAM
 
     ; Push PC
     LDD OLDISVC2
@@ -210,6 +223,15 @@ ISVCIRQMMUOK2
     ; We finished!
     PULS CC, PC    
 
+@ELSE
+
+    LDA $FF02
+    LDA $FF92
+    RTI
+
+@ENDIF
+
+
 NMIISVCIRQ
     PSHS D
     PSHS X
@@ -219,6 +241,9 @@ NMIISVCIRQ
     LDD #0
     STD $00e3
     STA $FFDE
+
+@IF outputFileType != RAM
+
     TFR S, X
     LEAX +14,X
     LDD ,X
@@ -236,6 +261,14 @@ NMIISVCIRQ2
 NMIISVCIRQ2NORAM
     PULS D
     JMP [OLDNMIISVC2]
+
+@ELSE
+
+    LDA $FF03
+    LDA $FF93
+    RTI
+    
+@ENDIF
 
 @IF sysCallUsed
 
