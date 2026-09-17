@@ -1012,6 +1012,53 @@ void generate_dsk_new( Environment * _environment ) {
 
 void generate_ram( Environment * _environment ) {
 
+    // Calculate the effective size.
+    FILE * fh = fopen( _environment->exeFileName, "rb" );
+    int executableBinaryFileSize = 0;
+    if ( fh ) {
+        fseek( fh, 0, SEEK_END );
+        executableBinaryFileSize = ftell( fh );
+        fclose( fh );
+    } else {
+        CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_RAM( _environment->exeFileName );
+    }
+    executableBinaryFileSize -= 5;
+
+    char * originalBinaryFileContent = malloc( executableBinaryFileSize );
+    fh = fopen( _environment->exeFileName, "rb" );
+    (void)!fread( originalBinaryFileContent, 1, 5, fh);
+    (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
+    fclose( fh );
+
+    DECBHandle * handle = decb_create();
+
+    unsigned char ignored = 0x1;
+    decb_add( handle, 1, 0xffdf, &ignored );
+    decb_add( handle, executableBinaryFileSize, 0x2a00, originalBinaryFileContent );
+
+    int anyBank = 0;
+    Bank * bank = _environment->expansionBanks;
+    while( bank ) {
+        int bankSize = bank->space - bank->remains;
+        if ( bankSize > 0 ) {
+            unsigned char id = (unsigned char)(bank->id);
+            decb_add( handle, 1, 0xffa6, &id );
+            decb_add( handle, bankSize, 0xc000, bank->data );
+            anyBank = 1;
+        }
+        bank = bank->next;
+    }
+    if ( anyBank ) {
+        unsigned char defaultBank = 0x3e;
+        decb_add( handle, 1, 0xffa6, &defaultBank );
+    }
+
+    decb_eof( handle, 0x2a00 );
+
+    decb_output( handle, _environment->exeFileName );
+
+    decb_free( handle );
+
 }
 
 void target_linkage( Environment * _environment ) {
@@ -1030,6 +1077,7 @@ void target_linkage( Environment * _environment ) {
             generate_dsk_new( _environment );
             break;
         case OUTPUT_FILE_TYPE_RAM:
+            generate_bin( _environment );
             generate_ram( _environment );
             break;
         default:
