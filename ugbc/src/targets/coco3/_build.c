@@ -1032,6 +1032,8 @@ void generate_ram( Environment * _environment ) {
 
     DECBHandle * handle = decb_create();
 
+    unsigned char ignored = 0x1;
+    decb_add( handle, 1, 0xffdf, &ignored );
     decb_add( handle, executableBinaryFileSize, 0x2a00, originalBinaryFileContent );
 
     int anyBank = 0;
