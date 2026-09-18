@@ -634,7 +634,7 @@ void generate_dsk_new( Environment * _environment ) {
     sprintf( basFileName, "%sloader.bas", temporaryPath);
     fh = fopen( basFileName, "wb" );
     fprintf( fh, "1REM ugBASIC %s\n", UGBASIC_VERSION );
-    fprintf( fh, "2LOADM\"LOADER.BIN\":EXEC&HE00\n");
+    fprintf( fh, "2LOADM\"LOADER.BIN\":EXEC&H18CF\n");
     fclose( fh );
     
     char outputFileName[MAX_TEMPORARY_STORAGE*2];
@@ -697,7 +697,7 @@ void generate_dsk_new( Environment * _environment ) {
 
     // Now we are going to create the ASM loader.
 
-    int loaderOffset = 0x19e;
+    int loaderOffset = 0x1a1;
     
     int lineNr = 21;
 

@@ -52,9 +52,12 @@ EOFFLG          EQU $0070
 FNBUF           EQU $094c
 DRVNUM          EQU $00eb
 
-    ORG $0e00
+    ORG $18CF
 
 START
+
+    JSR COPYSTACK
+
     JSR INITDSK
     LDA $FF91
     ANDA #$FE
@@ -69,7 +72,7 @@ NEXTFIL
     LDA #'.'
     STA ,Y+
     STY CURPOS
-    BCC NEXTFIL
+    BRA NEXTFIL
 ALLDONE         
     JMP $2a00
 
@@ -77,7 +80,7 @@ COPYBLOCK
     PSHS X
     ORCC #$50
     LDU #$2000
-    LDX #$1100
+    LDX #SPAREAREA
 COPYBLOCKDEST
     LDY #$0000
     STA $ffdf
@@ -95,7 +98,7 @@ COPYBLOCKL1
 COPYBLOCKGIME
     ORCC #$50
     LDU #$2000
-    LDX #$1100
+    LDX #SPAREAREA
     LDY #$c000
     STA $ffdf
 COPYBLOCKGIMEBANK
@@ -126,7 +129,7 @@ CPYNAM
     STD COPYBLOCKDEST+2
     CMPD #$2A00
     BEQ CPYNAM2
-    LDD #$1100
+    LDD #SPAREAREA
 CPYNAM2
     STD DESTPTR
     LDB ,X+
@@ -275,4 +278,36 @@ CURPOS          FDB $0400
 FILETAB
     fcb $42, $42
     RZB 14 * 64
+STACKLOAD
+    RZB 256
 
+COPYSTACK
+    ORCC    #$50
+
+    PSHS X
+    PSHS D
+    
+    LDX     #STACKLOAD
+    STX     $001F
+    TFR     S, X
+
+    LDS     #STACKLOAD
+    STS     $0021
+
+    LDB     #$FF
+
+    ; Move stack to $0D00
+COPYSTACKL1
+    LDA     B,X
+    STA     B,S
+    DECB
+    BNE     COPYSTACKL1
+
+    PULS D
+    PULS X
+
+    ANDCC   #$9F
+
+    RTS
+
+SPAREAREA
