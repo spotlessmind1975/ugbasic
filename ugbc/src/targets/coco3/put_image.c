@@ -77,7 +77,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
     }
 
     deploy_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
-    
+
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
@@ -403,6 +403,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     Resource resource;
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
+    resource.bankNumber = image->bankAssigned;
 
     gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
@@ -414,6 +415,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
+    resource.bankNumber = image->bankAssigned;
 
     gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 

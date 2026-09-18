@@ -3860,6 +3860,7 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
+        resource.bankNumber = -1;
         gime_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDY #0" );
@@ -3871,6 +3872,8 @@ void gime_blit_image( Environment * _environment, char * _sources[], int _source
         resource.realName = strdup( _sources[1] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
+        resource.bankNumber = -1;
+        resource.bankNumber = -1;
         gime_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
     } else {
         outline0( "LDY #0" );
@@ -3988,6 +3991,7 @@ void gime_put_image( Environment * _environment, Resource * _image, char * _x, c
         outline1("LDD %s", _flags );
         outline0("STB <IMAGEF" );
         outline0("STA <IMAGET" );
+
         outline1("LDA #$%2.2x", _image->bankNumber );
 
         if ( _image->compression ) {

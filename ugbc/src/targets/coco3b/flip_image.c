@@ -125,6 +125,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.bankNumber = image->bankAssigned;
 
                 gime_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
 
@@ -189,6 +190,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.bankNumber = image->bankAssigned;
 
                 gime_flip_image( _environment, &resource, NULL, NULL, image->frameSize, 0, _direction );
                 
@@ -229,6 +231,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 Resource resource;
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
+                resource.bankNumber = image->bankAssigned;
 
                 gime_flip_image( _environment, &resource, NULL, NULL, 0, 0, _direction );
 

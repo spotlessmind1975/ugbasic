@@ -15191,6 +15191,7 @@ Resource * build_resource_for_sequence( Environment * _environment, char * _imag
     resource->realName = image->realName;
     resource->type = image->type;
     resource->compression = image->compression;
+    resource->bankNumber = image->bankAssigned;
 
     if ( resource->type == VT_ADDRESS ) {
         resource->isAddress = 1;
