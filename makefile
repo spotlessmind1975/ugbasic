@@ -712,11 +712,17 @@ generated/coco/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 generated/coco/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -3 -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/coco/exe/%.ram: $(subst /exe/,/asm/,$(@:.ram=.asm))
+	@$(ASM6809) -l $(@:.ram=.lis) -s $(@:.ram=.lbl) -3 -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.ram=.asm))
+
 generated/coco/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/coco/exeso/,,$(@:.dsk=.bas))
 
 generated/coco/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/coco/exeso/,,$(@:.bin=.bas))
+
+generated/coco/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ram=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.coco$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O ram $(subst generated/coco/exeso/,,$(@:.ram=.bas))
 
 #------------------------------------------------ 
 # cocob:
@@ -736,11 +742,17 @@ generated/cocob/exe/%.dsk: $(subst /exe/,/asm/,$(@:.dsk=.asm))
 generated/cocob/exe/%.bin: $(subst /exe/,/asm/,$(@:.bin=.asm))
 	@$(ASM6809) -3 -l $(@:.bin=.lis) -s $(@:.bin=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.bin=.asm))
 
+generated/cocob/exe/%.ram: $(subst /exe/,/asm/,$(@:.ram=.asm))
+	@$(ASM6809) -3 -l $(@:.ram=.lis) -s $(@:.ram=.lbl) -C -e 10752 -o $(@) $(subst /exe/,/asm/,$(@:.ram=.asm))
+
 generated/cocob/exeso/%.dsk: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.dsk=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -L ../$(@:.dsk=.lis) -o ../$@ -O dsk $(subst generated/cocob/exeso/,,$(@:.dsk=.bas))
 
 generated/cocob/exeso/%.bin: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.bin=.bas))
 	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O bin $(subst generated/cocob/exeso/,,$(@:.bin=.bas))
+
+generated/cocob/exeso/%.ram: $(subst /generated/exeso/,/$(EXAMPLESDIR)/,$(@:.ram=.bas))
+	@cd $(EXAMPLESDIR) && ../ugbc/exe/ugbc.cocob$(UGBCEXESUFFIX) $(OPTIONS) -o ../$@ -O ram $(subst generated/cocob/exeso/,,$(@:.ram=.bas))
 
 #------------------------------------------------ 
 # coco3:

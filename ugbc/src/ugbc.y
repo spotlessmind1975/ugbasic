@@ -10913,6 +10913,7 @@ void show_usage_and_exit( int _argc, char *_argv[] ) {
 #elif defined(__coco__) || defined(__cocob__)
     printf("\t                bin    - COCO binary file\n" );
     printf("\t                dsk    - COCO disk basic (binary loader)\n" );
+    printf("\t                ram    - COCO ram image for XRoar\n" );
 #elif defined(__coco3__) || defined(__coco3b__)
     printf("\t                bin    - COCO binary file\n" );
     printf("\t                dsk    - COCO disk basic (binary loader)\n" );

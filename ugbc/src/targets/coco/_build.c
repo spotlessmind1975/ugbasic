@@ -457,6 +457,41 @@ void generate_dsk( Environment * _environment ) {
 
 }
 
+void generate_ram( Environment * _environment ) {
+
+    // Calculate the effective size.
+    FILE * fh = fopen( _environment->exeFileName, "rb" );
+    int executableBinaryFileSize = 0;
+    if ( fh ) {
+        fseek( fh, 0, SEEK_END );
+        executableBinaryFileSize = ftell( fh );
+        fclose( fh );
+    } else {
+        CRITICAL_BUILD_CANNOT_READ_EXECUTABLE_FOR_RAM( _environment->exeFileName );
+    }
+    executableBinaryFileSize -= 5;
+
+    char * originalBinaryFileContent = malloc( executableBinaryFileSize );
+    fh = fopen( _environment->exeFileName, "rb" );
+    (void)!fread( originalBinaryFileContent, 1, 5, fh);
+    (void)!fread( originalBinaryFileContent, 1, executableBinaryFileSize, fh);
+    fclose( fh );
+
+    DECBHandle * handle = decb_create();
+
+    unsigned char ignored = 0x1;
+    decb_add( handle, 1, 0xffdf, &ignored );
+    
+    decb_add( handle, executableBinaryFileSize, 0x2a00, originalBinaryFileContent );
+
+    decb_eof( handle, 0x2a00 );
+
+    decb_output( handle, _environment->exeFileName );
+
+    decb_free( handle );
+
+}
+
 void target_linkage( Environment * _environment ) {
 
     switch( _environment->outputFileType ) {
@@ -466,6 +501,10 @@ void target_linkage( Environment * _environment ) {
         case OUTPUT_FILE_TYPE_DSK:
             generate_bin( _environment );
             generate_dsk( _environment );
+            break;
+        case OUTPUT_FILE_TYPE_RAM:
+            generate_bin( _environment );
+            generate_ram( _environment );
             break;
         default:
             CRITICAL_UNSUPPORTED_OUTPUT_FILE_TYPE( OUTPUT_FILE_TYPE_AS_STRING[_environment->outputFileType] );

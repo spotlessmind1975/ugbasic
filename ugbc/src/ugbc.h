@@ -6487,6 +6487,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/coco.h"
     #include "hw/sn76489m.h"
+    #include "outputs/decb.h"
 #elif defined(__cocob__)
     #define targetDescription "TRS-80 Color Computer 1/2 (Motorola 6309)"
     #define defaultExtension "dsk"
@@ -6496,6 +6497,7 @@ Variable *              y_text_get( Environment * _environment, char * _y );
     #include "hw/pia.h"
     #include "hw/cocob.h"
     #include "hw/sn76489m.h"
+    #include "outputs/decb.h"
 #elif defined(__coco3__)
     #define targetDescription "TRS-80 Color Computer 3 (Motorola 6809)"
     #define defaultExtension "dsk"
