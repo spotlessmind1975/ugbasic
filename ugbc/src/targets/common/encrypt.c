@@ -76,7 +76,7 @@ Si noti che la dimensione della chiave deve essere uguale alla dimensione dei da
 @example data = ENCRYPT( params, "OKOK")
 
 </usermanual> */
-Variable * encrypt( Environment * _environment, char * _data, char * _key ) {
+Variable * encrypter( Environment * _environment, char * _data, char * _key ) {
 
     Variable * data = variable_retrieve( _environment, _data );
     Variable * key = variable_retrieve( _environment, _key );

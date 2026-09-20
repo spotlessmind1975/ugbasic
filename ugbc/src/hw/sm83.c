@@ -8429,7 +8429,7 @@ void cpu_float_single_exp( Environment * _environment, char * _value, char * _re
 
 void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
-    deploy( encrypt, src_hw_sm83_encrypt_asm );
+    deploy( encrypter, src_hw_sm83_encrypt_asm );
 
     outline1("LD HL, (%s)", _output );
     outline0("LD DE, HL" );
@@ -8446,7 +8446,7 @@ void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, c
 
 void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
 
-    deploy( decrypt, src_hw_sm83_decrypt_asm );
+    deploy( decrypter, src_hw_sm83_decrypt_asm );
 
     outline1("LD HL, (%s)", _output );
     outline0("LD DE, HL" );

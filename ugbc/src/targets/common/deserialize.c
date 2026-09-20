@@ -69,7 +69,7 @@ Variable * deserialize( Environment * _environment, char * _data, char * _key, c
 
     if ( _key ) {
         key = variable_retrieve( _environment, _key );
-        cpu_move_8bit( _environment, decrypt( _environment, var->name, _key, var->name )->realName, result->realName );
+        cpu_move_8bit( _environment, decrypter( _environment, var->name, _key, var->name )->realName, result->realName );
     } 
 
     return result;
