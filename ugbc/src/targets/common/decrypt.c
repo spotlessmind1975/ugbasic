@@ -78,7 +78,7 @@ Si noti che la dimensione della chiave deve essere uguale alla dimensione dei da
 @example IF DECRYPT( ENCRYPT( params, "OKOK" ), "OKOK" TO params) THEN: PRINT "OK!": ENDIF
 
 </usermanual> */
-Variable * decrypt( Environment * _environment, char * _data, char * _key, char * _var ) {
+Variable * decrypter( Environment * _environment, char * _data, char * _key, char * _var ) {
 
     Variable * data = variable_retrieve( _environment, _data );
     Variable * key = variable_retrieve( _environment, _key );

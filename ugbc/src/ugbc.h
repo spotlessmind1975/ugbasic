@@ -1993,8 +1993,8 @@ typedef struct _Deployed {
     int chain;
     int syscall;
     int gprint;
-    int encrypt;
-    int decrypt;
+    int encrypter;
+    int decrypter;
     int hex2bin;
     int cpuspeed;
     int play_samples;
@@ -5592,7 +5592,7 @@ DataSegment *           data_segment_define_or_retrieve_numeric( Environment * _
 void                    data_string( Environment * _environment, char * _value );
 void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
-Variable *              decrypt( Environment * _environment, char * _data, char * _key, char * _var );
+Variable *              decrypter( Environment * _environment, char * _data, char * _key, char * _var );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              deserialize( Environment * _environment, char * _data, char * _key, char * _var );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
@@ -5671,7 +5671,7 @@ void                    dojo_get_message_inplace( Environment * _environment, ch
 void                    ellipse( Environment * _environment, char * _x, char * _y, char * _rx, char * _ry, char * _c, int _preserve_color );
 void                    else_if_then( Environment * _environment, char * _expression );
 void                    else_if_then_label( Environment * _environment );
-Variable *              encrypt( Environment * _environment, char * _data, char * _key );
+Variable *              encrypter( Environment * _environment, char * _data, char * _key );
 void                    end( Environment * _environment );
 void                    end_copper( Environment * _environment );  
 void                    end_for( Environment * _environment );

@@ -9570,7 +9570,7 @@ void cpu_move_32bit_unsigned_16bit_unsigned( Environment * _environment, char *_
 
 void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
-    deploy( encrypt, src_hw_6502_encrypt_asm );
+    deploy( encrypter, src_hw_6502_encrypt_asm );
 
     outline1("LDA %s", _data );
     outline0("STA TMPPTR" );
@@ -9594,7 +9594,7 @@ void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, c
 
 void cpu_decrypt( Environment * _environment, char * _data, char * _data_size,  char * _key, char * _key_size, char * _output, char * _result ) {
 
-    deploy( decrypt, src_hw_6502_decrypt_asm );
+    deploy( decrypter, src_hw_6502_decrypt_asm );
 
     outline1("LDA %s", _data );
     outline0("STA TMPPTR" );

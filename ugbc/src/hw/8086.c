@@ -4686,7 +4686,7 @@ void cpu_hex_to_string( Environment * _environment, char * _number, char * _stri
 
 void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output ) {
 
-    deploy( encrypt, src_hw_8086_encrypt_asm );
+    deploy( encrypter, src_hw_8086_encrypt_asm );
 
     outline1("MOV SI, (%s)", _data );
     outline1("MOV DX, (%s)", _key );
@@ -4699,7 +4699,7 @@ void cpu_encrypt( Environment * _environment, char * _data, char * _data_size, c
 
 void cpu_decrypt( Environment * _environment, char * _data, char * _data_size, char * _key, char * _key_size, char * _output, char * _result ) {
 
-    deploy( decrypt, src_hw_8086_decrypt_asm );
+    deploy( decrypter, src_hw_8086_decrypt_asm );
 
     outline1("MOV SI, (%s)", _data );
     outline1("MOV DX, (%s)", _key );

@@ -78,7 +78,7 @@ Variable * serialize( Environment * _environment, char * _data, char * _key ) {
 
     if ( _key ) {
         key = variable_retrieve( _environment, _key );
-        encryptedData = encrypt( _environment, _data, _key );
+        encryptedData = encrypter( _environment, _data, _key );
     } else {
         encryptedData = variable_retrieve( _environment, _data );
     }
