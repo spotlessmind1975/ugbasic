@@ -326,6 +326,20 @@ endif
 endif
 
 #------------------------------------------------ 
+# SED
+#------------------------------------------------ 
+ifeq ($(OS),Windows_NT)
+SED = sed
+else
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+SED = gsed
+else
+SED = sed
+endif
+endif
+
+#------------------------------------------------ 
 # FLEX
 #------------------------------------------------ 
 ifeq ($(OS),Windows_NT)
@@ -1142,8 +1156,8 @@ src-generated/ugbc.yy.c: flex src/ugbc.lex src/ugbc.y
 
 src-generated/ugbc.tab.c: bison src/ugbc.lex src/ugbc.y
 	@$(BISON) ${BISON_OPTIONS} --file-prefix=src-generated/ugbc src/ugbc.y
-	@sed -i 's/YYINITDEPTH 200/YYINITDEPTH  2000/g' $(@)
-	@sed -i 's/YYMAXDEPTH 10000/YYMAXDEPTH 100000/g' $(@)
+	@$(SED) -i 's/YYINITDEPTH 200/YYINITDEPTH  2000/g' $(@)
+	@$(SED) -i 's/YYMAXDEPTH 10000/YYMAXDEPTH 100000/g' $(@)
 
 src-generated/ugbc.embed.yy.c: flex src/ugbc.embed.lex src/ugbc.embed.y
 	@$(FLEX) ${FLEX_OPTIONS} --prefix=embed --outfile=src-generated/ugbc.embed.yy.c src/ugbc.embed.lex
