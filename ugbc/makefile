@@ -312,11 +312,16 @@ endif
 ifeq ($(OS),Windows_NT)
 BISON = bison
 else
+UNAME_S := $(shell uname -s)
+ifeq ($(UNAME_S),Darwin)
+BISON = ./../modules/bison/src/bison$(EXESUFFIX)
+else
 BISON_PATH = $(shell which bison 2>/dev/null)
 ifeq ($(strip $(BISON_PATH)),)
 BISON = ./../modules/bison/src/bison$(EXESUFFIX)
 else
 BISON = $(BISON_PATH)
+endif
 endif
 endif
 
