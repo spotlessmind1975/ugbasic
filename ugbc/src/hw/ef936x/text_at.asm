@@ -295,10 +295,10 @@ TEXTATDBBMSP03
     ANDA #$0F
     LEAY A, Y
     LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR0
     PULS D, Y
 
@@ -505,10 +505,10 @@ TEXTATDBCOMMON
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA _PAPER
     ANDA #$0F
@@ -974,10 +974,10 @@ TEXTATBMSP03
     ANDA #$0F
     LEAY A, Y
     LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR0
     PULS D, Y
 
@@ -1147,10 +1147,10 @@ TEXTATCOMMON
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA _PAPER
     ANDA #$0F

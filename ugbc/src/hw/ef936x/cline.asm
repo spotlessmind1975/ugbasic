@@ -100,10 +100,10 @@ CLINEG4
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA _PAPER
     ANDA #$0F

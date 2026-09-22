@@ -434,10 +434,10 @@ PLOTD4DB
     ANDCC #$FE
     LDA <PLOTCPE
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     
     ;---------
@@ -585,10 +585,10 @@ PLOTD3DB
 PLOTD3LODB0
 
     LDA <MATHPTR5
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA $2000, X
     ANDA #$0F
@@ -615,10 +615,10 @@ PLOTD3LODB1
 PLOTD3LODB2
 
     LDA <MATHPTR5
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA , X
     ANDA #$0F
@@ -1035,10 +1035,10 @@ PLOTD3
     BCS PLOTD3LO  ; yes => set low nibble
 
 PLOTD3HI
-    ASLA          ; no => set high nibble
-    ASLA
-    ASLA
-    ASLA
+    LSLA          ; no => set high nibble
+    LSLA
+    LSLA
+    LSLA
     STA PLOTD3nibble+1
     LDA ,X
     ANDA #$0F

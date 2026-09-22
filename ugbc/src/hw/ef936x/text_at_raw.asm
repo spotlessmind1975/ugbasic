@@ -109,10 +109,10 @@ TEXTATRAWDBBMSP03
     ANDA #$0F
     LEAY A, Y
     LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR0
     PULS D, Y
 
@@ -270,10 +270,10 @@ TEXTATRAWDBCOMMON
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA _PAPER
     ANDA #$0F
@@ -591,10 +591,10 @@ TEXTATRAWBMSP03
     ANDA #$0F
     LEAY A, Y
     LDA , Y
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR0
     PULS D, Y
 
@@ -766,10 +766,10 @@ TEXTATRAWCOMMON
     ANDCC #$FE
     LDA _PEN
     ANDA #$0F
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA <MATHPTR5
     LDA _PAPER
     ANDA #$0F

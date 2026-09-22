@@ -4270,7 +4270,7 @@ void gime_flash_begin( Environment * _environment, char * _index, char * _regist
     outline0("JSR FLASHBEGIN");
     if ( _register ) {
         outline1("LDA %s", _index );
-        outline0("ASLA" );
+        outline0("LSLA" );
         outline0("LDX FLASHREGISTERADDRESSES" );
         outline0("LDY A,X" );
         outline1("LDB %s", _register );

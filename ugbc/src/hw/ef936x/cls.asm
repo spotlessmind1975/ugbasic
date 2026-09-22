@@ -94,10 +94,10 @@ CLS0
 CLS1
 CLS4
     LDA _PEN
-    ASLA
-    ASLA
-    ASLA
-    ASLA
+    LSLA
+    LSLA
+    LSLA
+    LSLA
     STA ,-S
     LDA _PAPER
     ANDA #$0F
