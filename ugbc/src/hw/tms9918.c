@@ -1670,7 +1670,9 @@ void tms9918_initialization( Environment * _environment ) {
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
-    font_descriptors_init( _environment, 0 );
+    _environment->fontConfig.schema = FONT_SCHEMA_EMBEDDED;
+
+    font_descriptors_init( _environment, 1 );
     
     console_calculate( _environment );
 
