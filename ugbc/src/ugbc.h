@@ -1997,6 +1997,7 @@ typedef struct _Deployed {
     int decrypter;
     int hex2bin;
     int cpuspeed;
+    int waittimer;
     int play_samples;
     
 } Deployed;

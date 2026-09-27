@@ -48,6 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
+    deploy_preferred( waittimer, src_hw_coleco_wait_timer_asm )
+
     outline1( "LD HL, $%4.4x", _timing );
     outline0( "CALL WAITTIMER" );
 
@@ -62,6 +64,8 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _timing Number of cycles to wait
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
+
+    deploy_preferred( waittimer, src_hw_coleco_wait_timer_asm )
 
     MAKE_LABEL
 
