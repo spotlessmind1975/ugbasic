@@ -98,15 +98,15 @@ void vars_emit_word( Environment * _environment, char * _name, int _value ) {
 
 void vars_emit_dword( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffff ) );
     } else {
-        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffff ) );
     }
 }
 
 void vars_emit_number( Environment * _environment, char * _name, int _value ) {
     if ( _name ) {
-        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline3("%s:  defw $%4.4x,$%4.4x", _name, (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffff ) );
         if ( _environment->numberConfig.maxBytes > 0 ) {
             out0(" db " );
             for( int i=0; i<(_environment->numberConfig.maxBytes - 4); ++i ) {
@@ -119,7 +119,7 @@ void vars_emit_number( Environment * _environment, char * _name, int _value ) {
             }
         }
     } else {
-        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffffffff ) );
+        outline2(" defw $%4.4x,$%4.4x", (unsigned int)( _value & 0xffff ), (unsigned int)( (_value>>16) & 0xffff ) );
         if ( _environment->numberConfig.maxBytes > 0 ) {
             out0(" db" );
             for( int i=0; i<(_environment->numberConfig.maxBytes - 4); ++i ) {

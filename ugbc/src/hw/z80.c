@@ -9399,7 +9399,7 @@ void cpu_address_table_build( Environment * _environment, char * _table, int * _
 
     outhead1("%s:", _table );
     for( int i=0; i<_count; ++i ) {
-        outline2("DEFW $%4.4x, %s", _values[i], _address[i] );
+        outline2("DEFW $%4.4x, %s", (unsigned short)(_values[i]&0xffff), _address[i] );
     }
 
 }
