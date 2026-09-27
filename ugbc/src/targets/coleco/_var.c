@@ -603,29 +603,44 @@ void variable_cleanup( Environment * _environment ) {
         }
         outhead0("TMS9918AUDCCHAR01:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
+        outline0("LD HL, UDCHAR" );
         outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
         outhead0("TMS9918AUDCCHAR23:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
+        outline0("LD HL, UDCHAR" );
         outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
+        outline0("LD HL, UDCHAR" );
         outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
+        outline0("LD HL, UDCHAR" );
         outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
     } else {
-        outhead0("UDCCHAR: EQU $8000" );
         outhead0("TMS9918AUDCCHAR01:" );
+        outline0("LD BC, 2048" );
+        outline0("LD HL, $15A3" );
+        outline0("LD DE, $0100");
+        outline0("CALL VDPWRITE" );
         outline0("RET" );
         outhead0("TMS9918AUDCCHAR23:" );
+        outline0("LD BC, 2048" );
+        outline0("LD HL, $15A3" );
+        outline0("LD DE, $0100");
+        outline0("CALL VDPWRITE" );
+        outline0("LD BC, 2048" );
+        outline0("LD HL, $15A3" );
+        outline0("LD DE, $0900");
+        outline0("CALL VDPWRITE" );
+        outline0("LD BC, 2048" );
+        outline0("LD HL, $15A3" );
+        outline0("LD DE, $1100");
+        outline0("CALL VDPWRITE" );
         outline0("RET" );
     }
 
