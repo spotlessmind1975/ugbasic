@@ -826,6 +826,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
 
+            font_descriptors_init( _environment, 0 );
+
             outline0("CALL TMS9918AUDCCHAR23");
             outline0("CALL TMS9918SPRITEINIT");
 
