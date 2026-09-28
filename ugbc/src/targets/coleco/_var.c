@@ -604,21 +604,21 @@ void variable_cleanup( Environment * _environment ) {
         }
         outhead0("TMS9918AUDCCHAR01:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCHAR" );
+        outline0("LD HL, UDCCHAR" );
         outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
         outhead0("TMS9918AUDCCHAR23:" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCHAR" );
+        outline0("LD HL, UDCCHAR" );
         outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCHAR" );
+        outline0("LD HL, UDCCHAR" );
         outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCHAR" );
+        outline0("LD HL, UDCCHAR" );
         outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
         outline0("CALL VDPWRITE" );
         outline0("RET" );
