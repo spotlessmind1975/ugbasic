@@ -442,8 +442,12 @@ VDP_RSPRITEA        EQU 85H
 VDP_RSPRITEP        EQU 86H
 VDP_RCOLOR          EQU 87H
 
+@IF deployed.scroll
+
 ONSCROLLVOID:
     RET
+
+@ENDIF
 
 TMS9918STARTUP:
         
@@ -492,6 +496,7 @@ TMS9918STARTUPL1:
         LD A, $e2
         CALL VDPSETREG
 
+@IF deployed.scroll
         LD A, $C3
         LD HL, ONSCROLLUP
         LD (HL), A
@@ -532,6 +537,8 @@ TMS9918STARTUPL1:
         INC HL
         LD A, D
         LD (HL), A
+
+@ENDIF
 
         LD E, $83
         CALL VDPREGIN

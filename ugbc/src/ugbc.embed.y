@@ -580,6 +580,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.joystick;
             } else if ( strcmp( $3, "fp" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.fp_vars;
+            } else if ( strcmp( $3, "scroll" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.scroll;
             } else {
                 $$ = 0;
             }
