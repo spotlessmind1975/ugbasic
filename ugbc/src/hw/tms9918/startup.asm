@@ -460,43 +460,35 @@ TMS9918STARTUPL1:
 
 
         CALL VDPLOCK
-        LD A, VDP_R0
-        LD E, A
+        LD E, VDP_R0
         LD A, $00
         CALL VDPSETREG
 
-        LD A, VDP_RNAME
-        LD E, A
+        LD E, VDP_RNAME
         LD A, $06
         CALL VDPSETREG
 
-        LD A, VDP_RCOLORTABLE
-        LD E, A
+        LD E, VDP_RCOLORTABLE
         LD A, $80
         CALL VDPSETREG
 
-        LD A, VDP_RPATTERN
-        LD E, A
+        LD E, VDP_RPATTERN
         LD A, $00
         CALL VDPSETREG
 
-        LD A, VDP_RSPRITEA
-        LD E, A
+        LD E, VDP_RSPRITEA
         LD A, $36
         CALL VDPSETREG
 
-        LD A, VDP_RSPRITEP
-        LD E, A
+        LD E, VDP_RSPRITEP
         LD A, $07
         CALL VDPSETREG
 
-        LD A, VDP_RCOLOR
-        LD E, A
+        LD E, VDP_RCOLOR
         LD A, $F1
         CALL VDPSETREG
 
-        LD A, VDP_R1
-        LD E, A
+        LD E, VDP_R1
         LD A, $e2
         CALL VDPSETREG
 

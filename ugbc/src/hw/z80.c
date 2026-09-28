@@ -4857,40 +4857,22 @@ void cpu_set_asmio( Environment * _environment, int _asmio, int _value ) {
                 outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_B:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD B, A" );
-                outline0( "POP AF" );
+                outline1( "LD B, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_C:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD C, A" );
-                outline0( "POP AF" );
+                outline1( "LD C, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_D:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD D, A" );
-                outline0( "POP AF" );
+                outline1( "LD D, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_E:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD E, A" );
-                outline0( "POP AF" );
+                outline1( "LD E, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_H:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD H, A" );
-                outline0( "POP AF" );
+                outline1( "LD H, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_L:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD L, A" );
-                outline0( "POP AF" );
+                outline1( "LD L, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_IX:
                 outline1( "LD IX, $%4.4x", (unsigned short)(_value & 0xffff) );
@@ -4899,43 +4881,27 @@ void cpu_set_asmio( Environment * _environment, int _asmio, int _value ) {
                 outline1( "LD IY, $%4.4x", (unsigned short)(_value & 0xffff) );
                 break;
             case REGISTER_BC:
-                outline0( "PUSH HL" );
-                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
-                outline0( "LD BC, HL" );
-                outline0( "POP HL" );
+                outline1( "LD C, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LD B, $%2.2x", (unsigned char)((_value>>8) & 0xff ) );
                 break;
             case REGISTER_DE:
-                outline0( "PUSH HL" );
-                outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
-                outline0( "LD DE, HL" );
-                outline0( "POP HL" );
+                outline1( "LD L, $%2.2x", (unsigned char)(_value & 0xff ) );
+                outline1( "LD H, $%2.2x", (unsigned char)((_value>>8) & 0xff ) );
                 break;
             case REGISTER_HL:
                 outline1( "LD HL, $%4.4x", (unsigned short)(_value & 0xffff) );
                 break;
             case REGISTER_IXL:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IXL, A" );
-                outline0( "POP AF" );
+                outline1( "LD IXL, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_IXH:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IXH, A" );
-                outline0( "POP AF" );
+                outline1( "LD IXH, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_IYL:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IYL, A" );
-                outline0( "POP AF" );
+                outline1( "LD IYL, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_IYH:
-                outline0( "PUSH AF" );
-                outline1( "LD A, $%2.2x", (unsigned char)(_value & 0xff ) );
-                outline0( "LD IYH, A" );
-                outline0( "POP AF" );
+                outline1( "LD IYH, $%2.2x", (unsigned char)(_value & 0xff ) );
                 break;
             case REGISTER_CARRY:
                 outline0( "PUSH AF" );
@@ -6998,8 +6964,7 @@ void cpu_math_div_8bit_to_8bit_const( Environment * _environment, char *_source,
 
         outline1("LD A, (%s)", _source);
         outline0("LD D, A");
-        outline1("LD A, $%2.2x", (unsigned char)(_destination&0xff));
-        outline0("LD E, A");
+        outline1("LD E, $%2.2x", (unsigned char)(_destination&0xff));
 
         outline0("XOR A");
         outline0("LD B, 8");
