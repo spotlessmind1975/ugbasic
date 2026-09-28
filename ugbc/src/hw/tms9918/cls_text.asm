@@ -60,6 +60,9 @@ CLST:
 
 CLSTNMI2:
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
     LD A, (CURRENTTILEMODE)
     CP 0
     RET Z
@@ -74,13 +77,18 @@ CLSTNMI2:
     CP 3
     JR Z,CLST3
     JP CLSTDONE
+@ENDIF
 
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 0 )
 CLST0:
     LD A, (EMPTYTILE)
     LD BC, $100 + 40*25
     LD DE, (TEXTADDRESS)
     CALL VDPFILL
     JP CLSTDONE
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 1 )
 
 CLST1:
     LD A, (EMPTYTILE)
@@ -95,6 +103,10 @@ CLST1:
 
     JP CLSTDONE
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
 CLST2:
 CLST3:
     LD A, (EMPTYTILE)
@@ -108,6 +120,8 @@ CLST3:
     CALL VDPFILL
 
     JP CLSTDONE
+
+@ENDIF
 
 CLSTDONE:
     RET

@@ -60,6 +60,10 @@ CLSG:
 
 CLSGNMI2:
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LD A, (CURRENTTILEMODE)
     CP 1
     RET Z
@@ -69,6 +73,8 @@ CLSGNMI2:
     RET Z
     CP 1
     RET Z
+
+@ENDIF
 
     LD A, 0
     LD DE, (TEXTADDRESS)
