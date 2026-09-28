@@ -71,8 +71,7 @@ VSCROLLTDOWNNMI2:
 
 VSCROLLTDOWN0:
     LD BC, 40 * 24
-    LD A, 40
-    LD E, A
+    LD E, 40
     LD D, 0
     LD HL, (TEXTADDRESS)
     PUSH HL
@@ -80,8 +79,7 @@ VSCROLLTDOWN0:
 
 VSCROLLTDOWN1:
     LD BC, 32 * 24
-    LD A, 32
-    LD E, A
+    LD E, 32
     LD D, 0
     LD HL, (TEXTADDRESS)
     PUSH HL

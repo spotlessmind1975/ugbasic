@@ -73,19 +73,11 @@ PLOTNMI2:
     JP Z, PLOTP
 
 @IF scaleX > 0
-    PUSH AF
-    LD A, E
-    SLA A
-    LD E, A
-    POP AF
+    SLA E
 @ENDIF
 
 @IF scaleX > 1
-    PUSH AF
-    LD A, E
-    SLA A
-    LD E, A
-    POP AF
+    SLA E
 @ENDIF
 
 @IF offsetX > 0
@@ -98,19 +90,11 @@ PLOTNMI2:
 @ENDIF
 
 @IF scaleY > 0
-    PUSH AF
-    LD A, D
-    SLA A
-    LD D, A
-    POP AF
+    SLA D
 @ENDIF
 
 @IF scaleY > 1
-    PUSH AF
-    LD A, D
-    SLA A
-    LD D, A
-    POP AF
+    SLA D
 @ENDIF
 
 @IF offsetY > 0
