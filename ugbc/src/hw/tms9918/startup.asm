@@ -575,7 +575,7 @@ TMS9918SPRITEINITL1:
         INC HL
         DEC C
         JR NZ, TMS9918SPRITEINITL1
-
+        POP HL
         RET
 
 WAITVBL:
