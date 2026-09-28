@@ -127,35 +127,6 @@ NMI2:
 IRQVOID:
     RET
 
-CHECKIF60HZ:
-    IN A, ($bf)
-    NOP
-    NOP
-    NOP
-VDPSYNC:
-    IN A, ($bf)
-	AND $80
-    CP 0
-	JR Z, VDPSYNC
-    LD HL, $0
-VDPLOOP:
-    INC HL
-    IN A, ($bf)
-    AND $80
-    CP 0
-	JR Z, VDPLOOP
-VDPLOOPD:
-
-    LD A, H
-    CMP $06
-    JR Z, VDPLOOPDQ0
-    LD A, 1
-    RET
-
-VDPLOOPDQ0:
-    LD A, 0
-    RET
-
 COLECOSTARTUP:
     LD	HL, $9b9b
     LD	(CONTROLLER_BUFFER),HL
@@ -174,8 +145,8 @@ COLECOSTARTUP:
 	LD (IRQVECTORREADY), A
 
     CALL VDPLOCK
-    CALL CHECKIF60HZ
-    CMP 1
+    LD A, ($0069)
+    CMP $3c
     JR Z, COLECONTSC
 
 COLECOPAL:
