@@ -150,8 +150,6 @@ void target_initialization( Environment * _environment ) {
     _environment->program.startingAddress = 0x73b8;
     _environment->stackSize = 128;
 
-    outline0("CALL PROTOTHREADINIT" );
-
     setup_text_variables( _environment );
 
     outline0("CALL $1f7f");
@@ -159,7 +157,7 @@ void target_initialization( Environment * _environment ) {
     tms9918_initialization( _environment );
     sn76489z_initialization( _environment );
 
-   cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
+    cpu_compare_and_branch_8bit_const( _environment, "LASTVAR", 0x42, "CODESTARTRUN", 1 );
 
     Variable * outOfMemoryMessage = variable_define( _environment, "OOM", VT_STRING, 0 );
     variable_store_string( _environment, outOfMemoryMessage->name, "OOM" );
