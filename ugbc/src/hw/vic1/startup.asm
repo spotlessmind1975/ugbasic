@@ -120,7 +120,9 @@ VIC1IRQ:
 ; ;     STA VIC1BANK    
 ; ;     JMP VIC1IRQEX
 ; ; VIC1IRQEX:
+@IF deployed.music
     JSR MUSICPLAYER
+@ENDIF
 @IF deployed.timer
     JSR TIMERMANAGER
 @ENDIF
