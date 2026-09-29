@@ -165,5 +165,10 @@ COLECOSTARTUPDONE:
 @IF deployed.protothread
     CALL PROTOTHREADINIT
 @ENDIF
+
+@IF deployed.sn76489startup
+    CALL SN76489STARTUP
+@ENDIF
+
     RET
 

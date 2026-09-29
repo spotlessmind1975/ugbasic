@@ -79,15 +79,11 @@ void sn76489m_initialization( Environment * _environment ) {
     variable_import( _environment, "SN76489TMPPTR_BACKUP", VT_ADDRESS, 0 );
     variable_global( _environment, "SN76489TMPPTR_BACKUP" );
 
-    cpu_call( _environment, "SN76489STARTUP" );
-
 }
 
 void sn76489m_finalization( Environment * _environment ) {
 
     if ( ! _environment->deployed.sn76489startup ) {
-        cpu_label( _environment, "SN76489STARTUP" );
-        outline0( "RTS" );
         cpu_label( _environment, "MUSICPLAYER" );
         outline0( "RTS" );
     } else {
