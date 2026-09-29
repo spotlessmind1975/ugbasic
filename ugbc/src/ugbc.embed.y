@@ -563,6 +563,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.sidplayer;
             } else if ( strcmp( $3, "pokeystartup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.pokeystartup;
+            } else if ( strcmp( $3, "protothread" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.protothread;
             } else if ( strcmp( $3, "ay8910startup" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.ay8910startup;
             } else if ( strcmp( $3, "sn76489startup" ) == 0 ) {
