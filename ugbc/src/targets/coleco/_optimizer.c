@@ -336,6 +336,14 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
 	// 	optim( buf[1], NULL, "\tADD HL, DE" );
     // }
 
+	if( 
+        po_buf_match( buf[0], " LD *, *", v1, v2 ) &&
+        po_buf_match( buf[1], " LD *, *", v3, v4 ) &&
+        strcmp( v1->str, v3->str ) == 0
+    ) {
+		optim( buf[0], RULE "(LD x;LD x)->(LD x)", NULL );
+    }
+
     // ;Instead of
     //   sla l
     //   rl h         ; I've actually seen this!
