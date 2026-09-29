@@ -83,10 +83,7 @@ void sn76489m_initialization( Environment * _environment ) {
 
 void sn76489m_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.sn76489startup ) {
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RTS" );
-    } else {
+    if ( _environment->deployed.sn76489startup ) {
         deploy( sn76489startup2, src_hw_sn76489m_startup2_asm );
     }
 
