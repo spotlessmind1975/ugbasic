@@ -1679,6 +1679,12 @@ void cpu_addressof_16bit( Environment * _environment, char *_source, char *_dest
 
 }
 
+char * cpu_addressin( Environment * _environment, char *_source ) {
+    char * result = malloc( MAX_TEMPORARY_STORAGE );
+    sprintf( result, "(%s)", _source );
+    return result;
+}
+
 /**
  * @brief <i>Z80</i>: emit code to store 16 bit
  * 

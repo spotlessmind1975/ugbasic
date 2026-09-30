@@ -1429,8 +1429,12 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
 
-    outline1("LD DE, (%s)", _text);
-    outline1("LD A, (%s)", _text_size);
+    outline1("LD DE, %s", _text);
+    if ( _text_size ) {
+        outline1("LD A, (%s)", _text_size);
+    } else {
+        outline0("LD A, 1" );
+    }
     outline0("LD C, A");
 
     if ( _raw ) {
