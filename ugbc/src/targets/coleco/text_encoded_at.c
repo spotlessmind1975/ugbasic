@@ -44,26 +44,28 @@ void text_encoded( Environment * _environment, char * _text, char * _pen, char *
     Variable * pen = variable_retrieve( _environment, _pen );
     Variable * paper = variable_retrieve( _environment, _paper );
 
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
-    Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+    if ( text->type != VT_DSTRING ) {
 
-    switch( text->type ) {
-        case VT_STRING: {
-            cpu_move_8bit( _environment, text->realName, size->realName );
-            cpu_addressof_16bit( _environment, text->realName, address->realName );
-            cpu_inc_16bit( _environment, address->realName );
-            break;
+        switch( text->type ) {
+            case VT_STRING: {
+                tms9918_text( _environment, address_displacement( _environment, text->realName, "1" ), text->realName, _raw );
+                break;
+            }
+            case VT_CHAR: {
+                tms9918_text( _environment, text->realName, NULL, _raw );
+                break;
+            }
         }
-        case VT_DSTRING: {
-            cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
-            break;
-        }
-        case VT_CHAR:
-            cpu_addressof_16bit( _environment, text->realName, address->realName );
-            cpu_store_8bit( _environment, size->realName, 1 );
-            break;        
+
+    } else {
+
+        Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address of DSTRING)");
+        Variable * size = variable_temporary( _environment, VT_BYTE, "(size of DSTRING)");
+
+        cpu_dsdescriptor( _environment, text->realName, address->realName, size->realName );
+        
+        tms9918_text( _environment, cpu_addressin( _environment, address->realName ), size->realName, _raw );
+
     }
-
-    tms9918_text( _environment, address->realName, size->realName, _raw );
 
 }

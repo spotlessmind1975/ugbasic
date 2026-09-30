@@ -178,6 +178,7 @@ void cpu_math_sub_8bit( Environment * _environment, char *_source, char *_destin
 void cpu_math_sub_16bit_with_8bit( Environment * _environment, char *_source, char *_destination,  char *_name );
 void cpu_move_16bit( Environment * _environment, char *_source, char *_destination );
 void cpu_addressof_16bit( Environment * _environment, char *_source, char *_destination );
+char * cpu_addressin( Environment * _environment, char *_source );
 void cpu_move_32bit( Environment * _environment, char *_source, char *_destination );
 void cpu_move_8bit( Environment * _environment, char *_source, char *_destination );
 
