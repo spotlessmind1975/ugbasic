@@ -64,6 +64,10 @@ VSCROLLTUPNMI2:
     CP 1
     JP Z, VSCROLLTUPXX
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LD A, (CURRENTTILEMODE)
     CP 0
     RET Z
@@ -79,6 +83,10 @@ VSCROLLTUPNMI2:
     JR Z,VSCROLLTUP3
     JP VSCROLLTUPDONE
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 0 )
+
 VSCROLLTUP0:
     LD A, (CONSOLEH)
     LD B, A
@@ -91,6 +99,10 @@ VSCROLLTUP0:
     LD HL, (CONSOLESA)
     PUSH HL
     JP VSCROLLTUPCOMMON
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 1 ) || ( currentMode == 2 ) || ( currentMode == 3 ) )
 
 VSCROLLTUP1:
 VSCROLLTUP2:
@@ -107,6 +119,8 @@ VSCROLLTUP3:
     LD HL, (CONSOLESA)
     PUSH HL
     JP VSCROLLTUPCOMMON
+
+@ENDIF
 
 VSCROLLTUPCOMMON:
     LD HL, (CONSOLESA)
@@ -168,10 +182,16 @@ VSCROLLTUPLOOP:
     JMP VSCROLLTUPXX2
 
 VSCROLLTUPXX:
+
     LD HL, (CONSOLESA)
     PUSH HL
     LD DE, HL
+
 VSCROLLTUPXX2:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
     LD A, (CURRENTMODE)
     CP 0
     JR Z,VSCROLLTUPX0
@@ -181,6 +201,9 @@ VSCROLLTUPXX2:
     JR Z,VSCROLLTUPX2
     POP DE
     JP VSCROLLTUPDONE
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 0 )
 
 VSCROLLTUPX0:
     LD A, (CONSOLEW)
@@ -191,6 +214,10 @@ VSCROLLTUPX0:
     POP DE
     JP VSCROLLTUPDONE
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 1 ) || ( currentMode == 2 ) )
+
 VSCROLLTUPX1:
 VSCROLLTUPX2:
     LD A, (CONSOLEW)
@@ -200,6 +227,8 @@ VSCROLLTUPX2:
     CALL VDPFILL
     POP DE
     JP VSCROLLTUPDONE
+
+@ENDIF
 
 VSCROLLTUPDONE:
     RET
