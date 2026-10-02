@@ -975,7 +975,7 @@ void variable_cleanup( Environment * _environment ) {
 
     outline1("ORG $%4.4x", _environment->program.startingAddress );
     outhead0("CODESTART");
-    outline0("LDS #$2FFF");
+    outline0("LDS #$2F00");
     outline0("JMP CODESTART2");
     outhead0("STACK");
     outline1("rzb %d", _environment->stackSize );
