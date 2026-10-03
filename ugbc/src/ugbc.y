@@ -410,6 +410,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> put_image_flags1 
 %type <integer> raw_optional
 %type <integer> readonly_optional
+%type <integer> readonly_optional_writable
 %type <integer> relative_optional 
 %type <integer> release_optional
 %type <integer> left_or_right 
@@ -1126,6 +1127,13 @@ integer_optional:
 
 readonly_optional: 
     { $$ = READONLY_DEFAULT; } | 
+    NOT READ ONLY { $$ = 0; } |
+    NOT READONLY { $$ = 0; } |
+    READ ONLY { $$ = 1; } |
+    READONLY { $$ = 1; };
+
+readonly_optional_writable: 
+    { $$ = 0; } | 
     NOT READ ONLY { $$ = 0; } |
     NOT READONLY { $$ = 0; } |
     READ ONLY { $$ = 1; } |
@@ -6492,7 +6500,7 @@ dim_definition:
                 }
                 variable_array_type( _environment, $1, $2 );
             }
-        } array_assign readonly_optional on_bank_explicit {
+        } array_assign readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $9 != -1 ) {
@@ -6556,7 +6564,7 @@ dim_definition:
                 }
             }
 
-        } array_assign readonly_optional on_bank_explicit {
+        } array_assign readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $11 != -1 ) {
@@ -6588,7 +6596,7 @@ dim_definition:
                     variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
                 }
             }
-        } readonly_optional on_bank_explicit {
+        } readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $9 != -1 ) {
@@ -6620,7 +6628,7 @@ dim_definition:
                     variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
                 }
             }
-        } readonly_optional on_bank_explicit {
+        } readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $10 != -1 ) {
@@ -6674,7 +6682,7 @@ dim_definition:
                     variable_array_type( _environment, $1, realType );
                 }
             }
-        } array_assign readonly_optional on_bank_explicit {
+        } array_assign readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $10 != -1 ) {
@@ -6706,7 +6714,7 @@ dim_definition:
                     variable_store( _environment, ((struct _Environment *)_environment)->currentArray->name, ((struct _Environment *)_environment)->currentArray->value );
                 }
             }
-        } readonly_optional on_bank_explicit {
+        } readonly_optional_writable on_bank_explicit {
             if ( !((struct _Environment *)_environment)->emptyProcedure ) {
                 Variable * array = variable_retrieve( _environment, $1 );
                 if ( $10 != -1 ) {
