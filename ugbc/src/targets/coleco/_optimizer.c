@@ -359,13 +359,13 @@ static void basic_peephole(POBuffer buf[LOOK_AHEAD], int zA, int zB) {
     }
 
  	if( 
-        po_buf_match( buf[0], " LD A, $*", v1 ) &&
+        po_buf_match( buf[0], " LD A, *", v1 ) &&
         po_buf_match( buf[1], " LD *, A", v2 ) &&
-        strcmp( v1->str, v2->str ) == 0 &&
+        strstr( v1->str, "$" ) &&
         strstr("A B C D E", strtoupper(v2->str) )
     ) {
-		optim( buf[0], RULE "(LD A, c|LD r,A)->(LD r, c)", NULL );
-		optim( buf[1], RULE "(LD A, c|LD r,A)->(LD r, c)", "LD %s, $%s", v1->str, v2->str );
+		optim( buf[0], RULE "(LD A, c|LD r, A)->(LD r, c)", NULL );
+		optim( buf[1], RULE "(LD A, c|LD r, A)->(LD r, c)", "\tLD %s, %s", v2->str, v1->str );
     }
 
    // ; Instead of
