@@ -531,3 +531,17 @@ WAITTIMERL1:
     CP $FF
     JR NZ, WAITTIMER
     RET
+
+OOMHALTL1:
+    OUT ($BF), A
+    LD A, $87
+    OUT ($BF), A
+    RET
+
+OOMHALT:
+    LD A, $f4
+    CALL OOMHALTL1
+    LD A, $f1
+    CALL OOMHALTL1
+    JR OOMHALT
+
