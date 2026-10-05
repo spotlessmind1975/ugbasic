@@ -520,6 +520,13 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "RESOLUTION"))   return 1;
     if(po_buf_match(name, "ORIGIN"))   return 1;
     if(po_buf_match(name, "SPRITE"))   return 1;
+    if(po_buf_match(name, "COLECOTIMER"))   return 1;
+    if(po_buf_match(name, "CONSOLEX1"))   return 1;
+    if(po_buf_match(name, "CONSOLEX2"))   return 1;
+    if(po_buf_match(name, "CONSOLEY1"))   return 1;
+    if(po_buf_match(name, "CONSOLEY2"))   return 1;
+    if(po_buf_match(name, "CONSOLEW"))   return 1;
+    if(po_buf_match(name, "CONSOLEH"))   return 1;
     
     return 0;
 }
