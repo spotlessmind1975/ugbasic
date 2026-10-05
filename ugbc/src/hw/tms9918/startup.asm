@@ -561,6 +561,9 @@ TMS9918AFTERINIT:
         RET
 
 TMS9918SPRITEINIT:
+
+@IF deployed.sprite
+
         PUSH HL
         LD HL, (SPRITEAADDRESS)
         LD B, 0
@@ -577,6 +580,9 @@ TMS9918SPRITEINITL1:
         JR NZ, TMS9918SPRITEINITL1
         POP HL
         RET
+@ELSE
+        RET
+@ENDIF
 
 WAITVBL:
         LD A, 0
