@@ -62,6 +62,10 @@ TEXTATTILEMODERAW:
 
 TEXTATTILEMODENMI2RAW:
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LD A, (CURRENTTILEMODE)
     CP 0
     RET Z
@@ -72,6 +76,9 @@ TEXTATTILEMODENMI2RAW:
     JP TEXTATRAWTILEMODEDONE
 
 TEXTATRAWTILEMODEGO:
+
+@ENDIF
+
     PUSH BC
     PUSH DE
 
@@ -148,6 +155,10 @@ TEXTATRAWSP0:
     POP DE
     POP AF
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     PUSH AF
     LD A, (CURRENTMODE)
     CP 0
@@ -161,9 +172,21 @@ TEXTATRAWSP0:
     POP AF
     RET
 
+@ENDIF
+
 TEXTATRAW20:
 TEXTATRAW21:
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
+@ELSE
+
     POP AF
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
     PUSH HL
     PUSH AF
     PUSH DE
@@ -191,11 +214,24 @@ TEXTATRAW21:
     POP AF
     POP HL
 
+@ENDIF
+
     JMP TEXTATRAWINCX
 
 TEXTATRAW22:
 TEXTATRAW23:
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
+@ELSE
+
     POP AF
+
+@ENDIF
+
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
     PUSH HL
     PUSH AF
     PUSH DE
@@ -260,6 +296,8 @@ TEXTATRAW23:
     POP DE
     POP AF
     POP HL
+
+@ENDIF
 
 TEXTATRAWINCX:
     LD HL, (COPYOFTEXTADDRESS)
