@@ -1531,7 +1531,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
+    // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
     SCREEN_MODE_DEFINE( TILEMAP_MODE_GRAPHIC1, 0, 32, 24, 16, 8, 8, "Graphic I" );
 
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 256, 192, 16, 8, 8, "Graphic II" );
