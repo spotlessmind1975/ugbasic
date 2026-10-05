@@ -1427,7 +1427,7 @@ void tms9918_scroll_text( Environment * _environment, int _direction, int _overl
 void tms9918_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
-    deploy( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
 
     outline1("LD DE, %s", _text);
     if ( _text_size ) {
