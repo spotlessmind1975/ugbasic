@@ -179,9 +179,9 @@ TEXTATRAW21:
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 
-@ELSE
-
     POP AF
+
+@ELSE
 
 @ENDIF
 
@@ -223,9 +223,9 @@ TEXTATRAW23:
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
-@ELSE
-
     POP AF
+
+@ELSE
 
 @ENDIF
 
