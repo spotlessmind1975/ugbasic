@@ -62,6 +62,10 @@ TEXTATTILEMODE:
 
 TEXTATTILEMODENMI2:
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LD A, (CURRENTTILEMODE)
     CP 0
     RET Z
@@ -72,6 +76,13 @@ TEXTATTILEMODENMI2:
     JP TEXTATTILEMODEDONE
 
 TEXTATTILEMODEGO:
+
+@ENDIF
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     PUSH BC
     PUSH DE
 
@@ -90,17 +101,27 @@ TEXTATTILEMODEGO:
     JR Z,TEXTATTILEMODEGO3
     RET
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
 TEXTATTILEMODEGO0:
 TEXTATTILEMODEGO1:
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATTILEMODEGOX
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
 TEXTATTILEMODEGO2:
 TEXTATTILEMODEGO3:
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATTILEMODEGOX
+
+@ENDIF
 
 TEXTATTILEMODEGOX:
     LD A, 0
@@ -378,6 +399,10 @@ TEXTATSP0:
     POP DE
     POP AF
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     PUSH AF
     LD A, (CURRENTMODE)
     CP 0
@@ -391,9 +416,21 @@ TEXTATSP0:
     POP AF
     RET
 
+@ENDIF
+
 TEXTAT20:
 TEXTAT21:
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
+@ELSE
+
     POP AF
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
     PUSH HL
     PUSH AF
     PUSH DE
@@ -421,11 +458,23 @@ TEXTAT21:
     POP AF
     POP HL
 
+@ENDIF
+
     JMP TEXTAT2X
 
 TEXTAT22:
 TEXTAT23:
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+
+@ELSE
+
     POP AF
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+
     PUSH HL
     PUSH AF
     PUSH DE
@@ -490,6 +539,8 @@ TEXTAT23:
     POP DE
     POP AF
     POP HL
+
+@ENDIF
 
     JMP TEXTAT2X
 
