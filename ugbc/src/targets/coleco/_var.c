@@ -611,6 +611,9 @@ void variable_cleanup( Environment * _environment ) {
             outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
             outline0("CALL VDPWRITE" );
             outline0("RET" );
+        } else {
+            outhead0("TMS9918AUDCCHAR01:" );
+            outline0("RET" );
         }
         if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
             outhead0("TMS9918AUDCCHAR23:" );
@@ -635,6 +638,9 @@ void variable_cleanup( Environment * _environment ) {
             outline0("LD HL, $15A3" );
             outline0("LD DE, $0100");
             outline0("CALL VDPWRITE" );
+            outline0("RET" );
+        } else {
+            outhead0("TMS9918AUDCCHAR01:" );
             outline0("RET" );
         }
         if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
