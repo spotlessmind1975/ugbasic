@@ -3603,7 +3603,7 @@ exponential_less:
 
         Variable * image = image_load( _environment, params );
         if ( $12 != -1 ) {
-            image->readonly = ($12 || $1) ? ! : 0;
+            image->readonly = ($12 || $1) ? 1 : 0;
         }
         $$ = image->name;
       } | 
