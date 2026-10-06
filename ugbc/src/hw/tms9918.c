@@ -1454,7 +1454,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
             #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
                     deploy( textEncodedAt, src_hw_tms9918_text_asm );
             #endif
-            deploy( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+            deploy_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
             if ( ! _environment->hasGameLoop ) {
                 outline0("CALL TEXTATTILEMODERAW");
             } else {
@@ -1673,6 +1673,8 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "CONSOLEWB" );
 
     tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+
+    reset_screen_mode_selected( _environment );
 
     _environment->fontConfig.schema = FONT_SCHEMA_EMBEDDED;
 

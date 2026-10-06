@@ -86,6 +86,10 @@ TEXTATRAWTILEMODEGO:
     LD E, A
     LD D, 0
 
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
+
     LD A, (CURRENTMODE)
     CP 0
     JR Z,TEXTATRAWTILEMODEGO0
@@ -95,19 +99,30 @@ TEXTATRAWTILEMODEGO:
     JR Z,TEXTATRAWTILEMODEGO2
     CP 3
     JR Z,TEXTATRAWTILEMODEGO3
+
+    POP DE
+    POP BC
+
     RET
+
+@ENDIF
+
 
 TEXTATRAWTILEMODEGO0:
 TEXTATRAWTILEMODEGO1:
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATRAWTILEMODEGOX
+@ENDIF
 
 TEXTATRAWTILEMODEGO2:
 TEXTATRAWTILEMODEGO3:
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATRAWTILEMODEGOX
+@ENDIF
 
 TEXTATRAWTILEMODEGOX:
 
@@ -177,7 +192,7 @@ TEXTATRAWSP0:
 TEXTATRAW20:
 TEXTATRAW21:
 
-@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
+@IF ( !vestigialConfig.screenModeUnique )
 
     POP AF
 
@@ -221,7 +236,7 @@ TEXTATRAW21:
 TEXTATRAW22:
 TEXTATRAW23:
 
-@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
+@IF ( !vestigialConfig.screenModeUnique )
 
     POP AF
 
