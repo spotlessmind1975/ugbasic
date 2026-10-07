@@ -202,7 +202,7 @@ void tms9918_image_compile( Environment * _environment, ParamsImageCompile * _pa
 void tms9918_images_compile( Environment * _environment, ParamsImagesCompile * _params );
 void tms9918_sequence_compile( Environment * _environment, ParamsSequenceCompile * _params );
 Variable * tms9918_sprite_converter( Environment * _environment, char * _data, int _width, int _height, int _depth, RGBi * _color, int _x_slot, int _y_slot );
-void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags );
+void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen );
 void tms9918_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags );
 void tms9918_wait_vbl( Environment * _environment );
 Variable * tms9918_new_image( Environment * _environment, int _width, int _height, int _mode );

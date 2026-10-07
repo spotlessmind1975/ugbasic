@@ -371,6 +371,29 @@ VDPWRITEOPTLOOP2:
         CALL VDPUNLOCK
         RET
 
+VDPWRITEOPTB:
+	; CALL VDPREGIN
+        ; AND $80
+        ; JR Z, VDPWRITEOPT
+        CALL VDPLOCK
+        CALL    VDPWRITEADDR
+        ;INC B
+VDPWRITEOPTLOOPB:
+        ; LD      A, (HL)
+        PUSH    BC
+        LD      A, C
+        LD      BC, (VDPDATAPORTWRITE)
+        LD      B, A
+
+VDPWRITEOPTLOOPB2:
+        OUTI
+        JP NZ, VDPWRITEOPTLOOPB2
+        POP BC
+        DJNZ VDPWRITEOPTLOOPB
+
+        CALL VDPUNLOCK
+        RET
+
 VDPWRITE8:
         CALL VDPLOCK
         CALL    VDPWRITEADDR

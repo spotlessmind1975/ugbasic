@@ -2378,7 +2378,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
-void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
+void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -2389,20 +2389,29 @@ void tms9918_put_image( Environment * _environment, Resource * _image, char * _x
     outhead1("putimage%s:", label);
 
     tms9918_load_image_address_to_register( _environment, NULL, _image, _sequence, _frame, _frame_size, _frame_count );
-
-    outline1("LD A, (%s)", _x );
-    outline0("LD E, A" );
-    outline1("LD A, (%s)", _y );
-    outline0("LD D, A" );
-    outline1("LD A, (%s)", _flags );
-    outline0("LD (IMAGEF), A" );
-    outline1("LD A, (%s)", address_displacement(_environment, _flags, "1") );
-    outline0("LD (IMAGET), A" );
-
-    if ( ! _environment->hasGameLoop ) {
-        outline0("CALL PUTIMAGE");
+    
+    if ( _fullscreen ) {
+        outline0("LD DE, 0" );
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL PUTIMAGEFS");
+        } else {
+            outline0("CALL PUTIMAGEFSNMI2");
+        }
     } else {
-        outline0("CALL PUTIMAGENMI2");
+        outline1("LD A, (%s)", _x );
+        outline0("LD E, A" );
+        outline1("LD A, (%s)", _y );
+        outline0("LD D, A" );
+        outline1("LD A, (%s)", _flags );
+        outline0("LD (IMAGEF), A" );
+        outline1("LD A, (%s)", address_displacement(_environment, _flags, "1") );
+        outline0("LD (IMAGET), A" );
+
+        if ( ! _environment->hasGameLoop ) {
+            outline0("CALL PUTIMAGE");
+        } else {
+            outline0("CALL PUTIMAGENMI2");
+        }
     }
 
 }

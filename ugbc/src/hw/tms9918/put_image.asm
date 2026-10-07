@@ -328,3 +328,73 @@ PUTIMAGE0CP2C:
 
 PUTIMAGEDONE:
     RET
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+PUTIMAGEFS:
+PUTIMAGEFSNMI2:
+
+    LD A, (CURRENTTILEMODE)
+    CP 1
+    RET Z
+
+    LD A, (CURRENTMODE)
+    CP 0
+    JR NZ, PUTIMAGEFS0X
+    JMP PUTIMAGEFS0
+PUTIMAGEFS0X:
+    CP 1
+    JR NZ, PUTIMAGEFS1X
+    JMP PUTIMAGEFS1
+PUTIMAGEFS1X:
+    CP 2
+    JR NZ, PUTIMAGEFS2X
+    JMP PUTIMAGEFS2
+PUTIMAGEFS2X:
+    CP 3
+    JR NZ, PUTIMAGEFS3X
+    JMP PUTIMAGEFS3
+PUTIMAGEFS3X:
+    JP PUTIMAGEFSDONE
+
+PUTIMAGEFS0:
+PUTIMAGEFS1:
+PUTIMAGEFS3:
+    JP PUTIMAGEFSDONE
+
+PUTIMAGEFS2:
+
+    INC HL
+    INC HL
+    INC HL
+
+    PUSH BC
+    PUSH HL
+    PUSH BC
+
+    CALL VDPPOS
+
+    LD DE, HL
+
+    POP BC
+    POP HL
+    POP BC
+
+    DI
+
+PUTIMAGEFS0CPA:
+PUTIMAGEFS0CP:
+    LD BC, 32*192
+    CALL VDPWRITEOPTB
+    PUSH HL
+    EXX
+    PUSH HL
+    EXX
+    POP DE
+    POP HL
+    LD BC, 32*8*24
+    CALL VDPWRITEOPTB
+    EI
+    RET

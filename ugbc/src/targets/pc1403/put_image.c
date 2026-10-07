@@ -106,15 +106,15 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
 
                 if ( !sequence ) {
                     if ( !frame ) {
-                        // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
+                        // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, "", "", image->frameSize, image->frameCount );
                     } else {
-                        // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
+                        // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, "", frame->realName, image->frameSize, image->frameCount );
                     }
                 } else {
                     if ( !frame ) {
-                        // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
+                        // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, "", image->frameSize, image->frameCount );
                     } else {
-                        // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
+                        // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, sequence->realName, frame->realName, image->frameSize, image->frameCount );
                     }
                 }
 
@@ -127,20 +127,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                // // pc1403_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
+                        // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags );
                     } else {
-                        // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
+                        // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags );
                     }
                 } else {
                     if ( !frame ) {
-                        // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
+                        // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags );
                     } else {
-                        // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
+                        // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags );
                     }
                 }
             }
@@ -207,9 +207,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 }
 
                 if ( !frame ) {
-                    // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
+                    // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, NULL, "", image->frameSize, 0 );
                 } else {
-                    // // tms9918_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
+                    // // pc1403_calculate_sequence_frame_offset(_environment, offset->realName, NULL, realFrame->realName, image->frameSize, 0 );
                 }
 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
@@ -221,13 +221,13 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
+                // // pc1403_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
             } else {
                 if ( !frame ) {
-                    // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
+                    // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags );
                 } else {
-                    // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
+                    // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, NULL, image->frameSize, 0, _flags );
                 }
             }
             break;
@@ -257,9 +257,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                // // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                // // pc1403_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             } else {
-                // // tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+                // // pc1403_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
             }
             break;
         default:
@@ -341,7 +341,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    // // tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    // // pc1403_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
 
 }
 
