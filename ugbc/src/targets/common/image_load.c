@@ -412,7 +412,7 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
 
                 result->valueBuffer = output;
                 if ( _environment->expansionBanks ) {
-                    if ( ! banks_store( _environment, result, 1, 0 ) ) {
+                    if ( ! banks_store( _environment, result, 1 ) ) {
                         CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
                     };
                     free( result->valueBuffer );
