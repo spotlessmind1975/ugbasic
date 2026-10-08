@@ -1223,6 +1223,8 @@ typedef struct _Variable {
      */
     int usedImage;
 
+    int offsetColor;
+
     struct _Type * typeType;
 
     /** Link to the next variable (NULL if this is the last one) */

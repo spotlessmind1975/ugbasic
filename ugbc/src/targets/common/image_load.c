@@ -349,41 +349,76 @@ Variable * image_load( Environment * _environment, char * _filename, char * _ali
     // We can compress also if COMPRESSED flag is used.
     } else if ( _flags & FLAG_COMPRESSED && !_environment->compressionForbidden ) {
 
-        // Try to compress the result of image conversion.
-        // This means that the buffer will be compressed using MSC1
-        // algorithm, up to 32 frequent sequences. The original size of
-        // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
-        result->uncompressedSize = result->size;
-        MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
+        if ( result->offsetColor > 0 ) {
 
-        int temporary;
-        MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
-        if ( memcmp( outputCheck, result->valueBuffer, result->uncompressedSize ) != 0 ) {
-            CRITICAL_COMPRESSION_FAILED(_filename);
-        }
-        msc1_free( compressor );
+            int size1;
+            int size2;
+            result->uncompressedSize = result->size;
 
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        // If the compressed memory is greater than the original
-        // size, we discard the compression and we will continue as
-        // usual.
-        if ( result->uncompressedSize < result->size ) {
-            result->size = result->uncompressedSize;
-            result->uncompressedSize = 0;
-            free( output );
-        } 
-        // Otherwise, we can safely replace the original data
-        // buffer with the compressed one.
-        else {
-            result->valueBuffer = output;
-            if ( ! banks_store( _environment, result, 1 ) ) {
-                CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
-            };
-            free( result->valueBuffer );
-            result->valueBuffer = NULL;
+            MSC1Compressor * compressor1 = msc1_create( 32 );
+            MemoryBlock * output1 = msc1_compress( compressor1, result->valueBuffer + 3, result->offsetColor, &size1);
+            msc1_free( compressor1 );
+            MSC1Compressor * compressor2 = msc1_create( 32 );
+            MemoryBlock * output2 = msc1_compress( compressor2, result->valueBuffer + 3 + result->offsetColor, result->size - result->offsetColor, &size2 );
+
+            int temporary;
+            MemoryBlock * outputCheck2 = msc1_uncompress( compressor2, output2, result->size, &temporary );
+
+            // MemoryBlock * outputCheck2 = msc1_uncompress( compressor, output2, result->size, &temporary );
+            msc1_free( compressor2 );
+
+            if ( result->uncompressedSize < ( size1 + size2 ) ) {
+                result->uncompressedSize = 0;
+                free( output1 );
+                free( output2 );
+            } else {
+                result->valueBuffer = malloc( size1 + size2 );
+                memcpy( result->valueBuffer, output1, size1 );
+                memcpy( result->valueBuffer + size1, output2, size2 );
+                result->size = size1 + size2;
+            }
+
+        } else {
+
+            // Try to compress the result of image conversion.
+            // This means that the buffer will be compressed using MSC1
+            // algorithm, up to 32 frequent sequences. The original size of
+            // the buffer will be considered as "uncompressed" size.
+            MSC1Compressor * compressor = msc1_create( 32 );
+            result->uncompressedSize = result->size;
+            MemoryBlock * output = msc1_compress( compressor, result->valueBuffer + 3, result->uncompressedSize, &result->size );
+
+            int temporary;
+            MemoryBlock * outputCheck = msc1_uncompress( compressor, output, result->size, &temporary );
+            if ( memcmp( outputCheck, result->valueBuffer + 3, result->uncompressedSize - 3 ) != 0 ) {
+                CRITICAL_COMPRESSION_FAILED(_filename);
+            }
+            msc1_free( compressor );
+
+            // If the compressed memory is greater than the original
+            // size, we discard the compression and we will continue as
+            // usual.
+            // If the compressed memory is greater than the original
+            // size, we discard the compression and we will continue as
+            // usual.
+            if ( result->uncompressedSize < result->size ) {
+                result->size = result->uncompressedSize;
+                result->uncompressedSize = 0;
+                free( output );
+            }             
+            // Otherwise, we can safely replace the original data
+            // buffer with the compressed one.
+            else {
+
+                result->valueBuffer = output;
+                if ( _environment->expansionBanks ) {
+                    if ( ! banks_store( _environment, result, 1, 0 ) ) {
+                        CRITICAL_EXPANSION_OUT_OF_MEMORY_LOADING( result->name );
+                    };
+                    free( result->valueBuffer );
+                    result->valueBuffer = NULL;
+                }
+            }
         }
         
     }
