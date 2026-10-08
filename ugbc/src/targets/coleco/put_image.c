@@ -133,11 +133,12 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
             }
             break;
         case VT_IMAGE:
-        case VT_TARRAY:
+        case VT_TARRAY: {
             int fullscreen = ( (image->originalWidth == _environment->screenWidth) && (image->originalHeight == _environment->screenHeight) );
             int compressed = ( image->uncompressedSize != 0 );
             tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags, fullscreen, compressed );
             break;
+        }
         default:
             CRITICAL_PUT_IMAGE_UNSUPPORTED( _image, DATATYPE_AS_STRING[image->type] );
     }
