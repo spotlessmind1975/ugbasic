@@ -1918,6 +1918,8 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
 
     tms9918_image_converter_tiles( _environment, _source, buffer+3, _frame_width, _frame_height, _depth, _width );
 
+    result->offsetColor = ( _frame_width>>3 ) * _frame_height;
+
     variable_store_buffer( _environment, result->name, buffer, bufferSize, 0 );
  
     return result;
@@ -2378,7 +2380,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
-void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen ) {
+void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen, int _compressed ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
@@ -2392,10 +2394,18 @@ void tms9918_put_image( Environment * _environment, Resource * _image, char * _x
     
     if ( _fullscreen ) {
         outline0("LD DE, 0" );
-        if ( ! _environment->hasGameLoop ) {
-            outline0("CALL PUTIMAGEFS");
+        if ( _compressed ) {
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL PUTIMAGEMSC1FS");
+            } else {
+                outline0("CALL PUTIMAGEMSC1NMI2");
+            }
         } else {
-            outline0("CALL PUTIMAGEFSNMI2");
+            if ( ! _environment->hasGameLoop ) {
+                outline0("CALL PUTIMAGEFS");
+            } else {
+                outline0("CALL PUTIMAGEFSNMI2");
+            }
         }
     } else {
         outline1("LD A, (%s)", _x );

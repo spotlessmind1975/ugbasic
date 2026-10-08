@@ -128,20 +128,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags, 0 );
+                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags, 0, 0 );
 
             } else {
                 if ( !sequence ) {
                     if ( !frame ) {
-                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags, 0 );
+                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", "", image->frameSize, image->frameCount, _flags, 0, 0 );
                     } else {
-                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, 0 );
+                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, "", image->frameSize, image->frameCount, _flags, 0, 0 );
                     }
                 } else {
                     if ( !frame ) {
-                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
+                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", sequence->realName, image->frameSize, image->frameCount, _flags, 0, 0 );
                     } else {
-                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, 0 );
+                        tms9918_put_image( _environment, resource, x1->realName, y1->realName, frame->realName, sequence->realName, image->frameSize, image->frameCount, _flags, 0, 0 );
                     }
                 }
             }
@@ -222,7 +222,7 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
 
-                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags, 0 );
+                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags, 0, 0 );
                 
             } else {
 
@@ -261,9 +261,9 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 }
 
                 if ( !frame ) {
-                    tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags, 0 );
+                    tms9918_put_image( _environment, resource, x1->realName, y1->realName, "", NULL, image->frameSize, 0, _flags, 0, 0 );
                 } else {
-                    tms9918_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags, 0 );
+                    tms9918_put_image( _environment, resource, x1->realName, y1->realName, realFrame->realName, NULL, image->frameSize, 0, _flags, 0, 0 );
                 }
             }
             break;
@@ -294,10 +294,12 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 resource.isAddress = 0;
 
                 int fullscreen = ( (image->originalWidth == _environment->screenWidth) && (image->originalHeight == _environment->screenHeight) );
-                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags, fullscreen );
+                int compressed = ( image->uncompressedSize != 0 );
+                tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags, fullscreen, compressed );
             } else {
                 int fullscreen = ( (image->originalWidth == _environment->screenWidth) && (image->originalHeight == _environment->screenHeight) );
-                tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags, fullscreen );
+                int compressed = ( image->uncompressedSize != 0 );
+                tms9918_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags, fullscreen, compressed );
             }
             break;
         default:
@@ -385,7 +387,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
+    tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags, 0 );
 
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip:", label );
