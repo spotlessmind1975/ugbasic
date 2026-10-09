@@ -167,7 +167,7 @@ void c64_dsave( Environment * _environment, char * _filename, char * _offset, ch
         outline1("LDA %s", address->realName);
         outline0("STA DCOMMONP2");
         outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
-        ooutline0("STA DCOMMONP2+1");
+        outline0("STA DCOMMONP2+1");
         outline0("LDA #0");
         outline0("STA DCOMMON1");
 
