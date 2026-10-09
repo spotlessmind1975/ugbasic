@@ -387,7 +387,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags, 0 );
+    tms9918_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags, 0, 0 );
 
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip:", label );

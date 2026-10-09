@@ -100,20 +100,20 @@ void c64_dload( Environment * _environment, char * _filename, char * _offset, ch
     }
 
     outline1("LDA %s", tnaddress->realName);
-    outline0("STA TMPPTR");
+    outline0("STA DCOMMONP1");
     outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
-    outline0("STA TMPPTR+1");
+    outline0("STA DCOMMONP1+1");
     outline1("LDA %s", tnsize->realName);
-    outline0("STA MATHPTR0");
+    outline0("STA DCOMMON0");
 
     if ( address ) {
 
         outline1("LDA %s", address->realName);
-        outline0("STA TMPPTR2");
+        outline0("STA DCOMMONP2");
         outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
-        outline0("STA TMPPTR2+1");
+        outline0("STA DCOMMONP2+1");
         outline0("LDA #0");
-        outline0("STA MATHPTR1");
+        outline0("STA DCOMMON1");
 
     }
 
@@ -156,35 +156,35 @@ void c64_dsave( Environment * _environment, char * _filename, char * _offset, ch
     }
 
     outline1("LDA %s", tnaddress->realName);
-    outline0("STA TMPPTR");
+    outline0("STA DCOMMONP1");
     outline1("LDA %s", address_displacement(_environment, tnaddress->realName, "1"));
-    outline0("STA TMPPTR+1");
+    outline0("STA DCOMMONP1+1");
     outline1("LDA %s", tnsize->realName);
-    outline0("STA MATHPTR0");
+    outline0("STA DCOMMON0");
 
     if ( address ) {
 
         outline1("LDA %s", address->realName);
-        outline0("STA TMPPTR2");
+        outline0("STA DCOMMONP2");
         outline1("LDA %s", address_displacement(_environment, address->realName, "1"));
-        outline0("STA TMPPTR2+1");
+        outline0("STA DCOMMONP2+1");
         outline0("LDA #0");
-        outline0("STA MATHPTR1");
+        outline0("STA DCOMMON1");
 
     }
 
     if ( size ) {
 
         outline1("LDA %s", size->realName);
-        outline0("STA MATHPTR4");
+        outline0("STA DCOMMON4");
         outline1("LDA %s", address_displacement(_environment, size->realName, "1"));
-        outline0("STA MATHPTR5");
+        outline0("STA DCOMMON4+1");
 
     } else {
 
         outline0("LDA #$00");
-        outline0("STA MATHPTR4");
-        outline0("STA MATHPTR5");
+        outline0("STA DCOMMON4");
+        outline0("STA DCOMMON4+1");
 
     }
 
