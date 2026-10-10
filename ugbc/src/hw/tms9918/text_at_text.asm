@@ -79,12 +79,12 @@ TEXTATTILEMODEGO:
 
 @ENDIF
 
+    PUSH BC
+    PUSH DE
+
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
-
-    PUSH BC
-    PUSH DE
 
     LD A, (CURRENTTILESWIDTH)
     LD E, A
