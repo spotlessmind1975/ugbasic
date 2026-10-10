@@ -70,6 +70,8 @@ TEXTATTILEMODENMI2:
     CP 0
     RET Z
 
+@ENDIF
+
     LD A, C
     CP 0
     JR NZ,TEXTATTILEMODEGO
@@ -77,18 +79,16 @@ TEXTATTILEMODENMI2:
 
 TEXTATTILEMODEGO:
 
-@ENDIF
-
     PUSH BC
     PUSH DE
-
-@IF vestigialConfig.screenModeUnique
-
-@ELSE
 
     LD A, (CURRENTTILESWIDTH)
     LD E, A
     LD D, 0
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
 
     LD A, (CURRENTMODE)
     CP 0
