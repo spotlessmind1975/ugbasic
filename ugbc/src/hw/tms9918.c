@@ -349,11 +349,11 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
 //         outhead1("%s:", label );
 //     }
 // #endif
-    outline1("LD E, %2.2x", VDP_RCOLOR );
+    outline1("LD E, $%2.2x", VDP_RCOLOR );
     outline0("CALL VDPREGIN" );
     outline0("AND $F0" );
     outline0("LD B, A" );
-    outline1("LD E, %2.2x", VDP_RCOLOR );
+    outline1("LD E, $%2.2x", VDP_RCOLOR );
     outline1("LD A, (%s)", _border_color );
     outline0("AND $0F" );
     outline0("OR B" );
