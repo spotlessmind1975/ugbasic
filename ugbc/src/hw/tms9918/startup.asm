@@ -120,7 +120,7 @@ VDPSETREGI:
         LD      A, E
 VDPREGOUT:
         PUSH    BC
-        LD      BC, (VDPCONTROLPORTWRITE)
+        LD      BC, VDPCONTROLPORTWRITE
 ; if __sc3000__
 ;         NOP
 ;         NOP
@@ -137,7 +137,7 @@ VDPREGOUT:
 
 VDPREGIN:
         PUSH    BC
-        LD      BC, (VDPCONTROLPORTREAD)
+        LD      BC, VDPCONTROLPORTREAD
 ; if __sc3000__
 ;         NOP
 ;         NOP
@@ -154,7 +154,7 @@ VDPREGIN:
 
 VDPRAMOUT:
         PUSH    BC
-        LD      BC, (VDPDATAPORTWRITE)
+        LD      BC, VDPDATAPORTWRITE
 ; if __sc3000__
 ;         NOP
 ;         NOP
@@ -171,7 +171,7 @@ VDPRAMOUT:
 
 VDPRAMOUT8:
         PUSH    BC
-        LD      BC, (VDPDATAPORTWRITE)
+        LD      BC, VDPDATAPORTWRITE
 ; if __sc3000__
 ;         NOP
 ;         NOP
@@ -275,7 +275,7 @@ VDPRAMOUT8:
 
 VDPRAMIN:
         PUSH    BC
-        LD      BC, (VDPDATAPORTREAD)
+        LD      BC, VDPDATAPORTREAD
 ; if __sc3000__
 ;         NOP
 ;         NOP
@@ -355,7 +355,7 @@ VDPWRITEOPTLOOP:
         ; LD      A, (HL)
         PUSH    BC
         LD      A, C
-        LD      BC, (VDPDATAPORTWRITE)
+        LD      BC, VDPDATAPORTWRITE
         LD      B, A
 
 VDPWRITEOPTLOOP2:
@@ -382,7 +382,7 @@ VDPWRITEOPTLOOPB:
         ; LD      A, (HL)
         PUSH    BC
         LD      A, C
-        LD      BC, (VDPDATAPORTWRITE)
+        LD      BC, VDPDATAPORTWRITE
         LD      B, A
 
 VDPWRITEOPTLOOPB2:

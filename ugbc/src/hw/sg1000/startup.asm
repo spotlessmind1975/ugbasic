@@ -35,6 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+VDPDATAPORTWRITE 	= $be
+VDPDATAPORTREAD 	= $be
+VDPCONTROLPORTREAD  = $bf
+VDPCONTROLPORTWRITE = $bf
+
 vdp_control      	= $BF
 psg_port         	= $7F
 sc_ppi_a         	= $DC

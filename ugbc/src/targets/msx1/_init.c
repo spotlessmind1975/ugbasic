@@ -130,18 +130,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COPYOFTILESADDRESS" );    
 
-    variable_import( _environment, "VDPDATAPORTREAD", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTREAD" );
-
-    variable_import( _environment, "VDPDATAPORTWRITE", VT_BYTE, 0x98 );
-    variable_global( _environment, "VDPDATAPORTWRITE" );
-
-    variable_import( _environment, "VDPCONTROLPORTREAD", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTREAD" );
-
-    variable_import( _environment, "VDPCONTROLPORTWRITE", VT_BYTE, 0x99 );
-    variable_global( _environment, "VDPCONTROLPORTWRITE" );
-
     variable_import( _environment, "ISRSVC2", VT_BUFFER, 3 );
     variable_global( _environment, "ISRSVC2" );
 

@@ -35,6 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+VDPDATAPORTWRITE = $be
+VDPDATAPORTREAD = $be
+VDPCONTROLPORTREAD = $bf
+VDPCONTROLPORTWRITE = $bf
+
 rst_8:
     RETI
     NOP
