@@ -399,11 +399,11 @@ TEXTATSP0:
     POP DE
     POP AF
 
+    PUSH AF
 @IF vestigialConfig.screenModeUnique
 
 @ELSE
 
-    PUSH AF
     LD A, (CURRENTMODE)
     CP 0
     JR Z,TEXTAT20
@@ -421,11 +421,11 @@ TEXTATSP0:
 TEXTAT20:
 TEXTAT21:
 
+    POP AF
+
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 
 @ELSE
-
-    POP AF
 
 @ENDIF
 
@@ -465,13 +465,7 @@ TEXTAT21:
 TEXTAT22:
 TEXTAT23:
 
-@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
-
-@ELSE
-
     POP AF
-
-@ENDIF
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 
