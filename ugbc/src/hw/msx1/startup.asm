@@ -35,6 +35,11 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+VDPDATAPORTWRITE = $98
+VDPDATAPORTREAD = $98
+VDPCONTROLPORTREAD = $99
+VDPCONTROLPORTWRITE = $99
+
 CHECKIF60HZ:
     IN A, ($bf)
     NOP
