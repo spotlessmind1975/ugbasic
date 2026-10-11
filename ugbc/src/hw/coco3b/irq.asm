@@ -35,25 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-IRQSVC
-    PSHS D
-    PSHS X
-    PSHS Y
-    PSHS U
-    PSHS DP
-    PSHS CC
-IRQSVC2
-    NOP
-    NOP
-    NOP
-    PULS CC
-    PULS DP
-    PULS U
-    PULS Y
-    PULS X
-    PULS D
-    RTS
-    
 OLDISVC
     fdb $0
 
@@ -123,8 +104,6 @@ SKIPGIMEROM
 @IF deployed.flash
     JSR FLASHMANAGER
 @ENDIF
-
-    JSR IRQSVC
 
     LDD COCO3BTIMER
     ADDD #$1
