@@ -150,7 +150,7 @@ Variable * load( Environment * _environment, char * _filename, char * _alias, in
         // This means that the buffer will be compressed using MSC1
         // algorithm, up to 32 frequent sequences. The original size of
         // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
+        MSC1Compressor * compressor = msc1_create( _environment->msc1DictionarySize );
         result->uncompressedSize = result->size;
         MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
 

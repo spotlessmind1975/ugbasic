@@ -355,7 +355,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
             // This means that the buffer will be compressed using MSC1
             // algorithm, up to 32 frequent sequences. The original size of
             // the buffer will be considered as "uncompressed" size.
-            MSC1Compressor * compressor = msc1_create( 32 );
+            MSC1Compressor * compressor = msc1_create( _environment->msc1DictionarySize );
             result->uncompressedSize = result->size;
             MemoryBlock * output = msc1_compress( compressor, result->valueBuffer, result->uncompressedSize, &result->size );
 
@@ -397,10 +397,10 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
             int size2;
             result->uncompressedSize = result->size;
 
-            MSC1Compressor * compressor1 = msc1_create( 32 );
+            MSC1Compressor * compressor1 = msc1_create( _environment->msc1DictionarySize );
             MemoryBlock * output1 = msc1_compress( compressor1, result->valueBuffer + 3, result->offsetColor, &size1);
             msc1_free( compressor1 );
-            MSC1Compressor * compressor2 = msc1_create( 32 );
+            MSC1Compressor * compressor2 = msc1_create( _environment->msc1DictionarySize );
             MemoryBlock * output2 = msc1_compress( compressor2, result->valueBuffer + 3 + result->offsetColor, result->size - result->offsetColor, &size2 );
 
             int temporary;
@@ -426,7 +426,7 @@ Variable * image_load( Environment * _environment, ParamsImageLoad _ParamsImageL
             // This means that the buffer will be compressed using MSC1
             // algorithm, up to 32 frequent sequences. The original size of
             // the buffer will be considered as "uncompressed" size.
-            MSC1Compressor * compressor = msc1_create( 32 );
+            MSC1Compressor * compressor = msc1_create( _environment->msc1DictionarySize );
             result->uncompressedSize = result->size;
             MemoryBlock * output = msc1_compress( compressor, result->valueBuffer + 3, result->uncompressedSize, &result->size );
 

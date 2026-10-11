@@ -165,7 +165,7 @@ Variable * tileset_storage( Environment * _environment, char * _source_name, cha
         // This means that the buffer will be compressed using MSC1
         // algorithm, up to 32 frequent sequences. The original size of
         // the buffer will be considered as "uncompressed" size.
-        MSC1Compressor * compressor = msc1_create( 32 );
+        MSC1Compressor * compressor = msc1_create( _environment->msc1DictionarySize );
         final->uncompressedSize = final->size;
         MemoryBlock * output = msc1_compress( compressor, final->valueBuffer, final->uncompressedSize, &final->size );
 

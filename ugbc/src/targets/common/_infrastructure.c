@@ -17426,6 +17426,7 @@ void environment_setup_default( Environment * _environment ) {
     _environment->defaultArraySize = 10;
     _environment->vestigialConfig.screenModeUnique = 1;
     _environment->horizontalScrollOff = 1;
+    _environment->msc1DictionarySize = 32;
 
     #if defined(__pc128op__) || defined(__to8__)
         _environment->bankedLoadDefault = 1;
@@ -17690,6 +17691,9 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                             if ( strstr(p, "STRING_SPACE=" ) != NULL ) {
                                 ((struct _Environment *)_environment)->dstring.space = atoi(p+13);
                             }
+                            if ( strstr(p, "MSC1_DICTIONARY_SIZE=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->msc1DictionarySize = atoi(p+21);
+                            }                            
                             p = strtok(NULL, ",");
                         }
                     }

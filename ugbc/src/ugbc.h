@@ -3348,6 +3348,8 @@ typedef struct _Environment {
 
     int movieFilenamesCount;
     char * movieFilenames[ MAX_MOVIE_FILENAMES ];
+
+    int msc1DictionarySize;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */
