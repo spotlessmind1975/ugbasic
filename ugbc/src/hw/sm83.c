@@ -6811,8 +6811,10 @@ void cpu_number_to_string( Environment * _environment, char * _number, char * _s
             break;
     }
 
+    outline0("PUSH HL");
     outline1("LD HL, (%s)", _string);
     outline0("LD DE, HL");
+    outline0("POP HL");
     outline0("LD A, (IXHR)");
     outline0("CP 0");
     outline1("JR Z, %spos", label);

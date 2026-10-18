@@ -124,10 +124,10 @@ N2DNXT:  DEC C
 N2DSIZ:  LD HL,N2DEND    ; address of terminating 0
          LD C,E          ; size of BCD value in bytes
          OR A
-         CALL SBC_HL_DE       ; calculate address of MSB BCD
+         CALL SBC_HL_BC       ; calculate address of MSB BCD
          LD D,H
          LD E,L
-         CALL SBC_HL_DE
+         CALL SBC_HL_BC
          EX DE,HL        ; HL=address BCD value, DE=start of decimal value
          LD B,C          ; no. of bytes BCD
          SLA C           ; no. of bytes decimal (possibly 1 too high)
@@ -146,6 +146,6 @@ N2DEXPL: CALL REPLACEMENT_RLD
          INC DE
          INC HL          ; next BCD-byte
          DJNZ N2DEXP     ; and go on to convert each BCD-byte into 2 ASCII
-         CALL SBC_HL_DE       ; return with HL pointing to 1st decimal
+         CALL SBC_HL_BC       ; return with HL pointing to 1st decimal
          RET
 
