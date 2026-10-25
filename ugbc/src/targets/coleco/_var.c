@@ -596,22 +596,27 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     if ( _environment->descriptors ) {
-        outhead0("UDCCHAR:" );
-        int i=0,j=0;
-        for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
-            outline1("; $%2.2x ", i);
-            out0("DEFB " );
-            for(j=0;j<7;++j) {
-                out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+
+        if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
+            outhead0("UDCCHAR:" );
+            int i=0,j=0;
+            for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
+                outline1("; $%2.2x ", i);
+                out0("DEFB " );
+                for(j=0;j<7;++j) {
+                    out1("$%2.2x,", ((unsigned char)_environment->descriptors->data[i].data[j]) );
+                }
+                outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
-            outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
         if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
             outhead0("TMS9918AUDCCHAR01:" );
-            outline1("LD BC, %d", _environment->descriptors->count * 8 );
-            outline0("LD HL, UDCCHAR" );
-            outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-            outline0("CALL VDPWRITE" );
+            if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+            }
             outline0("RET" );
         } else {
             outhead0("TMS9918AUDCCHAR01:" );
@@ -619,18 +624,20 @@ void variable_cleanup( Environment * _environment ) {
         }
         if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
             outhead0("TMS9918AUDCCHAR23:" );
-            outline1("LD BC, %d", _environment->descriptors->count * 8 );
-            outline0("LD HL, UDCCHAR" );
-            outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-            outline0("CALL VDPWRITE" );
-            outline1("LD BC, %d", _environment->descriptors->count * 8 );
-            outline0("LD HL, UDCCHAR" );
-            outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
-            outline0("CALL VDPWRITE" );
-            outline1("LD BC, %d", _environment->descriptors->count * 8 );
-            outline0("LD HL, UDCCHAR" );
-            outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
-            outline0("CALL VDPWRITE" );
+            if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+            }
             outline0("RET" );
         }
     } else {
