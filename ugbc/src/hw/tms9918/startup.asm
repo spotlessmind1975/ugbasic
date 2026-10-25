@@ -52,67 +52,6 @@ VDPUNLOCK:
         EI
         RET
 
-; if __coleco__
-
-; WAIT_VDP_HOOK:
-;         LD A, (VDP_HOOK)
-;         CP $cd
-;         JR Z,WAIT_VDP_HOOK
-;         RET
-
-; SET_VDP_HOOK0:
-;         LD (VDP_HOOK+1),HL
-;         LD A,$c9
-;         LD (VDP_HOOK+3),A
-;         LD A,$cd
-;         LD (VDP_HOOK),A
-;         RET
-
-; SET_VDP_HOOK:
-;         LD (VDP_HOOK+1),HL
-;         LD A,$c9
-;         LD (VDP_HOOK+3),A
-;         LD A, B
-;         LD (VDP_HOOK+4),A
-;         LD A, C
-;         LD (VDP_HOOK+5),A
-;         LD A, D
-;         LD (VDP_HOOK+6),A
-;         LD A, E
-;         LD (VDP_HOOK+7),A
-;         LD A,$cd
-;         LD (VDP_HOOK),A
-;         RET
-
-; SET_VDP_HOOK_HL:
-;         LD A, H
-;         LD (VDP_HOOK+8),A
-;         LD A, L
-;         LD (VDP_HOOK+9),A
-;         RET
-
-; GET_VDP_HOOK:
-;         LD A, (VDP_HOOK+4)
-;         LD B, A
-;         LD A, (VDP_HOOK+5)
-;         LD C, A
-;         LD A, (VDP_HOOK+6)
-;         LD D, A
-;         LD A, (VDP_HOOK+7)
-;         LD E, A
-;         LD A, (VDP_HOOK+8)
-;         LD H, A
-;         LD A, (VDP_HOOK+9)
-;         LD L, A
-;         RET
-
-; DONE_VDP_HOOK:
-;         LD A,0
-;         LD (VDP_HOOK),A
-;         RET
-
-; endif
-
 VDPWRITEBIT: EQU     40H
 
 VDPSETREGI:
@@ -121,16 +60,6 @@ VDPSETREGI:
 VDPREGOUT:
         PUSH    BC
         LD      BC, VDPCONTROLPORTWRITE
-; if __sc3000__
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; endif
         OUT     (C), A
         POP     BC
         RET
@@ -138,16 +67,6 @@ VDPREGOUT:
 VDPREGIN:
         PUSH    BC
         LD      BC, VDPCONTROLPORTREAD
-; if __sc3000__
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; endif
         IN      A, (C)
         POP     BC
         RET
@@ -155,16 +74,6 @@ VDPREGIN:
 VDPRAMOUT:
         PUSH    BC
         LD      BC, VDPDATAPORTWRITE
-; if __sc3000__
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; endif
         OUT     (C), A
         POP     BC
         RET
@@ -172,16 +81,6 @@ VDPRAMOUT:
 VDPRAMOUT8:
         PUSH    BC
         LD      BC, VDPDATAPORTWRITE
-; if __sc3000__
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; endif
         OUT     (C), A
 @IF MSX1
         NOP
@@ -276,16 +175,6 @@ VDPRAMOUT8:
 VDPRAMIN:
         PUSH    BC
         LD      BC, VDPDATAPORTREAD
-; if __sc3000__
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-;         NOP
-; endif
         IN      A, (C)
         POP     BC
         RET
@@ -346,13 +235,9 @@ VDPWRITELOOP:
         RET
 
 VDPWRITEOPT:
-	; CALL VDPREGIN
-        ; AND $80
-        ; JR Z, VDPWRITEOPT
         CALL VDPLOCK
         CALL    VDPWRITEADDR
 VDPWRITEOPTLOOP:
-        ; LD      A, (HL)
         PUSH    BC
         LD      A, C
         LD      BC, VDPDATAPORTWRITE
@@ -363,23 +248,13 @@ VDPWRITEOPTLOOP2:
         JP NZ, VDPWRITEOPTLOOP2
 
         POP     BC
-        ; INC     HL
-        ; DEC     BC
-        ; LD      A, B
-        ; OR      C
-        ; JP      NZ, VDPWRITELOOP
         CALL VDPUNLOCK
         RET
 
 VDPWRITEOPTB:
-	; CALL VDPREGIN
-        ; AND $80
-        ; JR Z, VDPWRITEOPT
         CALL VDPLOCK
         CALL    VDPWRITEADDR
-        ;INC B
 VDPWRITEOPTLOOPB:
-        ; LD      A, (HL)
         PUSH    BC
         LD      A, C
         LD      BC, VDPDATAPORTWRITE
