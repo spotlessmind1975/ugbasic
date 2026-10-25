@@ -2022,7 +2022,7 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = image_y * ( _width >> 4 ) + ( ( image_x & 0x07 ) >> 3 );
+            offset = image_y * ( _width >> 3 ) + ( ( image_x & 0x07 ) >> 3 );
             if ( image_x > 7 ) {
                 offset += 16;
             }
