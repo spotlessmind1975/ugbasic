@@ -176,6 +176,61 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
+                    if ( variable->usedImage ) {
+
+                        if ( ! variable->absoluteAddress ) {
+                            if ( variable->readonly ) {
+
+                            } else {
+                                outhead0("section data_user");
+                            }
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size + 1 );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%s: db %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%s: db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        if ( ( ( i + 1 ) % 16 ) == 0 ) {
+                                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                            out0("  db ");
+                                        } else {
+                                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                        }
+                                    }
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                }
+                            } else {
+                                outline2("%s: defs %d", variable->realName, variable->size);
+                            }
+                            if ( variable->readonly ) {
+
+                            } else {
+                                outhead0("section code_user");
+                            }
+                        } else {
+                            outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
+                            if ( variable->valueBuffer ) {
+                                if ( variable->printable ) {
+                                    char * string = malloc( variable->size + 1 );
+                                    memset( string, 0, variable->size + 1 );
+                                    memcpy( string, variable->valueBuffer, variable->size );
+                                    outline2("%scopy: db %s", variable->realName, escape_newlines( string ) );
+                                } else {
+                                    out1("%scopy: db ", variable->realName);
+                                    int i=0;
+                                    for (i=0; i<(variable->size-1); ++i ) {
+                                        out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
+                                    }
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
+                                }
+                            }
+                        }
+                    }
+                    break;
                 case VT_MUSIC:
                 case VT_BUFFER:
                 case VT_TYPE:

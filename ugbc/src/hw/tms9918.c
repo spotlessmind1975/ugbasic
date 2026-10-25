@@ -1162,6 +1162,8 @@ void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char 
     Variable * sprite = variable_retrieve_or_define( _environment, _sprite, VT_BYTE, 0 );
     Variable * image = variable_retrieve_or_define( _environment, _image, VT_IMAGE, 0 );
 
+    image->usedImage = 1;
+    
     deploy( sprite, src_hw_tms9918_sprites_asm );
     
     outline1("LD A, (%s)", sprite->realName );
