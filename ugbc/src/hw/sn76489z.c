@@ -84,11 +84,6 @@ void sn76489z_initialization( Environment * _environment ) {
 
 void sn76489z_finalization( Environment * _environment ) {
 
-    if ( ! _environment->deployed.sn76489startup ) {
-        cpu_label( _environment, "MUSICPLAYER" );
-        outline0( "RET" );
-    }
-
 }
 
 void sn76489z_start( Environment * _environment, int _channels ) {
