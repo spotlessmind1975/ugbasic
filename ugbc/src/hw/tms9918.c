@@ -1993,8 +1993,14 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     // Color of the pixel to convert
     RGBi rgb;
 
-    int spriteWidth = 16;
-    int spriteHeight = 16;
+    int spriteWidth = _width;
+    if ( _width > 16 ) {
+        spriteWidth = 16;
+    }
+    int spriteHeight = _height;
+    if ( _height > 16 ) {
+        spriteHeight = 16;
+    }
 
     char * source = _source + ( ( _slot_y * spriteHeight * spriteWidth ) + _slot_x * spriteWidth ) * _depth;
 
@@ -2024,11 +2030,11 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
 
             // Calculate the offset starting from the tile surface area
             // and the bit to set.
-            offset = image_y * ( _width >> 3 ) + ( ( image_x & 0x07 ) >> 3 );
+            offset = image_y * ( _width >> 4 ) + ( ( image_x & 0x07 ) >> 3 );
             if ( image_x > 7 ) {
                 offset += 16;
             }
-            
+
             if ( rgb.alpha < 255 ) {
                 i = 0;
             } else {
