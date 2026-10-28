@@ -1169,6 +1169,7 @@ void tms9918_sprite_data_from( Environment * _environment, char * _sprite, char 
     outline1("LD A, (%s)", sprite->realName );
     outline0("LD B, A");
     outline1("LD HL, %s", image->realName );
+
     if ( ! _environment->hasGameLoop ) {
         outline0("CALL SPRITEDATAFROM");
     } else {
@@ -1994,11 +1995,11 @@ Variable * tms9918_sprite_converter( Environment * _environment, char * _source,
     RGBi rgb;
 
     int spriteWidth = _width;
-    if ( _width > 16 ) {
+    if ( _width < 16 ) {
         spriteWidth = 16;
     }
     int spriteHeight = _height;
-    if ( _height > 16 ) {
+    if ( _height < 16 ) {
         spriteHeight = 16;
     }
 
