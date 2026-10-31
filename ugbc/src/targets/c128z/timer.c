@@ -46,6 +46,8 @@
 
 Variable * get_timer( Environment * _environment ) {
 
+    _environment->timerUsed = 1;
+
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
 
     cpu_move_16bit( _environment, "C128ZTIMER", result->realName );

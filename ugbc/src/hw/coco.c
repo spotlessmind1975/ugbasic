@@ -110,6 +110,8 @@ void coco_back( Environment * _environment ) {
 
 void coco_busy_wait( Environment * _environment, char * _timing ) {
 
+    _environment->timerUsed = 1;
+    
     MAKE_LABEL
 
     outline1("LDD %s", _timing );

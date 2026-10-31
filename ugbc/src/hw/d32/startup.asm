@@ -69,9 +69,11 @@ ISVCIRQK
 ISVCIRQJ
 @ENDIF
     PSHS D
+@IF timerUsed
     LDD DRGTIMER
     ADDD #$1
     STD DRGTIMER
+@ENDIF
     LDD #0
     STD $00e3
     PULS D

@@ -93,6 +93,9 @@
 ;     RTI
 
 JIFFYUPDATE:
+
+@IF timerUsed
+
     PHP
     PHA
     TXA
@@ -131,6 +134,9 @@ JIFFYDAY:
     TAX
     PLA
     PLP
+
+@ENDIF
+
 	RTS
 
 C16STARTUP:

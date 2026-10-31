@@ -36,6 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 JIFFYUPDATE:
+
+@IF timerUsed
+
     PHP
     PHA
     TXA
@@ -74,6 +77,9 @@ JIFFYDAY:
     TAX
     PLA
     PLP
+
+@ENDIF
+
 	RTS
 
 NMISVC:

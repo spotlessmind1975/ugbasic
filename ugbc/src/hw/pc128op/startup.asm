@@ -40,10 +40,12 @@ PAGE0 equ $21
 ; TIMER service routine
 PC128IRQ
     PSHS  D
+@IF timerUsed
     LDD   #0              ; TI variable
 PC128TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
     STD   PC128TIMER      ; write result to TI variable
+@ENDIF
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
 @IF deployed.sn76489mstartup

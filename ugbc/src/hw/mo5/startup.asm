@@ -39,10 +39,12 @@ PAGE0 equ $21
 
 ; TIMER service routine
 MO5IRQ
+@IF timerUsed
     LDD   #0            ; TI variable
 MO5TIMER  set *-2       ; (variable within code)
     ADDD  #1            ; increment
     STD   MO5TIMER      ; write result to TI variable
+@ENDIF
     LDA   #PAGE0        ; sets the direct page
     TFR   A,DP          ; for ugbc routines
 @IF deployed.timer

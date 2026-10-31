@@ -987,11 +987,13 @@ WAITSTATEM0L2:
     RET
 
 IRQSVC:
+@IF timerUsed
     PUSH HL
     LD HL,(GBTIMER)
     INC HL
     LD (GBTIMER),HL
     POP HL
+@ENDIF
 @IF deployed.timer
 	CALL TIMERMANAGER
 @ENDIF

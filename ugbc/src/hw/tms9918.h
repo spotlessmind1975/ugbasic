@@ -51,7 +51,7 @@
 #else
     #define WVDP( r, v ) \
         if ( _environment->vestigialConfig.biosAllowed ) { \
-            outline1("LD BC, $%4.4x", ( ( r & 0xff ) << 8 | ( v & 0xff ) ) ); \
+            outline1("LD BC, $%4.4x", ( ( r & 0x7f ) << 8 | ( v & 0xff ) ) ); \
             outline0("CALL CBIOS_VDPSETREG" ); \
         } else { \
             outline1("LD A, $%2.2x", ( r & 0xff ) ); \

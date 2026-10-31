@@ -48,6 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
+    _environment->timerUsed = 1;
+
     deploy_preferred( waittimer, src_hw_coleco_wait_timer_asm )
 
     outline1( "LD HL, $%4.4x", _timing );
@@ -64,6 +66,8 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _timing Number of cycles to wait
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
+
+    _environment->timerUsed = 1;
 
     deploy_preferred( waittimer, src_hw_coleco_wait_timer_asm )
 

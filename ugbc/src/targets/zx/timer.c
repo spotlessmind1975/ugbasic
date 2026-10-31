@@ -46,6 +46,8 @@
 
 Variable * get_timer( Environment * _environment ) {
 
+    _environment->timerUsed = 1;
+
     Variable * result = variable_temporary( _environment, VT_WORD, "(result of get timer)");
 
     cpu_move_16bit( _environment, "ZXTIMER", result->realName );
@@ -61,6 +63,8 @@ Variable * get_timer( Environment * _environment ) {
 </usermanual> */
 
 void set_timer( Environment * _environment, char * _value ) {
+
+    _environment->timerUsed = 1;
 
     Variable * value = variable_retrieve_or_define( _environment, _value, VT_WORD, 0 );
 

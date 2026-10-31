@@ -51,6 +51,8 @@
 </usermanual> */
 void wait_vbl( Environment * _environment, char * _raster_line ) {
 
+    _environment->timerUsed = 1;
+
     MAKE_LABEL
 
     if ( !_environment->vestigialConfig.rchack_4gravity_1164 ) {
