@@ -186,25 +186,21 @@ VDPREADADDR:
         CALL    VDPREGOUT
         RET
 
-@IF COLECO
+VDPSETREGI:
+        CALL    VDPREGOUT
+        LD      A, E
+VDPREGOUT:
+        PUSH    BC
+        LD      BC, VDPCONTROLPORTWRITE
+        OUT     (C), A
+        POP     BC
+        RET
 
-        VDPSETREGI:
-                CALL    VDPREGOUT
-                LD      A, E
-        VDPREGOUT:
-                PUSH    BC
-                LD      BC, VDPCONTROLPORTWRITE
-                OUT     (C), A
-                POP     BC
-                RET
-
-        VDPSETREG:
-                CALL VDPLOCK
-                CALL    VDPSETREGI
-                CALL VDPUNLOCK
-                RET
-
-@ENDIF
+VDPSETREG:
+        CALL VDPLOCK
+        CALL    VDPSETREGI
+        CALL VDPUNLOCK
+        RET
 
 VDPOUTCHAR:
         CALL VDPLOCK
