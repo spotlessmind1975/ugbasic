@@ -42,11 +42,18 @@
 #define VDP_RSPRITEP    0x86
 #define VDP_RCOLOR      0x87
 
-#define WVDP( r, v ) \
-    outline1("LD A, $%2.2x", ( r & 0xff ) ); \
-    outline0("LD E, A" ); \
-    outline1("LD A, $%2.2x", ( v & 0xff ) ); \
-    outline0("CALL VDPSETREG" );
+#if defined(__coleco__)
+    #define WVDP( r, v ) \
+        outline1("LD A, $%2.2x", ( r & 0xff ) ); \
+        outline0("LD E, A" ); \
+        outline1("LD A, $%2.2x", ( v & 0xff ) ); \
+        outline0("CALL VDPSETREG" );
+#else
+    #define WVDP( r, v ) \
+        outline1("LD BC, $%4.4x", ( ( r & 0xff ) << 8 | ( v & 0xff ) ); \
+        outline0("CALL CBIOS_VDPSETREG" );
+#endif
+
 #define WVDP_R0( v )            WVDP( VDP_R0, v )
 #define WVDP_R1( v )            WVDP( VDP_R1, v )
 #define WVDP_RNAME( v )         WVDP( VDP_RNAME, v )

@@ -35,10 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VDPDATAPORTWRITE = $be
-VDPDATAPORTREAD = $be
-VDPCONTROLPORTREAD = $bf
-VDPCONTROLPORTWRITE = $bf
+VDPDATAPORTWRITE        = $be
+VDPDATAPORTREAD         = $be
+VDPCONTROLPORTREAD      = $bf
+VDPCONTROLPORTWRITE     = $bf
+
+CBIOS_VDPSETREG         = $1fd9
 
 rst_8:
     RETI
