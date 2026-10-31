@@ -41,6 +41,7 @@ VDPCONTROLPORTREAD      = $bf
 VDPCONTROLPORTWRITE     = $bf
 
 CBIOS_VDPSETREG         = $1fd9
+CBIOS_VDPWRITE          = $1fdf
 
 rst_8:
     RETI
