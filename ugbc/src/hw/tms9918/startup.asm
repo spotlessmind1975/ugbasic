@@ -54,10 +54,6 @@ VDPUNLOCK:
 
 VDPWRITEBIT: EQU     40H
 
-VDPREGIN:
-        IN      A, (VDPCONTROLPORTREAD)
-        RET
-
 VDPRAMOUT:
         OUT     (VDPDATAPORTWRITE), A
         RET
@@ -465,7 +461,7 @@ TMS9918STARTUPL1:
 @ENDIF
 
         LD E, $83
-        CALL VDPREGIN
+        IN A, (VDPCONTROLPORTREAD)
         AND $F0
         LD B, A
         LD E, $83
