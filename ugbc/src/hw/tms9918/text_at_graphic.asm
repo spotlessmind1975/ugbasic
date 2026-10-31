@@ -500,7 +500,11 @@ TEXTATBMSP0:
     ADD HL, DE
     LD DE, (COPYOFTEXTADDRESS)
     LD BC, 8
+@IF COLECO && vestigialConfig.biosAllowed
+    CALL CBIOS_VDPWRITE
+@ELSE
     CALL VDPWRITE
+@ENDIF
     POP BC
     POP DE
 

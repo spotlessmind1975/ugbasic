@@ -72,7 +72,7 @@ BACKNMI2:
     JP BACKDONE
 
 BACK0:
-@IF COLECO
+@IF COLECO && vestigialConfig.biosAllowed
     LD B, VDP_RCOLOR
     LD C, (_PAPER)
     CALL CBIOS_VDPSETREG

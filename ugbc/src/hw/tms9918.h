@@ -42,7 +42,7 @@
 #define VDP_RSPRITEP    0x86
 #define VDP_RCOLOR      0x87
 
-#if defined(__coleco__)
+#if !defined(__coleco__)
     #define WVDP( r, v ) \
         outline1("LD A, $%2.2x", ( r & 0xff ) ); \
         outline0("LD E, A" ); \
@@ -50,8 +50,15 @@
         outline0("CALL VDPSETREG" );
 #else
     #define WVDP( r, v ) \
-        outline1("LD BC, $%4.4x", ( ( r & 0xff ) << 8 | ( v & 0xff ) ); \
-        outline0("CALL CBIOS_VDPSETREG" );
+        if ( _environment->vestigialConfig.biosAllowed ) { \
+            outline1("LD BC, $%4.4x", ( ( r & 0xff ) << 8 | ( v & 0xff ) ) ); \
+            outline0("CALL CBIOS_VDPSETREG" ); \
+        } else { \
+            outline1("LD A, $%2.2x", ( r & 0xff ) ); \
+            outline0("LD E, A" ); \
+            outline1("LD A, $%2.2x", ( v & 0xff ) ); \
+            outline0("CALL VDPSETREG" ); \
+        }
 #endif
 
 #define WVDP_R0( v )            WVDP( VDP_R0, v )
