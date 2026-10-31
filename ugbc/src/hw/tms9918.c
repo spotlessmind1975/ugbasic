@@ -358,7 +358,7 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
     outline0("OR B" );
 #if defined(__coleco__)
     if ( _environment->vestigialConfig.biosAllowed ) {
-        outline1("LD B, $%2.2x", VDP_RCOLOR );
+        outline1("LD B, $%2.2x", ( VDP_RCOLOR & 0x7f ) );
         outline0("LD C, A" );
         outline0("CALL CBIOS_VDPSETREG" );
     } else {
@@ -1708,7 +1708,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
-    tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    // tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     reset_screen_mode_selected( _environment );
 

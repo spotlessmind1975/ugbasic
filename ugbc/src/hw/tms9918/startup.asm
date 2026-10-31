@@ -359,28 +359,28 @@ TMS9918STARTUPL1:
 
         CALL VDPLOCK
 
-        LD BC, VDP_R0 * 256
+        LD BC, $0000
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RNAME * 256 + $06
+        LD BC, $0206
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RCOLORTABLE * 256 + $80
+        LD BC, $0380
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RPATTERN * 256
+        LD BC, $0400
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RSPRITEA * 256 + $36
+        LD BC, $0536
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RSPRITEP * 256 + $07
+        LD BC, $0607
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_RCOLOR * 256 + $f1
+        LD BC, $07f1
         CALL CBIOS_VDPSETREG
 
-        LD BC, VDP_R1 * 256 + $e2
+        LD BC, $01e2
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -472,8 +472,13 @@ TMS9918STARTUPL1:
         LD A, $0
         AND $F0
         OR B
+@IF !COLECO || !vestigialConfig.biosAllowed
         CALL VDPSETREG
-        
+@ELSE
+        LD B, $03
+        LD C, A
+        CALL CBIOS_VDPSETREG
+@ENDIF
         CALL VDPUNLOCK
 
         RET
