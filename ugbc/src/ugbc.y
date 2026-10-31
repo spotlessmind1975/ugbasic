@@ -8213,8 +8213,58 @@ chain_definition:
  ----------------------------------------------------------------------------*/
 
 defdgr_definition:
-    OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 ); } | 
-    OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 ); };
+    OP_DOLLAR OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { 
+        Variable * b0 = variable_retrieve( _environment, $6 );
+        Variable * b1 = variable_retrieve( _environment, $8 );
+        Variable * b2 = variable_retrieve( _environment, $10 );
+        Variable * b3 = variable_retrieve( _environment, $12 );
+        Variable * b4 = variable_retrieve( _environment, $14 );
+        Variable * b5 = variable_retrieve( _environment, $16 );
+        Variable * b6 = variable_retrieve( _environment, $18 );
+        Variable * b7 = variable_retrieve( _environment, $20 );
+
+        if ( 
+                b0->initializedByConstant && 
+                b1->initializedByConstant && 
+                b2->initializedByConstant &&
+                b3->initializedByConstant &&
+                b4->initializedByConstant &&
+                b5->initializedByConstant &&
+                b6->initializedByConstant &&
+                b7->initializedByConstant
+        ) {
+            defdgr( _environment, $3, b0->value, b1->value, b2->value, b3->value, b4->value, b5->value, b6->value, b7->value ); 
+        } else {
+            defdgr_vars( _environment, $3, $6, $8, $10, $12, $14, $16, $18, $20 ); 
+        }
+    } | 
+    OP expr CP OP_ASSIGN expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr OP_COMMA expr { 
+    
+        Variable * b0 = variable_retrieve( _environment, $5 );
+        Variable * b1 = variable_retrieve( _environment, $7 );
+        Variable * b2 = variable_retrieve( _environment, $9 );
+        Variable * b3 = variable_retrieve( _environment, $11 );
+        Variable * b4 = variable_retrieve( _environment, $13 );
+        Variable * b5 = variable_retrieve( _environment, $15 );
+        Variable * b6 = variable_retrieve( _environment, $17 );
+        Variable * b7 = variable_retrieve( _environment, $19 );
+
+        if ( 
+                b0->initializedByConstant && 
+                b1->initializedByConstant && 
+                b2->initializedByConstant &&
+                b3->initializedByConstant &&
+                b4->initializedByConstant &&
+                b5->initializedByConstant &&
+                b6->initializedByConstant &&
+                b7->initializedByConstant
+        ) {
+            defdgr( _environment, $2, b0->value, b1->value, b2->value, b3->value, b4->value, b5->value, b6->value, b7->value ); 
+        } else {
+            defdgr_vars( _environment, $2, $5, $7, $9, $11, $13, $15, $17, $19 ); 
+        }
+        
+    };
 
 /*-----------------------------------------------------------------------------
  ------------ FLIP DEFINITION

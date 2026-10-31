@@ -187,6 +187,7 @@ void tms9918_tiles_get( Environment * _environment, char * _result );
 void tms9918_get_width( Environment * _environment, char * _result );
 void tms9918_get_height( Environment * _environment, char * _result );
 
+void tms9918_defdgr( Environment * _environment, char * _character, char * _data );
 void tms9918_pset_int( Environment * _environment, int _x, int _y, int *_c );
 void tms9918_pset_vars( Environment * _environment, char *_x, char *_y, char *_c );
 void tms9918_pget_color_vars( Environment * _environment, char *_x, char *_y, char * _result );
