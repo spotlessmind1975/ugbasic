@@ -220,6 +220,8 @@ VDPINCHAR:
         CALL VDPUNLOCK
         RET
 
+@IF !COLECO || !vestigialConfig.biosAllowed
+
 VDPWRITE:
         CALL VDPLOCK
         CALL    VDPWRITEADDR
@@ -233,6 +235,8 @@ VDPWRITELOOP:
         JP      NZ, VDPWRITELOOP
         CALL VDPUNLOCK
         RET
+
+@ENDIF
 
 VDPWRITEOPT:
         CALL VDPLOCK
@@ -360,8 +364,7 @@ TMS9918STARTUPL1:
         DEC C
         JR NZ, TMS9918STARTUPL1
 
-
-@IF COLECO
+@IF COLECO && vestigialConfig.biosAllowed
 
         CALL VDPLOCK
 

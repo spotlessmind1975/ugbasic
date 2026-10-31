@@ -57,10 +57,10 @@ DEFDGR3:
 
     PUSH HL
     LD BC, 8
-@IF COLECO
-    CALL VDPWRITE
-@ELSE
+@IF COLECO && vestigialConfig.biosAllowed
     CALL CBIOS_VDPWRITE
+@ELSE
+    CALL VDPWRITE
 @ENDIF
     LD HL, DE
     ADD HL, $800
@@ -70,10 +70,10 @@ DEFDGR3:
 
     PUSH HL
     LD BC, 8
-@IF COLECO
-    CALL VDPWRITE
-@ELSE
+@IF COLECO && vestigialConfig.biosAllowed
     CALL CBIOS_VDPWRITE
+@ELSE
+    CALL VDPWRITE
 @ENDIF
     LD HL, DE
     ADD HL, $800
@@ -83,10 +83,10 @@ DEFDGR3:
 DEFDGR0:
 DEFDGR1:
     LD BC, 8
-@IF COLECO
-    CALL VDPWRITE
-@ELSE
+@IF COLECO && vestigialConfig.biosAllowed
     CALL CBIOS_VDPWRITE
+@ELSE
+    CALL VDPWRITE
 @ENDIF
     RET
 

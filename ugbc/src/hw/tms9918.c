@@ -357,9 +357,14 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
     outline0("AND $0F" );
     outline0("OR B" );
 #if defined(__coleco__)
-    outline1("LD B, $%2.2x", VDP_RCOLOR );
-    outline0("LD C, A" );
-    outline0("CALL CBIOS_VDPSETREG" );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline1("LD B, $%2.2x", VDP_RCOLOR );
+        outline0("LD C, A" );
+        outline0("CALL CBIOS_VDPSETREG" );
+    } else {
+        outline1("LD E, $%2.2x", VDP_RCOLOR );
+        outline0("CALL VDPSETREG" );
+    }
 #else
     outline1("LD E, $%2.2x", VDP_RCOLOR );
     outline0("CALL VDPSETREG" );
@@ -1099,9 +1104,13 @@ void tms9918_screen_on( Environment * _environment ) {
     outline0("CALL VDPREGIN" );
     outline0("OR $40" );
 #if defined(__coleco__)
-    outline0("LD B, E" );
-    outline0("LD C, A" );
-    outline0("CALL CBIOS_VDPSETREG" );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("LD B, E" );
+        outline0("LD C, A" );
+        outline0("CALL CBIOS_VDPSETREG" );
+    } else {
+        outline0("CALL VDPSETREG" );
+    }
 #else
     outline0("CALL VDPSETREG" );
 #endif
@@ -1131,9 +1140,13 @@ void tms9918_screen_off( Environment * _environment ) {
     outline0("CALL VDPREGIN" );
     outline0("AND $BF" );
 #if defined(__coleco__)
-    outline0("LD B, E" );
-    outline0("LD C, A" );
-    outline0("CALL CBIOS_VDPSETREG" );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("LD B, E" );
+        outline0("LD C, A" );
+        outline0("CALL CBIOS_VDPSETREG" );
+    } else {
+        outline0("CALL VDPSETREG" );
+    }
 #else
     outline0("CALL VDPSETREG" );
 #endif
@@ -2708,10 +2721,21 @@ Variable * tms9918_get_raster_line( Environment * _environment ) {
 
 void tms9918_move_memory_video( Environment * _environment, char * _from, char * _to, char * _size ) {
 
+#if defined(__coleco__)
+    outline1("LD HL, (%s)", _from );
+    outline1("LD DE, (%s)", _to );
+    outline1("LD BC, (%s)", _size );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("CALL CBIOS_VDPWRITE" );
+    } else {
+        outline0("CALL VDPWRITE" );
+    }
+#else
     outline1("LD HL, (%s)", _from );
     outline1("LD DE, (%s)", _to );
     outline1("LD BC, (%s)", _size );
     outline0("CALL VDPWRITE" );
+#endif
 
 }
 
@@ -2744,9 +2768,13 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
     outline1("LD A, (%s)", _background_color );
     outline0("OR B" );
 #if defined(__coleco__)
-    outline0("LD B, E" );
-    outline0("LD C, A" );
-    outline0("CALL CBIOS_VDPSETREG" );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("LD B, E" );
+        outline0("LD C, A" );
+        outline0("CALL CBIOS_VDPSETREG" );
+    } else {
+        outline0("CALL VDPSETREG" );
+    }
 #else
     outline0("CALL VDPSETREG" );
 #endif    

@@ -668,7 +668,11 @@ void variable_cleanup( Environment * _environment ) {
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
                 outline0("LD HL, UDCCHAR" );
                 outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-                outline0("CALL VDPWRITE" );
+                if ( _environment->vestigialConfig.biosAllowed ) {
+                    outline0("CALL CBIOS_VDPWRITE" );
+                } else {
+                    outline0("CALL VDPWRITE" );
+                }
             }
             outline0("RET" );
         } else {
@@ -681,15 +685,27 @@ void variable_cleanup( Environment * _environment ) {
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
                 outline0("LD HL, UDCCHAR" );
                 outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-                outline0("CALL VDPWRITE" );
+                if ( _environment->vestigialConfig.biosAllowed ) {
+                    outline0("CALL CBIOS_VDPWRITE" );
+                } else {
+                    outline0("CALL VDPWRITE" );
+                }
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
                 outline0("LD HL, UDCCHAR" );
                 outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
-                outline0("CALL VDPWRITE" );
+                if ( _environment->vestigialConfig.biosAllowed ) {
+                    outline0("CALL CBIOS_VDPWRITE" );
+                } else {
+                    outline0("CALL VDPWRITE" );
+                }
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
                 outline0("LD HL, UDCCHAR" );
                 outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
-                outline0("CALL VDPWRITE" );
+                if ( _environment->vestigialConfig.biosAllowed ) {
+                    outline0("CALL CBIOS_VDPWRITE" );
+                } else {
+                    outline0("CALL VDPWRITE" );
+                }
             }
             outline0("RET" );
         }
@@ -699,7 +715,11 @@ void variable_cleanup( Environment * _environment ) {
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
             outline0("LD DE, $0100");
-            outline0("CALL VDPWRITE" );
+            if ( _environment->vestigialConfig.biosAllowed ) {
+                outline0("CALL CBIOS_VDPWRITE" );
+            } else {
+                outline0("CALL VDPWRITE" );
+            }
             outline0("RET" );
         } else {
             outhead0("TMS9918AUDCCHAR01:" );
@@ -710,15 +730,27 @@ void variable_cleanup( Environment * _environment ) {
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
             outline0("LD DE, $0100");
-            outline0("CALL VDPWRITE" );
+            if ( _environment->vestigialConfig.biosAllowed ) {
+                outline0("CALL CBIOS_VDPWRITE" );
+            } else {
+                outline0("CALL VDPWRITE" );
+            }
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
             outline0("LD DE, $0900");
-            outline0("CALL VDPWRITE" );
+            if ( _environment->vestigialConfig.biosAllowed ) {
+                outline0("CALL CBIOS_VDPWRITE" );
+            } else {
+                outline0("CALL VDPWRITE" );
+            }
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
             outline0("LD DE, $1100");
-            outline0("CALL VDPWRITE" );
+            if ( _environment->vestigialConfig.biosAllowed ) {
+                outline0("CALL CBIOS_VDPWRITE" );
+            } else {
+                outline0("CALL VDPWRITE" );
+            }
             outline0("RET" );
         }
     }
