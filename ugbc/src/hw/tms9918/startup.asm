@@ -55,17 +55,11 @@ VDPUNLOCK:
 VDPWRITEBIT: EQU     40H
 
 VDPREGIN:
-        PUSH    BC
-        LD      BC, VDPCONTROLPORTREAD
-        IN      A, (C)
-        POP     BC
+        IN      A, (VDPCONTROLPORTREAD)
         RET
 
 VDPRAMOUT:
-        PUSH    BC
-        LD      BC, VDPDATAPORTWRITE
-        OUT     (C), A
-        POP     BC
+        OUT     (VDPDATAPORTWRITE), A
         RET
 
 VDPRAMOUT8:
@@ -163,10 +157,7 @@ VDPRAMOUT8:
         RET
 
 VDPRAMIN:
-        PUSH    BC
-        LD      BC, VDPDATAPORTREAD
-        IN      A, (C)
-        POP     BC
+        IN      A, (VDPDATAPORTREAD)
         RET
 
 VDPWRITEADDR:
@@ -190,17 +181,17 @@ VDPSETREGI:
         CALL    VDPREGOUT
         LD      A, E
 VDPREGOUT:
-        PUSH    BC
-        LD      BC, VDPCONTROLPORTWRITE
-        OUT     (C), A
-        POP     BC
+        OUT     (VDPCONTROLPORTWRITE), A
         RET
+
+@IF !COLECO || vestigialConfig.biosAllowed
 
 VDPSETREG:
         CALL VDPLOCK
         CALL    VDPSETREGI
         CALL VDPUNLOCK
         RET
+@ENDIF
 
 VDPOUTCHAR:
         CALL VDPLOCK
