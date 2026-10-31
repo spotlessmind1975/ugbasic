@@ -35,17 +35,21 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF timerUsed
 PCCGATIMER:     dw  $0000
+@ENDIF
 
 TIMERISVC:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
+@IF timerUsed
     PUSH DX
     MOV DX, [PCCGATIMER]
     INC DX
     MOV [PCCGATIMER], DX
     POP DX
+@ENDIF
     IRET
 
 @IF deployed.keyboard && !keyboardConfig.sync

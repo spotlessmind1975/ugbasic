@@ -48,6 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
+    _environment->timerUsed = 1;
+
     outline1( "LDD #$%4.4x", _timing );
     outline0( "JSR WAITTIMER" );
 
@@ -62,6 +64,8 @@ void wait_ticks( Environment * _environment, int _timing ) {
  * @param _timing Number of cycles to wait
  */
 void wait_ticks_var( Environment * _environment, char * _timing ) {
+
+    _environment->timerUsed = 1;
 
     MAKE_LABEL
 

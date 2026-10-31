@@ -114,9 +114,12 @@ CPCISVC:
     JR NZ,IRQVECTORSKIP
     LD A,6
     LD (CPCTIMER2), A
+@IF timerUsed
     LD HL,(CPCTIMER)
     INC HL
     LD (CPCTIMER),HL
+@ENDIF
+
 @IF deployed.music
 	CALL MUSICPLAYER
 @ENDIF

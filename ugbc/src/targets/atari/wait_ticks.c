@@ -48,6 +48,8 @@
  */
 void wait_ticks( Environment * _environment, int _timing ) {
 
+    _environment->timerUsed = 1;
+
     outline1( "LDX #$%2.2x", (unsigned char)( _timing & 0xff ) );
     outline1( "LDY #$%2.2x", (unsigned char)( ( _timing >> 8 ) & 0xff ) );
     outline0( "JSR WAITTIMER" );

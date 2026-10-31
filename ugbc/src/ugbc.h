@@ -3313,6 +3313,13 @@ typedef struct _Environment {
     int dynamicConsole;
 
     int horizontalScrollOff;
+
+    int movieFilenamesCount;
+    char * movieFilenames[ MAX_MOVIE_FILENAMES ];
+
+    int msc1DictionarySize;
+    
+    int timerUsed;
     
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

@@ -688,6 +688,8 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->offsetY;
         } else if ( strcmp( $1, "copperList" ) == 0 ) {
             $$ = ( ((struct _Environment *)_environment)->copperList != NULL ) ? 1 : 0;
+        } else if ( strcmp( $1, "timerUsed" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->timerUsed;
         } else {
             $$ = 0;
         }

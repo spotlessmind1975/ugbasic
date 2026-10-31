@@ -79,9 +79,11 @@ ZXIRQSVC:
     PUSH IX
     PUSH IY
 
+@IF timerUsed
     LD HL, (ZXTIMER)
     INC HL
     LD (ZXTIMER), HL
+@ENDIF
 
 	LD A, (IRQVECTORREADY)
 	CMP 0

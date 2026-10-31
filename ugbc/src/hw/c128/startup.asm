@@ -37,6 +37,9 @@
 
 
 JIFFYUPDATE:
+
+@IF timerUsed
+
     PHP
     PHA
     TXA
@@ -75,6 +78,9 @@ JIFFYDAY:
     TAX
     PLA
     PLP
+
+@ENDIF
+
 	RTS
 
 NMISVC:
@@ -98,7 +104,9 @@ MSPRITESMANAGERADDRESS:
     CMP #IRQ1LINE
     BNE IRQSVCXX
 
+@IF timerUsed
     JSR JIFFYUPDATE
+@ENDIF
 
 @IF deployed.joystick && !joystickConfig.sync
     JSR JOYSTICKMANAGER

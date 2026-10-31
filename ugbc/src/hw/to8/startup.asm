@@ -40,10 +40,12 @@ PAGE0 equ $61
 ; TIMER service routine
 TO8IRQ
     PSHS  D
+@IF timerUsed
     LDD   #0              ; TI variable
 TO8TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
     STD   TO8TIMER      ; write result to TI variable
+@ENDIF
     LDA   #PAGE0          ; sets the direct page
     TFR   A,DP            ; for ugbc routines
 @IF deployed.scancode && !keyboardConfig.sync
