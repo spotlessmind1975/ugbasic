@@ -353,11 +353,18 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
     outline0("CALL VDPREGIN" );
     outline0("AND $F0" );
     outline0("LD B, A" );
-    outline1("LD E, $%2.2x", VDP_RCOLOR );
     outline1("LD A, (%s)", _border_color );
     outline0("AND $0F" );
     outline0("OR B" );
+#if defined(__coleco__)
+    outline1("LD B, $%2.2x", VDP_RCOLOR );
+    outline0("LD C, A" );
+    outline0("CALL CBIOS_VDPSETREG" );
+#else
+    outline1("LD E, $%2.2x", VDP_RCOLOR );
     outline0("CALL VDPSETREG" );
+#endif
+
 // #ifdef __coleco__
 //     if ( ! _environment->hasGameLoop ) {
 //         outline0("RET" );
@@ -1091,7 +1098,13 @@ void tms9918_screen_on( Environment * _environment ) {
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("OR $40" );
+#if defined(__coleco__)
+    outline0("LD B, E" );
+    outline0("LD C, A" );
+    outline0("CALL CBIOS_VDPSETREG" );
+#else
     outline0("CALL VDPSETREG" );
+#endif
 // #ifdef __coleco__
 //     if ( ! _environment->hasGameLoop ) {
 //         outline0("RET" );
@@ -1117,7 +1130,14 @@ void tms9918_screen_off( Environment * _environment ) {
     outline1("LD E, %2.2x", VDP_R1 );
     outline0("CALL VDPREGIN" );
     outline0("AND $BF" );
+#if defined(__coleco__)
+    outline0("LD B, E" );
+    outline0("LD C, A" );
+    outline0("CALL CBIOS_VDPSETREG" );
+#else
     outline0("CALL VDPSETREG" );
+#endif
+
 // #ifdef __coleco__
 //     if ( ! _environment->hasGameLoop ) {
 //         outline0("RET" );
@@ -2389,6 +2409,22 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
 }
 
+void tms9918_defdgr( Environment * _environment, char * _character, char * _data ) {
+
+    deploy( defdgr, src_hw_tms9918_defdgr_asm);
+
+    outline1( "LD HL, %s", _data );
+    outline1( "LD DE, (%s)", _character );
+    outline0( "SLA E" );
+    outline0( "RL D" );
+    outline0( "SLA E" );
+    outline0( "RL D" );
+    outline0( "SLA E" );
+    outline0( "RL D" );
+    outline0( "CALL DEFDGR");
+
+}
+
 void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen, int _compressed ) {
 
     deploy( tms9918vars, src_hw_tms9918_vars_asm);
@@ -2767,7 +2803,13 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
     outline0("LD B, A" );
     outline1("LD A, (%s)", _background_color );
     outline0("OR B" );
+#if defined(__coleco__)
+    outline0("LD B, E" );
+    outline0("LD C, A" );
+    outline0("CALL CBIOS_VDPSETREG" );
+#else
     outline0("CALL VDPSETREG" );
+#endif    
 // #ifdef __coleco__
 //     if ( ! _environment->hasGameLoop ) {
 //         outline0("RET" );

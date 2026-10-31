@@ -54,16 +54,6 @@ VDPUNLOCK:
 
 VDPWRITEBIT: EQU     40H
 
-VDPSETREGI:
-        CALL    VDPREGOUT
-        LD      A, E
-VDPREGOUT:
-        PUSH    BC
-        LD      BC, VDPCONTROLPORTWRITE
-        OUT     (C), A
-        POP     BC
-        RET
-
 VDPREGIN:
         PUSH    BC
         LD      BC, VDPCONTROLPORTREAD
@@ -196,11 +186,25 @@ VDPREADADDR:
         CALL    VDPREGOUT
         RET
 
-VDPSETREG:
-        CALL VDPLOCK
-        CALL    VDPSETREGI
-        CALL VDPUNLOCK
-        RET
+@IF COLECO
+
+        VDPSETREGI:
+                CALL    VDPREGOUT
+                LD      A, E
+        VDPREGOUT:
+                PUSH    BC
+                LD      BC, VDPCONTROLPORTWRITE
+                OUT     (C), A
+                POP     BC
+                RET
+
+        VDPSETREG:
+                CALL VDPLOCK
+                CALL    VDPSETREGI
+                CALL VDPUNLOCK
+                RET
+
+@ENDIF
 
 VDPOUTCHAR:
         CALL VDPLOCK
@@ -361,6 +365,36 @@ TMS9918STARTUPL1:
         JR NZ, TMS9918STARTUPL1
 
 
+@IF COLECO
+
+        CALL VDPLOCK
+
+        LD BC, VDP_R0 * 256
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RNAME * 256 + $06
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RCOLORTABLE * 256 + $80
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RPATTERN * 256
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RSPRITEA * 256 + $36
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RSPRITEP * 256 + $07
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_RCOLOR * 256 + $f1
+        CALL CBIOS_VDPSETREG
+
+        LD BC, VDP_R1 * 256 + $e2
+        CALL CBIOS_VDPSETREG
+
+@ELSE
+
         CALL VDPLOCK
         LD E, VDP_R0
         LD A, $00
@@ -393,6 +427,8 @@ TMS9918STARTUPL1:
         LD E, VDP_R1
         LD A, $e2
         CALL VDPSETREG
+
+@ENDIF
 
 @IF deployed.scroll
         LD A, $C3
