@@ -3314,11 +3314,6 @@ typedef struct _Environment {
 
     int horizontalScrollOff;
 
-    int movieFilenamesCount;
-    char * movieFilenames[ MAX_MOVIE_FILENAMES ];
-
-    int msc1DictionarySize;
-    
     int timerUsed;
     
     /* --------------------------------------------------------------------- */
