@@ -184,7 +184,7 @@ VDPREGOUT:
         OUT     (VDPCONTROLPORTWRITE), A
         RET
 
-@IF !COLECO || vestigialConfig.biosAllowed
+@IF !COLECO || !vestigialConfig.biosAllowed
 
 VDPSETREG:
         CALL VDPLOCK
