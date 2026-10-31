@@ -350,7 +350,7 @@ void tms9918_border_color( Environment * _environment, char * _border_color ) {
 //     }
 // #endif
     outline1("LD E, $%2.2x", VDP_RCOLOR );
-    outline0("CALL VDPREGIN" );
+    outline0("IN A, (VDPCONTROLPORTREAD)" );
     outline0("AND $F0" );
     outline0("LD B, A" );
     outline1("LD A, (%s)", _border_color );
@@ -1100,15 +1100,15 @@ void tms9918_screen_on( Environment * _environment ) {
 //         outhead1("%s:", label );
 //     }
 // #endif
-    outline1("LD E, %2.2x", VDP_R1 );
-    outline0("CALL VDPREGIN" );
+    outline0("IN A, (VDPCONTROLPORTREAD)" );
     outline0("OR $40" );
 #if defined(__coleco__)
     if ( _environment->vestigialConfig.biosAllowed ) {
-        outline0("LD B, E" );
+        outline1("LD B, $%2.2x", VDP_R1 );
         outline0("LD C, A" );
         outline0("CALL CBIOS_VDPSETREG" );
     } else {
+        outline1("LD E, $%2.2x", VDP_R1 );
         outline0("CALL VDPSETREG" );
     }
 #else
@@ -1136,15 +1136,15 @@ void tms9918_screen_off( Environment * _environment ) {
 //         outhead1("%s:", label );
 //     }
 // #endif
-    outline1("LD E, %2.2x", VDP_R1 );
-    outline0("CALL VDPREGIN" );
+    outline0("IN A, (VDPCONTROLPORTREAD)" );
     outline0("AND $BF" );
 #if defined(__coleco__)
     if ( _environment->vestigialConfig.biosAllowed ) {
-        outline0("LD B, E" );
+        outline1("LD B, $%2.2x", VDP_R1 );
         outline0("LD C, A" );
         outline0("CALL CBIOS_VDPSETREG" );
     } else {
+        outline1("LD E, $%2.2x", VDP_R1 );
         outline0("CALL VDPSETREG" );
     }
 #else
@@ -1369,9 +1369,9 @@ void tms9918_busy_wait( Environment * _environment, char * _timing ) {
     MAKE_LABEL
 
     outline1("LD C, (%s)", _timing);
-    outline0("CALL VDPREGIN");
+    outline0("IN A, (VDPCONTROLPORTREAD)");
     outhead1("%sfirst:", label );
-    outline0("CALL VDPREGIN");
+    outline0("IN A, (VDPCONTROLPORTREAD)");
     outline0("AND $01");
     outline1("JP Z, %sfirst", label);
     outline0("DEC C");
@@ -1708,7 +1708,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
-    // tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     reset_screen_mode_selected( _environment );
 
@@ -2817,8 +2817,7 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
 //         outhead1("%s:", label );
 //     }
 // #endif
-    outline1("LD E, %2.2x", VDP_RCOLOR );
-    outline0("CALL VDPREGIN" );
+    outline0("IN A, (VDPCONTROLPORTREAD)" );
     outline1("LD A, (%s)", _foreground_color );
     outline0("SLA A" );
     outline0("SLA A" );
@@ -2829,10 +2828,11 @@ void tms9918_colors_vars( Environment * _environment, char * _foreground_color, 
     outline0("OR B" );
 #if defined(__coleco__)
     if ( _environment->vestigialConfig.biosAllowed ) {
-        outline0("LD B, E" );
+        outline1("LD B, $%2.2x", VDP_RCOLOR );
         outline0("LD C, A" );
         outline0("CALL CBIOS_VDPSETREG" );
     } else {
+        outline1("LD E, $%2.2x", VDP_RCOLOR );
         outline0("CALL VDPSETREG" );
     }
 #else
