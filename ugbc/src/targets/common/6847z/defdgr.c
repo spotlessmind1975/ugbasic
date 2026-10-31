@@ -48,6 +48,35 @@
 @keyword DEFDGR
 @target vz200
 </usermanual> */
+
+void defdgr( Environment * _environment, char * _character, int _b0, int _b1, int _b2, int _b3, int _b4, int _b5, int _b6, int _b7 ) {
+
+    char buffer[8]; 
+    memset(buffer, 0, 8 );
+    buffer[0] = _b0;
+    buffer[1] = _b1;
+    buffer[2] = _b2;
+    buffer[3] = _b3;
+    buffer[4] = _b4;
+    buffer[5] = _b5;
+    buffer[6] = _b6;
+    buffer[7] = _b7;
+
+    Variable * character = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
+
+    Variable * charData = variable_temporary( _environment, VT_BUFFER, "(chardata)");
+    variable_store_buffer( _environment, charData->name, buffer, 8, 0 );
+
+    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
+    Variable * offset = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
+    Variable * newOffset = variable_sl_const( _environment, offset->name, 3 );
+
+    cpu_addressof_16bit( _environment, "UDCCHAR", address->realName );
+    cpu_math_add_16bit( _environment, address->realName, newOffset->realName, address->realName );
+    cpu_mem_move_direct_indirect_size( _environment, charData->realName, address->realName, 8 );
+
+}
+
 void defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 ) {
 
     Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");

@@ -91,12 +91,39 @@ durante la compilazione, è necessario utilizzare il comando ''LOAD FONT''.
 @usedInExample font_example_02.bas
 
 </usermanual> */
+
+void defdgr( Environment * _environment, char * _character, int _b0, int _b1, int _b2, int _b3, int _b4, int _b5, int _b6, int _b7 ) {
+
+    char buffer[8]; 
+    memset(buffer, 0, 8 );
+    buffer[0] = _b0;
+    buffer[1] = _b1;
+    buffer[2] = _b2;
+    buffer[3] = _b3;
+    buffer[4] = _b4;
+    buffer[5] = _b5;
+    buffer[6] = _b6;
+    buffer[7] = _b7;
+
+    Variable * character = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
+
+    Variable * charData = variable_temporary( _environment, VT_BUFFER, "(chardata)");
+    variable_store_buffer( _environment, charData->name, buffer, 8, 0 );
+
+    tms9918_defdgr( _environment, character->realName, charData->realName );
+
+}
+
 void defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 ) {
 
-    Variable * address = variable_temporary( _environment, VT_ADDRESS, "(address)");
+    char buffer[8]; 
+    memset(buffer, 0, 8 );
 
-    Variable * offset = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
-    Variable * newOffset = variable_sl_const( _environment, offset->name, 3 );
+    Variable * character = variable_retrieve_or_define( _environment, _character, VT_WORD, 0 );
+
+    Variable * charData = variable_temporary( _environment, VT_BUFFER, "(chardata)");
+    variable_store_buffer( _environment, charData->name, buffer, 8, 0 );
+
     Variable * b0 = variable_retrieve_or_define( _environment, _b0, VT_BYTE, 0 );
     Variable * b1 = variable_retrieve_or_define( _environment, _b1, VT_BYTE, 0 );
     Variable * b2 = variable_retrieve_or_define( _environment, _b2, VT_BYTE, 0 );
@@ -106,15 +133,15 @@ void defdgr_vars( Environment * _environment, char * _character, char * _b0, cha
     Variable * b6 = variable_retrieve_or_define( _environment, _b6, VT_BYTE, 0 );
     Variable * b7 = variable_retrieve_or_define( _environment, _b7, VT_BYTE, 0 );
 
-    cpu_addressof_16bit( _environment, "UDCCHAR", address->realName );
-    cpu_math_add_16bit( _environment, address->realName, newOffset->realName, address->realName );
-    cpu_move_8bit_indirect_with_offset( _environment, b0->realName, address->realName, 0 );    
-    cpu_move_8bit_indirect_with_offset( _environment, b1->realName, address->realName, 1 );    
-    cpu_move_8bit_indirect_with_offset( _environment, b2->realName, address->realName, 2 );    
-    cpu_move_8bit_indirect_with_offset( _environment, b3->realName, address->realName, 3 );    
-    cpu_move_8bit_indirect_with_offset( _environment, b4->realName, address->realName, 4);    
-    cpu_move_8bit_indirect_with_offset( _environment, b5->realName, address->realName, 5 );    
-    cpu_move_8bit_indirect_with_offset( _environment, b6->realName, address->realName, 6);    
-    cpu_move_8bit_indirect_with_offset( _environment, b7->realName, address->realName, 7 );    
+    cpu_move_8bit( _environment, b0->realName, address_displacement( _environment, charData->realName, "0" ) );
+    cpu_move_8bit( _environment, b1->realName, address_displacement( _environment, charData->realName, "1" ) );
+    cpu_move_8bit( _environment, b2->realName, address_displacement( _environment, charData->realName, "2" ) );
+    cpu_move_8bit( _environment, b3->realName, address_displacement( _environment, charData->realName, "3" ) );
+    cpu_move_8bit( _environment, b4->realName, address_displacement( _environment, charData->realName, "4" ) );
+    cpu_move_8bit( _environment, b5->realName, address_displacement( _environment, charData->realName, "5" ) );
+    cpu_move_8bit( _environment, b6->realName, address_displacement( _environment, charData->realName, "6" ) );
+    cpu_move_8bit( _environment, b7->realName, address_displacement( _environment, charData->realName, "7" ) );
+
+    tms9918_defdgr( _environment, character->realName, charData->realName );
 
 }

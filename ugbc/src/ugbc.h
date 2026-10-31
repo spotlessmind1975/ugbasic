@@ -2001,6 +2001,7 @@ typedef struct _Deployed {
     int cpuspeed;
     int waittimer;
     int play_samples;
+    int defdgr;
     
 } Deployed;
 
@@ -5599,6 +5600,7 @@ void                    data_string( Environment * _environment, char * _value )
 void                    data_type( Environment * _environment );
 void                    declare_procedure( Environment * _environment, char * _name, int _address, int _system );
 Variable *              decrypter( Environment * _environment, char * _data, char * _key, char * _var );
+void                    defdgr( Environment * _environment, char * _character, int _b0, int _b1, int _b2, int _b3, int _b4, int _b5, int _b6, int _b7 );
 void                    defdgr_vars( Environment * _environment, char * _character, char * _b0, char * _b1, char * _b2, char * _b3, char * _b4, char * _b5, char * _b6, char * _b7 );
 Variable *              deserialize( Environment * _environment, char * _data, char * _key, char * _var );
 Variable *              distance( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 );
