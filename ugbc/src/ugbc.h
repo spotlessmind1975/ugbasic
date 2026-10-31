@@ -2047,6 +2047,7 @@ typedef struct _VestigialConfig {
     char doubleBuffer;
     char palettePreserve;
     char clsImplicit;
+    char biosAllowed;
     
     /* retrocompatible hacks */
 
