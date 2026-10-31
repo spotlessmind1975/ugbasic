@@ -1708,7 +1708,7 @@ void tms9918_initialization( Environment * _environment ) {
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEWB" );
 
-    // tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
+    tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
 
     reset_screen_mode_selected( _environment );
 
