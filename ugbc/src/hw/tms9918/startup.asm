@@ -486,6 +486,9 @@ CONSOLECALCULATEL10:
 ;  0  1  0 Multicolor Mode   (3)
 ;  1  0  0 Text Mode         (0)
 
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) )
+
 SCREENMODE0:
 
         CALL VDPLOCK
@@ -602,6 +605,8 @@ SCREENMODE0:
 
         RET
 
+@ENDIF
+
 SCREENMODE1:
 
         CALL VDPLOCK
@@ -717,6 +722,8 @@ SCREENMODE1:
         CALL VDPUNLOCK
 
         RET
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
 SCREENMODE2:
 SCREENMODE3:
@@ -838,3 +845,5 @@ SCREENMODE3:
         CALL VDPUNLOCK
 
         RET
+
+@ENDIF
