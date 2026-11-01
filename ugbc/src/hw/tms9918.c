@@ -640,51 +640,14 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenColors = 16;
             _environment->currentModeBW = 0;
 
-            // M3 = 0
-            WVDP_R0( 0x00 );
-            //  1 + = Selects 16K bytes of VRAM.
-            //  2 + = Enables the active display
-            //  4 + = Enables VDP interrupt
-            //  8 + = M1 x 1 = 8
-            //      = M2 x 0 = 0
-            //      = Reserved Bit (must be set to O)
-            //      = Selects Size 1 sprites (16x16 pixels)
-            //      = Selects no magnification
-            WVDP_R1( 0xb2 );
-
-            // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-            // range of its contents is from O-F. The contents of the register form the upper four bits of
-            // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-            // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x06 );
+            outline0("CALL SCREENMODE0");
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
 
-            // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-            // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-            // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-            // (Register 4) * 800 (Hex).
-            // 5-3
-            // NOTE
-            // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-            // mode the Pattern Table can only be located in one of two places in VRAM, either
-            // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-            // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-            // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-            // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-            // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-            // 03 and Hex 07.
-            WVDP_RPATTERN( 0x00 );
-
             cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
-
-            WVDP_RSPRITEA( 0xff );
-            WVDP_RSPRITEP( 0xff );
 
             outline0("CALL TMS9918AUDCCHAR01");
             outline0("CALL TMS9918SPRITEINIT");
-
-            WVDP_R1( 0xf2 );
 
             break;
         case TILEMAP_MODE_GRAPHIC1:
@@ -698,71 +661,19 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenColors = 16;    
             _environment->currentModeBW = 1;
 
-            // M3 = 0
-            WVDP_R0( 0x00 );
-            //  1 + = Selects 16K bytes of VRAM.
-            //  2 + = Enables the active display
-            //  4 + = Enables VDP interrupt
-            //  8 + = M1 x 0 = 0
-            //      = M2 x 0 = 0
-            //      = Reserved Bit (must be set to O)
-            //      = Selects Size 1 sprites (16x16 pixels)
-            //      = Selects no magnification
-            WVDP_R1( 0xa2 );
-
-            // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-            // range of its contents is from O-F. The contents of the register form the upper four bits of
-            // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-            // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x06 );
+            outline0("CALL SCREENMODE1");
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
 
-            // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
-            // range of its contents is from O-FF. The contents of the register form the upper eight bits of
-            // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
-            // (Register 3) * 40 (Hex).
-            // NOTE
-            // Register 3 functions differently when the VDP is in Graphics II Mode. In this
-            // mode the Color Table can only be located ~n one of two places in VRAM, either
-            // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Color Table to be
-            // located, then the MSB in Register 3 has to be a O. If Hex 2000 is the location
-            // choice for your Color Table, then the MSB in Register 3 must be a 1. In either
-            // case, all the LSBs in Register 3 must be set to ls. Therefore, in Graphics II
-            // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
-            // FF.
-            WVDP_RCOLORTABLE( 0x12 );
-
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
 
-            // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-            // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-            // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-            // (Register 4) * 800 (Hex).
-            // 5-3
-            // NOTE
-            // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-            // mode the Pattern Table can only be located in one of two places in VRAM, either
-            // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-            // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-            // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-            // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-            // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-            // 03 and Hex 07.
-            WVDP_RPATTERN( 0x0 );
-
             cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
-
-            WVDP_RSPRITEA( 0x20 ); // 1000
-            WVDP_RSPRITEP( 0x00 ); // 0000
 
             cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1000 );
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
 
             outline0("CALL TMS9918AUDCCHAR01");
             outline0("CALL TMS9918SPRITEINIT");
-
-            WVDP_R1( 0xe2 );
 
             break;
         case BITMAP_MODE_GRAPHIC2:
@@ -777,63 +688,13 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenColors = 16;    
             _environment->currentModeBW = 1;
 
-            // M3 = 1
-            WVDP_R0( 0x02 );
-            //  1 + = Selects 16K bytes of VRAM.
-            //  2 + = Enables the active display
-            //  4 + = Enables VDP interrupt
-            //  8 + = M1 x 0 = 0
-            //      = M2 x 0 = 0
-            //      = Reserved Bit (must be set to O)
-            //      = Selects Size 1 sprites (16x16 pixels)
-            //      = Selects no magnification
-            WVDP_R1( 0x80 );
-
-            // Register 2 tells the VDP where the starting address of the Name Table is located in VRAM. The
-            // range of its contents is from O-F. The contents of the register form the upper four bits of
-            // the 14-bit VDP address, therefore making the location of the Name Table in VRAM equal to
-            // (Register 2) * 400 (Hex)
-            WVDP_RNAME( 0x0e );
-
             cpu_store_16bit( _environment, "TEXTADDRESS", 0x0e * 0x0400 );
-
-            // Register 3 tells the VDP where the starting address of the Color Table is located in VRAM. The
-            // range of its contents is from O-FF. The contents of the register form the upper eight bits of
-            // the 14-bit VDP address, therefore making the. location of the Color Table in VRAM equal to
-            // (Register 3) * 40 (Hex).
-            // NOTE
-            // Register 3 functions differently when the VDP is in Graphics II Mode. In this
-            // mode the Color Table can only be located ~n one of two places in VRAM, either
-            // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Color Table to be
-            // located, then the MSB in Register 3 has to be a O. If Hex 2000 is the location
-            // choice for your Color Table, then the MSB in Register 3 must be a 1. In either
-            // case, all the LSBs in Register 3 must be set to ls. Therefore, in Graphics II
-            // Mode the only two values that work correctly in Register 3 are Hex 7F and Hex
-            // FF.
-            WVDP_RCOLORTABLE( 0xff );
 
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
 
-            // Register 4 tells the VDP where the starting address of the Pattern Table is located in VRAM.
-            // The range of its contents is from 0-7. The contents of the register form the upper three bits of
-            // the 14 bit VDP address, therefore making the location of the Pattern Table in VRAM equal to
-            // (Register 4) * 800 (Hex).
-            // 5-3
-            // NOTE
-            // Register 4 functions differently when the VDP is in Graphics II Mode. In this
-            // mode the Pattern Table can only be located in one of two places in VRAM, either
-            // Hex 0000 or Hex 2000. If Hex 0000 is where you wish the Pattern Table to
-            // be located, then the MSB in Register 4 has to be a 0. If Hex 2000 is the location
-            // choice for your Pattern Generator Table, then the MSB in Register 4 must be a
-            // 1. In either case, all the LSBs in Register 4 must be set to ls. Therefore, in
-            // Graphics II Mode the only two values that work correctly in Register 4 are Hex
-            // 03 and Hex 07.
-            WVDP_RPATTERN( 0x03 );
-
             cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
 
-            WVDP_RSPRITEA( 0x76 ); // 1000
-            WVDP_RSPRITEP( 0x03 ); // 0000
+            outline0("CALL SCREENMODE2");
 
             cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
@@ -842,8 +703,6 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             outline0("CALL TMS9918AUDCCHAR23");
             outline0("CALL TMS9918SPRITEINIT");
-
-            WVDP_R1( 0xe2 );
 
             break;
     }
