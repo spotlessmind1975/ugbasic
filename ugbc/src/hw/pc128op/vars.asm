@@ -45,7 +45,7 @@ TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
 EMPTYTILE           fcb     $60
-TICKSPERSECOND      fcb     $0
+TICKSPERSECOND      fcb     50
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25

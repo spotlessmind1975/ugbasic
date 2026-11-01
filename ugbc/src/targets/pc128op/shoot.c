@@ -51,6 +51,8 @@
 </usermanual> */
 void shoot( Environment * _environment, int _channels ) {
 
+    _environment->timerUsed = 1;
+    
     deploy( pc128audio, src_hw_pc128op_audio_asm );
 
     outline0("LDU #$0f");
