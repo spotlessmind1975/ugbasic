@@ -488,9 +488,9 @@ CONSOLECALCULATEL10:
 
 SCREENMODE0:
 
-@IF COLECO && vestigialConfig.biosAllowed
-
         CALL VDPLOCK
+
+@IF COLECO && vestigialConfig.biosAllowed
 
         ; Register 0 = 0000003E = 00000000
         ;     3 = M3 (0)
@@ -529,14 +529,14 @@ SCREENMODE0:
         LD BC, $07f1
         CALL CBIOS_VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 1110
+        ; Register 1 = xSI1 20XM = 0111 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (1)
         ;     2 = M2 (0)
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $014e
+        LD BC, $0172
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -544,7 +544,6 @@ SCREENMODE0:
         ; Register 0 = 0000003E = 00000000
         ;     3 = M3 (0)
         ;     E = 0
-        CALL VDPLOCK
         LD E, VDP_R0
         LD A, $00
         CALL VDPSETREG
@@ -586,7 +585,7 @@ SCREENMODE0:
         LD A, $F1
         CALL VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 1110
+        ; Register 1 = xSI1 20XM = 0111 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (1)
@@ -594,18 +593,20 @@ SCREENMODE0:
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
         LD E, VDP_R1
-        LD A, $4e
+        LD A, $72
         CALL VDPSETREG
 
 @ENDIF
+
+        CALL VDPUNLOCK
 
         RET
 
 SCREENMODE1:
 
-@IF COLECO && vestigialConfig.biosAllowed
-
         CALL VDPLOCK
+
+@IF COLECO && vestigialConfig.biosAllowed
 
         ; Register 0 = 0000003E = 00000000
         ;     3 = M3 (0)
@@ -644,14 +645,14 @@ SCREENMODE1:
         LD BC, $07f1
         CALL CBIOS_VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 0110
+        ; Register 1 = xSI1 20XM = 0110 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (0)
         ;     2 = M2 (0)
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $0146
+        LD BC, $0162
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -659,7 +660,6 @@ SCREENMODE1:
         ; Register 0 = 0000003E = 00000000
         ;     3 = M3 (0)
         ;     E = 0
-        CALL VDPLOCK
         LD E, VDP_R0
         LD A, $00
         CALL VDPSETREG
@@ -701,7 +701,7 @@ SCREENMODE1:
         LD A, $F1
         CALL VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 0110
+        ; Register 1 = xSI1 20XM = 0110 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (0)
@@ -709,19 +709,21 @@ SCREENMODE1:
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
         LD E, VDP_R1
-        LD A, $46
+        LD A, $62
         CALL VDPSETREG
 
 @ENDIF
+
+        CALL VDPUNLOCK
 
         RET
 
 SCREENMODE2:
 SCREENMODE3:
 
-@IF COLECO && vestigialConfig.biosAllowed
-
         CALL VDPLOCK
+
+@IF COLECO && vestigialConfig.biosAllowed
 
         ; Register 0 = 0000003E = 00000010
         ;     3 = M3 (1)
@@ -762,14 +764,14 @@ SCREENMODE3:
         LD BC, $07f1
         CALL CBIOS_VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 0110
+        ; Register 1 = xSI1 20XM = 0110 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (0)
         ;     2 = M2 (0)
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $0146
+        LD BC, $0162
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -777,7 +779,6 @@ SCREENMODE3:
         ; Register 0 = 0000003E = 00000010
         ;     3 = M3 (1)
         ;     E = 0
-        CALL VDPLOCK
         LD E, VDP_R0
         LD A, $02
         CALL VDPSETREG
@@ -821,7 +822,7 @@ SCREENMODE3:
         LD A, $F1
         CALL VDPSETREG
 
-        ; Register 1 = MX02 1ISx = 0100 0110
+        ; Register 1 = xSI1 20XM = 0110 0010
         ;     S = active display (0 = off, 1 = on)
         ;     I = interrupt enable
         ;     1 = M1 (0)
@@ -829,9 +830,11 @@ SCREENMODE3:
         ;     X = sprite size (0 = 8x8, 1  = 16x16)
         ;     M = sprite magnification (0 = single, 1 = double)
         LD E, VDP_R1
-        LD A, $46
+        LD A, $62
         CALL VDPSETREG
 
 @ENDIF
+
+        CALL VDPUNLOCK
 
         RET
