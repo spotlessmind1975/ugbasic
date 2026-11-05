@@ -55,7 +55,7 @@ void target_initialization( Environment * _environment ) {
     variable_global( _environment, "COLORMAPADDRESS" );
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0400 );
     variable_global( _environment, "TEXTADDRESS" );    
-    variable_import( _environment, "EMPTYTILE", VT_TILE, 32 );
+    variable_import( _environment, "EMPTYTILE", VT_BYTE, 32 );
     variable_global( _environment, "EMPTYTILE" );    
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
