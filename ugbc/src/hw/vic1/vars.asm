@@ -34,6 +34,13 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+@IF emptyTileUsed
+EMPTYTILE:  .BYTE   32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+
 PLOTDEST = $28 ; $29
 PLOTCDEST= $26 ; $27
 PLOTC2DEST= $24 ; $25

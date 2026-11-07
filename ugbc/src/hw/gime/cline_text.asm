@@ -78,7 +78,12 @@ CLINESKIP
 
 CLINEINCX
     
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
+
     LDB <PLOTC
 
     ; The CLINE command do not need to switch from one bank to another 
@@ -116,7 +121,12 @@ CLINEENTIRE
 
 CLINEINC2X
 
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
+    
     LDB <PLOTC
 
     ; The CLINE command do not need to switch from one bank to another 

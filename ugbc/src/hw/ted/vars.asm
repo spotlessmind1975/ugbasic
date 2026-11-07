@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE:  .BYTE   32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+
 CURRENTWIDTH:      .word 40
 CURRENTHEIGHT:      .word 25
 RESOLUTIONX:       .word 0

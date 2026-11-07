@@ -45,7 +45,12 @@ CLS0:
     LD DE, (TEXTADDRESS)
     LD BC, (CURRENTFRAMESIZE)
 CLST3:
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+
     LD (DE), A
     INC DE
     DEC BC

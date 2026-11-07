@@ -70,7 +70,11 @@ CLINESKIP
     LDU #0
 
 CLINEINCX
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
     STA ,X
     LEAX 1, X    
     INC <CLINEX
@@ -89,7 +93,11 @@ CLINEENTIRE
     LDB <CLINEX
 
 CLINEINC2X
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
     STA B, X
         
     INCB

@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE:  .BYTE   0
+@ELSE
+EMPTYTILE = 0
+@ENDIF
+
 XGR:    .word 0
 YGR:    .word 0
 LINE:   .byte $ff, $ff

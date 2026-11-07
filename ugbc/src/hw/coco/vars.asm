@@ -45,7 +45,6 @@ EVERYSTATUS         fcb     0
 TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
-EMPTYTILE           fcb     $60
 
 COCOTIMER           fdb     $0
 COCOTIMER2          fdb     $0

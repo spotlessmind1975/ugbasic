@@ -81,7 +81,11 @@ CLSTNMI2:
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 0 )
 CLST0:
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
     LD BC, $100 + 40*25
     LD DE, (TEXTADDRESS)
     CALL VDPFILL
@@ -91,7 +95,11 @@ CLST0:
 @IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 1 )
 
 CLST1:
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
     LD BC, $100 + 32*24
     LD DE, (TEXTADDRESS)
     CALL VDPFILL
@@ -109,7 +117,11 @@ CLST1:
 
 CLST2:
 CLST3:
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
     LD BC, $100 + 32*24
     LD DE, (TEXTADDRESS)
     CALL VDPFILL

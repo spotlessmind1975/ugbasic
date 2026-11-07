@@ -177,7 +177,12 @@ VSCROLLTUPREFILLNOW
     ASLB
     LEAX D, X
 
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
+    
     LDB <PLOTC
 
     ; The VSCROLL command do not need to switch from one bank to another 
@@ -319,7 +324,12 @@ VSCROLLTDOWNREFILLB
 
     JSR GIMEBANKROM
     
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
+    
     LDB <PLOTC
 
     ; The VSCROLL command do not need to switch from one bank to another 

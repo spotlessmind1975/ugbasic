@@ -126,7 +126,12 @@ CLINE0CL:
     LD A, (CURRENTTILESWIDTH)
     SUB A, B
     LD C, A
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+
 CLINE0CL1:
 
     PUSH DE

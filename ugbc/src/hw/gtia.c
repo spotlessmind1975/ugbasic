@@ -1950,7 +1950,7 @@ void gtia_tiles_get( Environment * _environment, char *_result ) {
 
 void gtia_cls( Environment * _environment ) {
     
-    deploy( cls, src_hw_gtia_cls_asm );
+    deploy_preferred( cls, src_hw_gtia_cls_asm );
 
     outline0("LDA #$0");
     outline0("STA PATTERN");
@@ -1980,7 +1980,7 @@ void gtia_cls_box( Environment * _environment, char * _x1, char * _y1, char * _w
 
 void gtia_clear( Environment * _environment, char * _pattern ) {
     
-    deploy( cls, src_hw_gtia_cls_asm );
+    deploy_preferred( cls, src_hw_gtia_cls_asm );
 
     outline1("LDA %s", _pattern );
     outline0("STA PATTERN");
@@ -2006,7 +2006,7 @@ void gtia_text( Environment * _environment, char * _text, char * _text_size, int
     deploy( gtiavars, src_hw_gtia_vars_asm );
     deploy_deferred( gtiavarsGraphic, src_hw_gtia_vars_graphics_asm );
     deploy_preferred( vScrollText, src_hw_gtia_vscroll_text_asm );
-    deploy( cls, src_hw_gtia_cls_asm );
+    deploy_preferred( cls, src_hw_gtia_cls_asm );
     deploy( textEncodedAt, src_hw_gtia_text_at_asm );
 
     outline1("LDA %s", _text);
@@ -2144,7 +2144,7 @@ void gtia_initialization( Environment * _environment ) {
 void gtia_finalization( Environment * _environment ) {
 
     if (_environment->vestigialConfig.clsImplicit ) {
-        deploy( cls, src_hw_gtia_cls_asm );
+        deploy_preferred( cls, src_hw_gtia_cls_asm );
     }
 
     CopperList * copperList = _environment->copperList;

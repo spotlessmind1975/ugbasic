@@ -35,12 +35,15 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE: DEFB 0
+@ENDIF
+
 ; BITMAPADDRESS: DEFW $4000
 ; COLORMAPADDRESS: DEFW $5800
 ; TABCOUNT:   DEFB    4
 ; XCURS:      DEFB    0
 ; YCURS:      DEFB    0
-; EMPTYTILE:  DEFB   32
 ; XCURSYS:      DEFB    0
 ; YCURSYS:      DEFB    0
 

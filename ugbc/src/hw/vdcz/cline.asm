@@ -82,7 +82,12 @@ CLINE0CL:
     LD A, (CURRENTTILESWIDTH)
     SUB A, B
     LD C, A
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+
 CLINE0CL1:
 
     LD A, 18
@@ -105,7 +110,13 @@ CLINE0CL1:
 
     LD A, 31
     LD IXH, A
+
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+    
     LD IXL, A
     CALL VDCZWRITE
 

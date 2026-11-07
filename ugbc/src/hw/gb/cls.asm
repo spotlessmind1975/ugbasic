@@ -40,7 +40,11 @@ CLS:
     LD BC, 32*32
 CLSL1:
     CALL WAITSTATE
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
     LD (HL+), A
     DEC BC
     LD A, B

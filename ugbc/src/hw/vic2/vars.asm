@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE:  .BYTE   32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+
 PLOTDEST = $1A ; $1B
 PLOTCDEST= $18 ; $19
 PLOTC2DEST= $16 ; $17

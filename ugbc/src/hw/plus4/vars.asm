@@ -46,8 +46,12 @@ TICKSPERSECOND:     .BYTE   0
 TABCOUNT:   .BYTE    4
 XCURS:      .BYTE    0
 YCURS:      .BYTE    0
-EMPTYTILE:  .BYTE   32
 
+@IF emptyTileUsed
+EMPTYTILE:  .BYTE   32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
 
 TMPPTR = $71    ; $72
 TMPPTR2 = $7E    ; $7F

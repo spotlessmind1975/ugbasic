@@ -35,7 +35,14 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; SECTION data_user
+@IF emptyTileUsed
+SECTION data_user
+EMPTYTILE:   DEFB    32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+SECTION code_user
+
 ; ORG $c000
 
 ; TEXTADDRESS: DEFW FRAMEBUFFER

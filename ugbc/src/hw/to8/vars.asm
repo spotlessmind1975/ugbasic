@@ -44,7 +44,7 @@ CURRENTTILEMODE     fcb     0
 TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
-EMPTYTILE           fcb     $60
+
 TICKSPERSECOND      fcb     50
 
 TMPPTR equ $10    ; $23

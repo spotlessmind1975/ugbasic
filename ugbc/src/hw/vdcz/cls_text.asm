@@ -50,7 +50,13 @@ CLST:
 
     ; Set data byte
     LD IXH, 31
+
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+    
     LD IXL, A
     CALL VDCZWRITE
 

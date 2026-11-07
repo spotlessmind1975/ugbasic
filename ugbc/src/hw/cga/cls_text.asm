@@ -47,7 +47,11 @@ CLST:
     JMP CLSTDONE
 
 CLST0:
+@IF emptyTileUsed
     MOV AL, [EMPTYTILE]
+@ELSE
+    MOV AL, EMPTYTILE
+@ENDIF
     MOV AH, [_PAPER]
     SAL AH, 1
     SAL AH, 1

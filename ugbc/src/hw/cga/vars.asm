@@ -35,6 +35,12 @@
 ; *                                                                             *
 ; * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE: DEFB 32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+
 ; SECTION data_user
 ; ORG $c000
 

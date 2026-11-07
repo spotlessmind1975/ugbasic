@@ -62,7 +62,12 @@ CLSTX
     TFR D, U
     LDX TEXTADDRESS
 
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF
+    
     LDB <PLOTC
 
     ; The CLS command do not need to switch from one bank to another 

@@ -34,6 +34,13 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+@IF emptyTileUsed
+EMPTYTILE           fcb     $60
+@ELSE
+EMPTYTILE           equ     #$60
+@ENDIF
+
 PLOTDEST equ $0b ; $29
 PLOTCDEST equ $0d ; $27
 PLOTC2DEST equ $0f ; $25

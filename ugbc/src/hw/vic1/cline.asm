@@ -142,7 +142,11 @@ CLINEENTIRE:
     LDY #0
 
 CLINEINC2X:
+@IF emptyTileUsed
     LDA EMPTYTILE
+@ELSE
+    LDA #EMPTYTILE
+@ENDIF    
     STA (COPYOFTEXTADDRESS),y
         
     INY

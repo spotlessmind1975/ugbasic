@@ -996,6 +996,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dcommon, src_hw_atari_dcommon_asm );
     deploy_inplace_preferred( dload, src_hw_atari_dload_asm );
     deploy_inplace_preferred( chain, src_hw_atari_chain_asm );
+    deploy_inplace_preferred( cls, src_hw_gtia_cls_asm );
     
     outhead0("CODESTART:");
 

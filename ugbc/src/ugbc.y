@@ -4142,8 +4142,18 @@ exponential_less:
     } | 
     RASTER LINE { $$ = get_raster_line( _environment )->name; } | 
     TI { $$ = get_timer( _environment )->name; } | 
-    EMPTYTILE { $$ = "EMPTYTILE"; } | 
-    EMPTY TILE { $$ = "EMPTYTILE"; } | 
+    EMPTYTILE { 
+        ((struct _Environment *)_environment)->emptyTileUsed = 1;
+        Variable * to = variable_temporary( _environment, VT_BYTE, "(emptytile)" );
+        cpu_move_8bit( _environment, "EMPTYTILE", to->realName ); 
+        $$ = to->realName; 
+    } | 
+    EMPTY TILE { 
+        ((struct _Environment *)_environment)->emptyTileUsed = 1;
+        Variable * to = variable_temporary( _environment, VT_BYTE, "(emptytile)" );
+        cpu_move_8bit( _environment, "EMPTYTILE", to->realName ); 
+        $$ = to->realName; 
+    } | 
     TIMER { $$ = get_timer( _environment )->name; } | 
     PEN {
         Variable * pen = variable_temporary( _environment, VT_COLOR, "(pen)" );
@@ -9960,8 +9970,16 @@ statement2nc:
     ELSE { else_if_then_label( _environment );   else_if_then( _environment, NULL ); } | 
     ELSE IF { else_if_then_label( _environment ); }  expr THEN { else_if_then( _environment, $4 ); } | 
     ELSEIF { else_if_then_label( _environment ); } expr THEN { else_if_then( _environment, $3 ); } |
-    EMPTY TILE OP_ASSIGN expr { variable_move( _environment, $4, "EMPTYTILE" ); } | 
-    EMPTYTILE OP_ASSIGN expr { variable_move( _environment, $3, "EMPTYTILE" ); } | 
+    EMPTY TILE OP_ASSIGN expr { 
+        ((struct _Environment *)_environment)->emptyTileUsed = 1;
+        Variable * from = variable_retrieve( _environment, $4 );
+        cpu_move_8bit( _environment, from->realName, "EMPTYTILE" ); 
+    } | 
+    EMPTYTILE OP_ASSIGN expr { 
+        ((struct _Environment *)_environment)->emptyTileUsed = 1;
+        Variable * from = variable_retrieve( _environment, $3 );
+        cpu_move_8bit( _environment, from->realName, "EMPTYTILE" ); 
+    } | 
     ENABLE INTERRUPT { cpu_ei( _environment ); } | 
     END { end( _environment ); } | 
     END COPPER { end_copper( _environment ); } | 

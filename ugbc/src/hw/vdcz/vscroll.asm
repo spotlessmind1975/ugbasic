@@ -99,7 +99,13 @@ VSCROLLUPL1:
 
     LD A, 31
     LD IXH, A
+
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+    
     LD IXL, A
     CALL VDCZWRITE
 

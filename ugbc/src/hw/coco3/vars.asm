@@ -45,7 +45,6 @@ EVERYSTATUS        fcb     0
 TABCOUNT            fcb     4
 XCURS               fcb     0
 YCURS               fcb     0
-EMPTYTILE           fcb     32
 
 COCO3TIMER          fdb     $0
 COCO3TIMER2         fdb     $0

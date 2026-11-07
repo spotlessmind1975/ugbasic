@@ -75,7 +75,12 @@ CLSL10Y:
 CLSL2:
 
     LD D, REGISTER1
+@IF emptyTileUsed
     LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+
     LD E, A
     CALL EF9345LIB
 
