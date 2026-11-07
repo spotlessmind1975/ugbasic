@@ -303,6 +303,8 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     char labelDecompressionDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDecompressionDone, "%sdecompression", label );
     char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
 
+    deploy_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
+
     Variable * image = variable_retrieve( _environment, _image );
 
     Variable * x1 = variable_retrieve_or_define( _environment, _x1, VT_POSITION, 0 );
