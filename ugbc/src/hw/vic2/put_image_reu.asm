@@ -2301,6 +2301,23 @@ PUTIMAGEREU3:
 
         JMP PUTIMAGEREU3EFINAL
 
+    PUTIMAGEREU3EFINAL:
+
+@IF putImageSafe
+@IF deployed.timer
+        LDA TIMERRUNNING
+        BNE ?skipsafe
+@ENDIF
+        CLI
+@IF deployed.timer
+?skipsafe:
+@ENDIF
+@ENDIF
+
+        RTS
+
+@ENDIF
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGEREUFS:
@@ -2363,23 +2380,3 @@ PUTIMAGEREU3FS:
     STA REUTRANSLEN+1
     LDA #%10010001
     STA REUCOMMAND
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-    PUTIMAGEREU3EFINAL:
-
-@IF putImageSafe
-@IF deployed.timer
-        LDA TIMERRUNNING
-        BNE ?skipsafe
-@ENDIF
-        CLI
-@IF deployed.timer
-?skipsafe:
-@ENDIF
-@ENDIF
-
-        RTS
-
-@ENDIF
-
