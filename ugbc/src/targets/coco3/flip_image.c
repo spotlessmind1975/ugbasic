@@ -123,6 +123,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
                 resource.bankNumber = -1;
@@ -188,6 +189,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
                 resource.bankNumber = -1;
@@ -229,6 +231,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 cpu_label( _environment, alreadyLoadedLabel );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
                 resource.bankNumber = -1;

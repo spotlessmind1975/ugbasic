@@ -1282,6 +1282,7 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         zx_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
@@ -1295,6 +1296,7 @@ void zx_blit_image( Environment * _environment, char * _sources[], int _source_c
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[1] );
         resource.type = VT_IMAGE;
         zx_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );

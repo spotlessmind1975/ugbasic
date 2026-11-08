@@ -222,6 +222,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     outline1("LD (%s), HL", address->realName );
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 

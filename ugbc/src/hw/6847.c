@@ -3131,6 +3131,7 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
 
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.isAddress = 0;
         resource.type = VT_IMAGE;
@@ -3142,6 +3143,7 @@ void c6847_blit_image( Environment * _environment, char * _sources[], int _sourc
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[1] );
         resource.isAddress = 0;
         resource.type = VT_IMAGE;

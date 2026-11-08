@@ -2986,6 +2986,7 @@ void vdcz_blit_image( Environment * _environment, char * _sources[], int _source
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         vdcz_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
@@ -2996,6 +2997,7 @@ void vdcz_blit_image( Environment * _environment, char * _sources[], int _source
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         vdcz_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );

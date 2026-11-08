@@ -2240,6 +2240,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
@@ -2251,6 +2252,7 @@ void tms9918_blit_image( Environment * _environment, char * _sources[], int _sou
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
@@ -2724,6 +2726,7 @@ void tms9918_slice_image_copy( Environment * _environment, char * _image,  char 
     MAKE_LABEL
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( _image );
     resource.type = VT_IMAGE;
     tms9918_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );
@@ -2744,6 +2747,7 @@ void tms9918_slice_image_extract( Environment * _environment, char * _image,  ch
     MAKE_LABEL
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( _image );
     resource.type = VT_IMAGE;
     tms9918_load_image_address_to_register( _environment, NULL, &resource, _sequence, _frame, _frame_size, _frame_count );

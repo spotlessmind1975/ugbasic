@@ -98,6 +98,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 variable_add_inplace_vars( _environment, address->name, offset->name );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( address->realName );
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
@@ -138,6 +139,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 variable_add_inplace_vars( _environment, address->name, offset->name );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( address->realName );
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;
@@ -160,6 +162,7 @@ void flip_image_vars( Environment * _environment, char * _image, char * _frame, 
                 variable_store( _environment, address->name, image->absoluteAddress );
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( address->realName );
                 resource.bankNumber = image->bankAssigned;
                 resource.isAddress = 1;

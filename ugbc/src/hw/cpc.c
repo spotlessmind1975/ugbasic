@@ -2206,6 +2206,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
     outhead1("blitimage%s:", label);
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
@@ -2220,6 +2221,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         resource.isAddress = 0;
@@ -2567,6 +2569,7 @@ void cpc_slice_image_copy( Environment * _environment, char * _image,  char * _f
     MAKE_LABEL
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( _image );
     resource.type = VT_IMAGE;
     cpc_load_image_address_to_register( _environment, "HL", &resource, _sequence, _frame, _frame_size, _frame_count );
@@ -2587,6 +2590,7 @@ void cpc_slice_image_extract( Environment * _environment, char * _image,  char *
     MAKE_LABEL
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( _image );
     resource.type = VT_IMAGE;
     cpc_load_image_address_to_register( _environment, "HL", &resource, _sequence, _frame, _frame_size, _frame_count );

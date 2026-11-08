@@ -36,7 +36,9 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 @IF emptyTileUsed
-EMPTYTILE: DEFB 0
+EMPTYTILE           fcb     $60
+@ELSE
+EMPTYTILE           equ     #$60
 @ENDIF
 
 ; PLOTDEST equ $0b ; $29

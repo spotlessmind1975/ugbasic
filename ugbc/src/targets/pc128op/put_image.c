@@ -146,6 +146,7 @@ extern char DATATYPE_AS_STRING[][32];
                 }
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
                 resource.isCompiled = 0;
@@ -267,6 +268,7 @@ extern char DATATYPE_AS_STRING[][32];
                 }
 
                 Resource resource;
+                memset( &resource, 0, sizeof( Resource ) );
                 resource.realName = strdup( bankWindowName );
                 resource.isAddress = 0;
                 resource.isCompiled = 0;
@@ -506,6 +508,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     }
 
     Resource resource;
+    memset( &resource, 0, sizeof( Resource ) );
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 

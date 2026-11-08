@@ -3267,6 +3267,7 @@ void ef936x_blit_image( Environment * _environment, char * _sources[], int _sour
 
     if ( _source_count > 0 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[0] );
         resource.type = VT_IMAGE;
         ef936x_load_image_address_to_register( _environment, "BLITTMPPTR", &resource, _sequence, _frame, _frame_size, _frame_count );
@@ -3277,6 +3278,7 @@ void ef936x_blit_image( Environment * _environment, char * _sources[], int _sour
 
     if ( _source_count > 1 ) {
         Resource resource;
+        memset( &resource, 0, sizeof( Resource ) );
         resource.realName = strdup( _sources[1] );
         resource.type = VT_IMAGE;
         ef936x_load_image_address_to_register( _environment, "BLITTMPPTR2", &resource, _sequence, _frame, _frame_size, _frame_count );
