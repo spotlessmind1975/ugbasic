@@ -1022,7 +1022,7 @@ void gb_get_height( Environment * _environment, char *_result ) {
 
 void gb_cls( Environment * _environment ) {
     
-    deploy( clsText, src_hw_gb_cls_asm );
+    deploy_preferred( clsText, src_hw_gb_cls_asm );
     outline0("CALL CLS");
 
 }
@@ -1045,7 +1045,7 @@ void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) 
 
 void gb_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( gbvars, src_hw_gb_vars_asm );
+    deploy_preferred( gbvars, src_hw_gb_vars_asm );
 
     deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
@@ -1829,7 +1829,7 @@ void gb_blit_image( Environment * _environment, char * _sources[], int _source_c
 
 void gb_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( gbvars, src_hw_gb_vars_asm);
+    deploy_preferred( gbvars, src_hw_gb_vars_asm);
     deploy( putimage, src_hw_gb_put_image_asm );
 
     // MAKE_LABEL

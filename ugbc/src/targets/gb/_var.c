@@ -618,6 +618,8 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("SECTION code");
 
     deploy_inplace_preferred( startup, src_hw_gb_startup_asm);
+    deploy_inplace_preferred( gbvars, src_hw_gb_vars_asm);
+    deploy_inplace_preferred( clsText, src_hw_gb_cls_asm )
 
     outhead0("CODESTART:");
 

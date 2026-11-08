@@ -219,6 +219,7 @@ void target_initialization( Environment * _environment ) {
 
     cpu_init( _environment );
 
+    deploy_preferred( gbvars, src_hw_gb_vars_asm);
     deploy_preferred( startup, src_hw_gb_startup_asm);
 
     outline0("CALL GBSTARTUP" );

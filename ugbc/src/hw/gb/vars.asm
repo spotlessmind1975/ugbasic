@@ -34,3 +34,9 @@
 ;*                          by Marco Spedaletti                                *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+@IF emptyTileUsed
+EMPTYTILE:   DEFB    32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
