@@ -339,7 +339,9 @@ ONSCROLLVOID:
 @ENDIF
 
 TMS9918STARTUP:
-        
+
+@IF paletteNeeded
+
         LD A, 16
         LD C, A
         LD A, 0
@@ -350,6 +352,8 @@ TMS9918STARTUPL1:
         INC A
         DEC C
         JR NZ, TMS9918STARTUPL1
+
+@ENDIF
 
         CALL SCREENMODE1
 

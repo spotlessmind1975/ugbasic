@@ -413,9 +413,11 @@ void tms9918_background_color( Environment * _environment, int _index, int _back
  */
 void tms9918_background_color_vars( Environment * _environment, char * _index, char * _background_color ) {
 
+    _environment->paletteNeeded = 1;
+
     MAKE_LABEL
 
-   cpu_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
+    cpu_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
 
     tms9918_border_color( _environment, _background_color );
 
@@ -443,6 +445,8 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
  */
 void tms9918_background_color_semivars( Environment * _environment, int _index, char * _background_color ) {
 
+    _environment->paletteNeeded = 1;
+
     if ( ! _index ) {
         tms9918_border_color( _environment, _background_color );
     }
@@ -469,6 +473,8 @@ void tms9918_background_color_semivars( Environment * _environment, int _index, 
  * @param _background_color Background color to use
  */
 void tms9918_background_color_get_vars( Environment * _environment, char * _index, char * _background_color ) {
+
+    _environment->paletteNeeded = 1;
 
     outline1( "LD A, (%s)", _index );
     outline0( "LD E, A" );
@@ -1418,12 +1424,6 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "COLORMAPADDRESS" );    
     variable_import( _environment, "PATTERNADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "PATTERNADDRESS" );    
-    Variable * palette = variable_import( _environment, "PALETTE", VT_BUFFER, 16 );
-    variable_global( _environment, "PALETTE" ); 
-    // palette->readonly = 1;
-
-    char defaultPalette[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-    variable_store_buffer( _environment, "PALETTE", &defaultPalette[0], 16, 0 );
 
     SCREEN_MODE_DEFINE( TILEMAP_MODE_STANDARD, 0, 40, 24, 20, 6, 8, "Text Mode" );
     // SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 0, 32, 24, 16, 8, 8, "Graphic II" );
@@ -1767,11 +1767,6 @@ static Variable * tms9918_image_converter_bitmap_mode_standard( Environment * _e
     if (paletteColorCount > 16) {
         CRITICAL_IMAGE_CONVERTER_TOO_COLORS( paletteColorCount );
     }
-
-    // printf("X PALETTE (%dx%d):\n", _frame_width, _frame_height );
-    // for( int i=0; i<paletteColorCount; ++i ) {
-    //     printf("  (%2.2d) = %2.2x%2.2x%2.2x%2.2x (%s)\n", i, palette[i].alpha, palette[i].red, palette[i].green, palette[i].blue, palette[i].description );
-    // }
 
     int i, j, k;
 

@@ -695,6 +695,8 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->timerUsed;
         } else if ( strcmp( $1, "emptyTileUsed" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->emptyTileUsed;
+        } else if ( strcmp( $1, "paletteNeeded" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->paletteNeeded;
         } else {
             $$ = 0;
         }
