@@ -349,7 +349,7 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     resource.realName = strdup( address->realName );
     resource.isAddress = 1;
 
-    c6847b_put_image( _environment, &resource, x1->name, y1->name, NULL, NULL, 0, 0, _flags );
+    c6847b_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 0, 0, _flags );
     
     if ( !_environment->putImageRefUnsafe ) {
         outhead1("%sskip", label );
