@@ -35,6 +35,12 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF emptyTileUsed
+EMPTYTILE:   DEFB    32
+@ELSE
+EMPTYTILE = 32
+@ENDIF
+
 @IF verticalOverlapRequired
 
 VSCROLLBUFFERLINE: DEFS 80*8,  0
