@@ -54,20 +54,27 @@ static RGBi SYSTEM_PALETTE[] = {
 
 void coleco_inkey( Environment * _environment, char * _pressed, char * _key ) {
 
-    MAKE_LABEL
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("LD A, 0");
+        outline1("LD (%s), A", _pressed );
+        outline1("LD (%s), A", _key );
+    } else {
+        MAKE_LABEL
 
-    deploy( scancode, src_hw_coleco_scancode_asm );
+        deploy( scancode, src_hw_coleco_scancode_asm );
 
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _pressed );
-    outline1("LD (%s), A", _key );
-    outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z, %snokey", label );
-    outline1("LD (%s), a", _key );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
+        outline0("LD A, 0");
+        outline1("LD (%s), A", _pressed );
+        outline1("LD (%s), A", _key );
+        outline0("CALL SCANCODE");
+        outline0("CP 0");
+        outline1("JR Z, %snokey", label );
+        outline1("LD (%s), a", _key );
+        outline0("LD A, $FF");
+        outline1("LD (%s), A", _pressed );
+        outhead1("%snokey:", label );
+
+    }
    
 }
 
@@ -85,7 +92,9 @@ void coleco_wait_key_or_fire_semivar( Environment * _environment, char * _port, 
 
 void coleco_wait_fire( Environment * _environment, int _port, int _release ) {
 
-    _environment->bitmaskNeeded = 1;
+    if ( !_environment->vestigialConfig.biosAllowed ) {
+        _environment->bitmaskNeeded = 1;
+    }        
 
     deploy( joystick, src_hw_coleco_joystick_asm );
 
@@ -100,7 +109,7 @@ void coleco_wait_fire( Environment * _environment, int _port, int _release ) {
             outline0("CALL WAITFIRE1");
             break;
     }
-   
+
 }
 
 void coleco_wait_fire_semivar( Environment * _environment, char * _port, int _release ) {
@@ -120,21 +129,27 @@ void coleco_wait_fire_semivar( Environment * _environment, char * _port, int _re
 
 void coleco_scancode( Environment * _environment, char * _pressed, char * _scancode ) {
 
-    MAKE_LABEL
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("LD A, 0");
+        outline1("LD (%s), A", _pressed );
+        outline1("LD (%s), A", _scancode );
+    } else {
+        MAKE_LABEL
 
-    deploy( scancode, src_hw_coleco_scancode_asm );
+        deploy( scancode, src_hw_coleco_scancode_asm );
 
-    outline0("LD A, 0");
-    outline1("LD (%s), A", _scancode );
-    outline1("LD (%s), A", _pressed );
-    outline0("CALL SCANCODE");
-    outline0("CP 0");
-    outline1("JR Z,%snokey", label);
-    outline1("LD (%s), A", _scancode );
-    outline0("LD A, $FF");
-    outline1("LD (%s), A", _pressed );
-    outhead1("%snokey:", label );
-   
+        outline0("LD A, 0");
+        outline1("LD (%s), A", _scancode );
+        outline1("LD (%s), A", _pressed );
+        outline0("CALL SCANCODE");
+        outline0("CP 0");
+        outline1("JR Z,%snokey", label);
+        outline1("LD (%s), A", _scancode );
+        outline0("LD A, $FF");
+        outline1("LD (%s), A", _pressed );
+        outhead1("%snokey:", label );
+    }
+    
 }
 
 void coleco_key_pressed( Environment * _environment, char *_scancode, char * _result ) {

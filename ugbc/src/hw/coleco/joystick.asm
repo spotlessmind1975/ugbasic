@@ -38,6 +38,38 @@
 IO_Joy1		EQU	0FCH		; Joystick 1 input port
 IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
+@IF vestigialConfig.biosAllowed
+
+    WAITFIRE0:
+        CALL CBIOS_POLLER
+        LD A, (CONTROLLER_BUFFER+2)
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIREA:
+        CP $0
+        JR Z, WAITFIRE0
+
+    WAITFIRE1:
+        CALL CBIOS_POLLER
+        LD A, (CONTROLLER_BUFFER+7)
+        CP 0
+        JR Z, WAITFIRE0
+        RET
+
+    WAITFIRE:
+        CALL CBIOS_POLLER
+        LD A, (CONTROLLER_BUFFER+2)
+        LD B, A
+        LD A, (CONTROLLER_BUFFER+7)
+        OR B
+        CP 0
+        JR Z, WAITFIRE
+        RET
+
+@ELSE
+
 @IF joystickConfig.values
 
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -406,5 +438,7 @@ JOYSTICKREAD:
         CP 0
         JR Z, WAITFIRE
         RET
+
+@ENDIF
 
 @ENDIF
