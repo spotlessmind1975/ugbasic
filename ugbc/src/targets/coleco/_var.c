@@ -576,10 +576,10 @@ void variable_cleanup( Environment * _environment ) {
     // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
     // outline0("DEFB $aa, $55");
     // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
-    if ( _environment->configureParameters.coleco.cartridge.value == HPO_TEST ) {
-        outline0("DEFB $55, $aa");
-    } else {
+    if ( _environment->configureParameters.coleco.cartridge.value == HPO_GAME ) {
         outline0("DEFB $aa, $55");
+    } else {
+        outline0("DEFB $55, $aa");
     }
     // DW       0000           ;Pointer to the sprite name table
     outline0("DEFW $0000");
@@ -587,8 +587,13 @@ void variable_cleanup( Environment * _environment ) {
     outline0("DEFW $0000");
     // DW       0000           ;Pointer to the working buffer for WR_SPR_NM_TBL
     outline0("DEFW $0000");
-    // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
-    outline0("DEFW CONTROLLER_BUFFER");
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
+        outline0("DEFW CONTROLLER_BUFFER");
+    } else {
+        // DW       CONTROLLER_BUFFER ;Pointer to the hand controller input areas
+        outline0("DEFW $0000");
+    }
     // DW       START      ;Entry point to the user program
     outline0("DEFW CODESTART");
 

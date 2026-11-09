@@ -1,4 +1,4 @@
-REM @english
+﻿REM @english
 REM I/O CONTROL JOYSTICK READ (BITMAP)
 REM
 REM This example will read the joystick status for the first joystick. Then it will decode the
@@ -15,6 +15,8 @@ REM funziona lo scrolling verticale automatico, quando si raggiunge  con l'uso d
 REM ''PRINT'' la fine dello schermo.
 REM
 REM @include coleco,sg1000,sc3000,cpc,coco3
+
+DEFINE BIOS ALLOWED
 
     CLS
 

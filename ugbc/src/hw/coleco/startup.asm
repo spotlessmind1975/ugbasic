@@ -42,6 +42,8 @@ VDPCONTROLPORTWRITE     = $bf
 
 CBIOS_VDPSETREG         = $1fd9
 CBIOS_VDPWRITE          = $1fdf
+CBIOS_POLLER            = $1feb
+CBIOS_CONTROLLER_INIT   = $1105
 
 rst_8:
     RETI
@@ -151,9 +153,17 @@ NMI2:
 ;         LD (GAMELOOP_HOOK),A
 ;         RET
 
+@IF vestigialConfig.biosAllowed
+section data_user
+CONTROLLER_BUFFER: DEFB $9b, $9b, $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
+section code_user
+@ENDIF
+
 COLECOSTARTUP:
-    ; LD	HL, $9b9b
-    ; LD	(CONTROLLER_BUFFER),HL
+
+@IF vestigialConfig.biosAllowed
+    CALL CBIOS_CONTROLLER_INIT
+@ENDIF
 
 @IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
     LD DE, IRQVOID

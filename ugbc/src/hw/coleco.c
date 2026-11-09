@@ -177,63 +177,127 @@ void coleco_clear_key( Environment * _environment ) {
 
 void coleco_joy_vars( Environment * _environment, char * _port, char * _value ) {
 
-    deploy( joystick, src_hw_coleco_joystick_asm );
-
     MAKE_LABEL
 
-    outline1("LD A, (%s)", _port);
-    outline0("CP 0");
-    outline1("JR NZ, %spt1", label );
-    if ( _environment->joystickConfig.sync ) {
-        outline0("CALL JOYSTICKREAD0" );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("CALL CBIOS_POLLER" );
+        outline1("LD A, (%s)", _port );
+        outline0("CP 0" );
+        outline1("JR Z, %s", label );
+        outline0("LD DE, 7" );
+        outline1("JR %sbis", label );
+        outhead1("%s:", label );
+        outline0("LD DE, 3" );
+        outhead1("%sbis:", label );
+        outline0("LD HL, CONTROLLER_BUFFER");
+        outline0("ADD HL, DE" );
+        outline0("LD A, (HL)" );
+        outline0("LD B, A" );
+        outline0("INC HL" );
+        outline0("LD A, (HL)" );
+        outline0("OR B" );
+        outline1("LD (%s), A", _value);
     } else {
-        outline0("LD A, (JOYSTICK0)" );
+        deploy( joystick, src_hw_coleco_joystick_asm );
+
+        outline1("LD A, (%s)", _port);
+        outline0("CP 0");
+        outline1("JR NZ, %spt1", label );
+        if ( _environment->joystickConfig.sync ) {
+            outline0("CALL JOYSTICKREAD0" );
+        } else {
+            outline0("LD A, (JOYSTICK0)" );
+        }
+        if ( _environment->joystickConfig.values ) {
+            outline0("CALL JOYSTICKTSB" );
+        }
+        outline1("LD (%s), A", _value);
+        outline1("JR %sptx", label );
+        outhead1("%spt1:", label);
+        if ( _environment->joystickConfig.sync ) {
+            outline0("CALL JOYSTICKREAD1" );
+        } else {
+            outline0("LD A, (JOYSTICK1)" );
+        }
+        if ( _environment->joystickConfig.values ) {
+            outline0("CALL JOYSTICKTSB" );
+        }
+        outline1("LD (%s), A", _value);
+        outline1("JR %sptx", label );
+        outhead1("%sptx:", label);
     }
-    if ( _environment->joystickConfig.values ) {
-        outline0("CALL JOYSTICKTSB" );
-    }
-    outline1("LD (%s), A", _value);
-    outline1("JR %sptx", label );
-    outhead1("%spt1:", label);
-    if ( _environment->joystickConfig.sync ) {
-        outline0("CALL JOYSTICKREAD1" );
-    } else {
-        outline0("LD A, (JOYSTICK1)" );
-    }
-    if ( _environment->joystickConfig.values ) {
-        outline0("CALL JOYSTICKTSB" );
-    }
-    outline1("LD (%s), A", _value);
-    outline1("JR %sptx", label );
-    outhead1("%sptx:", label);
 
 }
 
 void coleco_joy( Environment * _environment, int _port, char * _value ) {
 
-    deploy( joystick, src_hw_coleco_joystick_asm );
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline0("CALL CBIOS_POLLER" );
+        outline1("LD A, (CONTROLLER_BUFFER+%d)", 2 + _port * 7  );
+        outline0("LD B, A" );
+        outline1("LD A, (CONTROLLER_BUFFER+%d)", 3 + _port * 7 );
+        outline0("OR B" );
+        outline1("LD (%s), A", _value);
+    } else {
+        deploy( joystick, src_hw_coleco_joystick_asm );
 
-    switch ( _port ) {
-        case 0:
-            if ( _environment->joystickConfig.sync ) {
-                outline0("CALL JOYSTICKREAD0" );
-            } else {
-                outline0("LD A, (JOYSTICK0)" );
-            }
-            break;
-        case 1:
-            if ( _environment->joystickConfig.sync ) {
-                outline0("CALL JOYSTICKREAD1" );
-            } else {
-                outline0("LD A, (JOYSTICK1)" );
-            }
-            break;
+        switch ( _port ) {
+            case 0:
+                if ( _environment->joystickConfig.sync ) {
+                    outline0("CALL JOYSTICKREAD0" );
+                } else {
+                    outline0("LD A, (JOYSTICK0)" );
+                }
+                break;
+            case 1:
+                if ( _environment->joystickConfig.sync ) {
+                    outline0("CALL JOYSTICKREAD1" );
+                } else {
+                    outline0("LD A, (JOYSTICK1)" );
+                }
+                break;
+        }
+        if ( _environment->joystickConfig.values ) {
+            outline0("CALL JOYSTICKTSB" );
+        }
+        outline1("LD (%s), A", _value);
     }
-    if ( _environment->joystickConfig.values ) {
-        outline0("CALL JOYSTICKTSB" );
-    }
-    outline1("LD (%s), A", _value);
 
+}
+
+void coleco_joy_direction( Environment * _environment, int _port, int _direction, char * _value ) {
+    outline0("CALL CBIOS_POLLER" );
+    outline1("LD A, (CONTROLLER_BUFFER+%d)", 3 + _port * 7  );
+    outline0("LD B, A" );
+    outline1("LD A, %d", ( 1 << _direction ) );
+    outline0("AND B" );
+    outline0("CP 0" );
+    cpu_ztoa(_environment);
+}
+
+void coleco_joy_direction_semivars( Environment * _environment, char * _port, int _direction, char * _value ) {
+    
+    MAKE_LABEL
+
+    outline0("CALL CBIOS_POLLER" );
+    outline1("LD A, (%s)", _port );
+    outline0("CP 0" );
+    outline1("JR Z, %s", label );
+    outline0("LD DE, 8" );
+    outline1("JR %sbis", label );
+    outhead1("%s:", label );
+    outline0("LD DE, 4" );
+    outhead1("%sbis:", label );
+    outline0("LD HL, CONTROLLER_BUFFER");
+    outline0("ADD HL, DE" );
+    outline0("LD A, (HL)" );
+    outline0("LD B, A" );
+    outline0("LD A, (HL)" );
+    outline0("OR B" );
+    outline1("LD A, %d", ( 1 << _direction ) );
+    outline0("AND B" );
+    outline0("CP 0" );
+    cpu_ztoa(_environment);
 }
 
 void coleco_sys_call( Environment * _environment, int _destination ) {

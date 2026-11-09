@@ -66,9 +66,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COPYOFTILESADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COPYOFTILESADDRESS" );    
 
-    variable_import( _environment, "CONTROLLER_BUFFER", VT_BUFFER, 12 );
-    variable_global( _environment, "CONTROLLER_BUFFER" );    
-
     variable_import( _environment, "COLECOTIMER", VT_WORD, 0 );
     variable_global( _environment, "COLECOTIMER" );    
 
