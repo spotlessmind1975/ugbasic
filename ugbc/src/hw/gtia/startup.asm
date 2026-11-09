@@ -116,7 +116,7 @@ GTIASTARTUPDONE:
 
     LDA #$00
     STA $02c4
-    LDA #$00
+    LDA #14
     STA $02c5
     LDA #$00
     STA $02c6

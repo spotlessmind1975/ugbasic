@@ -821,7 +821,7 @@ static void calculate_frame_buffer( Environment * _environment, int _size_requir
     if ( _environment->frameBufferStart > ( FRAME_BUFFER_ADDRESS - _size_required ) ) {
         _environment->frameBufferStart = ( FRAME_BUFFER_ADDRESS - _size_required );
     }
-    if ( _size_required > 1024 ) {
+    if ( _size_required > 4096 ) {
         _environment->frameBufferStart = ( _environment->frameBufferStart >> 12 ) << 12;
     } else {
         _environment->frameBufferStart = ( ( _environment->frameBufferStart + _size_required - 1 ) >> 12 ) << 12;
