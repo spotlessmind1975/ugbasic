@@ -72,11 +72,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COLECOTIMER", VT_WORD, 0 );
     variable_global( _environment, "COLECOTIMER" );    
 
-    variable_import( _environment, "IRQVECTOR", VT_BUFFER, 3 );
-    variable_global( _environment, "IRQVECTOR" );   
-    variable_import( _environment, "IRQVECTORREADY", VT_BYTE, 0 );
-    variable_global( _environment, "IRQVECTORREADY" );   
-
     variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
     variable_global( _environment, "TICKSPERSECOND" );   
 

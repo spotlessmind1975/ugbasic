@@ -72,7 +72,19 @@ rst_38:
 
 jp NMI
 
+@IF customIrqNeeded
+IRQVOID:
+    RET
+@ENDIF
+
+@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
+section data_user
+IRQVECTOR:      DEFS 3, 0
+IRQVECTORREADY: DEFB $00
+@ENDIF
+
 NMI:
+@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
 	PUSH	AF
     LD A, (VDPINUSE)
     CP 1
@@ -93,11 +105,15 @@ NMI:
     INC HL
     LD (COLECOTIMER),HL
 @ENDIF
+
+@IF customIrqNeeded
 	LD A, (IRQVECTORREADY)
 	CMP 0
 	JR Z, IRQVECTORSKIP
     CALL IRQVECTOR
 IRQVECTORSKIP:
+@ENDIF
+
 @IF deployed.sn76489startup
 	CALL SN76489MANAGER
 @ENDIF
@@ -124,6 +140,7 @@ IRQVECTORSKIP:
     IN A, ($bf)
 NMI2:
 	POP	AF
+@ENDIF
 	RETN
 
 ; SET_GAMELOOP_HOOK:
@@ -134,13 +151,11 @@ NMI2:
 ;         LD (GAMELOOP_HOOK),A
 ;         RET
 
-IRQVOID:
-    RET
-
 COLECOSTARTUP:
     LD	HL, $9b9b
     LD	(CONTROLLER_BUFFER),HL
 
+@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
     LD DE, IRQVOID
     LD HL, IRQVECTOR
     LD A, $c3
@@ -153,6 +168,7 @@ COLECOSTARTUP:
     LD (HL), A
 	LD A, 1
 	LD (IRQVECTORREADY), A
+@ENDIF
 
     CALL VDPLOCK
     LD A, ($0069)
