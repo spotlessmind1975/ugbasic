@@ -152,8 +152,8 @@ NMI2:
 ;         RET
 
 COLECOSTARTUP:
-    LD	HL, $9b9b
-    LD	(CONTROLLER_BUFFER),HL
+    ; LD	HL, $9b9b
+    ; LD	(CONTROLLER_BUFFER),HL
 
 @IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
     LD DE, IRQVOID

@@ -576,7 +576,11 @@ void variable_cleanup( Environment * _environment ) {
     // DB       0AAh,055h       ;Cartridge present:  Colecovision logo
     // outline0("DEFB $aa, $55");
     // ;DB       055h,0AAh       ;Cartridge present:  skip logo, Colecovision logo
-    outline0("DEFB $55, $aa");
+    if ( _environment->configureParameters.coleco.cartridge.value == HPO_TEST ) {
+        outline0("DEFB $55, $aa");
+    } else {
+        outline0("DEFB $aa, $55");
+    }
     // DW       0000           ;Pointer to the sprite name table
     outline0("DEFW $0000");
     // DW       0000           ;Pointer to the sprite order table

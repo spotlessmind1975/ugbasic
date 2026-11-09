@@ -348,16 +348,25 @@ typedef struct _StaticString {
 typedef enum _HardwareName {
 
     HN_GMC = 1,
-    HN_SN76489 = 2
+    HN_SN76489 = 2,
+    HN_COLECO = 2,
 
 } HardwareName;
 
 typedef enum _HardwareParameterName {
 
     HPN_SLOT = 1,
-    HPN_ADDRESS = 2
+    HPN_ADDRESS = 2,
+    HPN_CARTRIDGE = 3
 
 } HardwareParameterName;
+
+typedef enum _HardwareOptionName {
+
+    HPO_GAME = 1, //    CARTRIDGE GAME
+    HPO_TEST = 2  //    CARTRIDGE TEST
+
+} HardwareOptionName;
 
 typedef enum _AudioDeviceName {
 
@@ -416,11 +425,19 @@ typedef struct _ConfigureSN76489Parameters {
  
 } ConfigureSN76489Parameters;
 
+typedef struct _ConfigureColecoParameters {
+
+    OptionParameterValued   cartridge;
+ 
+} ConfigureColecoParameters;
+
 typedef struct _ConfigureParameters {
 
     ConfigureGMCParameters      gmc;
 
     ConfigureSN76489Parameters  sn76489;
+
+    ConfigureColecoParameters   coleco;
 
 } ConfigureParameters;
 

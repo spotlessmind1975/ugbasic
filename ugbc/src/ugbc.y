@@ -233,7 +233,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token BINARY BIRD BIT BITMAP BITMAPADDRESS BITMAPS BLACK BLIT BLOCK BLOWN BLUE
 %token BOOLEAN BOOM BORDER BOTTLE BOTTOM BOUNCE BOWED BOX BRASS BREATH BRIGHT
 %token BRIGHTNESS BROWN BUFFER BUT BY BYTE BYTES C C128Z C16 C64 C64REU CALL
-%token CALLIOPE CAN CAPS CAPSLOCK CASE CDOWN CELESTA CELLO CENTER CENTRE CGOTO
+%token CALLIOPE CAN CAPS CAPSLOCK CARTRIDGE CASE CDOWN CELESTA CELLO CENTER CENTRE CGOTO
 %token CHAIN CHANNEL CHAR CHARANG CHECK CHIFF CHOIR CHR CHURCH CIRCLE CLAMP
 %token CLARINET CLASS CLAVI CLEAN CLEAR CLEFT CLINE CLIP CLOSE CLR CLS CMOB
 %token CMOVE COARSE COCO COCO1 COCO2 COCO3 CODE COLECO COLLISION COLON COLOR
@@ -255,7 +255,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token FELLIPSE FHEIGHT FI FIDDLE FIFTHS FILESIZE FILEX FILL FINAL FIND FINGER
 %token FIRE FIRST FLASH FLIP FLOAT FLUTE FONT FOR FORBID FRAME FRAMES FREE
 %token FREEZE FRENCH FRET FRETLESS FROM FSIZE FUJINET FUNCTION FWIDTH FX G
-%token GAMELOOP GB GET GLOBAL GLOCKENSPIEL GMC GOBLINS GOLD GOSUB GOTO GPRINT
+%token GAME GAMELOOP GB GET GLOBAL GLOCKENSPIEL GMC GOBLINS GOLD GOSUB GOTO GPRINT
 %token GR GRAND GRAPHIC GRAPHICS GRAY GREEN GREY GUITAR GUNSHOT H HALO HALT
 %token HALTED HARMONICA HARMONICS HARP HARPSICHORD HAS HDBDOS HEIGHT HELICOPTER
 %token HEX HEX2BIN HIRES HIT HOME HONKY HORIZONTAL HORN HSCROLL HTTP I IAF ID
@@ -295,7 +295,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token STEADY STEEL STEP STOP STORAGE STORE STR STRIG STRING STRINGS STRIP
 %token STRPTR SUBSTRING SUCCESS SUM SUSPEND SWAP SWEEP SYNC SYNTH SYNTHBRASS
 %token SYNTHSTRINGS SYS SYSTEM T TAB TAIKO TAN TANGO TARGET TASK TED TELEPHONE
-%token TEMPORARY TENOR TEXT TEXTADDRESS TEXTMAP THEN THREAD THRESHOLD TI TICK
+%token TEMPORARY TENOR TEST TEXT TEXTADDRESS TEXTMAP THEN THREAD THRESHOLD TI TICK
 %token TICKS TILE TILEMAP TILES TILESET TIMER TIMPANI TINKLE TO TO8 TOM TONK
 %token TPS TRANSPARENCY TRANSPARENT TRAVEL TREMOLO TRIANGLE TROMBONE TRUE
 %token TRUMPET TSB TUBA TUBULAR TURQUOISE TWEET TYPE U UBOUND UCASE UGBASIC
@@ -397,7 +397,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> on_targets
 %type <integer> op_comma_or_semicolon
 %type <integer> on_off_optional 
-%type <integer> option_name
+%type <integer> configure_parameter_name
+%type <integer> configure_option_name
 %type <integer> safe_fast_optional
 %type <integer> endianess_optional
 %type <integer> integer_optional
@@ -7984,22 +7985,37 @@ define_definitions:
  ----------------------------------------------------------------------------*/
 
 configure_name:
+    COLECO { $$ = HN_COLECO; } | 
     GMC { $$ = HN_GMC; } | 
     SN76489 { $$ = HN_SN76489; };
 
-option_name:
+configure_parameter_name:
     ADDRESS { $$ = HPN_ADDRESS; } |
+    CARTRIDGE { $$ = HPN_CARTRIDGE; } |
     SLOT { $$ = HPN_SLOT; };
 
+configure_option_name:
+    GAME { $$ = HPO_GAME; } |
+    TEST { $$ = HPO_TEST; };
+
 configure_set_static_option:
-    option_name OP_ASSIGN const_expr {
+    configure_parameter_name OP_ASSIGN const_expr {
         OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
         memset( actual, 0, sizeof( OptionParameterValue ) );
         actual->parameter = $1;
         actual->value = $3;
         actual->next = ((struct _Environment *)_environment)->optionParameters;
         ((struct _Environment *)_environment)->optionParameters = actual;
+    } |
+    configure_parameter_name configure_option_name {
+        OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
+        memset( actual, 0, sizeof( OptionParameterValue ) );
+        actual->parameter = $1;
+        actual->value = $2;
+        actual->next = ((struct _Environment *)_environment)->optionParameters;
+        ((struct _Environment *)_environment)->optionParameters = actual;
     };
+    ;
 
 configure_set_static_options:
     configure_set_static_option | 
@@ -8014,10 +8030,19 @@ configure_static_definitions:
                 configure_set_value( _environment, $2, actual->parameter, actual->value );
                 actual = actual->next;
             }
+        } |
+    static_optional configure_name {
+            ((struct _Environment *)_environment)->optionParameters = NULL;
+        } configure_set_static_options {
+            OptionParameterValue * actual = ((struct _Environment *)_environment)->optionParameters;
+            while( actual ) {
+                configure_set_value( _environment, $2, actual->parameter, actual->value );
+                actual = actual->next;
+            }
         };
 
 configure_set_dynamic_option:
-    option_name OP_ASSIGN expr {
+    configure_option_name OP_ASSIGN expr {
         OptionParameterValue * actual = malloc( sizeof( OptionParameterValue ) );
         memset( actual, 0, sizeof( OptionParameterValue ) );
         actual->parameter = $1;
