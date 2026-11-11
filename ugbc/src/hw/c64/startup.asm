@@ -37,7 +37,7 @@
 
 JIFFYUPDATE:
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
 
     PHP
     PHA
@@ -201,6 +201,8 @@ NUMBER: .BYTE $D6, $FF, $FF, $FF, $FF
 
 C64STARTUP:
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $02A6
     BEQ C64NTSC
 C64PAL:
@@ -211,6 +213,8 @@ C64NTSC:
     LDA #60
     STA TICKSPERSECOND
     JMP C64STARTUPDONE    
+
+@ENDIF
 
 C64STARTUPDONE:
 

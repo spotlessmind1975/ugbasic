@@ -40,20 +40,40 @@ VDPDATAPORTREAD = $98
 VDPCONTROLPORTREAD = $99
 VDPCONTROLPORTWRITE = $99
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+SECTION data_user
+TICKSPERSECOND: DEFB     50
+SECTION code_user
+@ELSE
+SECTION data_user
+TICKSPERSECOND: DEFB     60
+SECTION code_user
+@ENDIF
+@ELSE
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND equ 50
+@ELSE
+TICKSPERSECOND equ 60
+@ENDIF
+@ENDIF
+
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
 CHECKIF60HZ:
-    IN A, ($bf)
+    IN A, ($99)
     NOP
     NOP
     NOP
 VDPSYNC:
-    IN A, ($bf)
+    IN A, ($99)
 	AND $80
     CP 0
 	JR Z, VDPSYNC
     LD HL, $0
 VDPLOOP:
     INC HL
-    IN A, ($bf)
+    IN A, ($99)
     AND $80
     CP 0
 	JR Z, VDPLOOP
@@ -68,6 +88,8 @@ VDPLOOPD:
 VDPLOOPDQ0:
     LD A, 0
     RET
+
+@ENDIF
 
 ISRSVC:
 @IF deployed.ay8910startup
@@ -119,6 +141,9 @@ MSX1STARTUP:
     EI
     
     CALL VDPLOCK
+
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     CALL CHECKIF60HZ
     CMP 1
     JR Z, MSX1NTSC
@@ -132,6 +157,8 @@ MSX1NTSC:
     LD A, 60
     LD (TICKSPERSECOND), A
     JP MSX1STARTUPDONE    
+
+@ENDIF
 
 MSX1STARTUPDONE:
 

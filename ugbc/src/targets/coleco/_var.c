@@ -659,6 +659,8 @@ void variable_cleanup( Environment * _environment ) {
         staticStrings = staticStrings->next;
     }
 
+    printf( ">>>>>>>>>> _environment->descriptors = %d\n", _environment->descriptors );
+    
     if ( _environment->descriptors ) {
 
         if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {

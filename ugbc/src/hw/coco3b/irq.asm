@@ -110,7 +110,7 @@ SKIPGIMEROM
     JSR FLASHMANAGER
 @ENDIF
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD COCO3BTIMER
     ADDD #$1
     STD COCO3BTIMER

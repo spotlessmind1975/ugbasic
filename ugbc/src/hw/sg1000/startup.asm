@@ -273,6 +273,18 @@ NMI_HANDLER2:
 IRQVOID:
     RET
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+section data_user
+TICKSPERSECOND: DEFB 50
+section code_user
+@ELSE
+section data_user
+TICKSPERSECOND: DEFB 60
+section code_user
+@ENDIF
+@ENDIF
+
 SG1000STARTUP:
     LD DE, IRQVOID
     LD HL, IRQVECTOR
@@ -292,6 +304,8 @@ SG1000STARTUP:
     LD DE, 0
     CALL VDPWRITE
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     CALL CheckIf60Hz
     JR Z, SG1000NTSC
 
@@ -304,6 +318,8 @@ SG1000NTSC:
     LD A, 60
     LD (TICKSPERSECOND), a
     JMP SG1000STARTUPDONE    
+
+@ENDIF
 
 SG1000STARTUPDONE:
 

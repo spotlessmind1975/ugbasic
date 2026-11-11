@@ -48,7 +48,20 @@ YCURS               fcb     0
 
 COCO3TIMER          fdb     $0
 COCO3TIMER2         fdb     $0
-TICKSPERSECOND      fcb     $0
+
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND      fcb     50
+@ELSE
+TICKSPERSECOND      fcb     60
+@ENDIF
+@ELSE
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND equ 50
+@ELSE
+TICKSPERSECOND equ 60
+@ENDIF
+@ENDIF
 
 TMPPTR equ $10    ; $23
 TMPPTR2 equ $12    ; $25

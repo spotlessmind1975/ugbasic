@@ -47,6 +47,8 @@ descriptorsCount = 0
 
 VIC20STARTUP:
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $EDE4
     CMP #$05
     BEQ VIC20NTSC
@@ -60,6 +62,8 @@ VIC20NTSC:
     LDA #60
     STA TICKSPERSECOND
     JMP VIC20STARTUPDONE    
+
+@ENDIF
 
 VIC20STARTUPDONE:
 

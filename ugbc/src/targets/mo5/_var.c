@@ -981,6 +981,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( duff, src_hw_6809_duff_asm );
     deploy_inplace_preferred( msc1, src_hw_6809_msc1_asm );
     deploy_inplace_preferred( bank, src_hw_mo5_bank_asm );
+    deploy_inplace_preferred( vars, src_hw_mo5_vars_asm);
     
     for( i=0; i<MAX_RESIDENT_SHAREDS; ++i ) {
         if ( _environment->maxExpansionBankSize[i] ) {

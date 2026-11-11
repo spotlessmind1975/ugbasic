@@ -45,6 +45,10 @@ ISRSVC:
 @ENDIF
     RET
 
+@IF ticksPerSecondUsed
+TICKSPERSECOND: DEFB $00, $00
+@ENDIF
+
 VG5000STARTUP:
 
     DI
@@ -59,9 +63,13 @@ VG5000STARTUP:
     LD A, $c3
     LD ($47e2), A
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LD A, 50
     LD (TICKSPERSECOND), A
-    
+
+@ENDIF
+
     EI
 
     RET

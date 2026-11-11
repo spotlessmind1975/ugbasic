@@ -1573,7 +1573,11 @@ void tms9918_initialization( Environment * _environment ) {
 
     _environment->fontConfig.schema = FONT_SCHEMA_EMBEDDED;
 
+#if defined(__coleco__)
     font_descriptors_init( _environment, 1 );
+#else
+    font_descriptors_init( _environment, 0 );
+#endif
     
     console_calculate( _environment );
 

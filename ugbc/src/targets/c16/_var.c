@@ -706,6 +706,7 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    deploy_inplace_preferred( vars2, src_hw_c16_vars2_asm );
     deploy_inplace_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outhead0(".segment \"CODE\"" );

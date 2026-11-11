@@ -55,7 +55,7 @@ INT_HANDLER2:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD HL,(SC3000TIMER)
     INC HL
     LD (SC3000TIMER),HL

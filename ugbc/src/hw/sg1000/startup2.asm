@@ -57,7 +57,7 @@ INT_HANDLER2:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD HL,(SG1000TIMER)
     INC HL
     LD (SG1000TIMER),HL

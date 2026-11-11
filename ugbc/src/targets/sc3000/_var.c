@@ -46,6 +46,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
     Variable * variable = _first;
 
     while( variable ) {
+
         if ( ( !variable->assigned || ( variable->assigned && !variable->temporary ) ) ) {
             switch( variable->type ) {
                 case VT_CHAR:
@@ -57,7 +58,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        vars_emit_byte( _environment, variable->realName, variable->initialValue);
+                        vars_emit_byte( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -105,7 +106,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        vars_emit_word( _environment, variable->realName, variable->initialValue);
+                        vars_emit_word( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -115,7 +116,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        vars_emit_dword( _environment, variable->realName, variable->initialValue);
+                        vars_emit_dword( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -124,7 +125,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
                         outhead0("section data_user");
-                        vars_emit_number( _environment, variable->realName, variable->initialValue);
+                        vars_emit_number( _environment, variable->realName, variable->initialValue );
                         outhead0("section code_user");
                     }
                     break;
@@ -149,26 +150,10 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         outhead0("section code_user");
                     }
                     break;
+                case VT_TILE:
+                case VT_TILESET:
                 case VT_MSPRITE:
                 case VT_SPRITE:
-                    if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead0("section data_user");
-                        outline1("%s: db 0", variable->realName);
-                        outhead0("section code_user");
-                    }
-                    break;
-                case VT_TILE:
-                    if ( variable->memoryArea ) {
-                        outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
-                    } else {
-                        outhead0("section data_user");
-                        outline2("%s: db $%2.2x", variable->realName, variable->value);
-                        outhead0("section code_user");
-                    }
-                    break;
-                case VT_TILESET:
                     if ( variable->memoryArea ) {
                         outline2("%s: EQU $%4.4x", variable->realName, variable->absoluteAddress);
                     } else {
@@ -187,19 +172,19 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                     }
                     break;
                 case VT_BLIT:
-                    break;
+                    break;                
                 case VT_IMAGE:
                 case VT_IMAGES:
                 case VT_SEQUENCE:
                 case VT_MOVIE:
                     if ( variable->usedImage ) {
 
-                        if ( variable->readonly ) {
-
-                        } else {
-                            outhead0("section data_user");
-                        }                
                         if ( ! variable->absoluteAddress ) {
+                            if ( variable->readonly ) {
+
+                            } else {
+                                outhead0("section data_user");
+                            }
                             if ( variable->valueBuffer ) {
                                 if ( variable->printable ) {
                                     char * string = malloc( variable->size + 1 );
@@ -211,16 +196,21 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
                                         if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                            outline1("%d", variable->valueBuffer[i]);
+                                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                             out0("  db ");
                                         } else {
-                                            out1("%d,", variable->valueBuffer[i]);
+                                            out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                         }
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             } else {
-                                outline2("%s: defs %d,0", variable->realName, variable->size);
+                                outline2("%s: defs %d", variable->realName, variable->size);
+                            }
+                            if ( variable->readonly ) {
+
+                            } else {
+                                outhead0("section code_user");
                             }
                         } else {
                             outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -234,16 +224,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     out1("%scopy: db ", variable->realName);
                                     int i=0;
                                     for (i=0; i<(variable->size-1); ++i ) {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                     }
-                                    outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                    outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                                 }
                             }
-                        }
-                        if ( variable->readonly ) {
-
-                        } else {
-                            outhead0("section code_user");
                         }
                     }
                     break;
@@ -251,12 +236,12 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                 case VT_SAMPLES:
                 case VT_BUFFER:
                 case VT_TYPE:
-                    if ( variable->readonly ) {
-
-                    } else {
-                        outhead0("section data_user");
-                    }                
                     if ( ! variable->absoluteAddress ) {
+                        if ( variable->readonly ) {
+
+                        } else {
+                            outhead0("section data_user");
+                        }
                         if ( variable->valueBuffer ) {
                             if ( variable->printable ) {
                                 char * string = malloc( variable->size + 1 );
@@ -268,16 +253,21 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
                                     if ( ( ( i + 1 ) % 16 ) == 0 ) {
-                                        outline1("%d", variable->valueBuffer[i]);
+                                        outline1("$%2.2x", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                         out0("  db ");
                                     } else {
-                                        out1("%d,", variable->valueBuffer[i]);
+                                        out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                     }
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                             }
                         } else {
-                            outline2("%s: defs %d,0", variable->realName, variable->size);
+                            outline2("%s: defs %d", variable->realName, variable->size);
+                        }
+                        if ( variable->readonly ) {
+
+                        } else {
+                            outhead0("section code_user");
                         }
                     } else {
                         outline2("%s = $%4.4x", variable->realName, variable->absoluteAddress);
@@ -291,16 +281,11 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                 out1("%scopy: db ", variable->realName);
                                 int i=0;
                                 for (i=0; i<(variable->size-1); ++i ) {
-                                    out1("%d,", variable->valueBuffer[i]);
+                                    out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                                 }
-                                outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                                outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                             }
                         }
-                    }
-                    if ( variable->readonly ) {
-
-                    } else {
-                        outhead0("section code_user");
                     }
                     break;
                 case VT_TILEMAP:
@@ -335,9 +320,9 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                             out1("%s: db ", variable->realName);
                             int i=0;
                             for (i=0; i<(variable->size-1); ++i ) {
-                                out1("%d,", variable->valueBuffer[i]);
+                                out1("$%2.2x,", (unsigned char)(variable->valueBuffer[i] & 0xff ) );
                             }
-                            outline1("%d", variable->valueBuffer[(variable->size-1)]);
+                            outline1("$%2.2x", (unsigned char)(variable->valueBuffer[(variable->size-1)] & 0xff ) );
                         } else if ( variable->value ) {
 
                             switch( VT_BITWIDTH( variable->arrayType ) ) {
@@ -366,7 +351,6 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                                     outline3("%s: defs %d, $%2.2x", variable->realName, variable->size, (unsigned char)(variable->value?0xff:0x00));
                                     break;
                             }                             
-                            
                         } else {
                             outline2("%s: defs %d", variable->realName, variable->size);
                         }
@@ -375,6 +359,7 @@ static void variable_cleanup_entry( Environment * _environment, Variable * _firs
                         } else {
                             outhead0("section code_user");
                         }
+
                     }
 
                     break;
@@ -435,6 +420,7 @@ static void variable_cleanup_entry_bit( Environment * _environment, Variable * _
 
 }
 
+
 /**
  * @brief Emit source and configuration lines for variables
  * 
@@ -463,8 +449,8 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline0( "dw $ffff, DATAPTRE" );
         }
-    }  
-        
+    }   
+
     if ( _environment->offsetting ) {
         Offsetting * actual = _environment->offsetting;
         while( actual ) {
@@ -488,7 +474,7 @@ void variable_cleanup( Environment * _environment ) {
                     actualVariable = actualVariable->next;
                 }
                 outhead1("fs%4.4xoffsetsequence:", actual->size );
-                outhead1("fs%4.4xoffsetframe:", actual->size );                   
+                outhead1("fs%4.4xoffsetframe:", actual->size );                
                 outline0("LD L, A" );
                 outline0("LD H, 0" );
                 outline0("ADD HL, HL" );
@@ -504,7 +490,7 @@ void variable_cleanup( Environment * _environment ) {
                 outline0("POP HL" );
                 outline0("ADD HL, DE" );
                 outline0("RET" );
-            }            
+            }
             actual = actual->next;
         }
 
@@ -524,18 +510,9 @@ void variable_cleanup( Environment * _environment ) {
         cpu_address_table_build( _environment, "EXECOFFSETS", values, address, count );
 
         cpu_address_table_lookup( _environment, "EXECOFFSETS", count );        
-
+        
     }
 
-    deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
-    deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
-    deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
-    deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
-
-    generate_cgoto_address_table( _environment );
-
-    banks_generate( _environment );
-    
     Constant * c = _environment->constants;
     while( c ) {
         if ( c->valueString ) {
@@ -584,7 +561,30 @@ void variable_cleanup( Environment * _environment ) {
         }
     }    
 
+    generate_cgoto_address_table( _environment );
+
     variable_on_memory_init( _environment, 1 );
+
+    buffered_push_output( _environment );
+
+    outhead0("SECTION code_user");
+    outhead0("ORG $0000");
+    outhead0("SECTION data_user");
+    outhead0("ORG $C000");
+    outhead0("SECTION code_user");
+
+    deploy_inplace_preferred( startup, src_hw_sc3000_startup_asm);
+    deploy_inplace_preferred( startup2, src_hw_sc3000_startup2_asm);
+    deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
+    deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+    deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+
+    outhead0("CODESTART:")
+    
+    outline0("CALL VARINIT2");
+    cpu_call( _environment, "VARINIT" );
+
+    buffered_prepend_output( _environment );
 
     DataSegment * dataSegment = _environment->dataSegment;
     while( dataSegment ) {
@@ -592,8 +592,8 @@ void variable_cleanup( Environment * _environment ) {
         if ( dataSegment->data ) {
             out1("%s: db ", dataSegment->realName );
         } else {
-            outhead1("%s: ", dataSegment->realName );
-        }        
+            outhead1("%s ", dataSegment->realName );
+        }
         DataDataSegment * dataDataSegment = dataSegment->data;
         while( dataDataSegment ) {
             if ( dataSegment->type ) {
@@ -631,7 +631,7 @@ void variable_cleanup( Environment * _environment ) {
     if ( _environment->dataNeeded || _environment->dataSegment || _environment->deployed.read_data_unsafe ) {
         outhead0("DATAPTRE:");
     }
-        
+    
     StaticString * staticStrings = _environment->strings;
     while( staticStrings ) {
         outline3("cstring%d: db %d, %s", staticStrings->id, (int)strlen(staticStrings->value), escape_newlines( staticStrings->value ) );
@@ -639,6 +639,7 @@ void variable_cleanup( Environment * _environment ) {
     }
 
     if ( _environment->descriptors ) {
+
         outhead0("UDCCHAR:" );
         int i=0,j=0;
         for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
@@ -649,50 +650,63 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
-        outhead0("TMS9918AUDCCHAR01:" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline0("RET" );
-        outhead0("TMS9918AUDCCHAR23:" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline1("LD BC, %d", _environment->descriptors->count * 8 );
-        outline0("LD HL, UDCCHAR" );
-        outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
-        outline0("CALL VDPWRITE" );
-        outline0("RET" );
+        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+            outhead0("TMS9918AUDCCHAR01:" );
+            outline1("LD BC, %d", _environment->descriptors->count * 8 );
+            outline0("LD HL, UDCCHAR" );
+            outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+            outline0("CALL VDPWRITE" );
+            outline0("RET" );
+        } else {
+            outhead0("TMS9918AUDCCHAR01:" );
+            outline0("RET" );
+        }
+        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+            outhead0("TMS9918AUDCCHAR23:" );
+            if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $800+$%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+                outline1("LD BC, %d", _environment->descriptors->count * 8 );
+                outline0("LD HL, UDCCHAR" );
+                outline1("LD DE, $1000+$%4.4x", _environment->descriptors->first*8 );
+                outline0("CALL VDPWRITE" );
+            }
+            outline0("RET" );
+        }
     } else {
-        outhead0("UDCCHAR: EQU $E000");
-        outhead0("TMS9918AUDCCHAR01:" );
-        outline0("RET" );
-        outhead0("TMS9918AUDCCHAR23:" );
-        outline0("RET" );
+        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+            outhead0("TMS9918AUDCCHAR01:" );
+            outline0("LD BC, 2048" );
+            outline0("LD HL, $1000" );
+            outline0("LD DE, $0100");
+            outline0("CALL VDPWRITE" );
+            outline0("RET" );
+        } else {
+            outhead0("TMS9918AUDCCHAR01:" );
+            outline0("RET" );
+        }
+        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+            outhead0("TMS9918AUDCCHAR23:" );
+            outline0("LD BC, 2048" );
+            outline0("LD HL, $1000" );
+            outline0("LD DE, $0100");
+            outline0("CALL VDPWRITE" );
+            outline0("LD BC, 2048" );
+            outline0("LD HL, $1000" );
+            outline0("LD DE, $0900");
+            outline0("CALL VDPWRITE" );
+            outline0("LD BC, 2048" );
+            outline0("LD HL, $1000" );
+            outline0("LD DE, $1100");
+            outline0("CALL VDPWRITE" );
+            outline0("RET" );
+        }
     }
-
-    buffered_push_output( _environment );
-
-    outhead0("SECTION code_user");
-    outhead0("ORG $0000");
-    outhead0("SECTION data_user");
-    outhead0("ORG $C000");
-    outhead0("SECTION code_user");
-
-    deploy_inplace(startup,src_hw_sc3000_startup_asm);
-    deploy_inplace(startup,src_hw_sc3000_startup2_asm);
-
-    outhead0("CODESTART:")
-    
-    outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
-
-    buffered_prepend_output( _environment );
 
 }

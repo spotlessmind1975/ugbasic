@@ -69,9 +69,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "COLECOTIMER", VT_WORD, 0 );
     variable_global( _environment, "COLECOTIMER" );    
 
-    variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
-    variable_global( _environment, "TICKSPERSECOND" );   
-
     variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
     variable_global( _environment, "JOYSTICK0" );   
 

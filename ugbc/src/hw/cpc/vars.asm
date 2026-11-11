@@ -42,8 +42,13 @@ EMPTYTILE = 32
 @ENDIF
 
 @IF verticalOverlapRequired
-
 VSCROLLBUFFERLINE: DEFS 80*8,  0
-
 @ENDIF
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND: DEFB   50
+@ELSE
+TICKSPERSECOND: DEFB   60
+@ENDIF
+@ENDIF

@@ -46,7 +46,20 @@ XCURS:      .BYTE    0
 YCURS:      .BYTE    0
 
 KBDDELAYC:      .BYTE   64
-TICKSPERSECOND: .BYTE   0
+
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND: .BYTE   50
+@ELSE
+TICKSPERSECOND: .BYTE   60
+@ENDIF
+@ELSE
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND = 50
+@ELSE
+TICKSPERSECOND = 60
+@ENDIF
+@ENDIF
 
 TMPPTR = $22    ; $23
 TMPPTR2 = $24    ; $25

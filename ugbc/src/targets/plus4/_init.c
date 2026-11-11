@@ -82,6 +82,7 @@ void target_initialization( Environment * _environment ) {
     outhead0("CODESTART:");
 
     deploy( vars, src_hw_plus4_vars_asm);
+    deploy_preferred( vars2, src_hw_plus4_vars2_asm);
     deploy_deferred( startup, src_hw_plus4_startup_asm);
 
     cpu_call( _environment, "PLUS4STARTUP" );

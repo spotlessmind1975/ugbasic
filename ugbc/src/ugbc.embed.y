@@ -699,6 +699,16 @@ const_factor:
             $$ = ((struct _Environment *)_environment)->paletteNeeded;
         } else if ( strcmp( $1, "customIrqNeeded" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->customIrqNeeded;
+        } else if ( strcmp( $1, "videoOutputStandard" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->videoOutputStandard;
+        } else if ( strcmp( $1, "ticksPerSecondUsed" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->ticksPerSecondUsed;
+        } else if ( strcmp( $1, "VOS_NONE" ) == 0 ) {
+            $$ = VOS_NONE;
+        } else if ( strcmp( $1, "VOS_PAL" ) == 0 ) {
+            $$ = VOS_PAL;
+        } else if ( strcmp( $1, "VOS_NTSC" ) == 0 ) {
+            $$ = VOS_NTSC;
         } else {
             $$ = 0;
         }

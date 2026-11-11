@@ -74,19 +74,19 @@ rst_38:
 
 jp NMI
 
-@IF customIrqNeeded
+@IF customIrqNeeded || ticksPerSecondUsed
 IRQVOID:
     RET
 @ENDIF
 
-@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
+@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync) || ticksPerSecondUsed
 section data_user
 IRQVECTOR:      DEFS 3, 0
 IRQVECTORREADY: DEFB $00
 @ENDIF
 
 NMI:
-@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
+@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync) || ticksPerSecondUsed
 	PUSH	AF
     LD A, (VDPINUSE)
     CP 1
@@ -102,7 +102,7 @@ NMI:
 	PUSH	BC
 	PUSH	DE
 	PUSH	HL
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD HL,(COLECOTIMER)
     INC HL
     LD (COLECOTIMER),HL
@@ -159,13 +159,25 @@ CONTROLLER_BUFFER: DEFB $9b, $9b, $00, $00, $00, $00, $00, $00, $00, $00, $00, $
 section code_user
 @ENDIF
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+section data_user
+TICKSPERSECOND: DEFB 50
+section code_user
+@ELSE
+section data_user
+TICKSPERSECOND: DEFB 60
+section code_user
+@ENDIF
+@ENDIF
+
 COLECOSTARTUP:
 
 @IF vestigialConfig.biosAllowed
     CALL CBIOS_CONTROLLER_INIT
 @ENDIF
 
-@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)
+@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)  || ticksPerSecondUsed
     LD DE, IRQVOID
     LD HL, IRQVECTOR
     LD A, $c3
@@ -180,8 +192,12 @@ COLECOSTARTUP:
 	LD (IRQVECTORREADY), A
 @ENDIF
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LD A, ($0069)
     LD (TICKSPERSECOND), A
+
+@ENDIF
 
 @IF deployed.protothread
     CALL PROTOTHREADINIT

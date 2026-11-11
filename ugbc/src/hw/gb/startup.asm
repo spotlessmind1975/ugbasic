@@ -987,7 +987,7 @@ WAITSTATEM0L2:
     RET
 
 IRQSVC:
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     PUSH HL
     LD HL,(GBTIMER)
     INC HL

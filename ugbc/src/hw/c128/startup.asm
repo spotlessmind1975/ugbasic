@@ -38,7 +38,7 @@
 
 JIFFYUPDATE:
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
 
     PHP
     PHA
@@ -104,7 +104,7 @@ MSPRITESMANAGERADDRESS:
     CMP #IRQ1LINE
     BNE IRQSVCXX
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     JSR JIFFYUPDATE
 @ENDIF
 
@@ -198,6 +198,8 @@ IRQSVC2:
 
 C128STARTUP:
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $0A03
     CMP #$0
     BEQ C128NTSC
@@ -213,6 +215,8 @@ C128NTSC:
     JMP C128STARTUPDONE    
 
 C128STARTUPDONE:
+
+@ENDIF
 
     SEI
 

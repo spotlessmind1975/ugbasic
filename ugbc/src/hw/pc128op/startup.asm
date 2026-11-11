@@ -40,7 +40,7 @@ PAGE0 equ $21
 ; TIMER service routine
 PC128IRQ
     PSHS  D
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD   #0              ; TI variable
 PC128TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
@@ -110,6 +110,8 @@ PC128STARTUP3
 
     ANDCC #$AF
 
+@IF ticksPerSecondUsed 
+
     LDD #$0
 PC128STARTUPL1
     ADDD #$1
@@ -117,19 +119,21 @@ PC128STARTUPL1
     CMPD #$3100
     BNE PC128STARTUPL1
 
-    ; LDA PC128TIMER+1
-    ; CMPA #40
-    ; BLE PC128NTSC
+    LDA PC128TIMER+1
+    CMPA #$0A
+    BLE PC128NTSC
 
-; PC128PAL
-;     LDA #50
-;     STA TICKSPERSECOND
-;     JMP PC128STARTUPDONE
+PC128PAL
+    LDA #50
+    STA TICKSPERSECOND
+    JMP PC128STARTUPDONE
 
-; PC128NTSC
-;     LDA #60
-;     STA TICKSPERSECOND
-;     JMP PC128STARTUPDONE
+PC128NTSC
+    LDA #60
+    STA TICKSPERSECOND
+    JMP PC128STARTUPDONE
+
+@ENDIF
 
 PC128STARTUPDONE
 

@@ -71,6 +71,8 @@ al momento della compilazione.
 </usermanual> */
 Variable * get_ticks_per_second( Environment * _environment ) {
     
+    _environment->ticksPerSecondUsed = 1;
+    
     Variable * ticks_per_second = variable_temporary( _environment, VT_BYTE, "(ticks per second)" );
 
     cpu_move_8bit( _environment, "TICKSPERSECOND", ticks_per_second->realName );

@@ -54,7 +54,7 @@ IRQSVC:
     CALL JOYSTICKMANAGER
 @ENDIF
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD BC, (C128ZTIMER)
     INC BC
     LD (C128ZTIMER), BC
@@ -116,19 +116,53 @@ C128ZSTARTUPL1:
     OUT (C), A
     EI
 
-    LD A, ($0A03)
-    CMP 0
-    JR Z, C128ZNTSC
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
 
-C128ZPAL:
+    DI
+    LD HL, $FF00
+    LD A, (HL)
+    LD D, A
+    AND %11111110
+    LD (HL), A
+
+    LD BC, 0
+C128ZSTARTUPLOOP:
+    LD A, ($D011)
+    AND $80
+    JR Z, C128ZSTARTUPNEXT
+    LD A, ($D012)
+    CP 8
+    JR NC, C128ZSTARTUPPAL
+C128ZSTARTUPNEXT:
+    DEC BC
+    LD A, B
+    OR C
+    JR NZ, C128ZSTARTUPLOOP
+    LD A, D
+    LD (HL), A
+    EI
+C128ZNTSC:
+    LD A, 60
+    LD (TICKSPERSECOND), A
+    JP C128ZSTARTUPDONE
+C128ZSTARTUPPAL:
+    LD A, D
+    LD (HL), A
+    EI
+C128ZPPAL:
     LD A, 50
     LD (TICKSPERSECOND), A
     JP C128ZSTARTUPDONE
 
-C128ZNTSC:
-    LD A, 60
-    LD (TICKSPERSECOND), A
-    JP C128ZSTARTUPDONE    
+@ENDIF
+
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND: DEFB   50
+@ELSE
+TICKSPERSECOND: DEFB   60
+@ENDIF
+@ENDIF
 
 C128ZSTARTUPDONE:
 

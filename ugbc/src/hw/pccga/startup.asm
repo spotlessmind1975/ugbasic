@@ -35,7 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
 PCCGATIMER:     dw  $0000
 @ENDIF
 
@@ -43,7 +43,7 @@ TIMERISVC:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     PUSH DX
     MOV DX, [PCCGATIMER]
     INC DX
@@ -58,9 +58,25 @@ KEYBOARDIRQSAVED:   dw 0, 0
 
 @ENDIF
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND: DEFB     50
+@ELSE
+TICKSPERSECOND: DEFB     60
+@ENDIF
+@ELSE
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND = 50
+@ELSE
+TICKSPERSECOND = 60
+@ENDIF
+@ENDIF
+
 PCCGASTARTUP:
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
     MOV AX, 50
     MOV [TICKSPERSECOND], AX
+@ENDIF
 
 @IF dataSegment
     MOV DX, DATAFIRSTSEGMENT

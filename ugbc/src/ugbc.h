@@ -101,6 +101,16 @@ typedef enum _Dialect {
 
 } Dialect;
 
+typedef enum _VideoOutputStandard {
+
+    VOS_NONE = 0,
+
+    VOS_PAL = 1,
+
+    VOS_NTSC = 2,
+
+} VideoOutputStandard;
+
 /**
  * @brief Type of compression
  */
@@ -3377,6 +3387,10 @@ typedef struct _Environment {
     int paletteNeeded;
 
     int customIrqNeeded;
+
+    VideoOutputStandard videoOutputStandard;
+
+    int ticksPerSecondUsed;
 
     /* --------------------------------------------------------------------- */
     /* OUTPUT PARAMETERS                                                     */

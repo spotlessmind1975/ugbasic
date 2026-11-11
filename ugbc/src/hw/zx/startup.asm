@@ -35,6 +35,18 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+section data_user
+TICKSPERSECOND: DEFB 50
+section code_user
+@ELSE
+section data_user
+TICKSPERSECOND: DEFB 60
+section code_user
+@ENDIF
+@ENDIF
+
 ZXSTARTUP:
 
     DI
@@ -79,7 +91,7 @@ ZXIRQSVC:
     PUSH IX
     PUSH IY
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD HL, (ZXTIMER)
     INC HL
     LD (ZXTIMER), HL
@@ -118,6 +130,8 @@ ZXIRQSVCDONE:
     EI
     RET
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
 CHECKIF60HZ:
     LD DE, 0
     LD A, 0
@@ -140,12 +154,16 @@ VDPLOOPDQ0:
     LD A, 0
     RET
 
+@ENDIF
+
 ZXSTARTUP2:
 
 @IF dataSegment
     LD HL, DATAFIRSTSEGMENT
     LD (DATAPTR), HL
 @ENDIF
+
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
 
     CALL CHECKIF60HZ
     CMP 1
@@ -160,6 +178,8 @@ ZXNTSC:
     LD A, 60
     LD (TICKSPERSECOND), A
     JP ZXSTARTUPDONE    
+
+@ENDIF
 
 ZXSTARTUPDONE:
 

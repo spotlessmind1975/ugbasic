@@ -59,9 +59,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "TIMERADDRESS", VT_BUFFER, 16 );
     variable_global( _environment, "TIMERADDRESS" );
 
-    variable_import( _environment, "TICKSPERSECOND", VT_BYTE, 0 );
-    variable_global( _environment, "TICKSPERSECOND" );   
-
     variable_import( _environment, "USING", VT_BYTE, 0 );
 
     variable_import( _environment, "COPYOFCOLORMAPADDRESS", VT_ADDRESS, 0x0000 );

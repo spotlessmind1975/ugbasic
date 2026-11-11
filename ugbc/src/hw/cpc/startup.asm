@@ -114,7 +114,7 @@ CPCISVC:
     JR NZ,IRQVECTORSKIP
     LD A,6
     LD (CPCTIMER2), A
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LD HL,(CPCTIMER)
     INC HL
     LD (CPCTIMER),HL
@@ -161,8 +161,25 @@ IRQVECTORSKIP:
 
 CPCSTARTUP:
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
+	LD BC, $F500
+	IN A, (C)
+	AND $10
+	ADD A, $F0
+	JR C, CPCSTARTUPPAL
+
+	LD A, 60
+	LD (TICKSPERSECOND), A
+	JP CPCSTARTUPVODONE
+
+CPCSTARTUPPAL:
 	LD A, 50
 	LD (TICKSPERSECOND), A
+
+@ENDIF
+
+CPCSTARTUPVODONE:
 
 @IF dataSegment
     LD HL, DATAFIRSTSEGMENT

@@ -927,6 +927,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( bank, src_hw_coco3_bank_asm);
     deploy_inplace_preferred( gimevars, src_hw_gime_vars_asm );
     deploy_inplace_preferred( gimestartup, src_hw_gime_startup_asm );
+    deploy_inplace_preferred( vars, src_hw_coco3_vars_asm);
     deploy_inplace_preferred( msc1_banked, src_hw_coco3_msc1_banked_asm );
     deploy_inplace_preferred( putimage, src_hw_gime_put_image_asm );
     deploy_inplace_preferred( getimage, src_hw_gime_get_image_asm );

@@ -72,6 +72,8 @@ COCO3STARTUPNOIRQ
     ORA #$01
     STA $FF03
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDD #$0
 COCO3STARTUPL1
     ADDD #$1
@@ -92,6 +94,8 @@ COCO3NTSC
     LDA #60
     STA TICKSPERSECOND
     JMP COCO3STARTUPDONE
+
+@ENDIF
 
 COCO3STARTUPDONE
 

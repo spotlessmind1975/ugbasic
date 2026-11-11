@@ -69,7 +69,7 @@ ISVCIRQK
 ISVCIRQJ
 @ENDIF
     PSHS D
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD DRGTIMER
     ADDD #$1
     STD DRGTIMER
@@ -100,6 +100,8 @@ D32STARTUPNOIRQREDEF
     STD DATAPTR
 @ENDIF
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDD #$0
 D32STARTUPL1
     ADDD 1
@@ -120,6 +122,8 @@ D32NTSC
     LDA #60
     STA TICKSPERSECOND
     JMP D32STARTUPDONE
+
+@ENDIF
 
 D32STARTUPDONE
 

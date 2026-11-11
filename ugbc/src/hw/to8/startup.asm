@@ -40,7 +40,7 @@ PAGE0 equ $61
 ; TIMER service routine
 TO8IRQ
     PSHS  D
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD   #0              ; TI variable
 TO8TIMER  set *-2       ; (variable within code)
     ADDD  #1              ; increment
@@ -107,12 +107,16 @@ TO8STARTUP3
 
     ANDCC #$AF
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDD #$0
 TO8STARTUPL1
     ADDD #$1
     STD <MATHPTR0
     CMPD #$3100
     BNE TO8STARTUPL1
+
+@ENDIF
 
 ;     LDA TO8TIMER+1
 ;     CMPA #40

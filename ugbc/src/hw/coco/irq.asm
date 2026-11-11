@@ -100,7 +100,7 @@ ISVCIRQJ
     JSR MUSICPLAYER
 @ENDIF
     PSHS D
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD COCOTIMER
     ADDD #$1
     STD COCOTIMER

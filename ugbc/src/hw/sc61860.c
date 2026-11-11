@@ -1613,6 +1613,10 @@ void cpu_compare_8bit( Environment * _environment, char *_source, char *_destina
 
 }
 
+void cpu_compare_nbit( Environment * _environment, char *_source, char *_destination,  char *_other, int _positive, int _bits ) {
+
+}
+
 /**
  * @brief <i>SC616860</i>: emit code to compare two 8 bit values
  * 

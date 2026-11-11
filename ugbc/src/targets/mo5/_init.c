@@ -101,7 +101,7 @@ void target_initialization( Environment * _environment ) {
     // outhead0("CODESTART");
     // outline0("LDS #$A000");
 
-    deploy( vars, src_hw_mo5_vars_asm);
+    deploy_preferred( vars, src_hw_mo5_vars_asm);
     deploy_preferred( startup, src_hw_mo5_startup_asm);
     // bank_define( _environment, "STRINGS", BT_STRINGS, 0x4200, NULL );
 

@@ -44,3 +44,17 @@ TIMERINIT:      .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 TIMERADDRESS:   .WORD   $0, $0, $0, $0, $0, $0, $0, $0
 
 @ENDIF
+
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND: .BYTE   50
+@ELSE
+TICKSPERSECOND: .BYTE   60
+@ENDIF
+@ELSE
+@IF videoOutputStandard == VOS_PAL
+TICKSPERSECOND = 50
+@ELSE
+TICKSPERSECOND = 60
+@ENDIF
+@ENDIF

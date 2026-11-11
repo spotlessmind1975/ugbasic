@@ -273,6 +273,18 @@ NMI_HANDLER2:
 IRQVOID:
     RET
 
+@IF ticksPerSecondUsed
+@IF videoOutputStandard == VOS_PAL
+section data_user
+TICKSPERSECOND: DEFB 50
+section code_user
+@ELSE
+section data_user
+TICKSPERSECOND: DEFB 60
+section code_user
+@ENDIF
+@ENDIF
+
 SC3000STARTUP:
     LD DE, IRQVOID
     LD HL, IRQVECTOR
@@ -287,10 +299,10 @@ SC3000STARTUP:
 	LD A, 1
 	LD (IRQVECTORREADY), A
 
-	LD HL, UDCCHAR
-	LD BC, 2048
-    LD DE, 0
-    CALL VDPWRITE
+	; LD HL, UDCCHAR
+	; LD BC, 2048
+    ; LD DE, 0
+    ; CALL VDPWRITE
 
 	XOR A
 	LD	(KEYBOARD_LAST_CHAR), A
@@ -302,6 +314,8 @@ SC3000STARTUP:
 	LD	HL, KEYBD_BUFFER
 	LD	(KEYBD_PUTPNT), HL
 	LD	(KEYBD_GETPNT), HL
+
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
 
     CALL CheckIf60Hz
     JR Z, SC3000NTSC
@@ -315,6 +329,8 @@ SC3000NTSC:
     LD A, 60
     LD (TICKSPERSECOND), a
     JMP SC3000STARTUPDONE    
+
+@ENDIF
 
 SC3000STARTUPDONE:
 

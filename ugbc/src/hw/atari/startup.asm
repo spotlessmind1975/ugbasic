@@ -163,6 +163,8 @@ ATARISTARTUP:
 
 @ENDIF
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $D014
     AND #$0E
     CMP #$0E
@@ -177,6 +179,8 @@ ATARINTSC:
     LDA #60
     STA TICKSPERSECOND
     JMP ATARISTARTUPDONE
+
+@ENDIF
 
 ATARISTARTUPDONE:
 @IF dataSegment

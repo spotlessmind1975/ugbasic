@@ -273,7 +273,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %token MULTICOLOUR MUSIC MUTED N NAME NAMED NARROW NEW NEWLINE NEXT NIBBLE
 %token NOISE NONE NOP NORMAL NOT NOTE NRM NTSC NULLkw NUMBER NYLON O OBOE
 %token OCARINA OF OFF OFFSET OLIVE ON ONLY OOHS OPACITY OPEN OPTIMIZED OPTION
-%token OR ORANGE ORCHESTRA ORCHESTRAL ORGAN ORIGIN OUT OVERDRIVEN OVERLAYED P
+%token OR ORANGE ORCHESTRA ORCHESTRAL ORGAN ORIGIN OUT OUTPUT OVERDRIVEN OVERLAYED P
 %token PAD PAGE PAINT PAL PALETTE PALETTE1 PAN PAPER PARALLEL PARAM PARSE
 %token PASSWORD PATH PAUSE PC128OP PC1403 PCCGA PCLS PEACH PEEK PEEKD PEEKW PEN
 %token PER PERCUSSIVE PERIOD PI PIANO PICCOLO PICK PING PINK PIPE PIZZICATO
@@ -354,6 +354,8 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> box_mode 
 %type <integer> clamp_optional
 %type <integer> configure_name
+%type <integer> configure_option_name
+%type <integer> configure_parameter_name
 %type <integer> const_color_enumeration
 %type <integer> const_expr 
 %type <integer> const_expr_math 
@@ -397,8 +399,7 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 %type <integer> on_targets
 %type <integer> op_comma_or_semicolon
 %type <integer> on_off_optional 
-%type <integer> configure_parameter_name
-%type <integer> configure_option_name
+%type <integer> video_output_mode
 %type <integer> safe_fast_optional
 %type <integer> endianess_optional
 %type <integer> integer_optional
@@ -2808,6 +2809,12 @@ direct_integer:
         }
     };
 
+video_output_mode:
+    AUTO { $$ = VOS_NONE; } |
+    NONE { $$ = VOS_NONE; } |
+    PAL { $$ = VOS_PAL; } |
+    NTSC  { $$ = VOS_NTSC; };
+
 /*============================================================================
  ============ CASTING
  ============================================================================*/
@@ -4039,12 +4046,26 @@ exponential_less:
     } | 
     PAL {
         Variable * pal = variable_temporary( _environment, VT_SBYTE, "PAL" );
-        cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 50, pal->realName, 1 );
+        if ( ((struct _Environment *)_environment)->videoOutputStandard == VOS_PAL ) {
+            cpu_store_8bit( _environment, pal->realName, 0xff );
+        } else if ( ((struct _Environment *)_environment)->videoOutputStandard == VOS_NTSC ) {
+            cpu_store_8bit( _environment, pal->realName, 0x00 );
+        } else {
+            ((struct _Environment *)_environment)->ticksPerSecondUsed = 1;
+            cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 50, pal->realName, 1 );
+        }
         $$ = pal->name;
     } | 
     NTSC {
         Variable * ntsc = variable_temporary( _environment, VT_SBYTE, "NTSC" );
-        cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
+        if ( ((struct _Environment *)_environment)->videoOutputStandard == VOS_NTSC ) {
+            cpu_store_8bit( _environment, ntsc->realName, 0xff );
+        } else if ( ((struct _Environment *)_environment)->videoOutputStandard == VOS_PAL ) {
+            cpu_store_8bit( _environment, ntsc->realName, 0x00 );
+        } else {
+            ((struct _Environment *)_environment)->ticksPerSecondUsed = 1;
+            cpu_compare_8bit_const( _environment, "TICKSPERSECOND", 60, ntsc->realName, 1 );
+        }
         $$ = ntsc->name;
     } | 
     LITTLE ENDIAN { $$ = variable_by_constant( _environment, VT_SBYTE, (ENDIANESSVALUE == 1) ? 255 : 0)->name; } |
@@ -7974,7 +7995,8 @@ define_definition:
         }
         ((struct _Environment *)_environment)->paintBucketSize = $3;
     } |
-    BIOS ALLOWED { ((Environment *)_environment)->vestigialConfig.biosAllowed = 1; };
+    BIOS ALLOWED { ((Environment *)_environment)->vestigialConfig.biosAllowed = 1; } |
+    VIDEO OUTPUT video_output_mode { ((Environment *)_environment)->videoOutputStandard = $3; };
 
 define_definitions:
     define_definition |

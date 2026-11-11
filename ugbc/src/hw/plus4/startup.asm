@@ -93,7 +93,7 @@
 ;     RTI
 
 JIFFYUPDATE:
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     PHP
     PHA
     TXA
@@ -161,6 +161,8 @@ PLUS4STARTUP:
     ; ...
     ; ; **** reindirizzamento IRQ
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $F33F
     CMP #$48
     BEQ PLUS4NTSC
@@ -174,6 +176,8 @@ PLUS4NTSC:
     LDA #60
     STA TICKSPERSECOND
     JMP PLUS4STARTUPDONE
+
+@ENDIF
 
 PLUS4STARTUPDONE:
     RTS

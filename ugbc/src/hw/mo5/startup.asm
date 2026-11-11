@@ -39,7 +39,7 @@ PAGE0 equ $21
 
 ; TIMER service routine
 MO5IRQ
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
     LDD   #0            ; TI variable
 MO5TIMER  set *-2       ; (variable within code)
     ADDD  #1            ; increment
@@ -105,20 +105,6 @@ MO5STARTUPL1
     STD <MATHPTR0
     CMPD #$3100
     BNE MO5STARTUPL1
-
-    ; LDA MO5TIMER+1
-    ; CMPA #0A
-    ; BLE MO5NTSC
-
-; MO5PAL
-;     LDA #50
-    ; STA TICKSPERSECOND
-;     JMP MO5STARTUPDONE
-
-; MO5NTSC
-;     LDA #60
-;     STA TICKSPERSECOND
-;     JMP MO5STARTUPDONE
 
 MO5STARTUPDONE
 

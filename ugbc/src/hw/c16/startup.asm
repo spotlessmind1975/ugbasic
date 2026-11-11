@@ -94,7 +94,7 @@
 
 JIFFYUPDATE:
 
-@IF timerUsed
+@IF timerUsed || ticksPerSecondUsed
 
     PHP
     PHA
@@ -165,6 +165,8 @@ C16STARTUP:
     ; ...
     ; ; **** reindirizzamento IRQ
 
+@IF ticksPerSecondUsed && ( videoOutputStandard == VOS_NONE )
+
     LDA $F33F
     CMP #$48
     BEQ C16NTSC
@@ -178,6 +180,8 @@ C16NTSC:
     LDA #60
     STA TICKSPERSECOND
     JMP C16STARTUPDONE
+
+@ENDIF
 
 C16STARTUPDONE:
     RTS

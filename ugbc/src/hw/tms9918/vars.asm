@@ -38,14 +38,15 @@
 @IF emptyTileUsed
 SECTION data_user
 EMPTYTILE:   DEFB    32
+SECTION code_user
 @ELSE
 EMPTYTILE = 32
 @ENDIF
-SECTION code_user
 
 @IF paletteNeeded
 SECTION data_user
 PALETTE:   DEFB    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
+SECTION code_user
 @ENDIF
 
 ; ORG $c000

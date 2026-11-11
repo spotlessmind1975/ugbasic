@@ -255,6 +255,9 @@
 
 #define READONLY_DEFAULT   0
 
+#define DSTRING_DEFAULT_COUNT           16
+#define DSTRING_DEFAULT_SPACE           128
+
 void pc1403_initialization( Environment * _environment );
 
 void pc1403_wait_key( Environment * _environment, int _release );
