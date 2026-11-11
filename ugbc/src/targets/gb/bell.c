@@ -57,7 +57,7 @@ void bell( Environment * _environment, int _note, int _duration, int _channels )
     gb_set_program( _environment, ( _channels & 0x03 ), IMF_INSTRUMENT_GLOCKENSPIEL );
     gb_set_note( _environment, ( _channels & 0x03 ), _note );
 
-    long durationInCycles = ( _duration / 20 ) & 0xffff;
+    long durationInCycles = ( _duration / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) ) & 0xffff;
 
     gb_set_duration( _environment,  ( _channels & 0x03 ), durationInCycles );
 
@@ -90,7 +90,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         gb_set_note_vars( _environment, channels->realName, note->realName );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
             gb_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
         } else {
             gb_set_duration_vars( _environment, channels->realName, NULL );
@@ -101,7 +101,7 @@ void bell_vars( Environment * _environment, char * _note, char * _duration, char
         gb_set_note_vars( _environment, NULL, note->realName );
         if ( _duration ) {
             Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 1500 );
-            Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+            Variable * durationInTicks = variable_div_const( _environment, duration->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
             gb_set_duration_vars( _environment, NULL, durationInTicks->realName );
         } else {
             gb_set_duration_vars( _environment, NULL, NULL );

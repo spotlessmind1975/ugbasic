@@ -56,7 +56,7 @@ void boom( Environment * _environment, int _duration, int _channels ) {
     gb_start( _environment, 0x08 );
     gb_set_frequency( _environment, 0x08, 1000 );
 
-    long durationInTicks = ( _duration / 20 ) & 0xff;
+    long durationInTicks = ( _duration / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) ) & 0xff;
 
     gb_set_duration( _environment, 0x08, durationInTicks );
 
@@ -88,7 +88,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
     // gb_set_program_semi_var( _environment, NULL, IMF_INSTRUMENT_EXPLOSION );
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-        Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+        Variable * durationInTicks = variable_div_const( _environment, duration->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
         gb_set_duration_vars( _environment, noiseChannel->realName, durationInTicks->realName );
     } else {
         gb_set_duration_vars( _environment, noiseChannel->realName, NULL );

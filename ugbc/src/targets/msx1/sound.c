@@ -112,7 +112,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_set_frequency_vars( _environment, channels->realName, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * durationInTicks = variable_div_const( _environment,delay->name, 20, NULL );
+            Variable * durationInTicks = variable_div_const( _environment,delay->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
             ay8910_set_duration_vars( _environment, channels->realName, durationInTicks->realName );
             ay8910_wait_duration_vars( _environment, channels->realName );
         }
@@ -121,7 +121,7 @@ void sound_vars( Environment * _environment, char * _freq, char * _delay, char *
         ay8910_set_frequency_vars( _environment, NULL, chipsetFrequency->realName );
         if ( _delay ) {
             Variable * delay = variable_retrieve_or_define( _environment, _delay, VT_WORD, 0 );
-            Variable * durationInTicks = variable_div_const( _environment, delay->name, 20, NULL );
+            Variable * durationInTicks = variable_div_const( _environment, delay->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
             ay8910_set_duration_vars( _environment, NULL, durationInTicks->realName );
             ay8910_wait_duration_vars( _environment, NULL );
         }        

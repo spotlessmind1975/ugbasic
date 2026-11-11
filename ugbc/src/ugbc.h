@@ -747,6 +747,13 @@ typedef struct _Resource {
         ( t == VT_SAMPLES ) \
     )
 
+#define MS_PER_TICK_FOR_VOS( vos ) \
+    ( \
+        -( vos == VOS_NONE ) * 20 + \
+        -( vos == VOS_PAL ) * 20 + \
+        -( vos == VOS_NTSC ) * 16 \
+    )
+
 /**
  * @brief Maximum number of variable types
  */

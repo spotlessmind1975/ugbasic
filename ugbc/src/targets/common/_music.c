@@ -647,7 +647,7 @@ static Variable * midi_load_to_variable( Environment * _environment, char * _fil
                     // We must calculate the effective delay (in jiffies) 
                     // to introduce into the IMF stream, and it is based
                     // on the real MIDI tempo.
-                    int jiffies = deltaTimeInMilliseconds / 20;
+                    int jiffies = deltaTimeInMilliseconds / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard );
 
                     // printf( " ( midiMinPosition - midiPosition ): %d\n",  ( midiMinPosition - midiPosition ) );
                     // printf( "deltaTimeInMilliseconds: %f, jiffies: %d\n", deltaTimeInMilliseconds, jiffies );

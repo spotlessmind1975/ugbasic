@@ -58,7 +58,7 @@ void boom( Environment * _environment, int _duration, int _channels ) {
     ted_start( _environment, _channels );
     ted_set_frequency( _environment, _channels, 500 );
 
-    long durationInTicks = ( _duration / 20 ) & 0xff;
+    long durationInTicks = ( _duration / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) ) & 0xff;
 
     ted_set_duration( _environment, _channels, durationInTicks );
 
@@ -89,7 +89,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
     ted_set_frequency( _environment, channels, 500 );
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, _duration, VT_WORD, 0x07 );
-        Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+        Variable * durationInTicks = variable_div_const( _environment, duration->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
         ted_set_duration_vars( _environment, NULL, durationInTicks->realName );
     } else {
         ted_set_duration_vars( _environment, NULL, NULL );

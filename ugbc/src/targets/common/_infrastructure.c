@@ -17418,9 +17418,9 @@ void environment_setup_default( Environment * _environment ) {
     _environment->printSafe = 1;
     _environment->putImageSafe = 1;
     _environment->getImageSafe = 1;
-    _environment->keyboardConfig.latency = 700 / 20;
-    _environment->keyboardConfig.delay = 150 / 20;
-    _environment->keyboardConfig.release = 150 / 20;
+    _environment->keyboardConfig.latency = 700 / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard );
+    _environment->keyboardConfig.delay = 150 / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard );
+    _environment->keyboardConfig.release = 150 / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard );
     _environment->defaultPenColor = DEFAULT_PEN_COLOR;
     _environment->defaultPaperColor = DEFAULT_PAPER_COLOR;
     _environment->defaultArraySize = 10;
@@ -17693,6 +17693,18 @@ void environment_parse_command_line( Environment * _environment, int _argc, char
                             }
                             if ( strstr(p, "MSC1_DICTIONARY_SIZE=" ) != NULL ) {
                                 ((struct _Environment *)_environment)->msc1DictionarySize = atoi(p+21);
+                            }                            
+                            if ( strstr(p, "VIDEO_OUTPUT=" ) != NULL ) {
+                                ((struct _Environment *)_environment)->videoOutputStandard = atoi(p+21);
+                            }                            
+                            if ( strstr(p, "VIDEO_OUTPUT_PAL" ) != NULL ) {
+                                ((struct _Environment *)_environment)->videoOutputStandard = VOS_PAL;
+                            }                            
+                            if ( strstr(p, "VIDEO_OUTPUT_NTSC" ) != NULL ) {
+                                ((struct _Environment *)_environment)->videoOutputStandard = VOS_NTSC;
+                            }                            
+                            if ( strstr(p, "VIDEO_OUTPUT_AUTO" ) != NULL ) {
+                                ((struct _Environment *)_environment)->videoOutputStandard = VOS_NONE;
                             }                            
                             p = strtok(NULL, ",");
                         }

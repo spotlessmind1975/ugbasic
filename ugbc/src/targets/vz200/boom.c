@@ -57,7 +57,7 @@ void boom( Environment * _environment, int _duration, int _channels ) {
     // ay8910_start( _environment, ( _channels & 0x07 ) );
     // ay8910_set_frequency( _environment, _channels, 1000 );
 
-    long durationInTicks = ( _duration / 20 ) & 0xff;
+    long durationInTicks = ( _duration / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) ) & 0xff;
 
     // ay8910_set_duration( _environment, _channels, durationInTicks );
 
@@ -88,7 +88,7 @@ void boom_var( Environment * _environment, char * _duration, char * _channels ) 
 
     if ( _duration ) {
         Variable * duration = variable_retrieve_or_define( _environment, noiseChannel->realName, VT_WORD, 0x07 );
-        Variable * durationInTicks = variable_div_const( _environment, duration->name, 20, NULL );
+        Variable * durationInTicks = variable_div_const( _environment, duration->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
         // ay8910_set_duration_vars( _environment, noiseChannel->realName, durationInTicks->realName );
     } else {
         // ay8910_set_duration_vars( _environment, noiseChannel->realName, NULL );

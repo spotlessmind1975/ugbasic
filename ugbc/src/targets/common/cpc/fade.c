@@ -60,7 +60,7 @@ void fade_ticks_var( Environment * _environment, char * _ticks ) {
 
 void fade_milliseconds_var( Environment * _environment, char * _millliseconds ) {
 
-    Variable * realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _millliseconds, VT_WORD, 0 )->name, 20 * 8, NULL );
+    Variable * realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _millliseconds, VT_WORD, 0 )->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) * 8, NULL );
 
     cpc_fade( _environment, realTiming->realName );
 
