@@ -146,7 +146,7 @@ void target_linkage( Environment * _environment ) {
         if ( p ) {
             *p = 0;
         }
-        char temp[MAX_TEMPORARY_STORAGE];
+        char temp[MAX_TEMPORARY_STORAGE*2];
         sprintf(temp, "%s_BANK_%02X.bin", bankName, i );
         remove(temp);
     }
