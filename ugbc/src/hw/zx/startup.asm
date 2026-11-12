@@ -37,13 +37,9 @@
 
 @IF ticksPerSecondUsed
 @IF videoOutputStandard == VOS_PAL
-section data_user
 TICKSPERSECOND: DEFB 50
-section code_user
 @ELSE
-section data_user
 TICKSPERSECOND: DEFB 60
-section code_user
 @ENDIF
 @ENDIF
 
