@@ -121,9 +121,9 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
             variable = variable->next;
         }
 
-        cpu_return( _environment );
-
     }
+
+    cpu_return( _environment );
 
 }
 
