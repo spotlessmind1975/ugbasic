@@ -575,6 +575,7 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( startup, src_hw_sc3000_startup_asm);
     deploy_inplace_preferred( startup2, src_hw_sc3000_startup2_asm);
+    deploy_inplace_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
     deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
     deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );

@@ -656,6 +656,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("JMP CODESTART2");
 
     deploy_inplace_preferred( startup, src_hw_msx1_startup_asm);
+    deploy_inplace_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
     deploy_inplace_preferred( bank, src_hw_msx1_bank_asm);
     deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );

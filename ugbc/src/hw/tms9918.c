@@ -871,7 +871,7 @@ void tms9918_textmap_at( Environment * _environment, char * _address ) {
 
 void tms9918_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
@@ -909,7 +909,7 @@ void tms9918_pset_vars( Environment * _environment, char *_x, char *_y, char *_c
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
@@ -936,7 +936,7 @@ void tms9918_pget_color_vars( Environment * _environment, char *_x, char *_y, ch
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( plot, src_hw_tms9918_plot_asm );
     
@@ -1327,7 +1327,7 @@ void tms9918_scroll_text( Environment * _environment, int _direction, int _overl
 
 void tms9918_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
 
     outline1("LD DE, %s", _text);
@@ -1647,7 +1647,7 @@ void tms9918_back( Environment * _environment ) {
 
 void tms9918_cline( Environment * _environment, char * _characters ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
 
     Variable * x = variable_retrieve( _environment, "XCURSYS" );
     Variable * y = variable_retrieve( _environment, "YCURSYS" );
@@ -2223,7 +2223,7 @@ static void tms9918_load_image_address_to_register( Environment * _environment, 
 
 void tms9918_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( blitimage, src_hw_tms9918_blit_image_asm );
 
@@ -2300,7 +2300,7 @@ void tms9918_defdgr( Environment * _environment, char * _character, char * _data
 
 void tms9918_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags, int _fullscreen, int _compressed ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( putimage, src_hw_tms9918_put_image_asm );
 
@@ -2450,7 +2450,7 @@ Variable * tms9918_new_sequence( Environment * _environment, int _sequences, int
 
 void tms9918_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
     deploy( getimage, src_hw_tms9918_get_image_asm );
 
@@ -2492,7 +2492,7 @@ void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void tms9918_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -2521,7 +2521,7 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
 
     int size = ( tile->originalWidth >> 3 ) * ( tile->originalHeight >> 3 );
@@ -2563,7 +2563,7 @@ void tms9918_move_tiles( Environment * _environment, char * _tile, char * _x, ch
 
 void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
 
     outline1("LD A, (%s)", _tile );
@@ -2595,7 +2595,7 @@ void tms9918_put_tiles( Environment * _environment, char * _tile, char * _x, cha
 
 void tms9918_tile_at( Environment * _environment, char * _x, char * _y, char *_result ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
 
     outline1("LD A, (%s)", _x );
@@ -2616,7 +2616,7 @@ void tms9918_tile_at( Environment * _environment, char * _x, char * _y, char *_r
 
 void tms9918_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tiles, src_hw_tms9918_tiles_asm );
 
     outline1("LD A, (%s)", _tileset );
@@ -2717,7 +2717,7 @@ void tms9918_slice_image( Environment * _environment, char * _image, char * _fra
 
 void tms9918_slice_image_copy( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm);
     deploy( duff, src_hw_z80_duff_asm );
     deploy( sliceimagecopy, src_hw_tms9918_slice_image_copy_asm );
@@ -2738,7 +2738,7 @@ void tms9918_slice_image_copy( Environment * _environment, char * _image,  char 
 
 void tms9918_slice_image_extract( Environment * _environment, char * _image,  char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _destination ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm);
     deploy( duff, src_hw_z80_duff_asm );
     deploy( sliceimageextract, src_hw_tms9918_slice_image_extract_asm );
@@ -2830,7 +2830,7 @@ void tms9918_calculate_sequence_frame_offset( Environment * _environment, char *
 
 void tms9918_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    // deploy( tms9918vars, src_hw_tms9918_vars_asm);
+    // deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     // deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
 
     // MAKE_LABEL
