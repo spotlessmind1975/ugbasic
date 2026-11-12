@@ -7906,7 +7906,7 @@ define_definition:
         ((struct _Environment *)_environment)->keyboardConfig.latency = $3;
     } | 
     INPUT LATENCY const_expr milliseconds {
-        int latency = $3 / 20;
+        int latency = $3 / MS_PER_TICK_FOR_VOS( ((struct _Environment *)_environment)->videoOutputStandard );
         if ( latency <= 0 || latency >= 256 ) {
             CRITICAL_INVALID_INPUT_LATENCY_MS( $3 );
         }
@@ -8886,7 +8886,7 @@ rot_definition:
 
 key_definition:
     SPEED const_expr milliseconds OP_COMMA const_expr milliseconds OP_COMMA const_expr milliseconds {
-            int latency = $2 / 20;
+            int latency = $2 / MS_PER_TICK_FOR_VOS( ((struct _Environment *)_environment)->videoOutputStandard );
             if ( latency <= 0 || latency >= 256 ) {
                 CRITICAL_INVALID_INPUT_LATENCY_MS( $2 );
             }

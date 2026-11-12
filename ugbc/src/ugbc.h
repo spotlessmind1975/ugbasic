@@ -749,9 +749,9 @@ typedef struct _Resource {
 
 #define MS_PER_TICK_FOR_VOS( vos ) \
     ( \
-        -( vos == VOS_NONE ) * 20 + \
-        -( vos == VOS_PAL ) * 20 + \
-        -( vos == VOS_NTSC ) * 16 \
+        ( vos == VOS_NONE ) * 20 + \
+        ( vos == VOS_PAL ) * 20 + \
+        ( vos == VOS_NTSC ) * 16 \
     )
 
 /**
