@@ -97,7 +97,6 @@ void target_initialization( Environment * _environment ) {
     outhead0("ORG $4A0A");
     outhead0("CODESTART:")
     
-    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
     deploy_deferred( startup, src_hw_vg5000_startup_asm);

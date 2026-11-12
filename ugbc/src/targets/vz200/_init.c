@@ -121,10 +121,6 @@ void target_initialization( Environment * _environment ) {
     _environment->stackStartAddress = 0xfe92;
     _environment->stackSize = 256;
 
-    // outline0("CALL VARINIT2");
-    // cpu_call( _environment, "VARINIT" );
-    // outline0("CALL PROTOTHREADINIT" );
-
     setup_text_variables( _environment );
 
     c6847z_initialization( _environment );

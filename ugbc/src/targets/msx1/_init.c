@@ -258,7 +258,6 @@ void target_initialization( Environment * _environment ) {
     outhead0("CODESTART2:");
 
     outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
 
     cpu_init( _environment );
@@ -277,7 +276,7 @@ void target_initialization( Environment * _environment ) {
     
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
-        outline0("CALL VARINIT");
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

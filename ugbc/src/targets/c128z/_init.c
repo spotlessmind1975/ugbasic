@@ -156,7 +156,6 @@ void target_initialization( Environment * _environment ) {
     cpu_init( _environment );
 
     // outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
     outline0("CALL C128ZSTARTUP2");
     outline0("CALL PROTOTHREADINIT" );
 

@@ -87,8 +87,6 @@ void target_initialization( Environment * _environment ) {
     ef936x_initialization( _environment );
     sn76489m_initialization( _environment );
 
-    cpu_call( _environment, "VARINIT" );
-
     if ( _environment->tenLinerRulesEnforced ) {
         outline0("LDS #$2FFF");
         if ( _environment->tenLinerRulesEnforced ) {

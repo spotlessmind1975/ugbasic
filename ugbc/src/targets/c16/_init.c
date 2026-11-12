@@ -91,11 +91,9 @@ void target_initialization( Environment * _environment ) {
 
     ted_initialization( _environment );
 
-    cpu_call( _environment, "VARINIT" );
-
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
-        outline0("JSR VARINIT");
+        cpu_call( _environment, "VARINIT" );
     }
 
 }

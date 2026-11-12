@@ -156,8 +156,6 @@ void target_initialization( Environment * _environment ) {
     vic2_initialization( _environment );
     sid_initialization( _environment );
 
-    cpu_call( _environment, "VARINIT" );
-
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
         cpu_call( _environment, "VARINIT" );

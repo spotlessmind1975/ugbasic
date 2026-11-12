@@ -141,11 +141,6 @@ void target_initialization( Environment * _environment ) {
     _environment->stackSize = _environment->stackStartAddress - 0x4000;
 
     deploy_deferred( startup, src_hw_zx_startup_asm);
-    // outline0("CALL ZXSTARTUP");
-
-    // cpu_call( _environment, "VARINIT" );
-    // outline0("CALL PROTOTHREADINIT" );
-    // outline0("CALL ZXSTARTUP2" );
 
     setup_text_variables( _environment );
 

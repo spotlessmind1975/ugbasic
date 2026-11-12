@@ -102,17 +102,13 @@ void target_initialization( Environment * _environment ) {
     gtia_initialization( _environment );
     pokey_initialization( _environment );
     
-    cpu_call( _environment, "VARINIT" );
-
     if ( _environment->tenLinerRulesEnforced ) {
         shell_injection( _environment );
         if ( _environment->vestigialConfig.palettePreserve ) {
             outline0("LDA #$0");
             outline0("STA PALETTEPRESERVEUSED");
         }
-
         cpu_call( _environment, "VARINIT" );
-
     }
 
 }

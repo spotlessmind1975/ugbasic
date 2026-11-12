@@ -516,7 +516,6 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("CODESTART:");
     outline1("LD SP, $%4.4x", _environment->stackStartAddress);
     outline0("CALL ZXSTARTUP");
-    cpu_call( _environment, "VARINIT" );
     outline0("CALL PROTOTHREADINIT" );
     outline0("CALL ZXSTARTUP2" );
 

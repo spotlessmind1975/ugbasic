@@ -692,7 +692,6 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("CODESTART:")
     
     outline0("CALL VARINIT2");
-    cpu_call( _environment, "VARINIT" );
 
     buffered_prepend_output( _environment );
 

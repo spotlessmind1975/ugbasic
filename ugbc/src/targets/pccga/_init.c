@@ -96,8 +96,6 @@ void target_initialization( Environment * _environment ) {
 
     outhead0("CODESTART:")
 
-    cpu_call( _environment, "VARINIT" );
-
     cpu_init( _environment );
 
     outline0("CALL PROTOTHREADINIT" );
