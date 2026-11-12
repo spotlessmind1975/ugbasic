@@ -1395,7 +1395,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
 
 void tms9918_initialization( Environment * _environment ) {
 
-    deploy( tms9918vars, src_hw_tms9918_vars_asm );
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm );
     deploy_preferred( tms9918startup, src_hw_tms9918_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
@@ -2476,7 +2476,7 @@ void tms9918_get_image( Environment * _environment, char * _image, char * _x, ch
 
 void tms9918_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( vic2vars, src_hw_tms9918_vars_asm);
+    deploy_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy( scroll, src_hw_tms9918_scroll_asm);
     deploy( textHScroll, src_hw_tms9918_hscroll_text_asm );
     deploy( vScrollTextDown, src_hw_tms9918_vscroll_text_down_asm );
