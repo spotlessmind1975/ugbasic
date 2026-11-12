@@ -50,6 +50,7 @@ examples/*.sym
 examples/*.dsk
 examples/*.ram
 examples/*.rel
+examples/*.gb
 examples/.*
 8bit-lucky/
 birdy/
@@ -95,4 +96,11 @@ step/
 urpg/
 vc3-2025
 pushori64plus
-
+amstrad-cpc-wirerun/
+amystudio/
+dlair/
+galaxyexpress/
+ghostbusters/
+harlock/
+spaceace/
+substack/
