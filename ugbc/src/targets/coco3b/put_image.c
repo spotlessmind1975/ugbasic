@@ -76,8 +76,6 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
         realFrame = frame;
     }
 
-    deploy_preferred( msc1_banked, src_hw_coco3b_msc1_banked_asm );
-
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
@@ -438,6 +436,8 @@ void put_image_vars( Environment * _environment, char * _image, char * _x1, char
     if ( _environment->emptyProcedure ) {
         return;
     }
+
+    deploy_preferred( msc1_banked, src_hw_coco3b_msc1_banked_asm );
 
     Variable * image = variable_retrieve( _environment, _image );
 

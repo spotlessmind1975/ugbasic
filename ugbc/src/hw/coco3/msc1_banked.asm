@@ -150,14 +150,14 @@ MSC1UNCOMPRESSBANKEDL1NE
     ANDB #$80
     CMPB #$0
     BNE MSC1UNCOMPRESSBANKEDL1NE3
-    JMP MSC1LITERAL
+    JMP MSC1LITERALBANKED
 MSC1UNCOMPRESSBANKEDL1NE3
 
     ; This code will parse the token, in order to
     ; retrieve the number of repetitions and the
     ; starting offset. Then, it will copy the very 
     ; same 4 bytes for the number of repetitions given. 
-MSC1DUPES
+MSC1DUPESBANKED
     TFR A, B
 
     ; Take out the number of repetitions.
@@ -167,9 +167,9 @@ MSC1DUPES
     ; If repetitions is zero then repetitions
     ; will be 32 times.
     CMPB #$0
-    BNE MSC1DUPESNE
+    BNE MSC1DUPESBANKEDNE
     LDB #32
-MSC1DUPESNE
+MSC1DUPESBANKEDNE
 
     PSHS D
 
@@ -199,7 +199,7 @@ MSC1DUPESNE
 
     ; Initialize the counter and copy the same 
     ; 4 bytes for each repetition.
-MSC1DUPESL1
+MSC1DUPESBANKEDL1
     LDA ,U+
     STA ,X+
     LDA ,U+
@@ -210,7 +210,7 @@ MSC1DUPESL1
     STA ,X+
     LEAU -4, U
     DECB
-    BNE MSC1DUPESL1
+    BNE MSC1DUPESBANKEDL1
     JMP MSC1UNCOMPRESSBANKEDL1
 
 MSC1UNCOMPRESSBANKEDDONE
@@ -220,7 +220,7 @@ MSC1UNCOMPRESSBANKEDDONE
     PULS X,U
     RTS
 
-MSC1LITERAL
+MSC1LITERALBANKED
     TFR A, B
     ; Take the number of literals (1...127),
     ; and copy from the pointer to the output.
@@ -234,9 +234,9 @@ MSC1LITERAL
     STD MSC1REFILLNEEDED
     PULS D
 
-MSC1LITERALL1
+MSC1LITERALBANKEDL1
     LDA ,Y+
     STA ,X+
     DECB
-    BNE MSC1LITERALL1
+    BNE MSC1LITERALBANKEDL1
     JMP MSC1UNCOMPRESSBANKEDL1
