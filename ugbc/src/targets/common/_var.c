@@ -81,45 +81,49 @@ void variable_on_memory_init( Environment * _environment, int _imported_too ) {
         variable = variable->next;
     }
 
-    cpu_label( _environment, "VARINITCLEAR" );
-    variable = _environment->variables;
-    while( variable ) {
-        int imported = variable->imported;
-        if ( _imported_too ) {
-            imported = 0;
-        }
-        if ( ! variable->staticalInit && ! imported && ( variable->realName[0] == '_' ) ) {
-            switch( variable->type ) {
-                case VT_STRING:
-                case VT_DSTRING:
-                case VT_MSPRITE:
-                case VT_DOJOKA:
-                case VT_TILESET:
-                case VT_TILES:
-                case VT_BUFFER:
-                case VT_TYPE:
-                case VT_IMAGE:
-                case VT_IMAGES:
-                case VT_SEQUENCE:
-                case VT_MOVIE:
-                case VT_TILEMAP:
-                case VT_MUSIC:
-                case VT_SAMPLES:
-                case VT_TARRAY:
-                case VT_BLIT:
-                case VT_FLOAT:
-                case VT_NUMBER:
-                    break;
-                default:
-                    if ( variable->value != 0 ) {
-                        variable_store( _environment, variable->name, variable->initialValue );
-                    }
-            }
-        }
-        variable = variable->next;
-    }
+    if ( _environment->clearUsed ) {
 
-    cpu_return( _environment );
+        cpu_label( _environment, "VARINITCLEAR" );
+        variable = _environment->variables;
+        while( variable ) {
+            int imported = variable->imported;
+            if ( _imported_too ) {
+                imported = 0;
+            }
+            if ( ! variable->staticalInit && ! imported && ( variable->realName[0] == '_' ) ) {
+                switch( variable->type ) {
+                    case VT_STRING:
+                    case VT_DSTRING:
+                    case VT_MSPRITE:
+                    case VT_DOJOKA:
+                    case VT_TILESET:
+                    case VT_TILES:
+                    case VT_BUFFER:
+                    case VT_TYPE:
+                    case VT_IMAGE:
+                    case VT_IMAGES:
+                    case VT_SEQUENCE:
+                    case VT_MOVIE:
+                    case VT_TILEMAP:
+                    case VT_MUSIC:
+                    case VT_SAMPLES:
+                    case VT_TARRAY:
+                    case VT_BLIT:
+                    case VT_FLOAT:
+                    case VT_NUMBER:
+                        break;
+                    default:
+                        if ( variable->value != 0 ) {
+                            variable_store( _environment, variable->name, variable->initialValue );
+                        }
+                }
+            }
+            variable = variable->next;
+        }
+
+        cpu_return( _environment );
+
+    }
 
 }
 

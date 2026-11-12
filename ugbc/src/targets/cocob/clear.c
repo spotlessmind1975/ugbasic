@@ -40,6 +40,8 @@
 
 void clear( Environment * _environment ) {
 
+    _environment->clearUsed = 1;
+
     cpu_call( _environment, "VARINITCLEAR" );
 
 }
