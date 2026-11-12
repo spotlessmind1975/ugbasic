@@ -74,7 +74,7 @@ rst_38:
 
 jp NMI
 
-@IF customIrqNeeded || ticksPerSecondUsed
+@IF customIrqNeeded || timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync)  || ticksPerSecondUsed
 IRQVOID:
     RET
 @ENDIF
