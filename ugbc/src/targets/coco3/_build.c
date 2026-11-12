@@ -346,7 +346,6 @@ void generate_dsk_old( Environment * _environment ) {
     sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     sprintf( commandLine, "\"%s\" copy -0 -t \"%s\" \"%s,LOADER.BAS\"",
@@ -355,7 +354,6 @@ void generate_dsk_old( Environment * _environment ) {
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     remove( basFileName );
@@ -366,7 +364,6 @@ void generate_dsk_old( Environment * _environment ) {
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     if ( programDataCount ) {
@@ -379,7 +376,6 @@ void generate_dsk_old( Environment * _environment ) {
                 i );
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n"); 
-                printf("Please use option '-I' to install chain tool.\n\n");
             };
         }
     }
@@ -431,7 +427,6 @@ void generate_dsk_old( Environment * _environment ) {
                     fileStorage->targetName );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n"); 
-                    printf("Please use option '-I' to install chain tool.\n\n");
                 };
 
                 remove( dataFilename );
@@ -469,7 +464,6 @@ void generate_dsk_old( Environment * _environment ) {
                 sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, buffer );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n");
-                    printf("Please use option '-I' to install chain tool.\n\n");
                 };
                 if ( _environment->outputGeneratedFiles ) {
                     printf( "%s\n", buffer );
@@ -511,7 +505,6 @@ void generate_dsk_old( Environment * _environment ) {
                 bank->id );
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n"); 
-                printf("Please use option '-I' to install chain tool.\n\n");
                 exit(0);
             };
 
@@ -540,7 +533,6 @@ void generate_dsk_old( Environment * _environment ) {
                     bank->id );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n"); 
-                    printf("Please use option '-I' to install chain tool.\n\n");
                     exit(0);
                 };
 
@@ -791,7 +783,6 @@ void generate_dsk_new( Environment * _environment ) {
     sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     sprintf( commandLine, "\"%s\" copy -0 -t \"%s\" \"%s,LOADER.BAS\"",
@@ -800,7 +791,6 @@ void generate_dsk_new( Environment * _environment ) {
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     remove( basFileName );
@@ -811,7 +801,6 @@ void generate_dsk_new( Environment * _environment ) {
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     sprintf( commandLine, "\"%s\" copy -2 \"%sp.exe\" \"%s,P.EXE\"",
@@ -820,7 +809,6 @@ void generate_dsk_new( Environment * _environment ) {
         _environment->exeFileName );
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n"); 
-        printf("Please use option '-I' to install chain tool.\n\n");
     };
 
     if ( programDataCount ) {
@@ -833,7 +821,6 @@ void generate_dsk_new( Environment * _environment ) {
                 i );
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n"); 
-                printf("Please use option '-I' to install chain tool.\n\n");
             };
         }
     }
@@ -885,7 +872,6 @@ void generate_dsk_new( Environment * _environment ) {
                     fileStorage->targetName );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n"); 
-                    printf("Please use option '-I' to install chain tool.\n\n");
                 };
 
                 remove( dataFilename );
@@ -923,7 +909,6 @@ void generate_dsk_new( Environment * _environment ) {
                 sprintf( commandLine, "\"%s\" dskini \"%s\"", executableName, buffer );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n");
-                    printf("Please use option '-I' to install chain tool.\n\n");
                 };
                 if ( _environment->outputGeneratedFiles ) {
                     printf( "%s\n", buffer );
@@ -965,7 +950,6 @@ void generate_dsk_new( Environment * _environment ) {
                 bank->id );
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n"); 
-                printf("Please use option '-I' to install chain tool.\n\n");
                 exit(0);
             };
 
@@ -994,7 +978,6 @@ void generate_dsk_new( Environment * _environment ) {
                     bank->id );
                 if ( system_call( _environment,  commandLine ) ) {
                     printf("The compilation of assembly program failed.\n\n"); 
-                    printf("Please use option '-I' to install chain tool.\n\n");
                     exit(0);
                 };
 

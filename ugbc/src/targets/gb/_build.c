@@ -271,7 +271,6 @@ void generate_gb( Environment * _environment ) {
 
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
 
@@ -360,7 +359,6 @@ void generate_gb( Environment * _environment ) {
 
 //     if ( system_call( _environment,  commandLine ) ) {
 //         printf("The compilation of assembly program failed.\n\n");
-//         printf("Please use option '-I' to install chain tool.\n\n");
 //         return;
 //     }; 
 

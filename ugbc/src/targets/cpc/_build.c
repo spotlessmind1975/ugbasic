@@ -176,7 +176,6 @@ void target_linkage_z88dk_appmake_unpatched( Environment * _environment ) {
 
     if ( system_call( _environment,  commandLine ) ) {
         printf("The compilation of assembly program failed.\n\n");
-        printf("Please use option '-I' to install chain tool.\n\n");
         return;
     }; 
 
@@ -372,7 +371,6 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
         if ( system_call( _environment,  commandLine ) ) {
             printf("The compilation of assembly program failed.\n\n");
-            printf("Please use option '-I' to install chain tool.\n\n");
             return;
         }; 
 
@@ -437,7 +435,6 @@ void target_linkage_z88dk_appmake_patched( Environment * _environment ) {
 
             if ( system_call( _environment,  commandLine ) ) {
                 printf("The compilation of assembly program failed.\n\n");
-                printf("Please use option '-I' to install chain tool.\n\n");
                 return;
             }; 
 
