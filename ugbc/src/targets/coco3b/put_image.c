@@ -76,18 +76,20 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
         realFrame = frame;
     }
 
+    deploy_preferred( msc1_banked, src_hw_coco3b_msc1_banked_asm );
+
     switch( resource->type ) {
         case VT_SEQUENCE:
             if ( image->bankAssigned != -1 ) {
                 
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
+                // char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                // sprintf(alreadyLoadedLabel, "%salready", label );
 
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+                // char bankWindowId[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
 
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+                // char bankWindowName[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
                 // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 // if ( image->uncompressedSize ) {
@@ -121,13 +123,15 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
                 memset( &resource, 0, sizeof( Resource ) );
-                resource.realName = strdup( bankWindowName );
-                resource.isAddress = 0;
+                resource.realName = strdup( address->realName );
+                resource.isAddress = 1;
                 resource.bankNumber = image->bankAssigned;
+                resource.isCompiled = 0;
+                resource.compression = 0;
 
                 gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
 
@@ -150,14 +154,14 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
         case VT_IMAGES:
             if ( image->bankAssigned != -1 ) {
                 
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
+                // char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                // sprintf(alreadyLoadedLabel, "%salready", label );
 
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+                // char bankWindowId[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
 
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+                // char bankWindowName[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
                 // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
                 // if ( image->uncompressedSize ) {
@@ -200,13 +204,15 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
                 Variable * address = variable_temporary( _environment, VT_ADDRESS, "(temporary)");
                 variable_store( _environment, address->name, image->absoluteAddress );
                 variable_add_inplace_vars( _environment, address->name, offset->name );
-                bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
+                // bank_read_vars_direct( _environment, bank->name, address->name, bankWindowName, frameSize->name );
 
                 Resource resource;
                 memset( &resource, 0, sizeof( Resource ) );
-                resource.realName = strdup( bankWindowName );
-                resource.isAddress = 0;
+                resource.realName = strdup( address->realName );
+                resource.isAddress = 1;
                 resource.bankNumber = image->bankAssigned;
+                resource.isCompiled = 0;
+                resource.compression = 0;
 
                 gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, image->frameSize, 0, _flags );
                 
@@ -240,30 +246,34 @@ void put_image_vars_original( Environment * _environment, char * _image, char * 
         case VT_TARRAY:
             if ( image->bankAssigned != -1 ) {
 
-                char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
-                sprintf(alreadyLoadedLabel, "%salready", label );
+                // char alreadyLoadedLabel[MAX_TEMPORARY_STORAGE];
+                // sprintf(alreadyLoadedLabel, "%salready", label );
 
-                char bankWindowId[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
+                // char bankWindowId[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowId, "BANKWINDOWID%2.2x", image->residentAssigned );
 
-                char bankWindowName[MAX_TEMPORARY_STORAGE];
-                sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
+                // char bankWindowName[MAX_TEMPORARY_STORAGE];
+                // sprintf( bankWindowName, "BANKWINDOW%2.2x", image->residentAssigned );
 
-                cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
-                if ( image->uncompressedSize ) {
-                    bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
-                } else {
-                    bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
-                }
-                cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
-                cpu_label( _environment, alreadyLoadedLabel );
+                // cpu_compare_and_branch_16bit_const( _environment, bankWindowId, image->variableUniqueId, alreadyLoadedLabel, 1 );
+                // if ( image->uncompressedSize ) {
+                //     bank_uncompress_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName );
+                // } else {
+                //     bank_read_semi_var( _environment, image->bankAssigned, image->absoluteAddress, bankWindowName, image->size );
+                // }
+                // cpu_store_16bit(_environment, bankWindowId, image->variableUniqueId );
+                // cpu_label( _environment, alreadyLoadedLabel );
 
+                char address[MAX_TEMPORARY_STORAGE];
+                sprintf(address, "$%4.4x", image->absoluteAddress );
                 Resource resource;
                 memset( &resource, 0, sizeof( Resource ) );
-                resource.realName = strdup( bankWindowName );
+                resource.realName = strdup( address );
                 resource.isAddress = 0;
                 resource.bankNumber = image->bankAssigned;
-
+                resource.isCompiled = 0;
+                resource.compression = image->uncompressedSize ? 1 : 0;
+                
                 gime_put_image( _environment, &resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
             } else {
                 gime_put_image( _environment, resource, x1->realName, y1->realName, NULL, NULL, 1, 0, _flags );
@@ -295,6 +305,8 @@ void put_image_vars_imageref( Environment * _environment, char * _image, char * 
     char labelNoBankCompressed[MAX_TEMPORARY_STORAGE]; sprintf( labelNoBankCompressed, "%snocompressed", label );
     char labelDecompressionDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDecompressionDone, "%sdecompression", label );
     char labelDone[MAX_TEMPORARY_STORAGE]; sprintf( labelDone, "%sdone", label );
+
+    deploy_preferred( msc1_banked, src_hw_coco3b_msc1_banked_asm );
 
     Variable * image = variable_retrieve( _environment, _image );
 
