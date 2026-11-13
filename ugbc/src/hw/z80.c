@@ -77,19 +77,10 @@ void cpu_init( Environment * _environment ) {
     outline0( "INC DE");
     outline0( "LD (HL), DE");
 
-    variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
-    variable_global( _environment, "CALLINDIRECTSAVEHL" );
-
     char callIndirect[3] = {
         // +00
         0xc3, 0x00, 0x00
     };
-
-    variable_import( _environment, "CALLINDIRECT", VT_BUFFER, 3 );
-    variable_global( _environment, "CALLINDIRECT" );
-
-    variable_store_buffer( _environment, "CALLINDIRECT", callIndirect, sizeof( callIndirect ), 0 );
-    variable_retrieve( _environment, "CALLINDIRECT" )->readonly = 0;
 
 }
 
@@ -4736,6 +4727,8 @@ void cpu_call( Environment * _environment, char * _label ) {
 }
 
 void cpu_call_indirect( Environment * _environment, char * _value ) {
+
+    _environment->deployed.embedded.cpu_call_indirect = 1;
 
     MAKE_LABEL
 

@@ -195,3 +195,11 @@ section data_user
 CPURANDOM_SEED:  defw $ff42,$ffea
 section code_user
 @ENDIF
+
+@IF deployed.embedded.cpu_call_indirect
+section data_user
+CALLINDIRECT:           DEFB $c3,$00,	$00
+CALLINDIRECTSAVEHL:     DEFW $0000
+section code_user
+@ENDIF
+

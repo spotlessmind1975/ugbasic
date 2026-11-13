@@ -429,21 +429,25 @@ const_factor:
       }
       | Identifier OP_POINT Identifier OP_POINT Identifier {
 
-        int valued = 0;
-        int value = 0;
-        char * p1 = $1;
-        char * p3 = $3;
-        char * p5 = $5;
-        configure_get_value( gmc, slot );
-        configure_get_value( sn76489, address );
-        if ( valued ) {
-            // printf( "%s.%s.%s = %d\n", p1, p3, p5, value );
-            $$ = value;
-        } else {
-            // printf( "%s.%s.%s = 0 (unvalued)\n", p1, p3, p5 );
-            $$ = 0;
+        if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embed") == 0 && strcmp( $5, "cpu_call_indirect") == 0 ) {
+            $$ = ((struct _Environment *)_environment)->deployed.embedded.cpu_call_indirect;
+        } else {            
+            int valued = 0;
+            int value = 0;
+            char * p1 = $1;
+            char * p3 = $3;
+            char * p5 = $5;
+            configure_get_value( gmc, slot );
+            configure_get_value( sn76489, address );
+            if ( valued ) {
+                // printf( "%s.%s.%s = %d\n", p1, p3, p5, value );
+                $$ = value;
+            } else {
+                // printf( "%s.%s.%s = 0 (unvalued)\n", p1, p3, p5 );
+                $$ = 0;
+            }
+            // printf( "%s.%s == %d\n", $1, $3, $$ );
         }
-        // printf( "%s.%s == %d\n", $1, $3, $$ );
       }
       | Identifier OP_POINT Identifier {
         if ( strcmp( $1, "vestigialConfig" ) == 0 ) {

@@ -93,19 +93,10 @@ void cpu_init( Environment * _environment ) {
     variable_import( _environment, "FLAGS", VT_BYTE, 0 );
     variable_global( _environment, "FLAGS" );
 
-    variable_import( _environment, "CALLINDIRECTSAVEHL", VT_ADDRESS, 0 );
-    variable_global( _environment, "CALLINDIRECTSAVEHL" );
-
     char callIndirect[3] = {
         // +00
         0xc3, 0x00, 0x00
     };
-
-    variable_import( _environment, "CALLINDIRECT", VT_BUFFER, 3 );
-    variable_global( _environment, "CALLINDIRECT" );
-
-    variable_store_buffer( _environment, "CALLINDIRECT", callIndirect, sizeof( callIndirect ), 0 );
-    variable_retrieve( _environment, "CALLINDIRECT" )->readonly = 0;
 
     variable_import( _environment, "BCP", VT_WORD, 0 );
     variable_global( _environment, "BCP" );
@@ -3553,8 +3544,10 @@ void cpu_call( Environment * _environment, char * _label ) {
 
 void cpu_call_indirect( Environment * _environment, char * _value ) {
 
-    MAKE_LABEL
+    _environment->deployed.embedded.cpu_call_indirect = 1;
 
+    MAKE_LABEL
+    
     char indirectLabel[MAX_TEMPORARY_STORAGE]; sprintf( indirectLabel, "%sindirect", label );
 
     outline0( "LD (CALLINDIRECTSAVEHL), HL" )

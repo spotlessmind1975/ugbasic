@@ -370,3 +370,12 @@ section data_user
 SN76489TIMER: defs 6
 section code_user
 @ENDIF
+
+@IF deployed.embedded.cpu_call_indirect
+section data_user
+CALLINDIRECT:           DEFB $c3,$00,	$00
+CALLINDIRECTSAVEHL:     DEFW $0000
+section code_user
+@ENDIF
+
+
