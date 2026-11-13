@@ -953,12 +953,16 @@ WAITSTATEL1:
     POP AF
     RET
 
+@IF waitVblUsed
+
 WAITVBL:
     CALL WAITSTATE
     LD A, (rLY)
     CP 144
     JP C, WAITVBL
     RET
+
+@ENDIF
 
 SCREENONOFF:
     CP 0

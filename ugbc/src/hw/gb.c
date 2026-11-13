@@ -994,6 +994,7 @@ void gb_busy_wait( Environment * _environment, char * _timing ) {
     outline1("LD C, (%s)", _timing);
     outhead1("%sfirst:", label);
     outline0("CALL WAITVBL");
+    _environment->waitVblUsed = 1;
     outline0("DEC C");
     outline1("JP NZ, %sfirst", label);
 
@@ -1248,8 +1249,6 @@ void gb_initialization( Environment * _environment ) {
     // //     variable_global( _environment, "VDP_HOOK" );
     // // #endif
 
-    // variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
-    // variable_global( _environment, "VBLFLAG" ); 
     // variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
     // variable_global( _environment, "VDPINUSE" );
 
@@ -1855,6 +1854,7 @@ void gb_put_image( Environment * _environment, Resource * _image, char * _x, cha
 void gb_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     outline0("CALL WAITVBL");
+    _environment->waitVblUsed = 1;
 
 }
 

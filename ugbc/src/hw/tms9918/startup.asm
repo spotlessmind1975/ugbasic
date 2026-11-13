@@ -450,6 +450,8 @@ TMS9918SPRITEINITL1:
         RET
 @ENDIF
 
+@IF waitVblUsed
+
 WAITVBL:
         LD A, 0
         LD (VBLFLAG), A
@@ -458,6 +460,8 @@ WAITVBL2:
         CP 0
         JR Z, WAITVBL2
         RET
+
+@ENDIF
 
 @IF dynamicConsole
 

@@ -2280,7 +2280,8 @@ void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
         outline0("LD DE, 0x1000" );
     }
     outline0("CALL WAITVBL");
-
+    _environment->waitVblUsed = 1;
+    
 }
 
 Variable * cpc_new_image( Environment * _environment, int _width, int _height, int _mode ) {

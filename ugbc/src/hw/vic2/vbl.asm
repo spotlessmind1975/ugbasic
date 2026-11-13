@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF waitVblUsed
+
 VBLLINE:
     STA MATHPTR0
 VBLLINEL1:
@@ -59,3 +61,5 @@ WAITVBL3:
     CMP #$29
     BCC WAITVBL3
     RTS    
+
+@ENDIF

@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF waitVblUsed
+
     ; ===========[ VERTICAL BLANK ]===========
     ; ==   Wait for vertical blank routine  ==
     ; ==    (possibily at) given scanline   ==
@@ -260,3 +262,5 @@ WAITVBLSCREENWAITL2
     ;
     ; BRA (label)           ->  3 cycles
     BRA WAITVBLSCREENWAITL1X
+
+@ENDIF

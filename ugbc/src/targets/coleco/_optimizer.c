@@ -563,7 +563,6 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "IMAGEF"))   return 1;
     if(po_buf_match(name, "IMAGET"))   return 1;
     if(po_buf_match(name, "IMAGEY"))   return 1;
-    if(po_buf_match(name, "VBLFLAG"))   return 1;
     if(po_buf_match(name, "VDPINUSE"))   return 1;
     if(po_buf_match(name, "CONSOLESA"))   return 1;
     

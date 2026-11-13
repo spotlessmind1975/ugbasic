@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF waitVblUsed
+
 WAITVBL:
     LD A, 1
     LD (VBLSYNC), A
@@ -47,4 +49,6 @@ WAITVBL1:
     CP $FF
     JR NZ, WAITVBL1
     EI
-    RET
+    RE
+    T
+@ENDIF

@@ -107,6 +107,8 @@ ISRSVC:
 @IF deployed.timer
     CALL TIMERMANAGER
 @ENDIF
+
+@IF waitVblUsed
     PUSH AF
     PUSH HL
     LD A, 1
@@ -116,6 +118,8 @@ ISRSVC:
     ; LD ($FC9E), HL
     POP HL
     POP AF
+@ENDIF
+
     RET
 
 MSX1STARTUP:

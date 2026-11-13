@@ -1742,6 +1742,7 @@ void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
     if ( ! _raster_line ) {
         outline0("LD HL, 15624");
         outline0("CALL WAITVBL");
+        _environment->waitVblUsed = 1;
     } else {
         Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 192 );
         outline1("LD A, (%s)", raster_line->realName);
@@ -1754,6 +1755,7 @@ void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
         outline0("LD L, A" );
         outline0("LD H, 0" );
         outline0("CALL WAITVBL");
+        _environment->waitVblUsed = 1;
     }
 
 }

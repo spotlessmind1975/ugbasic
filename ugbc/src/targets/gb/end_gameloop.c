@@ -83,6 +83,8 @@ Loop * loop = _environment->loops;
             run_parallel( _environment );
         }
         cpu_call( _environment, "WAITVBL" );
+       _environment->waitVblUsed = 1;
+
         cpu_jump( _environment, loop->label );
         unsigned char newLabel[MAX_TEMPORARY_STORAGE]; sprintf(newLabel, "%sbis", loop->label );
         cpu_label( _environment, newLabel );

@@ -57,8 +57,10 @@ void wait_vbl( Environment * _environment, char * _raster_line ) {
         Variable * rasterLine = variable_retrieve_or_define( _environment, _raster_line, VT_WORD, 0 );
         outline1("LDD %s", rasterLine->realName );
         cpu_call( _environment, "WAITVBLSCANLINE" );
+       _environment->waitVblUsed = 1;
     } else {
         cpu_call( _environment, "WAITVBLSCREEN" );
+       _environment->waitVblUsed = 1;
     }
     
 }

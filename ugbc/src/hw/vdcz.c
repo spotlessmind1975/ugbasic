@@ -2561,9 +2561,6 @@ void vdcz_initialization( Environment * _environment ) {
     variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
     variable_global( _environment, "BLITTMPPTR2" );
 
-    variable_import( _environment, "VBLFLAG", VT_BYTE, 0 );
-    variable_global( _environment, "VBLFLAG" ); 
-
     vdcz_tilemap_enable( _environment, 80, 25, 8, 8, 8 );
 
     font_descriptors_init( _environment, 0 );

@@ -85,6 +85,7 @@ void end_gameloop( Environment * _environment ) {
         
         deploy( vbl, src_hw_vic2_vbl_asm);
         outline0( "JSR WAITVBL");
+       _environment->waitVblUsed = 1;
 
         deploy_embedded( cpu_mem_move, src_hw_6502_cpu_mem_move_asm );
         if ( _environment->doubleBufferEnabled ) {

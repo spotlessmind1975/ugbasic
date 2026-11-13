@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+@IF waitVblUsed
+
 WAITVBL:
     PUSH DE
     DI
@@ -114,15 +116,4 @@ WAITUSEC_01:
 WAITUSEC2:
     RET
 
-; WAITVBL:
-;     LD B, $f5
-; WAITVBLL1:    
-;     IN A, (C)
-;     RRA
-;     JP C, WAITVBLL1
-; WAITVBLL2:    
-;     IN A, (C)
-;     RRA
-;     JP NC, WAITVBLL2
-;     RET
-    
+@ENDIF
