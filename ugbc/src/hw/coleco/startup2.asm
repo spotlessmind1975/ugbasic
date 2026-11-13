@@ -49,3 +49,9 @@ section data_user
 CPURANDOM_SEED:  defw $ff42,$ffea
 section code_user
 @ENDIF
+
+@IF deployed.sn76489startup
+section data_user
+SN76489TIMER: defs 6
+section code_user
+@ENDIF

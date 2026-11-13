@@ -82,9 +82,6 @@ void target_initialization( Environment * _environment ) {
     variable_import( _environment, "DATAPTR", VT_ADDRESS, 0 );
     variable_global( _environment, "DATAPTR" );
 
-    variable_import( _environment, "SN76489TIMER", VT_BUFFER, 6 );
-    variable_global( _environment, "SN76489TIMER" );    
-
     variable_import( _environment, "DOJOERROR", VT_BYTE, 0 );
     variable_global( _environment, "DOJOERROR" );
     
