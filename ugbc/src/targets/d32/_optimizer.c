@@ -309,6 +309,28 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "YCURSYS"))   return 1;
     if(po_buf_match(name, "<XCURSYS"))   return 1;
     if(po_buf_match(name, "<YCURSYS"))   return 1;
+    if(po_buf_match(name, "CONSOLEX1"))   return 1;
+    if(po_buf_match(name, "CONSOLEX2"))   return 1;
+    if(po_buf_match(name, "CONSOLEY1"))   return 1;
+    if(po_buf_match(name, "CONSOLEY2"))   return 1;
+    if(po_buf_match(name, "CONSOLEW"))   return 1;
+    if(po_buf_match(name, "CONSOLEH"))   return 1;
+    if(po_buf_match(name, "CONSOLEID"))   return 1;
+    if(po_buf_match(name, "CONSOLEWB"))   return 1;
+    if(po_buf_match(name, "CONSOLEHB"))   return 1;
+    if(po_buf_match(name, "CONSOLESL"))   return 1;
+    if(po_buf_match(name, "CONSOLESA"))   return 1;
+    if(po_buf_match(name, "PATTERNADDRESS"))   return 1;
+    if(po_buf_match(name, "COPYOFTILESADDRESS"))   return 1;
+    if(po_buf_match(name, "COPYOFTEXTADDRESS"))   return 1;
+    if(po_buf_match(name, "COPYOFCOLORMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "COPYOFBITMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "TILESADDRESS"))   return 1;
+    if(po_buf_match(name, "TEXTADDRESS"))   return 1;
+    if(po_buf_match(name, "COLORMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "BITMAPADDRESS"))   return 1;
+    if(po_buf_match(name, "DOJOERROR"))   return 1;
+    if(po_buf_match(name, "DATAPTR"))   return 1;
 
     return 0;
 }
