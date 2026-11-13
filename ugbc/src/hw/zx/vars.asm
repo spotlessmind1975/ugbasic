@@ -39,31 +39,15 @@
 EMPTYTILE: DEFB 0
 @ENDIF
 
-; BITMAPADDRESS: DEFW $4000
-; COLORMAPADDRESS: DEFW $5800
-; TABCOUNT:   DEFB    4
-; XCURS:      DEFB    0
-; YCURS:      DEFB    0
-; XCURSYS:      DEFB    0
-; YCURSYS:      DEFB    0
+@IF consoleUsed
 
-; XGR:    DEFW 0
-; YGR:    DEFW 0
-; LINE:   DEFB $ff, $ff
+@EMIT maxConsole
 
-; CLIPX1:    DEFW 0
-; CLIPY1:    DEFW 0
-; CLIPX2:    DEFW 255
-; CLIPY2:    DEFW 191
-; CURRENTWIDTH:   DEFW    256
-; CURRENTHEIGHT:   DEFW    192
-; CURRENTTILESWIDTH:   DEFB   32 
-; CURRENTTILESHEIGHT:   DEFB    24
-; CURRENTTILES:   DEFB    255
-; CURRENTMODE:        DEFB 0
-; FONTWIDTH:          DEFB 8
-; FONTHEIGHT:         DEFB 8
-; CPURANDOM_SEED:     DEFB $FF, $FF, $FF, $FF
+SECTION data_user
+CONSOLES:     .res  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    .res  maxConsole*2        ; <-- storage for memorize / remember
+SECTION code_user
+@ENDIF
 
 ROWSADDRESS: 
     DEFW 16384

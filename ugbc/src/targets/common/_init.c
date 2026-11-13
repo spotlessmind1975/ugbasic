@@ -156,11 +156,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "CONSOLESL", VT_SWORD, 0 );
     variable_global( _environment, "CONSOLESL" );
 
-    variable_import( _environment, "CONSOLES", VT_BUFFER, MAX_CONSOLES * 8 );
-    variable_global( _environment, "CONSOLES" );
-    variable_import( _environment, "CONSOLES2", VT_BUFFER, MAX_CONSOLES * 2 );
-    variable_global( _environment, "CONSOLES2" );
-
     variable_import( _environment, "FPSCRAP", VT_BUFFER, 16 );
     variable_global( _environment, "FPSCRAP" );
 

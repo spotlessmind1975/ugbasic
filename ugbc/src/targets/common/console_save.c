@@ -62,6 +62,8 @@ data.
 </usermanual> */
 void console_save( Environment * _environment, int _number ) {
 
+    _environment->consoleUsed = 1;
+
     char offset[MAX_TEMPORARY_STORAGE];
 
     int displacement = ( _number * 8 );
@@ -95,6 +97,8 @@ void console_save( Environment * _environment, int _number ) {
 
 void console_save_vars( Environment * _environment, char * _number ) {
     
+    _environment->consoleUsed = 1;
+
     Variable * xcursys = variable_retrieve( _environment, "XCURSYS" );
     Variable * ycursys = variable_retrieve( _environment, "YCURSYS" );
 

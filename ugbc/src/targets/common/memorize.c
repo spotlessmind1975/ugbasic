@@ -66,6 +66,8 @@ definisce in modo implicito la ''CONSOLE 0''.
 
 void memorize( Environment * _environment ) {
 
+    _environment->consoleUsed = 1;
+
     MAKE_LABEL
 
     deploy_begin( memorize );

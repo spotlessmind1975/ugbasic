@@ -67,6 +67,8 @@ sarà definita una pari allo schermo intero.
 </usermanual> */
 void remember( Environment * _environment ) {
     
+    _environment->consoleUsed = 1;
+
     MAKE_LABEL
 
     deploy_begin( remember );

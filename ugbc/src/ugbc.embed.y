@@ -711,6 +711,10 @@ const_factor:
             $$ = VOS_NTSC;
         } else if ( strcmp( $1, "waitVblUsed" ) == 0 ) {
             $$ = ((struct _Environment *)_environment)->waitVblUsed;
+        } else if ( strcmp( $1, "consoleUsed" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->consoleUsed;
+        } else if ( strcmp( $1, "maxConsoles" ) == 0 ) {
+            $$ = MAX_CONSOLES;
         } else {
             $$ = 0;
         }
@@ -867,6 +871,34 @@ embed2:
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetX );
         } else if ( strcmp( $3, "offsetY" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetY );
+        }
+        ((struct _Environment *)_environment)->embedResult.conditional = 1;
+  }
+  | OP_AT EMIT Identifier {
+        if ( strcmp( $3, "frameBufferStart" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->frameBufferStart );
+        } else if ( strcmp( $3, "frameBufferStart2" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->frameBufferStart2 );
+        } else if ( strcmp( $3, "waitSpriteUpdateFlag" ) == 0 ) {
+            if ( ((struct _Environment *)_environment)->multiplexingSpriteConfig.async ) {
+                vars_emit_constant_integer( _environment, $3, 0 );
+            } else {
+                vars_emit_constant_integer( _environment, $3, 0xff );
+            }
+        } else if ( strcmp( $3, "horizontalScrollOff" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->horizontalScrollOff );
+        } else if ( strcmp( $3, "scaleX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->scaleX );
+        } else if ( strcmp( $3, "stackSize" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->stackSize );
+        } else if ( strcmp( $3, "stackStartAddress" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->stackStartAddress );
+        } else if ( strcmp( $3, "scaleY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->scaleY );
+        } else if ( strcmp( $3, "offsetX" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->offsetX );
+        } else if ( strcmp( $3, "offsetY" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->offsetY );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

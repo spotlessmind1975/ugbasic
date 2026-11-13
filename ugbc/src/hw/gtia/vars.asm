@@ -136,9 +136,14 @@ CONSOLESA:     .word 0         ; <-- calculated (address)
 CONSOLEWB:     .byte 40        ; <-- calculated (bytes)
 CONSOLEHB:     .byte 25        ; <-- calculated (bytes)
 ;
-CONSOLES:      .res 4*8        ; <-- storage for virtual consoles
-CONSOLES2:     .res 4*2        ; <-- storage for memorize / remember
 
+@IF consoleUsed
+
+@EMIT maxConsole
+
+CONSOLES:      .res maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:     .res maxConsole*2        ; <-- storage for memorize / remember
+@ENDIF
 
 CALCPOST:
 

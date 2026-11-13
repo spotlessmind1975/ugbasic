@@ -93,8 +93,14 @@ CONSOLESA     fdb 0         ; <-- calculated (address)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
-CONSOLES      rzb 4*8        ; <-- storage for virtual consoles
-CONSOLES2     rzb 4*2        ; <-- storage for memorize / remember on console
+@IF consoleUsed
+
+@EMIT maxConsole
+
+CONSOLES      rzb maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2     rzb maxConsole*2        ; <-- storage for memorize / remember on console
+@ENDIF
+
 
 IMAGEW2 EQU $40
 IMAGEX EQU $41 ; $42

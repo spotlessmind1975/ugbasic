@@ -49,6 +49,16 @@ PALETTE:   DEFB    0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 SECTION code_user
 @ENDIF
 
+@IF consoleUsed
+
+@EMIT maxConsole
+
+SECTION data_user
+CONSOLES:     .res  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    .res  maxConsole*2        ; <-- storage for memorize / remember
+SECTION code_user
+@ENDIF
+
 ; ORG $c000
 
 ; TEXTADDRESS: DEFW FRAMEBUFFER
