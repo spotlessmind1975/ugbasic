@@ -650,7 +650,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
 
-            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+            // cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
 
             outline0("CALL TMS9918AUDCCHAR01");
             outline0("CALL TMS9918SPRITEINIT");
@@ -673,7 +673,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
 
-            cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
+            // cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
 
             cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1000 );
             cpu_store_16bit( _environment, "SPRITEADDRESS", 0x0000 );
