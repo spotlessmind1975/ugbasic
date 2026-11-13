@@ -40,6 +40,8 @@ IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
 section data_user
 JFIRELATCH:  defw $0000
+JOYSTICK0: defb $00
+JOYSTICK1: defb $00
 section code_user
 
 @IF vestigialConfig.biosAllowed

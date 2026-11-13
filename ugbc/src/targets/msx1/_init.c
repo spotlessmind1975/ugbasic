@@ -133,11 +133,6 @@ void target_initialization( Environment * _environment ) {
 
     variable_import( _environment, "BANKSHADOW", VT_BYTE, 0 );
 
-    variable_import( _environment, "JOYSTICK0", VT_BYTE, 0 );
-    variable_global( _environment, "JOYSTICK0" );   
-    variable_import( _environment, "JOYSTICK1", VT_BYTE, 0 );
-    variable_global( _environment, "JOYSTICK1" );   
-
     variable_import( _environment, "AY8910TIMER", VT_BUFFER, 6 );
     variable_global( _environment, "AY8910TIMER" );    
 
