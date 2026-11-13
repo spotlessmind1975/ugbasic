@@ -47,6 +47,9 @@
 
 ; PPIKEYBOARD		DS 1		; this byte must be defined in RAM area (>= $C000 for internal RAM)
 
+section data_user
+JFIRELATCH:  defw $0000
+section code_user
 
 ; 2) Call this to obtain joystick + keyboard keys
 ;

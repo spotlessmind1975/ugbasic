@@ -33,6 +33,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+section data_user
+JFIRELATCH:  defw $0000
+section code_user
+
 ; Originally published on:
 ; https://github.com/siriokds/SC-3000-Keyboard-support/blob/main/SC3000_SG1000_KeybJoy.asm
 

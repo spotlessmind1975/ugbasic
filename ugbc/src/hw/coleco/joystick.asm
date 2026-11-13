@@ -38,6 +38,10 @@
 IO_Joy1		EQU	0FCH		; Joystick 1 input port
 IO_Joy2		EQU	0FFH		; Joystick 2 input port
 
+section data_user
+JFIRELATCH:  defw $0000
+section code_user
+
 @IF vestigialConfig.biosAllowed
 
     WAITFIRE0:

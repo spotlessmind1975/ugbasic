@@ -35,6 +35,10 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+section data_user
+JFIRELATCH:  defw $0000
+section code_user
+
 @IF joystickConfig.values
 
     ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
