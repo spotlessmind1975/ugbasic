@@ -709,6 +709,8 @@ const_factor:
             $$ = VOS_PAL;
         } else if ( strcmp( $1, "VOS_NTSC" ) == 0 ) {
             $$ = VOS_NTSC;
+        } else if ( strcmp( $1, "waitVblUsed" ) == 0 ) {
+            $$ = ((struct _Environment *)_environment)->waitVblUsed;
         } else {
             $$ = 0;
         }
