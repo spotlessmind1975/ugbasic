@@ -40,6 +40,8 @@
 ;     by Lasse Loorni (loorni@gmail.com)
 ;  Available at http://cadaver.github.io
 
+SPRITECOUNT: .BYTE $00
+
 IRQ1LINE        = $FC
 IRQ2LINE        = $2a
 MAXSPR          = 32

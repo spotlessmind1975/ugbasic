@@ -51,8 +51,6 @@ XGR:    .word 0
 YGR:    .word 0
 LINE:   .byte $ff, $ff
 
-SPRITECOUNT:    .byte 0
-
 CLIPX1:    .word 0
 CLIPY1:    .word 0
 ORIGINX:   .word 0

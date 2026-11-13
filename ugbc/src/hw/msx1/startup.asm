@@ -189,3 +189,9 @@ WAITTIMERL1:
     CP $FF
     JR NZ, WAITTIMER
     RET
+
+@IF deployed.random
+section data_user
+CPURANDOM_SEED:  defw $ff42,$ffea
+section code_user
+@ENDIF

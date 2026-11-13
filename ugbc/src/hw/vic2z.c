@@ -1607,9 +1607,6 @@ void vic2z_initialization( Environment * _environment ) {
     variable_import( _environment, "YSCROLL", VT_BYTE, 0 );
     variable_global( _environment, "YSCROLL" );
 
-    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
-    variable_global( _environment, "SPRITECOUNT" );
-
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 40;

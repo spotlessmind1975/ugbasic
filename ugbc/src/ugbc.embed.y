@@ -589,6 +589,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->deployed.fp_vars;
             } else if ( strcmp( $3, "scroll" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->deployed.scroll;
+            } else if ( strcmp( $3, "random" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->deployed.random;
             } else {
                 $$ = 0;
             }

@@ -566,3 +566,8 @@ OOMHALT:
     CALL OOMHALTL1
     JR OOMHALT
 
+@IF deployed.random
+section data_user
+CPURANDOM_SEED:  defw $ff42,$ffea
+section code_user
+@ENDIF

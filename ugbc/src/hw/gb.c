@@ -1169,9 +1169,6 @@ void gb_initialization( Environment * _environment ) {
     variable_import( _environment, "CURRENTTILEMODE", VT_BYTE, 1 );
     variable_global( _environment, "CURRENTTILEMODE" );
 
-    variable_import( _environment, "SPRITECOUNT", VT_SPRITE, 0 );
-    variable_global( _environment, "SPRITECOUNT" );
-
     variable_import( _environment, "GBMUSICREADY", VT_BYTE, 0 );
     variable_global( _environment, "GBMUSICREADY" );
     variable_import( _environment, "GBMUSICPAUSE", VT_BYTE, 0 );

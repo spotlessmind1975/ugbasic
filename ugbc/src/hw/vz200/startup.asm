@@ -231,3 +231,6 @@ SUB_HL_DE:
     POP     BC
     RET
 	
+@IF deployed.random
+CPURANDOM_SEED:  defw $ff42,$ffea
+@ENDIF

@@ -35,6 +35,8 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+SPRITECOUNT: .BYTE $00
+
 SPRITEDATASET:
     PHA
     LDA #$00
