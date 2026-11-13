@@ -54,6 +54,20 @@
 
 ; else
 
+VDPFILLA:
+        CALL VDPLOCK
+        PUSH    AF
+        CALL    VDPWRITEADDR
+        POP     AF
+VDPFILLALOOP:
+        CALL    VDPRAMOUT
+        DEC     C
+        INC     A
+        JP      NZ, VDPFILLALOOP
+        DJNZ    VDPFILLALOOP
+        CALL VDPUNLOCK
+        RET
+        
 CLSG:
 
 ; endif

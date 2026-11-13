@@ -260,19 +260,19 @@ VDPWRITEOPTLOOPB2:
         CALL VDPUNLOCK
         RET
 
-VDPWRITE8:
-        CALL VDPLOCK
-        CALL    VDPWRITEADDR
-VDPWRITE8LOOP:
-        LD      A, (HL)
-        CALL    VDPRAMOUT8
-        INC     HL
-        DEC     BC
-        LD      A, B
-        OR      C
-        JP      NZ, VDPWRITE8LOOP
-        CALL VDPUNLOCK
-        RET
+; VDPWRITE8:
+;         CALL VDPLOCK
+;         CALL    VDPWRITEADDR
+; VDPWRITE8LOOP:
+;         LD      A, (HL)
+;         CALL    VDPRAMOUT8
+;         INC     HL
+;         DEC     BC
+;         LD      A, B
+;         OR      C
+;         JP      NZ, VDPWRITE8LOOP
+;         CALL VDPUNLOCK
+;         RET
 
 VDPREAD:
         CALL VDPLOCK
@@ -305,20 +305,6 @@ VDPFILLLOOP8:
         CALL    VDPRAMOUT8
         DEC     C
         JP      NZ, VDPFILLLOOP8
-        CALL VDPUNLOCK
-        RET
-
-VDPFILLA:
-        CALL VDPLOCK
-        PUSH    AF
-        CALL    VDPWRITEADDR
-        POP     AF
-VDPFILLALOOP:
-        CALL    VDPRAMOUT
-        DEC     C
-        INC     A
-        JP      NZ, VDPFILLALOOP
-        DJNZ    VDPFILLALOOP
         CALL VDPUNLOCK
         RET
 

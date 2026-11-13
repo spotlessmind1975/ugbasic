@@ -532,6 +532,7 @@ static int vars_ok(POBuffer name) {
     if(po_buf_match(name, "CONSOLEID"))   return 1;
     if(po_buf_match(name, "CONSOLEWB"))   return 1;
     if(po_buf_match(name, "CONSOLEHB"))   return 1;
+    if(po_buf_match(name, "CONSOLESL"))   return 1;
     if(po_buf_match(name, "CPURANDOM"))   return 1;
     if(po_buf_match(name, "LINE"))   return 1;
     if(po_buf_match(name, "SN76489MUSICTYPE"))   return 1;
