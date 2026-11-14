@@ -89,7 +89,11 @@ CLST0:
     LD BC, $100 + 40*25
     LD DE, (TEXTADDRESS)
     CALL VDPFILL
-    JP CLSTDONE
+    @IF !vestigialConfig.screenModeUnique
+        JP CLSTDONE
+    @ELSE
+        RET
+    @ENDIF
 @ENDIF
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 1 )
@@ -109,7 +113,11 @@ CLST1:
     LD DE, (COLORMAPADDRESS)
     CALL VDPFILL
 
-    JP CLSTDONE
+    @IF !vestigialConfig.screenModeUnique
+        JP CLSTDONE
+    @ELSE
+        RET
+    @ENDIF
 
 @ENDIF
 
@@ -131,9 +139,15 @@ CLST3:
     LD DE, (COLORMAPADDRESS)
     CALL VDPFILL
 
-    JP CLSTDONE
+    @IF !vestigialConfig.screenModeUnique
+        JP CLSTDONE
+    @ELSE
+        RET
+    @ENDIF
 
 @ENDIF
 
+@IF ( !vestigialConfig.screenModeUnique )
 CLSTDONE:
     RET
+@ENDIF
