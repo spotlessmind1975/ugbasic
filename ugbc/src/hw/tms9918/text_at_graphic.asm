@@ -469,7 +469,13 @@ TEXTATBMAT:
     LD A, (DE)
     SUB A, B
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     ADD A, B
     LD (CLINEX), A
     INC DE
@@ -572,7 +578,13 @@ TEXTATBMINCX2:
     JR NC, TEXTATBMNEXT2
     JP TEXTATBMNEXT
 TEXTATBMNEXT2:
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD (XCURSYS), A
     LD A, (YCURSYS)
     INC A

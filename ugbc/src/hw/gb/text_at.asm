@@ -166,7 +166,13 @@ TEXTATBMPARSEAT:
     CALL TEXTATREADCHAR
     SUB A, B
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     ADD A, B
     LD (CLINEX), A
     LD A, (YCURSYS)
@@ -206,7 +212,13 @@ TEXTATBMCMOVE:
     LD A, (CLINEX)
     ADD A, B
     PUSH AF
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD B, A
     POP AF
     CP B
@@ -290,7 +302,13 @@ TEXTATBMINCX:
     JR NC, TEXTATBMINCY
     JP TEXTATBMNEXT
 TEXTATBMINCY:
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD (XCURSYS), A
     LD A, (YCURSYS)
     INC A

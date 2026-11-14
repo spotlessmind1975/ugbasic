@@ -739,12 +739,6 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
-    console_init( _environment );
-
-    console_calculate( _environment );
-
-    console_calculate_vars( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         c6847_cls( _environment );
     }
@@ -1162,8 +1156,6 @@ void c6847_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
     _environment->screenShades = 4;
     _environment->screenColors = 4;
-
-    console_init( _environment );
     
     if ( _environment->vestigialConfig.clsImplicit ) {
         c6847_cls( _environment );
@@ -2832,7 +2824,7 @@ static int c6847_image_converter_sg8_block( Environment * _environment, char * _
             int y2, x2;
             int colorCount[4];
 
-            memset( colorCount, 0, 6 * sizeof( int ) );
+            memset( colorCount, 0, 4 * sizeof( int ) );
 
             for( y2 = 0; y2 < 3; ++y2 ) {
                 for( x2 = 0; x2 < 2; ++x2 ) {

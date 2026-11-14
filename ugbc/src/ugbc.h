@@ -5240,7 +5240,6 @@ void define_implicit_array_if_needed( Environment * _Environment, char * _name )
 
 int define_audio_target_check( Environment * _environment, int _value );
 
-void console_init( Environment * _environment );
 void console_calculate( Environment * _environment );
 void console_calculate_vars( Environment * _environment );
 

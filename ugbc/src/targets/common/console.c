@@ -38,49 +38,6 @@
  * CODE SECTION 
  ****************************************************************************/
 
-void console_init( Environment * _environment ) {
-
-    if ( 
-        _environment->activeConsole.x1 || 
-        _environment->activeConsole.y1 ||
-        (_environment->activeConsole.x2 != _environment->screenTilesWidth-1) ||
-        (_environment->activeConsole.y2 != _environment->screenTilesHeight-1) ||
-        (_environment->activeConsole.width != _environment->screenTilesWidth) ||
-        (_environment->activeConsole.height != _environment->screenTilesHeight)
-      ) {
-
-        _environment->activeConsole.x1 = 0;
-        _environment->activeConsole.y1 = 0;
-        _environment->activeConsole.x2 = _environment->screenTilesWidth-1;
-        _environment->activeConsole.y2 = _environment->screenTilesHeight-1;
-        _environment->activeConsole.width = _environment->screenTilesWidth;
-        _environment->activeConsole.height = _environment->screenTilesHeight;
-
-        for( int i=0; i<MAX_CONSOLES; ++i ) {
-            _environment->activeConsole.id = i;
-            memcpy( &_environment->consoles[i], &_environment->activeConsole, sizeof( Console ) );
-        }
-
-        _environment->activeConsole.id = 0;
-
-        variable_store( _environment, "XCURSYS", _environment->activeConsole.x1 );
-        variable_store( _environment, "YCURSYS", _environment->activeConsole.y1 );
-
-        console_calculate( _environment );
-
-        variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
-        variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
-        variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
-        variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
-        variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
-        variable_store( _environment, "CONSOLEH", _environment->activeConsole.height );
-        
-        console_calculate( _environment );
-
-      }
-
-}
-
 /**
  * @brief Emit code for <strong>CONSOLE</strong>
  * 
@@ -116,6 +73,8 @@ Se hai bisogno di avere le righe e le colonne dell'intero schermo, devi usare i 
 @target all
 </usermanual> */
 void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
+
+    _environment->consoleUsed = 1;
 
 	// - CONSOLE ASSIGNMENT
 	// 	 - X1 = x1
@@ -169,7 +128,7 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 
     console_calculate( _environment );
 
-    variable_store( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
+    cpu_store_8bit( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
     variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
     variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
     variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
@@ -179,6 +138,8 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
 }
 
 void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x2, char * _y2 ) {
+
+    _environment->consoleUsed = 1;
 
     MAKE_LABEL
 
@@ -204,7 +165,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     // _environment->activeConsole.x1 = _x1;
 
-    variable_move( _environment, x1->name, "CONSOLEX1" );
+    cpu_move_8bit( _environment, x1->realName, "CONSOLEX1" );
 
     // _environment->activeConsole.y1 = _y1;
 
@@ -227,9 +188,12 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     outline0("; compare (a)");
 
+    Variable * result = variable_temporary( _environment, VT_SBYTE, "(bool)");
+    cpu_compare_8bit( _environment, "CONSOLEX1", "CONSOLEX2", result->realName, 1 );
+
     cpu_compare_and_branch_8bit_const( 
         _environment, 
-        variable_compare( _environment, "CONSOLEX1", "CONSOLEX2" )->realName, 
+        result->realName, 
         0, 
         consoleX1X2DifferentLabel,
         1 
@@ -245,6 +209,8 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     outline0("; compare (b)");
 
+    cpu_greater_than_8bit( _environment, "CONSOLEX1", "CONSOLEX2", result->realName, 1, 0 );
+
 	// 	 RULE 2) x2 > x1	->	X2 = ( SW - 1 )
 
     // if ( _environment->activeConsole.x1 >= _environment->activeConsole.x2 ) {
@@ -253,7 +219,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     cpu_compare_and_branch_8bit_const( 
         _environment, 
-        variable_greater_than( _environment, "CONSOLEX1", "CONSOLEX2", 1 )->realName,
+        result->realName,
         0, 
         consoleX1LTX2Label,
         1 
@@ -313,11 +279,13 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     // _environment->activeConsole.width = ( _environment->activeConsole.x2 - _environment->activeConsole.x1 ) + 1;
 
+    Variable * difference = variable_temporary( _environment, VT_BYTE, "(diff)");
+
+    cpu_math_sub_8bit( _environment, "CONSOLEX2", "CONSOLEX1", difference->realName );
+
     variable_move( 
         _environment, 
-        variable_sub( _environment,
-            "CONSOLEX2",
-            "CONSOLEX1" )->name,
+        difference->name,
         "CONSOLEW" );
     cpu_inc( _environment, "CONSOLEW" );
 
@@ -335,7 +303,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
 	// 	(+ graphical if needed)
 
-    variable_move( _environment, "CONSOLEX1", "XCURSYS" );
+    cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );
     variable_move( _environment, "CONSOLEY1", "YCURSYS" );
 
     console_calculate_vars( _environment );

@@ -43,3 +43,8 @@ EMPTYTILE = 32
 @ENDIF
 SECTION code_user
 
+@IF consoleUsed
+CONSOLEX1:           DEFB   0
+@ELSE
+CONSOLEX1: EQU 0
+@ENDIF

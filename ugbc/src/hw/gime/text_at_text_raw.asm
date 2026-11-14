@@ -148,7 +148,12 @@ TEXTATRAWNEXT2
 
     ; Put 0 as horizontal position.
 
+@IF consoleUsed
     LDA CONSOLEX1
+@ELSE
+    LDA #CONSOLEX1
+@ENDIF
+
     STA <XCURSYS
 
     ; Increment the vertical position.

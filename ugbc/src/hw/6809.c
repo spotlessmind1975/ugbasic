@@ -743,9 +743,21 @@ void cpu_move_8bit( Environment * _environment, char *_source, char *_destinatio
 
     inline( cpu_move_8bit )
 
-        outline1("LDB %s", _source);
+#if defined(__mo5__) || defined(__pc128op__) || defined(__to8__)
+    if ( strcmp( _source, "XCURSYS") == 0 ) {
+        outline1("LDB <%s", _source);
+    } else {
+        outline1("LDB %s", _source);            
+    }
+    if ( strcmp( _destination, "XCURSYS") == 0 ) {
+        outline1("STB <%s", _destination);
+    } else {
         outline1("STB %s", _destination);
-
+    }
+#else
+    outline1("LDB %s", _source);            
+    outline1("STB %s", _destination);
+#endif
     no_embedded( cpu_move_8bit )
 
 }

@@ -75,6 +75,8 @@ data, e salvati in precedenza con il comando ''CONSOLE SAVE''.
 </usermanual> */
 void console_restore( Environment * _environment, int _number ) {
 
+    _environment->consoleUsed = 1;
+    
     char offset[MAX_TEMPORARY_STORAGE];
     int displacement;
 

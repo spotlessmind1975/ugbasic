@@ -305,7 +305,13 @@ TEXTATAT:
     DEC C
     SUB A, B
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     ADD A, B
     LD (CLINEX), A
     LD A, (YCURSYS)
@@ -375,7 +381,13 @@ TEXTATNEXT2:
     SBC HL, DE
     LD (COPYOFTEXTADDRESS), HL
     POP DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD (XCURSYS), A
     LD A, (YCURSYS)
     INC A

@@ -62,3 +62,11 @@ CALLINDIRECT:           DEFB $c3,$00,	$00
 CALLINDIRECTSAVEHL:     DEFW $0000
 section code_user
 @ENDIF
+
+@IF consoleUsed
+section data_user
+CONSOLEX1:           DEFB   0
+section code_user
+@ELSE
+CONSOLEX1: EQU 0
+@ENDIF

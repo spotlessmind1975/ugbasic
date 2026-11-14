@@ -541,8 +541,6 @@ void zx_initialization( Environment * _environment ) {
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-    console_init( _environment );
-
     font_descriptors_init( _environment, 1 );
 
     if (_environment->vestigialConfig.clsImplicit ) {
@@ -609,7 +607,7 @@ int zx_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenColors = 8;
-    console_init( _environment );
+
     if (_environment->vestigialConfig.clsImplicit ) {
         zx_cls( _environment, NULL, NULL );
     }

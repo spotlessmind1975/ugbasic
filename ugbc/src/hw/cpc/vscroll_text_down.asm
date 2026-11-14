@@ -87,7 +87,13 @@ VSCROLLTDOWNWL1:
     LD D, (HL)
     LD A, (XCURSYS)
     PUSH AF
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD (XCURSYS), A
     LD (COPYOFTEXTADDRESS), DE
     CALL TEXTATPIXPOSH
@@ -151,7 +157,13 @@ VSCROLLTDOWNL1:
 
     PUSH HL    
     LD HL, DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE
@@ -170,7 +182,13 @@ VSCROLLTDOWNL1:
     LD HL, BC
 
     PUSH DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE
@@ -252,7 +270,13 @@ VSCROLLDOWNREFILLWL1:
     LD D, (HL)
     LD A, (XCURSYS)
     PUSH AF
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD (XCURSYS), A
     LD (COPYOFTEXTADDRESS), DE
     CALL TEXTATPIXPOSH
@@ -301,7 +325,13 @@ VSCROLLDOWNREFILLNOW:
     INC HL
 
     LD HL, DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+    
     LD E, A
     LD D, 0
     ADD HL, DE

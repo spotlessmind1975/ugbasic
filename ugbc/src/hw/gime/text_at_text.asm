@@ -429,7 +429,11 @@ TEXTATAT
     DECB
     ANDCC #$01
     SUBA <XCURSYS
+
+@IF consoleUsed
     ADDA CONSOLEX1
+@ENDIF
+    
     STA <CLINEX
 
     ; The vertical delta is calculated started from
@@ -501,12 +505,28 @@ TEXTATNEXT2
 
     ; Put 0 as horizontal position.
 
+@IF consoleUsed
     LDA CONSOLEX1
+@ELSE
+    LDA #CONSOLEX1
+@ENDIF
+    
     STA <XCURSYS
 
     ; Increment the vertical position.
 
     INC <YCURSYS
+
+    ANDCC #$fe
+    LDA #0
+    LDB CURRENTTILESWIDTH
+    LDX <COPYOFTEXTADDRESS
+    PSHS D
+    LEAX D, X
+    LEAX D, X
+    PULS D
+
+    STX <COPYOFTEXTADDRESS
 
     ; Update the video ram address.
 

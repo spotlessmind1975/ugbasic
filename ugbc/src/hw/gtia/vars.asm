@@ -121,7 +121,11 @@ CONSOLEID:     .byte $ff       ; <-- actual
 @IF lmarginAtariBasicEnabled
 CONSOLEX1 = 82                  ; <-- input from program (chars)
 @ELSE
+@IF consoleUsed
 CONSOLEX1:     .byte 0          ; <-- input from program (chars)
+@ELSE
+CONSOLEX1 = 0
+@ENDIF
 @ENDIF
 
 CONSOLEY1:     .byte 0         ; <-- input from program (chars)

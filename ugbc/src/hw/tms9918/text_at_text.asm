@@ -371,7 +371,13 @@ TEXTATAT:
     DEC C
     SUB A, B
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     ADD A, B
     LD (CLINEX), A
     LD A, (YCURSYS)
@@ -567,13 +573,14 @@ TEXTATINCX:
     JP Z, TEXTATEND2
 
 TEXTATCHECKCONSOLE:
+    LD A, (XCURSYS)
     PUSH AF
     LD A, (CONSOLEX2)
     LD B, A
     POP AF
     CP B
-    JR NZ, TEXTATNEXT
-    JR C, TEXTATNEXT2
+    JR Z, TEXTATNEXT
+    JR NC, TEXTATNEXT2
     JMP TEXTATNEXT
 TEXTATNEXT2:
     PUSH DE
@@ -583,14 +590,20 @@ TEXTATNEXT2:
     LD HL, (COPYOFTEXTADDRESS)
     AND A
     ADC HL, DE
-    LD A, (XCURSYS)    
+    LD A, (CONSOLEW)    
     LD E, A
     LD D, 0
     AND A
     SBC HL, DE
     LD (COPYOFTEXTADDRESS), HL
     POP DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+    
     LD (XCURSYS), A
     LD A, (YCURSYS)
     INC A

@@ -207,8 +207,10 @@ TEXTATBMAT:
     LDA (TEXTPTR), Y
     SEC
     SBC XCURSYS
+@IF consoleUsed
     CLC
     ADC CONSOLEX1
+@ENDIF 
     STA CLINEX
     INC TEXTPTR
     DEX

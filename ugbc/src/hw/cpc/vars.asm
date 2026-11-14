@@ -56,3 +56,9 @@ TICKSPERSECOND: DEFB   60
 @IF deployed.random
 CPURANDOM_SEED:  defw $ff42,$ffea
 @ENDIF
+
+@IF consoleUsed
+CONSOLEX1:           DEFB   0
+@ELSE
+CONSOLEX1: EQU 0
+@ENDIF

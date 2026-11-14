@@ -497,8 +497,6 @@ int ef9345_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-    console_init( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         ef9345_cls( _environment );
     }
@@ -868,8 +866,6 @@ void ef9345_initialization( Environment * _environment ) {
     _environment->screenColors = 8;
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
-
-    console_init( _environment );
 
     if (_environment->vestigialConfig.clsImplicit ) {
         ef9345_cls( _environment );

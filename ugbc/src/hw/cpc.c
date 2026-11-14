@@ -706,8 +706,6 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
 
-    console_init( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         cpc_cls( _environment );
     }
@@ -1198,8 +1196,6 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "PAPERT" );
 
     cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
-
-    console_init( _environment );
 
     font_descriptors_init( _environment, 0 );
     

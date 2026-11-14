@@ -297,7 +297,11 @@ TEXTATAT:
     INC SI
     DEC CL
     SUB AL, [XCURSYS]
+    
+@IF consoleUsed
     ADD AL, [CONSOLEX1]
+@ENDIF
+
     MOV [CLINEX], AL
     MOV AL, [YCURSYS]
     MOV BL, AL
@@ -366,7 +370,13 @@ TEXTATNEXT2:
     SUB DI, AX
     SUB DI, AX
     MOV [COPYOFTEXTADDRESS], DI
+
+@IF consoleUsed
     MOV AL, [CONSOLEX1]
+@ELSE
+    MOV AL, CONSOLEX1
+@ENDIF
+
     MOV [XCURSYS], AL
     MOV AL, [YCURSYS]
     INC AL

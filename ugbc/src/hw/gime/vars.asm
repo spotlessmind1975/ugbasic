@@ -119,7 +119,12 @@ CONSOLEID     fcb $ff       ; <-- actual
 ;
 ; Text mode
 ;
+@IF consoleUsed
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
+@ELSE
+CONSOLEX1 = 0
+@ENDIF
+
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
 CONSOLEY2     fcb 15        ; <-- recalculated (chars)

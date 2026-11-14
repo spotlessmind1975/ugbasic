@@ -54,7 +54,7 @@ SECTION code_user
 @EMIT maxConsole
 
 SECTION data_user
-CONSOLES:     .res  maxConsole*8        ; <-- storage for virtual consoles
-CONSOLES2:    .res  maxConsole*2        ; <-- storage for memorize / remember
+CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
 SECTION code_user
 @ENDIF

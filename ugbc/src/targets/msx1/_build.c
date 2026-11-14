@@ -180,7 +180,7 @@ void generate_rom( Environment * _environment ) {
         if ( p ) {
             *p = 0;
         }
-        char temp[MAX_TEMPORARY_STORAGE];
+        char temp[MAX_TEMPORARY_STORAGE*2];
         sprintf(temp, "%s_BANK_%02X.bin", bankName, i );
         remove(temp);
     }
@@ -215,7 +215,7 @@ void generate_rom( Environment * _environment ) {
         if ( p ) {
             *p = 0;
         }
-        char temp[MAX_TEMPORARY_STORAGE];
+        char temp[MAX_TEMPORARY_STORAGE*2];
         sprintf(temp, "%s_BANK_%02X.bin", bankName, bankId );
         strcpy( bankName, temp );
         int bankSize = bank->space;

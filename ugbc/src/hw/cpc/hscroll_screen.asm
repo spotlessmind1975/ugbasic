@@ -70,7 +70,13 @@ HSCROLLSCREENL1:
     INC HL
 
     LD HL, DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE
@@ -126,7 +132,13 @@ HSCROLLSCREENRL1:
     INC HL
     
     LD HL, DE
+    
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE

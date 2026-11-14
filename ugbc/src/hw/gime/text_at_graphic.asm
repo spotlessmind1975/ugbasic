@@ -581,7 +581,11 @@ TEXTATBMAT
     DECB
     ANDCC #$01
     SUBA <XCURSYS
+
+@IF consoleUsed
     ADDA CONSOLEX1
+@ENDIF
+
     STA <CLINEX
 
     ; The vertical delta is calculated started from
@@ -646,7 +650,12 @@ TEXTATBMNEXT2
 
     ; Put 0 as horizontal position.
 
+@IF consoleUsed
     LDA CONSOLEX1
+@ELSE
+    LDA #CONSOLEX1
+@ENDIF
+    
     STA <XCURSYS
 
     ; Increment the vertical position.

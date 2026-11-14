@@ -373,22 +373,6 @@ void pc1403_initialization( Environment * _environment ) {
     _environment->consoleTilesWidth = _environment->screenTilesWidth;
     _environment->consoleTilesHeight = _environment->screenTilesHeight;
 
-    // cpu_store_16bit( _environment, "CURRENTWIDTH", _environment->screenWidth );
-    // cpu_store_16bit( _environment, "CURRENTHEIGHT", _environment->screenHeight );
-    // cpu_move_16bit( _environment, "CURRENTWIDTH", "RESOLUTIONX" );
-    // cpu_move_16bit( _environment, "CURRENTHEIGHT", "RESOLUTIONY" );
-    // cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
-    // cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
-    // cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-    // cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
-    // cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
-
-    // console_init( _environment );
-
-    // if (_environment->vestigialConfig.clsImplicit ) {
-    //     pc1403_cls( _environment, NULL, NULL );
-    // }
-    
 }
 
 void pc1403_finalization( Environment * _environment ) {
@@ -416,15 +400,6 @@ void console_calculate_vars( Environment * _environment ) {
 }
 
 int pc1403_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode ) {
-    // _environment->screenWidth = 256;
-    // _environment->screenHeight = 192;
-    // _environment->fontWidth = 8;
-    // _environment->fontHeight = 8;
-    // _environment->screenColors = 8;
-    // console_init( _environment );
-    // if (_environment->vestigialConfig.clsImplicit ) {
-    //     pc1403_cls( _environment, NULL, NULL );
-    // }
 
 }
 

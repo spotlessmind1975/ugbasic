@@ -360,8 +360,6 @@ int vic1_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
-    console_init( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         vic1_cls( _environment );
     }
@@ -790,8 +788,6 @@ void vic1_initialization( Environment * _environment ) {
     _environment->screenColors = 16;
     _environment->consoleTilesWidth = 22;
     _environment->consoleTilesHeight = 23;
-
-    console_init( _environment );
 
     font_descriptors_init( _environment, 1 );
 

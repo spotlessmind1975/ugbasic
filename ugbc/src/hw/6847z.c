@@ -407,12 +407,6 @@ int c6847z_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
-    // console_init( _environment );
-
-    // console_calculate( _environment );
-
-    // console_calculate_vars( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         c6847z_cls( _environment );
     }
@@ -861,8 +855,6 @@ void c6847z_initialization( Environment * _environment ) {
     _environment->screenHeight = _environment->screenTilesHeight*_environment->fontHeight;
     _environment->screenShades = 4;
     _environment->screenColors = 4;
-
-    console_init( _environment );
     
     c6847z_tilemap_enable( _environment, 32, 16, 1, 8, 8 );
 

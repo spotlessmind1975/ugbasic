@@ -1072,6 +1072,8 @@ CALCPOS15:
 
 @ENDIF
 
+    RTS
+
 @IF dynamicConsole
 
 CONSOLECALCULATE:

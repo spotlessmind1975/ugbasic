@@ -842,8 +842,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0c00 );
 
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+            cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 319 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -876,8 +876,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
             
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0c00 );
             
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+            cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 159 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -895,8 +895,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+            cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -916,8 +916,8 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
 
             cpu_store_16bit( _environment, colormapAddress->realName, 0x0800 );
 
-            cpu_store_8bit( _environment, "_PEN", 0x01 );
-            cpu_store_8bit( _environment, "_PAPER", 0x00 );
+            cpu_store_8bit( _environment, "_PEN", _environment->defaultPenColor );
+            cpu_store_8bit( _environment, "_PAPER", _environment->defaultPaperColor );
             cpu_store_16bit( _environment, "CLIPX1", 0 );
             cpu_store_16bit( _environment, "CLIPX2", 39 );
             cpu_store_16bit( _environment, "CLIPY1", 0 );
@@ -945,8 +945,6 @@ int ted_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
-
-    console_init( _environment );
 
     if (_environment->vestigialConfig.clsImplicit ) {
         ted_cls( _environment );

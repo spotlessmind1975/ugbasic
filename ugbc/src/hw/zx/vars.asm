@@ -40,13 +40,15 @@ EMPTYTILE: DEFB 0
 @ENDIF
 
 @IF consoleUsed
-
 @EMIT maxConsole
+CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
+@ENDIF
 
-SECTION data_user
-CONSOLES:     .res  maxConsole*8        ; <-- storage for virtual consoles
-CONSOLES2:    .res  maxConsole*2        ; <-- storage for memorize / remember
-SECTION code_user
+@IF consoleUsed
+CONSOLEX1:           DEFB   0
+@ELSE
+CONSOLEX1: EQU 0
 @ENDIF
 
 ROWSADDRESS: 

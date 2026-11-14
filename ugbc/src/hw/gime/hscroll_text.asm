@@ -129,7 +129,13 @@ HSCROLLSTX
     MUL
     LEAX D, X
     LEAX D, X
+
+@IF consoleUsed
     LDB CONSOLEX1
+@ELSE
+    LDB #CONSOLEX1
+@ENDIF
+
     LEAX B, X
     LEAX B, X
     TFR X, Y

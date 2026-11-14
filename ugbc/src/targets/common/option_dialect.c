@@ -72,6 +72,7 @@ void option_dialect( Environment * _environment, Dialect _dialect ) {
             _environment->defaultPaperColor = 0x94;
             _environment->graphicsAtariBasicEnabled = 1;
             _environment->lmarginAtariBasicEnabled = 1;
+            _environment->consoleUsed = 1; // It depends on "lmarginAtariBasicEnabled = 1"
             _environment->drawUsingTsbSyntax = 0;
             break;
     }

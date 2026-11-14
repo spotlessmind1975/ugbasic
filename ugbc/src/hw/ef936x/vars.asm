@@ -133,7 +133,12 @@ CONSOLEID     fcb $ff       ; <-- actual
 ;
 ; Text mode
 ;
+@IF consoleUsed
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
+@ELSE
+CONSOLEX1     = 0
+@ENDIF
+
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
 CONSOLEY2     fcb 15        ; <-- recalculated (chars)
@@ -146,11 +151,13 @@ CONSOLESA     fdb 0         ; <-- calculated (address)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
-ALIGN 2
+    ALIGN 2
 
 @IF consoleUsed
 
+; Hello!
 @EMIT maxConsole
+; World!
 
 CONSOLES      rzb maxConsole*8        ; <-- storage for virtual consoles
 CONSOLES2     rzb maxConsole*2        ; <-- storage for memorize / remember on console

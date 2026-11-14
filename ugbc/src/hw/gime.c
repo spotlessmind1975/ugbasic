@@ -1341,8 +1341,6 @@ int gime_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_16bit( _environment, "CLIPY1", 0 );
     cpu_store_16bit( _environment, "CLIPY2", _environment->screenHeight-1 );
 
-    console_init( _environment );
-
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_16bit( _environment, "CURRENTFRAMESIZE", currentFrameSize );
     switch( _environment->screenColors ) {
@@ -1863,8 +1861,6 @@ void gime_initialization( Environment * _environment ) {
     gime_tilemap_enable( _environment, 40, 25, 16, 8, 8 );
 
     font_descriptors_init( _environment, 0 );
-
-    console_init( _environment );
 
 }
 

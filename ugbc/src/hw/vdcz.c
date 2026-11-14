@@ -2051,8 +2051,6 @@ int vdcz_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-    console_init( _environment );
-
     _environment->screenShades = 16;
     _environment->screenColors = 2;
 
@@ -2429,9 +2427,9 @@ void vdcz_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTHEIGHT" );
     variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 80 );
     variable_global( _environment, "CURRENTTILESWIDTH" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 25 );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
     variable_global( _environment, "FONTWIDTH" );

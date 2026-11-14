@@ -69,7 +69,11 @@ dello schermo in fretta.
 </usermanual> */
 void home( Environment * _environment ) {
 
-    variable_move( _environment, "CONSOLEX1", "XCURSYS" );
+    if ( _environment->consoleUsed ) {
+        cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );
+    } else {
+        cpu_store_8bit( _environment, "XCURSYS", 0 );
+    }
     variable_move( _environment, "CONSOLEY1", "YCURSYS" );
 
 }

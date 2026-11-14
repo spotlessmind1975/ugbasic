@@ -348,7 +348,13 @@ TEXTATRAWNEXT2:
     SBC HL, DE
     LD (COPYOFTEXTADDRESS), HL
     POP DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+    
     LD (XCURSYS), A
     LD A, (YCURSYS)
     INC A

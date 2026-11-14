@@ -85,7 +85,13 @@ HSCROLLSCREEN:
 HSCROLLSCREENL:
     LD A, (CONSOLEY1)
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD D, A
     LD C, D
     LD A, (CONSOLEWB)
@@ -193,7 +199,13 @@ HSCROLLSCREENR:
     SRL A
     SRL A
     LD H, A
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD D, A
     LD A, (CONSOLEWB)
     ADD A, D

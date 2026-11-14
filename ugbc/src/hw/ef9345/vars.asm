@@ -56,12 +56,17 @@ CONSOLEID     fcb $ff      ; <-- actual
 ;
 ; Text mode
 ;
-CONSOLEX1     db 0         ; <-- input from program (chars)
-CONSOLEY1     db 0         ; <-- input from program (chars)
-CONSOLEX2     db 31        ; <-- recalculated (chars)
-CONSOLEY2     db 15        ; <-- recalculated (chars)
-CONSOLEW      db 32        ; <-- calculated (chars)
-CONSOLEH      db 16        ; <-- calculated (chars)
+@IF consoleUsed
+CONSOLEX1     fcb 0         ; <-- input from program (chars)
+@ELSE
+CONSOLEX1 = 0
+@ENDIF
+
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLEX2     fcb 31        ; <-- recalculated (chars)
+CONSOLEY2     fcb 15        ; <-- recalculated (chars)
+CONSOLEW      fcb 32        ; <-- calculated (chars)
+CONSOLEH      fcb 16        ; <-- calculated (chars)
 ;
 ; Graphic mode
 ;

@@ -34,26 +34,25 @@
 #include "../ugbc.h"
 
 #define COLOR_BLACK					0
-#define COLOR_DARK_WHITE			12 // GREY
-#define COLOR_WHITE					1
-#define COLOR_DARK_RED				2 // RED
-#define COLOR_RED					2
-#define COLOR_CYAN					3
-#define COLOR_VIOLET				4
-#define COLOR_DARK_GREEN			5 // GREEN
-#define COLOR_GREEN					5
-#define COLOR_DARK_BLUE				6 // BLUE
-#define COLOR_BLUE					6
-#define COLOR_YELLOW				7
-#define COLOR_ORANGE				8
-#define COLOR_BROWN					9
-#define COLOR_LIGHT_RED				10
-#define COLOR_DARK_GREY				11
-#define COLOR_GREY					12
-#define COLOR_LIGHT_GREEN			13
-#define COLOR_LIGHT_BLUE			14
-#define COLOR_LIGHT_GREY			15
-#define COLOR_DARK_BLUE				6
+#define COLOR_DARK_WHITE			0x01 // GREY
+#define COLOR_WHITE					0x31
+#define COLOR_DARK_RED				0x12 // RED
+#define COLOR_RED					0x32
+#define COLOR_CYAN					0x33
+#define COLOR_VIOLET				0x34
+#define COLOR_DARK_GREEN			0x15 // GREEN
+#define COLOR_GREEN					0x35
+#define COLOR_DARK_BLUE				0x36 // BLUE
+#define COLOR_BLUE					0x36
+#define COLOR_YELLOW				0x37
+#define COLOR_ORANGE				0x38
+#define COLOR_BROWN					0x39
+#define COLOR_LIGHT_RED				0x5a
+#define COLOR_DARK_GREY				0x21
+#define COLOR_GREY					0x31
+#define COLOR_LIGHT_GREEN			0x5d
+#define COLOR_LIGHT_BLUE			0x5e
+#define COLOR_LIGHT_GREY			0x5f
 #define COLOR_MAGENTA				COLOR_RED
 #define COLOR_PURPLE				COLOR_VIOLET
 #define COLOR_LAVENDER       		COLOR_VIOLET

@@ -54,7 +54,11 @@ void text_newline( Environment * _environment ) {
 
     deploy_begin( text_newline );
 
-        variable_move( _environment, "CONSOLEX1", "XCURSYS" );    
+        if ( _environment->consoleUsed ) {
+            cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );
+        } else {
+            cpu_store_8bit( _environment, "XCURSYS", 0 );
+        }
 
         variable_increment( _environment, "YCURSYS" );
 

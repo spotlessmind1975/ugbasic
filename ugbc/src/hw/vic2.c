@@ -1176,8 +1176,6 @@ int vic2_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mo
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
 
-    console_init( _environment );
-
     outline0( "LDA $D018" );
     outline0( "STA OLDD018" );
     
@@ -2255,8 +2253,6 @@ void vic2_initialization( Environment * _environment ) {
     _environment->screenTilesHeight = 25;
     _environment->screenWidth = _environment->screenTilesWidth * 8;
     _environment->screenHeight = _environment->screenTilesHeight * 8;
-
-    console_init( _environment );
 
     font_descriptors_init( _environment, 1 );
 

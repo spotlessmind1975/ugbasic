@@ -446,7 +446,13 @@ ROWCOPY:
     PUSH HL
     PUSH BC
     PUSH DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE
@@ -474,7 +480,13 @@ ROWCOPYL:
 ROWCLEAR:
     PUSH BC
     LD HL, DE
+
+@IF consoleUsed
     LD A, (CONSOLEX1)
+@ELSE
+    LD A, CONSOLEX1
+@ENDIF
+
     LD E, A
     LD D, 0
     ADD HL, DE

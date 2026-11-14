@@ -111,14 +111,15 @@ void locate( Environment * _environment, char * _x, char * _y ) {
 
     if ( _x ) {
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
-        Variable * consoleX1 = variable_retrieve( _environment, "CONSOLEX1" );
         Variable * x = variable_retrieve_or_define( _environment, _x, VT_BYTE, 0 );
         if ( x->initializedByConstant ) {
             variable_store( _environment, windowCX->name, x->value );
         } else {
             variable_move( _environment, x->name, windowCX->name );
         }
-        variable_add_inplace_vars( _environment, windowCX->name, consoleX1->name );
+        if ( _environment->consoleUsed ) {
+            cpu_math_add_8bit( _environment, windowCX->realName, "CONSOLEX1", windowCX->realName );
+        }
     }
 
     if ( _y ) {

@@ -877,6 +877,8 @@ embed2:
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetX );
         } else if ( strcmp( $3, "offsetY" ) == 0 ) {
             vars_emit_constant_integer( _environment, $5, ((struct _Environment *)_environment)->offsetY );
+        } else if ( strcmp( $3, "maxConsole" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $5, MAX_CONSOLES );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }
@@ -905,6 +907,8 @@ embed2:
             vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->offsetX );
         } else if ( strcmp( $3, "offsetY" ) == 0 ) {
             vars_emit_constant_integer( _environment, $3, ((struct _Environment *)_environment)->offsetY );
+        } else if ( strcmp( $3, "maxConsole" ) == 0 ) {
+            vars_emit_constant_integer( _environment, $3, MAX_CONSOLES );
         }
         ((struct _Environment *)_environment)->embedResult.conditional = 1;
   }

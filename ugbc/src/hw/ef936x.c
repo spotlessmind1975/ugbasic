@@ -453,8 +453,6 @@ int ef936x_screen_mode_enable( Environment * _environment, ScreenMode * _screen_
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
 
-    console_init( _environment );
-
     if (_environment->vestigialConfig.clsImplicit ) {
         ef936x_cls( _environment );
     }
