@@ -1439,11 +1439,11 @@ void tms9918_initialization( Environment * _environment ) {
     variable_global( _environment, "CURRENTHEIGHT" );
     variable_import( _environment, "CURRENTTILES", VT_BYTE, 255 );
     variable_global( _environment, "CURRENTTILES" );
-    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, 40 );
+    variable_import( _environment, "CURRENTTILESWIDTH", VT_SBYTE, TEXT_COLUMNS_COUNT );
     variable_global( _environment, "CURRENTTILESWIDTH" );
     variable_import( _environment, "CURRENTTILESWIDTHX8", VT_WORD, 320 );
     variable_global( _environment, "CURRENTTILESWIDTHX8" );
-    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, 24 );
+    variable_import( _environment, "CURRENTTILESHEIGHT", VT_SBYTE, TEXT_ROWS_COUNT );
     variable_global( _environment, "CURRENTTILESHEIGHT" );
     variable_import( _environment, "FONTWIDTH", VT_BYTE, 8 );
     variable_global( _environment, "FONTWIDTH" );
