@@ -386,21 +386,22 @@ TMS9918STARTUPL1:
 
 @ENDIF
 
-        LD E, $83
-        IN A, (VDPCONTROLPORTREAD)
-        AND $F0
-        LD B, A
-        LD E, $83
-        LD A, $0
-        AND $F0
-        OR B
-@IF !COLECO || !vestigialConfig.biosAllowed
-        CALL VDPSETREG
-@ELSE
-        LD B, $03
-        LD C, A
-        CALL CBIOS_VDPSETREG
-@ENDIF
+;         LD E, $83
+;         IN A, (VDPCONTROLPORTREAD)
+;         AND $F0
+;         LD B, A
+;         LD E, $83
+;         LD A, $0
+;         AND $F0
+;         OR B
+; @IF !COLECO || !vestigialConfig.biosAllowed
+;         CALL VDPSETREG
+; @ELSE
+;         LD B, $03
+;         LD C, A
+;         CALL CBIOS_VDPSETREG
+; @ENDIF
+
 	CALL TMS9918AUDCCHAR01
 	CALL TMS9918SPRITEINIT        
 
