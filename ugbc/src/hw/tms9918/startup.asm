@@ -296,6 +296,8 @@ VDPFILLLOOP:
         CALL VDPUNLOCK
         RET
 
+@IF COLECO && !vestigialConfig.biosAllowed
+
 VDPFILL8:
         CALL VDPLOCK
         PUSH    AF
@@ -307,6 +309,8 @@ VDPFILLLOOP8:
         JP      NZ, VDPFILLLOOP8
         CALL VDPUNLOCK
         RET
+
+@ENDIF
 
 VDP_R0              EQU 80H
 VDP_R1              EQU 81H

@@ -120,11 +120,19 @@ CLINEGLOOP2:
 
     PUSH DE
     PUSH BC
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD HL, (COPYOFTEXTADDRESS)
+    LD DE, 8
+    LD A, 0
+    CALL CBIOS_FILL_VRAM
+@ELSE
     LD A, 1
     LD C, A
     LD A, 0
     LD DE, (COPYOFTEXTADDRESS)
     CALL VDPFILL8
+@ENDIF
     POP BC
     POP DE
 

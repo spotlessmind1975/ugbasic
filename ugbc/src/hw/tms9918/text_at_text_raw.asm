@@ -108,17 +108,17 @@ TEXTATRAWTILEMODEGO:
 @ENDIF
 
 
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
 TEXTATRAWTILEMODEGO0:
 TEXTATRAWTILEMODEGO1:
-@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATRAWTILEMODEGOX
 @ENDIF
 
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 TEXTATRAWTILEMODEGO2:
 TEXTATRAWTILEMODEGO3:
-@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) )
     LD HL, (TEXTADDRESS)
     LD (COPYOFTEXTADDRESS), HL
     JMP TEXTATRAWTILEMODEGOX
@@ -263,14 +263,21 @@ TEXTATRAW23:
     PUSH DE
     LD HL, (COLORMAPADDRESS)
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     PUSH DE
@@ -280,14 +287,21 @@ TEXTATRAW23:
     POP DE
     PUSH DE
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     PUSH DE
@@ -297,14 +311,21 @@ TEXTATRAW23:
     POP DE
     PUSH DE
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     POP BC

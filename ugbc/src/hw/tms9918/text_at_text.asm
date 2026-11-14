@@ -497,14 +497,21 @@ TEXTAT23:
     PUSH DE
     LD HL, (COLORMAPADDRESS)
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     PUSH DE
@@ -514,14 +521,21 @@ TEXTAT23:
     POP DE
     PUSH DE
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     PUSH DE
@@ -531,14 +545,21 @@ TEXTAT23:
     POP DE
     PUSH DE
     ADD HL, DE
-    LD DE, HL
     LD A, (_PEN)
     SLA A
     SLA A
     SLA A
     SLA A
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD DE, 8
+    CALL CBIOS_FILL_VRAM
+@ELSE
+    LD DE, HL
     LD BC, 1
     CALL VDPFILL8
+@ENDIF
+
     POP DE
 
     POP BC

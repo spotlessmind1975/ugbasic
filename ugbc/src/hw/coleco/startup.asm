@@ -44,6 +44,7 @@ CBIOS_VDPSETREG         = $1fd9
 CBIOS_VDPWRITE          = $1fdf
 CBIOS_POLLER            = $1feb
 CBIOS_CONTROLLER_INIT   = $1105
+CBIOS_FILL_VRAM         = $1f82
 
 rst_8:
     RETI
