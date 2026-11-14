@@ -229,9 +229,11 @@ CONSOLEID:    .byte $ff       ; <-- actual
 @IF consoleUsed
 CONSOLEX1:    .byte 0         ; <-- input from program (chars)
 CONSOLEY1:    .byte 0         ; <-- input from program (chars)
+CONSOLESA:    .word 0         ; <-- calculated (address)
 @ELSE
 CONSOLEX1:    EQU 0
 CONSOLEY1:    EQU 0
+CONSOLESA:    EQU TEXTADDRESS
 @ENDIF
 
 CONSOLEX2:    .byte 31        ; <-- recalculated (chars)
@@ -241,7 +243,6 @@ CONSOLEH:     .byte 16        ; <-- calculated (chars)
 ;
 ; Graphic mode
 ;
-CONSOLESA:    .word 0         ; <-- calculated (address)
 CONSOLECA:    .word 0         ; <-- calculated (address)
 CONSOLEWB:    .byte 32        ; <-- calculated (bytes)
 CONSOLEHB:    .byte 16        ; <-- calculated (bytes)

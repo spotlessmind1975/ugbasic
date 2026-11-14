@@ -1251,8 +1251,6 @@ void cga_initialization( Environment * _environment ) {
     variable_import( _environment, "SLICEDTARGET", VT_POSITION, 0 );
     variable_global( _environment, "SLICEDTARGET" );
 
-    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
-    variable_global( _environment, "CONSOLESA" );
     variable_import( _environment, "CONSOLEHB", VT_BYTE, 0x0 );
     variable_global( _environment, "CONSOLEHB" );
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 0x0 );

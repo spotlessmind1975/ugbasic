@@ -136,9 +136,11 @@ CONSOLEID     fcb $ff       ; <-- actual
 @IF consoleUsed
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLESA     fdb 0         ; <-- calculated (address)
 @ELSE
 CONSOLEX1     = 0
 CONSOLEY1     = 0
+CONSOLESA     = BITMAPADDRESS         ; <-- calculated (address)
 @ENDIF
 
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
@@ -148,7 +150,6 @@ CONSOLEH      fcb 16        ; <-- calculated (chars)
 ;
 ; Graphic mode
 ;
-CONSOLESA     fdb 0         ; <-- calculated (address)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;

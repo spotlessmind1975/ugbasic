@@ -59,9 +59,11 @@ CONSOLEID     fcb $ff      ; <-- actual
 @IF consoleUsed
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
+CONSOLESA     FDB 0         ; <-- calculated (address)
 @ELSE
 CONSOLEX1 = 0
 CONSOLEY1 = 0
+CONSOLESA = TEXTADDRESS
 @ENDIF
 
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
@@ -71,9 +73,8 @@ CONSOLEH      fcb 16        ; <-- calculated (chars)
 ;
 ; Graphic mode
 ;
-CONSOLESA     dw 0         ; <-- calculated (address)
-CONSOLEWB     db 32        ; <-- calculated (bytes)
-CONSOLEHB     db 16        ; <-- calculated (bytes)
+CONSOLEWB     fcb 32        ; <-- calculated (bytes)
+CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
 
 @IF consoleUsed

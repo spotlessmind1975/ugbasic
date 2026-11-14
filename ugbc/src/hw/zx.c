@@ -511,8 +511,6 @@ void zx_initialization( Environment * _environment ) {
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0 );
     variable_global( _environment, "TEXTADDRESS" );
 
-    variable_import( _environment, "CONSOLESA", VT_ADDRESS, 0x0 );
-    variable_global( _environment, "CONSOLESA" );
     variable_import( _environment, "CONSOLEHB", VT_BYTE, 192 );
     variable_global( _environment, "CONSOLEHB" );
     variable_import( _environment, "CONSOLEWB", VT_BYTE, 32 );
