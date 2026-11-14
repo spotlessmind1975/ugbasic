@@ -1598,6 +1598,7 @@ void tms9918_initialization( Environment * _environment ) {
     // tms9918_tilemap_enable( _environment, 40, 24, 1, 8, 8 );
     // reset_screen_mode_selected( _environment );
 
+    _environment->currentMode = 1;
     _environment->fontWidth = 8;
     _environment->fontHeight = 8;
     _environment->screenTilesWidth = 32;
