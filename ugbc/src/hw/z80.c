@@ -5292,7 +5292,7 @@ void cpu_halt( Environment * _environment ) {
     MAKE_LABEL
 
     outhead1("%s:", label );
-    outline1("jp %s", label );
+    outline1("jr %s", label );
 
 }
 
