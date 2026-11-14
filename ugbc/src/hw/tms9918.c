@@ -1617,7 +1617,7 @@ void tms9918_initialization( Environment * _environment ) {
     font_descriptors_init( _environment, 0 );
 #endif
     
-    console_calculate( _environment );
+    // console_calculate( _environment );
 
     _environment->currentRgbConverterFunction = rgbConverterFunction;
     _environment->screenShades = 16;
