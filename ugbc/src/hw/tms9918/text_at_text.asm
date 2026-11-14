@@ -387,7 +387,13 @@ TEXTATAT:
     DEC C
     SUB A, B
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF       
+
     ADD A, B
     LD (CLINEY), A
     JMP TEXTATCMOVE

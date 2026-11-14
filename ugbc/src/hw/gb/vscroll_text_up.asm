@@ -46,7 +46,12 @@ VSCROLLTUP:
 
     LD HL, _SCRN0
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+    
     CP 0
     JR Z, VSCROLLTUPY0
 

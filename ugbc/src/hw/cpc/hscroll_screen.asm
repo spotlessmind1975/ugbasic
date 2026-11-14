@@ -44,7 +44,12 @@ HSCROLLSCREEN:
     LD B, 0
     LD HL, PLOTVBASE
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+
     LD E, A
     LD D, 0
     SLA E
@@ -106,7 +111,12 @@ HSCROLLSCREENR:
     LD B, 0
     LD HL, PLOTVBASE
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+
     LD E, A
     LD D, 0
     SLA E

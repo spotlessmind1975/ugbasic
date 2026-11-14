@@ -483,7 +483,13 @@ TEXTATBMAT:
     LD A, (YCURSYS)
     LD B, A
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     ADD A, B
     LD A, (DE)
     SUB A, B

@@ -66,7 +66,9 @@ section code_user
 @IF consoleUsed
 section data_user
 CONSOLEX1:           DEFB   0
+CONSOLEY1:           DEFB   0
 section code_user
 @ELSE
 CONSOLEX1: EQU 0
+CONSOLEY1: EQU 0
 @ENDIF

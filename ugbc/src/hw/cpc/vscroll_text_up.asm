@@ -76,7 +76,12 @@ VSCROLLTUP:
 
     ; DE = CONSOLEY1
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+
     LD E, A
     LD D, 0
     

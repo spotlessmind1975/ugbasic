@@ -139,8 +139,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "CONSOLEID", VT_SBYTE, 0xff );
     variable_global( _environment, "CONSOLEID" );
 
-    variable_import( _environment, "CONSOLEY1", VT_SBYTE, 0 );
-    variable_global( _environment, "CONSOLEY1" );
     variable_import( _environment, "CONSOLEX2", VT_SBYTE, TEXT_COLUMNS_COUNT-1 );
     variable_global( _environment, "CONSOLEX2" );
     variable_import( _environment, "CONSOLEY2", VT_SBYTE, TEXT_ROWS_COUNT-1 );

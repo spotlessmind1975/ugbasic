@@ -47,8 +47,10 @@ CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
 
 @IF consoleUsed
 CONSOLEX1:           DEFB   0
+CONSOLEY1:           DEFB   0
 @ELSE
 CONSOLEX1: EQU 0
+CONSOLEY1: EQU 0
 @ENDIF
 
 ROWSADDRESS: 

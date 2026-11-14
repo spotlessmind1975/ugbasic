@@ -738,8 +738,8 @@ int cga_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     if ( _environment->consoleUsed ) {
         cpu_store_8bit( _environment, "CONSOLEX1", 0 );
+        cpu_store_8bit( _environment, "CONSOLEY1", 0 );
     }
-    cpu_store_8bit( _environment, "CONSOLEY1", 0 );
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
     cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
     cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );

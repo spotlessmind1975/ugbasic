@@ -80,7 +80,13 @@ VSCROLLUPL:
     ; Lookup for first row (CONSOLEY1)
 
     PUSH BC
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     CP 0
     JR Z, ROWSELECTUP
     SLA A
@@ -199,7 +205,13 @@ VSCROLLUPLC:
     ; Lookup for first row (CONSOLEY1)
 
     PUSH BC
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     CP 0
     JR Z, ROWSELECTUPC20
     LD C, A

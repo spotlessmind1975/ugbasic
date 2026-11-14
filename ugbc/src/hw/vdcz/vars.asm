@@ -45,6 +45,8 @@ SECTION code_user
 
 @IF consoleUsed
 CONSOLEX1:           DEFB   0
+CONSOLEY1:           DEFB   0
 @ELSE
 CONSOLEX1: EQU 0
+CONSOLEY1: EQU 0
 @ENDIF

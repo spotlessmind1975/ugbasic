@@ -83,7 +83,13 @@ HSCROLLSCREEN:
     JP C, HSCROLLSCREENR
 
 HSCROLLSCREENL:
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     LD B, A
 
 @IF consoleUsed
@@ -192,7 +198,13 @@ HSCROLLSCREENLL5:
     RET
 
 HSCROLLSCREENR:
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     LD B, A
     LD A, (CONSOLEHB)
     SRL A

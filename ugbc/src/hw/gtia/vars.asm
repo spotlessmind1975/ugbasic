@@ -123,12 +123,13 @@ CONSOLEX1 = 82                  ; <-- input from program (chars)
 @ELSE
 @IF consoleUsed
 CONSOLEX1:     .byte 0          ; <-- input from program (chars)
+CONSOLEY1:     .byte 0         ; <-- input from program (chars)
 @ELSE
 CONSOLEX1 = 0
+CONSOLEY1 = 0
 @ENDIF
 @ENDIF
 
-CONSOLEY1:     .byte 0         ; <-- input from program (chars)
 CONSOLEX2:     .byte 39        ; <-- recalculated (chars)
 CONSOLEY2:     .byte 24        ; <-- recalculated (chars)
 CONSOLEW:      .byte 40        ; <-- calculated (chars)

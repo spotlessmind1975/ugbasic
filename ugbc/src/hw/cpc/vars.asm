@@ -59,6 +59,8 @@ CPURANDOM_SEED:  defw $ff42,$ffea
 
 @IF consoleUsed
 CONSOLEX1:           DEFB   0
+CONSOLEY1:           DEFB   0
 @ELSE
 CONSOLEX1: EQU 0
+CONSOLEY1: EQU 0
 @ENDIF

@@ -71,9 +71,10 @@ void home( Environment * _environment ) {
 
     if ( _environment->consoleUsed ) {
         cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );
+        cpu_move_8bit( _environment, "CONSOLEY1", "YCURSYS" );
     } else {
         cpu_store_8bit( _environment, "XCURSYS", 0 );
+        cpu_store_8bit( _environment, "YCURSYS", 0 );
     }
-    variable_move( _environment, "CONSOLEY1", "YCURSYS" );
 
 }

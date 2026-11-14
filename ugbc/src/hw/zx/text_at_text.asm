@@ -175,7 +175,13 @@ LIBPRINTSTRINGATAT:
     INC IX
     DEC C
     LD B, A
+
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF   
+
     ADD B
     LD (YCURSYS), A
     JP LIBPRINTSTRING1D

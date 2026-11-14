@@ -595,7 +595,11 @@ TEXTATBMAT
     DECB
     ANDCC #$01
     SUBA <YCURSYS
+
+@IF consoleUsed
     ADDA CONSOLEY1
+@ENDIF
+    
     STA <CLINEY
 
     ; Change the position like a CMOVE.

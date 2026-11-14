@@ -228,11 +228,12 @@ CONSOLEID:    .byte $ff       ; <-- actual
 ;
 @IF consoleUsed
 CONSOLEX1:    .byte 0         ; <-- input from program (chars)
+CONSOLEY1:    .byte 0         ; <-- input from program (chars)
 @ELSE
 CONSOLEX1:    EQU 0
+CONSOLEY1:    EQU 0
 @ENDIF
 
-CONSOLEY1:    .byte 0         ; <-- input from program (chars)
 CONSOLEX2:    .byte 31        ; <-- recalculated (chars)
 CONSOLEY2:    .byte 15        ; <-- recalculated (chars)
 CONSOLEW:     .byte 32        ; <-- calculated (chars)

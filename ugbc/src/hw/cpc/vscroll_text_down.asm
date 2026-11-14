@@ -125,7 +125,12 @@ VSCROLLTDOWNNOW:
 
 @ENDIF
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+
     LD E, A
     LD D, 0
     SLA E
@@ -209,7 +214,12 @@ VSCROLLTDOWNL1:
 
     LD HL, PLOTVBASE
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+
     LD E, A
     LD D, 0
     SLA E
@@ -243,7 +253,12 @@ VSCROLLDOWNREFILLW:
 
     LD HL, PLOTVBASE
 
+@IF consoleUsed
     LD A, (CONSOLEY1)
+@ELSE
+    LD A, CONSOLEY1
+@ENDIF
+    
     LD E, A
     LD D, 0
     SLA E

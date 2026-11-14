@@ -310,7 +310,11 @@ TEXTATAT:
     DEC CL
     SUB AL, BL
     MOV BL, AL
+
+@IF consoleUsed
     ADD AL, [CONSOLEY1]
+@ENDIF 
+
     MOV [CLINEY], AL
     JMP TEXTATCMOVE
 

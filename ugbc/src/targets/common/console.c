@@ -129,7 +129,7 @@ void console( Environment * _environment, int _x1, int _y1, int _x2, int _y2 ) {
     console_calculate( _environment );
 
     cpu_store_8bit( _environment, "CONSOLEX1", _environment->activeConsole.x1 );
-    variable_store( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
+    cpu_store_8bit( _environment, "CONSOLEY1", _environment->activeConsole.y1 );
     variable_store( _environment, "CONSOLEX2", _environment->activeConsole.x2);
     variable_store( _environment, "CONSOLEY2", _environment->activeConsole.y2 );
     variable_store( _environment, "CONSOLEW", _environment->activeConsole.width );
@@ -169,7 +169,7 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     // _environment->activeConsole.y1 = _y1;
 
-    variable_move( _environment, y1->name, "CONSOLEY1" );
+    cpu_move_8bit( _environment, y1->realName, "CONSOLEY1" );
 
     // _environment->activeConsole.x2 = _x2;
 
@@ -261,17 +261,16 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
     //     _environment->activeConsole.y2 = _environment->activeConsole.y1;
     // }
 
+    cpu_less_than_8bit( _environment, "CONSOLEY2", "CONSOLEY1", result->realName, 1, 0 );
+
     cpu_compare_and_branch_8bit_const( 
         _environment, 
-        variable_less_than( _environment, "CONSOLEY2", "CONSOLEY1", 1 )->realName,
+        result->realName,
         0, 
         consoleY2LTY1Label,
         1 
     );
-        variable_move( 
-            _environment, 
-            "CONSOLEY1",
-            "CONSOLEY2" );
+        cpu_move_8bit( _environment, "CONSOLEY1", "CONSOLEY2" );
     cpu_label( _environment, consoleY2LTY1Label );
 
 	// - CONSOLE COMPUTATION
@@ -293,18 +292,18 @@ void console_vars( Environment * _environment, char * _x1, char * _y1, char * _x
 
     // _environment->activeConsole.height = ( _environment->activeConsole.y2 - _environment->activeConsole.y1 ) + 1;
 
+    cpu_math_sub_8bit( _environment, "CONSOLEY2", "CONSOLEY1", difference->realName );
+
     variable_move( 
         _environment, 
-        variable_sub( _environment,
-            "CONSOLEY2",
-            "CONSOLEY1" )->name,
+        difference->name,
         "CONSOLEH" );
     cpu_inc( _environment, "CONSOLEH" );
 
 	// 	(+ graphical if needed)
 
     cpu_move_8bit( _environment, "CONSOLEX1", "XCURSYS" );
-    variable_move( _environment, "CONSOLEY1", "YCURSYS" );
+    cpu_move_8bit( _environment, "CONSOLEY1", "YCURSYS" );
 
     console_calculate_vars( _environment );
 

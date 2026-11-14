@@ -83,11 +83,12 @@ CONSOLEID     fcb $ff       ; <-- actual
 
 @IF consoleUsed
 CONSOLEX1     fcb 0         ; <-- input from program (chars)
+CONSOLEY1     fcb 0         ; <-- input from program (chars)
 @ELSE
 CONSOLEX1     EQU 0
+CONSOLEY1     EQU 0
 @ENDIF
 
-CONSOLEY1     fcb 0         ; <-- input from program (chars)
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
 CONSOLEY2     fcb 15        ; <-- recalculated (chars)
 CONSOLEW      fcb 32        ; <-- calculated (chars)
@@ -549,7 +550,13 @@ CONSOLECALCULATE
     LDA #CONSOLEX1
 @ENDIF
     STA MATHPTR0
+    
+@IF consoleUsed
     LDA CONSOLEY1
+@ELSE
+    LDA #CONSOLEY1
+@ENDIF
+
     STA MATHPTR1
     JSR CALCPOSG
     STX CONSOLESA
