@@ -4480,15 +4480,19 @@ color_definition_expression:
   OP_COMMA expr { color_tsb( _environment, NULL, NULL, $2 ); } |
   expr { color_tsb( _environment, $1, NULL, NULL ); } | 
   BORDER expr {
-      if ( !((struct _Environment *)_environment)->insideCopperList ) {
-          color_border_var( _environment, $2 );
-      } else {
         Variable * color = variable_retrieve( _environment, $2 );
-        if ( !color->initializedByConstant ) {
-            CRITICAL_COLOR_WITH_NOT_CONST_NOT_ALLOWED( $2 );
+        if ( !((struct _Environment *)_environment)->insideCopperList ) {
+            if ( color->initializedByConstant ) {
+                color_border( _environment, color->value );
+            } else {
+                color_border_var( _environment, $2 );
+            }
+        } else {
+            if ( !color->initializedByConstant ) {
+                CRITICAL_COLOR_WITH_NOT_CONST_NOT_ALLOWED( $2 );
+            }
+            copper_color_border( _environment, color->value );
         }
-        copper_color_border( _environment, color->value );
-      }
   } | 
   BACK expr { back( _environment, $2 ); } | 
   BACKGROUND expr {

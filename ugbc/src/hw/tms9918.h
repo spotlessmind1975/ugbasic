@@ -152,7 +152,8 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
 void tms9918_background_color_semivars( Environment * _environment, int _index, char * _background_color );
 void tms9918_colors_vars( Environment * _environment, char * _foreground_color, char * _background_color );
 void tms9918_background_color_get_vars( Environment * _environment, char * _index, char * _background_color );
-void tms9918_border_color( Environment * _environment, char * _border_color );
+void tms9918_border_color( Environment * _environment, int _border_color );
+void tms9918_border_color_var( Environment * _environment, char * _border_color );
 Variable * tms9918_collision( Environment * _environment, char * _sprite );
 void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _result );
 void tms9918_next_raster( Environment * _environment );

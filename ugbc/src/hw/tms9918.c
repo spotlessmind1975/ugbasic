@@ -340,7 +340,40 @@ void tms9918_hit( Environment * _environment, char * _sprite_mask, char * _resul
  * @param _environment Current calling environment
  * @param _border_color Border color to use
  */
-void tms9918_border_color( Environment * _environment, char * _border_color ) {
+void tms9918_border_color( Environment * _environment, int _border_color ) {
+
+    outline1("LD E, $%2.2x", VDP_RCOLOR );
+    outline0("IN A, (VDPCONTROLPORTREAD)" );
+    outline0("AND $F0" );
+    outline1("LD B, $%2.2x", _border_color );
+    outline0("AND $0F" );
+    outline0("OR B" );
+#if defined(__coleco__)
+    if ( _environment->vestigialConfig.biosAllowed ) {
+        outline1("LD B, $%2.2x", ( VDP_RCOLOR & 0x7f ) );
+        outline0("LD C, A" );
+        outline0("CALL CBIOS_VDPSETREG" );
+    } else {
+        outline1("LD E, $%2.2x", VDP_RCOLOR );
+        outline0("CALL VDPSETREG" );
+    }
+#else
+    outline1("LD E, $%2.2x", VDP_RCOLOR );
+    outline0("CALL VDPSETREG" );
+#endif
+
+}
+
+/**
+ * @brief <i>TMS9918</i>: emit code to change border color
+ * 
+ * This function can be used to issue code aimed at changing the
+ * border color of the screen.
+ * 
+ * @param _environment Current calling environment
+ * @param _border_color Border color to use
+ */
+void tms9918_border_color_var( Environment * _environment, char * _border_color ) {
 
 // #ifdef __coleco__
 //     MAKE_LABEL
@@ -419,7 +452,7 @@ void tms9918_background_color_vars( Environment * _environment, char * _index, c
 
     cpu_compare_and_branch_8bit_const( _environment, _index, 0, label, 0 );
 
-    tms9918_border_color( _environment, _background_color );
+    tms9918_border_color_var( _environment, _background_color );
 
     cpu_label( _environment, label );
     outline1( "LD A, (%s)", _index );
@@ -448,7 +481,7 @@ void tms9918_background_color_semivars( Environment * _environment, int _index, 
     _environment->paletteNeeded = 1;
 
     if ( ! _index ) {
-        tms9918_border_color( _environment, _background_color );
+        tms9918_border_color_var( _environment, _background_color );
     }
 
     outline1( "LD A, $%2.2x", _index );
