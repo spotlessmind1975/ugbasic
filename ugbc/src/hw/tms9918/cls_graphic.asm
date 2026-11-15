@@ -84,6 +84,7 @@ CLSGNMI2:
     CALL VDPFILL
 @ENDIF
 
+    LD A, (_PAPER)
 
 @IF COLECO && vestigialConfig.biosAllowed
     LD HL, (COLORMAPADDRESS)
@@ -92,7 +93,6 @@ CLSGNMI2:
 @ELSE
     LD BC, 32*24*8
     LD DE, (COLORMAPADDRESS)
-    LD A, (_PAPER)
     CALL VDPFILL
 @ENDIF
 
