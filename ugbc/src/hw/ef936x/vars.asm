@@ -138,9 +138,9 @@ CONSOLEX1     fcb 0         ; <-- input from program (chars)
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
 CONSOLESA     fdb 0         ; <-- calculated (address)
 @ELSE
-CONSOLEX1     = 0
-CONSOLEY1     = 0
-CONSOLESA     = BITMAPADDRESS         ; <-- calculated (address)
+CONSOLEX1     EQU 0
+CONSOLEY1     EQU 0
+CONSOLESA     EQU BITMAPADDRESS         ; <-- calculated (address)
 @ENDIF
 
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
