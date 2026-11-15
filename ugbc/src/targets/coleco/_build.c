@@ -44,7 +44,7 @@ void target_linkage( Environment * _environment ) {
 
     char commandLine[8*MAX_TEMPORARY_STORAGE];
     char executableName[MAX_TEMPORARY_STORAGE];
-    char binaryName[MAX_TEMPORARY_STORAGE];
+    char binaryName[MAX_TEMPORARY_STORAGE*2];
     char listingFileName[MAX_TEMPORARY_STORAGE];
     
     BUILD_CHECK_FILETYPE(_environment, OUTPUT_FILE_TYPE_ROM)

@@ -87,7 +87,7 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
         for (int i=0; i<image->originalColors; ++i ) {
             if ( image->originalPalette[i].index == COLOR_TRANSPARENT ) continue;
             ++c;
-            cpu_move_8bit( _environment, "SPRITECOUNT", index->name );
+            cpu_move_8bit( _environment, "SPRITECOUNT", index->realName );
             Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
             tms9918_sprite_data_from( _environment, index->name, realImage->name );
             cpu_inc( _environment, "SPRITECOUNT" );
@@ -95,18 +95,9 @@ Variable * csprite_init( Environment * _environment, char * _image, char *_sprit
 
     }
 
-
     cpu_store_8bit( _environment, index->realName, ( c ) << 4 );
     
     cpu_math_add_8bit( _environment, index->realName, startIndex->realName, index->realName );
-
-    if ( _sprite ) {
-
-    } else {
-
-        cpu_move_8bit( _environment, spriteCount->realName, "SPRITECOUNT" );
-
-    }
 
     return index;
 
