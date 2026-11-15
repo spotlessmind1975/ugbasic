@@ -54,7 +54,7 @@ void text_hscroll_line( Environment * _environment, int _direction, int _overlap
         outline0("JMP lib_text_hscroll_line_after");
 
         outhead0("lib_text_hscroll_line:" );
-        outline1("LD HL, (BITMAPADDRESS)" );
+        outline0("LD HL, (BITMAPADDRESS)" );
         outline0("LD DE, 32");
         outhead0("lib_text_hscroll_line_ypos:");
         outline0("ADD HL, DE");
