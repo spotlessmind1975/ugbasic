@@ -1033,7 +1033,7 @@ void cpc_text( Environment * _environment, char * _text, char * _text_size, int 
     deploy( clsGraphic, src_hw_cpc_cls_graphic_asm );
     deploy_preferred( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
     // deploy( textEncodedAt, src_hw_cpc_text_at_asm );
-    deploy( textEncodedAtGraphic, src_hw_cpc_text_at_graphic_asm );
+    deploy_preferred( textEncodedAtGraphic, src_hw_cpc_text_at_graphic_asm );
     outline0("CALL TEXTATBITMAPMODE");
 
 }
@@ -2245,7 +2245,7 @@ void cpc_blit_image( Environment * _environment, char * _sources[], int _source_
 void cpc_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy_preferred( cpcvarsGraphic, src_hw_cpc_vars_graphic_asm );
-    deploy( vbl, src_hw_cpc_vbl_asm);
+    deploy_preferred( vbl, src_hw_cpc_vbl_asm);
 
     if ( _raster_line ) {
         Variable * raster_line = variable_retrieve_or_define( _environment, _raster_line, VT_BYTE, 255 );
@@ -2395,7 +2395,7 @@ void cpc_get_image( Environment * _environment, char * _image, char * _x, char *
 
 void cpc_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( vic2vars, src_hw_cpc_vars_asm);
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
     deploy( scroll, src_hw_cpc_scroll_asm);
     deploy( textHScrollLine, src_hw_cpc_hscroll_line_asm );
     deploy( textHScrollScreen, src_hw_cpc_hscroll_screen_asm );

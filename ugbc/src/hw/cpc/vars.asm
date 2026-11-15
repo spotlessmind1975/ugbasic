@@ -68,3 +68,17 @@ IFDEF TEXTADDRESS
     CONSOLESA: EQU TEXTADDRESS
 ENDIF
 @ENDIF
+
+@IF consoleUsed
+
+@EMIT maxConsole
+CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
+@ENDIF
+
+@IF deployed.embedded.cpu_call_indirect
+section data_user
+CALLINDIRECT:           DEFB $c3,$00,	$00
+CALLINDIRECTSAVEHL:     DEFW $0000
+section code_user
+@ENDIF

@@ -118,6 +118,8 @@ void target_initialization( Environment * _environment ) {
     outhead0("CODESTART:")
     outline1("LD SP, $%4.4x", _environment->stackStartAddress );
 
+    deploy_preferred( cpcvars, src_hw_cpc_vars_asm);
+
     cpu_init( _environment );
     _environment->program.startingAddress = 0x100;
     _environment->stackSize = _environment->stackStartAddress - _environment->program.startingAddress;

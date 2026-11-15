@@ -484,6 +484,8 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( dload, src_hw_cpc_dload_asm );
     deploy_inplace_preferred( dsave, src_hw_cpc_dsave_asm );
     deploy_inplace_preferred( chain, src_hw_cpc_chain_asm );
+    deploy_inplace_preferred( vbl, src_hw_cpc_vbl_asm);    
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_cpc_text_at_graphic_asm );
     // outhead0("SECTION data_user");
     // outhead0("ORG $7030");
     // outhead0("SECTION code_user");
