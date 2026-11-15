@@ -35,7 +35,9 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
+section data_user
 SPRITECOUNT: DEFB $00
+section code_user
 
 SPRITEDATASET:
 SPRITEDATASETNMI2:

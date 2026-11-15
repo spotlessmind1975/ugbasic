@@ -618,8 +618,9 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("SECTION code");
 
     deploy_inplace_preferred( startup, src_hw_gb_startup_asm);
-    deploy_inplace_preferred( gbvars, src_hw_gb_vars_asm);
     deploy_inplace_preferred( clsText, src_hw_gb_cls_asm )
+    deploy_inplace_preferred( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_gb_text_at_asm );
 
     outhead0("CODESTART:");
 
@@ -630,6 +631,8 @@ void variable_cleanup( Environment * _environment ) {
     // deploy_inplace_preferred( tms9918startup, src_hw_// tms9918_startup_asm);
 
     buffered_prepend_output( _environment );
+
+    deploy_inplace_preferred( gbvars, src_hw_gb_vars_asm);
 
     variable_on_memory_init( _environment, 1 );
 

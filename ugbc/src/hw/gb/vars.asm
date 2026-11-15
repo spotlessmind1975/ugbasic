@@ -65,3 +65,16 @@ IFDEF TEXTADDRESS
     CONSOLESA: EQU TEXTADDRESS
 ENDIF
 @ENDIF
+
+@IF deployed.random || deployed.embedded.cpu_random
+CPURANDOM_SEED:  defw $ff42,$ffea
+@ENDIF
+
+@IF consoleUsed
+
+@EMIT maxConsole
+CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
+@ENDIF
+
+

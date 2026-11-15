@@ -1040,7 +1040,7 @@ void gb_scroll_text( Environment * _environment, int _direction, int _overlap ) 
         deploy( vScrollTextDown, src_hw_gb_vscroll_text_down_asm );
         outline0("CALL VSCROLLTDOWN");
     } else {
-        deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+        deploy_preferred( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
         outline0("CALL VSCROLLTUP");
     }
 
@@ -1050,7 +1050,7 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
 
     deploy_preferred( gbvars, src_hw_gb_vars_asm );
 
-    deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+    deploy_preferred( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
     outline1("LD HL, (%s)", _text);
     outline0("PUSH HL");
@@ -1069,7 +1069,7 @@ void gb_text( Environment * _environment, char * _text, char * _text_size, int _
 
         // deploy( clsGraphic, src_hw_gb_cls_graphic_asm );
         // deploy( textEncodedAt, src_hw_gb_text_asm );
-        deploy( textEncodedAtGraphic, src_hw_gb_text_at_asm );
+        deploy_preferred( textEncodedAtGraphic, src_hw_gb_text_at_asm );
         outline0("CALL TEXTATBITMAPMODE");
 
     }
@@ -1984,7 +1984,7 @@ void gb_scroll( Environment * _environment, int _dx, int _dy ) {
     // // deploy( scroll, src_hw_gb_scroll_asm);
     // // deploy( textHScroll, src_hw_gb_hscroll_text_asm );
     // // deploy( vScrollTextDown, src_hw_gb_vscroll_text_down_asm );
-    // // deploy( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
+    // // deploy_preferred( vScrollTextUp, src_hw_gb_vscroll_text_up_asm );
 
     // outline1("LD A, $%2.2x", (unsigned char)(_dx&0xff) );
     // outline0("LD B, A" );
