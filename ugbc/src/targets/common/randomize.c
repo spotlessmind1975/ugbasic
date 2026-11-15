@@ -45,15 +45,28 @@
  * 
  * @param _environment Current calling environment
  */
-void randomize( Environment * _environment, char * _other_seed ) {
+/* <usermanual>
+@keyword RANDOMIZE
 
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
+@english
+Initialize the random seed.
 
-    if ( _other_seed ) {
-        Variable * external_seed = variable_retrieve( _environment, _other_seed );
-        variable_move( _environment, external_seed->name, seed->name );
+@italian
+Inizializza il seme casuale.
+
+@syntax RANDOMIZE seed
+
+@example RANDOMIZE
+
+@target all
+</usermanual> */
+void randomize( Environment * _environment, char * _ext_seed ) {
+
+    if ( _ext_seed ) {
+        Variable * external_seed = variable_retrieve_or_define( _environment, _ext_seed, VT_DWORD, 0xf0f0f0f0 );
+        cpu_move_32bit( _environment, external_seed->realName, "CPURANDOM_SEED" );
     } else {
-        variable_store( _environment, seed->name, 0xf0f0f0f0 );
+        cpu_store_32bit( _environment, "CPURANDOM_SEED", 0xf0f0f0f0 );
     }
 
     cpu_random_8bit( _environment, NULL, NULL );

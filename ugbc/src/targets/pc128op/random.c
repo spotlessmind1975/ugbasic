@@ -61,8 +61,6 @@ Variable * random_value( Environment * _environment, VariableType _type ) {
 
     _environment->timerUsed = 1;
     
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
-
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
 
     switch( VT_BITWIDTH( _type ) ) {

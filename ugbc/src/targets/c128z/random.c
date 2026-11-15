@@ -59,8 +59,6 @@
  */
 Variable * random_value( Environment * _environment, VariableType _type ) {
 
-    Variable * seed = variable_retrieve( _environment, "CPURANDOM_SEED" );
-
     Variable * result = variable_temporary( _environment, _type, "(random value)" );
     Variable * temp = variable_temporary( _environment, _type, "(temp value)" );
 
