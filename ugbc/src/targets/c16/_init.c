@@ -50,8 +50,6 @@ void target_initialization( Environment * _environment ) {
 
     _environment->audioConfig.async = 1;
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x6000 );
-    variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x5800 );
     variable_global( _environment, "COLORMAPADDRESS" );
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x5c00 );

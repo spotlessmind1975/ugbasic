@@ -66,8 +66,7 @@ void bitmap_at( Environment * _environment, int _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-    variable_store( _environment, "BITMAPADDRESS", ( ( _address >> 10 ) ) * 0x200 );
+    cpu_store_16bit( _environment, "BITMAPADDRESS", ( ( _address >> 10 ) ) * 0x200 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 10 ) );
 
@@ -95,10 +94,9 @@ void bitmap_at_var( Environment * _environment, char * _address ) {
 
     // Let's define the special variable bitmapAddress, and update
     // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve_or_define( _environment, "BITMAPADDRESS", VT_WORD, 0x0c00 );
     Variable * address = variable_retrieve_or_define( _environment, _address, VT_WORD, 0x0c00 );
 
-    variable_move_naked( _environment, address->name, bitmapAddress->name );
+    cpu_move_16bit( _environment, address->realName, "BITMAPADDRESS" );
 
     ef936x_bitmap_at( _environment, address->realName );
 

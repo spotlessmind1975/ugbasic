@@ -144,12 +144,6 @@ Il comando può essere abbreviato come ''BITMAP'' da solo.
 </usermanual> */
 void bitmap_enable( Environment * _environment, int _width, int _height, int _colors ) {
 
-    // Let's define the special variable bitmapAddress.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
-    // Let's define the special variable colormapAddress.
-    Variable * colormapAddress = variable_retrieve_or_define( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x8400 );
-
     vic2_bitmap_enable( _environment, _width, _height, _colors );
 
 }

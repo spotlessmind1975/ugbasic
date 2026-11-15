@@ -58,10 +58,6 @@
  */
 void charset_at( Environment * _environment, int _address ) {
 
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
 }
 
 /**
@@ -81,10 +77,6 @@ void charset_at( Environment * _environment, int _address ) {
  * @param _address Address to use
  */
 void charset_at_var( Environment * _environment, char * _address ) {
-
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
 
 }
 

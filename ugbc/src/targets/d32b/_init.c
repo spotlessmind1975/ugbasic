@@ -48,8 +48,6 @@ void target_initialization( Environment * _environment ) {
 
     banks_init( _environment );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0c00 );
-    variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0xa000 );
     variable_global( _environment, "COLORMAPADDRESS" );
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0400 );

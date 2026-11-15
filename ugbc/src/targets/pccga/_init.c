@@ -43,8 +43,6 @@ extern char OUTPUT_FILE_TYPE_AS_STRING[][16];
 
 void target_initialization( Environment * _environment ) {
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COLORMAPADDRESS" );
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );

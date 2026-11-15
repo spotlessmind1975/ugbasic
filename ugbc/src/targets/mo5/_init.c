@@ -83,8 +83,6 @@ void target_initialization( Environment * _environment ) {
     
     // MEMORY_AREA_DEFINE( MAT_DIRECT, 0x8000, 0x9fff );
 
-    variable_import( _environment, "BITMAPADDRESS", VT_ADDRESS, 0x0000 );
-    variable_global( _environment, "BITMAPADDRESS" );
     variable_import( _environment, "COLORMAPADDRESS", VT_ADDRESS, 0x0000 );
     variable_global( _environment, "COLORMAPADDRESS" );
     variable_import( _environment, "TEXTADDRESS", VT_ADDRESS, 0x0000 );

@@ -59,11 +59,6 @@
 </usermanual> */
 void bitmap_clear_with( Environment * _environment, int _pattern ) {
 
-    
-
-    // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
     Variable * pattern = variable_temporary( _environment, VT_BYTE, "(pattern)");
 
     Variable * blocks = variable_temporary( _environment, VT_BYTE, "(blocks)" );
@@ -71,7 +66,7 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
     variable_store( _environment, blocks->name, 196 );
     variable_store( _environment, pattern->name, _pattern );
 
-    cpu_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
+    cpu_fill_blocks( _environment, "BITMAPADDRESS", blocks->realName, pattern->realName );
 
 }
 
@@ -92,16 +87,13 @@ void bitmap_clear_with( Environment * _environment, int _pattern ) {
  */
 void bitmap_clear_with_vars( Environment * _environment, char * _pattern ) {
 
-    // Safety check -- bitmap address must be defined at least once.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
     // Safety check -- expression must exists (it should be always true)
     Variable * pattern = variable_retrieve( _environment, _pattern );
     Variable * blocks = variable_temporary( _environment, VT_BYTE, "(blocks)" );
 
     variable_store( _environment, blocks->name, 196 );
 
-    cpu_fill_blocks( _environment, bitmapAddress->realName, blocks->realName, pattern->realName );
+    cpu_fill_blocks( _environment, "BITMAPADDRESS", blocks->realName, pattern->realName );
 
 }
 
