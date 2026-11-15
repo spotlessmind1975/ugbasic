@@ -1241,9 +1241,6 @@ void cga_initialization( Environment * _environment ) {
     variable_import( _environment, "BLITTMPPTR2", VT_ADDRESS, 0 );
     variable_global( _environment, "BLITTMPPTR2" );
 
-    variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
-    variable_global( _environment, "VDPINUSE" );
-
     variable_import( _environment, "SLICEX", VT_POSITION, 0 );
     variable_global( _environment, "SLICEX" );
     variable_import( _environment, "SLICEY", VT_POSITION, 0 );

@@ -1580,9 +1580,6 @@ void tms9918_initialization( Environment * _environment ) {
     //     variable_global( _environment, "VDP_HOOK" );
     // #endif
 
-    variable_import( _environment, "VDPINUSE", VT_BYTE, 0 );
-    variable_global( _environment, "VDPINUSE" );
-
     variable_import( _environment, "SLICEX", VT_POSITION, 0 );
     variable_global( _environment, "SLICEX" );
     variable_import( _environment, "SLICEY", VT_POSITION, 0 );

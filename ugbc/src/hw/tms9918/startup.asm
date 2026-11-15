@@ -37,16 +37,20 @@
 
 VDPLOCK:
         DI
+@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync) || ticksPerSecondUsed
         PUSH AF
         LD A, 1
         LD (VDPINUSE), A
         POP AF
+@ENDIF
         RET
 
 VDPUNLOCK:
         PUSH AF
+@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync) || ticksPerSecondUsed
         LD A, 0
         LD (VDPINUSE), A
+@ENDIF
         IN A, ($bf)
         POP AF
         EI
