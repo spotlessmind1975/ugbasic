@@ -62,10 +62,7 @@
 </usermanual> */
 void charset_at( Environment * _environment, int _address ) {
 
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-    variable_store( _environment, "BITMAPADDRESS", ( ( _address >> 14 ) & 0x1 ) * 0x2000 );
+    cpu_store_16bit( _environment, "BITMAPADDRESS", ( ( _address >> 14 ) & 0x1 ) * 0x2000 );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "#$%2.2x", ( _address >> 8 ) );
 
@@ -96,12 +93,9 @@ void charset_at( Environment * _environment, int _address ) {
 </usermanual> */
 void charset_at_var( Environment * _environment, char * _address ) {
 
-    // Let's define the special variable bitmapAddress, and update
-    // it with the requested value.    
-    Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
     Variable * address = variable_retrieve( _environment, _address );
 
-    variable_move_naked( _environment, address->name, bitmapAddress->name );
+    cpu_move_16bit( _environment, address->realName, "BITMAPADDRESS" );
 
     char addressString[MAX_TEMPORARY_STORAGE]; sprintf(addressString, "%s", address_displacement(_environment, address->realName, "1") );
 

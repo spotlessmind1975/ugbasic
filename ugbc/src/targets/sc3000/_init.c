@@ -134,6 +134,9 @@ void target_initialization( Environment * _environment ) {
     outline0("CALL SC3000STARTUP");
     outline0("CALL SC3000STARTUP2" );
 
+    deploy_preferred( startup, src_hw_sc3000_startup_asm);
+    deploy_preferred( startup2, src_hw_sc3000_startup2_asm);
+
     setup_text_variables( _environment );
     
     tms9918_initialization( _environment );

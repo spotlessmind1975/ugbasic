@@ -60,6 +60,7 @@ void blit_image( Environment * _environment, char * _blit, char * _x, char * _y,
     int i = 0;
     for(i=0; i<_environment->blit.sourceCount; ++i ) {
         image = variable_retrieve( _environment, _environment->blit.sources[i] );
+        image->usedImage = 1;
         if ( vtImage == VT_BYTE ) {
             vtImage = image->type;
         }

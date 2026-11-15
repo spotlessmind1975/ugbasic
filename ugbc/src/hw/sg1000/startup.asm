@@ -374,17 +374,5 @@ CALLINDIRECTSAVEHL:     DEFW $0000
 section code_user
 @ENDIF
 
-@IF consoleUsed
-section data_user
-CONSOLEX1:           DEFB   0
-CONSOLEY1:           DEFB   0
-CONSOLESA:           DEFW   0
-section code_user
-@ELSE
-CONSOLEX1: EQU 0
-CONSOLEY1: EQU 0
-IFDEF TEXTADDRESS
-    CONSOLESA: EQU TEXTADDRESS
-ENDIF
-@ENDIF
+
 

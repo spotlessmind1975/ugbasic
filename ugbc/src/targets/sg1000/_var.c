@@ -527,11 +527,17 @@ void variable_cleanup( Environment * _environment ) {
 
     }
 
+    deploy_inplace_preferred( startup, src_hw_sg1000_startup_asm);
     deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
     deploy_inplace_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
+    deploy_inplace_preferred( sn76489startup, src_hw_sn76489z_startup_asm );
     deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_tms9918_text_asm );
     deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
+    deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
 
     generate_cgoto_address_table( _environment );
 
@@ -694,5 +700,7 @@ void variable_cleanup( Environment * _environment ) {
     outline0("CALL VARINIT2");
 
     buffered_prepend_output( _environment );
+
+    deploy_inplace_preferred( startup2, src_hw_sg1000_startup2_asm);
 
 }
