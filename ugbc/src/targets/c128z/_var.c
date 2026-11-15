@@ -437,7 +437,12 @@ void variable_cleanup( Environment * _environment ) {
 
     deploy_inplace_preferred( startup, src_hw_c128z_startup_asm);
     deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
+    deploy_inplace_preferred( vdcvars, src_hw_vdcz_vars_asm);
     deploy_inplace_preferred( bank, src_hw_c128z_bank_asm );
+    deploy_inplace_preferred( clsText, src_hw_vdcz_cls_text_asm );
+    deploy_inplace_preferred( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+    deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_vdcz_text_at_text_raw_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
     deploy( startup2, src_hw_c128z_startup2_asm);
 
     generate_cgoto_address_table( _environment );

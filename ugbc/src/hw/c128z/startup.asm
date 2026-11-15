@@ -164,7 +164,7 @@ TICKSPERSECOND: DEFB   60
 @ENDIF
 @ENDIF
 
-@IF deployed.random || deployed.embed.cpu_random
+@IF deployed.random || deployed.embedded.cpu_random
 CPURANDOM_SEED:  defw $ff42,$ffea
 @ENDIF
 
@@ -197,4 +197,11 @@ SYSCALL0:
 	CALL $0000
 	JP SYSCALLDONE
 
+@ENDIF
+
+@IF deployed.embedded.cpu_call_indirect
+section data_user
+CALLINDIRECT:           DEFB $c3,$00,	$00
+CALLINDIRECTSAVEHL:     DEFW $0000
+section code_user
 @ENDIF

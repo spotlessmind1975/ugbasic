@@ -2121,7 +2121,7 @@ void vdcz_textmap_at( Environment * _environment, char * _address ) {
 
 void vdcz_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
@@ -2157,7 +2157,7 @@ void vdcz_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) 
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
@@ -2182,7 +2182,7 @@ void vdcz_pget_color_vars( Environment * _environment, char *_x, char *_y, char 
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( plot, src_hw_vdcz_plot_asm );
 
@@ -2336,10 +2336,10 @@ void vdcz_get_height( Environment * _environment, char *_result ) {
 void vdcz_cls( Environment * _environment ) {
 
     if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
-        deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+        deploy_preferred( clsGraphic, src_hw_vdcz_cls_graphic_asm );
         outline0("CALL CLSG");
     } else {
-        deploy( clsText, src_hw_vdcz_cls_text_asm );
+        deploy_preferred( clsText, src_hw_vdcz_cls_text_asm );
         outline0("CALL CLST");
     }
 
@@ -2378,7 +2378,7 @@ void vdcz_scroll_text( Environment * _environment, int _direction, int _overlap 
 
 void vdcz_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( textEncodedAt, src_hw_vdcz_text_at_asm );
 
     outline1("LD DE, (%s)", _text);
@@ -2389,26 +2389,26 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size, int
         if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
             deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
             deploy( vScroll, src_hw_vdcz_vscroll_asm );
-            deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+            deploy_preferred( clsGraphic, src_hw_vdcz_cls_graphic_asm );
             deploy( textEncodedAtGraphicRaw, src_hw_vdcz_text_at_graphic_raw_asm );
             outline0("CALL TEXTATBITMAPMODERAW");
         } else {
             deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
-            deploy( clsText, src_hw_vdcz_cls_text_asm );
-            deploy( textEncodedAtTextRaw, src_hw_vdcz_text_at_text_raw_asm );
+            deploy_preferred( clsText, src_hw_vdcz_cls_text_asm );
+            deploy_preferred( textEncodedAtTextRaw, src_hw_vdcz_text_at_text_raw_asm );
             outline0("CALL TEXTATTILEMODERAW");
         }
     } else {
         if ( _environment->currentMode != TILEMAP_MODE_STANDARD ) {
             deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm);
             deploy( vScroll, src_hw_vdcz_vscroll_asm );
-            deploy( clsGraphic, src_hw_vdcz_cls_graphic_asm );
+            deploy_preferred( clsGraphic, src_hw_vdcz_cls_graphic_asm );
             deploy( textEncodedAtGraphic, src_hw_vdcz_text_at_graphic_asm );
             outline0("CALL TEXTATBITMAPMODE");
         } else {
             deploy( vScrollTextUp, src_hw_vdcz_vscroll_text_up_asm );
-            deploy( clsText, src_hw_vdcz_cls_text_asm );
-            deploy( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
+            deploy_preferred( clsText, src_hw_vdcz_cls_text_asm );
+            deploy_preferred( textEncodedAtText, src_hw_vdcz_text_at_text_asm );
             outline0("CALL TEXTATTILEMODE");
         }
     }
@@ -2418,7 +2418,7 @@ void vdcz_text( Environment * _environment, char * _text, char * _text_size, int
 
 void vdcz_initialization( Environment * _environment ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm );
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm );
     deploy_preferred( vdczstartup, src_hw_vdcz_startup_asm );
 
     variable_import( _environment, "CURRENTWIDTH", VT_POSITION, 256 );
@@ -2570,7 +2570,7 @@ static RGBi * multicolorSpritePalette[2];
 void vdcz_finalization( Environment * _environment ) {
 
     if ( _environment->vestigialConfig.clsImplicit ) {
-        deploy( clsText, src_hw_vdcz_cls_text_asm );
+        deploy_preferred( clsText, src_hw_vdcz_cls_text_asm );
     }
 
     CopperList * copperList = _environment->copperList;
@@ -2934,7 +2934,7 @@ static void vdcz_load_image_address_to_register( Environment * _environment, cha
 
 void vdcz_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( putimage, src_hw_vdcz_put_image_asm );
 
@@ -2962,7 +2962,7 @@ void vdcz_put_image( Environment * _environment, Resource * _image, char * _x, c
 
 void vdcz_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( blitimage, src_hw_vdcz_blit_image_asm );
 
@@ -3053,7 +3053,7 @@ Variable * vdcz_new_sequence( Environment * _environment, int _sequences, int _f
 
 void vdcz_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( vdczvarsGraphic, src_hw_vdcz_vars_graphic_asm );
     deploy( getimage, src_hw_vdcz_get_image_asm );
 
@@ -3072,7 +3072,7 @@ void vdcz_get_image( Environment * _environment, char * _image, char * _x, char 
 
 void vdcz_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( scroll, src_hw_vdcz_scroll_asm);
     deploy( textHScroll, src_hw_vdcz_hscroll_text_asm );
     deploy( vScrollTextDown, src_hw_vdcz_vscroll_text_down_asm );
@@ -3082,7 +3082,7 @@ void vdcz_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void vdcz_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( tiles, src_hw_vdcz_tiles_asm );
 
 }
@@ -3093,28 +3093,28 @@ void vdcz_move_tiles( Environment * _environment, char * _tile, char * _x, char 
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( tiles, src_hw_vdcz_tiles_asm );
 
 }
 
 void vdcz_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( tiles, src_hw_vdcz_tiles_asm );
 
 }
 
 void vdcz_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( tiles, src_hw_vdcz_tiles_asm );
 
 }
 
 void vdcz_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( vdczvars, src_hw_vdcz_vars_asm);
+    deploy_preferred( vdczvars, src_hw_vdcz_vars_asm);
     deploy( tiles, src_hw_vdcz_tiles_asm );
 
 }

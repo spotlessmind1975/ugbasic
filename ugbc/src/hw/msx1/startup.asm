@@ -190,7 +190,7 @@ WAITTIMERL1:
     JR NZ, WAITTIMER
     RET
 
-@IF deployed.random || deployed.embed.cpu_random
+@IF deployed.random || deployed.embedded.cpu_random
 section data_user
 CPURANDOM_SEED:  defw $ff42,$ffea
 section code_user

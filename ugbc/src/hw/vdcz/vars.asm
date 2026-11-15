@@ -54,3 +54,10 @@ IFDEF TEXTADDRESS
     CONSOLESA: EQU TEXTADDRESS
 ENDIF
 @ENDIF
+
+@IF consoleUsed
+
+@EMIT maxConsole
+CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
+CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
+@ENDIF

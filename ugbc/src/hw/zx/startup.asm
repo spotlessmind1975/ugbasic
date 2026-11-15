@@ -204,6 +204,6 @@ WAITTIMERL1:
     JR NZ, WAITTIMER
     RET
 
-@IF deployed.random || deployed.embed.cpu_random
+@IF deployed.random || deployed.embedded.cpu_random
 CPURANDOM_SEED:  defw $ff42,$ffea
 @ENDIF

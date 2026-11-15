@@ -429,9 +429,9 @@ const_factor:
       }
       | Identifier OP_POINT Identifier OP_POINT Identifier {
 
-        if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embed") == 0 && strcmp( $5, "cpu_call_indirect") == 0 ) {
+        if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embedded") == 0 && strcmp( $5, "cpu_call_indirect") == 0 ) {
             $$ = ((struct _Environment *)_environment)->deployed.embedded.cpu_call_indirect;
-        } else if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embed") == 0 && strcmp( $5, "cpu_random") == 0 ) {
+        } else if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embedded") == 0 && strcmp( $5, "cpu_random") == 0 ) {
             $$ = ((struct _Environment *)_environment)->deployed.embedded.cpu_random;
         } else {            
             int valued = 0;
