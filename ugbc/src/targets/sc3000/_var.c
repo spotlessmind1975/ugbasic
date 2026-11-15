@@ -656,7 +656,7 @@ void variable_cleanup( Environment * _environment ) {
             }
             outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline1("LD BC, %d", _environment->descriptors->count * 8 );
             outline0("LD HL, UDCCHAR" );
@@ -667,7 +667,7 @@ void variable_cleanup( Environment * _environment ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("RET" );
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) ) {
             outhead0("TMS9918AUDCCHAR23:" );
             if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
@@ -686,7 +686,7 @@ void variable_cleanup( Environment * _environment ) {
             outline0("RET" );
         }
     } else {
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("LD BC, 2048" );
             outline0("LD HL, $1000" );
@@ -697,7 +697,7 @@ void variable_cleanup( Environment * _environment ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("RET" );
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) ) {
             outhead0("TMS9918AUDCCHAR23:" );
             outline0("LD BC, 2048" );
             outline0("LD HL, $1000" );

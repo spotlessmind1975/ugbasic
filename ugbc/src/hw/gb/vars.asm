@@ -77,4 +77,4 @@ CONSOLES:     DEFS  maxConsole*8        ; <-- storage for virtual consoles
 CONSOLES2:    DEFS  maxConsole*2        ; <-- storage for memorize / remember
 @ENDIF
 
-
+DOJOERROR:           DEFB   0

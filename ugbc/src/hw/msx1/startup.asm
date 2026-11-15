@@ -216,3 +216,7 @@ IFDEF TEXTADDRESS
     CONSOLESA: EQU TEXTADDRESS
 ENDIF
 @ENDIF
+
+section data_user
+DOJOERROR:           DEFB   0
+section code_user

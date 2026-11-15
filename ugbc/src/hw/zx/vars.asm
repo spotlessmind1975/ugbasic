@@ -323,3 +323,5 @@ CALCULATECOLOR:
     POP BC
     POP AF
     RET
+
+DOJOERROR:           DEFB   0

@@ -82,3 +82,5 @@ CALLINDIRECT:           DEFB $c3,$00,	$00
 CALLINDIRECTSAVEHL:     DEFW $0000
 section code_user
 @ENDIF
+
+DOJOERROR:           DEFB   0
