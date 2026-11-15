@@ -35,25 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$1800		            $0000 (coleco)
-; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
-; VDPUPDATE2:		$3800		$2000
-; VDPUPDATE3:		$3800		$2000		$0000
-
-; if __coleco__
-
-; CLSG:
-;     CALL WAIT_VDP_HOOK
-;     LD HL, CLSGNMI
-;     CALL SET_VDP_HOOK0
-;     CALL WAIT_VDP_HOOK
-;     RET
-
-; CLSGNMI:
-
-; else
-
 VDPFILLA:
         CALL VDPLOCK
         PUSH    AF
@@ -69,9 +50,6 @@ VDPFILLALOOP:
         RET
         
 CLSG:
-
-; endif
-
 CLSGNMI2:
 
 @IF vestigialConfig.screenModeUnique
@@ -95,14 +73,27 @@ CLSGNMI2:
     LD BC, 256*3
     CALL VDPFILLA
 
+@IF COLECO && vestigialConfig.biosAllowed
+    LD HL, (PATTERNADDRESS)
+    LD DE, 256*8*3
+    CALL CBIOS_FILL_VRAM
+@ELSE
     LD BC, 256*8*3
     LD DE, (PATTERNADDRESS)
     LD A, 0
     CALL VDPFILL
+@ENDIF
 
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD HL, (COLORMAPADDRESS)
+    LD DE, 32*24*8
+    CALL CBIOS_FILL_VRAM
+@ELSE
     LD BC, 32*24*8
     LD DE, (COLORMAPADDRESS)
     LD A, (_PAPER)
     CALL VDPFILL
+@ENDIF
 
     RET

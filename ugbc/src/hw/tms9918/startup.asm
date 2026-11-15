@@ -287,6 +287,8 @@ VDPREAD:
         CALL VDPUNLOCK
         RET
 
+@IF !COLECO || !vestigialConfig.biosAllowed
+
 VDPFILL:
         CALL VDPLOCK
         PUSH    AF
@@ -300,7 +302,9 @@ VDPFILLLOOP:
         CALL VDPUNLOCK
         RET
 
-@IF COLECO && !vestigialConfig.biosAllowed
+@ENDIF
+
+@IF !COLECO || !vestigialConfig.biosAllowed
 
 VDPFILL8:
         CALL VDPLOCK

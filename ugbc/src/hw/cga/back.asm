@@ -35,64 +35,7 @@
 ; ;*                                                                             *
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; ; 			        NAME		COLOR		PATTERN
-; ; VDPUPDATE0: 		$1800		            $0000 (coleco)
-; ; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
-; ; VDPUPDATE2:		$3800		$2000
-; ; VDPUPDATE3:		$3800		$2000		$0000
+BACKNMI:
+BACK:
+    RET
 
-; ; if __coleco__
-
-; ; BACK:
-; ;     CALL WAIT_VDP_HOOK
-; ;     LD HL, BACKNMI
-; ;     CALL SET_VDP_HOOK
-; ;     CALL WAIT_VDP_HOOK
-; ;     RET
-
-; ; BACKNMI:
-
-; ; else
-
-; BACK:
-
-; ; endif
-
-; BACKNMI2:
-
-;     LD A, (CURRENTMODE)
-;     CP 0
-;     JR Z,BACK0
-;     CP 1
-;     JR Z,BACK1
-;     CP 2
-;     JR Z,BACK2
-;     CP 3
-;     JR Z,BACK3
-;     JP BACKDONE
-
-; BACK0:
-;     LD A, VDP_RCOLOR
-;     LD E, A
-;     LD A, (_PAPER)
-;     CALL VDPSETREG
-;     JP BACKDONE
-
-; BACK1:
-;     LD DE, (COLORMAPADDRESS)
-;     LD BC, $32
-;     JP BACKCOMMON
-
-; BACK2:
-; BACK3:
-;     LD DE, (COLORMAPADDRESS)
-;     LD BC, 32*24*8
-;     JP BACKCOMMON
-
-; BACKCOMMON:
-;     LD A, (_PAPER)
-;     CALL VDPFILL
-;     JP BACKDONE
-
-; BACKDONE:
-;     RET

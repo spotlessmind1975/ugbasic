@@ -35,54 +35,6 @@
 ; ;*                                                                             *
 ; ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; ; 			        NAME		COLOR		PATTERN
-; ; VDPUPDATE0: 		$1800		            $0000 (coleco)
-; ; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
-; ; VDPUPDATE2:		$3800		$2000
-; ; VDPUPDATE3:		$3800		$2000		$0000
-
-; ; if __coleco__
-
-; ; CLSG:
-; ;     CALL WAIT_VDP_HOOK
-; ;     LD HL, CLSGNMI
-; ;     CALL SET_VDP_HOOK0
-; ;     CALL WAIT_VDP_HOOK
-; ;     RET
-
-; ; CLSGNMI:
-
-; ; else
-
-; CLSG:
-
-; ; endif
-
-; CLSGNMI2:
-
-;     LD A, (CURRENTTILEMODE)
-;     CP 1
-;     RET Z
-
-;     LD A, (CURRENTMODE)
-;     CP 0
-;     RET Z
-;     CP 1
-;     RET Z
-
-;     LD A, 0
-;     LD DE, (TEXTADDRESS)
-;     LD BC, 256*3
-;     CALL VDPFILLA
-
-;     LD BC, 256*8*3
-;     LD DE, (PATTERNADDRESS)
-;     LD A, 0
-;     CALL VDPFILL
-
-;     LD BC, 32*24*8
-;     LD DE, (COLORMAPADDRESS)
-;     LD A, (_PAPER)
-;     CALL VDPFILL
-
-;     RET
+CLSG:
+CLSGNMI2:
+    RET

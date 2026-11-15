@@ -86,9 +86,17 @@ CLST0:
 @ELSE
     LD A, EMPTYTILE
 @ENDIF
-    LD BC, $100 + 40*25
-    LD DE, (TEXTADDRESS)
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (TEXTADDRESS)
+        LD DE, $100 + 40*25
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD BC, $100 + 40*25
+        LD DE, (TEXTADDRESS)
+        CALL VDPFILL
+    @ENDIF
+
     @IF !vestigialConfig.screenModeUnique
         JP CLSTDONE
     @ELSE
@@ -104,14 +112,28 @@ CLST1:
 @ELSE
     LD A, EMPTYTILE
 @ENDIF
-    LD BC, $100 + 32*24
-    LD DE, (TEXTADDRESS)
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (TEXTADDRESS)
+        LD DE, $100 + 32*24
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD BC, $100 + 32*24
+        LD DE, (TEXTADDRESS)
+        CALL VDPFILL
+    @ENDIF
 
     LD A, (_PAPER)
-    LD BC, $100 + 32
-    LD DE, (COLORMAPADDRESS)
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (COLORMAPADDRESS)
+        LD DE, $100 + 32
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD BC, $100 + 32
+        LD DE, (COLORMAPADDRESS)
+        CALL VDPFILL
+    @ENDIF
 
     @IF !vestigialConfig.screenModeUnique
         JP CLSTDONE
@@ -130,14 +152,28 @@ CLST3:
 @ELSE
     LD A, EMPTYTILE
 @ENDIF
-    LD BC, $100 + 32*24
-    LD DE, (TEXTADDRESS)
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (TEXTADDRESS)
+        LD DE, $100 + 32*24
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD BC, $100 + 32*24
+        LD DE, (TEXTADDRESS)
+        CALL VDPFILL
+    @ENDIF
 
     LD A, (_PAPER)
-    LD BC, 32*24*8
-    LD DE, (COLORMAPADDRESS)
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (COLORMAPADDRESS)
+        LD DE, 32*24*8
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD BC, 32*24*8
+        LD DE, (COLORMAPADDRESS)
+        CALL VDPFILL
+    @ENDIF
 
     @IF !vestigialConfig.screenModeUnique
         JP CLSTDONE

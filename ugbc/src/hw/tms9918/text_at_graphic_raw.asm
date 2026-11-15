@@ -174,9 +174,17 @@ TEXTATRAWBMSP0:
     SLA A
     SLA A
     OR B
-    LD DE, (COPYOFCOLORMAPADDRESS)
-    LD BC, $108
-    CALL VDPFILL
+
+    @IF COLECO && vestigialConfig.biosAllowed
+        LD HL, (COPYOFCOLORMAPADDRESS)
+        LD DE, $108
+        CALL CBIOS_FILL_VRAM
+    @ELSE
+        LD DE, (COPYOFCOLORMAPADDRESS)
+        LD BC, $108
+        CALL VDPFILL
+    @ENDIF
+
     POP DE
     POP BC
     POP AF

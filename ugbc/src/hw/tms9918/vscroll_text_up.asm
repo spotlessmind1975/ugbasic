@@ -118,12 +118,10 @@ VSCROLLTUP3:
     LD D, 0
     LD HL, (CONSOLESA)
     PUSH HL
-    JP VSCROLLTUPCOMMON
 
 @ENDIF
 
 VSCROLLTUPCOMMON:
-    LD HL, (CONSOLESA)
     PUSH HL
     ADD HL, DE
     POP DE
@@ -134,24 +132,20 @@ VSCROLLTUPPREP:
     PUSH DE
 VSCROLLTUPLOOP:
 
-    PUSH DE
-    PUSH BC
-    LD DE, HL
-    LD BC, 1
-    CALL VDPINCHAR
-    POP BC
-    POP DE
-
-    PUSH BC
-    LD BC, 1
-    CALL VDPOUTCHAR
-    POP BC
-
-    INC     DE
-    INC     HL
-
-    DEC     C
-    JP      NZ, VSCROLLTUPLOOP
+	PUSH BC
+	PUSH DE
+	LD D,H
+	LD E,L
+	LD BC,1
+	CALL VDPINCHAR
+	POP DE
+	LD BC,1
+	CALL VDPOUTCHAR
+	POP BC
+	INC DE
+	INC HL
+	DEC C
+	JR NZ,VSCROLLTUPLOOP
 
     POP DE
     POP HL
@@ -206,6 +200,22 @@ VSCROLLTUPXX2:
 @IF ( !vestigialConfig.screenModeUnique ) || ( currentMode == 0 )
 
 VSCROLLTUPX0:
+
+@IF COLECO && vestigialConfig.biosAllowed
+    LD HL, DE
+
+    LD A, (CONSOLEW)
+    LD E, A
+    LD D, $0
+@IF emptyTileUsed
+    LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+    CALL CBIOS_FILL_VRAM
+
+@ELSE
+
     LD A, (CONSOLEW)
     LD C, A
     LD B, $1
@@ -215,6 +225,9 @@ VSCROLLTUPX0:
     LD A, EMPTYTILE
 @ENDIF
     CALL VDPFILL
+
+@ENDIF
+
     POP DE
     JP VSCROLLTUPDONE
 
@@ -224,6 +237,21 @@ VSCROLLTUPX0:
 
 VSCROLLTUPX1:
 VSCROLLTUPX2:
+@IF COLECO && vestigialConfig.biosAllowed
+    LD HL, DE
+
+    LD A, (CONSOLEW)
+    LD E, A
+    LD D, $0
+@IF emptyTileUsed
+    LD A, (EMPTYTILE)
+@ELSE
+    LD A, EMPTYTILE
+@ENDIF
+    CALL CBIOS_FILL_VRAM
+
+@ELSE
+
     LD A, (CONSOLEW)
     LD C, A
     LD B, $1
@@ -233,6 +261,9 @@ VSCROLLTUPX2:
     LD A, EMPTYTILE
 @ENDIF
     CALL VDPFILL
+
+@ENDIF
+
     POP DE
     JP VSCROLLTUPDONE
 
