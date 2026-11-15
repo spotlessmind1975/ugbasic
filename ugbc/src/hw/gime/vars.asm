@@ -180,5 +180,3 @@ CONSOLECALCULATESKIPD
     RTS    
 
 @ENDIF
-
-DOJOERROR           fcb   0
