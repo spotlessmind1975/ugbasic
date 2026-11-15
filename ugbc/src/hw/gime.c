@@ -4209,7 +4209,7 @@ void gime_calculate_sequence_frame_offset( Environment * _environment, char * _o
 
 void gime_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    deploy( gimevars, src_hw_gime_vars_asm);
+    deploy_preferred( gimevars, src_hw_gime_vars_asm);
 
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
         gime_load_image_address_to_register( _environment, "TMPPTR", _image, _sequence, _frame, _frame_size, _frame_count );

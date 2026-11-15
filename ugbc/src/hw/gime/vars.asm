@@ -124,9 +124,13 @@ CONSOLEX1     fcb 0         ; <-- input from program (chars)
 CONSOLEY1     fcb 0         ; <-- input from program (chars)
 CONSOLESA     fdb 0         ; <-- calculated (address)
 @ELSE
-CONSOLEX1 = 0
-CONSOLEY1 = 0
-CONSOLESA = TEXTADDRESS
+CONSOLEX1     EQU 0         ; <-- input from program (chars)
+CONSOLEY1     EQU 0         ; <-- input from program (chars)
+   IF TEXTADDRESS
+CONSOLESA EQU TEXTADDRESS
+   ELSE
+CONSOLESA EQU 0
+    ENDIF
 @ENDIF
 
 CONSOLEX2     fcb 31        ; <-- recalculated (chars)
