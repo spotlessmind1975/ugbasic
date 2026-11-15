@@ -74,6 +74,7 @@ Variable * get_tab( Environment * _environment ) {
 
     Variable * tab = variable_retrieve_or_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, tab->name, "\t");
+    variable_global( _environment, "TAB" );
 
     return tab;
 
