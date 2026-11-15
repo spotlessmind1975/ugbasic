@@ -70,8 +70,6 @@ che può essere modificata utilizzando il comando ''SET TAB''.
 </usermanual> */
 Variable * get_tab( Environment * _environment ) {
     
-    _environment->tabUsed = 1;
-
     Variable * tab = variable_retrieve_or_define( _environment, "TAB", VT_STRING, 0 );
     variable_store_string( _environment, tab->name, "\t");
     variable_global( _environment, "TAB" );
