@@ -59,3 +59,8 @@ SECTION code_user
 @ENDIF
 
 
+@IF timerUsed || deployed.music || deployed.timer || (deployed.joystick && ! joystickConfig.sync) || ticksPerSecondUsed
+SECTION data_user
+VDPINUSE:     DEFB  $00
+SECTION code_user
+@ENDIF

@@ -1378,8 +1378,8 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
         if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
             deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
             deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-            deploy( textEncodedAt, src_hw_tms9918_text_asm );
-            deploy( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
+            deploy_preferred( textEncodedAt, src_hw_tms9918_text_asm );
+            deploy_preferred( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
             if ( ! _environment->hasGameLoop ) {
                 outline0("CALL TEXTATBITMAPMODERAW");
             } else {
@@ -1388,7 +1388,7 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
         } else {
             deploy( clsText, src_hw_tms9918_cls_text_asm );
             #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-                    deploy( textEncodedAt, src_hw_tms9918_text_asm );
+                    deploy_preferred( textEncodedAt, src_hw_tms9918_text_asm );
             #endif
             deploy_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
             if ( ! _environment->hasGameLoop ) {
@@ -1403,8 +1403,8 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
         if ( ( _environment->currentMode == 2 || _environment->currentMode == 3 ) && !_environment->currentTileMode ) {
             deploy( clsGraphic, src_hw_tms9918_cls_graphic_asm );
             deploy( tms9918varsGraphic, src_hw_tms9918_vars_graphic_asm );
-            deploy( textEncodedAt, src_hw_tms9918_text_asm );
-            deploy( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
+            deploy_preferred( textEncodedAt, src_hw_tms9918_text_asm );
+            deploy_preferred( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
             if ( ! _environment->hasGameLoop ) {
                 outline0("CALL TEXTATBITMAPMODE");
             } else {
@@ -1413,9 +1413,9 @@ void tms9918_text( Environment * _environment, char * _text, char * _text_size, 
         } else {
             deploy( clsText, src_hw_tms9918_cls_text_asm );
             #if defined(__sc3000__) || defined(__sg1000__)  || defined(__msx1__) || defined(__coleco__)
-                    deploy( textEncodedAt, src_hw_tms9918_text_asm );
+                    deploy_preferred( textEncodedAt, src_hw_tms9918_text_asm );
             #endif
-            deploy( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
+            deploy_preferred( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
             if ( ! _environment->hasGameLoop ) {
                 outline0("CALL TEXTATTILEMODE");
             } else {

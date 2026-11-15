@@ -44,8 +44,6 @@ void text_hscroll_screen( Environment * _environment, int _direction, int _overl
 
     if ( !_environment->deployed.textHScrollScreen ) {
 
-        Variable * bitmapAddress = variable_retrieve( _environment, "BITMAPADDRESS" );
-
         outline0("JMP lib_text_hscroll_screen_after");
 
         outhead0("lib_text_hscroll_screen:" );
@@ -61,7 +59,7 @@ void text_hscroll_screen( Environment * _environment, int _direction, int _overl
         outhead0("lib_text_hscroll_screen_left3:");
         outline0("LD A, 0" );
         outline0("LD B, A" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD HL, (BITMAPADDRESS)" );
         outhead0("lib_text_hscroll_screen_left2:");
         outline0("RL (HL)");
         outline0("INC HL");
@@ -88,7 +86,7 @@ void text_hscroll_screen( Environment * _environment, int _direction, int _overl
         outhead0("lib_text_hscroll_screen_right3:");
         outline0("LD A, 32" );
         outline0("LD B, A" );
-        outline1("LD HL, (%s)", bitmapAddress->realName );
+        outline0("LD HL, (BITMAPADDRESS)" );
         outhead0("lib_text_hscroll_screen_right2:");
         outline0("RR (HL)");
         outline0("INC HL");

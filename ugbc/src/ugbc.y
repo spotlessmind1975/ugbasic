@@ -4207,7 +4207,11 @@ exponential_less:
     YCURS { $$ = text_get_ycurs( _environment )->name; } | 
     Y CURS { $$ = text_get_ycurs( _environment )->name; } | 
     TEXTADDRESS { $$ = strdup( "TEXTADDRESS" ); } | 
-    BITMAPADDRESS { $$ = strdup( "BITMAPADDRESS" ); } | 
+    BITMAPADDRESS { 
+        Variable * bitmapAddress = variable_temporary( _environment, VT_ADDRESS, "(bitmapaddress)");
+        cpu_move_16bit( _environment, "BITMAPADDRESS", bitmapAddress->realName );
+        $$ = bitmapAddress->name; 
+    } | 
     JOY OP OP_HASH const_expr CP { $$ = joy( _environment, $4 )->name; } | 
     JOY OP expr CP { $$ = joy_vars( _environment, $3 )->name; } | 
     JOYX { $$ = joyx( _environment, 0 )->name; } | 

@@ -603,7 +603,11 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
     deploy_inplace_preferred( waittimer, src_hw_coleco_wait_timer_asm);
     deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_tms9918_text_asm );
     deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
+    deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
 
     buffered_prepend_output( _environment );
 
@@ -663,7 +667,7 @@ void variable_cleanup( Environment * _environment ) {
 
     if ( _environment->descriptors ) {
 
-        if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) ) {
             outhead0("UDCCHAR:" );
             int i=0,j=0;
             for(i=_environment->descriptors->first;i<(_environment->descriptors->first+_environment->descriptors->count);++i) {
@@ -675,7 +679,7 @@ void variable_cleanup( Environment * _environment ) {
                 outline1("$%2.2x", ((unsigned char)_environment->descriptors->data[i].data[j]) );
             }
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) ) {
             outhead0("TMS9918AUDCCHAR01:" );
             if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
@@ -692,7 +696,7 @@ void variable_cleanup( Environment * _environment ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("RET" );
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 )) ) {
             outhead0("TMS9918AUDCCHAR23:" );
             if ( _environment->deployed.textEncodedAtGraphic || _environment->deployed.textEncodedAtGraphicRaw ) {
                 outline1("LD BC, %d", _environment->descriptors->count * 8 );
@@ -723,7 +727,7 @@ void variable_cleanup( Environment * _environment ) {
             outline0("RET" );
         }
     } else {
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 0 || _environment->currentMode == 1 ) ) ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
@@ -738,7 +742,7 @@ void variable_cleanup( Environment * _environment ) {
             outhead0("TMS9918AUDCCHAR01:" );
             outline0("RET" );
         }
-        if ( !_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) {
+        if ( count_screen_mode_selected( _environment ) > 1 || (!_environment->vestigialConfig.screenModeUnique || ( _environment->currentMode == 2 || _environment->currentMode == 3 ) ) ) {
             outhead0("TMS9918AUDCCHAR23:" );
             outline0("LD BC, 2048" );
             outline0("LD HL, $15A3" );
