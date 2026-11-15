@@ -4832,8 +4832,10 @@ void vic2_blit_image( Environment * _environment, char * _sources[], int _source
 
 void vic2_wait_vbl( Environment * _environment, char * _raster_line ) {
 
+    _environment->waitVblUsed = 1;
+    
     deploy( vic2varsGraphic, src_hw_vic2_vars_graphic_asm );
-    deploy( vbl, src_hw_vic2_vbl_asm);
+    deploy_preferred( vbl, src_hw_vic2_vbl_asm);
 
     if ( ! _raster_line ) {
         outline0("JSR VBL");

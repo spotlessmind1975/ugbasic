@@ -936,6 +936,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( textHScroll, src_hw_vic2_hscroll_text_asm );
     deploy_inplace_preferred( bank, src_hw_c64reu_bank_asm );
     deploy_inplace_preferred( console, src_hw_vic2_console_asm );
+    deploy_inplace_preferred( vbl, src_hw_vic2_vbl_asm);
 
     // outhead0(".segment \"CODE\"" );
 

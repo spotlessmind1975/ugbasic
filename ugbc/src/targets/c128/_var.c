@@ -1000,6 +1000,7 @@ void variable_cleanup( Environment * _environment ) {
     deploy_inplace_preferred( chain, src_hw_c128_chain_asm );
     deploy_inplace_preferred( bank, src_hw_c128_bank_asm );
     deploy_inplace_preferred( console, src_hw_vic2_console_asm );
+    deploy_inplace_preferred( vbl, src_hw_vic2_vbl_asm);
 
     // outhead0(".segment \"CODE\"" );
 
