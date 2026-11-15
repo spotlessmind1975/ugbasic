@@ -117,9 +117,6 @@ void setup_text_variables( Environment * _environment ) {
     variable_import( _environment, "DRAWHDCOMMAND", VT_CHAR, 'x' );
     variable_global( _environment, "DRAWHDCOMMAND" );
 
-    variable_define( _environment, "TAB", VT_STRING, 0 );
-    variable_store_string( _environment, "TAB", "\t");
-    variable_global( _environment, "TAB" );
     variable_import( _environment, "PROTOTHREADCT", VT_BYTE, 0 );
     variable_global( _environment, "PROTOTHREADCT" );
     variable_import( _environment, "PLAYDURATION", VT_BYTE, 2 );

@@ -89,7 +89,7 @@ void text_newline( Environment * _environment ) {
 
 void text_tab( Environment * _environment ) {
 
-    Variable * tab = variable_retrieve( _environment, "TAB" );
+    Variable * tab = get_tab( _environment );
 
     text_text( _environment, tab->name, 0 );
     

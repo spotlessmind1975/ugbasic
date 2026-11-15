@@ -39,7 +39,7 @@
  ****************************************************************************/
 
 /**
- * @brief Emit code for <strong>TAB$</strong>
+ * @brief Emit code for <strong>TICKS PER SECOND</strong>
  * 
  * @param _environment Current calling environment
  */
