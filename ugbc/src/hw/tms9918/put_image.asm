@@ -35,46 +35,25 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; IMAGET:     DB 0      -> A
-; IMAGEX:     DB 0      -> E
-; IMAGEY:     DB 0      -> D
-; IMAGEW:     DB 0      -> C
-; IMAGEH:     DB 0      -> B
-; IMAGEH2:    DB 0      -> ?
-; PTR:        DW 0      -> HL
-
-; ----------------------------------------------------------------------------
-; - Put image on bitmap
-; ----------------------------------------------------------------------------
-
-
-; if __coleco__
-
-; PUTIMAGE:
-;     CALL WAIT_VDP_HOOK
-;     CALL SET_VDP_HOOK_HL
-;     LD HL, PUTIMAGENMI
-;     CALL SET_VDP_HOOK
-;     CALL WAIT_VDP_HOOK
-;     RET
-
-; PUTIMAGENMI:
-;     CALL GET_VDP_HOOK
-
-; else
-
 PUTIMAGE:
-
-; endif
-
 PUTIMAGENMI2:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
 
     LD A, (CURRENTTILEMODE)
     CP 1
     RET Z
 
+@ENDIF
+
     LD A, D
     LD (IMAGEY), A
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
 
     LD A, (CURRENTMODE)
     CP 0
@@ -95,10 +74,18 @@ PUTIMAGE2X:
 PUTIMAGE3X:
     JP PUTIMAGEDONE
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 3 ))
+
 PUTIMAGE0:
 PUTIMAGE1:
 PUTIMAGE3:
     JP PUTIMAGEDONE
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) )
 
 PUTIMAGE2:
 
@@ -329,12 +316,18 @@ PUTIMAGE0CP2C:
 PUTIMAGEDONE:
     RET
 
+@ENDIF
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 PUTIMAGEFS:
 PUTIMAGEFSNMI2:
+
+@IF vestigialConfig.screenModeUnique
+
+@ELSE
 
     LD A, (CURRENTTILEMODE)
     CP 1
@@ -359,10 +352,18 @@ PUTIMAGEFS2X:
 PUTIMAGEFS3X:
     JP PUTIMAGEFSDONE
 
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) || ( currentMode == 1 ) || ( currentMode == 3 ))
+
 PUTIMAGEFS0:
 PUTIMAGEFS1:
 PUTIMAGEFS3:
     JP PUTIMAGEFSDONE
+
+@ENDIF
+
+@IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) )
 
 PUTIMAGEFS2:
 
@@ -494,3 +495,5 @@ PUTIMAGEMSC1FSLITERALL1:
     DEC B
     JR NZ, PUTIMAGEMSC1FSLITERALL1
     JP PUTIMAGEMSC1FSL1
+
+@ENDIF

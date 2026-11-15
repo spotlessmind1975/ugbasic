@@ -35,30 +35,7 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-; 			        NAME		COLOR		PATTERN
-; VDPUPDATE0: 		$1800		            $0000 (coleco)
-; VDPUPDATE1:		$1800		$0480		$0000 (coleco)
-; VDPUPDATE2:		$3800		$2000
-; VDPUPDATE3:		$3800		$2000		$0000
-
-; if __coleco__
-
-; TEXTATTILEMODE:
-;     CALL WAIT_VDP_HOOK
-;     CALL SET_VDP_HOOK_HL
-;     LD HL, TEXTATTILEMODENMI
-;     CALL SET_VDP_HOOK
-;     CALL WAIT_VDP_HOOK
-;     RET
-
-; TEXTATTILEMODENMI:
-;     CALL GET_VDP_HOOK
-
-; else
-
 TEXTATTILEMODE:
-
-; endif
 
 TEXTATTILEMODENMI2:
 
