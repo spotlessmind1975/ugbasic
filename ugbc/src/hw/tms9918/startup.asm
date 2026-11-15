@@ -58,6 +58,8 @@ VDPUNLOCK:
 
 VDPWRITEBIT: EQU     40H
 
+@IF !COLECO || !vestigialConfig.biosAllowed
+
 VDPRAMOUT:
         OUT     (VDPDATAPORTWRITE), A
         RET
@@ -156,6 +158,8 @@ VDPRAMOUT8:
         POP     BC
         RET
 
+@ENDIF
+
 VDPRAMIN:
         IN      A, (VDPDATAPORTREAD)
         RET
@@ -193,6 +197,8 @@ VDPSETREG:
         RET
 @ENDIF
 
+@IF !COLECO || !vestigialConfig.biosAllowed
+
 VDPOUTCHAR:
         CALL VDPLOCK
         PUSH AF
@@ -201,6 +207,20 @@ VDPOUTCHAR:
         CALL    VDPRAMOUT
         CALL VDPUNLOCK
         RET
+
+@ELSE
+
+VDPOUTCHAR:
+        PUSH HL
+        PUSH DE
+        LD HL, DE
+        LD DE, 1
+        CALL CBIOS_FILL_VRAM
+        POP DE
+        POP HL
+        RET
+
+@ENDIF
 
 VDPINCHAR:
         CALL VDPLOCK
