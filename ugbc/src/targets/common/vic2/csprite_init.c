@@ -107,7 +107,15 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
     if ( _environment->deployed.msprite ) {
         CRITICAL_CANNOT_MIX_SPRITES_MSPRITES();
     }
-    
+
+    Variable * image = variable_retrieve( _environment, _image );
+
+    int colorTransparency = COLOR_BLACK;
+
+    if ( _flags & SPRITE_FLAG_TRANSPARENCY_COLOR ) {
+        colorTransparency = _flags & 0x000f;
+    }
+
     Variable * index;
     Variable * startIndex;
     Variable * result = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
@@ -115,7 +123,6 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
     Variable * spriteCount;
 
     if ( _sprite ) {
-        outline0("; ---------------------------vvvvvvvv");
         index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
         cpu_move_8bit( _environment, index->realName, startIndex->realName );
@@ -127,29 +134,30 @@ Variable * csprite_init( Environment * _environment, char * _image, char * _spri
         cpu_math_sub_8bit( _environment, spriteCount->realName, startIndex->realName, spriteCount->realName );
         cpu_move_8bit( _environment, startIndex->realName, index->realName );
         cpu_move_8bit( _environment, startIndex->realName, spriteCount->realName );
-        outline0("; ---------------------------^^^^^^^^^^");
+
+        for (int i=0; i<image->originalColors; ++i ) {
+            if ( image->originalPalette[i].index == colorTransparency ) continue;
+            variable_move_naked( _environment, spriteCount->name, index->name );
+            Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
+            vic2_sprite_data_from( _environment, index->name, realImage->name );
+            cpu_inc( _environment, spriteCount->realName );
+            cpu_inc( _environment, index->realName );
+        }
+
     } else {
         index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );   
         startIndex = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
-        variable_move_naked( _environment, spriteCount->name, startIndex->name );
-    }
+        cpu_move_8bit( _environment, "SPRITECOUNT", startIndex->name );
 
-    Variable * image = variable_retrieve( _environment, _image );
+        for (int i=0; i<image->originalColors; ++i ) {
+            if ( image->originalPalette[i].index == colorTransparency ) continue;
+            cpu_move_8bit( _environment, "SPRITECOUNT", index->name );
+            Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
+            vic2_sprite_data_from( _environment, index->name, realImage->name );
+            cpu_inc( _environment, "SPRITECOUNT" );
+            cpu_inc( _environment, index->realName );
+        }
 
-    int colorTransparency = COLOR_BLACK;
-
-    if ( _flags & SPRITE_FLAG_TRANSPARENCY_COLOR ) {
-        colorTransparency = _flags & 0x000f;
-    }
-
-    for (int i=0; i<image->originalColors; ++i ) {
-        if ( image->originalPalette[i].index == colorTransparency ) continue;
-        variable_move_naked( _environment, spriteCount->name, index->name );
-        Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[i], _flags, 0, 0 );
-        vic2_sprite_data_from( _environment, index->name, realImage->name );
-        cpu_inc( _environment, spriteCount->realName );
-        cpu_inc( _environment, index->realName );
     }
 
     cpu_combine_nibbles( _environment, startIndex->realName, index->realName, result->realName );

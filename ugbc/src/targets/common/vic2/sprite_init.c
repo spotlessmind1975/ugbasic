@@ -147,10 +147,9 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
 
     } else {
 
-        Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
         index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        variable_move_naked( _environment, spriteCount->name, index->name );
-        cpu_inc( _environment, spriteCount->realName );
+        cpu_move_8bit( _environment, "SPRITECOUNT", index->name );
+        cpu_inc( _environment, "SPRITECOUNT" );
 
     }
 

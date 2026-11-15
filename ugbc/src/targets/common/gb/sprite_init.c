@@ -50,7 +50,6 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
 
     Variable * index;
     Variable * image = variable_retrieve( _environment, _image );
-    Variable * spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
 
     Variable * realImage = sprite_converter( _environment, image->originalBitmap, image->originalWidth, image->originalHeight, image->originalDepth, &image->originalPalette[1], _flags, 0, 0 );
 
@@ -58,8 +57,8 @@ Variable * sprite_init( Environment * _environment, char * _image, char * _sprit
         index = variable_retrieve_or_define( _environment, _sprite, VT_SPRITE, 0 );
     } else {
         index = variable_temporary( _environment, VT_SPRITE, "(sprite index)" );
-        variable_move_naked( _environment, spriteCount->name, index->name );
-        cpu_inc( _environment, spriteCount->realName );
+        cpu_move_8bit( _environment, "SPRITECOUNT", index->realName );
+        cpu_inc( _environment, "SPRITECOUNT" );
     }
 
     gb_sprite_data_from( _environment, index->name, realImage->name );

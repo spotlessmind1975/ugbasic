@@ -137,7 +137,6 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
     Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
 
     index = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
-    spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
     startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
 
     if ( _sprite ) {
@@ -145,8 +144,8 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
         cpu_move_8bit( _environment, original->realName, startIndex->realName );
         cpu_move_8bit( _environment, original->realName, result->realName );
     } else {
-        cpu_move_8bit( _environment, spriteCount->realName, startIndex->realName );
-        cpu_move_8bit( _environment, spriteCount->realName, result->realName );
+        cpu_move_8bit( _environment, "SPRITECOUNT", startIndex->realName );
+        cpu_move_8bit( _environment, "SPRITECOUNT", result->realName );
     }
 
     Variable * image = variable_retrieve( _environment, _image );
@@ -216,7 +215,7 @@ Variable * msprite_init( Environment * _environment, char * _image, char * _spri
                 // }
 
                 if ( ! _sprite ) {
-                    cpu_inc( _environment, spriteCount->realName );
+                    cpu_inc( _environment, "SPRITECOUNT" );
                 }
                 cpu_inc( _environment, startIndex->realName );
                 cpu_inc( _environment, index->realName );

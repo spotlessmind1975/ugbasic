@@ -59,10 +59,9 @@ Variable * msprite_duplicate( Environment * _environment, char * _original ) {
     Variable * result = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
 
     index = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );   
-    spriteCount = variable_retrieve( _environment, "SPRITECOUNT" );
     startIndex = variable_temporary( _environment, VT_MSPRITE, "(sprite index)" );
 
-    cpu_move_8bit( _environment, spriteCount->realName, result->realName );
+    cpu_move_8bit( _environment, "SPRITECOUNT", result->realName );
     cpu_move_8bit( _environment, address_displacement( _environment, original->realName, "1" ), address_displacement( _environment, result->realName, "1" ) );
 
     vic2_sprite_duplicate( _environment, result->name, original->name );
