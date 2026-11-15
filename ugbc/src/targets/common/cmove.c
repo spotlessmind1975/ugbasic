@@ -41,7 +41,12 @@
 void cmove_direct( Environment * _environment, int _dx, int _dy ) {
 
     if ( _dx ) {
-        Variable * consoleX1 = variable_retrieve( _environment, "CONSOLEX1" );
+        Variable * consoleX1 = variable_temporary( _environment, VT_BYTE, "(consolex1)" );
+        if ( _environment->consoleUsed ) {
+            cpu_move_8bit( _environment, "CONSOLEX1", consoleX1->realName );        
+        } else {
+            cpu_store_8bit( _environment, consoleX1->realName, 0 );
+        }
         Variable * consoleX2 = variable_sub_const( _environment, variable_retrieve( _environment, "CONSOLEX2" )->name, 1 );
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_temporary( _environment, VT_SBYTE, "(cmove hz)" );
@@ -50,7 +55,12 @@ void cmove_direct( Environment * _environment, int _dx, int _dy ) {
     }
 
     if ( _dy ) {
-        Variable * consoleY1 = variable_retrieve( _environment, "CONSOLEY1" );
+        Variable * consoleY1 = variable_temporary( _environment, VT_BYTE, "(consolex1)" );
+        if ( _environment->consoleUsed ) {
+            cpu_move_8bit( _environment, "CONSOLEY1", consoleY1->realName );        
+        } else {
+            cpu_store_8bit( _environment, consoleY1->realName, 0 );
+        }
         Variable * consoleY2 = variable_sub_const( _environment, variable_retrieve( _environment, "CONSOLEY2" )->name, 1 );
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_temporary( _environment, VT_SBYTE, "(cmove vt)" );
@@ -100,7 +110,12 @@ e offset positivi.
 void cmove( Environment * _environment, char * _dx, char * _dy ) {
 
     if ( _dx ) {
-        Variable * consoleX1 = variable_retrieve( _environment, "CONSOLEX1" );
+        Variable * consoleX1 = variable_temporary( _environment, VT_BYTE, "(consolex1)" );
+        if ( _environment->consoleUsed ) {
+            cpu_move_8bit( _environment, "CONSOLEX1", consoleX1->realName );        
+        } else {
+            cpu_store_8bit( _environment, consoleX1->realName, 0 );
+        }
         Variable * consoleX2 = variable_retrieve( _environment, "CONSOLEX2" );
         Variable * windowCX = variable_retrieve( _environment, "XCURSYS" );
         Variable * dx = variable_retrieve_or_define( _environment, _dx, VT_SBYTE, 0 );
@@ -108,7 +123,12 @@ void cmove( Environment * _environment, char * _dx, char * _dy ) {
     }
 
     if ( _dy ) {
-        Variable * consoleY1 = variable_retrieve( _environment, "CONSOLEY1" );
+        Variable * consoleY1 = variable_temporary( _environment, VT_BYTE, "(consolex1)" );
+        if ( _environment->consoleUsed ) {
+            cpu_move_8bit( _environment, "CONSOLEY1", consoleY1->realName );        
+        } else {
+            cpu_store_8bit( _environment, consoleY1->realName, 0 );
+        }
         Variable * consoleY2 = variable_retrieve( _environment, "CONSOLEY2" );;
         Variable * windowCY = variable_retrieve( _environment, "YCURSYS" );
         Variable * dy = variable_retrieve_or_define( _environment, _dy, VT_SBYTE, 0 );
