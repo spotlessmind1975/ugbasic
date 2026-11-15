@@ -35,6 +35,3 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-@IF deployed.random
-CPURANDOM_SEED:  defw $ff42,$ffea
-@ENDIF

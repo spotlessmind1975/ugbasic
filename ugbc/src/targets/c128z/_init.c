@@ -145,7 +145,7 @@ void target_initialization( Environment * _environment ) {
 
     // outhead0("SECTION code_user");
     // outhead0("ORG $1BFF");
-    // deploy_inplace( startup, src_hw_c128z_startup_asm);
+    deploy_preferred( startup, src_hw_c128z_startup_asm);
     // deploy_deferred( startup, src_hw_c128z_startup2_asm);
 
     // outhead0("CODESTART:")

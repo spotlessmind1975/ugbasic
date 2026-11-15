@@ -44,7 +44,7 @@ COLECOSTARTUP2:
 
     RET
 
-@IF deployed.random
+@IF deployed.random || deployed.embed.cpu_random
 section data_user
 CPURANDOM_SEED:  defw $ff42,$ffea
 section code_user

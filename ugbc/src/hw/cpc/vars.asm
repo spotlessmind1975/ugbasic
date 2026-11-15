@@ -53,7 +53,7 @@ TICKSPERSECOND: DEFB   60
 @ENDIF
 @ENDIF
 
-@IF deployed.random
+@IF deployed.random || deployed.embed.cpu_random
 CPURANDOM_SEED:  defw $ff42,$ffea
 @ENDIF
 

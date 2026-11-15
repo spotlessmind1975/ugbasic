@@ -431,6 +431,8 @@ const_factor:
 
         if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embed") == 0 && strcmp( $5, "cpu_call_indirect") == 0 ) {
             $$ = ((struct _Environment *)_environment)->deployed.embedded.cpu_call_indirect;
+        } else if ( strcmp( $1, "deployed") == 0 && strcmp( $3, "embed") == 0 && strcmp( $5, "cpu_random") == 0 ) {
+            $$ = ((struct _Environment *)_environment)->deployed.embedded.cpu_random;
         } else {            
             int valued = 0;
             int value = 0;

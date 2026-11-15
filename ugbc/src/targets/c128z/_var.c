@@ -435,10 +435,10 @@ void variable_cleanup( Environment * _environment ) {
     outhead0("JP CODESTART" );
     outhead0("DEFB $6C, $FC, $FF" );
 
-    deploy_inplace( startup, src_hw_c128z_startup_asm);
+    deploy_inplace_preferred( startup, src_hw_c128z_startup_asm);
     deploy_inplace_preferred( vdczstartup, src_hw_vdcz_startup_asm);
     deploy_inplace_preferred( bank, src_hw_c128z_bank_asm );
-    deploy( startup, src_hw_c128z_startup2_asm);
+    deploy( startup2, src_hw_c128z_startup2_asm);
 
     generate_cgoto_address_table( _environment );
 

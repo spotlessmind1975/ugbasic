@@ -231,6 +231,6 @@ SUB_HL_DE:
     POP     BC
     RET
 	
-@IF deployed.random
+@IF deployed.random || deployed.embed.cpu_random
 CPURANDOM_SEED:  defw $ff42,$ffea
 @ENDIF
