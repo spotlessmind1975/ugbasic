@@ -1733,7 +1733,7 @@ void zx_put_key(  Environment * _environment, char *_string, char * _size ) {
 void zx_wait_vbl( Environment * _environment, char * _raster_line ) {
 
     deploy_preferred( vars, src_hw_zx_vars_asm );
-    deploy( vbl, src_hw_zx_vbl_asm);
+    deploy_preferred( vbl, src_hw_zx_vbl_asm);
 
     if ( ! _raster_line ) {
         outline0("LD HL, 15624");

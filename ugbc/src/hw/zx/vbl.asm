@@ -49,6 +49,6 @@ WAITVBL1:
     CP $FF
     JR NZ, WAITVBL1
     EI
-    RE
-    T
+    RET
+    
 @ENDIF
