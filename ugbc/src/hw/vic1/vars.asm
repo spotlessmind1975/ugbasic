@@ -231,9 +231,9 @@ CONSOLEX1:    .byte 0         ; <-- input from program (chars)
 CONSOLEY1:    .byte 0         ; <-- input from program (chars)
 CONSOLESA:    .word 0         ; <-- calculated (address)
 @ELSE
-CONSOLEX1:    EQU 0
-CONSOLEY1:    EQU 0
-CONSOLESA:    EQU TEXTADDRESS
+CONSOLEX1 = 0
+CONSOLEY1 = 0
+CONSOLESA = TEXTADDRESS
 @ENDIF
 
 CONSOLEX2:    .byte 31        ; <-- recalculated (chars)
