@@ -543,6 +543,16 @@ SCREENMODE0:
         LD BC, $0000
         CALL CBIOS_VDPSETREG
 
+        ; Register 1 = xSI1 20XM = 0111 0010
+        ;     S = active display (0 = off, 1 = on)
+        ;     I = interrupt enable
+        ;     1 = M1 (1)
+        ;     2 = M2 (0)
+        ;     X = sprite size (0 = 8x8, 1  = 16x16)
+        ;     M = sprite magnification (0 = single, 1 = double)
+        LD BC, $0172
+        CALL CBIOS_VDPSETREG
+
         ; Register 2 = 0000NNNN = 00000110
         ;     N = starting name table (0..F x $0400) = $1800
         LD BC, $0206
@@ -572,16 +582,6 @@ SCREENMODE0:
         ;     F = fore color = 0x0f
         ;     B = back color = 0x01
         LD BC, $07f1
-        CALL CBIOS_VDPSETREG
-
-        ; Register 1 = xSI1 20XM = 0111 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (1)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $0172
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -655,108 +655,90 @@ SCREENMODE1:
 
 @IF COLECO && vestigialConfig.biosAllowed
 
-        ; Register 0 = 0000003E = 00000000
-        ;     3 = M3 (0)
-        ;     E = 0
+        ; • Name Table (Schermo): 0x1800 (768 byte)
+        ; • Color Table (Colori): 0x2000 (32 byte)
+        ; • Pattern Table (Caratteri): 0x0000 (2048 byte)
+        ; • Sprite Attribute Table: 0x1B00 (128 byte)
+        ; • Sprite Pattern Table: 0x3800 (2048 byte)
+
+        ; R0: M3=0 (Graphics I), Video esterno disabilitato
         LD BC, $0000
         CALL CBIOS_VDPSETREG
 
-        ; Register 2 = 0000NNNN = 00000110
-        ;     N = starting name table (0..F x $0400) = $1800
+        ; R1: 16KB VRAM, Schermo ON, Interrupt ON, M1=0, M2=0, Sprite 8x8
+        LD BC, $01e0
+        CALL CBIOS_VDPSETREG
+
+        ; R2: Name Table = 06h * 400h = 1800h
         LD BC, $0206
         CALL CBIOS_VDPSETREG
 
-        ; Register 3 = CCCCCCCC = 10000000
-        ;     C = starting name color table (0..FF x $40) = $0480
-        LD BC, $0312
+        ; R3: Color Table = 80h * 40h = 2000h
+        LD BC, $0380
         CALL CBIOS_VDPSETREG
 
-        ; Register 4 = xxxxxPPP = 00000000
-        ;     P = starting pattern table (x $800) = $0000
+        ; R4: Pattern Table = 00h * 800h = 0000h
         LD BC, $0400
         CALL CBIOS_VDPSETREG
 
-        ; Register 5 = xSSSSSSS = 00100000
-        ;     S = starting sprite attribute table (x $80) = $1000
-        LD BC, $0520
+        ; R5: Sprite Attribute Table = 36h * 80h = 1B00h
+        LD BC, $0536
         CALL CBIOS_VDPSETREG
 
-        ; Register 6 = xxxxxSSS = 00000000
-        ;     S = starting sprite table (x $800) = $0000
-        LD BC, $0600
+        ; R6: Sprite Pattern Table = 07h * 800h = 3800h
+        LD BC, $0607
         CALL CBIOS_VDPSETREG
 
-        ; Register 7 = FFFFBBBB = 11110001
-        ;     F = fore color = 0x0f
-        ;     B = back color = 0x01
-        LD BC, $07f1
-        CALL CBIOS_VDPSETREG
-
-        ; Register 1 = xSI1 20XM = 0110 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (0)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $0162
+        ; R7: Colore bordo = Nero (1)
+        LD BC, $0601
         CALL CBIOS_VDPSETREG
 
 @ELSE
 
-        ; Register 0 = 0000003E = 00000000
-        ;     3 = M3 (0)
-        ;     E = 0
+        ; • Name Table (Schermo): 0x1800 (768 byte)
+        ; • Color Table (Colori): 0x2000 (32 byte)
+        ; • Pattern Table (Caratteri): 0x0000 (2048 byte)
+        ; • Sprite Attribute Table: 0x1B00 (128 byte)
+        ; • Sprite Pattern Table: 0x3800 (2048 byte)
+
+        ; R0: M3=0 (Graphics I), Video esterno disabilitato
         LD E, VDP_R0
         LD A, $00
         CALL VDPSETREG
 
-        ; Register 2 = 0000NNNN = 00000110
-        ;     N = starting name table (0..F x $0400) = $1800
+        ; R1: 16KB VRAM, Schermo ON, Interrupt ON, M1=0, M2=0, Sprite 8x8
+        LD E, VDP_R1
+        LD A, $e2
+        CALL VDPSETREG
+
+        ; R2: Name Table = 06h * 400h = 1800h
         LD E, VDP_RNAME
         LD A, $06
         CALL VDPSETREG
 
-        ; Register 3 = CCCCCCCC = 10000000
-        ;     C = starting name color table (0..FF x $40) = $0480
+        ; R3: Color Table = 80h * 40h = 2000h
         LD E, VDP_RCOLORTABLE
-        LD A, $12
+        LD A, $80
         CALL VDPSETREG
 
-        ; Register 4 = xxxxxPPP = 00000000
-        ;     P = starting pattern table (x $800) = $0000
+        ; R4: Pattern Table = 00h * 800h = 0000h
         LD E, VDP_RPATTERN
         LD A, $00
         CALL VDPSETREG
 
-        ; Register 5 = xSSSSSSS = 00100000
-        ;     S = starting sprite attribute table (x $80) = $1000
+        ; R5: Sprite Attribute Table = 36h * 80h = 1B00h
         LD E, VDP_RSPRITEA
-        LD A, $20
+        LD A, $36
         CALL VDPSETREG
 
-        ; Register 6 = xxxxxSSS = 00000000
-        ;     S = starting sprite table (x $800) = $0000
+        ; R6: Sprite Pattern Table = 07h * 800h = 3800h
         LD E, VDP_RSPRITEP
-        LD A, $00
+        LD A, $07
         CALL VDPSETREG
 
-        ; Register 7 = FFFFBBBB = 11110001
-        ;     F = fore color = 0x0f
-        ;     B = back color = 0x01
+        ; R7: Colore bordo = Nero (1)
         LD E, VDP_RCOLOR
-        LD A, $F1
-        CALL VDPSETREG
-
-        ; Register 1 = xSI1 20XM = 0110 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (0)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD E, VDP_R1
-        LD A, $62
+        LD A, $01
         CALL VDPSETREG
 
 @ENDIF
