@@ -655,14 +655,19 @@ void variable_cleanup( Environment * _environment ) {
 
     outline0("JMP CODESTART2");
 
-    deploy_inplace_preferred( startup, src_hw_msx1_startup_asm);
     deploy_inplace_preferred( tms9918vars, src_hw_tms9918_vars_asm);
     deploy_inplace_preferred( tms9918startup, src_hw_tms9918_startup_asm);
     deploy_inplace_preferred( bank, src_hw_msx1_bank_asm);
     deploy_inplace_preferred( vScrollTextUp, src_hw_tms9918_vscroll_text_up_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_tms9918_text_asm );
     deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_tms9918_text_at_text_raw_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_tms9918_text_at_text_asm );
+    deploy_inplace_preferred( textEncodedAtGraphicRaw, src_hw_tms9918_text_at_graphic_raw_asm );
+    deploy_inplace_preferred( textEncodedAtGraphic, src_hw_tms9918_text_at_graphic_asm );
 
     buffered_prepend_output( _environment );
+
+    deploy_inplace_preferred( startup, src_hw_msx1_startup_asm);
 
     variable_on_memory_init( _environment, 1 );
 
