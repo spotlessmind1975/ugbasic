@@ -157,7 +157,7 @@ void generate_atr( Environment * _environment ) {
     strcat( temporaryPath, " " );
     temporaryPath[strlen(temporaryPath)-1] = PATH_SEPARATOR;
 
-    char bootCodeFilename[MAX_TEMPORARY_STORAGE];
+    char bootCodeFilename[MAX_TEMPORARY_STORAGE*2];
     sprintf( bootCodeFilename, "%sBOOTCODE", temporaryPath );
 
     remove( bootCodeFilename );
