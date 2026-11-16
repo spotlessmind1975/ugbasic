@@ -44,7 +44,7 @@ REVISION := "$(shell git describe --abbrev=9 --always)"
 FLEX_VERSION=$(shell flex --version)
 FLEX_OPTIONS=--8bit 
 BISON_OPTIONS=-d
-CFLAGS=-O3 -fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
+CFLAGS=-fomit-frame-pointer -I $(LIBXML2PATH)/include -D LIBXML_STATIC -DUGBASIC_REVISION=\"$(REVISION)\"
 LFLAGS=
 LIBS=$(LIBXML2)
 
@@ -428,6 +428,11 @@ ifneq ($(OS),Windows_NT)
 ifeq ($(debug),1)
 CFLAGS += -D_DEBUG -g
 endif
+endif
+
+ifeq ($(fast),1)
+else
+CFLAGS += -O3
 endif
 
 # ----------------------------------------------------------------------------
@@ -1283,7 +1288,7 @@ compiler:
 
 objs.$(target)/%.o: %.c src-generated/ugbc.yy.c src-generated/ugbc.tab.c src-generated/ugbc.embed.yy.c src-generated/ugbc.embed.tab.c src-generated/modules_$(target).c
 	@mkdir -p $(dir $@)
-	@$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
+	$(CC) $(CFLAGS) -D__$(target)__  -c $< -o $@
 
 tester: $(SOURCESTEST)
 	@$(CC) $(LFLAGS) $(CFLAGS) -D__$(target)__ $(SOURCESTEST) -o exe-test/ugbc.$(target)$(UGBCEXESUFFIX) -lm $(LIBS)
