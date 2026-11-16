@@ -36,29 +36,39 @@
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 VDPFILLA:
+
 @IF !COLECO || !vestigialConfig.biosAllowed
-        CALL VDPLOCK
-        PUSH    AF
-        CALL    VDPWRITEADDR
-        POP     AF
+
+    CALL VDPLOCK
+    PUSH    AF
+    CALL    VDPWRITEADDR
+    POP     AF
 VDPFILLALOOP:
-        CALL    VDPRAMOUT
-        DEC     C
-        INC     A
-        JP      NZ, VDPFILLALOOP
-        DJNZ    VDPFILLALOOP
-        CALL VDPUNLOCK
+    CALL    VDPRAMOUT
+    INC     A
+    DEC     C
+    JP      NZ, VDPFILLALOOP
+    DJNZ    VDPFILLALOOP
+    CALL VDPUNLOCK
 
 @ELSE
+
     LD HL, DE
 VDPFILLALOOP:
     LD DE, 1
+    PUSH BC
+    PUSH AF
     CALL CBIOS_FILL_VRAM
-    DEC     C
+    POP AF
+    POP BC
+    INC     HL
     INC     A
+    DEC     C
     JP      NZ, VDPFILLALOOP
     DJNZ    VDPFILLALOOP
+
 @ENDIF
+
     RET
 
 CLSG:
