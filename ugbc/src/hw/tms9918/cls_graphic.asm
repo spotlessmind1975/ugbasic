@@ -39,8 +39,8 @@ VDPFILLA:
 
 @IF !COLECO || !vestigialConfig.biosAllowed
 
-    CALL VDPLOCK
     PUSH    AF
+    CALL VDPLOCK
     CALL    VDPWRITEADDR
     POP     AF
 VDPFILLALOOP:
