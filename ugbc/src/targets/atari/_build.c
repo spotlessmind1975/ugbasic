@@ -186,16 +186,16 @@ void generate_atr( Environment * _environment ) {
 #endif
     system_call( _environment, commandLine );
 
-    char mainFilename[MAX_TEMPORARY_STORAGE];
+    char mainFilename[MAX_TEMPORARY_STORAGE*2];
     sprintf( mainFilename, "%sMAIN.EXE", temporaryPath );
 
-    char dos25Filename[MAX_TEMPORARY_STORAGE];
+    char dos25Filename[MAX_TEMPORARY_STORAGE*2];
     sprintf( dos25Filename, "%sDOS.SYS", temporaryPath );
 
-    char dup25Filename[MAX_TEMPORARY_STORAGE];
+    char dup25Filename[MAX_TEMPORARY_STORAGE*2];
     sprintf( dup25Filename, "%sDUP.SYS", temporaryPath );
 
-    char atrFileName[MAX_TEMPORARY_STORAGE];
+    char atrFileName[MAX_TEMPORARY_STORAGE*2];
     strcopy( atrFileName, _environment->exeFileName );
     char * p = strstr( atrFileName, ".atr" );
     if ( !p ) {

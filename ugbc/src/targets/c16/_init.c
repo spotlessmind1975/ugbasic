@@ -75,14 +75,11 @@ void target_initialization( Environment * _environment ) {
         exit(EXIT_FAILURE);
     }
 
-    outhead0(".segment \"CODE\"");
-
-    outhead0("CODESTART:");
-
-    deploy( vars, src_hw_c16_vars_asm);
+    deploy_preferred( vars, src_hw_c16_vars_asm);
     deploy_preferred( vars2, src_hw_c16_vars2_asm);
     deploy_deferred( startup, src_hw_c16_startup_asm);
 
+    outhead0("CODESTART2:");
     cpu_call( _environment, "C16STARTUP" );
 
     setup_text_variables( _environment );

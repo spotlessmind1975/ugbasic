@@ -706,10 +706,18 @@ void variable_cleanup( Environment * _environment ) {
         }
     }
 
+    buffered_push_output( _environment );
+
+    outhead0(".segment \"CODE\"");
+    outhead0("CODESTART:");
+    cpu_jump( _environment, "CODESTART2" );
+
+    deploy_inplace_preferred( vars, src_hw_c16_vars_asm);
     deploy_inplace_preferred( vars2, src_hw_c16_vars2_asm );
+    deploy_inplace_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_inplace_preferred( tedstartup, src_hw_ted_startup_asm );
 
-    outhead0(".segment \"CODE\"" );
+    buffered_prepend_output( _environment );
 
     variable_on_memory_init( _environment, 0 );
 

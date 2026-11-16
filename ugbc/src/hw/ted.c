@@ -1070,7 +1070,7 @@ void ted_charset_at( Environment * _environment, char * _address ) {
 
 void ted_pset_int( Environment * _environment, int _x, int _y, int *_c ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
@@ -1109,7 +1109,7 @@ void ted_pset_vars( Environment * _environment, char *_x, char *_y, char *_c ) {
         c = variable_retrieve( _environment, "PEN" );
     }
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
@@ -1141,7 +1141,7 @@ void ted_pget_color_vars( Environment * _environment, char *_x, char *_y, char *
     Variable * y = variable_retrieve( _environment, _y );
     Variable * result = variable_retrieve( _environment, _result );
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( plot, src_hw_ted_plot_asm );
     
@@ -1380,7 +1380,7 @@ void ted_scroll_text( Environment * _environment, int _direction, int _overlap )
 
 void ted_scroll( Environment * _environment, int _dx, int _dy ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( scroll, src_hw_ted_scroll_asm);
     deploy( textHScroll, src_hw_ted_hscroll_text_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
@@ -1395,7 +1395,7 @@ void ted_scroll( Environment * _environment, int _dx, int _dy ) {
 
 void ted_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy( vScrollText, src_hw_ted_vscroll_text_asm );
     deploy( textEncodedAt, src_hw_ted_text_at_asm );
 
@@ -1421,7 +1421,7 @@ void ted_text( Environment * _environment, char * _text, char * _text_size, int 
 
 void ted_initialization( Environment * _environment ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     variable_import( _environment, "CURRENTMODE", VT_BYTE, 0 );
@@ -2060,7 +2060,7 @@ static void ted_load_image_address_to_register( Environment * _environment, char
 
 void ted_put_image( Environment * _environment, Resource * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _flags ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( putimage, src_hw_ted_put_image_asm );
 
@@ -2094,7 +2094,7 @@ void ted_put_image( Environment * _environment, Resource * _image, char * _x, ch
 
 void ted_blit_image( Environment * _environment, char * _sources[], int _source_count, char * _blit, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _flags ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( blitimage, src_hw_ted_blit_image_asm );
 
@@ -2251,7 +2251,7 @@ Variable * ted_new_sequence( Environment * _environment, int _sequences, int _fr
 
 void ted_get_image( Environment * _environment, char * _image, char * _x, char * _y, char * _frame, char * _sequence, int _frame_size, int _frame_count, int _palette ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
     deploy( getimage, src_hw_ted_get_image_asm );
 
@@ -2274,7 +2274,7 @@ void ted_get_image( Environment * _environment, char * _image, char * _x, char *
 
 void ted_put_tile( Environment * _environment, char * _tile, char * _x, char * _y ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tiles, src_hw_ted_tiles_asm );
 
     outline1("LDA %s", _tile );
@@ -2299,7 +2299,7 @@ void ted_move_tiles( Environment * _environment, char * _tile, char * _x, char *
     Variable * x = variable_retrieve( _environment, _x );
     Variable * y = variable_retrieve( _environment, _y );
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tiles, src_hw_ted_tiles_asm );
 
     outline1("LDA %s", tile->realName );
@@ -2336,7 +2336,7 @@ void ted_move_tiles( Environment * _environment, char * _tile, char * _x, char *
 
 void ted_put_tiles( Environment * _environment, char * _tile, char * _x, char * _y, char *_w, char *_h ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tiles, src_hw_ted_tiles_asm );
 
     outline1("LDA %s", _tile );
@@ -2364,7 +2364,7 @@ void ted_put_tiles( Environment * _environment, char * _tile, char * _x, char * 
 
 void ted_tile_at( Environment * _environment, char * _x, char * _y, char * _result ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tiles, src_hw_ted_tiles_asm );
 
     outline1("LDA %s", _x );
@@ -2381,7 +2381,7 @@ void ted_tile_at( Environment * _environment, char * _x, char * _y, char * _resu
 
 void ted_use_tileset( Environment * _environment, char * _tileset ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tiles, src_hw_ted_tiles_asm );
 
     outline1("LDA %s", _tileset );
@@ -2423,7 +2423,7 @@ static unsigned int SOUND_FREQUENCIES[] = {
 
 void ted_start( Environment * _environment, int _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels & 0x01 ) {
@@ -2437,7 +2437,7 @@ void ted_start( Environment * _environment, int _channels ) {
 
 void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDX #%2.2x", ( _volume & 0x0f ) );
@@ -2576,7 +2576,7 @@ void ted_set_volume( Environment * _environment, int _channels, int _volume ) {
 
 void ted_set_program( Environment * _environment, int _channels, int _program ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     switch (_program) {
@@ -2782,7 +2782,7 @@ void ted_set_parameter( Environment * _environment, int _channels, int _paramete
 
 void ted_set_frequency( Environment * _environment, int _channels, int _frequency ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_FREQUENCY( _channels, _frequency );
@@ -2791,7 +2791,7 @@ void ted_set_frequency( Environment * _environment, int _channels, int _frequenc
 
 void ted_set_pitch( Environment * _environment, int _channels, int _pitch ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_PITCH( _channels, _pitch );
@@ -2806,7 +2806,7 @@ void ted_set_note( Environment * _environment, int _channels, int _note ) {
 
 void ted_stop( Environment * _environment, int _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     STOP_FREQUENCY( _channels );
@@ -2815,7 +2815,7 @@ void ted_stop( Environment * _environment, int _channels ) {
 
 void ted_start_var( Environment * _environment, char * _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
@@ -2829,7 +2829,7 @@ void ted_start_var( Environment * _environment, char * _channels ) {
 
 void ted_set_volume_vars( Environment * _environment, char * _channels, char * _volume ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDA %s", _volume );
@@ -2844,7 +2844,7 @@ void ted_set_volume_vars( Environment * _environment, char * _channels, char * _
 
 void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _volume ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDX #$%2.2x", _volume );
@@ -2854,7 +2854,7 @@ void ted_set_volume_semi_var( Environment * _environment, char * _channel, int _
 
 void ted_set_program_semi_var( Environment * _environment, char * _channels, int _program ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     switch (_program) {
@@ -3056,7 +3056,7 @@ void ted_set_program_semi_var( Environment * _environment, char * _channels, int
 
 void ted_set_frequency_vars( Environment * _environment, char * _channels, char * _frequency ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
@@ -3073,7 +3073,7 @@ void ted_set_frequency_vars( Environment * _environment, char * _channels, char 
 
 void ted_set_pitch_vars( Environment * _environment, char * _channels, char * _pitch ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
@@ -3090,7 +3090,7 @@ void ted_set_pitch_vars( Environment * _environment, char * _channels, char * _p
 
 void ted_set_note_vars( Environment * _environment, char * _channels, char * _note ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline0("LDA #<TEDFREQTABLE");
@@ -3119,7 +3119,7 @@ void ted_set_note_vars( Environment * _environment, char * _channels, char * _no
 
 void ted_stop_vars( Environment * _environment, char * _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline1("LDA %s", _channels );
@@ -3129,7 +3129,7 @@ void ted_stop_vars( Environment * _environment, char * _channels ) {
 
 void ted_music( Environment * _environment, char * _music, int _size, int _loop ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     outline0("SEI");
@@ -3168,7 +3168,7 @@ int ted_palette_extract( Environment * _environment, char * _data, int _width, i
 
 void ted_flip_image( Environment * _environment, Resource * _image, char * _frame, char * _sequence, int _frame_size, int _frame_count, char * _direction ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm);
+    deploy_preferred( tedvars, src_hw_ted_vars_asm);
     deploy( tedvarsGraphic, src_hw_ted_vars_graphic_asm );
 
     if ( strcmp( _direction, "#FLIPIMAGEDIRECTION0001" ) == 0 || strcmp( _direction, "#FLIPIMAGEDIRECTION0003" ) == 0 ) {
@@ -3212,7 +3212,7 @@ void ted_flip_image( Environment * _environment, Resource * _image, char * _fram
 
 void ted_set_duration( Environment * _environment, int _channels, int _duration ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     PROGRAM_DURATION( _channels, _duration );
@@ -3221,7 +3221,7 @@ void ted_set_duration( Environment * _environment, int _channels, int _duration 
 
 void ted_wait_duration( Environment * _environment, int _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     WAIT_DURATION( _channels );
@@ -3230,7 +3230,7 @@ void ted_wait_duration( Environment * _environment, int _channels ) {
 
 void ted_set_duration_vars( Environment * _environment, char * _channels, char * _duration ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
 
     if ( _channels ) {
@@ -3252,7 +3252,7 @@ void ted_set_duration_vars( Environment * _environment, char * _channels, char *
 
 void ted_wait_duration_vars( Environment * _environment, char * _channels ) {
 
-    deploy( tedvars, src_hw_ted_vars_asm );
+    deploy_preferred( tedvars, src_hw_ted_vars_asm );
     deploy_preferred( tedstartup, src_hw_ted_startup_asm );
     
     if ( _channels ) {
