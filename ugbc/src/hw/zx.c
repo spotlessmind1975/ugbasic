@@ -138,7 +138,7 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
     outline1("LD IXL, $%2.2x", ( _overlap & 0xff ) );
 
     deploy_preferred( vars,src_hw_zx_vars_asm);
-    deploy( vScroll,src_hw_zx_vscroll_asm );
+    deploy_preferred( vScroll,src_hw_zx_vscroll_asm );
 
     outline0("CALL VSCROLL");
 
@@ -147,8 +147,8 @@ void zx_vscroll( Environment * _environment, int _displacement, int _overlap ) {
 void zx_text( Environment * _environment, char * _text, char * _text_size, int _raw ) {
 
     deploy_preferred( vars,src_hw_zx_vars_asm);
-    deploy( vScroll, src_hw_zx_vscroll_asm );
-    deploy( textEncodedAt, src_hw_zx_text_at_asm );
+    deploy_preferred( vScroll, src_hw_zx_vscroll_asm );
+    deploy_preferred( textEncodedAt, src_hw_zx_text_at_asm );
     deploy( cls, src_hw_zx_cls_asm );
 
     //cpu_move_8bit( _environment, _tab, "TABCOUNT");
@@ -159,10 +159,10 @@ void zx_text( Environment * _environment, char * _text, char * _text_size, int _
     outline1("LD HL, (%s)", _text );
 
     if ( _raw ) {
-        deploy( textEncodedAtTextRaw, src_hw_zx_text_at_text_raw_asm );
+        deploy_preferred( textEncodedAtTextRaw, src_hw_zx_text_at_text_raw_asm );
         outline0("CALL TEXTATRAW");
     } else {
-        deploy( textEncodedAtText, src_hw_zx_text_at_text_asm );
+        deploy_preferred( textEncodedAtText, src_hw_zx_text_at_text_asm );
         outline0("CALL TEXTAT");
     } 
 

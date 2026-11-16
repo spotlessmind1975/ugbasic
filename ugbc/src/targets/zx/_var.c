@@ -393,6 +393,10 @@ void variable_cleanup( Environment * _environment ) {
         
     deploy_inplace_preferred( vars,src_hw_zx_vars_asm);
     deploy_inplace_preferred( vbl, src_hw_zx_vbl_asm);
+    deploy_inplace_preferred( vScroll, src_hw_zx_vscroll_asm );
+    deploy_inplace_preferred( textEncodedAt, src_hw_zx_text_at_asm );
+    deploy_inplace_preferred( textEncodedAtTextRaw, src_hw_zx_text_at_text_raw_asm );
+    deploy_inplace_preferred( textEncodedAtText, src_hw_zx_text_at_text_asm );
 
     for(i=0; i<BANK_TYPE_COUNT; ++i) {
         Bank * actual = _environment->banks[i];

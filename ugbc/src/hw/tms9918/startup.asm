@@ -473,6 +473,8 @@ TMS9918SPRITEINITL1:
 
 @IF waitVblUsed
 
+VBLFLAG:        DEFB $00
+
 WAITVBL:
         LD A, 0
         LD (VBLFLAG), A
