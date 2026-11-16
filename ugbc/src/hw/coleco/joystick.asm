@@ -74,6 +74,14 @@ section code_user
         JR Z, WAITFIRE
         RET
 
+    JFIRE:
+        CALL CBIOS_POLLER
+        LD A, (CONTROLLER_BUFFER+2)
+        LD B, A
+        LD A, (CONTROLLER_BUFFER+7)
+        OR B
+        RET
+
 @ELSE
 
 @IF joystickConfig.values

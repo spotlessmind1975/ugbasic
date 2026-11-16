@@ -47,7 +47,8 @@ Variable * joy_direction_semivars( Environment * _environment, char * _port, int
     Variable * result = variable_temporary( _environment, joyResultType, "(result of J*)" );
 
     if ( _environment->vestigialConfig.biosAllowed ) {
-        coleco_joy_direction_semivars( _environment, _port, _direction, result->realName );
+        Variable * port = variable_retrieve_or_define( _environment, _port, VT_BYTE, 0 );
+        coleco_joy_direction_semivars( _environment, port->realName, _direction, result->realName );
     } else {
         MAKE_LABEL
         Variable * value = joy_vars( _environment, _port );

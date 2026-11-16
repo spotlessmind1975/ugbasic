@@ -81,6 +81,3 @@ IFDEF TEXTADDRESS
 BITMAPADDRESS: EQU TEXTADDRESS
 ENDIF
 
-section data_user
-DOJOERROR:           DEFB   0
-section code_user
