@@ -170,7 +170,7 @@ VDPPOS:
     EXX
     POP DE
 
-    LD HL, $2000
+    LD HL, (COLORMAPADDRESS)
     PUSH DE
     LD D, 0
     SRL E

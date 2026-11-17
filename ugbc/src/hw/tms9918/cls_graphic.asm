@@ -35,42 +35,6 @@
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-VDPFILLA:
-
-@IF !COLECO || !vestigialConfig.biosAllowed
-
-    PUSH    AF
-    CALL VDPLOCK
-    CALL    VDPWRITEADDR
-    POP     AF
-VDPFILLALOOP:
-    CALL    VDPRAMOUT
-    INC     A
-    DEC     C
-    JP      NZ, VDPFILLALOOP
-    DJNZ    VDPFILLALOOP
-    CALL VDPUNLOCK
-
-@ELSE
-
-    LD HL, DE
-VDPFILLALOOP:
-    LD DE, 1
-    PUSH BC
-    PUSH AF
-    CALL CBIOS_FILL_VRAM
-    POP AF
-    POP BC
-    INC     HL
-    INC     A
-    DEC     C
-    JP      NZ, VDPFILLALOOP
-    DJNZ    VDPFILLALOOP
-
-@ENDIF
-
-    RET
-
 CLSG:
 CLSGNMI2:
 
@@ -89,11 +53,6 @@ CLSGNMI2:
     RET Z
 
 @ENDIF
-
-    LD A, 0
-    LD DE, (TEXTADDRESS)
-    LD BC, 256*3
-    CALL VDPFILLA
 
 @IF COLECO && vestigialConfig.biosAllowed
     LD HL, (PATTERNADDRESS)

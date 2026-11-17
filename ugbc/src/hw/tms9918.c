@@ -704,7 +704,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             cpu_store_16bit( _environment, "TEXTADDRESS", 6 * 0x0400 );
 
-            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x0480 );
+            cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
 
             // cpu_store_16bit( _environment, "PATTERNADDRESS", 0x0000 );
 
@@ -727,7 +727,7 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
             _environment->screenColors = 16;    
             _environment->currentModeBW = 1;
 
-            cpu_store_16bit( _environment, "TEXTADDRESS", 0x0e * 0x0400 );
+            cpu_store_16bit( _environment, "TEXTADDRESS", 0x1800 );
 
             cpu_store_16bit( _environment, "COLORMAPADDRESS", 0x2000 );
 
@@ -735,8 +735,8 @@ int tms9918_screen_mode_enable( Environment * _environment, ScreenMode * _screen
 
             outline0("CALL SCREENMODE2");
 
-            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x3b00 );
-            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x1800 );
+            cpu_store_16bit( _environment, "SPRITEAADDRESS", 0x1B00 );
+            cpu_store_16bit( _environment, "SPRITEADDRESS", 0x3800 );
 
             font_descriptors_init( _environment, 0 );
 

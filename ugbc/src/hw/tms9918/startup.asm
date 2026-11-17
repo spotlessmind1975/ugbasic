@@ -529,6 +529,9 @@ CONSOLECALCULATEL10:
 ;  0  1  0 Multicolor Mode   (3)
 ;  1  0  0 Text Mode         (0)
 
+@EMIT defaultPenColor
+@EMIT defaultPaperColor
+
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 0 ) )
 
 SCREENMODE0:
@@ -581,7 +584,7 @@ SCREENMODE0:
         ; Register 7 = FFFFBBBB = 11110001
         ;     F = fore color = 0x0f
         ;     B = back color = 0x01
-        LD BC, $07f1
+        LD BC, $0700 + ( defaultPenColor * 16 ) + defaultPaperColor
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -592,6 +595,17 @@ SCREENMODE0:
         LD E, VDP_R0
         LD A, $00
         CALL VDPSETREG
+
+        ; Register 1 = xSI1 20XM = 0111 0010
+        ;     S = active display (0 = off, 1 = on)
+        ;     I = interrupt enable
+        ;     1 = M1 (1)
+        ;     2 = M2 (0)
+        ;     X = sprite size (0 = 8x8, 1  = 16x16)
+        ;     M = sprite magnification (0 = single, 1 = double)
+        LD E, VDP_R1
+        LD A, $72
+        CALL VDPSETREG        
 
         ; Register 2 = 0000NNNN = 00000110
         ;     N = starting name table (0..F x $0400) = $1800
@@ -627,19 +641,10 @@ SCREENMODE0:
         ;     F = fore color = 0x0f
         ;     B = back color = 0x01
         LD E, VDP_RCOLOR
-        LD A, $F1
+        LD A, ( defaultPenColor * 16 ) + defaultPaperColor
         CALL VDPSETREG
 
-        ; Register 1 = xSI1 20XM = 0111 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (1)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD E, VDP_R1
-        LD A, $72
-        CALL VDPSETREG
+
 
 @ENDIF
 
@@ -690,7 +695,7 @@ SCREENMODE1:
         CALL CBIOS_VDPSETREG
 
         ; R7: Colore bordo = Nero (1)
-        LD BC, $0601
+        LD BC, $0700 + defaultPaperColor
         CALL CBIOS_VDPSETREG
 
 @ELSE
@@ -738,7 +743,7 @@ SCREENMODE1:
 
         ; R7: Colore bordo = Nero (1)
         LD E, VDP_RCOLOR
-        LD A, $01
+        LD A, defaultPaperColor
         CALL VDPSETREG
 
 @ENDIF
@@ -749,6 +754,42 @@ SCREENMODE1:
 
 @IF ( !vestigialConfig.screenModeUnique ) || ( ( currentMode == 2 ) || ( currentMode == 3 ) )
 
+VDPFILLA:
+
+@IF !COLECO || !vestigialConfig.biosAllowed
+
+        PUSH    AF
+        CALL VDPLOCK
+        CALL    VDPWRITEADDR
+        POP     AF
+VDPFILLALOOP:
+        CALL    VDPRAMOUT
+        INC     A
+        DEC     C
+        JP      NZ, VDPFILLALOOP
+        DJNZ    VDPFILLALOOP
+        CALL VDPUNLOCK
+
+@ELSE
+
+        LD HL, DE
+VDPFILLALOOP:
+        LD DE, 1
+        PUSH BC
+        PUSH AF
+        CALL CBIOS_FILL_VRAM
+        POP AF
+        POP BC
+        INC     HL
+        INC     A
+        DEC     C
+        JP      NZ, VDPFILLALOOP
+        DJNZ    VDPFILLALOOP
+
+@ENDIF
+
+        RET
+
 SCREENMODE2:
 SCREENMODE3:
 
@@ -756,115 +797,98 @@ SCREENMODE3:
 
 @IF COLECO && vestigialConfig.biosAllowed
 
-        ; Register 0 = 0000003E = 00000010
-        ;     3 = M3 (1)
-        ;     E = 0
+        ; • Name Table (Schermo): 0x1800 (768 byte)
+        ; • Color Table (Colori): 0x2000 (6144 byte)
+        ; • Pattern Table (Grafica): 0x0000 (6144 byte)
+        ; • Sprite Attribute Table: 0x1B00 (128 byte)
+        ; • Sprite Pattern Table: 0x3800 (2048 byte)
+
+        ; R0: M3=1 (Abilita Graphics II)
         LD BC, $0002
         CALL CBIOS_VDPSETREG
 
-        ; Register 2 = 0000NNNN = 00001110
-        ;     N = starting name table (0..F x $0400) = $3800
-        LD BC, $020e
+        ; R1: 16KB VRAM, Schermo ON, Interrupt ON, M1=0, M2=0
+        LD BC, $01e2
         CALL CBIOS_VDPSETREG
 
-        ; Register 3 = Cxxxxxxxx = 11111111
-        ;     C = starting name color table
-        ;           $7f = $0000
-        ;           $ff = $2000
+        ; R2: Name Table = 1800h
+        LD BC, $0206
+        CALL CBIOS_VDPSETREG
+
+        ; R3: Color Table = 2000h (Maschera bit completa per 6KB)
         LD BC, $03ff
         CALL CBIOS_VDPSETREG
 
-        ; Register 4 = xxxxxPPP = 00000011
-        ;     P = starting pattern table (x $800) = $1800
-        LD BC, $0403
+        ; R4: Pattern Table = 0000h (Maschera bit completa per 6KB)
+        LD BC, $0400
         CALL CBIOS_VDPSETREG
 
-        ; Register 5 = xSSSSSSS = 001110110
-        ;     S = starting sprite attribute table (x $80) = $3B00
-        LD BC, $0576
+        ; R5: Sprite Attribute Table = 1B00h
+        LD BC, $0536
         CALL CBIOS_VDPSETREG
 
-        ; Register 6 = xxxxxSSS = 00000011
-        ;     S = starting sprite table (x $800) = $1800
-        LD BC, $0603
+        ; R6: Sprite Pattern Table = 3800h
+        LD BC, $0607
         CALL CBIOS_VDPSETREG
 
-        ; Register 7 = FFFFBBBB = 11110001
-        ;     F = fore color = 0x0f
-        ;     B = back color = 0x01
-        LD BC, $07f1
-        CALL CBIOS_VDPSETREG
-
-        ; Register 1 = xSI1 20XM = 0110 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (0)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD BC, $0162
+        ; R7: Colore bordo = Nero (1)
+        LD BC, $0700 + defaultPaperColor
         CALL CBIOS_VDPSETREG
 
 @ELSE
 
-        ; Register 0 = 0000003E = 00000010
-        ;     3 = M3 (1)
-        ;     E = 0
+        ; • Name Table (Schermo): 0x1800 (768 byte)
+        ; • Color Table (Colori): 0x2000 (6144 byte)
+        ; • Pattern Table (Grafica): 0x0000 (6144 byte)
+        ; • Sprite Attribute Table: 0x1B00 (128 byte)
+        ; • Sprite Pattern Table: 0x3800 (2048 byte)
+
+        ; R0: M3=1 (Abilita Graphics II)
         LD E, VDP_R0
         LD A, $02
         CALL VDPSETREG
 
-        ; Register 2 = 0000NNNN = 00001110
-        ;     N = starting name table (0..F x $0400) = $3800
-        LD E, VDP_RNAME
-        LD A, $0e
+        ; R1: 16KB VRAM, Schermo ON, Interrupt ON, M1=0, M2=0
+        LD E, VDP_R1
+        LD A, $e2
         CALL VDPSETREG
 
-        ; Register 3 = Cxxxxxxxx = 11111111
-        ;     C = starting name color table
-        ;           $7f = $0000
-        ;           $ff = $2000
+        ; R2: Name Table = 1800h
+        LD E, VDP_RNAME
+        LD A, $06
+        CALL VDPSETREG
+
+        ; R3: Color Table = 2000h (Maschera bit completa per 6KB)
         LD E, VDP_RCOLORTABLE
         LD A, $ff
         CALL VDPSETREG
 
-        ; Register 4 = xxxxxPPP = 00000011
-        ;     P = starting pattern table (x $800) = $1800
+        ; R4: Pattern Table = 0000h (Maschera bit completa per 6KB)
         LD E, VDP_RPATTERN
-        LD A, $03
+        LD A, $00
         CALL VDPSETREG
 
-        ; Register 5 = xSSSSSSS = 001110110
-        ;     S = starting sprite attribute table (x $80) = $3B00
+        ; R5: Sprite Attribute Table = 1B00h
         LD E, VDP_RSPRITEA
-        LD A, $76
+        LD A, $36
         CALL VDPSETREG
 
-        ; Register 6 = xxxxxSSS = 00000011
-        ;     S = starting sprite table (x $800) = $1800
+        ; R6: Sprite Pattern Table = 3800h
         LD E, VDP_RSPRITEP
-        LD A, $03
+        LD A, $07
         CALL VDPSETREG
 
-        ; Register 7 = FFFFBBBB = 11110001
-        ;     F = fore color = 0x0f
-        ;     B = back color = 0x01
+        ; R7: Colore bordo = Nero (1)
         LD E, VDP_RCOLOR
-        LD A, $F1
-        CALL VDPSETREG
-
-        ; Register 1 = xSI1 20XM = 0110 0010
-        ;     S = active display (0 = off, 1 = on)
-        ;     I = interrupt enable
-        ;     1 = M1 (0)
-        ;     2 = M2 (0)
-        ;     X = sprite size (0 = 8x8, 1  = 16x16)
-        ;     M = sprite magnification (0 = single, 1 = double)
-        LD E, VDP_R1
-        LD A, $62
+        LD A, defaultPaperColor
         CALL VDPSETREG
 
 @ENDIF
+
+        LD A, 0
+        LD DE, (TEXTADDRESS)
+        LD BC, 256*3
+        CALL VDPFILLA
 
         CALL VDPUNLOCK
 
