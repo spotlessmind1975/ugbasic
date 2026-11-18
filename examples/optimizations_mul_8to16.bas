@@ -12,6 +12,8 @@ REM svolgere moltiplicazioni intere da 8 a 16 bit
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

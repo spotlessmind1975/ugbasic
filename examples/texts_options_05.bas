@@ -10,6 +10,8 @@ REM Questo esempio mostra come cambiare il testo e i color di backround durante 
 REM
 REM @include c128,coco3
 
+DEFINE FONT ALPHA
+
     CLS
 
     PEN ORANGE

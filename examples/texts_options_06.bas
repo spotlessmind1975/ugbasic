@@ -14,6 +14,8 @@ REM per ogni chiamata, mentre la resa differirà in base al valore attuale di ''
 REM
 REM @include c128,coco3
 
+DEFINE FONT ALPHA
+
     CLS
 
     t$ = PEN$(YELLOW)+"YELLOW ON "+PAPER$(BLUE)+" BLUE"

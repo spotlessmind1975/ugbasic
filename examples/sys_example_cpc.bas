@@ -24,6 +24,8 @@ REM a partire dalla versione 1.14.1 in poi.
 REM
 REM @import cpc
 
+DEFINE FONT ALPHA
+
 IMPORT DECLARES
 
 CLS

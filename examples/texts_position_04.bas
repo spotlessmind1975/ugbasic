@@ -16,6 +16,8 @@ REM un movimento specifico all'interno di una stringa, e riprodurlo incorporando
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     CLS
 
     PRINT CMOVE$(10,10);"CMOVE(10,10)"

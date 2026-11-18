@@ -12,6 +12,8 @@ REM svolgere conversioni da stringa a intero.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

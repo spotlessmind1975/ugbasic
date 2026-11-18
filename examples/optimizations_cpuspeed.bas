@@ -12,6 +12,8 @@ REM usando l'istruzione CPUSPEED.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 10000
 
 	CLS

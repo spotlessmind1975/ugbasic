@@ -1,4 +1,5 @@
-﻿
+﻿DEFINE FONT ALPHA
+
 PROCEDURE callMe
 
 	x = x + 1

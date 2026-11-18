@@ -10,6 +10,8 @@ REM Questo esempio mostra come caricare una immagine su una espansione.
 REM
 REM @include coco3,c64reu
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON COCO3, C64REU
 
     IF BANK COUNT = 0 THEN

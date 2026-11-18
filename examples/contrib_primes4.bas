@@ -16,6 +16,8 @@ REM @url https://www.linkedin.com/pulse/ottimizzazione-del-codice-massimo-sanna/
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,cpc,vic20,zx,pc128op,to8
 
+DEFINE FONT ALPHA
+
 4 CLS
 5 REM inizializzo limite massimo e array di flag 
 6 REM nums(x) = 0 -> x dentro

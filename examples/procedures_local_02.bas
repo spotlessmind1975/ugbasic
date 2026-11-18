@@ -18,6 +18,8 @@ REM a livello globale, anche se hanno lo stesso nome.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc128op,to8,cpc
 
+DEFINE FONT ALPHA
+
    CLS
    
    a = 42

@@ -12,6 +12,8 @@ REM a seguito della vittoria nella "FORZA 4 Challenge".
 REM
 REM @include atari,atarixl,cpc,coco3
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE(16)
     CLS BLACK
     COLOR BORDER BLACK

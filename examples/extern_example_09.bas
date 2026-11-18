@@ -16,6 +16,8 @@ REM e restituirà il risultato sempre sullo stack.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
 	CLS
 	
 	executable := LOAD("executable_sum_stack.bin")

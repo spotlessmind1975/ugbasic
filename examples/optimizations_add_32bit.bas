@@ -12,6 +12,8 @@ REM effettuare calcoli con numeri interi, in particolare a 32 bit.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

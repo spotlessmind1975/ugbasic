@@ -12,6 +12,8 @@ REM utilizzando le variabili ''XGR'' e ''YGR''.
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE
     CLS
     CIRCLE SCREEN WIDTH / 2, SCREEN HEIGHT / 2, 42

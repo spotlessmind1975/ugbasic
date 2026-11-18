@@ -15,6 +15,8 @@ REM tra loro le applicazioni, utilizzando FujiNet.
 REM 
 REM @include coco,atari
 
+DEFINE FONT ALPHA
+
 CLS
 
 PRINT "============"

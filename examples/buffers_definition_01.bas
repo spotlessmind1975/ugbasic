@@ -12,6 +12,8 @@ REM Un buffer è un'area di memoria definita staticamente e usata "così com'è"
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,sg1000,sc3000,to8,vic20,zx,pccga
 
+DEFINE FONT ALPHA
+
     CLS
 
     b = #[48454c4c4f]

@@ -10,6 +10,8 @@ REM Questo esempio cambierà il banco selezionato.
 REM
 REM @include coco3,c64reu
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON COCO3, C64REU, C64
 
     CLS

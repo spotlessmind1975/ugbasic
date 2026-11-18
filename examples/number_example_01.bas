@@ -16,6 +16,8 @@ REM sempre su questo tipo di variabili.
 REM
 REM @include atari,atarixl
 
+DEFINE FONT ALPHA
+
 	' Define the number width of 10 bytes (80 bits)
 	DEFINE NUMBER BYTES 10
 	

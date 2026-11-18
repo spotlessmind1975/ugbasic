@@ -11,6 +11,8 @@ REM reale del sistema di rete di Fujinet.
 REM 
 REM @include coco
 
+DEFINE FONT ALPHA
+
 OPTION COMPILE ON ATARI, ATARIXL, COCO
 
 CLS

@@ -15,6 +15,8 @@ REM classica, ma con l'utilizzo di uno scorrimento di bit.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 30000
 
 	CLS

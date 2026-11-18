@@ -19,6 +19,8 @@ REM differenziare l'utilizzo di BELL.
 REM
 REM @target atari,atarixl,c128,
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON POKEY, TED
 
     FOR f=0 TO 107

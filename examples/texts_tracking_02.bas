@@ -11,6 +11,8 @@ REM in una stringa per spostare il cursore in basso di 1 carattere.
 REM
 REM @include c128,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
   CLS
   LOCATE 10,10
   PRINT "10,10";

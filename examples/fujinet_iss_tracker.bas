@@ -9,6 +9,8 @@ REM Questo è un esempio di applicazione che traccia la ISS.
 REM 
 REM @include coco
 
+DEFINE FONT ALPHA
+
 OPTION COMPILE ON ATARI, ATARIXL, COCO
 
 CONST httpGet = 12

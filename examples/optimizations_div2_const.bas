@@ -12,6 +12,8 @@ REM svolgere divisini intere usando potenze di due
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

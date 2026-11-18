@@ -9,6 +9,8 @@ REM
 REM Questo piccolo esempio emetterà un suono monotono per cinque secondi.
 REM
 
+DEFINE FONT ALPHA
+
 	CLS
 
     SOUND 440

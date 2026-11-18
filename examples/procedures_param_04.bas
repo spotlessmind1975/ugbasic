@@ -10,6 +10,8 @@ REM Questo esempio dimostrerà come definire procedure per restituire valori.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,pc128op,to8,cpc
 
+DEFINE FONT ALPHA
+
      CLS
    
      PROCEDURE test[x]

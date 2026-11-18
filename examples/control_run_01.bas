@@ -10,6 +10,8 @@ REM Questo esempio mostrerà l'uso della parola chiave ''RUN''.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
     CLS
     x = 0
     PRINT x

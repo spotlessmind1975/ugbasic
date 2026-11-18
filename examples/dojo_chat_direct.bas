@@ -21,6 +21,8 @@ REM riferimento al sito dedicato: https://dojo.ugbasic.iwashere.eu/
 REM 
 REM @include coco,atari
 
+DEFINE FONT ALPHA
+
 CLS
 
 PRINT "================"

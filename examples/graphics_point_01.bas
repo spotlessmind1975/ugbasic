@@ -12,6 +12,8 @@ REM colore nella posizione specificata sullo schermo.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE(16)
 
     CLS

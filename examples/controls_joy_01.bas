@@ -16,7 +16,7 @@ REM ''PRINT'' la fine dello schermo.
 REM
 REM @include coleco,sg1000,sc3000,cpc,coco3
 
-DEFINE BIOS ALLOWED
+DEFINE FONT ALPHA
 
     CLS
 

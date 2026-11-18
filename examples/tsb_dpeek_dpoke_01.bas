@@ -9,6 +9,8 @@ REM Questo esempio mostra come funzionano D!POKE e D!PEEK.
 REM 
 REM @include atari,atarixl,c128,c128z,c64,c64reu,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,to8,vg5000,vic20,zx
 
+DEFINE FONT ALPHA
+
 D!POKE &Hc000, 42
 PRINT D!PEEK(&Hc000)
 

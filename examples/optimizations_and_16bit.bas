@@ -12,6 +12,8 @@ REM svolgere delle operazioni di AND tra bit con numeri a 16 bit.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

@@ -16,6 +16,8 @@ REM la stringa viene stampata, il colore della penna verrà modificato di conseg
 REM
 REM @include c128,coco3
 
+DEFINE FONT ALPHA
+
     CLS
 
     p$ = PEN$(WHITE)+"WELL ALL WHITE, "+PEN$(YELLOW)+" I STILL GOT THE YELLOW"

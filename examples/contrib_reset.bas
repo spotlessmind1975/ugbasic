@@ -11,6 +11,8 @@ REM porlo in uno stato noto
 REM
 REM @include atari,atarixl
 
+DEFINE FONT ALPHA
+
 	CLS
 	
 	PRINT "Press any key to reset!"

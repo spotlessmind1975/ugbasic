@@ -12,6 +12,8 @@ REM aspettando la pressione di un tasto specifico (A oppure B).
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,sc3000
 
+DEFINE FONT ALPHA
+
     CLS
 
     DO

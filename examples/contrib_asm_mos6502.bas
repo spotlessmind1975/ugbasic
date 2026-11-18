@@ -17,6 +17,8 @@ REM si opera una somma a 16 bit (2 x 8 bit) con il processore MOS 6502.
 REM 
 REM @include atari,atarixl,c128,c64,vic20
 
+DEFINE FONT ALPHA
+
 	CLS
 
 	DIM x AS INTEGER, y AS INTEGER, z AS INTEGER

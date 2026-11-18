@@ -17,6 +17,8 @@ REM da ugBASIC.
 REM
 REM @include coco3,c64reu
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON COCO3, C64REU, C64
 
     CLS

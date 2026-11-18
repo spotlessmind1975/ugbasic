@@ -36,6 +36,8 @@ REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,zx,pc128op,to8
 
+DEFINE FONT ALPHA
+
 ' ============================================================================
 ' INITIALIZATION / INIZIALIZZAZIONE
 ' ============================================================================

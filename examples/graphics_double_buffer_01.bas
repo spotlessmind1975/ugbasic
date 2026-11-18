@@ -9,6 +9,8 @@ REM
 REM Questo esempio mostra come usare il double buffering.
 REM
 
+DEFINE FONT ALPHA
+
     PROCEDURE example ON COCO3
 
         BITMAP ENABLE (160,200,16)

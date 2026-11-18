@@ -12,6 +12,8 @@ REM del generatore di numeri casuali.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,zx,pc128op,to8
 
+DEFINE FONT ALPHA
+
 	CLS
 
 	CONST range = SCREEN COLUMNS

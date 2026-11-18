@@ -18,6 +18,8 @@ REM specifico e restituirà il risultato su un registro specifico.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
 	CLS
 	
 	executable := LOAD("executable_increment.bin")

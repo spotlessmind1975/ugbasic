@@ -25,6 +25,8 @@ REM a partire dalla versione 1.14.1 in poi.
 
 IMPORT DECLARES
 
+DEFINE FONT ALPHA
+
 CLS
 
 PRINT "---------------------------------------"

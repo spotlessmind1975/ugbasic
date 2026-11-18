@@ -12,6 +12,7 @@ REM Modified by M.Spedaletti.
 REM
 REM @include c128,cpc,pc128op,to8
 
+DEFINE FONT ALPHA
 
 CONST numr  =  1000 : REM num of random position in pool 
 CONST nums  =    20 : REM number of stars in starfield

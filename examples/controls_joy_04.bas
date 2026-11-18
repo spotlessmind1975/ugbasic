@@ -12,6 +12,8 @@ REM analogici, lungo le direzioni orizzontali e verticali.
 REM
 REM @include coco coco3 d32 d64
 
+DEFINE FONT ALPHA
+
 	DEFINE JOYSTICK RETRIES 1
 	
 	CLS

@@ -12,6 +12,8 @@ REM le modalità FAST e SLOW.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 10000
 
 	CLS

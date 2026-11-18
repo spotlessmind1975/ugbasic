@@ -10,6 +10,8 @@ REM Questo esempio mostra come caricare un file al momento dell'esecuzione.
 REM 
 REM @include atari,atarixl,c128,c64,coco,coco3,vic20,cpc
 
+DEFINE FONT ALPHA
+
 CLS
 
 STORAGE "DISCHETTO" AS "DISK1"

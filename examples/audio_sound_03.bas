@@ -9,6 +9,8 @@ REM
 REM Questo piccolo esempio emetterà un suono polifonico per cinque secondi.
 REM
 
+DEFINE FONT ALPHA
+
 	CLS
 
 	SOUND 440 ON %0001

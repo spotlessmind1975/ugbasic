@@ -11,6 +11,8 @@ REM Questo piccolo esempio mostra come generare un semplice effetto audio,
 REM che non interrompe l'esecuzione del programma.
 REM
 
+DEFINE FONT ALPHA
+
 	CLS
 
     SHOOT

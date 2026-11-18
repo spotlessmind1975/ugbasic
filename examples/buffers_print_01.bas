@@ -18,6 +18,8 @@ REM e non del tipo della variabile.
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,pc128op,sg1000,sc3000,to8,vic20,zx,pccga
 
+DEFINE FONT ALPHA
+
     CLS
 
     b := LOAD("test2.txt")

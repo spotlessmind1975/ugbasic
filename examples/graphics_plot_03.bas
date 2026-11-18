@@ -14,6 +14,8 @@ REM e l'indice sarà stampato sullo schermo.
 REM
 REM @include c128,coco,d32,d64,coco3,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE
     CLS RED
     INK YELLOW

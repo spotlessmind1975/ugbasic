@@ -20,6 +20,8 @@ REM configurato. Per maggiori info: https://dojo.ugbasic.iwashere.eu/
 REM 
 REM @include coco,atari
 
+DEFINE FONT ALPHA
+
 DEFINE DOJO ON FUJINET
 
 CLS

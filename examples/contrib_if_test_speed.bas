@@ -13,6 +13,8 @@ REM
 REM @url https://www.facebook.com/groups/2057165187928233/posts/3451955151782556/
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx,pc128op,to8
 
+DEFINE FONT ALPHA
+
 	CLS
 
 	DIM a AS BYTE

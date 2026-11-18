@@ -1,4 +1,7 @@
-﻿	CLS
+﻿
+DEFINE FONT ALPHA
+
+	CLS
 	
 	PRINT "DOJO ON FUJINET"
 	PRINT "==============="

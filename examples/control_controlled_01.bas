@@ -12,6 +12,8 @@ REM per stampare i primi 100 numeri (da 1 a 100).
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     CLS
 
     i = 0

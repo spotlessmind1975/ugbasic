@@ -10,6 +10,8 @@ REM Questo esempio mostra come dichiarare e usare un array di bit.
 REM
 REM @include atari,atarixl,c16,c128,c128z,c64,coco,cocob,coco3,coco3b,coleco,cpc,d32,d32b,d64,d64b,mo5,msx1,pc128op,plus4,sc3000,sg1000,to8,vg5000,vic20,zx,pccga
 
+DEFINE FONT ALPHA
+
     CLS
 
     DIM a AS BIT(10,10)

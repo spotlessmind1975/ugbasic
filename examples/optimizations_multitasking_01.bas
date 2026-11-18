@@ -12,6 +12,8 @@ REM svolgere il task switching.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 10000
 
 	x = 0

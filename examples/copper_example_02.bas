@@ -12,6 +12,8 @@ REM BEGIN COPPER ... END COPPER per creare un semplice arcobaleno statico.
 REM
 REM @include atari,atarixl
 	
+DEFINE FONT ALPHA
+
 	CONST rainbowStep = 8
 	
 	BEGIN COPPER "primo"

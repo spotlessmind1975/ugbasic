@@ -12,6 +12,8 @@ REM disegnare 2.000 immagini da 32x16 pixel
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 2000
 
 	BITMAP ENABLE(16)

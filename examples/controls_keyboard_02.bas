@@ -14,6 +14,8 @@ REM stamperà il valore ASCII del tasto premuto.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc,sc3000
 
+DEFINE FONT ALPHA
+
     CLS
     
     PRINT "PRESS SOME KEYS TO OBTAIN ASCII VALUE"

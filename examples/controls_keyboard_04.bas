@@ -14,6 +14,8 @@ REM il relativo valore sarà stampato sullo schermo.
 REM
 REM @include c128
 
+DEFINE FONT ALPHA
+
     CLS
 
     DO

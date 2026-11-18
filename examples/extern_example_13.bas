@@ -19,6 +19,8 @@ REM in quella posizione.
 REM
 REM @include atari,atarixl,c128,c64
 
+DEFINE FONT ALPHA
+
 DECLARE FUNCTION seriale AT $c000 ( valore AS BYTE ON STACK(BYTE) ) RETURN STACK(BYTE) AS BYTE ON CPU6502
 
 	CLS

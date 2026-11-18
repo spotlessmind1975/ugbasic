@@ -24,6 +24,8 @@ REM massimo di colori diversi consentiti.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
 
+DEFINE FONT ALPHA
+
      BITMAP ENABLE (320,200)
      CLS
      w = SCREEN WIDTH

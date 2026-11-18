@@ -10,6 +10,8 @@ REM Questo esempio mostra come cancellare parte di una riga e una riga intera, u
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000
 
+DEFINE FONT ALPHA
+
   CLS
   
   LOCATE 0,1

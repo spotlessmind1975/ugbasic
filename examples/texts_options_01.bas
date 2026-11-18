@@ -16,6 +16,8 @@ REM il comando ''PEN''.
 REM
 REM @include c128,coco3
 
+DEFINE FONT ALPHA
+
    CLS
 
    FOR index=0 TO PEN COLORS - 1

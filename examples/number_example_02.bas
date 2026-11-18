@@ -10,6 +10,8 @@ REM Questo esempio mostra come calcolare una serie di numeri in alta precisione.
 REM
 REM @include atari,atarixl
 
+DEFINE FONT ALPHA
+
 	' Define the number width of 10 bytes (80 bits)
 	DEFINE NUMBER BYTES 10
 	

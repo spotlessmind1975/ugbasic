@@ -8,6 +8,8 @@ REM STAMPA DI TESTI CON POSIZIONAMENTO SU GRIGLIA
 REM
 REM Questo esempio mostra fcome posizionare il testo a una specifica posizione.
 
+DEFINE FONT ALPHA
+
   CLS
 
   PRINT @100, "Hello World"

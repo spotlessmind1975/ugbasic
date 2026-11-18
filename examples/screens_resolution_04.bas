@@ -10,6 +10,8 @@ REM Questo esempio mostra la miglior risoluzione BITMAP disponibile.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
 
+DEFINE FONT ALPHA
+
      TILEMAP ENABLE
      CLS BLACK: PEN WHITE
      PRINT WIDTH;"x";HEIGHT;" (";COLORS;" colors with ";SHADES;" shades)"

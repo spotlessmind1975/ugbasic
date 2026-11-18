@@ -16,6 +16,8 @@ REM il comando ''PAPER''.
 REM
 REM @include c128,coco3
 
+DEFINE FONT ALPHA
+
    CLS
 
    PEN DEFAULT PEN

@@ -16,6 +16,8 @@ REM fattori nelle operazioni.
 REM
 REM @include coco3,pc128op,to8
 
+DEFINE FONT ALPHA
+
 CONST width = 16
 CONST height = 16
 

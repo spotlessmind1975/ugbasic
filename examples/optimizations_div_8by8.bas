@@ -12,6 +12,8 @@ REM svolgere divisioni con numeri da 8 bit.
 REM
 REM @include 
 
+DEFINE FONT ALPHA
+
 	CONST maxCounter = 20000
 
 	CLS

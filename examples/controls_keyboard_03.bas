@@ -16,6 +16,8 @@ REM ristampato lo scan code.
 REM
 REM @include coco,coco3,d32,d64,sc3000
 
+DEFINE FONT ALPHA
+
     CLS
     
     k = ""

@@ -17,6 +17,8 @@ REM procedura parametrica.
 REM
 REM @include atari,atarixl,c16,c128,c64,coco,cocob,coco3,coco3b,d32,d32b,d64,d64b,coleco,pc128op,to8,sg1000,sc3000,cpc,vic20,zx,pccga
 
+DEFINE FONT ALPHA
+
     CLS
 	
     CONST first = 6

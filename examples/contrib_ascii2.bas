@@ -12,6 +12,8 @@ REM Il buffer carwicato sarà compresso con l'algoritmo MSC1, per risparmiare sp
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc,vic20,to8,zx
 
+DEFINE FONT ALPHA
+
     CLS
     
     PRINT "print ascii:"

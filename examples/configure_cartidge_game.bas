@@ -15,6 +15,8 @@ REM l'esecuzione del programma.
 REM
 REM @include coleco
 
+DEFINE FONT ALPHA
+
 OPTION COMPILE ON COLECO
 
 CONFIGURE COLECO CARTRIDGE GAME

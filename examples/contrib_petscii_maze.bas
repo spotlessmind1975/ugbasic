@@ -22,6 +22,8 @@ REM @url https://www.facebook.com/groups/2503729026388481/?multi_permalinks=2514
 REM
 REM @include c16,c128,c64,c64reu,vic20
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON C128, C64, C64REU, VIC20
 
 	endAddress = TEXTADDRESS + ROWS*COLUMNS

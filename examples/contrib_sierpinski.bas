@@ -36,6 +36,8 @@ REM
 REM @url https://www.facebook.com/groups/retroprogramming/posts/879754189371504/
 REM
 
+DEFINE FONT ALPHA
+
 10 t=TI: REM POKE 53280,15
 20 x1=160: y1=0
 30 x2=0: y2=199

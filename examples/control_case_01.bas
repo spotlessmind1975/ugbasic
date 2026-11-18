@@ -10,6 +10,8 @@ REM Questo esempio mostra come usare il comando ''SELECT CASE''.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,cpc
 
+DEFINE FONT ALPHA
+
     CLS
 
     DO

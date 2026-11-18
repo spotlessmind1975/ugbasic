@@ -20,6 +20,8 @@ REM @url https://github.com/JJFlash-IT/XCB3_Examples/blob/main/RAM_Scan_XCB/xcb-
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64
 
+DEFINE FONT ALPHA
+
 	VAR wSourceAddress AS ADDRESS = 0
 
 	INK WHITE

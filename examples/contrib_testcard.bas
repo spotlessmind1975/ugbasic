@@ -16,6 +16,8 @@ REM elettronicamente, utilizzati per calibrare o risolvere i problemi dell'uscit
 REM
 REM @include c128,c64,coco3,cpc,pc128op,to8,msx1
 
+DEFINE FONT ALPHA
+
 OPTION EXPLICIT
 
 BITMAP ENABLE (16)

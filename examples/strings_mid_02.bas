@@ -8,6 +8,8 @@ REM MANIPOLAZIONE DI STRIGHE MID ITERATIVI
 REM
 REM Questo esempio mostra come estrarre sottostringhe dalla stessa stringa.
 
+DEFINE FONT ALPHA
+
     CLS
 
     text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"

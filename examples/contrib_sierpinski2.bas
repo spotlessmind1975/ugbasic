@@ -35,6 +35,8 @@ REM il fattore 1/2 si otterrà un triangolo di Sierpinski.
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,zx
 
+DEFINE FONT ALPHA
+
 ' ============================================================================
 ' INITIALIZATION
 ' ============================================================================

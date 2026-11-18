@@ -16,6 +16,8 @@ REM @url https://www.facebook.com/groups/retroprogramming/posts/793835291296728/
 REM
 REM @include atari,atarixl,c128,c64,coco,d32,d64,coleco,sg1000,sc3000,cpc,vic20,zx,pc128op,to8
 
+DEFINE FONT ALPHA
+
 10 CLS:c%=400:t=TI:m%=0:b%=2:PRINT" 2", " 3", " 5", " 7", 
 20 FOR i=11 TO c% STEP 2
 30 FOR j=5 TO SQR(i) STEP 6

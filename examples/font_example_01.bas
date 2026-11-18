@@ -12,6 +12,8 @@ REM nel font (grafico) accluso.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,plus4,sc3000,sg1000,to8,vg5000,vic20,zx
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE
     
     CLS

@@ -12,6 +12,8 @@ REM utilizzare per i programmi, e le relative temporizzazioni.
 REM
 REM @include atari atarixl c128 c128z c16 c64 c64reu coco cocob coco3 coco3b coleco cpc d32 d32b d64 d64b gb mo5 msx1 pc128op pc1403 pccga plus4 sc3000 sg1000 to8 vic20 zx
 
+DEFINE FONT ALPHA
+
 DEFINE VIDEO OUTPUT NTSC
 
 CLS

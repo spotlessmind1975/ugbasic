@@ -10,6 +10,8 @@ REM Questo esempio mostra come provare le collisioni.
 REM
 REM @include coleco,sg1000,sc3000
 
+DEFINE FONT ALPHA
+
 BITMAP ENABLE (16)
 
 spriteImage = LOAD IMAGE("sprite.png")

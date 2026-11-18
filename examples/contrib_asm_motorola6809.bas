@@ -17,6 +17,8 @@ REM si opera una somma a 16 bit (2 x 8 bit) con il processore MOTOROLA 6809.
 REM 
 REM @include coco,coco3,d32,d64,pc128op,to8
 
+DEFINE FONT ALPHA
+
 	DIM x AS INTEGER, y AS INTEGER, z AS INTEGER
 
 	CLS

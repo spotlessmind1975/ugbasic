@@ -16,6 +16,8 @@ REM richiamata prima l'istruzione ''RANDOMIZE''.
 REM
 REM @include atari,atarixl,c128,c64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     CLS
     
     RANDOMIZE TIMER

@@ -10,6 +10,8 @@ REM Questo esempio mostrerà l'effetto di usare le "virgole" per la stampa.
 REM
 REM @include atari,atarixl,c128,c64,coco3
 
+DEFINE FONT ALPHA
+
    CLS
    FOR i=1 TO 200
       PRINT "a",

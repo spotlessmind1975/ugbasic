@@ -15,6 +15,8 @@ REM esplicitamente.
 REM 
 REM @include atari,atarixl,c128,c64,coco,coco3,vic20,cpc
 
+DEFINE FONT ALPHA
+
 GLOBAL track
 
 STORAGE "disco" AS "disk1"

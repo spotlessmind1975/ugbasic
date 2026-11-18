@@ -20,6 +20,8 @@ REM che controllano per un bitmask specifico.
 REM
 REM @include c128
 
+DEFINE FONT ALPHA
+
     CLS
 
     DO

@@ -8,6 +8,8 @@ REM PRIMITIVE DI GRAFICA CON L'USO DI PLOT (4)
 REM
 REM Questo esempio mostrerà gli effetti di stampare sulle bitmap monocromatiche e su quelle multicolor.
 
+DEFINE FONT ALPHA
+
   BITMAP ENABLE (1)
   CLS BLACK
   INK WHITE

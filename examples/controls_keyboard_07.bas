@@ -18,6 +18,8 @@ REM il bitmask sullo schermo, usando la funzione ''BIN$''. Questo esempio
 REM mostra anche come posizionare l'output sullo schermo, su una posizione specifica,
 REM utilizzando i comandi ''LOCATE'' e ''CENTRE'' keywords.
 
+DEFINE FONT ALPHA
+
     CLS
     
     CENTRE "PLEASE PRESS SOME CONTROL KEYS"

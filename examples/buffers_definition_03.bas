@@ -14,6 +14,8 @@ REM dato che il nome del file è lo stesso).
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,pc128op,sg1000,sc3000,to8,vic20,zx,pccga
 
+DEFINE FONT ALPHA
+
     CLS
 
     b = LOAD("test.txt")

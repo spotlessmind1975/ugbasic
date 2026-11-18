@@ -14,6 +14,8 @@ REM "topolino" che si muove all'interno del labirinto in cerca del "formaggio".
 REM
 REM @include c128
 
+DEFINE FONT ALPHA
+
     DEFINE DEFAULT TYPE SIGNED WORD
 
     VAR finalScrPosition AS WORD

@@ -27,6 +27,8 @@ REM posto al valor assoluto.
 REM
 REM @include atari,atarixl,c128,c128z,c64,coco,coco3,coleco,cpc,d32,d64,mo5,msx1,pc128op,sc3000,sg1000,vg5000,to8,zx
 
+DEFINE FONT ALPHA
+
 PROCEDURE example ON ALL BUT VIC20, PLUS4, C16
 
     CLS

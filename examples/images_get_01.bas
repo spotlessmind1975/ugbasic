@@ -12,6 +12,8 @@ REM dallo schermo, per essere disegnata su un'altra parte dello schermo.
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
     BITMAP ENABLE (2)
     CLS
 

@@ -10,6 +10,8 @@ REM Questo esempio mostra come usare le sequence di escape per emulare alcuni co
 REM
 REM @include atari,atarixl,c128,c64,coco,coco3,d32,d64,coleco,sg1000,sc3000,cpc
 
+DEFINE FONT ALPHA
+
 PRINT "{clear}";
 
 PRINT "OK!"
