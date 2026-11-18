@@ -562,6 +562,7 @@ void variable_cleanup( Environment * _environment ) {
 
     if ( _environment->descriptors ) {
         outhead0(".segment \"UDCCHAR\"" );
+        outhead0("UDCCHAR:");
         int i=0,j=0;
         for(i=0;i<_environment->descriptors->firstFree;++i) {
             outline1("; $%2.2x ", i);
