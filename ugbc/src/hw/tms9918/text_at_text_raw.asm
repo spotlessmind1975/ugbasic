@@ -214,7 +214,7 @@ TEXTATRAW21:
     LD A, 0
     LD D, A
 
-    LD HL, $480
+    LD HL, (COLORMAPADDRESS)
     ADD HL, DE
     LD DE, HL
     LD A, (_PEN)
