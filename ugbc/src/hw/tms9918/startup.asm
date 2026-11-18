@@ -820,7 +820,7 @@ SCREENMODE3:
         CALL CBIOS_VDPSETREG
 
         ; R4: Pattern Table = 0000h (Maschera bit completa per 6KB)
-        LD BC, $0400
+        LD BC, $0403
         CALL CBIOS_VDPSETREG
 
         ; R5: Sprite Attribute Table = 1B00h
@@ -865,7 +865,7 @@ SCREENMODE3:
 
         ; R4: Pattern Table = 0000h (Maschera bit completa per 6KB)
         LD E, VDP_RPATTERN
-        LD A, $00
+        LD A, $03
         CALL VDPSETREG
 
         ; R5: Sprite Attribute Table = 1B00h
