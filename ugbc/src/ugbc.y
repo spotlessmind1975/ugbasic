@@ -5048,12 +5048,12 @@ point_definition:
 
 plot_definition_expression:
     optional_x OP_COMMA optional_y OP_COMMA optional_expr {
-        plot( _environment, $1, $3, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, $1, $3 );
+        plot( _environment, $1, $3, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
     } | 
     optional_x OP_COMMA optional_y {
-        plot( _environment, $1, $3, NULL, 0 );
         gr_locate( _environment, $1, $3 );
+        plot( _environment, $1, $3, NULL, 0 );
     };
 
 plot_definition:
@@ -5063,14 +5063,14 @@ plotr_definition_expression:
       expr OP_COMMA expr OP_COMMA optional_expr {
         Variable * x = origin_resolution_relative_transform_x( _environment, $1, 1 );
         Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
-        plot( _environment, x->name, y->name, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
         gr_locate( _environment, x->name, y->name );
+        plot( _environment, x->name, y->name, resolve_color( _environment, $5 ), ((Environment *)_environment)->colorImplicit );
     } | 
     expr OP_COMMA expr {
         Variable * x = origin_resolution_relative_transform_x( _environment, $1, 1 );
         Variable * y = origin_resolution_relative_transform_y( _environment, $3, 1 );
-        plot( _environment, x->name, y->name, NULL, 0 );
         gr_locate( _environment, x->name, y->name );
+        plot( _environment, x->name, y->name, NULL, 0 );
     };
 
 plotr_definition:
