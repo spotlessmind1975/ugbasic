@@ -17952,5 +17952,12 @@ void environment_setup_retrohack( Environment * _environment ) {
     if ( strstr( _environment->sourceFileName, "hangword") != NULL ) {
         _environment->vestigialConfig.rchack_hangword_1181 = 1;
     }
+
+    /* retrocompatible hacks */
+    // We are compiling "Lader" game with a recent
+    // version of the compiler (>=1.18.2).
+    if ( strstr( _environment->sourceFileName, "lader") != NULL ) {
+        _environment->vestigialConfig.rchack_lader_1182 = 1;
+    }
     
 }

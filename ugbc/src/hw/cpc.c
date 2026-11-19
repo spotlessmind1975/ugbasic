@@ -1063,7 +1063,7 @@ void cpc_initialization( Environment * _environment ) {
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC0, 1, 160, 200, 16, 8, 8, "Graphic Mode 0" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC1, 1, 320, 200, 4, 8, 8, "Graphic Mode 1" );
     SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC2, 1, 640, 200, 2, 8, 8, "Graphic Mode 2" );
-    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC3, 1, 160, 200, 4, 8, 8, "Graphic Mode 3" );
+    SCREEN_MODE_DEFINE( BITMAP_MODE_GRAPHIC3, 1, 160, 200, 4, 8, 8, "Graphic Mode 3" );        
 
     outline0("CALL CPCVIDEOSTARTUP");
 
@@ -1195,8 +1195,12 @@ void cpc_initialization( Environment * _environment ) {
     variable_global( _environment, "PENT" );
     variable_import( _environment, "PAPERT", VT_BYTE, 0x0 );
     variable_global( _environment, "PAPERT" );
-
-    cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, BITMAP_MODE_DEFAULT ) );
+             
+    int bitmapModeDefault = BITMAP_MODE_DEFAULT;
+    if ( _environment->vestigialConfig.rchack_lader_1182 ) {
+        bitmapModeDefault = BITMAP_MODE_GRAPHIC1;
+    }
+    cpc_screen_mode_enable( _environment, find_screen_mode_by_id( _environment, bitmapModeDefault ) );
 
     font_descriptors_init( _environment, 0 );
     
@@ -1212,6 +1216,11 @@ void cpc_initialization( Environment * _environment ) {
     _environment->screenShades = 16;
     _environment->screenColors = 2;
     _environment->currentModeBW = 1;
+    _environment->currentMode = bitmapModeDefault;
+    _environment->currentTileMode = 0;
+
+    cpu_store_8bit( _environment, "CURRENTMODE", _environment->currentMode );
+    cpu_store_8bit( _environment, "CURRENTTILEMODE", _environment->currentTileMode );
 
 }
 
