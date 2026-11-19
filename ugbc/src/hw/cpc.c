@@ -705,6 +705,9 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "FONTWIDTH", _environment->fontWidth );
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
+
+    console_calculate( _environment );
 
     if (_environment->vestigialConfig.clsImplicit ) {
         cpc_cls( _environment );
