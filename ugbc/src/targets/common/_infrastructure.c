@@ -17960,4 +17960,14 @@ void environment_setup_retrohack( Environment * _environment ) {
         _environment->vestigialConfig.rchack_lader_1182 = 1;
     }
     
+    /* retrocompatible hacks */
+    // We are compiling "Open Pilantra" demo with a recent
+    // version of the compiler (>=1.18.2).
+    if ( 
+        stristr( _environment->sourceFileName, "pilantra") != NULL ||
+        stristr( _environment->sourceFileName, "opil") != NULL
+     ) {
+        _environment->vestigialConfig.rchack_opil_1182 = 1;
+    }
+
 }

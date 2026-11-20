@@ -2144,6 +2144,11 @@ typedef struct _VestigialConfig {
 
     char rchack_lader_1182;
 
+    // If 1 we are compiling "Open Pilantra" demo with
+    // a recent version of the compiler.
+
+    char rchack_opil_1182;
+
 } VestigialConfig;
 
 typedef struct _FontConfig {
