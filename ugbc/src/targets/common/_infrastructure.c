@@ -17964,8 +17964,10 @@ void environment_setup_retrohack( Environment * _environment ) {
     // We are compiling "Open Pilantra" demo with a recent
     // version of the compiler (>=1.18.2).
     if ( 
-        stristr( _environment->sourceFileName, "pilantra") != NULL ||
-        stristr( _environment->sourceFileName, "opil") != NULL
+        strstr( _environment->sourceFileName, "PILANTRA") != NULL ||
+        strstr( _environment->sourceFileName, "OPIL") != NULL ||
+        strstr( _environment->sourceFileName, "pilantra") != NULL ||
+        strstr( _environment->sourceFileName, "opil") != NULL
      ) {
         _environment->vestigialConfig.rchack_opil_1182 = 1;
     }

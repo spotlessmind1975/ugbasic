@@ -10027,12 +10027,12 @@ statement2nc:
     ELSEIF { else_if_then_label( _environment ); } expr THEN { else_if_then( _environment, $3 ); } |
     EMPTY TILE OP_ASSIGN expr { 
         ((struct _Environment *)_environment)->emptyTileUsed = 1;
-        Variable * from = variable_retrieve( _environment, $4 );
+        Variable * from = variable_retrieve_or_define( _environment, $4, VT_BYTE, 32 );
         cpu_move_8bit( _environment, from->realName, "EMPTYTILE" ); 
     } | 
     EMPTYTILE OP_ASSIGN expr { 
         ((struct _Environment *)_environment)->emptyTileUsed = 1;
-        Variable * from = variable_retrieve( _environment, $3 );
+        Variable * from = variable_retrieve_or_define( _environment, $3, VT_BYTE, 32 );
         cpu_move_8bit( _environment, from->realName, "EMPTYTILE" ); 
     } | 
     ENABLE INTERRUPT { cpu_ei( _environment ); } | 
