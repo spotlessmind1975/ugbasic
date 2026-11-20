@@ -733,8 +733,10 @@ int gb_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mode
     }    
     cpu_store_8bit( _environment, "CONSOLEX2", _environment->consoleTilesWidth-1 );
     cpu_store_8bit( _environment, "CONSOLEY2", _environment->consoleTilesHeight-1 );
-    cpu_store_8bit( _environment, "CONSOLEW", _environment->consoleTilesWidth );
-    cpu_store_8bit( _environment, "CONSOLEH", _environment->consoleTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->screenTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->screenTilesHeight-1 );
 
     console_calculate( _environment );
     

@@ -706,6 +706,9 @@ int cpc_screen_mode_enable( Environment * _environment, ScreenMode * _screen_mod
     cpu_store_8bit( _environment, "FONTHEIGHT", _environment->fontHeight );
     cpu_store_8bit( _environment, "PALETTELIMIT", _environment->screenColors );
     cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->screenTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->screenTilesHeight-1 );
 
     console_calculate( _environment );
 
