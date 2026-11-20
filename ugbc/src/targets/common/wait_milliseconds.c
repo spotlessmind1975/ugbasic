@@ -49,6 +49,9 @@
 void wait_milliseconds( Environment * _environment, int _timing ) {
 
     int timing = _timing / MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard );
+    if ( _environment->vestigialConfig.rchack_opil_1182 ) {
+        timing = timing * 15 / 10;
+    }
 
     if ( _environment->protothread && !_environment->protothreadForbid && _environment->procedureName ) {
 
@@ -98,7 +101,12 @@ void wait_milliseconds( Environment * _environment, int _timing ) {
  */
 void wait_milliseconds_var( Environment * _environment, char * _timing ) {
 
-    Variable * realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 )->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
+    Variable * realTiming;
+    if ( _environment->vestigialConfig.rchack_opil_1182 ) {
+        realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 )->name, ( MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ) / 10 * 6 ), NULL );
+    } else {
+        realTiming = variable_div_const( _environment, variable_retrieve_or_define( _environment, _timing, VT_WORD, 0 )->name, MS_PER_TICK_FOR_VOS( _environment->videoOutputStandard ), NULL );
+    }
 
     if ( _environment->protothread && !_environment->protothreadForbid && _environment->procedureName ) {
 

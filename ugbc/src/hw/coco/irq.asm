@@ -34,7 +34,30 @@
 ;*                             by Marco Spedaletti                             *
 ;*                                                                             *
 ;* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    
+
+@IF vestigialConfig.rchack_opil_1182
+
+IRQSVC
+    PSHS D
+    PSHS X
+    PSHS Y
+    PSHS U
+    PSHS DP
+    PSHS CC
+IRQSVC2
+    NOP
+    NOP
+    NOP
+    PULS CC
+    PULS DP
+    PULS U
+    PULS Y
+    PULS X
+    PULS D
+    RTS
+
+@ENDIF
+
 ; OLDISVC
 ;     fdb $0
 
@@ -104,6 +127,10 @@ ISVCIRQJ
     LDD COCOTIMER
     ADDD #$1
     STD COCOTIMER
+@ENDIF
+
+@IF vestigialConfig.rchack_opil_1182
+    JSR IRQSVC
 @ENDIF
 
     LDD #0

@@ -471,6 +471,8 @@ const_factor:
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_4gravity_1163;
             } else if ( strcmp( $3, "rchack_4gravity_1164" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_4gravity_1164;
+            } else if ( strcmp( $3, "rchack_opil_1182" ) == 0 ) {
+                $$ = ((struct _Environment *)_environment)->vestigialConfig.rchack_opil_1182;
             } else if ( strcmp( $3, "clsImplicit" ) == 0 ) {
                 $$ = ((struct _Environment *)_environment)->vestigialConfig.clsImplicit;
             } else if ( strcmp( $3, "biosAllowed" ) == 0 ) {
