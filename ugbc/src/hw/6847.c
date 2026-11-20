@@ -738,7 +738,11 @@ int c6847_screen_mode_enable( Environment * _environment, ScreenMode * _screen_m
     cpu_store_8bit( _environment, "CURRENTTILES", _environment->screenTiles );
     cpu_store_8bit( _environment, "CURRENTTILESWIDTH", _environment->screenTilesWidth );
     cpu_store_8bit( _environment, "CURRENTTILESHEIGHT", _environment->screenTilesHeight );
-
+    cpu_store_8bit( _environment, "CONSOLEW", _environment->screenTilesWidth );
+    cpu_store_8bit( _environment, "CONSOLEX2", _environment->screenTilesWidth-1 );
+    cpu_store_8bit( _environment, "CONSOLEH", _environment->screenTilesHeight );
+    cpu_store_8bit( _environment, "CONSOLEY2", _environment->screenTilesHeight-1 );
+    
     if (_environment->vestigialConfig.clsImplicit ) {
         c6847_cls( _environment );
     }
