@@ -44,9 +44,9 @@ PUTIMAGE
     CMPA #$FF
     BEQ PUTIMAGENOEXPBANK
 
-    STA $FFAC
+    STA $FFAA
     TFR Y, D
-    ADDD #$8000
+    ADDD #$4000
     TFR D, Y
     
 PUTIMAGENOEXPBANK
@@ -55,8 +55,8 @@ PUTIMAGENOEXPBANK
     LDA CURRENTTILEMODE
     BEQ PUTIMAGEGO
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
 
     PULS D
 
@@ -91,8 +91,8 @@ PUTIMAGEGO
 
     ANDCC #$AF
     
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -296,8 +296,8 @@ PUTIMAGECOMMONEL1
 
     ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -429,8 +429,8 @@ PUTIMAGECOMMONENOBANK
 
     ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -447,8 +447,8 @@ PUTIMAGECOMMONEL1NOBANK
 
     ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -459,7 +459,7 @@ PUTIMAGEMSC1
     CMPA #$FF
     BEQ PUTIMAGEMSC1NOEXPBANK
 
-    STA $FFAC
+    STA $FFAA
     TFR Y, D
     ADDD #$8000
     TFR D, Y
@@ -476,8 +476,8 @@ PUTIMAGEMSC1NOEXPBANK
     LDA CURRENTTILEMODE
     BEQ PUTIMAGEMSC1GO
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
 
     PULS D
 
@@ -512,8 +512,8 @@ PUTIMAGEMSC1GO
 
     ; ANDCC #$AF
     
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -725,8 +725,8 @@ PUTIMAGEMSC1COMMONEL1
 
     ; ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -975,8 +975,8 @@ PUTIMAGEMSC1COMMONENOBANK
 
     ; ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
 
@@ -993,7 +993,7 @@ PUTIMAGEMSC1COMMONEL1NOBANK
 
     ; ANDCC #$AF
 
-    LDA #$3C
-    STA $FFAC
+    LDA #$3A
+    STA $FFAA
     
     RTS
