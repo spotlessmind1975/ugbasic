@@ -101,6 +101,7 @@ void target_linkage( Environment * _environment ) {
 		    convertbintosddrive( _environment );
 			break;
 		default:
+            break;
 	}
 
 }
