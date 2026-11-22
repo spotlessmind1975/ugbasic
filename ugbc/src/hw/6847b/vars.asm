@@ -101,7 +101,6 @@ CONSOLEH      fcb 16        ; <-- calculated (chars)
 CONSOLEWB     fcb 32        ; <-- calculated (bytes)
 CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 ;
-
 @IF consoleUsed
 
 @EMIT maxConsole
@@ -109,6 +108,7 @@ CONSOLEHB     fcb 16        ; <-- calculated (bytes)
 CONSOLES      rzb maxConsole*8        ; <-- storage for virtual consoles
 CONSOLES2     rzb maxConsole*2        ; <-- storage for memorize / remember on console
 @ENDIF
+
 
 IMAGEW2 EQU $40
 IMAGEX EQU $41 ; $42
