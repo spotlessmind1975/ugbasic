@@ -211,6 +211,7 @@ VDPOUTCHAR:
 @ELSE
 
 VDPOUTCHAR:
+        PUSH BC
         PUSH HL
         PUSH DE
         LD HL, DE
@@ -218,6 +219,7 @@ VDPOUTCHAR:
         CALL CBIOS_FILL_VRAM
         POP DE
         POP HL
+        POP BC
         RET
 
 @ENDIF
