@@ -33,5 +33,6 @@ i = 0
         PRINT BIN$(j,5)
         LOCATE 2, 5
         PRINT "T: ";i;"(";j;")"
+        PRINT JFIRE(0)
         INC i
     LOOP

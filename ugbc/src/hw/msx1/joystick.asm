@@ -192,7 +192,7 @@ JOYSTICKREAD1:
 
         ; Isolate the FIRE bit.
 
-        AND $40
+        AND $10
 
         ; Update the FIRE latch.
 
@@ -350,7 +350,7 @@ JOYSTICKREAD1:
 
         ; Isolate the FIRE bit.
 
-        AND $40
+        AND $10
 
         ; Update the FIRE latch.
 
