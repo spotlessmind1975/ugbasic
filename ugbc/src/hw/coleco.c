@@ -288,6 +288,8 @@ void coleco_joy_direction( Environment * _environment, int _port, int _direction
     outline0("AND B" );
     outline0("CP 0" );
     cpu_ztoa(_environment);
+    outline0("CPL" );
+    outline1("LD (%s), A", _value );
 }
 
 void coleco_joy_direction_semivars( Environment * _environment, char * _port, int _direction, char * _value ) {
@@ -298,21 +300,20 @@ void coleco_joy_direction_semivars( Environment * _environment, char * _port, in
     outline1("LD A, (%s)", _port );
     outline0("CP 0" );
     outline1("JR Z, %s", label );
-    outline0("LD DE, 8" );
+    outline0("LD DE, 10" );
     outline1("JR %sbis", label );
     outhead1("%s:", label );
-    outline0("LD DE, 4" );
+    outline0("LD DE, 3" );
     outhead1("%sbis:", label );
     outline0("LD HL, CONTROLLER_BUFFER");
     outline0("ADD HL, DE" );
-    outline0("LD A, (HL)" );
-    outline0("LD B, A" );
-    outline0("LD A, (HL)" );
-    outline0("OR B" );
+    outline0("LD B, (HL)");
     outline1("LD A, %d", ( 1 << _direction ) );
     outline0("AND B" );
     outline0("CP 0" );
     cpu_ztoa(_environment);
+    outline0("CPL" );
+    outline1("LD (%s), A", _value );    
 }
 
 void coleco_sys_call( Environment * _environment, int _destination ) {
