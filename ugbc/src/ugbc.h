@@ -1585,7 +1585,7 @@ typedef struct _ScreenMode {
 #define SCREEN_MODE_DEFINE( _id, _bitmap, _width, _height, _colors, _tile_width, _tile_height, _description ) \
     { \
         ScreenMode * screenMode = malloc( sizeof( ScreenMode ) ); \
-        memset( screenMode, 0, sizeof( screenMode ) ) ; \
+        memset( screenMode, 0, sizeof( ScreenMode ) ) ; \
         screenMode->bitmap = _bitmap; \
         screenMode->id = _id; \
         screenMode->width = _width; \
